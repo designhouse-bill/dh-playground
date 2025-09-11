@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"name": "mydarndest-playground",
+			"path": "."
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "mydarndest-playground"
+	}
+}

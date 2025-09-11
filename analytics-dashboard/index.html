@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Weekly Circular — Analytics Dashboard</title>
+
+  <!-- Base styles -->
+  <link rel="stylesheet" href="assets/css/styles.css">
+
+  <!-- Inter font (Master baseline) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="theme-light">
+
+  <!-- Header (static shell; content bound via JS) -->
+  <header id="app-header" class="page-header">
+    <div class="header-left">
+      <div class="left">
+        <div class="title-container">
+          <h1>Analytics Dashboard</h1>
+        </div>
+
+        <div id="week-context" class="week-context">
+          <div class="week-line">
+            <select id="week-select" class="week-select"></select>
+            <span class="status" id="week-status" style="color:var(--muted)">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-center">
+      <div class="banner"><h2 id="banner-name">—</h2></div>
+      <div class="version">
+        <label for="version-select">Change Version:</label>
+        <select id="version-select"><option value="all">All</option></select>
+      </div>
+    </div>
+
+    <div id="header-tiles" class="header-tiles" aria-label="YTD KPIs"></div>
+  </header>
+
+  <!-- SECTION: Circular (Row 1 + Row 2) -->
+  <section id="sec-circular" class="container section-circular" aria-label="Circular">
+    <div id="row-1" class="row row-1" aria-label="Top KPIs"></div>
+    <div id="row-2" class="row row-2" aria-label="Trends • Position • Store Lift"></div>
+  </section>
+
+  <!-- SECTION: Category (Row 3) -->
+  <section id="sec-category" class="container section-category" aria-label="Category">
+    <div id="row-3" class="row row-3" aria-label="Category KPIs"></div>
+  </section>
+
+  <!-- SECTION: Promotions (Row 4 + Row 5 + Row 6) -->
+  <section id="sec-promotions" class="container section-promotions" aria-label="Promotions">
+    <div id="row-4" class="row row-4" aria-label="Promotion Performance"></div>
+    <div id="row-5" class="row row-5" aria-label="Size KPIs"></div>
+    <div id="row-6" class="row row-6" aria-label="Sharing KPIs (Slim)"></div>
+  </section>
+
+  <!-- Vendor first -->
+  <script src="assets/vendor/echarts.min.js"></script>
+
+  <!-- App code (order matters) -->
+  <script src="assets/js/nomodule/charts.js"></script>
+  <script src="assets/js/nomodule/renderers.js"></script>
+  <script src="assets/js/nomodule/main.nomodule.js"></script>
+
+  <!-- Data last (must define: DATA_META, DATA_WEEKS, DATA, getScopedData(), getWeekData()) -->
+  <script src="assets/js/nomodule/data.mock.js"></script>
+</body>
+</html>

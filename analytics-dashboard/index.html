@@ -33,10 +33,15 @@
     </div>
 
     <div class="header-center">
-      <div class="banner"><h2 id="banner-name">—</h2></div>
-      <div class="version">
-        <label for="version-select">Change Version:</label>
-        <select id="version-select"><option value="all">All</option></select>
+      <div class="filters-stack">
+        <div class="filter-row">
+          <label for="store-select">Store:</label>
+          <select id="store-select"><option value="all">All</option></select>
+        </div>
+        <div class="filter-row">
+          <label for="version-select">Version:</label>
+          <select id="version-select"><option value="all">All</option></select>
+        </div>
       </div>
     </div>
 
@@ -64,12 +69,19 @@
   <!-- Vendor first -->
   <script src="assets/vendor/echarts.min.js"></script>
 
+  <!-- Mock Data & API Services -->
+  <script src="assets/js/data/mock-data-generator.js"></script>
+  <script src="assets/js/services/api-service.js"></script>
+
+  <!-- KPI Drill-down Configuration -->
+  <script src="assets/js/config/kpi-drilldown.js"></script>
+
   <!-- App code (order matters) -->
   <script src="assets/js/nomodule/charts.js"></script>
   <script src="assets/js/nomodule/renderers.js"></script>
   <script src="assets/js/nomodule/main.nomodule.js"></script>
 
   <!-- Data last (must define: DATA_META, DATA_WEEKS, DATA, getScopedData(), getWeekData()) -->
-  <script src="assets/js/nomodule/data.mock.js"></script>
+  <script src="assets/js/nomodule/data.mock.simple.js"></script>
 </body>
 </html>

@@ -13,6 +13,130 @@
   const AD = window.AD = window.AD || {};
   const $ = sel => document.querySelector(sel);
 
+  // KPI Tooltip Definitions
+  const KPI_DEFINITIONS = {
+    // Header KPIs
+    'TRAFFIC (YTD)': {
+      tooltip: 'Traffic (YTD) measures the cumulative number of circular views across all campaigns year-to-date, providing total exposure volume.',
+      whyImportant: 'Essential baseline metric for measuring overall campaign reach and brand visibility; tracks aggregate performance trends over time.'
+    },
+    'VISITORS (YTD)': {
+      tooltip: 'Visitors (YTD) counts unique individuals who have viewed circulars year-to-date, measuring actual audience reach beyond repeat views.',
+      whyImportant: 'Shows true audience penetration and market coverage; key for understanding brand awareness and customer acquisition effectiveness.'
+    },
+    'MARKETING HEALTH (YTD)': {
+      tooltip: 'Marketing Health (YTD) is a composite score measuring overall circular program effectiveness, combining engagement quality and audience growth.',
+      whyImportant: 'Single north-star metric for marketing performance; indicates program health and optimization opportunities across all campaigns.'
+    },
+    // Row 1 KPIs
+    'PULSE SCORE': {
+      tooltip: 'Pulse Score distills engagement into a single score for a circular, blending exposure and actions into one comparable measure.',
+      whyImportant: 'Single north-star score summarizing circular engagement; fast quality read for overall performance.'
+    },
+    'ENGAGEMENT RATE': {
+      tooltip: 'Engagement Rate measures the percentage of circular viewers who took an action like clicking a promotion or adding to list.',
+      whyImportant: 'Quantifies circular effectiveness by showing conversion from exposure to action; key metric for optimization.'
+    },
+    'AUDIENCE REACH': {
+      tooltip: 'Audience Reach is the count of unique shoppers who saw the circular, measuring actual footprint rather than just views.',
+      whyImportant: 'Defines circular footprint with transparent audience sizing for clear campaign reach assessment.'
+    },
+    // Row 2 KPIs
+    'Trend Overview (4 weeks)': {
+      tooltip: 'Trend Overview plots composite scores over the last four weeks to visualize momentum.',
+      whyImportant: 'Shows short-term momentum up/down; helps spot patterns quickly for early trend identification.'
+    },
+    'Promotion Position Performance': {
+      tooltip: 'Promotion Position Performance shows how promotions are distributed by position quartiles (Top/Upper-Mid/Lower-Mid/Bottom) in the circular.',
+      whyImportant: 'Surfaces positional bias impacting performance; enables fair comparison by normalizing for layout effects.'
+    },
+    'Store Lift — Engagement vs Lift': {
+      tooltip: 'Store Lift compares engagement rates across stores to identify outperformers and laggards relative to average performance.',
+      whyImportant: 'Highlights stores exceeding or falling behind expectations; informs field operations and localization strategies.'
+    },
+    // Row 3 KPIs
+    'Category Performance (Engagement Share)': {
+      tooltip: 'Category Performance highlights which product categories shoppers engage with most, ranked by add-to-list conversion rates.',
+      whyImportant: 'Identifies best and worst performing categories; informs merchandising priorities and category mix decisions.'
+    },
+    'Top Categories by Avg Engagement': {
+      tooltip: 'Top Categories by Engagement visualizes category share as percentages to show relative importance and shopper focus areas.',
+      whyImportant: 'Shows where shoppers spend their attention; guides category investment and promotional strategy.'
+    },
+    // Row 4 KPIs
+    'Promotion Performance': {
+      tooltip: 'Promotion Performance ranks promotions based on composite or percentile scores.',
+      whyImportant: 'Ranks promotions by overall engagement; answers what\'s hot this week for optimization and storytelling.'
+    },
+    'Digital Circular Heat Map': {
+      tooltip: 'Circular Heat Map visualizes density of shopper attention across positions in the circular layout using impression data.',
+      whyImportant: 'Shows where design placement impacts outcomes; aids layout optimization and position strategy decisions.'
+    },
+    // Row 5 KPIs
+    'Size Class Mix': {
+      tooltip: 'Size Class Mix shows the proportion of promotions by card size (Small/Medium/Large) to understand design footprint strategy.',
+      whyImportant: 'Provides context for performance comparison; shows how much space each size class occupies in the layout.'
+    },
+    'Best Performing Size Class': {
+      tooltip: 'Best Performing Size Class highlights which card size drives the most add-to-list actions relative to impressions received.',
+      whyImportant: 'Quantifies ROI of footprint decisions; supports optimal size allocation and design layout choices.'
+    },
+    'Expanded Interaction Rate': {
+      tooltip: 'Expanded Interaction Rate measures the percentage of promotion cards that were expanded or interacted with by shoppers.',
+      whyImportant: 'Indicates content engagement depth; helps optimize card design for maximum interaction potential.'
+    },
+    'Deal Type Effectiveness': {
+      tooltip: 'Deal Type Effectiveness compares performance across different promotional offer types (BOGO, discounts, etc.).',
+      whyImportant: 'Identifies which deal structures resonate most with shoppers; guides promotional strategy decisions.'
+    },
+    // Row 6 KPIs
+    'Shared Promotions': {
+      tooltip: 'Shared Promotions counts how many promotions were shared externally by shoppers through social or messaging platforms.',
+      whyImportant: 'Measures viral potential and organic reach amplification; identifies content that resonates beyond paid exposure.'
+    },
+    'Share Open Rate': {
+      tooltip: 'Share Open Rate shows the percentage of shared promotion links that were actually opened by recipients.',
+      whyImportant: 'Measures effectiveness of shared content; indicates quality and relevance of virally distributed promotions.'
+    },
+    'Share Add-to-List Rate': {
+      tooltip: 'Share Add-to-List Rate measures conversion from shared promotions, showing percentage of share opens that led to list adds.',
+      whyImportant: 'Quantifies end-to-end viral conversion; demonstrates business impact of social sharing and word-of-mouth marketing.'
+    }
+  };
+
+  // Helper function to create card header with info button
+  function createCardHeader(title, tooltip = '', whyImportant = '', additionalContent = '') {
+    // Use predefined definitions if not provided
+    const definition = KPI_DEFINITIONS[title];
+    const finalTooltip = tooltip || (definition?.tooltip || '');
+    const finalWhyImportant = whyImportant || (definition?.whyImportant || '');
+
+    const hasTooltip = finalTooltip.trim() !== '';
+    const infoButton = hasTooltip ? `
+      <button class="info-btn"
+              aria-label="Show definition for ${title}"
+              aria-expanded="false"
+              data-tooltip-content="${encodeURIComponent(JSON.stringify({
+                title: title,
+                tooltip: finalTooltip || 'Definition not available.',
+                whyImportant: finalWhyImportant || 'Business value information not available.'
+              }))}"
+              tabindex="0">
+        <span aria-hidden="true">i</span>
+      </button>` : '';
+
+    return `
+      <div class="card-head">
+        <div class="card-head-left">
+          <h3>${title}</h3>
+          ${infoButton}
+        </div>
+        <div class="card-head-right">
+          ${additionalContent}
+        </div>
+      </div>`;
+  }
+
   // State
   AD.state = {
     version: 'all',
@@ -33,6 +157,21 @@
     const meta = window.DATA_META || {};
     const bannerEl = $('#banner-name');
     if (bannerEl) bannerEl.textContent = meta.bannerName || '—';
+
+    // Store dropdown
+    const storeSel = document.getElementById('store-select');
+    if (storeSel && window.AnalyticsAPI) {
+      const currentStore = AD.state.store || 'all';
+      const storeOpts = [{value:'all',label:'All'}].concat(
+        window.AnalyticsAPI.getStores().map(s=>({value:s,label:s}))
+      );
+      storeSel.innerHTML = storeOpts.map(o=>`<option value="${o.value}">${o.label}</option>`).join('');
+      storeSel.value = currentStore;
+      storeSel.onchange = () => {
+        AD.state.store = storeSel.value || 'all';
+        AD.applySelection();
+      };
+    }
 
     // Version dropdown
     const sel = document.getElementById('version-select');
@@ -89,16 +228,40 @@ if (ws) {
     const host = $('#header-tiles'); if (!host) return;
     host.innerHTML = '';
     const t = window.DATA || {};
-    const tiles = [
-      { label:'Traffic (YTD)',  value: fmtInt(t.trafficYTD ?? 0) },
-      { label:'Visitors (YTD)', value: fmtInt(t.visitorsYTD ?? 0) },
-      { label:'Health (YTD)', value: String(t.marketingHealthYTD ?? '—') }
-    ];
-    tiles.forEach(k=>{
+    const ytdKpis = t.ytdKpis || [];
+
+    ytdKpis.forEach((kpi, index) => {
       const card = document.createElement('div');
       card.className = 'card kpi';
-      card.innerHTML = `<div class="card-head"><h3>${k.label}</h3></div>
-                        <div class="card-body"><div class="small">${k.value}</div></div>`;
+      const displayValue = typeof kpi.value === 'string' ? kpi.value : fmtInt(kpi.value);
+
+      // Map KPI labels to drill-down keys
+      const drillDownKeys = ['traffic', 'engagement_rate', 'weekly_growth'];
+      const drillDownKey = drillDownKeys[index] || 'traffic';
+
+      card.innerHTML = `
+        <div class="card-head">
+          <div class="card-head-left">
+            <h3>${kpi.label}</h3>
+            <button class="info-btn"
+                    aria-label="Show definition for ${kpi.label}"
+                    aria-expanded="false"
+                    data-tooltip-content="${encodeURIComponent(JSON.stringify({
+                      title: kpi.label,
+                      tooltip: kpi.tooltip || 'Definition not available.',
+                      whyImportant: kpi.whyImportant || 'Business value information not available.'
+                    }))}"
+                    tabindex="0">
+              <span aria-hidden="true">i</span>
+            </button>
+          </div>
+          <div class="card-head-right">
+            <!-- More detail button will go here if needed -->
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="small">${displayValue}${kpi.unit || ''}</div>
+        </div>`;
       host.appendChild(card);
     });
   };
@@ -108,16 +271,16 @@ if (ws) {
     const host = $('#row-1'); if(!host) return;
     const t = window.DATA || {};
     const labels = [
-      {h:'PULSE SCORE', sub:'Composite', val: t.pulseScore ?? 0},
-      {h:'ENGAGEMENT RATE', sub:'Rate', val: (t.engagementRate ?? 0) + '%'},
-      {h:'AUDIENCE REACH', sub:'Visitors', val: fmtInt(t.audienceReach ?? 0)}
+      {h:'PULSE SCORE', sub:'Composite', val: t.pulseScore ?? 0, key: 'pulse_score'},
+      {h:'ENGAGEMENT RATE', sub:'Rate', val: (t.engagementRate ?? 0) + '%', key: 'engagement_rate'},
+      {h:'AUDIENCE REACH', sub:'Visitors', val: fmtInt(t.audienceReach ?? 0), key: 'audience_reach'}
     ];
     host.innerHTML = `
       <div class='section-title'>Digital Circular</div>
       <div class="grid three-up">
         ${labels.map(k=>`
           <div class="card kpi">
-            <div class="card-head"><h3>${k.h}</h3></div>
+            ${createCardHeader(k.h)}
             <div class="card-body"><div class="big">${k.val}</div><div class="subtext">${k.sub}</div></div>
           </div>
         `).join('')}
@@ -130,18 +293,18 @@ if (ws) {
     host.innerHTML = `
       <div class="three-up">
         <div class="card trend">
-          <div class="card-head"><h3>Trend Overview (4 weeks)</h3></div>
+          ${createCardHeader('Trend Overview (4 weeks)', '', '', '<button class="detail-btn" onclick="drillDownToInquiry(\'trend_overview\')">Inquiry →</button>')}
           <div class="card-body"><div id="trend-line" class="chart-host"></div></div>
         </div>
         <div class="card">
-          <div class="card-head"><h3>Promotion Position Performance</h3></div>
+          ${createCardHeader('Promotion Position Performance', '', '', '<button class="detail-btn" onclick="drillDownToInquiry(\'position_performance\')">Inquiry →</button>')}
           <div class="card-body">
             <div class="kpi"><div class="small" id="ppp-total">—</div></div>
             <div class="stack-legend" id="ppp-stack"></div>
           </div>
         </div>
         <div class="card lift">
-          <div class="card-head"><h3>Store Lift — Engagement vs Lift</h3></div>
+          ${createCardHeader('Store Lift — Engagement vs Lift', '', '', '<button class="detail-btn" onclick="drillDownToInquiry(\'store_lift\')">Inquiry →</button>')}
           <div class="card-body"><div id="store-scatter" class="chart-host"></div></div>
         </div>
       </div>
@@ -180,13 +343,13 @@ if (ws) {
       <div class="grid cols-2">
         <div class="col">
           <div class="card">
-            <div class="card-head"><h3>Category Performance (Engagement Share)</h3></div>
+            ${createCardHeader('Category Performance (Engagement Share)', '', '', '<button class="detail-btn" onclick="drillDownToInquiry(\'category_share\')">Inquiry →</button>')}
             <div class="card-body"><div id="category-donut" class="chart-host"></div></div>
           </div>
         </div>
         <div class="col">
           <div class="card">
-            <div class="card-head"><h3>Top Categories by Avg Engagement</h3></div>
+            ${createCardHeader('Top Categories by Avg Engagement', '', '', '<button class="detail-btn" onclick="drillDownToInquiry(\'category_top\')">Inquiry →</button>')}
             <div class="card-body"><div id="category-topbar" class="chart-host"></div></div>
           </div>
         </div>
@@ -205,22 +368,40 @@ if (ws) {
 <div class="grid cols-2 promotions">
       <!-- Left: Promotion Performance (unchanged) -->
       <div class="card chart-card" id="promotion-performance">
-        <div class="card-head">
-          <h3>Promotion Performance</h3>
-          <div class="center-controls">
-            <label style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)">
-              Top
-              <select id="pp-topn" style="background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:4px 8px;font-size:12px">
-                <option value="10" selected>10</option>
-                <option value="25">25</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-              </select>
-            </label>
+        <div class="card-head" style="flex-direction: column; align-items: stretch;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div class="card-head-left">
+              <h3>Promotion Performance</h3>
+              <button class="info-btn"
+                      aria-label="Show definition for Promotion Performance"
+                      aria-expanded="false"
+                      data-tooltip-content="${encodeURIComponent(JSON.stringify({
+                        title: 'Promotion Performance',
+                        tooltip: KPI_DEFINITIONS['Promotion Performance']?.tooltip || 'Definition not available.',
+                        whyImportant: KPI_DEFINITIONS['Promotion Performance']?.whyImportant || 'Business value information not available.'
+                      }))}"
+                      tabindex="0">
+                <span aria-hidden="true">i</span>
+              </button>
+            </div>
+            <button class="detail-btn" onclick="drillDownToInquiry('promotion_performance')">Inquiry →</button>
           </div>
-          <div class="toggle" role="group" aria-label="Score Toggle">
-            <button class="toggle-btn is-active" data-mode="composite"><span class="swatch s-top"></span>Composite</button>
-            <button class="toggle-btn" data-mode="percentile"><span class="swatch s-upmid"></span>Percentile</button>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="center-controls">
+              <label style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)">
+                Top
+                <select id="pp-topn" style="background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:4px 8px;font-size:12px">
+                  <option value="10" selected>10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+              </label>
+            </div>
+            <div class="toggle" role="group" aria-label="Score Toggle">
+              <button class="toggle-btn is-active" data-mode="composite"><span class="swatch s-top"></span>Composite</button>
+              <button class="toggle-btn" data-mode="percentile"><span class="swatch s-upmid"></span>Percentile</button>
+            </div>
           </div>
         </div>
         <div class="card-body bars-wrap"><div class="bars" role="list" id="pp-bars"></div></div>
@@ -228,13 +409,8 @@ if (ws) {
 
       <!-- Right: NEW fixed-size Digital Circular Heat Map -->
       <div class="card heatmap-card" id="digital-heatmap">
-        <div class="card-head">
-          <h3>Digital Circular Heat Map</h3>
-          <button id="heatmap-toggle"
-                  class="toggle-btn is-active"
-                  aria-pressed="true"
-                  data-state="on">On</button>
-        </div>
+        ${createCardHeader('Digital Circular Heat Map', '', '',
+          '<button id="heatmap-toggle" class="toggle-btn is-active" aria-pressed="true" data-state="on">On</button>')}
         <div class="card-body heatmap-body">
           <img id="heatmap-image"
                class="heatmap-img"
@@ -253,17 +429,29 @@ if (ws) {
       const topN = Number(sel.value||10);
       const items = (window.DATA?.promotions || []).slice(0, topN);
 
+
       if (barsHost){
+        // Calculate max composite for normalization in composite mode
+        const maxComposite = mode === 'composite' ? Math.max(...items.map(it => it.composite || 0)) : 100;
+
         barsHost.innerHTML = items.map(it=>{
-          const val = (mode==='percentile'? it.percentile : it.composite) || 0;
-          const pct = Math.max(0, Math.min(100, Math.round(val)));
+          let val, pct;
+          if (mode === 'percentile') {
+            val = it.percentile || 0;
+            pct = Math.max(0, Math.min(100, Math.round(val)));
+          } else {
+            // Composite mode: normalize to percentage of max composite
+            val = it.composite || 0;
+            pct = maxComposite > 0 ? Math.round((val / maxComposite) * 100) : 0;
+          }
+
           const seed = encodeURIComponent(it.title||'p');
 
           const barColor = (mode === 'percentile')
             ? 'background: var(--green);'
             : 'background: var(--blue);';
 
-          const valDisplay = (mode === 'percentile') ? pct + '%' : pct;
+          const valDisplay = (mode === 'percentile') ? pct + '%' : val; // Show raw composite score for composite mode
 
           return `
             <div class="bar" role="listitem">
@@ -333,25 +521,25 @@ AD.renderRow5 = function(){
     <div class="grid cols-4">
       <div class="col">
         <div class="card small">
-          <div class="card-head"><h3>Size Class Mix</h3></div>
+          ${createCardHeader('Size Class Mix', '', '', '<button class="detail-btn" onclick="drillDownToInquiry(\'size_mix\')">Inquiry →</button>')}
           <div class="card-body"><div id="size-mix" class="chart-host"></div></div>
         </div>
       </div>
       <div class="col">
         <div class="card small">
-          <div class="card-head"><h3>Best Performing Size Class</h3></div>
+          ${createCardHeader('Best Performing Size Class', '', '', '<button class="detail-btn" onclick="drillDownToInquiry(\'best_size\')">Inquiry →</button>')}
           <div class="card-body"><div id="best-size" class="chart-host"></div></div>
         </div>
       </div>
       <div class="col">
         <div class="card small">
-          <div class="card-head"><h3>Expanded Interaction Rate</h3></div>
+          ${createCardHeader('Expanded Interaction Rate', '', '', '<button class="detail-btn" onclick="drillDownToInquiry(\'expand_rate\')">Inquiry →</button>')}
           <div class="card-body"><div id="expand-donut" class="chart-host"></div></div>
         </div>
       </div>
       <div class="col deal-type">
         <div class="card small">
-          <div class="card-head"><h3>Deal Type Effectiveness</h3></div>
+          ${createCardHeader('Deal Type Effectiveness', '', '', '<button class="detail-btn" onclick="drillDownToInquiry(\'deal_effectiveness\')">Inquiry →</button>')}
           <div class="card-body">
             <!-- wrapper fills tile; lets ECharts compute size; scroll if long -->
             <div class="dealtype-wrap">
@@ -382,15 +570,15 @@ AD.renderRow5 = function(){
     const host = $('#row-6'); if(!host) return;
     const t = window.DATA || {};
     const tiles = [
-      { label:'Shared Promotions', value: fmtInt(t.sharedCount ?? 0) },
-      { label:'Share Open Rate', value: pct(t.shareOpenRate ?? 0) },
-      { label:'Share Add-to-List Rate', value: pct(t.shareAddRate ?? 0) }
+      { label:'Shared Promotions', value: fmtInt(t.sharedCount ?? 0), key: 'shared_promotions' },
+      { label:'Share Open Rate', value: pct(t.shareOpenRate ?? 0), key: 'share_open_rate' },
+      { label:'Share Add-to-List Rate', value: pct(t.shareAddRate ?? 0), key: 'share_add_rate' }
     ];
     host.innerHTML = `
       <div class="slim-kpis">
         ${tiles.map(k=>`
           <div class="card kpi">
-            <div class="card-head"><h3>${k.label}</h3></div>
+            ${createCardHeader(k.label)}
             <div class="card-body"><div class="big">${k.value}</div></div>
           </div>
         `).join('')}

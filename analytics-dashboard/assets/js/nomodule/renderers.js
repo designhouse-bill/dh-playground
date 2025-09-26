@@ -59,9 +59,13 @@
       tooltip: 'Category Performance highlights which product categories shoppers engage with most, ranked by add-to-list conversion rates.',
       whyImportant: 'Identifies best and worst performing categories; informs merchandising priorities and category mix decisions.'
     },
-    'Top Categories by Avg Engagement': {
-      tooltip: 'Top Categories by Engagement visualizes category share as percentages to show relative importance and shopper focus areas.',
-      whyImportant: 'Shows where shoppers spend their attention; guides category investment and promotional strategy.'
+    'Category Lift vs Baseline Performance': {
+      tooltip: 'Category Lift vs Baseline shows which categories over/under-perform vs their historical average, highlighting seasonal effects and category momentum.',
+      whyImportant: 'Identifies categories gaining or losing traction; enables proactive merchandising adjustments and inventory planning.'
+    },
+    'Category Size vs Engagement Quality': {
+      tooltip: 'Category Size vs Engagement Quality plots traffic volume against engagement rate with conversion as bubble size to identify high-opportunity categories.',
+      whyImportant: 'Reveals underperforming high-traffic categories and niche performers; guides resource allocation and promotional focus.'
     },
     // Row 4 KPIs
     'Promotion Performance': {
@@ -150,7 +154,7 @@
   // ---------- Header: bind banner, versions, weeks, YTD tiles ----------
   AD.renderHeaderRow = function(){
     AD.bindHeaderContext();
-    AD.renderHeaderTiles();
+    // Header tiles content now moved to row-1
   };
 
   AD.bindHeaderContext = function(){
@@ -191,9 +195,10 @@ if (wc) {
   wc.innerHTML = `
     <div class="week-line">
       <div class="week-select-wrapper">
+      <div class="status" id="week-status" style="color:var(--muted)">—</div>
         <select id="week-select" class="week-select"></select>
       </div>
-      <div class="status" id="week-status" style="color:var(--muted)">—</div>
+      
     </div>
   `;
 }
@@ -270,20 +275,40 @@ if (ws) {
   AD.renderRow1 = function(){
     const host = $('#row-1'); if(!host) return;
     const t = window.DATA || {};
-    const labels = [
+
+    // YTD KPIs (from header-tiles)
+    const ytdKpis = t.ytdKpis || [];
+
+    // Digital Circular KPIs
+    const digitalKpis = [
       {h:'PULSE SCORE', sub:'Composite', val: t.pulseScore ?? 0, key: 'pulse_score'},
       {h:'ENGAGEMENT RATE', sub:'Rate', val: (t.engagementRate ?? 0) + '%', key: 'engagement_rate'},
       {h:'AUDIENCE REACH', sub:'Visitors', val: fmtInt(t.audienceReach ?? 0), key: 'audience_reach'}
     ];
+
+    // Generate YTD cards
+    const ytdCards = ytdKpis.map((kpi, index) => {
+      const displayValue = typeof kpi.value === 'string' ? kpi.value : fmtInt(kpi.value);
+
+      return `
+        <div class="card kpi">
+          ${createCardHeader(kpi.label)}
+          <div class="card-body"><div class="big">${displayValue}</div><div class="subtext">${kpi.unit || ''}</div></div>
+        </div>`;
+    }).join('');
+
+    // Generate Digital Circular cards
+    const digitalCards = digitalKpis.map(k=>`
+      <div class="card kpi">
+        ${createCardHeader(k.h)}
+        <div class="card-body"><div class="big">${k.val}</div><div class="subtext">${k.sub}</div></div>
+      </div>
+    `).join('');
+
     host.innerHTML = `
       <div class='section-title'>Digital Circular</div>
-      <div class="grid three-up">
-        ${labels.map(k=>`
-          <div class="card kpi">
-            ${createCardHeader(k.h)}
-            <div class="card-body"><div class="big">${k.val}</div><div class="subtext">${k.sub}</div></div>
-          </div>
-        `).join('')}
+      <div class="grid six-up">
+        ${ytdCards}${digitalCards}
       </div>`;
   };
 
@@ -300,7 +325,7 @@ if (ws) {
           ${createCardHeader('Promotion Position Performance', '', '', '<button class="detail-btn" onclick="drillDownToInquiry(\'position_performance\')">Inquiry →</button>')}
           <div class="card-body">
             <div class="kpi"><div class="small" id="ppp-total">—</div></div>
-            <div class="stack-legend" id="ppp-stack"></div>
+            <div id="position-chart" class="chart-host"></div>
           </div>
         </div>
         <div class="card lift">
@@ -319,15 +344,16 @@ if (ws) {
     const ppp = t.ppp || {total:0, qTop:0, qUpMid:0, qLoMid:0, qBottom:0};
     const pppTotalEl = document.getElementById('ppp-total');
     if (pppTotalEl) { pppTotalEl.innerHTML = `<span class="total">${fmtInt(ppp.total)}</span> <span class="title">Total Promotions</span>`;}
-    const stackHost = document.getElementById('ppp-stack');
-    if (stackHost){
-      stackHost.innerHTML = `
-        <div class="stack-row"><span class="swatch s-top"></span><span>Top</span><span class="pct">${pct(ppp.qTop)}</span></div>
-        <div class="stack-row"><span class="swatch s-upmid"></span><span>Upper Middle</span><span class="pct">${pct(ppp.qUpMid)}</span></div>
-        <div class="stack-row"><span class="swatch s-lomid"></span><span>Lower Middle</span><span class="pct">${pct(ppp.qLoMid)}</span></div>
-        <div class="stack-row"><span class="swatch s-bottom"></span><span>Bottom</span><span class="pct">${pct(ppp.qBottom)}</span></div>
-      `;
-    }
+
+    // Create position performance chart data
+    const positionData = [
+      { name: 'Top', value: ppp.qTop || 0, color: '#4272D8' }, // Blue
+      { name: 'Upper Middle', value: ppp.qUpMid || ppp.qUpperMid || 0, color: '#10B981' }, // Green
+      { name: 'Lower Middle', value: ppp.qLoMid || ppp.qLowerMid || 0, color: '#F59E0B' }, // Yellow/Orange
+      { name: 'Bottom', value: ppp.qBottom || 0, color: '#EF4444' } // Red
+    ];
+
+    window.ns.echartsPositionPerformance('position-chart', positionData);
 
     // Store scatter
     window.ns.echartsScatter('store-scatter', (t.stores || []).map(s=>({
@@ -340,24 +366,33 @@ if (ws) {
     const host = $('#row-3'); if(!host) return;
     host.innerHTML = `
       <div class='section-title'>Category</div>
-      <div class="grid cols-2">
-        <div class="col">
-          <div class="card">
-            ${createCardHeader('Category Performance (Engagement Share)', '', '', '<button class="detail-btn" onclick="drillDownToInquiry(\'category_share\')">Inquiry →</button>')}
-            <div class="card-body"><div id="category-donut" class="chart-host"></div></div>
-          </div>
+      <div class="grid three-up">
+        <div class="card">
+          ${createCardHeader('Category Performance (Engagement Share)', '', '', '<button class="detail-btn" onclick="drillDownToInquiry(\'category_share\')">Inquiry →</button>')}
+          <div class="card-body"><div id="category-donut" class="chart-host"></div></div>
         </div>
-        <div class="col">
-          <div class="card">
-            ${createCardHeader('Top Categories by Avg Engagement', '', '', '<button class="detail-btn" onclick="drillDownToInquiry(\'category_top\')">Inquiry →</button>')}
-            <div class="card-body"><div id="category-topbar" class="chart-host"></div></div>
-          </div>
+        <div class="card">
+          ${createCardHeader('Category Lift vs Baseline Performance', '', '', '<button class="detail-btn" onclick="drillDownToInquiry(\'category_lift\')">Inquiry →</button>')}
+          <div class="card-body"><div id="category-lift" class="chart-host"></div></div>
+        </div>
+        <div class="card">
+          ${createCardHeader('Category Size vs Engagement Quality', '', '', '<button class="detail-btn" onclick="drillDownToInquiry(\'category_quality\')">Inquiry →</button>')}
+          <div class="card-body"><div id="category-bubble" class="chart-host"></div></div>
         </div>
       </div>
     `;
     const t = window.DATA || {};
-    window.ns.echartsDonut('category-donut', (t.categoryShare||[]));
-    window.ns.echartsBar('category-topbar', (t.categoryTop||[]));
+    // Use custom color palette for Category Performance (replacing red with #FF9656)
+    const categoryColors = ['#5470c6', '#91cc75', '#fac858', '#FF9656', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'];
+    window.ns.echartsDonut('category-donut', (t.categoryShare||[]), categoryColors);
+
+    // Force destroy any existing chart instance
+    const categoryLiftEl = document.getElementById('category-lift');
+    if (categoryLiftEl && categoryLiftEl._echarts_instance_) {
+      echarts.dispose(categoryLiftEl);
+    }
+    window.ns.echartsCategoryLift('category-lift', (t.categoryLift||[]));
+    window.ns.echartsCategoryBubble('category-bubble', (t.categoryBubble||[]));
   };
 
 // ---------- Row 4: Promotion Performance list (unchanged microbar pattern) ----------
@@ -448,8 +483,8 @@ if (ws) {
           const seed = encodeURIComponent(it.title||'p');
 
           const barColor = (mode === 'percentile')
-            ? 'background: var(--green);'
-            : 'background: var(--blue);';
+            ? 'background: var(--blue);'
+            : 'background: var(--green);';
 
           const valDisplay = (mode === 'percentile') ? pct + '%' : val; // Show raw composite score for composite mode
 
@@ -553,9 +588,9 @@ AD.renderRow5 = function(){
 
   const t = window.DATA || {};
   // Existing charts
-  window.ns.echartsDonut('size-mix', (t.sizeMix||[]));
-  window.ns.echartsBar('best-size', (t.bestSize||[]));
-  window.ns.echartsDonut('expand-donut', (t.expandRate||[]));
+  window.ns.echartsDonut('size-mix', (t.sizeMix||[]), ['#B8D64D', '#4272D8', '#4E5370']); // Small, Medium, Large
+  window.ns.echartsBar('best-size', (t.bestSize||[]), ['#B8D64D', '#4272D8', '#4E5370']); // Small, Medium, Large
+  window.ns.echartsDonut('expand-donut', (t.expandRate||[]), ['#B8D64D', '#4272D8']); // Expanded, Not Expanded
 
   // Deal Type Effectiveness (horizontal bar; scrolls when long)
   window.ns.echartsDealTypeHBars('dealtype-bars', (t.dealTypes || []), { showPercent: true });

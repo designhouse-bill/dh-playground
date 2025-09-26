@@ -109,10 +109,11 @@
     // Get promotion data (synchronous) - now with improved realistic generation
     const promotions = api.dataGenerator.getPromotionsByFilters({ week_id: normalizedWeekId });
     console.log('Generated promotions sample:', promotions.slice(0, 3));
+    console.log('Total promotions available:', promotions.length);
 
     const topPromotions = promotions
       .sort((a, b) => b.composite - a.composite)
-      .slice(0, 10)
+      .slice(0, 100) // Increase limit to support up to 100 items in the dropdown
       .map(promo => ({
         title: promo.title,
         score: promo.percentile / 100, // Keep this for backward compatibility
@@ -201,10 +202,22 @@
       // Row 3: Categories
       row3: {
         categoryShare: CATEGORIES.slice(0, 6),
-        categoryTop: CATEGORIES.slice(0, 6).map(cat => ({
-          name: cat.name,
-          value: Math.round(cat.engagement * 100)
-        }))
+        categoryLift: [
+          { name: 'Featured', value: 12 },
+          { name: 'Farm Fresh', value: -5 },
+          { name: 'Good Food Matters', value: 18 },
+          { name: 'Custom Cuts', value: -10 },
+          { name: 'Deals For Days', value: 15 },
+          { name: 'Beef Pork Chicken', value: -3 }
+        ],
+        categoryBubble: [
+          { name: 'Featured', traffic: 1180, engagement: 65, conversion: 11 },
+          { name: 'Farm Fresh', traffic: 920, engagement: 42, conversion: 7 },
+          { name: 'Good Food Matters', traffic: 1520, engagement: 70, conversion: 14 },
+          { name: 'Custom Cuts', traffic: 680, engagement: 35, conversion: 5 },
+          { name: 'Deals For Days', traffic: 1820, engagement: 52, conversion: 9 },
+          { name: 'Beef Pork Chicken', traffic: 1080, engagement: 60, conversion: 10 }
+        ]
       },
 
       // Row 4: Promotion Performance - Enhanced with ranking data
@@ -266,10 +279,22 @@
         name: cat.name,
         value: cat.share
       })),
-      categoryTop: CATEGORIES.slice(0, 6).map(cat => ({
-        name: cat.name,
-        value: Math.round(cat.engagement * 100)
-      })),
+      categoryLift: [
+        { name: 'Featured', value: 20 },
+        { name: 'Farm Fresh', value: -12 },
+        { name: 'Good Food Matters', value: 25 },
+        { name: 'Custom Cuts', value: -15 },
+        { name: 'Deals For Days', value: 22 },
+        { name: 'Beef Pork Chicken', value: -8 }
+      ],
+      categoryBubble: [
+        { name: 'Featured', traffic: 1350, engagement: 72, conversion: 13 },
+        { name: 'Farm Fresh', traffic: 1050, engagement: 48, conversion: 9 },
+        { name: 'Good Food Matters', traffic: 1680, engagement: 75, conversion: 16 },
+        { name: 'Custom Cuts', traffic: 780, engagement: 40, conversion: 7 },
+        { name: 'Deals For Days', traffic: 1950, engagement: 58, conversion: 11 },
+        { name: 'Beef Pork Chicken', traffic: 1200, engagement: 65, conversion: 12 }
+      ],
 
       // Top-level properties for renderRow5 compatibility
       sizeMix: SIZE_CLASSES.map(size => ({
@@ -351,7 +376,22 @@
       ppp: { total: 0, qTop: 25, qUpMid: 30, qLoMid: 40, qBottom: 25 },
       stores: STORE_LIFT,
       categoryShare: CATEGORIES.slice(0, 6).map(cat => ({ name: cat.name, value: cat.share })),
-      categoryTop: CATEGORIES.slice(0, 6).map(cat => ({ name: cat.name, value: Math.round(cat.engagement * 100) })),
+      categoryLift: [
+        { name: 'Featured', value: 15 },
+        { name: 'Farm Fresh', value: -8 },
+        { name: 'Good Food Matters', value: 22 },
+        { name: 'Custom Cuts', value: -12 },
+        { name: 'Deals For Days', value: 18 },
+        { name: 'Beef Pork Chicken', value: -5 }
+      ],
+      categoryBubble: [
+        { name: 'Featured', traffic: 1250, engagement: 68, conversion: 12 },
+        { name: 'Farm Fresh', traffic: 980, engagement: 45, conversion: 8 },
+        { name: 'Good Food Matters', traffic: 1580, engagement: 72, conversion: 15 },
+        { name: 'Custom Cuts', traffic: 720, engagement: 38, conversion: 6 },
+        { name: 'Deals For Days', traffic: 1890, engagement: 55, conversion: 10 },
+        { name: 'Beef Pork Chicken', traffic: 1120, engagement: 62, conversion: 11 }
+      ],
       sizeMix: SIZE_CLASSES.map(size => ({ name: size.label, value: size.value })),
       bestSize: SIZE_CLASSES.slice(0, 3).map(size => ({ name: size.label, value: size.value })),
       expandRate: [{ name: 'Expanded', value: 28 }, { name: 'Not Expanded', value: 72 }],

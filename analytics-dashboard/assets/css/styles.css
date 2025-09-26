@@ -10,13 +10,27 @@
   --blue:#4272D8;
   --blue-dark:#4E5370;
   --green:#B8D64D;
-  --grid-gap:16px;
+
+  /* Responsive spacing variables */
+  --grid-gap:8px;
   --gap-lg:16px;
   --gap-xl:20px;
   --gap-md:12px;
   --gap-sm:8px;
   --gap-xs:4px;
 
+  /* Responsive breakpoints */
+  --breakpoint-mobile: 768px;
+  --breakpoint-tablet: 1200px;
+
+  /* Dynamic spacing (will adjust with media queries) */
+  --container-padding: 16px;
+  --card-padding: 16px;
+  --section-gap: 8px;
+
+  /* Touch targets */
+  --touch-target: 44px;
+  --info-btn-size: 20px;
 }
 html,body{margin: 0; padding: 0; font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,"Apple Color Emoji","Segoe UI Emoji";}
 body{background:var(--bg);color:var(--text); position: relative;}
@@ -24,7 +38,6 @@ h1,h2,h3{margin:0}
 h1{font-size:22px !important;font-weight:800}
 h2{font-size:18px !important;font-weight:800}
 h3{font-size:12px !important;letter-spacing:.04em;color:var(--muted);font-weight:700;   text-transform: uppercase;}
-.header-tiles h3 {font-size: 10px !important; text-transform: none; color: var(--text); font-weight: 600;}
 .context-banner {padding-top: 0 ;}  
 /* Header */
 .page-header{display:flex;justify-content:space-between;
@@ -57,7 +70,7 @@ header.page-header .left .week-context .week-line {
 align-items: flex-start;
 gap: var(--gap-xs);
 }
- header.page-header .left .week-context .week-line .week-select-wrapper select.week-select {
+ header.page-header .header-center .week-context .week-line .week-select-wrapper select.week-select {
 
     padding: 0;
     border: none;
@@ -65,38 +78,37 @@ gap: var(--gap-xs);
     background-color: transparent;
     font-size: 1.3rem;
     }
-header.page-header .left .week-context .week-line .status {
+header.page-header .header-center .week-context .week-line .status {
 font-size: 0.7rem;
 }
 header.page-header .header-center {
 display: flex; flex-direction: row;
 gap: var(--gap-sm); align-items: stretch;
 }
-header.page-header .header-center .banner h2 {
+header.page-header .header-right .banner h2 {
 font-size: 1.1rem;
 display: none;
 }
-header.page-header .header-center .filters-stack {
+header.page-header .header-right .filters-stack {
 display: flex;
 flex-direction: column;
 gap: 4px;
 }
-header.page-header .header-center .filter-row {
+header.page-header .header-right .filter-row {
 display: flex;
 align-items: center;
 gap: 8px;
+min-width: 250px;;
 }
-header.page-header .header-center .filter-row label {
-font-size: 0.7rem;
+header.page-header .header-right .filter-row label {
+font-size: 1.27rem;
 color: var(--muted);
-min-width: 50px;
 text-align: left;
 }
-header.page-header .header-center .filter-row select {
+header.page-header .header-right .filter-row select {
 font-size: 1rem;
 }
 
-header.page-header .header-tiles{display:flex;gap:var(--gap-sm);}
 
 
 
@@ -104,9 +116,19 @@ header.page-header .header-tiles{display:flex;gap:var(--gap-sm);}
 .container{max-width:1360px;margin:0 auto;padding: var(--gap-lg);}
 .container{padding:var(--gap-lg) var(--gap-lg) 0 var(--gap-lg);}
 .section-title {font-weight: 900; width: 100%; border-top: 2px solid gray; padding-top: var(--gap-sm);}
-.row{display:flex;flex-direction:column;gap: var(--gap-sm);margin-bottom:var(--gap-sm); }
+.row{display:flex;flex-direction:column;gap:0;margin-bottom:var(--gap-sm); }
 .row.row-2, .row.row-3 {margin-bottom: 0}
-.row.row-2 .three-up {max-height: 164px; }
+
+/* Make all cards in all rows use flexible height */
+.card {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body {
+  flex: 1;
+  min-height: 0;
+}
 
 .row.row-2 .three-up .card:nth-child(2) .small {margin-bottom: var(--gap-sm);}
 .row.row-2 .three-up .card:nth-child(2) .small .title {
@@ -121,28 +143,59 @@ header.page-header .header-tiles{display:flex;gap:var(--gap-sm);}
 /* Row 4 layout safety (keeps cards side-by-side using flex) */
 .row.row-4 {
   display: flex;
-  gap: var(--gap-sm);
+  gap: 0;
   align-items: stretch;
 }
-.row.row-4 .grid.cols-2.promotions .card.chart-card { 
-    flex-grow: 1;
+/* Row 4 promotions grid - desktop flexbox layout */
+.row.row-4 .grid.cols-2.promotions {
+  display: flex;
+  align-items: stretch; /* Make children fill height */
+  gap: var(--gap-sm);
+}
+
+.row.row-4 .grid.cols-2.promotions > .chart-card {
+  flex: 1; /* Both cards take equal width and fill height */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure chart-card flexes to row height, not content height */
+.row.row-4 .grid.cols-2.promotions .card.chart-card {
+  min-height: 0; /* Allow it to shrink */
+  height: auto; /* Don't set fixed height */
+}
+
+/* Chart-card card-body should expand to fill height */
+.row.row-4 .grid.cols-2.promotions .card.chart-card .card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 /* Heatmap card (fixed size & scroll) */
 .heatmap-card .card-body{padding:0;overflow:auto}
 .heatmap-img{width:100%;display:block}
 .heatmap-card {
-  width: 370px;
-  min-height: 600px;
-  max-height: 680px;
+  width: 440px; /* Fixed width for desktop */
   display: flex;
   flex-direction: column;
 }
-
+.chart-card, .heatmap-card {
+  min-height: 600px; /* Fixed height for desktop */
+  max-height: 700px;
+}
 .heatmap-card .card-body.heatmap-body {
   flex: 1 1 auto;
   overflow-y: auto;
   overflow-x: hidden;
-      margin-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+/* Promotion Performance bars container should match heatmap height */
+.bars-wrap {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+
 }
 
 .heatmap-img {
@@ -158,7 +211,7 @@ header.page-header .header-tiles{display:flex;gap:var(--gap-sm);}
 /* Cards */
 .card{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);margin:0;}
 .card-head{display: flex; flex-direction: row; justify-content: space-between;
-    align-items: center; padding:var(--gap-sm) var(--gap-lg);border-bottom:1px solid var(--border);}
+    align-items: center; padding:0 0 var(--gap-xs) var(--gap-xs);border-bottom:1px solid var(--border);}
 
 /* Card header left and right containers */
 .card-head-left {
@@ -328,12 +381,12 @@ header.page-header .header-tiles{display:flex;gap:var(--gap-sm);}
 
 /* KPI tiles */
 .card.kpi{width:150px}
-.card.kpi .big{font-size:36px;font-weight:800}
+.card.kpi .big{font-size:28px;font-weight:800}
 .card.kpi .small{font-size:16px;font-weight:800}
 .subtext{color:var(--muted);font-size:12px}
 
 /* Chart hosts need a guaranteed height */
-.chart-host{width:100%;height:220px}
+.chart-host{width:100%;flex:1;min-width:0;overflow:visible}
 
 /* Rank block */
 .rank .rank-row{display:flex;gap:var(--gap-sm);align-items:center;font-size:14px}
@@ -355,8 +408,8 @@ header.page-header .header-tiles{display:flex;gap:var(--gap-sm);}
   will-change: width;
 }
 /* Promotion Performance color by mode */
-#promotion-performance.mode-composite .microbar-fill { background: var(--blue); }
-#promotion-performance.mode-percentile .microbar-fill { background: var(--green); }
+#promotion-performance.mode-composite .microbar-fill { background: var(--green); }
+#promotion-performance.mode-percentile .microbar-fill { background: var(--blue); }
 .val{width:48px;text-align:right;font-weight:700; padding: 0 var(--gap-sm); font-size: 1.4rem;}
 button.toggle-btn {
   padding: 10px 20px;
@@ -372,8 +425,8 @@ button.toggle-btn {
   color: #333; /* A darker text color for contrast */
   border: 1px solid #ccc; /* A subtle border */
 }
-button.toggle-btn span.swatch.s-upmid {background: var(--green);}
-button.toggle-btn span.swatch.s-top{background: var(--blue);}
+button.toggle-btn span.swatch.s-upmid {background: var(--blue);}
+button.toggle-btn span.swatch.s-top{background: var(--green);}
 button.toggle-btn.is-active {
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Default box shadow */
   transition: box-shadow 0.2s ease-in-out; /* Smooth transition for the shadow */
@@ -433,9 +486,7 @@ button.toggle-btn:disabled {
   }
 }
 
-/* Simple utility widths for 3-up row */
-.three-up{display:flex;gap:var(--gap-sm)}
-.three-up > .card{flex:1}
+/* Simple utility widths for 3-up row - handled by responsive system below */
 
 /* Small KPI blocks row (sharing) */
 .slim-kpis{display:flex;gap:var(--gap-sm)}
@@ -1283,5 +1334,540 @@ header.page-header .header-center .version select:focus {
     width: 133px;
     max-width: 133px;
     min-width: 133px;
+  }
+}
+
+/* ========================================================================== */
+/* RESPONSIVE DESIGN - Mobile First Approach */
+/* ========================================================================== */
+
+/* Base styles are mobile-first (below 768px) */
+
+/* Responsive body adjustments */
+
+
+/* Responsive utility classes */
+.responsive-grid {
+  display: grid;
+  gap: var(--grid-gap);
+}
+
+.responsive-flex {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--grid-gap);
+}
+
+/* Hide elements on specific breakpoints */
+.mobile-only { display: block; }
+.tablet-up { display: none; }
+.desktop-only { display: none; }
+
+/* ========================================================================== */
+/* MOBILE STYLES (Base - below 768px) */
+/* ========================================================================== */
+
+/* Header responsive for mobile */
+.page-header {
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--gap-xl);
+  padding: 12px;
+}
+
+header.page-header .left {
+
+  align-items: center;
+}
+
+header.page-header .header-center {
+  justify-content: center;
+}
+
+
+
+/* Dashboard container responsive */
+.container {
+  padding: var(--container-padding);
+}
+
+/* Original working layout restored */
+.grid{display:flex;gap:var(--gap-sm)}
+.grid.cols-1 > .col, .grid.cols-2 > .col, .grid.cols-3 > .col, .grid.cols-4 > .col{flex:1}
+
+.three-up{display:flex;gap:var(--gap-sm)}
+.three-up > .card{flex:1}
+
+.six-up{display:flex;gap:var(--gap-sm);flex-wrap:wrap}
+.six-up > .card{flex:1 1 16.6667%}
+
+.slim-kpis {
+  display: flex;
+  gap: var(--gap-sm);
+}
+
+/* Mobile responsive overrides - only where needed */
+@media (max-width: 767px) {
+  .grid, .three-up, .slim-kpis {
+    flex-direction: column;
+  }
+
+  /* Mobile: 2 rows of 3 cards */
+  .six-up > .card {
+    flex: 1 1 33.33%;
+  }
+
+  /* Only rows 2-5 grids should stack vertically on mobile */
+  .row-2 .grid,
+  .row-3 .grid,
+  .row-4 .grid,
+  .row-5 .grid {
+    flex-direction: column;
+  }
+
+  /* Row-1 and row-6 should remain horizontal on mobile */
+  .row-1 .grid,
+  .row-6 .grid {
+    flex-direction: row;
+  }
+
+  /* Heatmap card responsive on mobile */
+  .heatmap-card {
+    width: 100%; /* Full width on mobile */
+    max-width: 100%;
+    margin: 0;
+  }
+
+  /* Card headers should stack on mobile so info buttons are visible */
+  .card-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .card-head-right {
+    align-self: flex-start;
+  }
+}
+
+/* ========================================================================== */
+/* SMALL MOBILE STYLES (576px and below) */
+/* ========================================================================== */
+@media (max-width: 576px) {
+  /* Small Mobile: 3 rows of 2 cards */
+  .six-up > .card {
+    flex: 1 1 50%;
+  }
+}
+
+/* Row adjustments for mobile */
+.row {
+  margin-bottom: var(--section-gap);
+}
+
+/* Cards responsive */
+.card {
+  padding: var(--card-padding);
+}
+
+/* Chart heights on mobile */
+.chart-host {
+  min-height: 200px;
+  height: auto;
+}
+
+/* Row 2 special adjustments for mobile */
+.row.row-2 .three-up {
+  max-height: none; /* Remove height restriction on mobile */
+}
+
+/* Row 4 promotions layout for mobile */
+.row.row-4 .grid.cols-2.promotions {
+  flex-direction: column;
+  gap: var(--grid-gap);
+}
+
+/* Promotion performance table responsive */
+.bars {
+  gap: 8px; /* Tighter spacing on mobile */
+}
+
+.bar {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  padding: 12px;
+  background: var(--bg);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.bar .thumb {
+  width: 100%;
+  height: 80px;
+  align-self: center;
+  max-width: 120px;
+}
+
+.bar .label {
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  white-space: normal;
+  max-width: none;
+  line-height: 1.3;
+}
+
+.bar .meter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bar .val {
+  font-weight: 700;
+  color: #333333;
+  min-width: 40px;
+  text-align: center;
+}
+
+/* Touch-optimized interactions for mobile */
+.info-btn {
+  width: var(--touch-target);
+  height: var(--touch-target);
+  border-radius: 50%;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Larger touch targets on mobile */
+}
+
+.info-btn:hover,
+.info-btn:focus {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+/* Tooltip enhancements for touch */
+.tooltip-overlay {
+  min-width: 280px;
+  max-width: 90vw;
+  padding: 20px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.tooltip-overlay .tooltip-title {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.tooltip-overlay .tooltip-content {
+  font-size: 16px;
+  margin-bottom: 16px;
+}
+
+.tooltip-overlay .tooltip-why-important {
+  font-size: 14px;
+  padding-top: 16px;
+}
+
+/* Additional mobile refinements */
+/* Prevent horizontal scroll */
+html, body {
+  overflow-x: hidden;
+}
+
+/* Card responsiveness */
+.card {
+  min-width: 0; /* Prevent flex item overflow */
+  word-wrap: break-word;
+}
+
+/* Responsive images */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Better button spacing on touch devices */
+button {
+  touch-action: manipulation; /* Prevents double-tap zoom */
+}
+
+/* Section titles responsive */
+.section-title {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+/* ========================================================================== */
+/* TABLET STYLES (768px - 1199px) */
+/* ========================================================================== */
+@media (min-width: 768px) {
+  :root {
+    --container-padding: 8px;
+    --card-padding: 8px;
+    --section-gap: 8px;
+    --info-btn-size: 24px;
+  }
+
+  /* Show/hide utility classes */
+  .mobile-only { display: none; }
+  .tablet-up { display: block; }
+  .desktop-only { display: none; }
+
+  /* Typography adjustments */
+  h1 { font-size: 24px !important; }
+  h2 { font-size: 20px !important; }
+  h3 { font-size: 13px !important; }
+
+  /* Page header responsive for tablet */
+  .page-header {
+    flex-direction: row;
+    align-items: center;
+
+    justify-content: flex-start;
+    padding: var(--gap-xl) var(--container-padding);
+  }
+
+  header.page-header .left {
+    align-items: flex-start;
+  }
+
+  header.page-header .header-center, .header-right {
+    justify-content: flex-start;
+  }
+.header-right, .filters-stack {
+    display: flex;
+    flex-direction: row;
+    gap: var(--gap-lg);
+  }
+
+  /* Tablet adjustments - restore row layout (overrides mobile) */
+  .grid, .three-up, .slim-kpis {
+    flex-direction: row;
+  }
+
+  /* Tablet: 1 row of 6 cards same as desktop */
+  .six-up > .card {
+    flex: 1 1 13.667%;
+  }
+
+
+  /* Row 4 promotions for tablet */
+  .row.row-4 .grid.cols-2.promotions {
+    flex-direction: column; /* Stack vertically on tablet */
+    gap: var(--grid-gap);
+  }
+
+  /* Chart heights for tablet */
+  .chart-host {
+    min-height: 250px;
+  }
+
+
+  /* Promotion performance table for tablet */
+  .bars {
+    gap: 10px;
+  }
+
+  .bar {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+  }
+
+  .bar .thumb {
+    width: 60px;
+    height: 40px;
+    max-width: 60px;
+    align-self: auto;
+  }
+
+  .bar .label {
+    font-size: 13px;
+    font-weight: normal;
+    text-align: left;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .bar .meter {
+    flex-grow: 1;
+    gap: 0;
+  }
+
+  .bar .val {
+    min-width: 35px;
+    text-align: right;
+    font-size: 14px;
+  }
+
+  /* Touch optimizations for tablet */
+  .info-btn {
+    width: var(--info-btn-size);
+    height: var(--info-btn-size);
+    font-size: 14px;
+  }
+
+  .tooltip-overlay {
+    min-width: 320px;
+    max-width: 400px;
+    padding: 16px;
+    font-size: 14px;
+  }
+
+  .tooltip-overlay .tooltip-title {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  .tooltip-overlay .tooltip-content {
+    font-size: 14px;
+    margin-bottom: 14px;
+  }
+
+  .tooltip-overlay .tooltip-why-important {
+    font-size: 13px;
+    padding-top: 14px;
+  }
+
+  /* Section titles for tablet */
+  .section-title {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+}
+
+/* ========================================================================== */
+/* MEDIUM SCREENS (992px - 991px) - Override tablet 6-column layout */
+/* ========================================================================== */
+@media (max-width: 991px) {
+  /* Medium: 2 rows of 3 cards */
+  .six-up > .card {
+    flex: 1 1 33.33%;
+  }
+
+  /* Heatmap card responsive on tablet */
+  .heatmap-card {
+    width: 380px; /* Fixed width for tablet */
+  }
+}
+
+/* ========================================================================== */
+/* DESKTOP STYLES (1200px+) */
+/* ========================================================================== */
+@media (min-width: 1200px) {
+  :root {
+    --container-padding: 8px;
+    --card-padding: 8px;
+    --section-gap: 8px;
+    --info-btn-size: 20px; /* Smaller on desktop due to mouse precision */
+  }
+
+  /* Show/hide utility classes */
+  .mobile-only { display: none; }
+  .tablet-up { display: block; }
+  .desktop-only { display: block; }
+
+  /* Typography adjustments */
+  h1 { font-size: 22px !important; }
+  h2 { font-size: 18px !important; }
+  h3 { font-size: 10px !important; }
+
+
+  /* Row 4 back to side-by-side on desktop */
+  .row.row-4 .grid.cols-2.promotions {
+    flex-direction: row; /* Side-by-side on desktop */
+    gap: var(--grid-gap);
+  }
+
+  .row.row-4 .grid.cols-2.promotions > * {
+    width: 440px;
+  }
+
+  /* Slim KPIs optimized for desktop */
+  .slim-kpis {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .slim-kpis > * {
+    flex: 1;
+    min-width: 100px;
+  }
+
+  /* Chart heights for desktop */
+  .chart-host {
+    min-height: 300px;
+  }
+
+  /* Container max-width for very large screens */
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* Promotion performance table for desktop */
+  .bars {
+    gap: 12px;
+  }
+
+  .bar .thumb {
+    width: 72px;
+    height: 48px;
+    max-width: 72px;
+  }
+
+  .bar .label {
+    font-size: 1rem;
+    max-width: 250px;
+  }
+
+  .bar .val {
+    font-size: 16px;
+  }
+
+  /* Desktop optimizations */
+  .info-btn {
+    width: var(--info-btn-size);
+    height: var(--info-btn-size);
+    font-size: 12px;
+  }
+
+  .tooltip-overlay {
+    min-width: 240px;
+    max-width: 320px;
+    padding: 16px;
+    font-size: 13px;
+  }
+
+  .tooltip-overlay .tooltip-title {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .tooltip-overlay .tooltip-content {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .tooltip-overlay .tooltip-why-important {
+    font-size: 12px;
+    padding-top: 12px;
+  }
+
+  /* Section titles for desktop */
+  .section-title {
+    font-size: 18px;
+    margin-bottom: 8px;
   }
 }

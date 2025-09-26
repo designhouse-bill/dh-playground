@@ -40,9 +40,13 @@
     // 3) Render rows
     if (window.AD && AD.renderAll) AD.renderAll();
 
-    // 4) resize guard
+    // 4) Responsive resize handling
+    let resizeTimeout;
     window.addEventListener('resize', () => {
-      if (window.AD && AD.renderRow2) AD.renderRow2();
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        handleResponsiveResize();
+      }, 150); // Debounce resize events
     }, {passive:true});
 
     // 5) KPI tooltip functionality
@@ -214,6 +218,28 @@
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+  }
+
+  function handleResponsiveResize() {
+    // Re-render all chart-containing rows to handle responsive changes
+    if (window.AD) {
+      if (AD.renderRow2) AD.renderRow2(); // Charts row
+      if (AD.renderRow3) AD.renderRow3(); // Category charts
+
+      // Handle ECharts instances directly
+      if (window.echarts) {
+        // Find all chart containers and resize their charts
+        document.querySelectorAll('.chart-host').forEach(container => {
+          const chartInstance = window.echarts.getInstanceByDom(container);
+          if (chartInstance) {
+            chartInstance.resize();
+          }
+        });
+      }
+
+      // Close any open tooltips on resize to prevent positioning issues
+      closeAllTooltips();
+    }
   }
 
   waitUntil(ready, boot);

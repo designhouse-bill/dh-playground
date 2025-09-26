@@ -211,8 +211,8 @@ class MockDataGenerator {
     let promotionCounter = 1;
 
     this.circulars.forEach(circular => {
-      // Generate 15-20 promotions per circular
-      const promoCount = this.randomInt(15, 20);
+      // Generate 25-35 promotions per circular to ensure enough data for 100+ filter
+      const promoCount = this.randomInt(25, 35);
 
       for (let i = 0; i < promoCount; i++) {
         const category = this.randomChoice(this.categories);

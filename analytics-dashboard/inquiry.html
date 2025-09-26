@@ -37,40 +37,35 @@
 <body class="bg-gray-50 text-gray-900">
   <div id="app" class="min-h-screen">
     <!-- Header (using original header from index.html) -->
-    <header id="app-header" class="page-header">
-      <div class="header-left">
-        <div class="left">
-          <div class="title-container">
-            <h1>Analytics Dashboard</h1>
-            <button id="back-to-overview" class="back-button" onclick="window.location.href='index.html'">← Back to Overview</button>
-          </div>
-
-          <div id="week-context" class="week-context">
-            <div class="week-line">
-              <select id="week-select" class="week-select"></select>
-              <span class="status" id="week-status" style="color:var(--muted)">Data Grid View</span>
-            </div>
+  <header id="app-header" class="page-header">
+    <div class="header-left">
+        <div class="title-container">
+          <h1>Analytics Dashboard</h1>
+        </div>
+  </div>
+<div class="header-center">
+      <div id="week-context" class="week-context">
+          <div class="week-line">
+             <span class="status" id="week-status" style="color:var(--muted)">—</span>
+            <select id="week-select" class="week-select"></select>
           </div>
         </div>
-      </div>
-
-      <div class="header-center">
-        <div class="filters-stack">
-          <div class="filter-row">
-            <label for="store-select">Store:</label>
-            <select id="store-select"><option value="all">All</option></select>
-          </div>
-          <div class="filter-row">
-            <label for="version-select">Version:</label>
-            <select id="version-select"><option value="all">All</option></select>
-          </div>
+</div>
+    <div class="header-right">
+      <div class="filters-stack">
+        <div class="filter-row">
+          <label for="version-select">Version:</label>
+          <select id="version-select"><option value="all">All</option></select>
         </div>
+        <div class="filter-row">
+          <label for="store-select">Store:</label>
+          <select id="store-select"><option value="all">All</option></select>
+        </div>
+        
       </div>
+    </div>
 
-      <div id="header-tiles" class="header-tiles" aria-label="YTD KPIs">
-        <!-- KPI tiles will be rendered here using index.html format -->
-      </div>
-    </header>
+  </header>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 

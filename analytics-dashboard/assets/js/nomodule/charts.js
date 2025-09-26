@@ -7,6 +7,11 @@
   function bindChart(hostId, option){
     const el = (typeof hostId === 'string') ? document.getElementById(hostId) : hostId;
     if (!el || !window.echarts) return null;
+
+    // Ensure chart takes full container dimensions
+    if (!el.style.width) el.style.width = '100%';
+    if (!el.style.height) el.style.height = '100%';
+
     const inst = echarts.init(el, null, {renderer:'canvas'});
     inst.setOption(option);
     // simple responsive hook
@@ -19,8 +24,10 @@ ns.echartsLine = function (hostId, seriesName, xLabels, yValues) {
   const el = (typeof hostId === 'string') ? document.getElementById(hostId) : hostId;
   if (!el || !window.echarts) return null;
 
-  // Ensure fixed height without CSS edits
-  el.style.height = '120px';
+  // Use responsive height based on container
+  if (!el.style.height) {
+    el.style.height = '100%';
+  }
 
   // Defensive: coerce inputs to arrays
   const xs = Array.isArray(xLabels) ? xLabels.slice() : [];
@@ -52,19 +59,19 @@ ns.echartsLine = function (hostId, seriesName, xLabels, yValues) {
       valueFormatter: v => `${Math.round(v)}%`,
       axisPointer: { type: 'line' }
     },
-    grid: { left: 42, right: 10, top: 18, bottom: 26 },
+    grid: { left: 35, right: 5, top: 5, bottom: 20 },
     xAxis: {
       type: 'category',
       data: weekLabels,
       boundaryGap: false,
       axisLine: { lineStyle: { color: '#d6dae1' } },
-      axisLabel: { color: '#697386' }
+      axisLabel: { color: '#222222' }
     },
     yAxis: {
       type: 'value',
       min: yMin,
       max: yMax,
-      axisLabel: { formatter: '{value}%', color: '#697386' },
+      axisLabel: { formatter: '{value}%', color: '#222222' },
       splitLine: { lineStyle: { color: '#eef1f5' } }
     },
     series: [{
@@ -74,7 +81,10 @@ ns.echartsLine = function (hostId, seriesName, xLabels, yValues) {
       showSymbol: true,
       symbolSize: 6,
       data: ysPct.map(v => Math.round(v)),
-      areaStyle: { opacity: 0.35 }
+      areaStyle: { opacity: 0.35 },
+      itemStyle: { color: '#4272D8' },
+      lineStyle: { color: '#4272D8' },
+      areaStyle: { color: '#4272D8', opacity: 0.35 }
     }]
   });
 
@@ -87,7 +97,7 @@ ns.echartsLine = function (hostId, seriesName, xLabels, yValues) {
 
 // Donut with legend showing % next to name (shared by all donut tiles)
 // Donut (left) + Legend (right on wide; bottom on narrow) with % next to name
-ns.echartsDonut = function (hostId, pairs) {
+ns.echartsDonut = function (hostId, pairs, customColors) {
   const data = (pairs || []).map(d => ({ name: d.name, value: d.value }));
   const total = data.reduce((s, d) => s + (+d.value || 0), 0) || 1;
   const cssTextColor =
@@ -130,6 +140,7 @@ ns.echartsDonut = function (hostId, pairs) {
 
   // Base option (works and resizes automatically)
   const option = {
+    color: customColors, // Use custom colors if provided, otherwise ECharts will use default palette
     tooltip: {
       trigger: 'item',
       formatter: (p) => {
@@ -177,15 +188,16 @@ ns.echartsDonut = function (hostId, pairs) {
 };
 
 // Simple vertical bar
-ns.echartsBar = function(hostId, pairs){
+ns.echartsBar = function(hostId, pairs, customColors){
   const xs = (pairs||[]).map(d=>d.name);
   const ys = (pairs||[]).map(d=>Number(d.value||0));
   const option = {
+    color: customColors || undefined,
     tooltip: { trigger:'axis' },
     grid: { left:30, right:10, top:10, bottom:30 },
     xAxis: { type:'category', data: xs, axisLabel:{color:'#a0a4ad'} },
     yAxis: { type:'value', splitLine:{lineStyle:{color:'#232838'}}, axisLabel:{color:'#a0a4ad'} },
-    series: [{ type:'bar', data: ys }]
+    series: [{ type:'bar', data: ys, itemStyle: { color: customColors?.[0] || '#4272D8' } }]
   };
   return bindChart(hostId, option);
 };
@@ -196,7 +208,10 @@ ns.echartsScatter = function (hostId, points) {
   if (!el || !window.echarts) return null;
 
   // Fix height without touching CSS
-  el.style.height = '120px';
+  // Use responsive height based on container
+  if (!el.style.height) {
+    el.style.height = '100%';
+  }
 
   const option = {
     tooltip: {
@@ -206,13 +221,13 @@ ns.echartsScatter = function (hostId, points) {
         return `${d.name}<br>Engagement: ${d.value[0]}%<br>Lift: ${d.value[1]}%`;
       }
     },
-    grid: { left: 42, right: 10, top: 18, bottom: 26 },
+    grid: { left: 35, right: 5, top: 5, bottom: 20 },
     xAxis: {
       type: 'value',
       name: 'Engagement %',
       min: 0,
       max: 100,
-      axisLabel: { color: '#697386', formatter: '{value}%' },
+      axisLabel: { color: '#222222', formatter: '{value}%' },
       splitLine: { lineStyle: { color: '#eef1f5' } }
     },
     yAxis: {
@@ -220,7 +235,7 @@ ns.echartsScatter = function (hostId, points) {
       name: 'Store Lift %',
       min: -20,
       max: 40,
-      axisLabel: { color: '#697386', formatter: '{value}%' },
+      axisLabel: { color: '#222222', formatter: '{value}%' },
       splitLine: { lineStyle: { color: '#eef1f5' } }
     },
     series: [{
@@ -278,7 +293,7 @@ ns.echartsDealTypeHBars = function (hostId, items, opts = {}) {
       min: 0,
       max: 100,
       splitNumber: 5,
-      axisLabel: { formatter: '{value}%', color: '#697386' },
+      axisLabel: { formatter: '{value}%', color: '#222222' },
       axisLine: { lineStyle: { color: '#d6dae1' } },
       splitLine: { lineStyle: { color: '#eef1f5' } }
     },
@@ -301,7 +316,7 @@ ns.echartsDealTypeHBars = function (hostId, items, opts = {}) {
       barCategoryGap: '50%',
       itemStyle: {
         borderRadius: 7,
-        color: '#4d6bfe'
+        color: '#4272D8'
       },
       label: {
         show: true,
@@ -319,6 +334,232 @@ ns.echartsDealTypeHBars = function (hostId, items, opts = {}) {
 };
 
 // Back-compat alias (so either name works)
+ns.echartsDealTypeBars = ns.echartsDealTypeHBars;
+
+// Position Performance Horizontal Bar Chart
+ns.echartsPositionPerformance = function(hostId, data) {
+  const el = (typeof hostId === 'string') ? document.getElementById(hostId) : hostId;
+  if (!el || !window.echarts) return null;
+
+  // Use responsive height based on container
+  if (!el.style.height) {
+    el.style.height = '100%';
+  }
+
+  // Define position colors
+  const positionColors = {
+    'Top': '#B8D64D',
+    'Upper Middle': '#4272D8',
+    'Lower Middle': '#4E5370',
+    'Bottom': '#FF9656'
+  };
+
+  const option = {
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' },
+      formatter: function(params) {
+        const p = params[0];
+        return `${p.name}: ${p.value}%`;
+      }
+    },
+    grid: { left: 80, right: 20, top: 20, bottom: 20 },
+    xAxis: {
+      type: 'value',
+      max: 50, // Set max to 50% for better visualization
+      axisLabel: { formatter: '{value}%', color: '#222222' },
+      splitLine: { lineStyle: { color: '#eef1f5' } }
+    },
+    yAxis: {
+      type: 'category',
+      data: data.map(d => d.name).reverse(), // Reverse so Top appears at top
+      axisLabel: { color: '#222222' },
+      axisTick: { show: false },
+      axisLine: { show: false }
+    },
+    series: [{
+      type: 'bar',
+      data: data.map(d => ({
+        value: d.value,
+        itemStyle: { color: positionColors[d.name] || '#B8D64D' }
+      })).reverse(), // Reverse data to match reversed labels
+      barWidth: '60%',
+      label: {
+        show: true,
+        position: 'right',
+        formatter: '{c}%',
+        color: '#333'
+      }
+    }]
+  };
+
+  const inst = echarts.init(el, null, { renderer: 'canvas' });
+  inst.setOption(option);
+
+  // Responsive resize
+  const onResize = () => { try { inst.resize(); } catch (e) {} };
+  window.addEventListener('resize', onResize, { passive: true });
+
+  return inst;
+};
+
+// Category Lift vs Baseline Performance - Horizontal Deviation Chart
+ns.echartsCategoryLift = function(hostId, data) {
+  console.log('UPDATED: Category Lift chart function called with new text colors');
+  const el = (typeof hostId === 'string') ? document.getElementById(hostId) : hostId;
+  if (!el || !window.echarts) return null;
+
+  if (!el.style.height) {
+    el.style.height = '100%';
+  }
+
+  const option = {
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' },
+      formatter: function(params) {
+        const p = params[0];
+        const sign = p.value >= 0 ? '+' : '';
+        return `${p.name}: ${sign}${p.value}% vs baseline`;
+      }
+    },
+    grid: { left: 90, right: 20, top: 20, bottom: 20 },
+    xAxis: {
+      type: 'value',
+      min: -30,
+      max: 30,
+      axisLabel: {
+        formatter: function(value) {
+          return value === 0 ? 'Baseline' : (value > 0 ? '+' + value + '%' : value + '%');
+        },
+        color: '#222222'
+      },
+      splitLine: {
+        lineStyle: { color: '#eef1f5' },
+        show: true
+      },
+      axisLine: {
+        lineStyle: { color: '#333', width: 2 },
+        show: true
+      }
+    },
+    yAxis: {
+      type: 'category',
+      data: data.map(d => d.name),
+      axisLabel: { color: '#222222' },
+      axisTick: { show: false },
+      axisLine: { show: false }
+    },
+    series: [{
+      type: 'bar',
+      data: data.map(d => ({
+        value: d.value,
+        itemStyle: {
+          color: d.value >= 0 ? '#B8D64D' : '#4272D8' // Positive: #B8D64D, Negative: #4272D8
+        }
+      })),
+      barWidth: '60%',
+      label: {
+        show: true,
+        position: function(params) {
+          return params.value >= 0 ? 'right' : 'left';
+        },
+        formatter: function(params) {
+          const sign = params.value >= 0 ? '+' : '';
+          return `{labelBox|${sign}${params.value}%}`;
+        },
+        rich: {
+          labelBox: {
+            color: '#333333',
+            backgroundColor: '#ffffffa1',
+            padding: [4, 8, 4, 8], // top, right, bottom, left
+            borderRadius: 4,
+            fontSize: 14,
+            fontWeight: 'bold',
+            shadowColor: 'rgba(0, 0, 0, 0.1)',
+            shadowBlur: 2,
+            shadowOffsetY: 1
+          }
+        }
+      }
+    }]
+  };
+
+  const inst = echarts.init(el, null, { renderer: 'canvas' });
+  inst.setOption(option);
+
+  const onResize = () => { try { inst.resize(); } catch (e) {} };
+  window.addEventListener('resize', onResize, { passive: true });
+
+  return inst;
+};
+
+// Category Size vs Engagement Quality - Bubble Chart
+ns.echartsCategoryBubble = function(hostId, data) {
+  const el = (typeof hostId === 'string') ? document.getElementById(hostId) : hostId;
+  if (!el || !window.echarts) return null;
+
+  if (!el.style.height) {
+    el.style.height = '100%';
+  }
+
+  const option = {
+    tooltip: {
+      trigger: 'item',
+      formatter: function(params) {
+        const d = params.data;
+        return `${d.name}<br/>Traffic: ${d.value[0]}<br/>Engagement: ${d.value[1]}%<br/>Conversion: ${d.value[2]}%`;
+      }
+    },
+    grid: { left: 60, right: 20, top: 20, bottom: 60 },
+    xAxis: {
+      type: 'value',
+      name: 'Traffic Volume',
+      nameLocation: 'middle',
+      nameGap: 25,
+      axisLabel: { color: '#222222' },
+      splitLine: { lineStyle: { color: '#eef1f5' } }
+    },
+    yAxis: {
+      type: 'value',
+      name: 'Engagement %',
+      nameLocation: 'middle',
+      nameGap: 40,
+      axisLabel: { formatter: '{value}%', color: '#222222' },
+      splitLine: { lineStyle: { color: '#eef1f5' } }
+    },
+    series: [{
+      type: 'scatter',
+      data: data.map(d => ({
+        name: d.name,
+        value: [d.traffic, d.engagement, d.conversion],
+        symbolSize: Math.sqrt(d.conversion) * 3, // Bubble size based on conversion rate
+        itemStyle: {
+          color: '#4272D8',
+          opacity: 0.7
+        }
+      })),
+      label: {
+        show: false
+      },
+      emphasis: {
+        focus: 'self',
+        itemStyle: {
+          opacity: 1
+        }
+      }
+    }]
+  };
+
+  const inst = echarts.init(el, null, { renderer: 'canvas' });
+  inst.setOption(option);
+
+  const onResize = () => { try { inst.resize(); } catch (e) {} };
+  window.addEventListener('resize', onResize, { passive: true });
+
+  return inst;
+};
+
 ns.echartsDealTypeBars = ns.echartsDealTypeHBars;
 
 })();

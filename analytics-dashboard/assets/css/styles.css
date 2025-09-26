@@ -117,7 +117,7 @@ font-size: 1rem;
 .container{padding:var(--gap-lg) var(--gap-lg) 0 var(--gap-lg);}
 .section-title {font-weight: 900; width: 100%; border-top: 2px solid gray; padding-top: var(--gap-sm);}
 .row{display:flex;flex-direction:column;gap:0;margin-bottom:var(--gap-sm); }
-.row.row-2, .row.row-3 {margin-bottom: 0}
+.row.row-2, .row.row-category-chart {margin-bottom: 0}
 
 /* Make all cards in all rows use flexible height */
 .card {
@@ -129,7 +129,63 @@ font-size: 1rem;
   flex: 1;
   min-height: 0;
 }
+/*YTD 3-up layout */
+.ytd-container {display:flex;gap:var(--gap-sm);margin-bottom:var(--gap-sm)}
+.ytd-container .grid {
+  display: flex;
+  gap: var(--gap-sm);
+  flex: 2;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.ytd-container .grid.one-up {
+  flex: 1;
+}
+.ytd-container .grid.one-up .card {
+  width: 100%;
+}
 
+/* Category container layout */
+.category-container {display:flex;gap:var(--gap-sm);margin-bottom:var(--gap-sm)}
+.category-container .grid {
+  display: flex;
+  gap: var(--gap-sm);
+  flex: 1;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.category-container .grid .card {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Section category row container layout */
+.section-category-row-container {
+  display: flex;
+  gap: var(--gap-sm);
+  margin-bottom: var(--gap-sm);
+}
+.section-category-row-container .row-category-number {
+  flex: 1;
+}
+.section-category-row-container .row-category-chart {
+  flex: 3;
+}
+.row-category-number .grid.two-up {
+  display: flex;
+  flex-direction: column;
+}
+.row-category-chart .category-container .grid .card {
+  min-width: 300px;
+}
+
+/* Size and Deal section flex properties */
+.size, .deal {
+  flex: 1;
+}
+.size .card.small, .deal .card.small {
+  flex: 1;
+}
 .row.row-2 .three-up .card:nth-child(2) .small {margin-bottom: var(--gap-sm);}
 .row.row-2 .three-up .card:nth-child(2) .small .title {
   font-size: 12px;
@@ -380,7 +436,10 @@ font-size: 1rem;
 .card.trend .card-body, .card.lift .card-body{padding:0 var(--gap-lg);}
 
 /* KPI tiles */
-.card.kpi{width:150px}
+.card.kpi {
+    min-width: 200px;
+    flex: 1;
+}
 .card.kpi .big{font-size:28px;font-weight:800}
 .card.kpi .small{font-size:16px;font-weight:800}
 .subtext{color:var(--muted);font-size:12px}
@@ -1398,6 +1457,9 @@ header.page-header .header-center {
 .three-up{display:flex;gap:var(--gap-sm)}
 .three-up > .card{flex:1}
 
+.four-up{display:flex;gap:var(--gap-sm)}
+.four-up > .card{flex:1 1 25%}
+
 .six-up{display:flex;gap:var(--gap-sm);flex-wrap:wrap}
 .six-up > .card{flex:1 1 16.6667%}
 
@@ -1408,7 +1470,7 @@ header.page-header .header-center {
 
 /* Mobile responsive overrides - only where needed */
 @media (max-width: 767px) {
-  .grid, .three-up, .slim-kpis {
+  .grid, .three-up, .four-up, .slim-kpis {
     flex-direction: column;
   }
 
@@ -1419,15 +1481,15 @@ header.page-header .header-center {
 
   /* Only rows 2-5 grids should stack vertically on mobile */
   .row-2 .grid,
-  .row-3 .grid,
+  .row-category-chart .grid,
   .row-4 .grid,
-  .row-5 .grid {
+  .promotion-container-size-deals .grid {
     flex-direction: column;
   }
 
-  /* Row-1 and row-6 should remain horizontal on mobile */
+  /* Row-1 and shared promotion should remain horizontal on mobile */
   .row-1 .grid,
-  .row-6 .grid {
+  .promotion-container-shared .grid {
     flex-direction: row;
   }
 
@@ -1754,6 +1816,11 @@ button {
   /* Medium: 2 rows of 3 cards */
   .six-up > .card {
     flex: 1 1 33.33%;
+  }
+
+  /* Medium: 2 rows of 2 cards for four-up */
+  .four-up > .card {
+    flex: 1 1 50%;
   }
 
   /* Heatmap card responsive on tablet */

@@ -562,4 +562,268 @@ ns.echartsCategoryBubble = function(hostId, data) {
 
 ns.echartsDealTypeBars = ns.echartsDealTypeHBars;
 
+// YTD Cumulative Line Chart
+ns.echartsYTDTrendline = function(hostId, data) {
+  const el = (typeof hostId === 'string') ? document.getElementById(hostId) : hostId;
+  if (!el || !window.echarts) return null;
+
+  if (!el.style.height) {
+    el.style.height = '100%';
+  }
+
+  const option = {
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'cross' },
+      formatter: function(params) {
+        const p = params[0];
+        return `${p.name}: ${(p.value / 1000000).toFixed(2)}M interactions`;
+      }
+    },
+    grid: { left: 60, right: 20, top: 20, bottom: 40 },
+    xAxis: {
+      type: 'category',
+      data: data.labels,
+      axisLabel: { color: '#697386' },
+      axisLine: { lineStyle: { color: '#d6dae1' } }
+    },
+    yAxis: {
+      type: 'value',
+      axisLabel: {
+        formatter: '{value}M',
+        color: '#697386'
+      },
+      splitLine: { lineStyle: { color: '#eef1f5' } }
+    },
+    series: [{
+      type: 'line',
+      data: data.values.map(v => Math.round(v / 1000000)), // Convert to millions
+      smooth: true,
+      symbol: 'circle',
+      symbolSize: 6,
+      itemStyle: { color: '#4272D8' },
+      lineStyle: { color: '#4272D8', width: 3 },
+      areaStyle: { color: '#4272D8', opacity: 0.15 }
+    }]
+  };
+
+  const inst = echarts.init(el, null, { renderer: 'canvas' });
+  inst.setOption(option);
+
+  const onResize = () => { try { inst.resize(); } catch (e) {} };
+  window.addEventListener('resize', onResize, { passive: true });
+
+  return inst;
+};
+
+// Multi-series Category Trend Chart
+ns.echartsCategoryTrend = function(hostId, data) {
+  const el = (typeof hostId === 'string') ? document.getElementById(hostId) : hostId;
+  if (!el || !window.echarts) return null;
+
+  if (!el.style.height) {
+    el.style.height = '100%';
+  }
+
+  const colors = ['#B8D64D', '#4272D8', '#4E5370', '#FF9656', '#00AADC'];
+
+  const option = {
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'cross' }
+    },
+    legend: {
+      bottom: 0,
+      textStyle: { fontSize: 10 }
+    },
+    grid: { left: 40, right: 20, top: 20, bottom: 60 },
+    xAxis: {
+      type: 'category',
+      data: data.labels,
+      axisLabel: { color: '#697386' }
+    },
+    yAxis: {
+      type: 'value',
+      axisLabel: { color: '#697386' },
+      splitLine: { lineStyle: { color: '#eef1f5' } }
+    },
+    series: data.series.map((series, index) => ({
+      name: series.name,
+      type: 'line',
+      data: series.values,
+      itemStyle: { color: colors[index % colors.length] },
+      lineStyle: { color: colors[index % colors.length] }
+    }))
+  };
+
+  const inst = echarts.init(el, null, { renderer: 'canvas' });
+  inst.setOption(option);
+
+  const onResize = () => { try { inst.resize(); } catch (e) {} };
+  window.addEventListener('resize', onResize, { passive: true });
+
+  return inst;
+};
+
+// Top Performing Categories Ranked List
+ns.echartsTopCategories = function(hostId, data) {
+  const el = (typeof hostId === 'string') ? document.getElementById(hostId) : hostId;
+  if (!el || !window.echarts) return null;
+
+  if (!el.style.height) {
+    el.style.height = '100%';
+  }
+
+  const option = {
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' }
+    },
+    grid: { left: 100, right: 30, top: 20, bottom: 20 },
+    xAxis: {
+      type: 'value',
+      max: 100,
+      axisLabel: { formatter: '{value}%', color: '#697386' },
+      splitLine: { lineStyle: { color: '#eef1f5' } }
+    },
+    yAxis: {
+      type: 'category',
+      data: data.map(d => d.name).reverse(),
+      axisLabel: { color: '#697386' },
+      axisTick: { show: false },
+      axisLine: { show: false }
+    },
+    series: [{
+      type: 'bar',
+      data: data.map(d => d.value).reverse(),
+      barWidth: '60%',
+      itemStyle: { color: '#B8D64D' },
+      label: {
+        show: true,
+        position: 'right',
+        formatter: '{c}%',
+        color: '#333'
+      }
+    }]
+  };
+
+  const inst = echarts.init(el, null, { renderer: 'canvas' });
+  inst.setOption(option);
+
+  const onResize = () => { try { inst.resize(); } catch (e) {} };
+  window.addEventListener('resize', onResize, { passive: true });
+
+  return inst;
+};
+
+// Promotion Level Sales Lift Chart
+ns.echartsPromoLift = function(hostId, data) {
+  const el = (typeof hostId === 'string') ? document.getElementById(hostId) : hostId;
+  if (!el || !window.echarts) return null;
+
+  if (!el.style.height) {
+    el.style.height = '100%';
+  }
+
+  const option = {
+    tooltip: {
+      trigger: 'axis',
+      formatter: function(params) {
+        const p = params[0];
+        return `${p.name}<br/>Sales Lift: $${(p.value / 1000).toFixed(0)}K`;
+      }
+    },
+    grid: { left: 60, right: 20, top: 20, bottom: 60 },
+    xAxis: {
+      type: 'category',
+      data: data.map(d => d.name),
+      axisLabel: {
+        color: '#697386',
+        rotate: 45
+      }
+    },
+    yAxis: {
+      type: 'value',
+      axisLabel: {
+        formatter: '${value}K',
+        color: '#697386'
+      },
+      splitLine: { lineStyle: { color: '#eef1f5' } }
+    },
+    series: [{
+      type: 'bar',
+      data: data.map(d => Math.round(d.value / 1000)), // Convert to thousands
+      itemStyle: { color: '#4272D8' },
+      label: {
+        show: true,
+        position: 'top',
+        formatter: '${c}K',
+        color: '#333'
+      }
+    }]
+  };
+
+  const inst = echarts.init(el, null, { renderer: 'canvas' });
+  inst.setOption(option);
+
+  const onResize = () => { try { inst.resize(); } catch (e) {} };
+  window.addEventListener('resize', onResize, { passive: true });
+
+  return inst;
+};
+
+// Promotion Size Impact Chart
+ns.echartsPromotionSizeImpact = function(hostId, data) {
+  const el = (typeof hostId === 'string') ? document.getElementById(hostId) : hostId;
+  if (!el || !window.echarts) return null;
+
+  if (!el.style.height) {
+    el.style.height = '100%';
+  }
+
+  const option = {
+    tooltip: {
+      trigger: 'axis',
+      formatter: function(params) {
+        const p = params[0];
+        return `${p.name}<br/>Performance: ${p.value}%`;
+      }
+    },
+    grid: { left: 80, right: 20, top: 20, bottom: 20 },
+    xAxis: {
+      type: 'value',
+      max: 100,
+      axisLabel: { formatter: '{value}%', color: '#697386' },
+      splitLine: { lineStyle: { color: '#eef1f5' } }
+    },
+    yAxis: {
+      type: 'category',
+      data: data.map(d => d.name).reverse(),
+      axisLabel: { color: '#697386' },
+      axisTick: { show: false },
+      axisLine: { show: false }
+    },
+    series: [{
+      type: 'bar',
+      data: data.map(d => d.value).reverse(),
+      barWidth: '60%',
+      itemStyle: { color: '#FF9656' },
+      label: {
+        show: true,
+        position: 'right',
+        formatter: '{c}%',
+        color: '#333'
+      }
+    }]
+  };
+
+  const inst = echarts.init(el, null, { renderer: 'canvas' });
+  inst.setOption(option);
+
+  const onResize = () => { try { inst.resize(); } catch (e) {} };
+  window.addEventListener('resize', onResize, { passive: true });
+
+  return inst;
+};
+
 })();

@@ -46,22 +46,32 @@
 
   </header>
 
+  <!-- SECTION: Year-to-Date Performance (NEW) -->
+  <section id="sec-ytd" class="container section-ytd" aria-label="Year-to-Date Performance">
+    <div id="row-ytd" class="row row-ytd" aria-label="YTD Performance KPIs"></div>
+  </section>
+
   <!-- SECTION: Circular (Row 1 + Row 2) -->
   <section id="sec-circular" class="container section-circular" aria-label="Circular">
-    <div id="row-1" class="row row-1" aria-label="Top KPIs"></div>
+    <div id="row-1" class="row row-1" aria-label="Current Period KPIs"></div>
     <div id="row-2" class="row row-2" aria-label="Trends • Position • Store Lift"></div>
   </section>
 
-  <!-- SECTION: Category (Row 3) -->
+  <!-- SECTION: Category (Row Category Number + Row Category Chart) -->
   <section id="sec-category" class="container section-category" aria-label="Category">
-    <div id="row-3" class="row row-3" aria-label="Category KPIs"></div>
+    <div class="section-title">Category</div>
+    <div class="section-category-row-container">
+      <div id="row-category-number" class="row row-category-number" aria-label="Category Analytics KPIs"></div>
+      <div id="row-category-chart" class="row row-category-chart" aria-label="Category Performance KPIs"></div>
+    </div>
   </section>
 
-  <!-- SECTION: Promotions (Row 4 + Row 5 + Row 6) -->
+  <!-- SECTION: Promotions (Row 4 + Individual + Size & Deal + Shared) -->
   <section id="sec-promotions" class="container section-promotions" aria-label="Promotions">
     <div id="row-4" class="row row-4" aria-label="Promotion Performance"></div>
-    <div id="row-5" class="row row-5" aria-label="Size KPIs"></div>
-    <div id="row-6" class="row row-6" aria-label="Sharing KPIs (Slim)"></div>
+    <div id="promotion-container-individual" class="row promotion-container-individual" aria-label="Individual"></div>
+    <div id="promotion-container-size-deals" class="row promotion-container-size-deals" aria-label="Size & Deal"></div>
+    <div id="promotion-container-shared" class="row promotion-container-shared" aria-label="Shared"></div>
   </section>
 
   <!-- Vendor first -->

@@ -131,103 +131,249 @@
     return {
       meta: { week: weekId, version, normalized_week: normalizedWeekId },
 
-      // YTD KPIs (header tiles) - Updated to YTD persistent metrics
-      ytdKpis: [
-        {
-          label: 'TRAFFIC (YTD)',
-          value: 1325812, // Cumulative YTD traffic
+      // YTD - Consolidated single source of truth for all year-to-date metrics
+      ytd: {
+        // Basic metrics (moved from ytdKpis array)
+        traffic: {
+          value: 1325812,
+          label: 'Traffic',
           unit: '',
           trend: 'up',
           change: '+15%',
           tooltip: 'Traffic (YTD) measures the cumulative number of circular views across all campaigns year-to-date, providing total exposure volume.',
           whyImportant: 'Essential baseline metric for measuring overall campaign reach and brand visibility; tracks aggregate performance trends over time.'
         },
-        {
-          label: 'VISITORS (YTD)',
-          value: 285551, // Cumulative YTD unique visitors
+        visitors: {
+          value: 285551,
+          label: 'Visitors',
           unit: '',
           trend: 'up',
           change: '+8%',
           tooltip: 'Visitors (YTD) counts unique individuals who have viewed circulars year-to-date, measuring actual audience reach beyond repeat views.',
           whyImportant: 'Shows true audience penetration and market coverage; key for understanding brand awareness and customer acquisition effectiveness.'
         },
-        {
-          label: 'MARKETING HEALTH (YTD)',
-          value: 73, // Marketing health composite score
+        marketingHealth: {
+          value: 73,
+          label: 'Marketing Health',
           unit: '',
           trend: 'up',
           change: '+5pts',
           tooltip: 'Marketing Health (YTD) is a composite score measuring overall circular program effectiveness, combining engagement quality and audience growth.',
           whyImportant: 'Single north-star metric for marketing performance; indicates program health and optimization opportunities across all campaigns.'
+        },
+
+        // Advanced metrics (consolidated from individual properties)
+        shopperReach: {
+          value: 125450,
+          label: 'Shopper Reach',
+          unit: 'Unique Shoppers'
+        },
+        engagementVolume: {
+          value: 2847293,
+          label: 'Engagement Volume',
+          unit: 'Total Interactions'
+        },
+        addToListTotal: {
+          value: 89340,
+          label: 'Add-to-List Total',
+          unit: 'Total ATL Actions'
+        },
+        liftFromPromotions: {
+          value: 2840000,
+          label: 'Lift From Promotions',
+          unit: 'Incremental Sales'
+        },
+        roiOnPromotions: {
+          value: 4.2,
+          label: 'ROI On Promotions',
+          unit: 'Return on Investment'
+        },
+
+        // Chart data
+        trendline: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+          values: [185000, 347000, 528000, 742000, 1024000, 1345000, 1689000, 2078000, 2460000]
         }
-      ],
+      },
 
       // Row 1: Main KPIs - Updated with composite scoring focus
-      row1: [
-        {
-          label: 'Pulse Score',
-          value: analytics.pulse_score,
-          unit: '',
-          tooltip: 'CIV + CC×10 + ATL×50 composite score'
-        },
-        {
-          label: 'Engagement Rate',
-          value: Math.round(analytics.engagement_rate * 100),
-          unit: '%',
-          tooltip: 'Overall promotion interaction rate'
-        },
-        {
-          label: 'Top Percentile',
-          value: promotions.length > 0 ? Math.max(...promotions.map(p => p.percentile)) : 0,
-          unit: '%',
-          tooltip: 'Highest performing promotion percentile'
-        }
-      ],
 
-      // Row 2: Charts
-      row2: {
-        trend: {
-          labels: ['W33', 'W34', 'W35', 'W36'],
-          values: [0.62, 0.65, 0.71, analytics.engagement_rate]
+      // Categories - Consolidated single source of truth for all category data
+      categories: {
+        // Master category list with all metrics
+        list: [
+          {
+            name: 'Featured',
+            share: CATEGORIES[0]?.share || 20,
+            engagement: CATEGORIES[0]?.engagement || 0.7,
+            lift: 12,
+            traffic: 1180,
+            conversion: 11,
+            performanceScore: 78,
+            atlRate: 12.8
+          },
+          {
+            name: 'Farm Fresh',
+            share: CATEGORIES[1]?.share || 18,
+            engagement: CATEGORIES[1]?.engagement || 0.65,
+            lift: -5,
+            traffic: 920,
+            conversion: 7,
+            performanceScore: 58,
+            atlRate: 10.2
+          },
+          {
+            name: 'Good Food Matters',
+            share: CATEGORIES[2]?.share || 16,
+            engagement: CATEGORIES[2]?.engagement || 0.6,
+            lift: 18,
+            traffic: 1520,
+            conversion: 14,
+            performanceScore: 85,
+            atlRate: 15.1
+          },
+          {
+            name: 'Custom Cuts',
+            share: CATEGORIES[3]?.share || 14,
+            engagement: CATEGORIES[3]?.engagement || 0.55,
+            lift: -10,
+            traffic: 680,
+            conversion: 5,
+            performanceScore: 42,
+            atlRate: 8.9
+          },
+          {
+            name: 'Deals For Days',
+            share: CATEGORIES[4]?.share || 12,
+            engagement: CATEGORIES[4]?.engagement || 0.5,
+            lift: 15,
+            traffic: 1820,
+            conversion: 9,
+            performanceScore: 71,
+            atlRate: 11.6
+          },
+          {
+            name: 'Beef Pork Chicken',
+            share: CATEGORIES[5]?.share || 10,
+            engagement: CATEGORIES[5]?.engagement || 0.45,
+            lift: -3,
+            traffic: 1080,
+            conversion: 10,
+            performanceScore: 65,
+            atlRate: 13.2
+          }
+        ],
+
+        // Aggregated metrics
+        contributionLift: 42.8, // % of total lift from top category
+        averageATLRate: 12.4, // Average add-to-list rate across categories
+
+        // Time series data
+        trends: {
+          fourWeek: {
+            labels: ['W33', 'W34', 'W35', 'W36'],
+            series: [
+              { name: 'Featured', values: [68, 72, 75, 78] },
+              { name: 'Farm Fresh', values: [52, 54, 56, 58] },
+              { name: 'Good Food Matters', values: [80, 82, 84, 85] }
+            ]
+          }
+        }
+      },
+
+      // Digital Circular - Consolidated single source of truth for all digital circular metrics
+      digitalCircular: {
+        // Core KPI metrics (Row 1)
+        pulseScore: {
+          value: analytics.pulse_score,
+          label: 'Pulse Score',
+          unit: '',
+          tooltip: 'CIV + CC×10 + ATL×50 composite score',
+          whyImportant: 'Primary engagement health indicator combining all interaction types'
         },
+        engagementRate: {
+          value: Math.round(analytics.engagement_rate * 100),
+          label: 'Engagement Rate',
+          unit: '%',
+          tooltip: 'Overall promotion interaction rate',
+          whyImportant: 'Shows how effectively content drives user actions'
+        },
+        audienceReach: {
+          value: analytics.audience_reach,
+          label: 'Audience Reach',
+          unit: '',
+          tooltip: 'Total unique visitors reached by circular',
+          whyImportant: 'Measures campaign penetration and market coverage'
+        },
+        topPercentile: {
+          value: promotions.length > 0 ? Math.max(...promotions.map(p => p.percentile)) : 0,
+          label: 'TOP PERCENTILE',
+          unit: '%',
+          tooltip: 'Highest performing promotion percentile',
+          whyImportant: 'Identifies peak performance potential in current campaign'
+        },
+
+        // Trend analysis (Row 2)
+        trends: {
+          fourWeek: {
+            labels: ['W33', 'W34', 'W35', 'W36'],
+            values: [0.62, 0.65, 0.71, analytics.engagement_rate]
+          }
+        },
+
+        // Position performance data (Row 2)
         positionPerformance: {
           qTop: 25,
           qUpperMid: 30,
           qLowerMid: 40,
           qBottom: 25
         },
+
+        // Store lift data (Row 2)
         storeLift: STORE_LIFT
       },
 
-      // Row 3: Categories
-      row3: {
-        categoryShare: CATEGORIES.slice(0, 6),
-        categoryLift: [
-          { name: 'Featured', value: 12 },
-          { name: 'Farm Fresh', value: -5 },
-          { name: 'Good Food Matters', value: 18 },
-          { name: 'Custom Cuts', value: -10 },
-          { name: 'Deals For Days', value: 15 },
-          { name: 'Beef Pork Chicken', value: -3 }
-        ],
-        categoryBubble: [
-          { name: 'Featured', traffic: 1180, engagement: 65, conversion: 11 },
-          { name: 'Farm Fresh', traffic: 920, engagement: 42, conversion: 7 },
-          { name: 'Good Food Matters', traffic: 1520, engagement: 70, conversion: 14 },
-          { name: 'Custom Cuts', traffic: 680, engagement: 35, conversion: 5 },
-          { name: 'Deals For Days', traffic: 1820, engagement: 52, conversion: 9 },
-          { name: 'Beef Pork Chicken', traffic: 1080, engagement: 60, conversion: 10 }
-        ]
-      },
-
-      // Row 4: Promotion Performance - Enhanced with ranking data
-      row4: {
-        promotions: topPromotions.map((promo, index) => ({
-          ...promo,
-          rank: index + 1, // Simple rank based on sorted position
+      // Promotions - Consolidated single source of truth for all promotion data
+      promotions: {
+        // Complete promotion list (normalized from API)
+        list: topPromotions.map((promo, index) => ({
+          id: `promo_${String(index + 1).padStart(3, '0')}`,
+          title: promo.title,
+          category: promo.category,
+          composite: promo.composite,
+          percentile: promo.percentile,
+          rank: index + 1,
           rankTotal: promotions.length,
-          performance: Math.round(((10 - index) / 10) * 100) // Calculate performance percentage based on rank
-        }))
+          performance: Math.round(((10 - index) / 10) * 100),
+          dealType: promo.dealType,
+          position: promo.position,
+          size: index < 3 ? 'Large' : index < 7 ? 'Medium' : 'Small', // Derived size based on performance
+          salesLift: Math.round(45000 - (index * 2000)), // Synthetic sales lift based on rank
+          mediaFreshness: index < Math.floor(promotions.length * 0.87), // 87.3% fresh
+          civ: promo.civ,
+          cc: promo.cc,
+          atl: promo.atl
+        })),
+
+        // Aggregated metrics
+        topQuartilePercentage: 23.5, // % of promos in top 25% performance
+        mediaFreshnessRate: 87.3, // % using current/fresh assets
+        totalCount: promotions.length,
+
+        // Specific promotion performance data
+        salesLiftByPromo: [
+          { name: 'Promo A', value: 45000, category: 'Featured' },
+          { name: 'Promo B', value: 38000, category: 'Farm Fresh' },
+          { name: 'Promo C', value: 52000, category: 'Good Food Matters' },
+          { name: 'Promo D', value: 29000, category: 'Custom Cuts' }
+        ],
+
+        // Size impact analysis
+        sizeImpact: [
+          { name: 'Small (1x1)', value: 32, engagement: 42 },
+          { name: 'Medium (2x2)', value: 58, engagement: 65 },
+          { name: 'Large (3x3)', value: 75, engagement: 78 }
+        ]
       },
 
       // Row 5: Size metrics
@@ -247,54 +393,10 @@
       // Deal types for charts
       dealTypes: DEAL_TYPES,
 
-      // Top-level promotions array for renderRow4 compatibility
-      promotions: topPromotions.map((promo, index) => ({
-        ...promo,
-        rank: index + 1, // Simple rank based on sorted position
-        rankTotal: promotions.length,
-        performance: Math.round(((10 - index) / 10) * 100) // Calculate performance percentage based on rank
-      })),
 
-      // Top-level properties for renderRow1 compatibility
-      pulseScore: analytics.pulse_score,
-      engagementRate: analytics.engagement_rate,
-      audienceReach: analytics.audience_reach,
 
-      // Top-level properties for renderRow2 compatibility
-      trend4w: {
-        labels: ['W33', 'W34', 'W35', 'W36'],
-        values: [0.62, 0.65, 0.71, analytics.engagement_rate]
-      },
-      ppp: {
-        total: promotions.length,
-        qTop: 25,
-        qUpMid: 30,
-        qLoMid: 40,
-        qBottom: 25
-      },
-      stores: STORE_LIFT,
 
-      // Top-level properties for renderRow3 compatibility
-      categoryShare: CATEGORIES.slice(0, 6).map(cat => ({
-        name: cat.name,
-        value: cat.share
-      })),
-      categoryLift: [
-        { name: 'Featured', value: 20 },
-        { name: 'Farm Fresh', value: -12 },
-        { name: 'Good Food Matters', value: 25 },
-        { name: 'Custom Cuts', value: -15 },
-        { name: 'Deals For Days', value: 22 },
-        { name: 'Beef Pork Chicken', value: -8 }
-      ],
-      categoryBubble: [
-        { name: 'Featured', traffic: 1350, engagement: 72, conversion: 13 },
-        { name: 'Farm Fresh', traffic: 1050, engagement: 48, conversion: 9 },
-        { name: 'Good Food Matters', traffic: 1680, engagement: 75, conversion: 16 },
-        { name: 'Custom Cuts', traffic: 780, engagement: 40, conversion: 7 },
-        { name: 'Deals For Days', traffic: 1950, engagement: 58, conversion: 11 },
-        { name: 'Beef Pork Chicken', traffic: 1200, engagement: 65, conversion: 12 }
-      ],
+
 
       // Top-level properties for renderRow5 compatibility
       sizeMix: SIZE_CLASSES.map(size => ({
@@ -321,77 +423,160 @@
   function getDefaultData() {
     return {
       meta: { week: '2025-W36', version: 'all' },
-      ytdKpis: [
-        {
-          label: 'TRAFFIC (YTD)',
+
+      // YTD - Consolidated single source of truth for all year-to-date metrics (default/fallback data)
+      ytd: {
+        // Basic metrics (moved from ytdKpis array)
+        traffic: {
           value: 1325812,
+          label: 'Traffic',
           unit: '',
           trend: 'stable',
           change: '0%',
           tooltip: 'Traffic (YTD) measures the cumulative number of circular views across all campaigns year-to-date, providing total exposure volume.',
           whyImportant: 'Essential baseline metric for measuring overall campaign reach and brand visibility; tracks aggregate performance trends over time.'
         },
-        {
-          label: 'VISITORS (YTD)',
+        visitors: {
           value: 285551,
+          label: 'Visitors',
           unit: '',
           trend: 'stable',
           change: '0%',
           tooltip: 'Visitors (YTD) counts unique individuals who have viewed circulars year-to-date, measuring actual audience reach beyond repeat views.',
           whyImportant: 'Shows true audience penetration and market coverage; key for understanding brand awareness and customer acquisition effectiveness.'
         },
-        {
-          label: 'MARKETING HEALTH (YTD)',
+        marketingHealth: {
           value: 73,
+          label: 'Marketing Health',
           unit: '',
           trend: 'stable',
           change: '0pts',
           tooltip: 'Marketing Health (YTD) is a composite score measuring overall circular program effectiveness, combining engagement quality and audience growth.',
           whyImportant: 'Single north-star metric for marketing performance; indicates program health and optimization opportunities across all campaigns.'
+        },
+
+        // Advanced metrics (default values)
+        shopperReach: {
+          value: 125450,
+          label: 'Shopper Reach',
+          unit: 'Unique Shoppers'
+        },
+        engagementVolume: {
+          value: 2847293,
+          label: 'Engagement Volume',
+          unit: 'Total Interactions'
+        },
+        addToListTotal: {
+          value: 89340,
+          label: 'Add-to-List Total',
+          unit: 'Total ATL Actions'
+        },
+        liftFromPromotions: {
+          value: 2840000,
+          label: 'Lift From Promotions',
+          unit: 'Incremental Sales'
+        },
+        roiOnPromotions: {
+          value: 4.2,
+          label: 'ROI On Promotions',
+          unit: 'Return on Investment'
+        },
+
+        // Chart data
+        trendline: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+          values: [185000, 347000, 528000, 742000, 1024000, 1345000, 1689000, 2078000, 2460000]
         }
-      ],
-      row1: [
-        { label: 'Pulse Score', value: 73, unit: '', tooltip: 'CIV + CC×10 + ATL×50 composite score' },
-        { label: 'Engagement Rate', value: 42, unit: '%', tooltip: 'Overall promotion interaction rate' },
-        { label: 'Top Percentile', value: 0, unit: '%', tooltip: 'Highest performing promotion percentile' }
-      ],
-      row2: {
-        trend: { labels: ['W33', 'W34', 'W35', 'W36'], values: [0.62, 0.65, 0.71, 0.73] },
-        positionPerformance: { qTop: 25, qUpperMid: 30, qLowerMid: 40, qBottom: 25 },
+      },
+      // Categories - Consolidated single source of truth (default/fallback data)
+      categories: {
+        // Master category list with all metrics
+        list: [
+          { name: 'Featured', share: 20, engagement: 0.7, lift: 15, traffic: 1250, conversion: 12, performanceScore: 78, atlRate: 12.8 },
+          { name: 'Farm Fresh', share: 18, engagement: 0.65, lift: -8, traffic: 980, conversion: 8, performanceScore: 58, atlRate: 10.2 },
+          { name: 'Good Food Matters', share: 16, engagement: 0.6, lift: 22, traffic: 1580, conversion: 15, performanceScore: 85, atlRate: 15.1 },
+          { name: 'Custom Cuts', share: 14, engagement: 0.55, lift: -12, traffic: 720, conversion: 6, performanceScore: 42, atlRate: 8.9 },
+          { name: 'Deals For Days', share: 12, engagement: 0.5, lift: 18, traffic: 1890, conversion: 10, performanceScore: 71, atlRate: 11.6 },
+          { name: 'Beef Pork Chicken', share: 10, engagement: 0.45, lift: -5, traffic: 1120, conversion: 11, performanceScore: 65, atlRate: 13.2 }
+        ],
+        contributionLift: 42.8,
+        averageATLRate: 12.4,
+        trends: {
+          fourWeek: {
+            labels: ['W33', 'W34', 'W35', 'W36'],
+            series: [
+              { name: 'Featured', values: [68, 72, 75, 78] },
+              { name: 'Farm Fresh', values: [52, 54, 56, 58] },
+              { name: 'Good Food Matters', values: [80, 82, 84, 85] }
+            ]
+          }
+        }
+      },
+      // Promotions - Consolidated single source of truth for all promotion data (default/fallback)
+      promotions: {
+        list: [], // Empty list for default/fallback
+        topQuartilePercentage: 0,
+        mediaFreshnessRate: 0,
+        totalCount: 0,
+        salesLiftByPromo: [],
+        sizeImpact: []
+      },
+
+      // Digital Circular - Consolidated single source of truth for all digital circular metrics (default/fallback)
+      digitalCircular: {
+        // Core KPI metrics (Row 1)
+        pulseScore: {
+          value: 73,
+          label: 'Pulse Score',
+          unit: '',
+          tooltip: 'CIV + CC×10 + ATL×50 composite score',
+          whyImportant: 'Primary engagement health indicator combining all interaction types'
+        },
+        engagementRate: {
+          value: 42,
+          label: 'Engagement Rate',
+          unit: '%',
+          tooltip: 'Overall promotion interaction rate',
+          whyImportant: 'Shows how effectively content drives user actions'
+        },
+        audienceReach: {
+          value: 15600,
+          label: 'Audience Reach',
+          unit: '',
+          tooltip: 'Total unique visitors reached by circular',
+          whyImportant: 'Measures campaign penetration and market coverage'
+        },
+        topPercentile: {
+          value: 0,
+          label: 'TOP PERCENTILE',
+          unit: '%',
+          tooltip: 'Highest performing promotion percentile',
+          whyImportant: 'Identifies peak performance potential in current campaign'
+        },
+
+        // Trend analysis (Row 2)
+        trends: {
+          fourWeek: {
+            labels: ['W33', 'W34', 'W35', 'W36'],
+            values: [0.62, 0.65, 0.71, 0.73]
+          }
+        },
+
+        // Position performance data (Row 2)
+        positionPerformance: {
+          qTop: 25,
+          qUpperMid: 30,
+          qLowerMid: 40,
+          qBottom: 25
+        },
+
+        // Store lift data (Row 2)
         storeLift: STORE_LIFT
       },
-      row3: {
-        categoryShare: CATEGORIES.slice(0, 6),
-        categoryTop: CATEGORIES.slice(0, 6).map(cat => ({ name: cat.name, value: Math.round(cat.engagement * 100) }))
-      },
-      row4: { promotions: [] },
+
       row5: { sizeClasses: SIZE_CLASSES, sizeEffect: 1.12, expandRate: 0.28 },
       row6: { sharedCount: 310, shareOpenRate: 0.41, shareAddRate: 0.28 },
       dealTypes: DEAL_TYPES,
-      promotions: [],
-      pulseScore: 73,
-      engagementRate: 0.42,
-      audienceReach: 15600,
-      trend4w: { labels: ['W33', 'W34', 'W35', 'W36'], values: [0.62, 0.65, 0.71, 0.73] },
-      ppp: { total: 0, qTop: 25, qUpMid: 30, qLoMid: 40, qBottom: 25 },
-      stores: STORE_LIFT,
-      categoryShare: CATEGORIES.slice(0, 6).map(cat => ({ name: cat.name, value: cat.share })),
-      categoryLift: [
-        { name: 'Featured', value: 15 },
-        { name: 'Farm Fresh', value: -8 },
-        { name: 'Good Food Matters', value: 22 },
-        { name: 'Custom Cuts', value: -12 },
-        { name: 'Deals For Days', value: 18 },
-        { name: 'Beef Pork Chicken', value: -5 }
-      ],
-      categoryBubble: [
-        { name: 'Featured', traffic: 1250, engagement: 68, conversion: 12 },
-        { name: 'Farm Fresh', traffic: 980, engagement: 45, conversion: 8 },
-        { name: 'Good Food Matters', traffic: 1580, engagement: 72, conversion: 15 },
-        { name: 'Custom Cuts', traffic: 720, engagement: 38, conversion: 6 },
-        { name: 'Deals For Days', traffic: 1890, engagement: 55, conversion: 10 },
-        { name: 'Beef Pork Chicken', traffic: 1120, engagement: 62, conversion: 11 }
-      ],
       sizeMix: SIZE_CLASSES.map(size => ({ name: size.label, value: size.value })),
       bestSize: SIZE_CLASSES.slice(0, 3).map(size => ({ name: size.label, value: size.value })),
       expandRate: [{ name: 'Expanded', value: 28 }, { name: 'Not Expanded', value: 72 }],

@@ -1,0 +1,201 @@
+/* ===================================================================
+   Dashboard Core Styles - Simplified 6-KPI Layout
+   =================================================================== */
+
+/* CSS Variables - Retained from original design system */
+:root {
+  --bg: #efefef;
+  --bg-header: #fcfcfc;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --shadow: 0 2px 12px rgba(15,23,42,.06);
+  --blue: #4272D8;
+  --blue-dark: #4E5370;
+  --green: #B8D64D;
+  --red: #ef4444;
+  --yellow: #f59e0b;
+
+  /* Responsive spacing */
+  --grid-gap: 16px;
+  --gap-lg: 20px;
+  --gap-md: 12px;
+  --gap-sm: 8px;
+  --gap-xs: 4px;
+
+  /* Responsive breakpoints */
+  --breakpoint-mobile: 768px;
+  --breakpoint-tablet: 1024px;
+
+  /* Dashboard specific */
+  --header-height: 80px;
+  --kpi-tile-height: 200px;
+  --kpi-tile-padding: 20px;
+}
+
+/* Base styles */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.4;
+}
+
+h1, h2, h3, h4 {
+  margin: 0;
+  font-weight: 700;
+}
+
+h1 {
+  font-size: 18px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Header - Simplified */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--gap-lg);
+  background: var(--bg-header);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: var(--header-height);
+  box-sizing: border-box;
+}
+
+.header-left .title-container h1 {
+  margin: 0;
+}
+
+.header-center .week-context {
+  text-align: center;
+}
+
+.week-line {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-xs);
+}
+
+.week-line .status {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.week-select {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.week-select:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(66, 114, 216, 0.1);
+}
+
+.inquiry-link {
+  color: var(--blue);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 8px 16px;
+  border: 1px solid var(--blue);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.inquiry-link:hover {
+  background: var(--blue);
+  color: white;
+}
+
+/* Dashboard Container */
+.dashboard-container {
+  padding: var(--gap-lg);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Dashboard Grid - 3-column layout */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--grid-gap);
+  align-items: start;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: var(--gap-md);
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: var(--gap-md);
+  }
+
+  .page-header {
+    flex-direction: column;
+    height: auto;
+    gap: var(--gap-md);
+    text-align: center;
+  }
+
+  .header-left, .header-center, .header-right {
+    width: 100%;
+  }
+}
+
+/* Utility classes */
+.hidden {
+  display: none !important;
+}
+
+.text-green {
+  color: var(--green);
+}
+
+.text-red {
+  color: var(--red);
+}
+
+.text-yellow {
+  color: var(--yellow);
+}
+
+.text-muted {
+  color: var(--muted);
+}

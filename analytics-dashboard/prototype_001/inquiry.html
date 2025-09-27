@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics Data Grid - Modern</title>
+
+  <!-- Tailwind CSS for modern styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Base styles from main dashboard -->
+  <link rel="stylesheet" href="assets/css/styles.css">
+
+  <!-- Inter font for consistency -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- ECharts -->
+  <script src="assets/vendor/echarts.min.js"></script>
+
+  <!-- Mock Data & API Services -->
+  <script src="assets/js/data/mock-data-generator.js"></script>
+  <script src="assets/js/services/api-service.js"></script>
+  <script src="assets/js/nomodule/data.mock.simple.js"></script>
+
+  <!-- KPI Drill-down Configuration -->
+  <script src="assets/js/config/kpi-drilldown.js"></script>
+
+  <!-- Include renderer functions for header tiles -->
+  <script src="assets/js/nomodule/renderers.js"></script>
+
+  <style>
+    /* Use base styles from styles.css - no overrides needed */
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+  <div id="app" class="min-h-screen">
+    <!-- Header (using original header from index.html) -->
+  <header id="app-header" class="page-header">
+    <div class="header-left">
+        <div class="title-container">
+          <h1>Analytics Dashboard</h1>
+        </div>
+  </div>
+<div class="header-center">
+      <div id="week-context" class="week-context">
+          <div class="week-line">
+             <span class="status" id="week-status" style="color:var(--muted)">—</span>
+            <select id="week-select" class="week-select"></select>
+          </div>
+        </div>
+</div>
+    <div class="header-right">
+      <div class="filters-stack">
+        <div class="filter-row">
+          <label for="version-select">Version:</label>
+          <select id="version-select"><option value="all">All</option></select>
+        </div>
+        <div class="filter-row">
+          <label for="store-select">Store:</label>
+          <select id="store-select"><option value="all">All</option></select>
+        </div>
+        
+      </div>
+    </div>
+
+  </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+      <!-- Drill-down Context Banner -->
+      <div id="drill-down-context" class="context-banner bg-blue-50 border border-blue-200 rounded-lg p-4" style="display:none;">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+            </svg>
+            <div>
+              <span class="text-sm font-medium text-blue-900">Analyzing:</span>
+              <span class="text-sm text-blue-800 ml-1" id="context-description">—</span>
+            </div>
+          </div>
+          <button id="reset-context" class="text-sm text-blue-600 hover:text-blue-800 font-medium">
+            ← Back to Overview
+          </button>
+        </div>
+      </div>
+      <!-- Inquiry Container -->
+      <div class="card">
+        <div class="card-head">
+          <h3>Inquiry</h3>
+        </div>
+        <div class="card-body">
+          <!-- Filter Panels -->
+          <div class="flex gap-6 mb-6">
+            <!-- Analysis Approach (25%) -->
+            <div class="card analysis-approach" style="flex-grow: 1;">
+              <div class="card-head">
+                <h3>Analysis Approach</h3>
+              </div>
+              <div class="card-body">
+                <div class="grid grid-cols-1 gap-4" id="tier1-content">
+                  <!-- Tier 1 controls will be rendered here -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Content Filters (75%) -->
+            <div class="card content-filters" style="flex-grow: 3;">
+              <div class="card-head">
+                <h3>Content Filters</h3>
+              </div>
+              <div class="card-body">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="tier2-content">
+                  <!-- Tier 2 controls will be rendered here -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Apply/Reset Actions -->
+          <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
+            <button id="reset-btn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300">Reset All</button>
+            <button id="apply-btn" class="px-4 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700">Apply Filters</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Promotion Performance Chart (Hidden for MVP - Focus on Data Grid) -->
+      <div class="card chart-card" id="promotion-performance" style="display: none;">
+        <div class="card-head">
+          <h3>Promotion Performance</h3>
+          <div class="center-controls">
+            <label style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)">
+              Top
+              <select id="pp-topn" style="background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:4px 8px;font-size:12px">
+                <option value="10" selected>10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+            </label>
+          </div>
+          <div class="toggle" role="group" aria-label="Score Toggle">
+            <button class="toggle-btn is-active" data-mode="composite"><span class="swatch s-top"></span>Composite</button>
+            <button class="toggle-btn" data-mode="percentile"><span class="swatch s-upmid"></span>Percentile</button>
+          </div>
+        </div>
+        <div class="card-body bars-wrap"><div class="bars" role="list" id="pp-bars"></div></div>
+      </div>
+
+      <!-- Data Grid Section - PrimeNG TreeTable Style -->
+      <div class="p-component p-treetable" id="analytics-treetable">
+        <div class="p-treetable-header">
+          <!-- Inquiry Chips Container -->
+          <div class="inquiry-chips" id="inquiry-chips">
+            <!-- Active filter chips will be rendered here -->
+          </div>
+
+          <div class="flex justify-end items-center">
+            <div class="p-iconfield p-iconfield-left">
+              <span class="p-inputicon pi pi-search"></span>
+              <input type="text" class="p-component p-inputtext" placeholder="Global Search" id="global-search-input">
+            </div>
+            <div class="flex items-center space-x-4 ml-4">
+              <span class="text-sm text-gray-600" id="grid-count">0 items</span>
+              <button id="export-btn" class="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                Export CSV
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="p-treetable-scrollable-wrapper">
+          <div class="p-treetable-scrollable-view">
+            <div class="p-treetable-scrollable-header">
+              <div class="p-treetable-scrollable-header-box">
+                <table class="p-treetable-scrollable-header-table" style="min-width: 50rem;">
+                  <thead role="rowgroup" class="p-treetable-thead">
+                    <tr id="grid-header-row">
+                      <!-- Column headers will be rendered here -->
+                    </tr>
+                    <tr id="grid-filter-row">
+                      <!-- Column filters will be rendered here -->
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+            </div>
+            <div class="p-treetable-scrollable-body">
+              <table role="table" style="min-width: 50rem;">
+                <tbody role="rowgroup" class="p-treetable-tbody" id="grid-body">
+                  <!-- Table rows will be rendered here -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- App code for header tiles rendering (same as index.html) -->
+  <script src="assets/js/nomodule/charts.js"></script>
+  <script src="assets/js/nomodule/main.nomodule.js"></script>
+
+  <!-- KPI Drill-down Configuration -->
+  <script src="assets/js/config/kpi-drilldown.js"></script>
+
+  <!-- Inquiry State Management -->
+  <script src="assets/js/services/inquiry-state.js"></script>
+
+  <script src="assets/js/modern/data-grid-api.js"></script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+Content Export Field,Data Type,Sample Values,Dashboard Usage,Priority,Implementation Notes
+campaign_id,String,Empty in sample,Global campaign context filter,P0,Needs population for campaign grouping
+parent_campaign,String,Empty in sample,Campaign hierarchy navigation,P2,Campaign parent-child relationships
+id,Integer,"1, 2, 3, ...",Primary key for promotions in data grid,P0,Direct mapping to PromotionID
+parent_id,Integer,"1, 1, 1, ...",Hierarchical position calculation,P1,Use for position quartile generation
+Image,String,"powerade-hpg-powerade-product-card.png, aquafina.png",Thumbnail images in data grid,P1,Asset path resolution needed
+Title,String,"Powerade, Aquafina Water, Coca-Cola Products",Promotion name in data grid and drill-downs,P0,Primary display name
+Description,String,"64 oz. | Offer valid from Aug. 27- Sep. 9, 2023.",Tooltip and detail views,P1,Rich context for user experience
+Date Text,String,date,Formatted date display,P2,User-friendly date formatting
+Quantity,Integer,"3, 2, 1",Deal quantity requirements,P1,Purchase quantity context
+price,Decimal/String,"8, 5.99, 1 FREE, 11.99",Price column in data grid,P0,Multiple format parsing needed
+Units,String,"Ea, lb, Pk",Price unit context,P1,Price formatting enhancement
+deal_type,String,"numfor, fixed, bogo, save_x",Deal Type filter multi-select,P0,Direct mapping to filter options
+upc,String,Empty in sample,Product identifier when available,P2,UPC linking to product database
+Category,String,"Drinks, Meat, Packaged Meats, Key",Category filter multi-select,P0,Direct mapping to category taxonomy
+length_not_required,Integer,"3, 2, 1",Size class calculation (width),P1,Small(1) Medium(2) Large(3+) classification
+height_not_required,Integer,"2, 2, 1",Size class calculation (height),P1,Combined with length for size classification
+Size,String,Empty in sample,Size display override,P2,Override computed size classification
+media_size_not_required,String,Empty in sample,Media asset sizing,P2,Image optimization hints
+card_style_not_required,String,"seg-paint, default, alt, emphasis",Visual styling classification,P2,Card appearance categorization
+icons,String,Empty in sample,Icon display enhancements,P2,Visual enhancement features
+headline,String,Empty in sample,Headline text for emphasis,P2,Promotional headline display
+Link,String,Browse,External link actions,P2,CTA link functionality
+Page,String,Empty in sample,Page routing context,P2,Navigation context
+coupon_amount_off,String,Empty in sample,Coupon value display,P2,Coupon-specific promotions
+coupon_quantity,String,Empty in sample,Coupon quantity limits,P2,Coupon constraint display
+coupon_limit,String,Empty in sample,Coupon usage limits,P2,Coupon constraint display
+Title (ES),String,Empty in sample,Spanish title translation,P2,Internationalization support
+Description (ES),String,Empty in sample,Spanish description translation,P2,Internationalization support
+Date Text (ES),String,Empty in sample,Spanish date formatting,P2,Internationalization support
+vendor_coupon,String,Empty in sample,Vendor coupon classification,P2,Coupon source tracking
+start_date,DateTime,2024-03-17 00:00:00,Week selector date ranges,P0,Date range filtering
+end_date,DateTime,2027-03-23 23:59:00,Week selector date ranges,P0,Date range filtering and promotion validity

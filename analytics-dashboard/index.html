@@ -5,91 +5,143 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Weekly Circular — Analytics Dashboard</title>
 
-  <!-- Base styles -->
-  <link rel="stylesheet" href="assets/css/styles.css">
-
-  <!-- Inter font (Master baseline) -->
+  <!-- Inter font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Dashboard styles -->
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/components.css">
 </head>
 <body class="theme-light">
 
-  <!-- Header (static shell; content bound via JS) -->
+  <!-- Simplified Header -->
   <header id="app-header" class="page-header">
     <div class="header-left">
-        <div class="title-container">
-          <h1>Analytics Dashboard</h1>
-        </div>
-  </div>
-<div class="header-center">
-      <div id="week-context" class="week-context">
-          <div class="week-line">
-             <span class="status" id="week-status" style="color:var(--muted)">—</span>
-            <select id="week-select" class="week-select"></select>
-          </div>
-        </div>
-</div>
-    <div class="header-right">
-      <div class="filters-stack">
-        <div class="filter-row">
-          <label for="version-select">Version:</label>
-          <select id="version-select"><option value="all">All</option></select>
-        </div>
-        <div class="filter-row">
-          <label for="store-select">Store:</label>
-          <select id="store-select"><option value="all">All</option></select>
-        </div>
-        
+      <div class="title-container">
+        <h1>Analytics Dashboard</h1>
       </div>
     </div>
-
+    <div class="header-center">
+      <div id="week-context" class="week-context">
+        <div class="week-line">
+          <span class="status" id="week-status">Week 36, 2024</span>
+          <select id="week-select" class="week-select">
+            <option value="w36">Week 36</option>
+            <option value="w35">Week 35</option>
+            <option value="w34">Week 34</option>
+            <option value="w33">Week 33</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="header-right">
+      <a href="inquiry.html" class="inquiry-link">Detailed Inquiry →</a>
+    </div>
   </header>
 
-  <!-- SECTION: Year-to-Date Performance (NEW) -->
-  <section id="sec-ytd" class="container section-ytd" aria-label="Year-to-Date Performance">
-    <div id="row-ytd" class="row row-ytd" aria-label="YTD Performance KPIs"></div>
-  </section>
+  <!-- Main Dashboard Grid -->
+  <main class="dashboard-container">
+    <div class="dashboard-grid">
 
-  <!-- SECTION: Circular (Row 1 + Row 2) -->
-  <section id="sec-circular" class="container section-circular" aria-label="Circular">
-    <div id="row-1" class="row row-1" aria-label="Current Period KPIs"></div>
-    <div id="row-2" class="row row-2" aria-label="Trends • Position • Store Lift"></div>
-  </section>
+      <!-- KPI 1: Week Performance Status -->
+      <div class="kpi-tile" id="week-performance-tile">
+        <div class="kpi-header">
+          <h3>Week Performance Status</h3>
+          <button class="info-btn" data-tooltip="week-performance">ⓘ</button>
+        </div>
+        <div class="kpi-content">
+          <div class="large-number" id="week-performance-value">—</div>
+          <div class="change-indicator" id="week-performance-change">—</div>
+        </div>
+      </div>
 
-  <!-- SECTION: Category (Row Category Number + Row Category Chart) -->
-  <section id="sec-category" class="container section-category" aria-label="Category">
-    <div class="section-title">Category</div>
-    <div class="section-category-row-container">
-      <div id="row-category-number" class="row row-category-number" aria-label="Category Analytics KPIs"></div>
-      <div id="row-category-chart" class="row row-category-chart" aria-label="Category Performance KPIs"></div>
+      <!-- KPI 2: Top Performing Categories -->
+      <div class="kpi-tile" id="top-categories-tile">
+        <div class="kpi-header">
+          <h3>Top Performing Categories</h3>
+          <button class="info-btn" data-tooltip="top-categories">ⓘ</button>
+        </div>
+        <div class="kpi-content">
+          <div class="category-list" id="top-categories-list">—</div>
+        </div>
+      </div>
+
+      <!-- KPI 3: Underperforming Alerts -->
+      <div class="kpi-tile" id="alerts-tile">
+        <div class="kpi-header">
+          <h3>Underperforming Alerts</h3>
+          <button class="info-btn" data-tooltip="alerts">ⓘ</button>
+        </div>
+        <div class="kpi-content">
+          <div class="alert-badge" id="alert-count">—</div>
+          <div class="alert-items" id="alert-items">—</div>
+        </div>
+      </div>
+
+      <!-- KPI 4: Current Week Trend -->
+      <div class="kpi-tile" id="trend-tile">
+        <div class="kpi-header">
+          <h3>Current Week Trend</h3>
+          <button class="info-btn" data-tooltip="trend">ⓘ</button>
+        </div>
+        <div class="kpi-content">
+          <div class="chart-container" id="trend-chart"></div>
+        </div>
+      </div>
+
+      <!-- KPI 5: Quick Win Opportunity -->
+      <div class="kpi-tile" id="quick-wins-tile">
+        <div class="kpi-header">
+          <h3>Quick Win Opportunity</h3>
+          <button class="info-btn" data-tooltip="quick-wins">ⓘ</button>
+        </div>
+        <div class="kpi-content">
+          <div class="quick-win-content" id="quick-win-content">—</div>
+        </div>
+      </div>
+
+      <!-- KPI 6: Share Activity Summary -->
+      <div class="kpi-tile" id="share-activity-tile">
+        <div class="kpi-header">
+          <h3>Share Activity Summary</h3>
+          <button class="info-btn" data-tooltip="share-activity">ⓘ</button>
+        </div>
+        <div class="kpi-content">
+          <div class="large-number" id="share-activity-value">—</div>
+          <div class="change-indicator" id="share-activity-change">—</div>
+        </div>
+      </div>
+
     </div>
-  </section>
+  </main>
 
-  <!-- SECTION: Promotions (Row 4 + Individual + Size & Deal + Shared) -->
-  <section id="sec-promotions" class="container section-promotions" aria-label="Promotions">
-    <div id="row-4" class="row row-4" aria-label="Promotion Performance"></div>
-    <div id="promotion-container-individual" class="row promotion-container-individual" aria-label="Individual"></div>
-    <div id="promotion-container-size-deals" class="row promotion-container-size-deals" aria-label="Size & Deal"></div>
-    <div id="promotion-container-shared" class="row promotion-container-shared" aria-label="Shared"></div>
-  </section>
+  <!-- Tooltip Overlay -->
+  <div id="tooltip-overlay" class="tooltip-overlay hidden">
+    <div class="tooltip-content">
+      <button class="tooltip-close">&times;</button>
+      <h4 id="tooltip-title"></h4>
+      <p id="tooltip-description"></p>
+      <div class="tooltip-why">
+        <strong>Why it matters:</strong>
+        <p id="tooltip-importance"></p>
+      </div>
+    </div>
+  </div>
 
-  <!-- Vendor first -->
-  <script src="assets/vendor/echarts.min.js"></script>
+  <!-- Scripts -->
+  <script src="vendor/echarts.min.js"></script>
+  <script src="js/data/dashboard-data.js"></script>
+  <script src="js/utils/data-formatter.js"></script>
+  <script src="js/utils/tooltip-system.js"></script>
+  <script src="js/components/week-performance.js"></script>
+  <script src="js/components/top-categories.js"></script>
+  <script src="js/components/alerts.js"></script>
+  <script src="js/components/trend-chart.js"></script>
+  <script src="js/components/quick-wins.js"></script>
+  <script src="js/components/share-activity.js"></script>
+  <script src="js/dashboard.js"></script>
 
-  <!-- Mock Data & API Services -->
-  <script src="assets/js/data/mock-data-generator.js"></script>
-  <script src="assets/js/services/api-service.js"></script>
-
-  <!-- KPI Drill-down Configuration -->
-  <script src="assets/js/config/kpi-drilldown.js"></script>
-
-  <!-- App code (order matters) -->
-  <script src="assets/js/nomodule/charts.js"></script>
-  <script src="assets/js/nomodule/renderers.js"></script>
-  <script src="assets/js/nomodule/main.nomodule.js"></script>
-
-  <!-- Data last (must define: DATA_META, DATA_WEEKS, DATA, getScopedData(), getWeekData()) -->
-  <script src="assets/js/nomodule/data.mock.simple.js"></script>
 </body>
 </html>

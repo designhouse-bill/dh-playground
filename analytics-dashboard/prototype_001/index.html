@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Weekly Circular — Analytics Dashboard</title>
+
+  <!-- Base styles -->
+  <link rel="stylesheet" href="assets/css/styles.css">
+
+  <!-- Inter font (Master baseline) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="theme-light">
+
+  <!-- Header (static shell; content bound via JS) -->
+  <header id="app-header" class="page-header">
+    <div class="header-left">
+        <div class="title-container">
+          <h1>Analytics Dashboard</h1>
+        </div>
+  </div>
+<div class="header-center">
+      <div id="week-context" class="week-context">
+          <div class="week-line">
+             <span class="status" id="week-status" style="color:var(--muted)">—</span>
+            <select id="week-select" class="week-select"></select>
+          </div>
+        </div>
+</div>
+    <div class="header-right">
+      <div class="filters-stack">
+        <div class="filter-row">
+          <label for="version-select">Version:</label>
+          <select id="version-select"><option value="all">All</option></select>
+        </div>
+        <div class="filter-row">
+          <label for="store-select">Store:</label>
+          <select id="store-select"><option value="all">All</option></select>
+        </div>
+        
+      </div>
+    </div>
+
+  </header>
+
+  <!-- SECTION: Year-to-Date Performance (NEW) -->
+  <section id="sec-ytd" class="container section-ytd" aria-label="Year-to-Date Performance">
+    <div id="row-ytd" class="row row-ytd" aria-label="YTD Performance KPIs"></div>
+  </section>
+
+  <!-- SECTION: Circular (Row 1 + Row 2) -->
+  <section id="sec-circular" class="container section-circular" aria-label="Circular">
+    <div id="row-1" class="row row-1" aria-label="Current Period KPIs"></div>
+    <div id="row-2" class="row row-2" aria-label="Trends • Position • Store Lift"></div>
+  </section>
+
+  <!-- SECTION: Category (Row Category Number + Row Category Chart) -->
+  <section id="sec-category" class="container section-category" aria-label="Category">
+    <div class="section-title">Category</div>
+    <div class="section-category-row-container">
+      <div id="row-category-number" class="row row-category-number" aria-label="Category Analytics KPIs"></div>
+      <div id="row-category-chart" class="row row-category-chart" aria-label="Category Performance KPIs"></div>
+    </div>
+  </section>
+
+  <!-- SECTION: Promotions (Row 4 + Individual + Size & Deal + Shared) -->
+  <section id="sec-promotions" class="container section-promotions" aria-label="Promotions">
+    <div id="row-4" class="row row-4" aria-label="Promotion Performance"></div>
+    <div id="promotion-container-individual" class="row promotion-container-individual" aria-label="Individual"></div>
+    <div id="promotion-container-size-deals" class="row promotion-container-size-deals" aria-label="Size & Deal"></div>
+    <div id="promotion-container-shared" class="row promotion-container-shared" aria-label="Shared"></div>
+  </section>
+
+  <!-- Vendor first -->
+  <script src="assets/vendor/echarts.min.js"></script>
+
+  <!-- Mock Data & API Services -->
+  <script src="assets/js/data/mock-data-generator.js"></script>
+  <script src="assets/js/services/api-service.js"></script>
+
+  <!-- KPI Drill-down Configuration -->
+  <script src="assets/js/config/kpi-drilldown.js"></script>
+
+  <!-- App code (order matters) -->
+  <script src="assets/js/nomodule/charts.js"></script>
+  <script src="assets/js/nomodule/renderers.js"></script>
+  <script src="assets/js/nomodule/main.nomodule.js"></script>
+
+  <!-- Data last (must define: DATA_META, DATA_WEEKS, DATA, getScopedData(), getWeekData()) -->
+  <script src="assets/js/nomodule/data.mock.simple.js"></script>
+</body>
+</html>

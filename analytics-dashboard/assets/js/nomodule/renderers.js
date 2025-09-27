@@ -495,7 +495,7 @@ if (ws) {
       <div class="promotion-container-main">
         <div class="grid cols-2 promotions">
           <!-- Left: Promotion Performance (unchanged) -->
-          <div class="card chart-card" id="promotion-performance">
+          <div class="card chart-card promotion-performance" id="promotion-performance">
             <div class="card-head" style="flex-direction: column; align-items: stretch;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                 <div class="card-head-left">

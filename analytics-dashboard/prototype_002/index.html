@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Weekly Circular — Analytics Dashboard</title>
+
+  <!-- Inter font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Dashboard styles -->
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body class="theme-light">
+
+  <!-- Simplified Header -->
+  <header id="app-header" class="page-header">
+    <div class="header-left">
+      <div class="title-container">
+        <h1>Analytics Dashboard</h1>
+      </div>
+    </div>
+    <div class="header-center">
+      <div id="week-context" class="week-context">
+        <div class="week-line">
+          <span class="status" id="week-status">Week 36, 2024</span>
+          <select id="week-select" class="week-select">
+            <option value="w36">Week 36</option>
+            <option value="w35">Week 35</option>
+            <option value="w34">Week 34</option>
+            <option value="w33">Week 33</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="header-right">
+      <a href="inquiry.html" class="inquiry-link">Detailed Inquiry →</a>
+    </div>
+  </header>
+
+  <!-- Main Dashboard Grid -->
+  <main class="dashboard-container">
+    <div class="dashboard-grid">
+
+      <!-- KPI 1: Week Performance Status -->
+      <div class="kpi-tile" id="week-performance-tile">
+        <div class="kpi-header">
+          <h3>Week Performance Status</h3>
+          <button class="info-btn" data-tooltip="week-performance">ⓘ</button>
+        </div>
+        <div class="kpi-content">
+          <div class="large-number" id="week-performance-value">—</div>
+          <div class="change-indicator" id="week-performance-change">—</div>
+        </div>
+      </div>
+
+      <!-- KPI 2: Top Performing Categories -->
+      <div class="kpi-tile" id="top-categories-tile">
+        <div class="kpi-header">
+          <h3>Top Performing Categories</h3>
+          <button class="info-btn" data-tooltip="top-categories">ⓘ</button>
+        </div>
+        <div class="kpi-content">
+          <div class="category-list" id="top-categories-list">—</div>
+        </div>
+      </div>
+
+      <!-- KPI 3: Underperforming Alerts -->
+      <div class="kpi-tile" id="alerts-tile">
+        <div class="kpi-header">
+          <h3>Underperforming Alerts</h3>
+          <button class="info-btn" data-tooltip="alerts">ⓘ</button>
+        </div>
+        <div class="kpi-content">
+          <div class="alert-badge" id="alert-count">—</div>
+          <div class="alert-items" id="alert-items">—</div>
+        </div>
+      </div>
+
+      <!-- KPI 4: Current Week Trend -->
+      <div class="kpi-tile" id="trend-tile">
+        <div class="kpi-header">
+          <h3>Current Week Trend</h3>
+          <button class="info-btn" data-tooltip="trend">ⓘ</button>
+        </div>
+        <div class="kpi-content">
+          <div class="chart-container" id="trend-chart"></div>
+        </div>
+      </div>
+
+      <!-- KPI 5: Quick Win Opportunity -->
+      <div class="kpi-tile" id="quick-wins-tile">
+        <div class="kpi-header">
+          <h3>Quick Win Opportunity</h3>
+          <button class="info-btn" data-tooltip="quick-wins">ⓘ</button>
+        </div>
+        <div class="kpi-content">
+          <div class="quick-win-content" id="quick-win-content">—</div>
+        </div>
+      </div>
+
+      <!-- KPI 6: Share Activity Summary -->
+      <div class="kpi-tile" id="share-activity-tile">
+        <div class="kpi-header">
+          <h3>Share Activity Summary</h3>
+          <button class="info-btn" data-tooltip="share-activity">ⓘ</button>
+        </div>
+        <div class="kpi-content">
+          <div class="large-number" id="share-activity-value">—</div>
+          <div class="change-indicator" id="share-activity-change">—</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Tooltip Overlay -->
+  <div id="tooltip-overlay" class="tooltip-overlay hidden">
+    <div class="tooltip-content">
+      <button class="tooltip-close">&times;</button>
+      <h4 id="tooltip-title"></h4>
+      <p id="tooltip-description"></p>
+      <div class="tooltip-why">
+        <strong>Why it matters:</strong>
+        <p id="tooltip-importance"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="vendor/echarts.min.js"></script>
+  <script src="js/data/dashboard-data.js"></script>
+  <script src="js/utils/data-formatter.js"></script>
+  <script src="js/utils/tooltip-system.js"></script>
+  <script src="js/components/week-performance.js"></script>
+  <script src="js/components/top-categories.js"></script>
+  <script src="js/components/alerts.js"></script>
+  <script src="js/components/trend-chart.js"></script>
+  <script src="js/components/quick-wins.js"></script>
+  <script src="js/components/share-activity.js"></script>
+  <script src="js/dashboard.js"></script>
+
+</body>
+</html>

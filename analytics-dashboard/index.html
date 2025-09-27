@@ -1,147 +1,159 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Weekly Circular — Analytics Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Dashboard - Weekly Circular Performance</title>
 
-  <!-- Inter font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
 
-  <!-- Dashboard styles -->
-  <link rel="stylesheet" href="css/dashboard.css">
-  <link rel="stylesheet" href="css/components.css">
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
+
+    <!-- Preload critical resources -->
+    <link rel="preload" href="js/mock-data/sedanos-data.js" as="script">
+    <link rel="preload" href="js/app.js" as="script">
 </head>
-<body class="theme-light">
+<body>
+    <!-- Context Bar (Fixed Header) -->
+    <header class="context-bar">
+        <div class="header-top">
+            <div class="viewing-context">
+                <label for="viewingScope">Viewing:</label>
+                <select id="viewingScope">
+                    <option value="all_stores">All Stores</option>
+                    <option value="northeast">Northeast Region</option>
+                    <option value="southeast">Southeast Region</option>
+                    <option value="store_123">Store #123 - Miami Lakes</option>
+                    <option value="store_456">Store #456 - Kendall</option>
+                    <option value="store_789">Store #789 - Hialeah</option>
+                </select>
+            </div>
+            <div class="time-context">
+                <label for="timePeriod">Period:</label>
+                <select id="timePeriod">
+                    <option value="w36">Week 36: Sep 18-24, 2025 (Day 5 of 7)</option>
+                    <option value="w35">Week 35: Sep 11-17, 2025</option>
+                    <option value="w34">Week 34: Sep 4-10, 2025</option>
+                    <option value="w33">Week 33: Aug 28-Sep 3, 2025</option>
+                    <option value="last_month">Last Month</option>
+                    <option value="ytd">Year to Date</option>
+                </select>
+            </div>
+        </div>
 
-  <!-- Simplified Header -->
-  <header id="app-header" class="page-header">
-    <div class="header-left">
-      <div class="title-container">
-        <h1>Analytics Dashboard</h1>
-      </div>
+        <!-- Main Navigation -->
+        <nav class="main-nav">
+            <ul class="nav-list">
+                <li><a href="index.html" class="nav-item active">Overview</a></li>
+                <li><a href="explore.html" class="nav-item">Explore</a></li>
+                <li><a href="analyze.html" class="nav-item">Analyze</a></li>
+                <li><a href="reports.html" class="nav-item">Reports</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content Wrapper (below fixed header) -->
+    <div class="main-content">
+        <!-- YTD Performance Strip -->
+        <div class="ytd-strip">
+            <!-- Content will be populated by JavaScript -->
+        </div>
+
+        <!-- Main Content Container -->
+        <div class="container">
+            <!-- Dashboard Grid will be populated by JavaScript -->
+            <!-- Additional panels will be added here -->
+        </div>
     </div>
-    <div class="header-center">
-      <div id="week-context" class="week-context">
-        <div class="week-line">
-          <span class="status" id="week-status">Week 36, 2024</span>
-          <select id="week-select" class="week-select">
-            <option value="w36">Week 36</option>
-            <option value="w35">Week 35</option>
-            <option value="w34">Week 34</option>
-            <option value="w33">Week 33</option>
-          </select>
-        </div>
-      </div>
-    </div>
-    <div class="header-right">
-      <a href="inquiry.html" class="inquiry-link">Detailed Inquiry →</a>
-    </div>
-  </header>
 
-  <!-- Main Dashboard Grid -->
-  <main class="dashboard-container">
-    <div class="dashboard-grid">
+    <!-- Scripts -->
+    <script src="js/mock-data/sedanos-data.js"></script>
+    <script src="js/app.js"></script>
 
-      <!-- KPI 1: Week Performance Status -->
-      <div class="kpi-tile" id="week-performance-tile">
-        <div class="kpi-header">
-          <h3>Week Performance Status</h3>
-          <button class="info-btn" data-tooltip="week-performance">ⓘ</button>
-        </div>
-        <div class="kpi-content">
-          <div class="large-number" id="week-performance-value">—</div>
-          <div class="change-indicator" id="week-performance-change">—</div>
-        </div>
-      </div>
+    <!-- Schema.org structured data for SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Analytics Dashboard",
+        "description": "Weekly circular performance tracking for grocery retail digital promotions",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        }
+    }
+    </script>
 
-      <!-- KPI 2: Top Performing Categories -->
-      <div class="kpi-tile" id="top-categories-tile">
-        <div class="kpi-header">
-          <h3>Top Performing Categories</h3>
-          <button class="info-btn" data-tooltip="top-categories">ⓘ</button>
-        </div>
-        <div class="kpi-content">
-          <div class="category-list" id="top-categories-list">—</div>
-        </div>
-      </div>
+    <!-- Performance monitoring -->
+    <script>
+        // Basic performance monitoring
+        window.addEventListener('load', function() {
+            if ('performance' in window) {
+                const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+                console.log('🕒 Page load time:', loadTime + 'ms');
 
-      <!-- KPI 3: Underperforming Alerts -->
-      <div class="kpi-tile" id="alerts-tile">
-        <div class="kpi-header">
-          <h3>Underperforming Alerts</h3>
-          <button class="info-btn" data-tooltip="alerts">ⓘ</button>
-        </div>
-        <div class="kpi-content">
-          <div class="alert-badge" id="alert-count">—</div>
-          <div class="alert-items" id="alert-items">—</div>
-        </div>
-      </div>
+                // Track Core Web Vitals
+                if ('PerformanceObserver' in window) {
+                    // Largest Contentful Paint
+                    new PerformanceObserver((entryList) => {
+                        const entries = entryList.getEntries();
+                        const lastEntry = entries[entries.length - 1];
+                        console.log('🎨 LCP:', lastEntry.startTime + 'ms');
+                    }).observe({entryTypes: ['largest-contentful-paint']});
 
-      <!-- KPI 4: Current Week Trend -->
-      <div class="kpi-tile" id="trend-tile">
-        <div class="kpi-header">
-          <h3>Current Week Trend</h3>
-          <button class="info-btn" data-tooltip="trend">ⓘ</button>
-        </div>
-        <div class="kpi-content">
-          <div class="chart-container" id="trend-chart"></div>
-        </div>
-      </div>
+                    // First Input Delay
+                    new PerformanceObserver((entryList) => {
+                        const entries = entryList.getEntries();
+                        entries.forEach(entry => {
+                            console.log('⚡ FID:', entry.processingStart - entry.startTime + 'ms');
+                        });
+                    }).observe({entryTypes: ['first-input']});
 
-      <!-- KPI 5: Quick Win Opportunity -->
-      <div class="kpi-tile" id="quick-wins-tile">
-        <div class="kpi-header">
-          <h3>Quick Win Opportunity</h3>
-          <button class="info-btn" data-tooltip="quick-wins">ⓘ</button>
-        </div>
-        <div class="kpi-content">
-          <div class="quick-win-content" id="quick-win-content">—</div>
-        </div>
-      </div>
+                    // Cumulative Layout Shift
+                    new PerformanceObserver((entryList) => {
+                        let clsValue = 0;
+                        const entries = entryList.getEntries();
+                        entries.forEach(entry => {
+                            if (!entry.hadRecentInput) {
+                                clsValue += entry.value;
+                            }
+                        });
+                        console.log('📐 CLS:', clsValue);
+                    }).observe({entryTypes: ['layout-shift']});
+                }
+            }
+        });
 
-      <!-- KPI 6: Share Activity Summary -->
-      <div class="kpi-tile" id="share-activity-tile">
-        <div class="kpi-header">
-          <h3>Share Activity Summary</h3>
-          <button class="info-btn" data-tooltip="share-activity">ⓘ</button>
-        </div>
-        <div class="kpi-content">
-          <div class="large-number" id="share-activity-value">—</div>
-          <div class="change-indicator" id="share-activity-change">—</div>
-        </div>
-      </div>
+        // Error tracking
+        window.addEventListener('error', function(e) {
+            console.error('❌ JavaScript Error:', e.error);
+        });
 
-    </div>
-  </main>
+        window.addEventListener('unhandledrejection', function(e) {
+            console.error('❌ Unhandled Promise Rejection:', e.reason);
+        });
+    </script>
 
-  <!-- Tooltip Overlay -->
-  <div id="tooltip-overlay" class="tooltip-overlay hidden">
-    <div class="tooltip-content">
-      <button class="tooltip-close">&times;</button>
-      <h4 id="tooltip-title"></h4>
-      <p id="tooltip-description"></p>
-      <div class="tooltip-why">
-        <strong>Why it matters:</strong>
-        <p id="tooltip-importance"></p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Scripts -->
-  <script src="vendor/echarts.min.js"></script>
-  <script src="js/data/dashboard-data.js"></script>
-  <script src="js/utils/data-formatter.js"></script>
-  <script src="js/utils/tooltip-system.js"></script>
-  <script src="js/components/week-performance.js"></script>
-  <script src="js/components/top-categories.js"></script>
-  <script src="js/components/alerts.js"></script>
-  <script src="js/components/trend-chart.js"></script>
-  <script src="js/components/quick-wins.js"></script>
-  <script src="js/components/share-activity.js"></script>
-  <script src="js/dashboard.js"></script>
-
+    <!-- Service Worker registration for offline functionality -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                        console.log('✅ SW registered with scope:', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('❌ SW registration failed:', error);
+                    });
+            });
+        }
+    </script>
 </body>
 </html>

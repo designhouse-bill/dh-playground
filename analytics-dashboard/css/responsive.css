@@ -1,0 +1,558 @@
+/**
+ * Responsive CSS - Mobile Breakpoints
+ * Mobile-first responsive design for all screen sizes
+ */
+
+/* ============================================================================
+   MOBILE FIRST BASE STYLES (Default: 320px+)
+   ============================================================================ */
+
+/* Mobile grid defaults */
+.dashboard-grid {
+  display: grid;
+  gap: var(--section-gap);
+  padding: var(--container-padding);
+  grid-template-columns: 1fr;
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+}
+
+/* Mobile context bar */
+.context-bar {
+  height: auto;
+}
+
+.header-top {
+  flex-direction: column;
+  gap: var(--gap-md);
+  padding: var(--gap-sm) var(--container-padding);
+}
+
+.viewing-context,
+.time-context {
+  width: 100%;
+  justify-content: center;
+}
+
+.viewing-context select,
+.time-context select {
+  min-width: auto;
+  width: 100%;
+  max-width: 280px;
+}
+
+/* Mobile YTD strip */
+.ytd-strip {
+  flex-direction: column;
+  gap: var(--gap-md);
+}
+
+.ytd-metric {
+  width: 100%;
+}
+
+/* Mobile navigation */
+.nav-list {
+  flex-direction: column;
+  gap: var(--gap-sm);
+}
+
+.nav-item {
+  text-align: center;
+  width: 100%;
+}
+
+/* Mobile KPI tiles */
+.kpi-tile {
+  min-height: auto;
+  padding: var(--card-padding);
+}
+
+.kpi-tile .kpi-content {
+  min-height: 80px;
+}
+
+.big-number {
+  font-size: 2rem;
+}
+
+.medium-number {
+  font-size: 1.5rem;
+}
+
+/* Mobile promotions panel */
+.promotions-panel {
+  grid-template-columns: 1fr;
+  gap: var(--gap-md);
+}
+
+/* Mobile category table */
+.category-table {
+  font-size: 0.75rem;
+}
+
+.category-table th,
+.category-table td {
+  padding: var(--gap-sm);
+}
+
+/* Mobile heat map */
+.heat-map {
+  max-width: 180px;
+  gap: var(--gap-xs);
+}
+
+.heat-cell {
+  font-size: 0.625rem;
+}
+
+/* ============================================================================
+   SMALL MOBILE (480px+)
+   ============================================================================ */
+
+@media (min-width: 480px) {
+  .dashboard-grid {
+    padding: var(--space-md);
+  }
+
+  .header-top {
+    flex-direction: row;
+    padding: var(--space-md) var(--space-md);
+  }
+
+  .ytd-strip {
+    flex-direction: row;
+  }
+
+  .ytd-metric {
+    width: auto;
+  }
+
+  .nav-list {
+    flex-direction: row;
+    gap: var(--space-md);
+  }
+
+  .nav-item {
+    width: auto;
+  }
+
+  .big-number {
+    font-size: 2.5rem;
+  }
+
+  .heat-map {
+    max-width: 210px;
+  }
+}
+
+/* ============================================================================
+   TABLET PORTRAIT (768px+)
+   ============================================================================ */
+
+@media (min-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--gap-lg);
+    padding: var(--container-padding);
+  }
+
+  .kpi-tile {
+    padding: var(--card-padding);
+  }
+
+  .kpi-tile .kpi-content {
+    min-height: 80px;
+  }
+
+  .big-number {
+    font-size: 3rem;
+  }
+
+  .medium-number {
+    font-size: 2rem;
+  }
+
+  .performance-panel,
+  .category-panel {
+    padding: var(--space-xl);
+  }
+
+  .promotions-panel {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .category-table {
+    font-size: 0.875rem;
+  }
+
+  .category-table th,
+  .category-table td {
+    padding: var(--gap-md);
+  }
+
+  .heat-map {
+    max-width: 240px;
+    gap: var(--gap-sm);
+  }
+
+  .heat-cell {
+    font-size: 0.75rem;
+  }
+
+  /* Tablet-specific tooltip positioning */
+  .tooltip-overlay {
+    max-width: 400px;
+  }
+}
+
+/* ============================================================================
+   TABLET LANDSCAPE (1024px+)
+   ============================================================================ */
+
+@media (min-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--gap-lg);
+    padding: var(--container-padding);
+  }
+
+  .container {
+    padding: 0 var(--gap-xl);
+  }
+
+  .ytd-strip {
+    justify-content: space-around;
+  }
+
+  .ytd-metric .value {
+    font-size: 2.5rem;
+  }
+
+  .kpi-tile .kpi-content {
+    min-height: 90px;
+  }
+
+  /* Three-column layout for certain components */
+  .grid-3-desktop {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Larger tooltips for desktop */
+  .tooltip-overlay {
+    max-width: 480px;
+  }
+}
+
+/* ============================================================================
+   DESKTOP (1200px+)
+   ============================================================================ */
+
+@media (min-width: 1200px) {
+  .dashboard-grid {
+    max-width: var(--container-max-width);
+  }
+
+  .container {
+    max-width: var(--container-max-width);
+  }
+
+  /* Four-column layout option */
+  .grid-4-desktop {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  /* Larger performance panels */
+  .performance-panel {
+    padding: var(--space-2xl);
+  }
+
+  .score-display .big-number {
+    font-size: 4rem;
+  }
+
+  .lifecycle-pattern .pattern-bars {
+    height: 100px;
+  }
+
+  /* Enhanced promotions panel */
+  .promotions-panel {
+    gap: var(--gap-xl);
+  }
+
+  .promotion-item {
+    padding: var(--gap-md);
+  }
+
+  .promotion-name {
+    font-size: 1rem;
+  }
+
+  .promotion-score {
+    font-size: 1.25rem;
+  }
+}
+
+/* ============================================================================
+   LARGE DESKTOP (1440px+)
+   ============================================================================ */
+
+@media (min-width: 1440px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--gap-lg);
+  }
+
+  /* Specialized large desktop layouts */
+  .dashboard-grid.six-column {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .dashboard-grid.asymmetric {
+    grid-template-columns: 3fr 2fr 2fr;
+  }
+
+  /* Enhanced spacing for large screens */
+  .container {
+    padding: 0 var(--gap-xl);
+  }
+
+  .ytd-strip {
+    padding: var(--gap-xl);
+  }
+
+  .ytd-metric .value {
+    font-size: 3rem;
+  }
+
+  /* Larger KPI tiles */
+  .kpi-tile {
+    padding: var(--card-padding);
+  }
+
+  .kpi-tile .kpi-content {
+    min-height: 100px;
+  }
+}
+
+/* ============================================================================
+   ULTRA-WIDE (1920px+)
+   ============================================================================ */
+
+@media (min-width: 1920px) {
+  .dashboard-grid {
+    max-width: 1800px;
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .container {
+    max-width: 1800px;
+  }
+
+  /* Ultra-wide specific layouts */
+  .performance-panel {
+    padding: var(--space-2xl) var(--space-2xl) var(--space-2xl) var(--space-2xl);
+  }
+
+  .score-display .big-number {
+    font-size: 5rem;
+  }
+}
+
+/* ============================================================================
+   LANDSCAPE ORIENTATION ADJUSTMENTS
+   ============================================================================ */
+
+@media (orientation: landscape) and (max-height: 480px) {
+  .context-bar {
+    padding: var(--space-xs) var(--space-md);
+  }
+
+  .ytd-strip {
+    padding: var(--space-md);
+  }
+
+  .ytd-metric .value {
+    font-size: 1.5rem;
+  }
+
+  .kpi-tile {
+    padding: var(--card-padding);
+  }
+
+  .kpi-tile .kpi-content {
+    min-height: 60px;
+  }
+
+  .big-number {
+    font-size: 1.75rem;
+  }
+}
+
+/* ============================================================================
+   HIGH DPI / RETINA DISPLAYS
+   ============================================================================ */
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .heat-cell,
+  .pattern-bar,
+  .kpi-tile {
+    backface-visibility: hidden;
+    transform: translateZ(0);
+  }
+
+  /* Sharper borders on high DPI */
+  .card,
+  .kpi-tile,
+  .category-table th {
+    border-width: 0.5px;
+  }
+}
+
+/* ============================================================================
+   REDUCED MOTION PREFERENCES
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .kpi-tile:hover {
+    transform: none;
+  }
+
+  .pattern-bar:hover {
+    transform: none;
+  }
+
+  .heat-cell:hover {
+    transform: none;
+  }
+
+  .loading::before {
+    animation: none;
+  }
+
+  .skeleton {
+    animation: none;
+  }
+}
+
+/* ============================================================================
+   DARK MODE SUPPORT (if needed)
+   ============================================================================ */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --white: #1a1a1a;
+    --near-white: #2d2d2d;
+    --light-gray: #404040;
+    --medium-gray: #666666;
+    --dark-gray: #cccccc;
+    --primary-navy: #ffffff;
+  }
+
+  .context-bar {
+    background-color: #2d2d2d;
+    border-color: #404040;
+  }
+
+  .kpi-tile,
+  .card,
+  .performance-panel,
+  .category-panel,
+  .promotions-panel {
+    background-color: #2d2d2d;
+    border-color: #404040;
+  }
+
+  .category-table th {
+    background-color: #404040;
+  }
+
+  .category-table tr:hover {
+    background-color: #333333;
+  }
+}
+
+/* ============================================================================
+   PRINT STYLES (Responsive)
+   ============================================================================ */
+
+@media print {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: var(--space-md) !important;
+  }
+
+  .context-bar,
+  .main-nav,
+  .drill-down-btn,
+  .view-more,
+  .info-btn {
+    display: none !important;
+  }
+
+  .ytd-strip {
+    margin-top: 0 !important;
+    background: none !important;
+    color: black !important;
+    border: 1px solid #ccc;
+  }
+
+  .kpi-tile {
+    break-inside: avoid;
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+  }
+
+  .big-number {
+    font-size: 2rem !important;
+  }
+
+  .category-table {
+    font-size: 0.75rem !important;
+  }
+
+  .promotions-panel {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ============================================================================
+   ACCESSIBILITY HELPERS
+   ============================================================================ */
+
+/* Focus styles for keyboard navigation */
+@media (any-hover: none) {
+  .kpi-tile:focus,
+  .info-btn:focus,
+  .drill-down-btn:focus {
+    outline: 2px solid var(--primary-blue);
+    outline-offset: 2px;
+  }
+}
+
+/* Ensure minimum touch targets on touch devices */
+@media (any-pointer: coarse) {
+  .info-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .drill-down-btn,
+  .view-more {
+    min-height: 44px;
+    padding: var(--space-md) var(--space-md);
+  }
+
+  .heat-cell {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}

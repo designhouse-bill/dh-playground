@@ -16,7 +16,7 @@ class DataService {
    * Get circular interaction data
    * This is the main data table that data engineers need to populate
    *
-   * Expected data source: Sedanos Circular Interaction spreadsheet structure
+   * Expected data source: Digital Circular Interaction data structure
    */
   async getCircularInteractionData(filters = {}) {
     const cacheKey = `interaction_${JSON.stringify(filters)}`;
@@ -50,7 +50,7 @@ class DataService {
     }
 
     if (filters.category) {
-      filteredData = filteredData.filter(item => item.category === filters.category);
+      filteredData = filteredData.filter(item => item.marketing_category === filters.category);
     }
 
     if (filters.card_size_code) {
@@ -179,9 +179,9 @@ class DataService {
     const categories = {};
 
     data.forEach(item => {
-      if (!categories[item.category]) {
-        categories[item.category] = {
-          name: item.category,
+      if (!categories[item.marketing_category]) {
+        categories[item.marketing_category] = {
+          name: item.marketing_category,
           totalImpressions: 0,
           totalViews: 0,
           totalClicks: 0,
@@ -192,7 +192,7 @@ class DataService {
         };
       }
 
-      const cat = categories[item.category];
+      const cat = categories[item.marketing_category];
       cat.totalImpressions += item.impressions;
       cat.totalViews += item.views;
       cat.totalClicks += item.clicks;

@@ -28,12 +28,22 @@
   --white: #ffffff;
   --near-white: #fcfcfc;
 
-  /* Chart Colors */
-  --chart-primary: #4272D8;
-  --chart-secondary: #B8D64D;
-  --chart-tertiary: #F39C12;
-  --chart-quaternary: #E74C3C;
-  --chart-accent: #9B59B6;
+  /* Chart Colors - Enhanced for ECharts */
+  --chart-color-1: #4272D8;   /* Primary Blue */
+  --chart-color-2: #B8D64D;   /* Success Green */
+  --chart-color-3: #F39C12;   /* Warning Amber */
+  --chart-color-4: #E74C3C;   /* Danger Red */
+  --chart-color-5: #9B59B6;   /* Accent Purple */
+  --chart-color-6: #06B6D4;   /* Cyan */
+  --chart-color-7: #84CC16;   /* Lime */
+  --chart-color-8: #F97316;   /* Orange */
+
+  /* Legacy chart color mappings */
+  --chart-primary: var(--chart-color-1);
+  --chart-secondary: var(--chart-color-2);
+  --chart-tertiary: var(--chart-color-3);
+  --chart-quaternary: var(--chart-color-4);
+  --chart-accent: var(--chart-color-5);
 
   /* Typography */
   --font-primary: "Inter", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -323,6 +333,7 @@ select:focus, input:focus {
   font-size: 0.875rem;
   font-weight: 600;
   display: inline-flex;
+  justify-content: center;
   align-items: center;
   gap: var(--space-xs);
   background-color: var(--card);
@@ -330,7 +341,9 @@ select:focus, input:focus {
   border-radius: 9999px;
   border: 1px solid var(--border);
 }
-
+#top-categories-card .trend {
+width: 75px;
+}
 .trend.positive {
   color: var(--dark-gray);
 }
@@ -375,7 +388,29 @@ select:focus, input:focus {
   color: var(--primary-navy);
   font-variant-numeric: tabular-nums;
 }
+.big-number-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
 
+.dashboard-row-week .big-number {
+  text-align: right;
+}
+
+.week-day {
+  font-size: 1.1rem;
+  text-align: center;
+  color: var(--medium-gray);
+  margin-top: var(--space-sm);
+}
+
+.sub-text {
+  text-align: right;
+  font-size: 1rem;
+  font-weight: 300;
+  color: black;
+}
 .medium-number {
   font-size: 2rem;
   font-weight: 700;

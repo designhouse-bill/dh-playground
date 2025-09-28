@@ -8,7 +8,7 @@ class EnhancedMockDataGenerator {
   constructor() {
     this.seed = 42;
 
-    // Realistic grocery categories from Sedanos analysis
+    // Standard grocery categories for digital circular analytics
     this.categories = [
       'Featured', 'Farm Fresh', 'Good Food Matters', 'Custom Cuts',
       'Deals For Days', 'Beef Pork Chicken', 'Fresh Is A Promise',
@@ -74,7 +74,7 @@ class EnhancedMockDataGenerator {
 
   /**
    * Generate circular interaction records (main data table)
-   * Simulates the structure expected from Sedanos spreadsheet
+   * Simulates the structure expected from digital circular data
    */
   generateCircularInteractionData(weekId = 'w36', recordCount = 500) {
     const interactions = [];

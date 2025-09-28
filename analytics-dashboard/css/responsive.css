@@ -5,16 +5,16 @@
 
 /* ============================================================================
    MOBILE FIRST BASE STYLES (Default: 320px+)
+   RESPONSIVE BREAKPOINTS: 560px, 768px, 991px, 1200px
    ============================================================================ */
 
-/* Mobile grid defaults */
-.dashboard-grid {
-  display: grid;
+/* Mobile flexbox defaults - all layouts use flexbox */
+.dashboard-row-week {
+  display: flex;
+  flex-direction: column;
   gap: var(--section-gap);
-  padding: var(--container-padding);
-  grid-template-columns: 1fr;
   max-width: var(--container-max-width);
-  margin: 0 auto;
+  margin: var(--space-md) 0;
 }
 
 /* Mobile context bar */
@@ -110,9 +110,12 @@
    SMALL MOBILE (480px+)
    ============================================================================ */
 
-@media (min-width: 480px) {
-  .dashboard-grid {
-    padding: var(--space-md);
+/* ============================================================================
+   SMALL DEVICES: 560px and up (landscape phones, small tablets)
+   ============================================================================ */
+@media (min-width: 560px) {
+  .dashboard-row-week {
+    gap: var(--gap-md);
   }
 
   .header-top {
@@ -147,14 +150,19 @@
 }
 
 /* ============================================================================
-   TABLET PORTRAIT (768px+)
+   MEDIUM DEVICES: 768px and up (tablets, small desktops)
    ============================================================================ */
 
 @media (min-width: 768px) {
-  .dashboard-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--gap-lg);
-    padding: var(--container-padding);
+  .dashboard-row-week {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+  }
+
+  .dashboard-row-week > * {
+    flex: 1 1 calc(50% - var(--space-md)/2);
+    min-width: 300px;
   }
 
   .kpi-tile {
@@ -173,7 +181,6 @@
     font-size: 2rem;
   }
 
-  .performance-panel,
   .category-panel {
     padding: var(--space-xl);
   }
@@ -207,14 +214,19 @@
 }
 
 /* ============================================================================
-   TABLET LANDSCAPE (1024px+)
+   LARGE DEVICES: 991px and up (large tablets, small desktops)
    ============================================================================ */
 
-@media (min-width: 1024px) {
-  .dashboard-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--gap-lg);
-    padding: var(--container-padding);
+@media (min-width: 991px) {
+  .dashboard-row-week {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: var(--space-md);
+  }
+
+  .dashboard-row-week > * {
+    flex: 1;
+    min-width: 250px;
   }
 
   .container {
@@ -245,11 +257,11 @@
 }
 
 /* ============================================================================
-   DESKTOP (1200px+)
+   EXTRA LARGE DEVICES: 1200px and up (desktops, large screens)
    ============================================================================ */
 
 @media (min-width: 1200px) {
-  .dashboard-grid {
+  .dashboard-row-week {
     max-width: var(--container-max-width);
   }
 
@@ -262,18 +274,8 @@
     grid-template-columns: repeat(4, 1fr);
   }
 
-  /* Larger performance panels */
-  .performance-panel {
-    padding: var(--space-2xl);
-  }
 
-  .score-display .big-number {
-    font-size: 4rem;
-  }
 
-  .lifecycle-pattern .pattern-bars {
-    height: 100px;
-  }
 
   /* Enhanced promotions panel */
   .promotions-panel {
@@ -298,17 +300,17 @@
    ============================================================================ */
 
 @media (min-width: 1440px) {
-  .dashboard-grid {
+  .dashboard-row-week {
     grid-template-columns: repeat(3, 1fr);
-    gap: var(--gap-lg);
+    gap: var(--space-md);
   }
 
   /* Specialized large desktop layouts */
-  .dashboard-grid.six-column {
+  .dashboard-row-week.six-column {
     grid-template-columns: repeat(6, 1fr);
   }
 
-  .dashboard-grid.asymmetric {
+  .dashboard-row-week.asymmetric {
     grid-template-columns: 3fr 2fr 2fr;
   }
 
@@ -340,7 +342,7 @@
    ============================================================================ */
 
 @media (min-width: 1920px) {
-  .dashboard-grid {
+  .dashboard-row-week {
     max-width: 1800px;
     grid-template-columns: repeat(6, 1fr);
   }
@@ -350,13 +352,7 @@
   }
 
   /* Ultra-wide specific layouts */
-  .performance-panel {
-    padding: var(--space-2xl) var(--space-2xl) var(--space-2xl) var(--space-2xl);
-  }
 
-  .score-display .big-number {
-    font-size: 5rem;
-  }
 }
 
 /* ============================================================================
@@ -464,7 +460,6 @@
 
   .kpi-tile,
   .card,
-  .performance-panel,
   .category-panel,
   .promotions-panel {
     background-color: #2d2d2d;
@@ -485,7 +480,7 @@
    ============================================================================ */
 
 @media print {
-  .dashboard-grid {
+  .dashboard-row-week {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: var(--space-md) !important;
   }

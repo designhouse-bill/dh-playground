@@ -2511,13 +2511,14 @@ class DataGridComponent {
    * Populate all dynamic filters from data
    */
   populateAllDynamicFilters() {
-    if (!this.data || this.data.length === 0) return;
+    // Always use original unfiltered data for filter population
+    const dataSource = this.originalData || this.data;
+    if (!dataSource || dataSource.length === 0) return;
 
-    this.populateCategoryFilters(this.data);
-    this.populateDealTypeFilters(this.data);
-    this.populateSizeClassFilters(this.data);
-
-    
+    this.populateCategoryFilters(dataSource);
+    this.populateDealTypeFilters(dataSource);
+    this.populateSizeClassFilters(dataSource);
+    this.populatePositionRangeFilters(dataSource);
   }
 
   /**
@@ -2526,10 +2527,8 @@ class DataGridComponent {
   populateCategoryFilters(data) {
     if (!data || data.length === 0) return;
 
-    // Extract unique categories from data with fallback fields
-    const categories = [...new Set(data.map(item =>
-      item.department || item.category || item.category_name || item.product_category
-    ).filter(Boolean))];
+    // Extract unique departments from data (this matches the actual data structure)
+    const categories = [...new Set(data.map(item => item.department).filter(Boolean))];
 
     categories.sort();
 
@@ -2541,15 +2540,13 @@ class DataGridComponent {
 
     // Generate checkbox for each category with count
     categories.forEach(category => {
-      const count = data.filter(item =>
-        (item.department || item.category || item.category_name || item.product_category) === category
-      ).length;
+      const count = data.filter(item => item.department === category).length;
 
-      const checkboxItem = this.createFilterCheckbox('category', category, `${category} (${count})`, count);
+      // Format category name for better display
+      const displayName = category.charAt(0).toUpperCase() + category.slice(1);
+      const checkboxItem = this.createFilterCheckbox('category', category, `${displayName} (${count})`, count);
       categoryFiltersContainer.appendChild(checkboxItem);
     });
-
-    
   }
 
   /**
@@ -2582,8 +2579,6 @@ class DataGridComponent {
       const checkboxItem = this.createFilterCheckbox('deal-type', dealType, `${displayName} (${count})`, count);
       dealTypeFiltersContainer.appendChild(checkboxItem);
     });
-
-    
   }
 
   /**
@@ -2617,8 +2612,56 @@ class DataGridComponent {
       const checkboxItem = this.createFilterCheckbox('size-class', sizeClass, `${displayName} (${count})`, count);
       sizeClassFiltersContainer.appendChild(checkboxItem);
     });
+  }
 
-    
+  /**
+   * Generate dynamic position range filter checkboxes from data
+   */
+  populatePositionRangeFilters(data) {
+    if (!data || data.length === 0) return;
+
+    // Define position range mapping based on actual data values
+    const positionRangeMap = {
+      'top': ['top-left', 'top-center', 'top-right'],
+      'upper-mid': ['mid-left', 'mid-center', 'mid-right'],
+      'lower-mid': ['low-left', 'low-center', 'low-right'],
+      'bottom': ['bot-left', 'bot-center', 'bot-right', 'bottom-left', 'bottom-center', 'bottom-right']
+    };
+
+    // Count items for each position range
+    const positionRangeCounts = {};
+    Object.keys(positionRangeMap).forEach(range => {
+      positionRangeCounts[range] = data.filter(item => {
+        const position = item.position || item.card_position || item.page_position_name || '';
+        return positionRangeMap[range].some(pos => position.toLowerCase().includes(pos.toLowerCase()));
+      }).length;
+    });
+
+    const positionRangeFiltersContainer = document.querySelector('#position-range-filters .checkbox-list');
+    if (!positionRangeFiltersContainer) return;
+
+    // Clear existing static content and populate with dynamic data
+    positionRangeFiltersContainer.innerHTML = '';
+
+    // Generate checkbox for each position range with count
+    Object.entries(positionRangeCounts).forEach(([range, count]) => {
+      const displayName = this.formatPositionRangeName(range);
+      const checkboxItem = this.createFilterCheckbox('position-range', range, `${displayName} (${count})`, count);
+      positionRangeFiltersContainer.appendChild(checkboxItem);
+    });
+  }
+
+  /**
+   * Format position range names for better display
+   */
+  formatPositionRangeName(range) {
+    const formatMap = {
+      'top': 'Top',
+      'upper-mid': 'Upper Mid',
+      'lower-mid': 'Lower Mid',
+      'bottom': 'Bottom'
+    };
+    return formatMap[range] || range;
   }
 
   /**
@@ -2653,13 +2696,17 @@ class DataGridComponent {
    */
   formatDealTypeName(dealType) {
     const formatMap = {
+      'amount': 'Fixed Amount',
+      'save x': 'Save $X',
+      'num for': 'Multi-Buy Deal',
       'bogo': 'Buy One Get One',
       'discount': 'Percentage Discount',
       'fixed_price': 'Fixed Price',
       'fixed-price': 'Fixed Price',
       'premium': 'Premium Offer',
       'coupon': 'Coupon Discount',
-      'clearance': 'Clearance Sale'
+      'clearance': 'Clearance Sale',
+      'limit_quantity': 'Limited Quantity'
     };
 
     return formatMap[dealType.toLowerCase()] || dealType;
@@ -2670,6 +2717,7 @@ class DataGridComponent {
    */
   formatSizeClassName(sizeClass) {
     const formatMap = {
+      // Traditional size classes
       'S': 'Small (S)',
       'M': 'Medium (M)',
       'L': 'Large (L)',
@@ -2679,7 +2727,13 @@ class DataGridComponent {
       'medium': 'Medium',
       'large': 'Large',
       'extra_large': 'Extra Large',
-      'xs': 'Extra Small (XS)'
+      'xs': 'Extra Small (XS)',
+      // Card dimension sizes from mock data
+      '1X1': 'Small Card (1×1)',
+      '2X1': 'Medium Card (2×1)',
+      '2X2': 'Large Card (2×2)',
+      '3X2': 'Extra Large Card (3×2)',
+      '4X2': 'Jumbo Card (4×2)'
     };
 
     return formatMap[sizeClass] || sizeClass;
@@ -2690,10 +2744,19 @@ class DataGridComponent {
    */
   compareSizeClasses(a, b) {
     const sizeOrder = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
+    const cardSizeOrder = ['1X1', '2X1', '2X2', '3X2', '4X2'];
+
     const indexA = sizeOrder.indexOf(a.toUpperCase());
     const indexB = sizeOrder.indexOf(b.toUpperCase());
+    const cardIndexA = cardSizeOrder.indexOf(a);
+    const cardIndexB = cardSizeOrder.indexOf(b);
 
-    // If both are in the standard order, use that
+    // If both are card sizes, use card size order
+    if (cardIndexA !== -1 && cardIndexB !== -1) {
+      return cardIndexA - cardIndexB;
+    }
+
+    // If both are in the standard size order, use that
     if (indexA !== -1 && indexB !== -1) {
       return indexA - indexB;
     }
@@ -2701,6 +2764,10 @@ class DataGridComponent {
     // If only one is in standard order, prioritize it
     if (indexA !== -1) return -1;
     if (indexB !== -1) return 1;
+
+    // If only one is a card size, prioritize it
+    if (cardIndexA !== -1) return -1;
+    if (cardIndexB !== -1) return 1;
 
     // Otherwise, use alphabetical order
     return a.localeCompare(b);
@@ -3130,6 +3197,7 @@ class DataGridComponent {
       // Validate data structure
       this._validateDataStructure(data);
 
+      this.originalData = [...data]; // Store original unfiltered data
       this.data = data;
       this.filteredData = [...data];
       this.error = null;

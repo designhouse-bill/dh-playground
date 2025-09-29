@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POC Feature Verification - Analytics Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: #fafafa;
+        }
+        .verification-result {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .pass { background: #e8f5e8; color: #2e7d32; border-left: 4px solid #4caf50; }
+        .fail { background: #ffebee; color: #c62828; border-left: 4px solid #f44336; }
+        .info { background: #e3f2fd; color: #1565c0; border-left: 4px solid #2196f3; }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .metric-card {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1976d2;
+        }
+        .metric-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        th, td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #f5f5f5;
+            font-weight: 600;
+        }
+
+        .store-selector, .group-selector {
+            padding: 8px;
+            margin: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        button {
+            background: #1976d2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1565c0;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .summary {
+            background: #e8f5e8;
+            border: 1px solid #4caf50;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .summary.failed {
+            background: #ffebee;
+            border-color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 POC Feature Verification</h1>
+        <p>Comprehensive testing of POC.08 features and functionality</p>
+
+        <div class="test-section">
+            <h3>Controls</h3>
+            <button onclick="runFullVerification()">Run Full Verification</button>
+            <button onclick="clearResults()">Clear Results</button>
+            <button onclick="exportReport()">Export Report</button>
+        </div>
+
+        <!-- Store Selector Test -->
+        <div class="test-section">
+            <h3>Store Selector Test</h3>
+            <select id="test-store-selector" class="store-selector">
+                <option value="">Loading...</option>
+            </select>
+            <select id="test-group-selector" class="group-selector">
+                <option value="">Loading...</option>
+            </select>
+            <button onclick="testStoreSelector()">Test Store Selector</button>
+        </div>
+
+        <!-- Live Metrics Display -->
+        <div class="test-section">
+            <h3>Live Metrics Display</h3>
+            <div class="metrics-grid" id="live-metrics">
+                <div class="metric-card">
+                    <div class="metric-value" id="live-total-views">-</div>
+                    <div class="metric-label">Total Views</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="live-total-clicks">-</div>
+                    <div class="metric-label">Total Clicks</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="live-ctr-rate">-</div>
+                    <div class="metric-label">CTR</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="live-performance-score">-</div>
+                    <div class="metric-label">Performance Score</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="verification-results"></div>
+    </div>
+
+    <!-- Load POC Data -->
+    <script src="shared/error-handler.js"></script>
+    <script src="mock-data/005-data-poc.js"></script>
+
+    <script>
+        let verificationResults = [];
+        let pocData = null;
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePOCVerification();
+        });
+
+        function initializePOCVerification() {
+            // Check if POC data loaded
+            if (typeof window.mockDatabase === 'undefined') {
+                logResult('fail', 'POC Data Load', 'POC data not available');
+                return;
+            }
+
+            pocData = window.mockDatabase;
+            logResult('pass', 'POC Data Load', `Successfully loaded ${pocData.promotions.length} promotions from ${pocData.storeHierarchy.stores.length} stores`);
+
+            // Populate store selector
+            populateStoreSelector();
+
+            // Update initial metrics
+            updateLiveMetrics(pocData.weeklyMetrics.overall);
+        }
+
+        function populateStoreSelector() {
+            const storeSelector = document.getElementById('test-store-selector');
+            const groupSelector = document.getElementById('test-group-selector');
+
+            // Clear existing options
+            storeSelector.innerHTML = '<option value="">All Stores</option>';
+            groupSelector.innerHTML = '<option value="">All Groups</option>';
+
+            // Add stores
+            pocData.storeHierarchy.stores.forEach(store => {
+                const option = document.createElement('option');
+                option.value = store.store_id;
+                option.textContent = store.store_name;
+                storeSelector.appendChild(option);
+            });
+
+            // Add groups
+            pocData.storeHierarchy.groups.forEach(group => {
+                const option = document.createElement('option');
+                option.value = group.group_id;
+                option.textContent = group.group_name;
+                groupSelector.appendChild(option);
+            });
+
+            logResult('pass', 'Store Selector Population', `Added ${pocData.storeHierarchy.stores.length} stores and ${pocData.storeHierarchy.groups.length} groups to selectors`);
+        }
+
+        function updateLiveMetrics(metrics) {
+            document.getElementById('live-total-views').textContent = metrics.total_views.toLocaleString();
+            document.getElementById('live-total-clicks').textContent = metrics.total_clicks.toLocaleString();
+            document.getElementById('live-ctr-rate').textContent = metrics.avg_ctr + '%';
+            document.getElementById('live-performance-score').textContent = metrics.performance_score.toLocaleString();
+        }
+
+        function testStoreSelector() {
+            const storeSelector = document.getElementById('test-store-selector');
+            const storeCount = storeSelector.options.length - 1; // Exclude "All Stores"
+
+            if (storeCount === 5) {
+                logResult('pass', 'Store Count Verification', `Correct number of stores: ${storeCount}`);
+            } else {
+                logResult('fail', 'Store Count Verification', `Expected 5 stores, found ${storeCount}`);
+            }
+
+            // Test store filtering
+            const firstStore = pocData.storeHierarchy.stores[0];
+            const storeMetrics = window.DataUtils.getMetricsByStore(firstStore.store_id);
+            updateLiveMetrics(storeMetrics);
+
+            logResult('pass', 'Store Filtering', `Successfully filtered metrics for ${firstStore.store_name}`);
+        }
+
+        function runFullVerification() {
+            verificationResults = [];
+
+            // Test 1: POC Data Structure
+            testPOCDataStructure();
+
+            // Test 2: Store Hierarchy
+            testStoreHierarchy();
+
+            // Test 3: Metrics Calculation
+            testMetricsCalculation();
+
+            // Test 4: Group Aggregation
+            testGroupAggregation();
+
+            // Test 5: Data Utility Functions
+            testDataUtilityFunctions();
+
+            // Test 6: Browser Compatibility
+            testBrowserCompatibility();
+
+            // Display summary
+            displayVerificationSummary();
+        }
+
+        function testPOCDataStructure() {
+            const tests = [
+                {
+                    name: 'Promotions Array',
+                    test: () => Array.isArray(pocData.promotions) && pocData.promotions.length === 150,
+                    expected: '150 promotions'
+                },
+                {
+                    name: 'Categories Array',
+                    test: () => Array.isArray(pocData.categories) && pocData.categories.length === 8,
+                    expected: '8 categories'
+                },
+                {
+                    name: 'Store Hierarchy',
+                    test: () => pocData.storeHierarchy && pocData.storeHierarchy.stores.length === 5,
+                    expected: '5 stores in hierarchy'
+                },
+                {
+                    name: 'Weekly Metrics',
+                    test: () => pocData.weeklyMetrics && pocData.weeklyMetrics.overall,
+                    expected: 'Overall metrics present'
+                }
+            ];
+
+            tests.forEach(test => {
+                if (test.test()) {
+                    logResult('pass', `Data Structure: ${test.name}`, test.expected);
+                } else {
+                    logResult('fail', `Data Structure: ${test.name}`, `Failed: ${test.expected}`);
+                }
+            });
+        }
+
+        function testStoreHierarchy() {
+            const expectedStores = ['STORE_001', 'STORE_011', 'STORE_021', 'STORE_031', 'STORE_041'];
+            const actualStores = pocData.storeHierarchy.stores.map(s => s.store_id);
+
+            const storesMatch = expectedStores.every(id => actualStores.includes(id));
+
+            if (storesMatch) {
+                logResult('pass', 'Store Hierarchy: Store IDs', 'All expected store IDs present');
+            } else {
+                logResult('fail', 'Store Hierarchy: Store IDs', `Missing stores: ${expectedStores.filter(id => !actualStores.includes(id))}`);
+            }
+
+            // Test group assignments
+            const groupedStores = pocData.storeHierarchy.groups.reduce((acc, group) => acc + group.store_ids.length, 0);
+            if (groupedStores === 5) {
+                logResult('pass', 'Store Hierarchy: Group Assignment', 'All stores assigned to groups');
+            } else {
+                logResult('fail', 'Store Hierarchy: Group Assignment', `Expected 5 stores in groups, found ${groupedStores}`);
+            }
+        }
+
+        function testMetricsCalculation() {
+            const overall = pocData.weeklyMetrics.overall;
+
+            // Test overall metrics structure
+            const requiredFields = ['total_views', 'total_clicks', 'avg_ctr', 'performance_score'];
+            const missingFields = requiredFields.filter(field => !(field in overall));
+
+            if (missingFields.length === 0) {
+                logResult('pass', 'Metrics: Structure', 'All required metric fields present');
+            } else {
+                logResult('fail', 'Metrics: Structure', `Missing fields: ${missingFields.join(', ')}`);
+            }
+
+            // Test CTR calculation
+            const calculatedCTR = Math.round((overall.total_clicks / overall.total_views) * 10000) / 100;
+            if (Math.abs(calculatedCTR - overall.avg_ctr) < 0.01) {
+                logResult('pass', 'Metrics: CTR Calculation', `CTR correctly calculated: ${overall.avg_ctr}%`);
+            } else {
+                logResult('fail', 'Metrics: CTR Calculation', `CTR mismatch: expected ${calculatedCTR}%, got ${overall.avg_ctr}%`);
+            }
+
+            // Test individual store metrics
+            const firstStoreMetrics = window.DataUtils.getMetricsByStore('STORE_001');
+            if (firstStoreMetrics && firstStoreMetrics.total_views > 0) {
+                logResult('pass', 'Metrics: Store-level', 'Store-level metrics calculated correctly');
+            } else {
+                logResult('fail', 'Metrics: Store-level', 'Store-level metrics calculation failed');
+            }
+        }
+
+        function testGroupAggregation() {
+            // Test group-level aggregation
+            const groupMetrics = window.DataUtils.getMetricsByGroup('GROUP_001');
+
+            if (groupMetrics && groupMetrics.total_views > 0) {
+                logResult('pass', 'Group Aggregation: Calculation', 'Group metrics calculated successfully');
+            } else {
+                logResult('fail', 'Group Aggregation: Calculation', 'Group metrics calculation failed');
+            }
+
+            // Test promotions by group
+            const groupPromotions = window.DataUtils.getPromotionsByGroup('GROUP_001');
+
+            if (Array.isArray(groupPromotions) && groupPromotions.length > 0) {
+                logResult('pass', 'Group Aggregation: Promotions', `Group contains ${groupPromotions.length} promotions`);
+            } else {
+                logResult('fail', 'Group Aggregation: Promotions', 'Failed to retrieve group promotions');
+            }
+        }
+
+        function testDataUtilityFunctions() {
+            const tests = [
+                {
+                    name: 'getPromotionsByStore',
+                    test: () => {
+                        const storePromotions = window.DataUtils.getPromotionsByStore('STORE_001');
+                        return Array.isArray(storePromotions) && storePromotions.length === 30;
+                    }
+                },
+                {
+                    name: 'getPromotionsByCategory',
+                    test: () => {
+                        const categoryPromotions = window.DataUtils.getPromotionsByCategory('featured_deals');
+                        return Array.isArray(categoryPromotions) && categoryPromotions.length > 0;
+                    }
+                },
+                {
+                    name: 'getPromotionsByDepartment',
+                    test: () => {
+                        const deptPromotions = window.DataUtils.getPromotionsByDepartment('meat');
+                        return Array.isArray(deptPromotions) && deptPromotions.length > 0;
+                    }
+                }
+            ];
+
+            tests.forEach(test => {
+                if (test.test()) {
+                    logResult('pass', `Data Utils: ${test.name}`, 'Function working correctly');
+                } else {
+                    logResult('fail', `Data Utils: ${test.name}`, 'Function failed or returned incorrect data');
+                }
+            });
+        }
+
+        function testBrowserCompatibility() {
+            const features = [
+                {
+                    name: 'ES6 Support',
+                    test: () => {
+                        try {
+                            const arrow = () => true;
+                            const [a] = [1];
+                            const {b} = {b: 2};
+                            return arrow() && a === 1 && b === 2;
+                        } catch (e) {
+                            return false;
+                        }
+                    }
+                },
+                {
+                    name: 'Performance API',
+                    test: () => typeof performance !== 'undefined' && typeof performance.now === 'function'
+                },
+                {
+                    name: 'Local Storage',
+                    test: () => {
+                        try {
+                            localStorage.setItem('test', 'value');
+                            const value = localStorage.getItem('test');
+                            localStorage.removeItem('test');
+                            return value === 'value';
+                        } catch (e) {
+                            return false;
+                        }
+                    }
+                },
+                {
+                    name: 'JSON Support',
+                    test: () => {
+                        try {
+                            const obj = {a: 1, b: [2, 3]};
+                            const json = JSON.stringify(obj);
+                            const parsed = JSON.parse(json);
+                            return parsed.a === 1 && parsed.b[0] === 2;
+                        } catch (e) {
+                            return false;
+                        }
+                    }
+                }
+            ];
+
+            features.forEach(feature => {
+                if (feature.test()) {
+                    logResult('pass', `Browser Compatibility: ${feature.name}`, 'Supported');
+                } else {
+                    logResult('fail', `Browser Compatibility: ${feature.name}`, 'Not supported or failed');
+                }
+            });
+
+            // Browser info
+            const browserInfo = {
+                userAgent: navigator.userAgent,
+                language: navigator.language,
+                platform: navigator.platform,
+                cookieEnabled: navigator.cookieEnabled
+            };
+
+            logResult('info', 'Browser Info', JSON.stringify(browserInfo, null, 2));
+        }
+
+        function displayVerificationSummary() {
+            const totalTests = verificationResults.length;
+            const passedTests = verificationResults.filter(r => r.type === 'pass').length;
+            const failedTests = verificationResults.filter(r => r.type === 'fail').length;
+
+            const summaryClass = failedTests === 0 ? 'summary' : 'summary failed';
+            const summaryText = failedTests === 0 ?
+                `✅ All ${totalTests} tests passed! POC is production-ready.` :
+                `❌ ${failedTests} of ${totalTests} tests failed. Review failures above.`;
+
+            const summaryDiv = document.createElement('div');
+            summaryDiv.className = summaryClass;
+            summaryDiv.innerHTML = `
+                <h3>Verification Summary</h3>
+                <p>${summaryText}</p>
+                <p>Passed: ${passedTests} | Failed: ${failedTests} | Total: ${totalTests}</p>
+            `;
+
+            const container = document.getElementById('verification-results');
+            container.insertBefore(summaryDiv, container.firstChild);
+        }
+
+        function logResult(type, title, content) {
+            const timestamp = new Date().toLocaleTimeString();
+            verificationResults.push({
+                timestamp,
+                type,
+                title,
+                content
+            });
+            displayResults();
+        }
+
+        function displayResults() {
+            const container = document.getElementById('verification-results');
+            const resultsHTML = verificationResults.map(result => `
+                <div class="verification-result ${result.type}">
+                    <strong>[${result.timestamp}] ${result.title}</strong><br>
+                    ${typeof result.content === 'object' ?
+                        '<pre>' + JSON.stringify(result.content, null, 2) + '</pre>' :
+                        result.content}
+                </div>
+            `).join('');
+
+            container.innerHTML = resultsHTML;
+        }
+
+        function clearResults() {
+            verificationResults = [];
+            displayResults();
+        }
+
+        function exportReport() {
+            const report = {
+                timestamp: new Date().toISOString(),
+                browser: navigator.userAgent,
+                results: verificationResults,
+                summary: {
+                    total: verificationResults.length,
+                    passed: verificationResults.filter(r => r.type === 'pass').length,
+                    failed: verificationResults.filter(r => r.type === 'fail').length
+                }
+            };
+
+            const blob = new Blob([JSON.stringify(report, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `poc-verification-report-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

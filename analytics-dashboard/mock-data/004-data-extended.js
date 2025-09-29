@@ -778,6 +778,2067 @@ mockDatabase.getBottomPromotions = function(count = 10, scoreType = 'composite')
 // Generate additional promotions and add them to the database
 mockDatabase.promotions.push(...generateAdditionalPromotions());
 
+/**
+ * POC.01: Minimal Store Infrastructure
+ * Basic store hierarchy for proof of concept
+ */
+window.storeHierarchyPOC = {
+  banner: "FreshMart",
+
+  groups: [
+    {
+      group_id: "GROUP_A",
+      group_name: "Urban Premium",
+      description: "High-end urban locations with premium focus",
+      store_count: 1
+    },
+    {
+      group_id: "GROUP_B",
+      group_name: "Suburban Family",
+      description: "Family-oriented suburban stores",
+      store_count: 1
+    },
+    {
+      group_id: "GROUP_C",
+      group_name: "Rural Value",
+      description: "Value-focused rural locations",
+      store_count: 1
+    },
+    {
+      group_id: "GROUP_D",
+      group_name: "Test Alpha",
+      description: "Alpha test group for new features",
+      store_count: 1
+    },
+    {
+      group_id: "GROUP_E",
+      group_name: "Test Beta",
+      description: "Beta test group for experimental features",
+      store_count: 1
+    }
+  ],
+
+  stores: [
+    {
+      store_id: "STORE_001",
+      store_name: "FreshMart Downtown Manhattan",
+      group_id: "GROUP_A",
+      group_name: "Urban Premium",
+      performance_index: 1.15,
+      location_type: "urban"
+    },
+    {
+      store_id: "STORE_011",
+      store_name: "FreshMart Westfield Commons",
+      group_id: "GROUP_B",
+      group_name: "Suburban Family",
+      performance_index: 1.05,
+      location_type: "suburban"
+    },
+    {
+      store_id: "STORE_021",
+      store_name: "FreshMart Country Plaza",
+      group_id: "GROUP_C",
+      group_name: "Rural Value",
+      performance_index: 0.85,
+      location_type: "rural"
+    },
+    {
+      store_id: "STORE_031",
+      store_name: "FreshMart Innovation Hub",
+      group_id: "GROUP_D",
+      group_name: "Test Alpha",
+      performance_index: 1.20,
+      location_type: "test"
+    },
+    {
+      store_id: "STORE_041",
+      store_name: "FreshMart Beta Center",
+      group_id: "GROUP_E",
+      group_name: "Test Beta",
+      performance_index: 0.95,
+      location_type: "test"
+    }
+  ]
+};
+
+/**
+ * POC.02: Categories and Small Product Set
+ * 8 categories with 30 base products for proof of concept
+ */
+window.productCatalogPOC = {
+  categories: [
+    {
+      category_id: "featured_deals",
+      category_name: "Featured Deals",
+      description: "Premium promotional items and seasonal highlights",
+      product_count: 5
+    },
+    {
+      category_id: "fresh_market",
+      category_name: "Fresh Market",
+      description: "Fresh produce, bakery, and deli items",
+      product_count: 5
+    },
+    {
+      category_id: "meat_seafood",
+      category_name: "Meat & Seafood",
+      description: "Fresh meats, poultry, and seafood",
+      product_count: 4
+    },
+    {
+      category_id: "dairy_frozen",
+      category_name: "Dairy & Frozen",
+      description: "Dairy products and frozen foods",
+      product_count: 4
+    },
+    {
+      category_id: "grocery_essentials",
+      category_name: "Grocery Essentials",
+      description: "Pantry staples and everyday items",
+      product_count: 4
+    },
+    {
+      category_id: "beverages_snacks",
+      category_name: "Beverages & Snacks",
+      description: "Drinks, chips, and snack foods",
+      product_count: 4
+    },
+    {
+      category_id: "health_beauty",
+      category_name: "Health & Beauty",
+      description: "Personal care and health products",
+      product_count: 4
+    },
+    {
+      category_id: "home_seasonal",
+      category_name: "Home & Seasonal",
+      description: "Household items and seasonal products",
+      product_count: 4
+    }
+  ],
+
+  products: [
+    // Featured Deals (5 items)
+    {
+      product_id: "FEAT_001",
+      product_name: "Premium Ribeye Steak",
+      base_price: 15.99,
+      category: "featured_deals",
+      suggested_position: "top-center"
+    },
+    {
+      product_id: "FEAT_002",
+      product_name: "Organic Strawberries",
+      base_price: 4.99,
+      category: "featured_deals",
+      suggested_position: "top-left"
+    },
+    {
+      product_id: "FEAT_003",
+      product_name: "Artisan Sourdough Bread",
+      base_price: 3.99,
+      category: "featured_deals",
+      suggested_position: "top-right"
+    },
+    {
+      product_id: "FEAT_004",
+      product_name: "Premium Ice Cream",
+      base_price: 6.99,
+      category: "featured_deals",
+      suggested_position: "mid-center"
+    },
+    {
+      product_id: "FEAT_005",
+      product_name: "Craft Beer Selection",
+      base_price: 12.99,
+      category: "featured_deals",
+      suggested_position: "mid-left"
+    },
+
+    // Fresh Market (5 items)
+    {
+      product_id: "FRESH_001",
+      product_name: "Fresh Avocados",
+      base_price: 1.99,
+      category: "fresh_market",
+      suggested_position: "top-center"
+    },
+    {
+      product_id: "FRESH_002",
+      product_name: "Baby Spinach",
+      base_price: 2.49,
+      category: "fresh_market",
+      suggested_position: "mid-left"
+    },
+    {
+      product_id: "FRESH_003",
+      product_name: "Chocolate Croissants",
+      base_price: 5.99,
+      category: "fresh_market",
+      suggested_position: "mid-center"
+    },
+    {
+      product_id: "FRESH_004",
+      product_name: "Boar's Head Turkey",
+      base_price: 9.99,
+      category: "fresh_market",
+      suggested_position: "top-left"
+    },
+    {
+      product_id: "FRESH_005",
+      product_name: "Roma Tomatoes",
+      base_price: 1.49,
+      category: "fresh_market",
+      suggested_position: "bot-center"
+    },
+
+    // Meat & Seafood (4 items)
+    {
+      product_id: "MEAT_001",
+      product_name: "Ground Beef 80/20",
+      base_price: 4.99,
+      category: "meat_seafood",
+      suggested_position: "top-center"
+    },
+    {
+      product_id: "MEAT_002",
+      product_name: "Chicken Breast",
+      base_price: 3.99,
+      category: "meat_seafood",
+      suggested_position: "mid-left"
+    },
+    {
+      product_id: "MEAT_003",
+      product_name: "Atlantic Salmon",
+      base_price: 12.99,
+      category: "meat_seafood",
+      suggested_position: "top-right"
+    },
+    {
+      product_id: "MEAT_004",
+      product_name: "Pork Chops",
+      base_price: 5.99,
+      category: "meat_seafood",
+      suggested_position: "mid-center"
+    },
+
+    // Dairy & Frozen (4 items)
+    {
+      product_id: "DAIRY_001",
+      product_name: "Whole Milk Gallon",
+      base_price: 3.49,
+      category: "dairy_frozen",
+      suggested_position: "top-left"
+    },
+    {
+      product_id: "DAIRY_002",
+      product_name: "Greek Yogurt",
+      base_price: 4.99,
+      category: "dairy_frozen",
+      suggested_position: "mid-center"
+    },
+    {
+      product_id: "DAIRY_003",
+      product_name: "Frozen Pizza",
+      base_price: 5.99,
+      category: "dairy_frozen",
+      suggested_position: "bot-left"
+    },
+    {
+      product_id: "DAIRY_004",
+      product_name: "Sharp Cheddar Cheese",
+      base_price: 4.49,
+      category: "dairy_frozen",
+      suggested_position: "mid-right"
+    },
+
+    // Grocery Essentials (4 items)
+    {
+      product_id: "GROC_001",
+      product_name: "Pasta Penne",
+      base_price: 1.99,
+      category: "grocery_essentials",
+      suggested_position: "mid-left"
+    },
+    {
+      product_id: "GROC_002",
+      product_name: "Olive Oil Extra Virgin",
+      base_price: 7.99,
+      category: "grocery_essentials",
+      suggested_position: "top-center"
+    },
+    {
+      product_id: "GROC_003",
+      product_name: "Quinoa Organic",
+      base_price: 5.99,
+      category: "grocery_essentials",
+      suggested_position: "mid-right"
+    },
+    {
+      product_id: "GROC_004",
+      product_name: "Sea Salt",
+      base_price: 2.49,
+      category: "grocery_essentials",
+      suggested_position: "bot-center"
+    },
+
+    // Beverages & Snacks (4 items)
+    {
+      product_id: "BEV_001",
+      product_name: "Sparkling Water 12-pack",
+      base_price: 4.99,
+      category: "beverages_snacks",
+      suggested_position: "top-left"
+    },
+    {
+      product_id: "BEV_002",
+      product_name: "Artisan Coffee Beans",
+      base_price: 12.99,
+      category: "beverages_snacks",
+      suggested_position: "mid-center"
+    },
+    {
+      product_id: "BEV_003",
+      product_name: "Kettle Chips",
+      base_price: 3.99,
+      category: "beverages_snacks",
+      suggested_position: "bot-right"
+    },
+    {
+      product_id: "BEV_004",
+      product_name: "Energy Drinks 4-pack",
+      base_price: 7.99,
+      category: "beverages_snacks",
+      suggested_position: "mid-right"
+    },
+
+    // Health & Beauty (4 items)
+    {
+      product_id: "HB_001",
+      product_name: "Vitamin D3 Supplements",
+      base_price: 14.99,
+      category: "health_beauty",
+      suggested_position: "top-center"
+    },
+    {
+      product_id: "HB_002",
+      product_name: "Organic Shampoo",
+      base_price: 8.99,
+      category: "health_beauty",
+      suggested_position: "mid-left"
+    },
+    {
+      product_id: "HB_003",
+      product_name: "Moisturizing Lotion",
+      base_price: 6.99,
+      category: "health_beauty",
+      suggested_position: "bot-center"
+    },
+    {
+      product_id: "HB_004",
+      product_name: "Toothpaste Natural",
+      base_price: 4.99,
+      category: "health_beauty",
+      suggested_position: "mid-right"
+    },
+
+    // Home & Seasonal (4 items)
+    {
+      product_id: "HOME_001",
+      product_name: "Laundry Detergent",
+      base_price: 11.99,
+      category: "home_seasonal",
+      suggested_position: "top-left"
+    },
+    {
+      product_id: "HOME_002",
+      product_name: "Paper Towels 6-pack",
+      base_price: 9.99,
+      category: "home_seasonal",
+      suggested_position: "mid-center"
+    },
+    {
+      product_id: "HOME_003",
+      product_name: "Candles Seasonal",
+      base_price: 12.99,
+      category: "home_seasonal",
+      suggested_position: "bot-right"
+    },
+    {
+      product_id: "HOME_004",
+      product_name: "Dish Soap",
+      base_price: 3.99,
+      category: "home_seasonal",
+      suggested_position: "mid-left"
+    }
+  ]
+};
+
+/**
+ * POC.03: Single Store Complete Data
+ * Full promotional data for STORE_001 using all 30 products
+ */
+window.store001Data = [
+  // Featured Deals (5 products) - Premium positions
+  {
+    card_id: "POC_001_FEAT_001",
+    upc: "POC441901001",
+    card_name: "Premium Ribeye Steak",
+    card_price: "$18.39",
+    units: "Lb.",
+    description: "Premium Cut | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "featured_deals",
+    department: "meat",
+    card_size: "3X2",
+    width: 3,
+    height: 2,
+    position: "top-center",
+    page: 1,
+    page_position: 2,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 95,
+    card_clicked: 85,
+    added_to_list: 68,
+    composite_score: 3200,
+    percentile: 97,
+    quartile: "Q1",
+    deal_type: "Amount",
+    quantity: 1,
+    savings: "$2.60",
+    reg_price: "$21.00",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 42,
+    print_count: 8,
+    pdf_downloads: 5,
+    image_url: "assets/images/products/ribeye_steak.png",
+    card_style: "premium",
+    media_size: "full"
+  },
+  {
+    card_id: "POC_001_FEAT_002",
+    upc: "POC441901002",
+    card_name: "Organic Strawberries",
+    card_price: "$5.74",
+    units: "1 lb container",
+    description: "Fresh Organic | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "featured_deals",
+    department: "produce",
+    card_size: "2X2",
+    width: 2,
+    height: 2,
+    position: "top-left",
+    page: 1,
+    page_position: 1,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 88,
+    card_clicked: 79,
+    added_to_list: 63,
+    composite_score: 2950,
+    percentile: 94,
+    quartile: "Q1",
+    deal_type: "Save X",
+    quantity: 1,
+    savings: "$1.25",
+    reg_price: "$7.00",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 38,
+    print_count: 7,
+    pdf_downloads: 4,
+    image_url: "assets/images/products/organic_strawberries.png",
+    card_style: "premium",
+    media_size: "full"
+  },
+  {
+    card_id: "POC_001_FEAT_003",
+    upc: "POC441901003",
+    card_name: "Artisan Sourdough Bread",
+    card_price: "$4.59",
+    units: "1 loaf",
+    description: "Fresh Baked Daily | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "featured_deals",
+    department: "bakery",
+    card_size: "2X2",
+    width: 2,
+    height: 2,
+    position: "top-right",
+    page: 1,
+    page_position: 3,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 82,
+    card_clicked: 74,
+    added_to_list: 59,
+    composite_score: 2750,
+    percentile: 91,
+    quartile: "Q1",
+    deal_type: "Amount",
+    quantity: 1,
+    savings: "$1.40",
+    reg_price: "$6.00",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 35,
+    print_count: 6,
+    pdf_downloads: 4,
+    image_url: "assets/images/products/sourdough_bread.png",
+    card_style: "premium",
+    media_size: "full"
+  },
+  {
+    card_id: "POC_001_FEAT_004",
+    upc: "POC441901004",
+    card_name: "Premium Ice Cream",
+    card_price: "$8.04",
+    units: "1.5 qt",
+    description: "Artisan Flavors | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "featured_deals",
+    department: "dairy_frozen",
+    card_size: "2X1",
+    width: 2,
+    height: 1,
+    position: "mid-center",
+    page: 1,
+    page_position: 8,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 76,
+    card_clicked: 68,
+    added_to_list: 54,
+    composite_score: 2400,
+    percentile: 86,
+    quartile: "Q1",
+    deal_type: "BOGO",
+    quantity: 2,
+    savings: "$8.04",
+    reg_price: "$16.08",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 31,
+    print_count: 5,
+    pdf_downloads: 3,
+    image_url: "assets/images/products/premium_ice_cream.png",
+    card_style: "premium",
+    media_size: "standard"
+  },
+  {
+    card_id: "POC_001_FEAT_005",
+    upc: "POC441901005",
+    card_name: "Craft Beer Selection",
+    card_price: "$14.94",
+    units: "12-pack",
+    description: "Local Breweries | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "featured_deals",
+    department: "beverages",
+    card_size: "2X1",
+    width: 2,
+    height: 1,
+    position: "mid-left",
+    page: 1,
+    page_position: 7,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 71,
+    card_clicked: 64,
+    added_to_list: 51,
+    composite_score: 2250,
+    percentile: 83,
+    quartile: "Q1",
+    deal_type: "Num For",
+    quantity: 2,
+    savings: "$5.00",
+    reg_price: "$19.94",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 28,
+    print_count: 5,
+    pdf_downloads: 3,
+    image_url: "assets/images/products/craft_beer.png",
+    card_style: "premium",
+    media_size: "standard"
+  },
+
+  // Fresh Market (5 products) - High visibility positions
+  {
+    card_id: "POC_001_FRESH_001",
+    upc: "POC441901006",
+    card_name: "Fresh Avocados",
+    card_price: "$2.29",
+    units: "Each",
+    description: "Ripe & Ready | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "fresh_market",
+    department: "produce",
+    card_size: "2X1",
+    width: 2,
+    height: 1,
+    position: "top-center",
+    page: 2,
+    page_position: 2,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 85,
+    card_clicked: 76,
+    added_to_list: 61,
+    composite_score: 2650,
+    percentile: 89,
+    quartile: "Q1",
+    deal_type: "Amount",
+    quantity: 1,
+    savings: "$0.70",
+    reg_price: "$3.00",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 33,
+    print_count: 6,
+    pdf_downloads: 4,
+    image_url: "assets/images/products/avocados.png",
+    card_style: "standard",
+    media_size: "standard"
+  },
+  {
+    card_id: "POC_001_FRESH_002",
+    upc: "POC441901007",
+    card_name: "Baby Spinach",
+    card_price: "$2.86",
+    units: "5 oz bag",
+    description: "Organic Baby Leaves | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "fresh_market",
+    department: "produce",
+    card_size: "1X1",
+    width: 1,
+    height: 1,
+    position: "mid-left",
+    page: 2,
+    page_position: 7,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 68,
+    card_clicked: 61,
+    added_to_list: 49,
+    composite_score: 2100,
+    percentile: 78,
+    quartile: "Q2",
+    deal_type: "Save X",
+    quantity: 1,
+    savings: "$0.63",
+    reg_price: "$3.50",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 25,
+    print_count: 4,
+    pdf_downloads: 2,
+    image_url: "assets/images/products/baby_spinach.png",
+    card_style: "standard",
+    media_size: "compact"
+  },
+  {
+    card_id: "POC_001_FRESH_003",
+    upc: "POC441901008",
+    card_name: "Chocolate Croissants",
+    card_price: "$6.89",
+    units: "4 pack",
+    description: "Fresh Baked | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "fresh_market",
+    department: "bakery",
+    card_size: "2X1",
+    width: 2,
+    height: 1,
+    position: "mid-center",
+    page: 2,
+    page_position: 8,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 73,
+    card_clicked: 66,
+    added_to_list: 53,
+    composite_score: 2300,
+    percentile: 81,
+    quartile: "Q1",
+    deal_type: "Amount",
+    quantity: 1,
+    savings: "$1.10",
+    reg_price: "$8.00",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 27,
+    print_count: 4,
+    pdf_downloads: 3,
+    image_url: "assets/images/products/chocolate_croissants.png",
+    card_style: "standard",
+    media_size: "standard"
+  },
+  {
+    card_id: "POC_001_FRESH_004",
+    upc: "POC441901009",
+    card_name: "Boar's Head Turkey",
+    card_price: "$11.49",
+    units: "Lb.",
+    description: "Sliced Fresh | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "fresh_market",
+    department: "deli",
+    card_size: "2X2",
+    width: 2,
+    height: 2,
+    position: "top-left",
+    page: 2,
+    page_position: 1,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 79,
+    card_clicked: 71,
+    added_to_list: 57,
+    composite_score: 2500,
+    percentile: 85,
+    quartile: "Q1",
+    deal_type: "Amount",
+    quantity: 1,
+    savings: "$1.50",
+    reg_price: "$13.00",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 29,
+    print_count: 5,
+    pdf_downloads: 3,
+    image_url: "assets/images/products/boars_head_turkey.png",
+    card_style: "premium",
+    media_size: "full"
+  },
+  {
+    card_id: "POC_001_FRESH_005",
+    upc: "POC441901010",
+    card_name: "Roma Tomatoes",
+    card_price: "$1.71",
+    units: "Lb.",
+    description: "Fresh Daily | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "fresh_market",
+    department: "produce",
+    card_size: "1X1",
+    width: 1,
+    height: 1,
+    position: "bot-center",
+    page: 2,
+    page_position: 14,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 58,
+    card_clicked: 52,
+    added_to_list: 42,
+    composite_score: 1750,
+    percentile: 65,
+    quartile: "Q2",
+    deal_type: "Save X",
+    quantity: 1,
+    savings: "$0.29",
+    reg_price: "$2.00",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 18,
+    print_count: 3,
+    pdf_downloads: 2,
+    image_url: "assets/images/products/roma_tomatoes.png",
+    card_style: "standard",
+    media_size: "compact"
+  },
+
+  // Meat & Seafood (4 products)
+  {
+    card_id: "POC_001_MEAT_001",
+    upc: "POC441901011",
+    card_name: "Ground Beef 80/20",
+    card_price: "$5.74",
+    units: "Lb.",
+    description: "Fresh Ground Daily | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "meat_seafood",
+    department: "meat",
+    card_size: "2X1",
+    width: 2,
+    height: 1,
+    position: "top-center",
+    page: 3,
+    page_position: 2,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 81,
+    card_clicked: 73,
+    added_to_list: 58,
+    composite_score: 2550,
+    percentile: 87,
+    quartile: "Q1",
+    deal_type: "Amount",
+    quantity: 1,
+    savings: "$1.25",
+    reg_price: "$7.00",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 30,
+    print_count: 5,
+    pdf_downloads: 3,
+    image_url: "assets/images/products/ground_beef.png",
+    card_style: "standard",
+    media_size: "standard"
+  },
+  {
+    card_id: "POC_001_MEAT_002",
+    upc: "POC441901012",
+    card_name: "Chicken Breast",
+    card_price: "$4.59",
+    units: "Lb.",
+    description: "Boneless Skinless | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "meat_seafood",
+    department: "meat",
+    card_size: "1X1",
+    width: 1,
+    height: 1,
+    position: "mid-left",
+    page: 3,
+    page_position: 7,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 65,
+    card_clicked: 59,
+    added_to_list: 47,
+    composite_score: 2000,
+    percentile: 75,
+    quartile: "Q2",
+    deal_type: "Save X",
+    quantity: 1,
+    savings: "$1.40",
+    reg_price: "$6.00",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 22,
+    print_count: 4,
+    pdf_downloads: 2,
+    image_url: "assets/images/products/chicken_breast.png",
+    card_style: "standard",
+    media_size: "compact"
+  },
+  {
+    card_id: "POC_001_MEAT_003",
+    upc: "POC441901013",
+    card_name: "Atlantic Salmon",
+    card_price: "$14.94",
+    units: "Lb.",
+    description: "Fresh Wild Caught | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "meat_seafood",
+    department: "seafood",
+    card_size: "2X2",
+    width: 2,
+    height: 2,
+    position: "top-right",
+    page: 3,
+    page_position: 3,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 77,
+    card_clicked: 69,
+    added_to_list: 55,
+    composite_score: 2450,
+    percentile: 84,
+    quartile: "Q1",
+    deal_type: "Amount",
+    quantity: 1,
+    savings: "$3.05",
+    reg_price: "$18.00",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 28,
+    print_count: 5,
+    pdf_downloads: 3,
+    image_url: "assets/images/products/atlantic_salmon.png",
+    card_style: "premium",
+    media_size: "full"
+  },
+  {
+    card_id: "POC_001_MEAT_004",
+    upc: "POC441901014",
+    card_name: "Pork Chops",
+    card_price: "$6.89",
+    units: "Lb.",
+    description: "Bone-In Center Cut | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "meat_seafood",
+    department: "meat",
+    card_size: "2X1",
+    width: 2,
+    height: 1,
+    position: "mid-center",
+    page: 3,
+    page_position: 8,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 70,
+    card_clicked: 63,
+    added_to_list: 50,
+    composite_score: 2200,
+    percentile: 79,
+    quartile: "Q2",
+    deal_type: "Save X",
+    quantity: 1,
+    savings: "$1.10",
+    reg_price: "$8.00",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 24,
+    print_count: 4,
+    pdf_downloads: 2,
+    image_url: "assets/images/products/pork_chops.png",
+    card_style: "standard",
+    media_size: "standard"
+  },
+
+  // Dairy & Frozen (4 products)
+  {
+    card_id: "POC_001_DAIRY_001",
+    upc: "POC441901015",
+    card_name: "Whole Milk Gallon",
+    card_price: "$4.01",
+    units: "1 Gallon",
+    description: "Fresh Daily | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "dairy_frozen",
+    department: "dairy",
+    card_size: "2X1",
+    width: 2,
+    height: 1,
+    position: "top-left",
+    page: 4,
+    page_position: 1,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 75,
+    card_clicked: 68,
+    added_to_list: 54,
+    composite_score: 2350,
+    percentile: 82,
+    quartile: "Q1",
+    deal_type: "Amount",
+    quantity: 1,
+    savings: "$0.48",
+    reg_price: "$4.50",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 26,
+    print_count: 4,
+    pdf_downloads: 3,
+    image_url: "assets/images/products/whole_milk.png",
+    card_style: "standard",
+    media_size: "standard"
+  },
+  {
+    card_id: "POC_001_DAIRY_002",
+    upc: "POC441901016",
+    card_name: "Greek Yogurt",
+    card_price: "$5.74",
+    units: "32 oz",
+    description: "Plain or Vanilla | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "dairy_frozen",
+    department: "dairy",
+    card_size: "2X1",
+    width: 2,
+    height: 1,
+    position: "mid-center",
+    page: 4,
+    page_position: 8,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 67,
+    card_clicked: 60,
+    added_to_list: 48,
+    composite_score: 2050,
+    percentile: 76,
+    quartile: "Q2",
+    deal_type: "Num For",
+    quantity: 2,
+    savings: "$2.25",
+    reg_price: "$8.00",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 21,
+    print_count: 3,
+    pdf_downloads: 2,
+    image_url: "assets/images/products/greek_yogurt.png",
+    card_style: "standard",
+    media_size: "standard"
+  },
+  {
+    card_id: "POC_001_DAIRY_003",
+    upc: "POC441901017",
+    card_name: "Frozen Pizza",
+    card_price: "$6.89",
+    units: "Each",
+    description: "Supreme or Pepperoni | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "dairy_frozen",
+    department: "frozen",
+    card_size: "1X1",
+    width: 1,
+    height: 1,
+    position: "bot-left",
+    page: 4,
+    page_position: 13,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 55,
+    card_clicked: 50,
+    added_to_list: 40,
+    composite_score: 1650,
+    percentile: 62,
+    quartile: "Q2",
+    deal_type: "BOGO",
+    quantity: 2,
+    savings: "$6.89",
+    reg_price: "$13.78",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 16,
+    print_count: 3,
+    pdf_downloads: 1,
+    image_url: "assets/images/products/frozen_pizza.png",
+    card_style: "standard",
+    media_size: "compact"
+  },
+  {
+    card_id: "POC_001_DAIRY_004",
+    upc: "POC441901018",
+    card_name: "Sharp Cheddar Cheese",
+    card_price: "$5.16",
+    units: "8 oz block",
+    description: "Aged Sharp | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "dairy_frozen",
+    department: "dairy",
+    card_size: "1X1",
+    width: 1,
+    height: 1,
+    position: "mid-right",
+    page: 4,
+    page_position: 9,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 62,
+    card_clicked: 56,
+    added_to_list: 45,
+    composite_score: 1850,
+    percentile: 69,
+    quartile: "Q2",
+    deal_type: "Save X",
+    quantity: 1,
+    savings: "$0.83",
+    reg_price: "$6.00",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 19,
+    print_count: 3,
+    pdf_downloads: 2,
+    image_url: "assets/images/products/cheddar_cheese.png",
+    card_style: "standard",
+    media_size: "compact"
+  },
+
+  // Grocery Essentials (4 products)
+  {
+    card_id: "POC_001_GROC_001",
+    upc: "POC441901019",
+    card_name: "Pasta Penne",
+    card_price: "$2.29",
+    units: "1 lb box",
+    description: "Italian Import | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "grocery_essentials",
+    department: "grocery",
+    card_size: "1X1",
+    width: 1,
+    height: 1,
+    position: "mid-left",
+    page: 5,
+    page_position: 7,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 64,
+    card_clicked: 58,
+    added_to_list: 46,
+    composite_score: 1950,
+    percentile: 73,
+    quartile: "Q2",
+    deal_type: "Num For",
+    quantity: 3,
+    savings: "$2.58",
+    reg_price: "$4.87",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 20,
+    print_count: 3,
+    pdf_downloads: 2,
+    image_url: "assets/images/products/pasta_penne.png",
+    card_style: "standard",
+    media_size: "compact"
+  },
+  {
+    card_id: "POC_001_GROC_002",
+    upc: "POC441901020",
+    card_name: "Olive Oil Extra Virgin",
+    card_price: "$9.19",
+    units: "500ml bottle",
+    description: "Cold Pressed | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "grocery_essentials",
+    department: "grocery",
+    card_size: "2X1",
+    width: 2,
+    height: 1,
+    position: "top-center",
+    page: 5,
+    page_position: 2,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 78,
+    card_clicked: 70,
+    added_to_list: 56,
+    composite_score: 2400,
+    percentile: 84,
+    quartile: "Q1",
+    deal_type: "Amount",
+    quantity: 1,
+    savings: "$1.80",
+    reg_price: "$11.00",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 27,
+    print_count: 4,
+    pdf_downloads: 3,
+    image_url: "assets/images/products/olive_oil.png",
+    card_style: "standard",
+    media_size: "standard"
+  },
+  {
+    card_id: "POC_001_GROC_003",
+    upc: "POC441901021",
+    card_name: "Quinoa Organic",
+    card_price: "$6.89",
+    units: "1 lb bag",
+    description: "Certified Organic | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "grocery_essentials",
+    department: "grocery",
+    card_size: "1X1",
+    width: 1,
+    height: 1,
+    position: "mid-right",
+    page: 5,
+    page_position: 9,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 59,
+    card_clicked: 53,
+    added_to_list: 42,
+    composite_score: 1800,
+    percentile: 67,
+    quartile: "Q2",
+    deal_type: "Save X",
+    quantity: 1,
+    savings: "$1.10",
+    reg_price: "$8.00",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 17,
+    print_count: 3,
+    pdf_downloads: 2,
+    image_url: "assets/images/products/quinoa.png",
+    card_style: "standard",
+    media_size: "compact"
+  },
+  {
+    card_id: "POC_001_GROC_004",
+    upc: "POC441901022",
+    card_name: "Sea Salt",
+    card_price: "$2.86",
+    units: "1 lb container",
+    description: "Coarse Ground | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "grocery_essentials",
+    department: "grocery",
+    card_size: "1X1",
+    width: 1,
+    height: 1,
+    position: "bot-center",
+    page: 5,
+    page_position: 14,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 53,
+    card_clicked: 48,
+    added_to_list: 38,
+    composite_score: 1550,
+    percentile: 58,
+    quartile: "Q3",
+    deal_type: "Amount",
+    quantity: 1,
+    savings: "$0.63",
+    reg_price: "$3.50",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 14,
+    print_count: 2,
+    pdf_downloads: 1,
+    image_url: "assets/images/products/sea_salt.png",
+    card_style: "standard",
+    media_size: "compact"
+  },
+
+  // Beverages & Snacks (4 products)
+  {
+    card_id: "POC_001_BEV_001",
+    upc: "POC441901023",
+    card_name: "Sparkling Water 12-pack",
+    card_price: "$5.74",
+    units: "12 x 12oz cans",
+    description: "Natural Flavors | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "beverages_snacks",
+    department: "beverages",
+    card_size: "2X1",
+    width: 2,
+    height: 1,
+    position: "top-left",
+    page: 6,
+    page_position: 1,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 72,
+    card_clicked: 65,
+    added_to_list: 52,
+    composite_score: 2250,
+    percentile: 80,
+    quartile: "Q1",
+    deal_type: "Num For",
+    quantity: 2,
+    savings: "$2.25",
+    reg_price: "$8.00",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 24,
+    print_count: 4,
+    pdf_downloads: 2,
+    image_url: "assets/images/products/sparkling_water.png",
+    card_style: "standard",
+    media_size: "standard"
+  },
+  {
+    card_id: "POC_001_BEV_002",
+    upc: "POC_441901024",
+    card_name: "Artisan Coffee Beans",
+    card_price: "$14.94",
+    units: "1 lb bag",
+    description: "Single Origin | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "beverages_snacks",
+    department: "beverages",
+    card_size: "2X1",
+    width: 2,
+    height: 1,
+    position: "mid-center",
+    page: 6,
+    page_position: 8,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 66,
+    card_clicked: 59,
+    added_to_list: 47,
+    composite_score: 2000,
+    percentile: 74,
+    quartile: "Q2",
+    deal_type: "Amount",
+    quantity: 1,
+    savings: "$3.05",
+    reg_price: "$18.00",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 21,
+    print_count: 3,
+    pdf_downloads: 2,
+    image_url: "assets/images/products/coffee_beans.png",
+    card_style: "standard",
+    media_size: "standard"
+  },
+  {
+    card_id: "POC_001_BEV_003",
+    upc: "POC441901025",
+    card_name: "Kettle Chips",
+    card_price: "$4.59",
+    units: "8 oz bag",
+    description: "Sea Salt & Vinegar | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "beverages_snacks",
+    department: "snacks",
+    card_size: "1X1",
+    width: 1,
+    height: 1,
+    position: "bot-right",
+    page: 6,
+    page_position: 15,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 50,
+    card_clicked: 45,
+    added_to_list: 36,
+    composite_score: 1450,
+    percentile: 54,
+    quartile: "Q3",
+    deal_type: "BOGO",
+    quantity: 2,
+    savings: "$4.59",
+    reg_price: "$9.18",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 12,
+    print_count: 2,
+    pdf_downloads: 1,
+    image_url: "assets/images/products/kettle_chips.png",
+    card_style: "standard",
+    media_size: "compact"
+  },
+  {
+    card_id: "POC_001_BEV_004",
+    upc: "POC441901026",
+    card_name: "Energy Drinks 4-pack",
+    card_price: "$9.19",
+    units: "4 x 16oz cans",
+    description: "Sugar Free | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "beverages_snacks",
+    department: "beverages",
+    card_size: "1X1",
+    width: 1,
+    height: 1,
+    position: "mid-right",
+    page: 6,
+    page_position: 9,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 57,
+    card_clicked: 51,
+    added_to_list: 41,
+    composite_score: 1700,
+    percentile: 63,
+    quartile: "Q2",
+    deal_type: "Save X",
+    quantity: 1,
+    savings: "$1.80",
+    reg_price: "$11.00",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 15,
+    print_count: 2,
+    pdf_downloads: 1,
+    image_url: "assets/images/products/energy_drinks.png",
+    card_style: "standard",
+    media_size: "compact"
+  },
+
+  // Health & Beauty (4 products)
+  {
+    card_id: "POC_001_HB_001",
+    upc: "POC441901027",
+    card_name: "Vitamin D3 Supplements",
+    card_price: "$17.24",
+    units: "60 tablets",
+    description: "2000 IU | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "health_beauty",
+    department: "health",
+    card_size: "2X1",
+    width: 2,
+    height: 1,
+    position: "top-center",
+    page: 7,
+    page_position: 2,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 74,
+    card_clicked: 67,
+    added_to_list: 54,
+    composite_score: 2300,
+    percentile: 82,
+    quartile: "Q1",
+    deal_type: "Amount",
+    quantity: 1,
+    savings: "$2.75",
+    reg_price: "$20.00",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 25,
+    print_count: 4,
+    pdf_downloads: 3,
+    image_url: "assets/images/products/vitamin_d3.png",
+    card_style: "standard",
+    media_size: "standard"
+  },
+  {
+    card_id: "POC_001_HB_002",
+    upc: "POC441901028",
+    card_name: "Organic Shampoo",
+    card_price: "$10.34",
+    units: "16 oz bottle",
+    description: "Sulfate Free | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "health_beauty",
+    department: "beauty",
+    card_size: "1X1",
+    width: 1,
+    height: 1,
+    position: "mid-left",
+    page: 7,
+    page_position: 7,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 61,
+    card_clicked: 55,
+    added_to_list: 44,
+    composite_score: 1850,
+    percentile: 70,
+    quartile: "Q2",
+    deal_type: "Save X",
+    quantity: 1,
+    savings: "$1.65",
+    reg_price: "$12.00",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 18,
+    print_count: 3,
+    pdf_downloads: 2,
+    image_url: "assets/images/products/organic_shampoo.png",
+    card_style: "standard",
+    media_size: "compact"
+  },
+  {
+    card_id: "POC_001_HB_003",
+    upc: "POC441901029",
+    card_name: "Moisturizing Lotion",
+    card_price: "$8.04",
+    units: "12 oz bottle",
+    description: "Sensitive Skin | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "health_beauty",
+    department: "beauty",
+    card_size: "1X1",
+    width: 1,
+    height: 1,
+    position: "bot-center",
+    page: 7,
+    page_position: 14,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 54,
+    card_clicked: 49,
+    added_to_list: 39,
+    composite_score: 1600,
+    percentile: 60,
+    quartile: "Q3",
+    deal_type: "Num For",
+    quantity: 2,
+    savings: "$3.95",
+    reg_price: "$12.00",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 13,
+    print_count: 2,
+    pdf_downloads: 1,
+    image_url: "assets/images/products/moisturizing_lotion.png",
+    card_style: "standard",
+    media_size: "compact"
+  },
+  {
+    card_id: "POC_001_HB_004",
+    upc: "POC441901030",
+    card_name: "Toothpaste Natural",
+    card_price: "$5.74",
+    units: "6 oz tube",
+    description: "Fluoride Free | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "health_beauty",
+    department: "health",
+    card_size: "1X1",
+    width: 1,
+    height: 1,
+    position: "mid-right",
+    page: 7,
+    page_position: 9,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 58,
+    card_clicked: 52,
+    added_to_list: 42,
+    composite_score: 1750,
+    percentile: 66,
+    quartile: "Q2",
+    deal_type: "Amount",
+    quantity: 1,
+    savings: "$1.25",
+    reg_price: "$7.00",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 16,
+    print_count: 3,
+    pdf_downloads: 2,
+    image_url: "assets/images/products/toothpaste_natural.png",
+    card_style: "standard",
+    media_size: "compact"
+  },
+
+  // Home & Seasonal (4 products)
+  {
+    card_id: "POC_001_HOME_001",
+    upc: "POC441901031",
+    card_name: "Laundry Detergent",
+    card_price: "$13.79",
+    units: "100 oz bottle",
+    description: "64 Loads | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "home_seasonal",
+    department: "household",
+    card_size: "2X1",
+    width: 2,
+    height: 1,
+    position: "top-left",
+    page: 8,
+    page_position: 1,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 69,
+    card_clicked: 62,
+    added_to_list: 50,
+    composite_score: 2100,
+    percentile: 77,
+    quartile: "Q2",
+    deal_type: "Amount",
+    quantity: 1,
+    savings: "$2.20",
+    reg_price: "$16.00",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 22,
+    print_count: 3,
+    pdf_downloads: 2,
+    image_url: "assets/images/products/laundry_detergent.png",
+    card_style: "standard",
+    media_size: "standard"
+  },
+  {
+    card_id: "POC_001_HOME_002",
+    upc: "POC441901032",
+    card_name: "Paper Towels 6-pack",
+    card_price: "$11.49",
+    units: "6 rolls",
+    description: "2-Ply Select-A-Size | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "home_seasonal",
+    department: "household",
+    card_size: "2X1",
+    width: 2,
+    height: 1,
+    position: "mid-center",
+    page: 8,
+    page_position: 8,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 63,
+    card_clicked: 57,
+    added_to_list: 46,
+    composite_score: 1900,
+    percentile: 72,
+    quartile: "Q2",
+    deal_type: "Save X",
+    quantity: 1,
+    savings: "$1.50",
+    reg_price: "$13.00",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 19,
+    print_count: 3,
+    pdf_downloads: 2,
+    image_url: "assets/images/products/paper_towels.png",
+    card_style: "standard",
+    media_size: "standard"
+  },
+  {
+    card_id: "POC_001_HOME_003",
+    upc: "POC441901033",
+    card_name: "Candles Seasonal",
+    card_price: "$14.94",
+    units: "3-wick jar",
+    description: "Fall Scents | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "home_seasonal",
+    department: "seasonal",
+    card_size: "1X1",
+    width: 1,
+    height: 1,
+    position: "bot-right",
+    page: 8,
+    page_position: 15,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 51,
+    card_clicked: 46,
+    added_to_list: 37,
+    composite_score: 1500,
+    percentile: 56,
+    quartile: "Q3",
+    deal_type: "BOGO",
+    quantity: 2,
+    savings: "$14.94",
+    reg_price: "$29.88",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 11,
+    print_count: 2,
+    pdf_downloads: 1,
+    image_url: "assets/images/products/seasonal_candles.png",
+    card_style: "standard",
+    media_size: "compact"
+  },
+  {
+    card_id: "POC_001_HOME_004",
+    upc: "POC441901034",
+    card_name: "Dish Soap",
+    card_price: "$4.59",
+    units: "25 oz bottle",
+    description: "Antibacterial | Group A Pricing | CLUB CARD PRICE",
+    marketing_category: "home_seasonal",
+    department: "household",
+    card_size: "1X1",
+    width: 1,
+    height: 1,
+    position: "mid-left",
+    page: 8,
+    page_position: 7,
+    version: "NY",
+    store_codes: ["STORE_001"],
+    type_hint: "10A",
+    card_in_view: 60,
+    card_clicked: 54,
+    added_to_list: 43,
+    composite_score: 1800,
+    percentile: 68,
+    quartile: "Q2",
+    deal_type: "Num For",
+    quantity: 3,
+    savings: "$4.37",
+    reg_price: "$8.96",
+    week: 40,
+    stage: "post_publish",
+    media_freshness: "new",
+    share_count: 17,
+    print_count: 3,
+    pdf_downloads: 2,
+    image_url: "assets/images/products/dish_soap.png",
+    card_style: "standard",
+    media_size: "compact"
+  }
+];
+
+/**
+ * POC.04: Replicate to 5 Stores
+ * Generate data for remaining 4 stores with group-specific characteristics
+ */
+
+// Helper function to apply group-specific pricing
+function applyGroupPricing(basePrice, groupId) {
+  const price = parseFloat(basePrice.replace('$', ''));
+  let multiplier = 1.0;
+
+  switch(groupId) {
+    case 'GROUP_A': multiplier = 1.15; break; // Urban Premium (+15%)
+    case 'GROUP_B': multiplier = 1.08; break; // Suburban Family (+8%)
+    case 'GROUP_C': multiplier = 0.90; break; // Rural Value (-10%)
+    case 'GROUP_D': multiplier = 1.20; break; // Test Alpha (+20%)
+    case 'GROUP_E': multiplier = 1.05; break; // Test Beta (+5%)
+  }
+
+  return '$' + (price * multiplier).toFixed(2);
+}
+
+// Helper function to apply performance variations
+function applyPerformanceVariation(baseValue, groupMultiplier, variation = 0.2) {
+  const randomFactor = 1 + (Math.random() - 0.5) * 2 * variation;
+  return Math.round(baseValue * groupMultiplier * randomFactor);
+}
+
+// Helper function to get group-specific deal types
+function getGroupDealType(originalDeal, groupId) {
+  const dealMap = {
+    'GROUP_A': originalDeal, // Keep premium deals
+    'GROUP_B': originalDeal === 'Amount' ? 'BOGO' : originalDeal, // BOGO focus
+    'GROUP_C': originalDeal === 'BOGO' ? 'Save X' : originalDeal, // Value focus
+    'GROUP_D': Math.random() > 0.5 ? 'Num For' : originalDeal, // Test variants
+    'GROUP_E': originalDeal // Digital focus (same deals, better metrics)
+  };
+  return dealMap[groupId];
+}
+
+// Generate STORE_011 data (Group B - Suburban Family)
+const store011Data = window.store001Data.map(item => ({
+  ...item,
+  card_id: item.card_id.replace('POC_001_', 'POC_011_'),
+  card_price: applyGroupPricing(item.card_price, 'GROUP_B'),
+  store_codes: ['STORE_011'],
+  card_in_view: applyPerformanceVariation(item.card_in_view, 1.05),
+  card_clicked: function() {
+    const views = applyPerformanceVariation(item.card_in_view, 1.05);
+    return Math.round(views * 0.82); // Slightly lower CTR for family shoppers
+  }(),
+  added_to_list: function() {
+    const clicks = Math.round(applyPerformanceVariation(item.card_in_view, 1.05) * 0.82);
+    return Math.round(clicks * 0.75); // Family planning focus
+  }(),
+  composite_score: applyPerformanceVariation(item.composite_score, 1.05),
+  percentile: Math.max(1, Math.min(100, applyPerformanceVariation(item.percentile, 1.05))),
+  deal_type: getGroupDealType(item.deal_type, 'GROUP_B'),
+  share_count: applyPerformanceVariation(item.share_count, 1.20), // Families share more
+  units: item.units.includes('lb') ? item.units.replace('lb', 'family pack') : item.units
+}));
+
+// Generate STORE_021 data (Group C - Rural Value)
+const store021Data = window.store001Data.map(item => ({
+  ...item,
+  card_id: item.card_id.replace('POC_001_', 'POC_021_'),
+  card_price: applyGroupPricing(item.card_price, 'GROUP_C'),
+  store_codes: ['STORE_021'],
+  card_in_view: applyPerformanceVariation(item.card_in_view, 0.85),
+  card_clicked: function() {
+    const views = applyPerformanceVariation(item.card_in_view, 0.85);
+    return Math.round(views * 0.88); // Higher CTR for value deals
+  }(),
+  added_to_list: function() {
+    const clicks = Math.round(applyPerformanceVariation(item.card_in_view, 0.85) * 0.88);
+    return Math.round(clicks * 0.85); // Strong conversion on value
+  }(),
+  composite_score: applyPerformanceVariation(item.composite_score, 0.85),
+  percentile: Math.max(1, Math.min(100, applyPerformanceVariation(item.percentile, 0.85))),
+  deal_type: getGroupDealType(item.deal_type, 'GROUP_C'),
+  share_count: applyPerformanceVariation(item.share_count, 0.60), // Less digital sharing
+  description: item.description.replace('Group A Pricing', 'Group C Value Pricing')
+}));
+
+// Generate STORE_031 data (Group D - Test Alpha)
+const store031Data = window.store001Data.map(item => ({
+  ...item,
+  card_id: item.card_id.replace('POC_001_', 'POC_031_'),
+  card_price: applyGroupPricing(item.card_price, 'GROUP_D'),
+  store_codes: ['STORE_031'],
+  card_in_view: applyPerformanceVariation(item.card_in_view, 1.20),
+  card_clicked: function() {
+    const views = applyPerformanceVariation(item.card_in_view, 1.20);
+    return Math.round(views * 0.85); // Test environment metrics
+  }(),
+  added_to_list: function() {
+    const clicks = Math.round(applyPerformanceVariation(item.card_in_view, 1.20) * 0.85);
+    return Math.round(clicks * 0.70); // Innovation test results
+  }(),
+  composite_score: applyPerformanceVariation(item.composite_score, 1.20),
+  percentile: Math.max(1, Math.min(100, applyPerformanceVariation(item.percentile, 1.20))),
+  deal_type: getGroupDealType(item.deal_type, 'GROUP_D'),
+  share_count: applyPerformanceVariation(item.share_count, 1.40), // High test engagement
+  media_freshness: 'experimental',
+  description: item.description.replace('Group A Pricing', 'Alpha Test Pricing')
+}));
+
+// Generate STORE_041 data (Group E - Test Beta)
+const store041Data = window.store001Data.map(item => ({
+  ...item,
+  card_id: item.card_id.replace('POC_001_', 'POC_041_'),
+  card_price: applyGroupPricing(item.card_price, 'GROUP_E'),
+  store_codes: ['STORE_041'],
+  card_in_view: applyPerformanceVariation(item.card_in_view, 0.95),
+  card_clicked: function() {
+    const views = applyPerformanceVariation(item.card_in_view, 0.95);
+    return Math.round(views * 0.90); // High digital engagement
+  }(),
+  added_to_list: function() {
+    const clicks = Math.round(applyPerformanceVariation(item.card_in_view, 0.95) * 0.90);
+    return Math.round(clicks * 0.80); // Strong digital conversion
+  }(),
+  composite_score: applyPerformanceVariation(item.composite_score, 0.95),
+  percentile: Math.max(1, Math.min(100, applyPerformanceVariation(item.percentile, 0.95))),
+  deal_type: getGroupDealType(item.deal_type, 'GROUP_E'),
+  share_count: applyPerformanceVariation(item.share_count, 1.80), // Heavy digital sharing
+  pdf_downloads: applyPerformanceVariation(item.pdf_downloads, 2.20), // Digital focus
+  media_freshness: 'digital_optimized',
+  description: item.description.replace('Group A Pricing', 'Beta Digital Pricing')
+}));
+
+// Combine all store data into comprehensive promotions array
+window.allStoresPromotions = [
+  ...window.store001Data,  // 30 promotions
+  ...store011Data,         // 30 promotions
+  ...store021Data,         // 30 promotions
+  ...store031Data,         // 30 promotions
+  ...store041Data          // 30 promotions
+]; // Total: 150 promotions
+
+// Store-specific data exports
+window.store011Data = store011Data;
+window.store021Data = store021Data;
+window.store031Data = store031Data;
+window.store041Data = store041Data;
+
+/**
+ * POC.05: Weekly Metrics Generation
+ * Aggregated metrics calculation functions for all stores and groups
+ */
+
+// Store to Group mapping
+const storeGroupMap = {
+  'STORE_001': 'GROUP_A',
+  'STORE_011': 'GROUP_B',
+  'STORE_021': 'GROUP_C',
+  'STORE_031': 'GROUP_D',
+  'STORE_041': 'GROUP_E'
+};
+
+// Helper function to calculate metrics for a dataset
+function calculateMetrics(dataSet, label) {
+  if (!dataSet || dataSet.length === 0) {
+    return {
+      label: label,
+      promotion_count: 0,
+      total_views: 0,
+      total_clicks: 0,
+      total_added_to_list: 0,
+      total_share_count: 0,
+      performance_score: 0,
+      avg_ctr: 0,
+      avg_conversion_rate: 0,
+      avg_share_rate: 0,
+      quartile_distribution: { Q1: 0, Q2: 0, Q3: 0, Q4: 0 }
+    };
+  }
+
+  const total_views = dataSet.reduce((sum, item) => sum + item.card_in_view, 0);
+  const total_clicks = dataSet.reduce((sum, item) => sum + item.card_clicked, 0);
+  const total_added_to_list = dataSet.reduce((sum, item) => sum + item.added_to_list, 0);
+  const total_share_count = dataSet.reduce((sum, item) => sum + item.share_count, 0);
+  const total_composite_score = dataSet.reduce((sum, item) => sum + item.composite_score, 0);
+
+  // Calculate quartile distribution
+  const quartileCounts = dataSet.reduce((acc, item) => {
+    acc[item.quartile] = (acc[item.quartile] || 0) + 1;
+    return acc;
+  }, {});
+
+  return {
+    label: label,
+    promotion_count: dataSet.length,
+    total_views: total_views,
+    total_clicks: total_clicks,
+    total_added_to_list: total_added_to_list,
+    total_share_count: total_share_count,
+    performance_score: Math.round(total_composite_score / dataSet.length),
+    avg_ctr: total_views > 0 ? Math.round((total_clicks / total_views) * 10000) / 100 : 0,
+    avg_conversion_rate: total_clicks > 0 ? Math.round((total_added_to_list / total_clicks) * 10000) / 100 : 0,
+    avg_share_rate: total_views > 0 ? Math.round((total_share_count / total_views) * 10000) / 100 : 0,
+    quartile_distribution: quartileCounts
+  };
+}
+
+// Get metrics by specific store
+function getMetricsByStore(store_id) {
+  const storeData = window.allStoresPromotions.filter(item =>
+    item.store_codes && item.store_codes.includes(store_id)
+  );
+
+  const storeInfo = window.storeHierarchyPOC.stores.find(store => store.store_id === store_id);
+  const label = storeInfo ? `${storeInfo.store_name} (${store_id})` : store_id;
+
+  return calculateMetrics(storeData, label);
+}
+
+// Get metrics by group
+function getMetricsByGroup(group_id) {
+  const groupStores = window.storeHierarchyPOC.stores
+    .filter(store => store.group_id === group_id)
+    .map(store => store.store_id);
+
+  const groupData = window.allStoresPromotions.filter(item =>
+    item.store_codes && groupStores.some(storeId => item.store_codes.includes(storeId))
+  );
+
+  const groupInfo = window.storeHierarchyPOC.groups.find(group => group.group_id === group_id);
+  const label = groupInfo ? `${groupInfo.group_name} (${group_id})` : group_id;
+
+  return calculateMetrics(groupData, label);
+}
+
+// Get comprehensive metrics for all data
+function getAllMetrics() {
+  const allMetrics = calculateMetrics(window.allStoresPromotions, 'All Stores Combined');
+
+  // Add store-level breakdown
+  const storeMetrics = {};
+  ['STORE_001', 'STORE_011', 'STORE_021', 'STORE_031', 'STORE_041'].forEach(storeId => {
+    storeMetrics[storeId] = getMetricsByStore(storeId);
+  });
+
+  // Add group-level breakdown
+  const groupMetrics = {};
+  ['GROUP_A', 'GROUP_B', 'GROUP_C', 'GROUP_D', 'GROUP_E'].forEach(groupId => {
+    groupMetrics[groupId] = getMetricsByGroup(groupId);
+  });
+
+  return {
+    overall: allMetrics,
+    by_store: storeMetrics,
+    by_group: groupMetrics,
+    summary: {
+      total_stores: 5,
+      total_groups: 5,
+      total_promotions: window.allStoresPromotions.length,
+      data_quality: {
+        complete_records: window.allStoresPromotions.filter(item =>
+          item.card_in_view && item.card_clicked && item.composite_score
+        ).length,
+        missing_data: window.allStoresPromotions.filter(item =>
+          !item.card_in_view || !item.card_clicked || !item.composite_score
+        ).length
+      }
+    }
+  };
+}
+
+// Get top performing promotions across all stores
+function getTopPromotions(limit = 10, metric = 'composite_score') {
+  return window.allStoresPromotions
+    .sort((a, b) => b[metric] - a[metric])
+    .slice(0, limit)
+    .map(item => ({
+      card_id: item.card_id,
+      card_name: item.card_name,
+      store_id: item.store_codes[0],
+      department: item.department,
+      [metric]: item[metric],
+      card_in_view: item.card_in_view,
+      card_clicked: item.card_clicked,
+      quartile: item.quartile
+    }));
+}
+
+// Get performance comparison between groups
+function getGroupComparison() {
+  const groups = ['GROUP_A', 'GROUP_B', 'GROUP_C', 'GROUP_D', 'GROUP_E'];
+
+  return groups.map(groupId => {
+    const metrics = getMetricsByGroup(groupId);
+    const groupInfo = window.storeHierarchyPOC.groups.find(g => g.group_id === groupId);
+
+    return {
+      group_id: groupId,
+      group_name: groupInfo.group_name,
+      description: groupInfo.description,
+      promotion_count: metrics.promotion_count,
+      avg_performance_score: metrics.performance_score,
+      total_engagement: metrics.total_views + metrics.total_clicks + metrics.total_share_count,
+      ctr_percentage: metrics.avg_ctr,
+      conversion_percentage: metrics.avg_conversion_rate,
+      share_percentage: metrics.avg_share_rate
+    };
+  });
+}
+
+// Weekly metrics object with all calculation functions
+window.weeklyMetrics = {
+  // Core calculation functions
+  getMetricsByStore: getMetricsByStore,
+  getMetricsByGroup: getMetricsByGroup,
+  getAllMetrics: getAllMetrics,
+
+  // Analysis functions
+  getTopPromotions: getTopPromotions,
+  getGroupComparison: getGroupComparison,
+
+  // Quick access to pre-calculated metrics
+  get current() {
+    return getAllMetrics();
+  },
+
+  // Validation function
+  validateData() {
+    const allMetrics = getAllMetrics();
+    const storeSum = Object.values(allMetrics.by_store).reduce((sum, store) => sum + store.total_views, 0);
+    const groupSum = Object.values(allMetrics.by_group).reduce((sum, group) => sum + group.total_views, 0);
+
+    return {
+      total_promotions: allMetrics.summary.total_promotions,
+      expected_promotions: 150, // 5 stores × 30 products
+      promotions_match: allMetrics.summary.total_promotions === 150,
+
+      overall_views: allMetrics.overall.total_views,
+      store_sum_views: storeSum,
+      group_sum_views: groupSum,
+      views_match: allMetrics.overall.total_views === storeSum,
+
+      data_completeness: (allMetrics.summary.data_quality.complete_records / allMetrics.summary.total_promotions) * 100,
+
+      all_tests_pass: (
+        allMetrics.summary.total_promotions === 150 &&
+        allMetrics.overall.total_views === storeSum &&
+        allMetrics.summary.data_quality.missing_data === 0
+      )
+    };
+  }
+};
+
 // Export for global access
 window.mockDatabase = mockDatabase;
 window.DataUtils = DataUtils;

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POC Integration Test - Analytics Dashboard</title>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="components/context-bar/context-bar-v2.styles.css">
+    <link rel="stylesheet" href="components/context-bar/simple-context-bar.css">
+    <link rel="stylesheet" href="datagrid-inquiry/styles.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
+
+    <!-- Preload POC data -->
+    <link rel="preload" href="mock-data/005-data-poc.js" as="script">
+    <link rel="preload" href="datagrid-inquiry/datagrid.js" as="script">
+</head>
+<body>
+    <!-- Simplified header -->
+    <header class="dashboard-header page-header" id="app-header">
+        <div class="header-container">
+            <div class="header-left">
+                <div class="title-container">
+                    <h1>Analytics Dashboard - POC Integration Test</h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Navigation -->
+        <nav class="main-nav">
+            <ul class="nav-list">
+                <li><a href="index.html" class="nav-item">Overview</a></li>
+                <li><a href="reports.html" class="nav-item">Reports</a></li>
+                <li><a href="test-poc-integration.html" class="nav-item active">POC Test</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main content -->
+    <main class="dashboard-main main-content">
+        <!-- Context bar container -->
+        <section id="context-bar-container" class="context-bar-v2" role="banner" aria-label="Dashboard Context"></section>
+
+        <div id="poc-test-container">
+            <!-- POC Test Header -->
+            <div id="poc-header" class="context-banner">
+                <div class="banner-content">
+                    <div class="breadcrumb">
+                        <a href="index.html" class="back-link" title="Back to Dashboard">
+                            <span class="back-arrow">←</span>
+                        </a>
+                        <span>Dashboard</span>
+                        <span class="separator">›</span>
+                        <span>POC Integration Test</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- POC Status Display -->
+            <div id="poc-status" class="filter-chips">
+                <div class="status-chip">Loading POC Data...</div>
+            </div>
+
+            <!-- Store Selector -->
+            <section class="filters-container">
+                <div class="filter-section">
+                    <h4>Store Selection</h4>
+                    <div class="filter-grid">
+                        <div class="filter-row">
+                            <label for="store-selector">Store</label>
+                            <select id="store-selector" class="form-control">
+                                <option value="">All Stores</option>
+                            </select>
+                        </div>
+                        <div class="filter-row">
+                            <label for="group-selector">Group</label>
+                            <select id="group-selector" class="form-control">
+                                <option value="">All Groups</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Metrics Display -->
+            <section id="metrics-display" class="content-filters">
+                <h4>Weekly Metrics</h4>
+                <div class="filter-groups-grid">
+                    <div class="metric-card">
+                        <h5>Total Views</h5>
+                        <div class="metric-value" id="total-views">-</div>
+                    </div>
+                    <div class="metric-card">
+                        <h5>Total Clicks</h5>
+                        <div class="metric-value" id="total-clicks">-</div>
+                    </div>
+                    <div class="metric-card">
+                        <h5>CTR</h5>
+                        <div class="metric-value" id="ctr-rate">-</div>
+                    </div>
+                    <div class="metric-card">
+                        <h5>Performance Score</h5>
+                        <div class="metric-value" id="performance-score">-</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Data Grid Container -->
+            <div id="filter-bar" class="filter-bar">
+                <input type="search" id="search-box" class="form-control" placeholder="Search promotions...">
+                <button id="clear-filters" class="btn btn-secondary">Clear</button>
+                <button id="export-btn" class="btn btn-primary" disabled>Export CSV</button>
+                <button id="validate-data-btn" class="btn btn-secondary">Validate Data</button>
+                <div class="column-settings">
+                    <button id="column-settings-btn" class="btn btn-secondary" title="Column Settings">⚙️</button>
+                    <div id="column-dropdown" class="column-dropdown" style="display: none;">
+                        <div class="dropdown-header">Show/Hide Columns</div>
+                        <div id="column-checkboxes" class="column-checkboxes"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="grid-container"></div>
+            <div id="grid-footer"></div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="shared/error-handler.js"></script>
+    <script src="mock-data/005-data-poc.js"></script>
+    <script src="datagrid-inquiry/datagrid.js"></script>
+
+    <!-- Context State Service -->
+    <script src="services/context-state-service.js"></script>
+
+    <!-- Simple Context Bar -->
+    <script src="components/context-bar/simple-context-bar.js"></script>
+
+    <!-- POC Integration Test Script -->
+    <script>
+
+        // Wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // Check if POC data is available
+            if (typeof window.mockDatabase === 'undefined') {
+                console.error('❌ POC data not loaded');
+                document.getElementById('poc-status').innerHTML =
+                    '<div class="status-chip error">POC Data Not Found</div>';
+                return;
+            }
+
+
+            // Update status
+            document.getElementById('poc-status').innerHTML = `
+                <div class="status-chip success">POC Data Loaded</div>
+                <div class="status-chip">${window.mockDatabase.promotions.length} Promotions</div>
+                <div class="status-chip">${window.mockDatabase.storeHierarchy.stores.length} Stores</div>
+                <div class="status-chip">${window.mockDatabase.categories.length} Categories</div>
+            `;
+
+            // Populate store selector
+            const storeSelector = document.getElementById('store-selector');
+            window.mockDatabase.storeHierarchy.stores.forEach(store => {
+                const option = document.createElement('option');
+                option.value = store.store_id;
+                option.textContent = store.store_name;
+                storeSelector.appendChild(option);
+            });
+
+            // Populate group selector
+            const groupSelector = document.getElementById('group-selector');
+            window.mockDatabase.storeHierarchy.groups.forEach(group => {
+                const option = document.createElement('option');
+                option.value = group.group_id;
+                option.textContent = group.group_name;
+                groupSelector.appendChild(option);
+            });
+
+            // Initialize Context Bar
+            const contextBarContainer = document.getElementById('context-bar-container');
+            if (contextBarContainer) {
+                new SimpleContextBar(contextBarContainer);
+            }
+
+            // Initialize Grid with POC data
+            setTimeout(() => {
+                if (window.grid) {
+                    window.grid.loadData(window.mockDatabase.promotions);
+                    updateMetricsDisplay(window.mockDatabase.weeklyMetrics.overall);
+                } else {
+                    console.warn('⚠️ Grid not available, creating new instance...');
+                    // Grid will be initialized by datagrid.js
+                }
+            }, 100);
+
+            // Add event listeners
+            storeSelector.addEventListener('change', function() {
+                filterDataByStore(this.value);
+            });
+
+            groupSelector.addEventListener('change', function() {
+                filterDataByGroup(this.value);
+            });
+
+            document.getElementById('validate-data-btn').addEventListener('click', function() {
+                validatePOCData();
+            });
+
+        });
+
+        // Filter data by store
+        function filterDataByStore(storeId) {
+            if (!storeId) {
+                // Show all data
+                window.grid && window.grid.loadData(window.mockDatabase.promotions);
+                updateMetricsDisplay(window.mockDatabase.weeklyMetrics.overall);
+            } else {
+                // Filter by store
+                const storeData = window.DataUtils.getPromotionsByStore(storeId);
+                window.grid && window.grid.loadData(storeData);
+                updateMetricsDisplay(window.DataUtils.getMetricsByStore(storeId));
+            }
+        }
+
+        // Filter data by group
+        function filterDataByGroup(groupId) {
+            if (!groupId) {
+                // Show all data
+                window.grid && window.grid.loadData(window.mockDatabase.promotions);
+                updateMetricsDisplay(window.mockDatabase.weeklyMetrics.overall);
+            } else {
+                // Filter by group
+                const groupData = window.DataUtils.getPromotionsByGroup(groupId);
+                window.grid && window.grid.loadData(groupData);
+                updateMetricsDisplay(window.DataUtils.getMetricsByGroup(groupId));
+            }
+        }
+
+        // Update metrics display
+        function updateMetricsDisplay(metrics) {
+            document.getElementById('total-views').textContent = metrics.total_views.toLocaleString();
+            document.getElementById('total-clicks').textContent = metrics.total_clicks.toLocaleString();
+            document.getElementById('ctr-rate').textContent = metrics.avg_ctr + '%';
+            document.getElementById('performance-score').textContent = metrics.performance_score.toLocaleString();
+        }
+
+        // Validate POC data integrity
+        function validatePOCData() {
+            const validation = {
+                promotions_count: window.mockDatabase.promotions.length,
+                expected_count: 150,
+                stores_count: window.mockDatabase.storeHierarchy.stores.length,
+                categories_count: window.mockDatabase.categories.length,
+                metrics_available: !!window.mockDatabase.weeklyMetrics,
+                datautils_available: !!window.DataUtils
+            };
+
+
+            const isValid = validation.promotions_count === 150 &&
+                           validation.stores_count === 5 &&
+                           validation.categories_count === 8 &&
+                           validation.metrics_available &&
+                           validation.datautils_available;
+
+            alert(`POC Data Validation ${isValid ? 'PASSED' : 'FAILED'}\n\n` +
+                  `Promotions: ${validation.promotions_count}/150\n` +
+                  `Stores: ${validation.stores_count}/5\n` +
+                  `Categories: ${validation.categories_count}/8\n` +
+                  `Metrics: ${validation.metrics_available ? 'Available' : 'Missing'}\n` +
+                  `DataUtils: ${validation.datautils_available ? 'Available' : 'Missing'}`);
+        }
+    </script>
+
+    <style>
+        .metric-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .metric-card h5 {
+            margin: 0 0 8px 0;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .status-chip {
+            display: inline-block;
+            padding: 4px 12px;
+            margin: 2px;
+            background: #e3f2fd;
+            color: #1565c0;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-chip.success {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .status-chip.error {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .filter-groups-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+    </style>
+</body>
+</html>

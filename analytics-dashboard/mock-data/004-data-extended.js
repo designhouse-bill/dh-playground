@@ -655,6 +655,106 @@ const DataUtils = {
     });
 
     return sizeScores;
+  },
+
+  // Store Hierarchy and Regional Structure
+  store_hierarchy: {
+    all_stores: {
+      id: "all_stores",
+      name: "All Stores",
+      type: "all",
+      total_count: 50,
+      description: "All stores in the network"
+    },
+    version_groups: [
+      {
+        id: "northeast",
+        name: "Northeast Version-Group",
+        type: "version-group",
+        store_count: 15,
+        stores: ["001", "002", "003", "004", "005", "006", "007", "008", "009", "010", "011", "012", "013", "014", "015"],
+        cities: ["New York", "Boston", "Philadelphia", "Hartford", "Albany"]
+      },
+      {
+        id: "southeast",
+        name: "Southeast Version-Group",
+        type: "version-group",
+        store_count: 12,
+        stores: ["016", "017", "018", "019", "020", "021", "022", "023", "024", "025", "026", "027"],
+        cities: ["Atlanta", "Miami", "Charlotte", "Jacksonville", "Tampa"]
+      },
+      {
+        id: "midwest",
+        name: "Midwest Version-Group",
+        type: "version-group",
+        store_count: 10,
+        stores: ["028", "029", "030", "031", "032", "033", "034", "035", "036", "037"],
+        cities: ["Chicago", "Detroit", "Cleveland", "Milwaukee", "Indianapolis"]
+      },
+      {
+        id: "west",
+        name: "West Version-Group",
+        type: "version-group",
+        store_count: 13,
+        stores: ["038", "039", "040", "041", "042", "043", "044", "045", "046", "047", "048", "049", "050"],
+        cities: ["Los Angeles", "San Francisco", "Seattle", "Phoenix", "Denver"]
+      }
+    ],
+    individual_stores: [
+      { id: "001", name: "Store 001 - Manhattan", versionGroup: "northeast", city: "New York", type: "store" },
+      { id: "002", name: "Store 002 - Brooklyn", versionGroup: "northeast", city: "New York", type: "store" },
+      { id: "003", name: "Store 003 - Boston Downtown", versionGroup: "northeast", city: "Boston", type: "store" },
+      { id: "004", name: "Store 004 - Boston North", versionGroup: "northeast", city: "Boston", type: "store" },
+      { id: "005", name: "Store 005 - Philadelphia Center", versionGroup: "northeast", city: "Philadelphia", type: "store" },
+      { id: "006", name: "Store 006 - Philadelphia West", versionGroup: "northeast", city: "Philadelphia", type: "store" },
+      { id: "007", name: "Store 007 - Hartford", versionGroup: "northeast", city: "Hartford", type: "store" },
+      { id: "008", name: "Store 008 - Albany", versionGroup: "northeast", city: "Albany", type: "store" },
+      { id: "009", name: "Store 009 - Syracuse", versionGroup: "northeast", city: "Syracuse", type: "store" },
+      { id: "010", name: "Store 010 - Buffalo", versionGroup: "northeast", city: "Buffalo", type: "store" },
+      { id: "011", name: "Store 011 - Queens", versionGroup: "northeast", city: "New York", type: "store" },
+      { id: "012", name: "Store 012 - Bronx", versionGroup: "northeast", city: "New York", type: "store" },
+      { id: "013", name: "Store 013 - Boston South", versionGroup: "northeast", city: "Boston", type: "store" },
+      { id: "014", name: "Store 014 - Philadelphia East", versionGroup: "northeast", city: "Philadelphia", type: "store" },
+      { id: "015", name: "Store 015 - Newark", versionGroup: "northeast", city: "Newark", type: "store" },
+
+      { id: "016", name: "Store 016 - Atlanta Downtown", versionGroup: "southeast", city: "Atlanta", type: "store" },
+      { id: "017", name: "Store 017 - Atlanta North", versionGroup: "southeast", city: "Atlanta", type: "store" },
+      { id: "018", name: "Store 018 - Miami Beach", versionGroup: "southeast", city: "Miami", type: "store" },
+      { id: "019", name: "Store 019 - Miami Downtown", versionGroup: "southeast", city: "Miami", type: "store" },
+      { id: "020", name: "Store 020 - Charlotte Center", versionGroup: "southeast", city: "Charlotte", type: "store" },
+      { id: "021", name: "Store 021 - Charlotte South", versionGroup: "southeast", city: "Charlotte", type: "store" },
+      { id: "022", name: "Store 022 - Jacksonville", versionGroup: "southeast", city: "Jacksonville", type: "store" },
+      { id: "023", name: "Store 023 - Tampa", versionGroup: "southeast", city: "Tampa", type: "store" },
+      { id: "024", name: "Store 024 - Orlando", versionGroup: "southeast", city: "Orlando", type: "store" },
+      { id: "025", name: "Store 025 - Fort Lauderdale", versionGroup: "southeast", city: "Fort Lauderdale", type: "store" },
+      { id: "026", name: "Store 026 - Savannah", versionGroup: "southeast", city: "Savannah", type: "store" },
+      { id: "027", name: "Store 027 - Nashville", versionGroup: "southeast", city: "Nashville", type: "store" },
+
+      { id: "028", name: "Store 028 - Chicago Loop", versionGroup: "midwest", city: "Chicago", type: "store" },
+      { id: "029", name: "Store 029 - Chicago North", versionGroup: "midwest", city: "Chicago", type: "store" },
+      { id: "030", name: "Store 030 - Detroit Downtown", versionGroup: "midwest", city: "Detroit", type: "store" },
+      { id: "031", name: "Store 031 - Detroit West", versionGroup: "midwest", city: "Detroit", type: "store" },
+      { id: "032", name: "Store 032 - Cleveland", versionGroup: "midwest", city: "Cleveland", type: "store" },
+      { id: "033", name: "Store 033 - Milwaukee", versionGroup: "midwest", city: "Milwaukee", type: "store" },
+      { id: "034", name: "Store 034 - Indianapolis", versionGroup: "midwest", city: "Indianapolis", type: "store" },
+      { id: "035", name: "Store 035 - Columbus", versionGroup: "midwest", city: "Columbus", type: "store" },
+      { id: "036", name: "Store 036 - Cincinnati", versionGroup: "midwest", city: "Cincinnati", type: "store" },
+      { id: "037", name: "Store 037 - St. Louis", versionGroup: "midwest", city: "St. Louis", type: "store" },
+
+      { id: "038", name: "Store 038 - Los Angeles Downtown", versionGroup: "west", city: "Los Angeles", type: "store" },
+      { id: "039", name: "Store 039 - Los Angeles West", versionGroup: "west", city: "Los Angeles", type: "store" },
+      { id: "040", name: "Store 040 - San Francisco", versionGroup: "west", city: "San Francisco", type: "store" },
+      { id: "041", name: "Store 041 - Oakland", versionGroup: "west", city: "Oakland", type: "store" },
+      { id: "042", name: "Store 042 - Seattle Downtown", versionGroup: "west", city: "Seattle", type: "store" },
+      { id: "043", name: "Store 043 - Seattle North", versionGroup: "west", city: "Seattle", type: "store" },
+      { id: "044", name: "Store 044 - Phoenix", versionGroup: "west", city: "Phoenix", type: "store" },
+      { id: "045", name: "Store 045 - Denver", versionGroup: "west", city: "Denver", type: "store" },
+      { id: "046", name: "Store 046 - Portland", versionGroup: "west", city: "Portland", type: "store" },
+      { id: "047", name: "Store 047 - San Diego", versionGroup: "west", city: "San Diego", type: "store" },
+      { id: "048", name: "Store 048 - Las Vegas", versionGroup: "west", city: "Las Vegas", type: "store" },
+      { id: "049", name: "Store 049 - Sacramento", versionGroup: "west", city: "Sacramento", type: "store" },
+      { id: "050", name: "Store 050 - Salt Lake City", versionGroup: "west", city: "Salt Lake City", type: "store" }
+    ]
   }
 };
 

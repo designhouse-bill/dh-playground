@@ -79,7 +79,7 @@
   --info-btn-size: 20px;
 
   /* Layout */
-  --header-height: 144px;
+  --header-height: 106px;
   --sidebar-width: 280px;
   --container-max-width: 1360px;
 
@@ -97,6 +97,56 @@
   --transition-fast: 0.15s ease;
   --transition-normal: 0.3s ease;
   --transition-slow: 0.5s ease;
+
+  /* Context Bar Design System */
+  --context-bg: #202020;
+  --pill-bg: #F4F5F8;
+  --pill-radius: 16px;
+  --text-primary: #000000;
+  --text-secondary: #495057;
+  --text-muted: #6c757d;
+  --border-color: #cbcbcb;
+  --icon-color: #2196F3;
+  --dropdown-arrow: #000000;
+
+  /* Context Bar Typography */
+  --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --text-week-large: 32px;
+  --text-week-medium: 24px;
+  --text-week-small: 20px;
+  --text-store-large: 32px;
+  --text-store-medium: 24px;
+  --text-store-small: 20px;
+  --text-detail-large: 16px;
+  --text-detail-medium: 14px;
+  --text-detail-small: 12px;
+  --text-label-large: 10px;
+  --text-label-medium: 9px;
+  --text-label-small: 8px;
+
+  /* Context Bar Spacing */
+  --gap-desktop: 8px;
+  --gap-tablet: 24px;
+  --gap-mobile: 16px;
+  --padding-pill-desktop: 14px 20px;
+  --padding-pill-tablet: 12px 16px;
+  --padding-pill-mobile:  8px 16px;
+  --padding-container-desktop: 8px 16px;
+  --padding-container-tablet:  8px 16px;
+  --padding-container-mobile: 8px 16px;
+
+  /* Context Bar Component Sizing */
+  --pill-min-width: 280px;
+  --icon-size: 24px;
+  --dropdown-size: 16px;
+
+  /* Context Bar Breakpoints */
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1441px;
+
+  /* Context Bar Z-index */
+  --z-context-bar: 900;
+  --z-dropdown: 1000;
 }
 
 /* Reset and Base Styles */
@@ -591,12 +641,7 @@ width: 75px;
    ============================================================================= */
 
 .context-banner {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
   padding: 16px 20px;
-  margin-bottom: 20px;
-  box-shadow: var(--shadow);
 }
 
 .banner-content {
@@ -1089,7 +1134,6 @@ width: 75px;
 @media (max-width: 768px) {
   .context-banner {
     padding: 12px 16px;
-    margin-bottom: 16px;
   }
 
   .breadcrumb {

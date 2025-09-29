@@ -9,6 +9,11 @@
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="components/context-bar/context-bar.styles.css">
+    <link rel="stylesheet" href="components/context-bar/context-bar-v2.styles.css">
+    <link rel="stylesheet" href="components/context-bar/period-selector.styles.css">
+    <link rel="stylesheet" href="components/context-bar/scope-selector.styles.css">
+    <link rel="stylesheet" href="components/context-bar/simple-context-bar.css">
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
@@ -28,7 +33,6 @@
             grid-template-columns: 280px 1fr 400px;
             gap: var(--space-lg);
             padding: var(--space-lg);
-            margin-top: var(--header-height);
             min-height: calc(100vh - var(--header-height));
         }
 
@@ -138,50 +142,12 @@
     </style>
 </head>
 <body>
-    <!-- Enhanced header from prototype_001 -->
+    <!-- Simplified header -->
     <header class="dashboard-header page-header" id="app-header">
         <div class="header-container">
             <div class="header-left">
                 <div class="title-container">
                     <h1>Analytics Dashboard</h1>
-                </div>
-            </div>
-            <div class="header-center">
-                <div id="week-context" class="week-context">
-                    <div class="week-line">
-                        <span class="status" id="week-status" style="color:var(--muted)">Week 36: Sep 18-24, 2025 (Day 5 of 7)</span>
-                        <select id="week-select" class="week-select">
-                            <option value="w36">Week 36: Sep 18-24, 2025 (Day 5 of 7)</option>
-                            <option value="w35">Week 35: Sep 11-17, 2025</option>
-                            <option value="w34">Week 34: Sep 4-10, 2025</option>
-                            <option value="w33">Week 33: Aug 28-Sep 3, 2025</option>
-                            <option value="last_month">Last Month</option>
-                            <option value="ytd">Year to Date</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="header-right">
-                <div class="filters-stack">
-                    <div class="filter-row">
-                        <label for="version-select">Version:</label>
-                        <select id="version-select">
-                            <option value="all">All</option>
-                            <option value="v1">Version 1</option>
-                            <option value="v2">Version 2</option>
-                        </select>
-                    </div>
-                    <div class="filter-row">
-                        <label for="store-select">Store:</label>
-                        <select id="store-select">
-                            <option value="all_stores">All Stores</option>
-                            <option value="northeast">Northeast Region</option>
-                            <option value="southeast">Southeast Region</option>
-                            <option value="store_123">Store #123 - Miami Lakes</option>
-                            <option value="store_456">Store #456 - Kendall</option>
-                            <option value="store_789">Store #789 - Hialeah</option>
-                        </select>
-                    </div>
                 </div>
             </div>
         </div>
@@ -198,31 +164,33 @@
 
     <!-- Main content -->
     <main class="dashboard-main main-content">
-        <div class="reports-container">
+        <!-- Context bar container -->
+        <section id="context-bar-container" class="context-bar-v2" role="banner" aria-label="Dashboard Context"></section>
+        <section class="reports-container">
             <!-- Sidebar for report templates and options -->
-            <div id="reports-sidebar" class="reports-sidebar">
-                <div class="card">
-                    <div class="card-header">
+            <aside id="reports-sidebar" class="reports-sidebar">
+                <section class="card">
+                    <header class="card-header">
                         <h2>Report Builder</h2>
-                    </div>
+                    </header>
                     <div class="card-body">
-                        <div class="quick-reports">
+                        <nav class="quick-reports">
                             <h3>Quick Reports</h3>
                             <button class="btn btn-secondary">Weekly Summary</button>
                             <button class="btn btn-secondary">Category Report</button>
-                        </div>
+                        </nav>
                     </div>
-                </div>
-            </div>
+                </section>
+            </aside>
 
             <!-- Main area for report configuration -->
-            <div id="reports-main" class="reports-main">
-                <div class="card">
-                    <div class="card-header">
+            <main id="reports-main" class="reports-main">
+                <section class="card">
+                    <header class="card-header">
                         <h2>Report Configuration</h2>
-                    </div>
+                    </header>
                     <div class="card-body">
-                        <div class="report-config">
+                        <form class="report-config">
                             <div class="form-group">
                                 <label for="template">Template:</label>
                                 <select id="template" class="form-control">
@@ -236,30 +204,69 @@
                                 <!-- Options will be populated based on template selection -->
                                 <p class="text-muted">Select a template to see configuration options</p>
                             </div>
-                        </div>
+                        </form>
                     </div>
-                </div>
-            </div>
+                </section>
+            </main>
 
             <!-- Preview area for report output -->
-            <div id="reports-preview" class="reports-preview">
-                <div class="card">
-                    <div class="card-header">
+            <aside id="reports-preview" class="reports-preview">
+                <section class="card">
+                    <header class="card-header">
                         <h2>Report Preview</h2>
-                    </div>
+                    </header>
                     <div class="card-body">
                         <iframe id="preview" class="report-preview-frame" src="about:blank" frameborder="0">
                             Your browser does not support iframes.
                         </iframe>
                     </div>
-                </div>
-            </div>
-        </div>
+                </section>
+            </aside>
+        </section>
     </main>
 
     <!-- Scripts -->
     <script src="mock-data/004-data-extended.js"></script>
     <script src="reports/report-templates.js"></script>
     <script src="reports/report-builder.js"></script>
+
+    <!-- Context State Service -->
+    <script src="services/context-state-service.js"></script>
+
+    <!-- Simple Context Bar -->
+    <script src="components/context-bar/simple-context-bar.js"></script>
+
+    <!-- Initialize Context Bar -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize URL synchronization
+            if (window.contextStateService) {
+                window.contextStateService.initUrlSync();
+                console.log('🔗 URL synchronization initialized for reports');
+            }
+
+            const contextBarContainer = document.getElementById('context-bar-container');
+            if (contextBarContainer) {
+                // Check if SimpleContextBar is available
+                if (typeof SimpleContextBar !== 'undefined') {
+                    window.contextBar = new SimpleContextBar(contextBarContainer);
+                    console.log('✅ Simple context bar initialized on reports page');
+                } else {
+                    console.error('❌ SimpleContextBar class not available on reports page');
+                    // Try again after a short delay
+                    setTimeout(() => {
+                        if (typeof SimpleContextBar !== 'undefined') {
+                            window.contextBar = new SimpleContextBar(contextBarContainer);
+                            console.log('✅ Simple context bar initialized on reports page (delayed)');
+                        } else {
+                            console.error('❌ SimpleContextBar still not available after delay');
+                        }
+                    }, 100);
+                }
+            } else {
+                console.error('❌ Context bar container not found on reports page');
+            }
+        });
+    </script>
 </body>
 </html>

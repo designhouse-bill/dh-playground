@@ -9,59 +9,23 @@
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="components/context-bar/context-bar-v2.styles.css">
+    <link rel="stylesheet" href="components/context-bar/simple-context-bar.css">
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
 
     <!-- Preload critical resources -->
-    <link rel="preload" href="mock-data/004-data.js" as="script">
+    <link rel="preload" href="mock-data/004-data-extended.js" as="script">
     <link rel="preload" href="shared/app_new.js" as="script">
 </head>
 <body>
-    <!-- Enhanced header from prototype_001 -->
+    <!-- Simplified header -->
     <header class="dashboard-header page-header" id="app-header">
         <div class="header-container">
             <div class="header-left">
                 <div class="title-container">
                     <h1>Analytics Dashboard</h1>
-                </div>
-            </div>
-            <div class="header-center">
-                <div id="week-context" class="week-context">
-                    <div class="week-line">
-                        <span class="status" id="week-status" style="color:var(--muted)">Week 36: Sep 18-24, 2025 (Day 5 of 7)</span>
-                        <select id="week-select" class="week-select">
-                            <option value="w36">Week 36: Sep 18-24, 2025 (Day 5 of 7)</option>
-                            <option value="w35">Week 35: Sep 11-17, 2025</option>
-                            <option value="w34">Week 34: Sep 4-10, 2025</option>
-                            <option value="w33">Week 33: Aug 28-Sep 3, 2025</option>
-                            <option value="last_month">Last Month</option>
-                            <option value="ytd">Year to Date</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="header-right">
-                <div class="filters-stack">
-                    <div class="filter-row">
-                        <label for="version-select">Version:</label>
-                        <select id="version-select">
-                            <option value="all">All</option>
-                            <option value="v1">Version 1</option>
-                            <option value="v2">Version 2</option>
-                        </select>
-                    </div>
-                    <div class="filter-row">
-                        <label for="store-select">Store:</label>
-                        <select id="store-select">
-                            <option value="all_stores">All Stores</option>
-                            <option value="northeast">Northeast Region</option>
-                            <option value="southeast">Southeast Region</option>
-                            <option value="store_123">Store #123 - Miami Lakes</option>
-                            <option value="store_456">Store #456 - Kendall</option>
-                            <option value="store_789">Store #789 - Hialeah</option>
-                        </select>
-                    </div>
                 </div>
             </div>
         </div>
@@ -78,6 +42,8 @@
 
     <!-- Main dashboard content -->
     <main class="dashboard-main main-content">
+        <!-- Context bar container -->
+        <section id="context-bar-container" class="context-bar-v2" role="banner" aria-label="Dashboard Context"></section>
         <!-- YTD Performance Strip - copied exactly -->
         <section class="ytd-metrics-section">
             <div class="ytd-strip">
@@ -637,14 +603,26 @@
 
     <!-- Scripts -->
     <script src="vendor/echarts.min.js"></script>
-    <script src="mock-data/004-data.js"></script>
+    <script src="mock-data/004-data-extended.js"></script>
     <script src="components/charts_new.js"></script>
     <script src="components/components_new.js"></script>
     <script src="shared/app_new.js"></script>
 
+    <!-- Context State Service -->
+    <script src="services/context-state-service.js"></script>
+
+    <!-- Simple Context Bar -->
+    <script src="components/context-bar/simple-context-bar.js"></script>
+
     <!-- Initialize Application -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize URL synchronization
+            if (window.contextStateService) {
+                window.contextStateService.initUrlSync();
+                console.log('🔗 URL synchronization initialized for dashboard');
+            }
+
             // Single initialization point
             if (window.dashboardInstance) {
                 console.log('⚠️ Dashboard instance already exists');
@@ -653,6 +631,13 @@
 
             window.dashboardInstance = new AnalyticsDashboard();
             window.dashboardInstance.init();
+
+            // Initialize Simple Context Bar
+            const contextBarContainer = document.getElementById('context-bar-container');
+            if (contextBarContainer) {
+                new SimpleContextBar(contextBarContainer);
+                console.log('✅ Simple context bar initialized');
+            }
         });
 
         /**
@@ -662,25 +647,33 @@
          * @param {string} direction - Sort direction (asc/desc)
          */
         function navigateToInquiry(filter, sort, direction) {
-            // Get current dashboard context
-            const weekSelect = document.getElementById('week-select');
-            const versionSelect = document.getElementById('version-select');
-            const storeSelect = document.getElementById('store-select');
-
-            const currentPeriod = weekSelect ? weekSelect.value : 'w36';
-            const currentVersion = versionSelect ? versionSelect.value : 'all';
-            const currentStore = storeSelect ? storeSelect.value : 'all_stores';
-
             // Build URL with context preservation
             const params = new URLSearchParams({
                 source: 'dashboard',
                 filter: filter,
                 sort: sort,
-                direction: direction,
-                period: currentPeriod,
-                version: currentVersion,
-                scope: currentStore
+                direction: direction
             });
+
+            // Add current context state to URL if available
+            if (window.contextStateService) {
+                const currentState = window.contextStateService.loadState('dashboard');
+
+                if (currentState.week && currentState.week !== 40) {
+                    params.set('week', currentState.week);
+                }
+
+                if (currentState.comparisonMode && currentState.compareWeek) {
+                    params.set('compare', currentState.compareWeek);
+                }
+
+                if (currentState.scopeLevel && currentState.scopeLevel !== 'all') {
+                    params.set('scope', currentState.scopeLevel);
+                    if (currentState.scopeValue && currentState.scopeValue !== 'all') {
+                        params.set('scopeValue', currentState.scopeValue);
+                    }
+                }
+            }
 
             // Use proper relative path for file protocol
             const basePath = window.location.protocol === 'file:' ?
@@ -689,16 +682,7 @@
 
             const targetUrl = `${basePath}?${params.toString()}`;
 
-            console.log('📊 Navigating to inquiry with context:', {
-                filter: filter,
-                sort: sort,
-                direction: direction,
-                period: currentPeriod,
-                version: currentVersion,
-                scope: currentStore,
-                url: targetUrl
-            });
-
+            // Navigate to inquiry with context
             window.location.href = targetUrl;
         }
     </script>

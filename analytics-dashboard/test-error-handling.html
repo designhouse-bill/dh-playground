@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error Handling Test - Context Bar</title>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="components/context-bar/context-bar-v2.styles.css">
+    <link rel="stylesheet" href="components/context-bar/simple-context-bar.css">
+
+    <style>
+        body {
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .test-button {
+            padding: 10px 15px;
+            margin: 5px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .log-container {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>Context Bar Error Handling Test</h1>
+
+    <!-- Context Bar Container -->
+    <section id="context-bar-container" class="context-bar-v2" role="banner" aria-label="Dashboard Context"></section>
+
+    <!-- Test Controls -->
+    <div class="test-section">
+        <h2>Error Scenario Tests</h2>
+        <button class="test-button" onclick="testSameWeekComparison()">Test Same Week Comparison</button>
+        <button class="test-button" onclick="testInvalidWeek()">Test Invalid Week</button>
+        <button class="test-button" onclick="testInvalidStore()">Test Invalid Store</button>
+        <button class="test-button" onclick="testMissingData()">Test Missing Data</button>
+        <button class="test-button" onclick="clearLog()">Clear Log</button>
+    </div>
+
+    <!-- Error Log Display -->
+    <div class="test-section">
+        <h2>Error Log</h2>
+        <div id="error-log" class="log-container">Test results will appear here...</div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="shared/error-handler.js"></script>
+    <script src="mock-data/004-data-extended.js"></script>
+    <script src="services/context-state-service.js"></script>
+    <script src="components/context-bar/simple-context-bar.js"></script>
+
+    <script>
+        let contextBar;
+        const logContainer = document.getElementById('error-log');
+
+        // Initialize context bar
+        document.addEventListener('DOMContentLoaded', function() {
+            const contextBarContainer = document.getElementById('context-bar-container');
+            if (contextBarContainer) {
+                contextBar = new SimpleContextBar(contextBarContainer);
+                log('✅ Context bar initialized for error testing');
+            }
+        });
+
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            logContainer.textContent += `[${timestamp}] ${message}\n`;
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        function clearLog() {
+            logContainer.textContent = 'Test results cleared...\n';
+        }
+
+        // Test same week comparison error
+        function testSameWeekComparison() {
+            log('🧪 Testing same week comparison validation...');
+
+            if (contextBar) {
+                // Test validation method directly
+                const errors = contextBar.validateWeekSelection(25, 25);
+                if (errors.length > 0) {
+                    log('❌ Same week comparison detected: ' + errors[0].message);
+                    // Show the error message
+                    contextBar.showErrorMessage(errors[0].message, errors[0].type);
+                } else {
+                    log('⚠️ Same week comparison validation failed to detect error');
+                }
+            } else {
+                log('❌ Context bar not available');
+            }
+        }
+
+        // Test invalid week error
+        function testInvalidWeek() {
+            log('🧪 Testing invalid week validation...');
+
+            if (contextBar) {
+                // Test validation with week outside available range
+                const errors = contextBar.validateWeekSelection(99);
+                if (errors.length > 0) {
+                    log('❌ Invalid week detected: ' + errors[0].message);
+                    contextBar.showErrorMessage(errors[0].message, errors[0].type);
+                } else {
+                    log('⚠️ Invalid week validation failed to detect error');
+                }
+            } else {
+                log('❌ Context bar not available');
+            }
+        }
+
+        // Test invalid store error
+        function testInvalidStore() {
+            log('🧪 Testing invalid store validation...');
+
+            if (contextBar) {
+                const invalidScope = {
+                    level: 'store',
+                    id: 'non-existent-store',
+                    name: 'Invalid Store',
+                    count: 1
+                };
+
+                const errors = contextBar.validateStoreSelection(invalidScope);
+                if (errors.length > 0) {
+                    log('❌ Invalid store detected: ' + errors[0].message);
+                    contextBar.showErrorMessage(errors[0].message, errors[0].type);
+                } else {
+                    log('⚠️ Invalid store validation failed to detect error');
+                }
+            } else {
+                log('❌ Context bar not available');
+            }
+        }
+
+        // Test missing data scenario
+        function testMissingData() {
+            log('🧪 Testing missing data scenario...');
+
+            if (contextBar) {
+                // Test fallback to defaults
+                try {
+                    contextBar.fallbackToDefaults();
+                    log('✅ Fallback to defaults executed successfully');
+                } catch (error) {
+                    log('❌ Fallback to defaults failed: ' + error.message);
+                }
+            } else {
+                log('❌ Context bar not available');
+            }
+        }
+
+        // Override console methods to capture logs in our display
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        const originalLog = console.log;
+
+        console.error = function(...args) {
+            log('🔴 ERROR: ' + args.join(' '));
+            originalError.apply(console, args);
+        };
+
+        console.warn = function(...args) {
+            log('🟡 WARN: ' + args.join(' '));
+            originalWarn.apply(console, args);
+        };
+
+        // Capture specific debug logs from context bar
+        console.log = function(...args) {
+            if (args[0] && typeof args[0] === 'string' && args[0].includes('Context Error')) {
+                log('🐛 DEBUG: ' + args.join(' '));
+            }
+            originalLog.apply(console, args);
+        };
+    </script>
+</body>
+</html>

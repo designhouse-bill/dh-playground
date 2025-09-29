@@ -17,6 +17,10 @@ class AnalyticsDashboard {
 
     // Simulate 200ms load time for all data operations
     this.loadDelay = 200;
+
+    // Context integration
+    this.contextBar = null;
+    this.currentContextState = null;
   }
 
   /**
@@ -44,6 +48,9 @@ class AnalyticsDashboard {
 
       // Initialize context bar
       this.initializeContextBar();
+
+      // Listen for context changes
+      this.setupContextListeners();
 
       // Load page-specific content
       await this.loadPageContent();
@@ -117,9 +124,16 @@ class AnalyticsDashboard {
   }
 
   /**
-   * Initialize context bar with user context
+   * Initialize context bar integration
    */
   initializeContextBar() {
+    // Check if SimpleContextBar is available
+    if (typeof SimpleContextBar !== 'undefined' && window.contextBar) {
+      this.contextBar = window.contextBar;
+      console.log('📊 Dashboard connected to context bar');
+    }
+
+    // Legacy context bar support
     const viewingSelect = document.getElementById('viewingScope');
     const timeSelect = document.getElementById('timePeriod');
 
@@ -136,6 +150,80 @@ class AnalyticsDashboard {
         this.updateContext('period', e.target.value);
       });
     }
+  }
+
+  /**
+   * Setup context change listeners
+   */
+  setupContextListeners() {
+    // Listen for context bar changes
+    document.addEventListener('contextChanged', (event) => {
+      console.log('📊 Context changed:', event.detail);
+      this.handleContextChange(event.detail);
+    });
+
+    // Listen for direct context state service changes
+    if (window.contextStateService) {
+      // Periodically check for context changes (fallback)
+      setInterval(() => {
+        this.checkContextChanges();
+      }, 1000);
+    }
+  }
+
+  /**
+   * Handle context changes from context bar
+   */
+  async handleContextChange(contextData) {
+    if (!this.isInitialized) return;
+
+    this.showLoading();
+
+    try {
+      // Update current context state
+      this.currentContextState = contextData;
+
+      // Reload content with new context
+      await this.loadPageContent();
+
+      console.log('✅ Dashboard updated with new context');
+    } catch (error) {
+      console.error('❌ Failed to update dashboard with context:', error);
+      this.showError('Context Update Failed', error.message);
+    } finally {
+      this.hideLoading();
+    }
+  }
+
+  /**
+   * Check for context changes (fallback method)
+   */
+  checkContextChanges() {
+    if (!window.contextStateService) return;
+
+    try {
+      const currentState = window.contextStateService.loadState(this.currentPage);
+
+      // Compare with stored state
+      if (!this.currentContextState || this.hasContextChanged(this.currentContextState, currentState)) {
+        console.log('📊 Context change detected via polling');
+        this.handleContextChange(currentState);
+      }
+    } catch (error) {
+      // Silently handle polling errors
+    }
+  }
+
+  /**
+   * Check if context has changed
+   */
+  hasContextChanged(oldState, newState) {
+    if (!oldState || !newState) return true;
+
+    return oldState.week !== newState.week ||
+           oldState.scopeLevel !== newState.scopeLevel ||
+           oldState.scopeValue !== newState.scopeValue ||
+           oldState.comparisonMode !== newState.comparisonMode;
   }
 
   /**
@@ -218,14 +306,132 @@ class AnalyticsDashboard {
     // Simulate loading delay
     await this.delay(this.loadDelay);
 
+    // Get current context for filtering
+    const contextState = this.getCurrentContextState();
+    console.log('📊 Loading with context:', contextState);
+
     // Load YTD metrics
     await this.loadYTDStrip();
 
-    // Load 6 KPI tiles
-    await this.loadKPITiles();
+    // Load 6 KPI tiles with context filtering
+    await this.loadKPITiles(contextState);
 
-    // Load additional panels
-    await this.loadAdditionalPanels();
+    // Load additional panels with context filtering
+    await this.loadAdditionalPanels(contextState);
+  }
+
+  /**
+   * Get current context state for filtering
+   */
+  getCurrentContextState() {
+    if (this.currentContextState) {
+      return this.currentContextState;
+    }
+
+    // Fallback to context state service
+    if (window.contextStateService) {
+      return window.contextStateService.loadState(this.currentPage);
+    }
+
+    // Default context
+    return {
+      week: 40,
+      scopeLevel: 'all',
+      scopeValue: 'all',
+      comparisonMode: false
+    };
+  }
+
+  /**
+   * Filter data by context
+   */
+  filterByContext(data, contextState) {
+    let filteredData = { ...data };
+
+    // Filter by week
+    if (contextState.week && contextState.week !== 40) {
+      filteredData = this.filterByWeek(filteredData, contextState.week);
+    }
+
+    // Filter by store scope
+    if (contextState.scopeLevel !== 'all') {
+      filteredData = this.filterByStoreScope(filteredData, contextState);
+    }
+
+    return filteredData;
+  }
+
+  /**
+   * Filter data by selected week
+   */
+  filterByWeek(data, selectedWeek) {
+    const filteredData = { ...data };
+
+    // Adjust weekly metrics for selected week
+    if (data.weeklyMetrics) {
+      filteredData.weeklyMetrics = { ...data.weeklyMetrics };
+
+      // Calculate week offset from current week (40)
+      const weekOffset = selectedWeek - 40;
+
+      // Simulate different performance for different weeks
+      if (weekOffset !== 0) {
+        const performanceVariation = 1 + (Math.sin(weekOffset) * 0.1); // ±10% variation
+
+        filteredData.weeklyMetrics.current_week = selectedWeek;
+        filteredData.weeklyMetrics.performance_score = Math.round(data.weeklyMetrics.performance_score * performanceVariation);
+        filteredData.weeklyMetrics.unique_viewers = Math.round(data.weeklyMetrics.unique_viewers * performanceVariation);
+        filteredData.weeklyMetrics.share_total = Math.round(data.weeklyMetrics.share_total * performanceVariation);
+
+        // Recalculate trends
+        const prevWeekScore = Math.round(filteredData.weeklyMetrics.performance_score * (1 - 0.05));
+        filteredData.weeklyMetrics.week_over_week_change = Math.round(((filteredData.weeklyMetrics.performance_score - prevWeekScore) / prevWeekScore) * 100);
+
+        console.log(`📊 Data filtered for week ${selectedWeek}, performance: ${filteredData.weeklyMetrics.performance_score}`);
+      }
+    }
+
+    // Filter promotions by week
+    if (data.promotions) {
+      filteredData.promotions = data.promotions.filter(promo => promo.week === selectedWeek || !promo.week);
+    }
+
+    return filteredData;
+  }
+
+  /**
+   * Filter data by store scope
+   */
+  filterByStoreScope(data, contextState) {
+    const filteredData = { ...data };
+
+    if (contextState.scopeLevel === 'region') {
+      // Find region data
+      const regions = data.regions || mockDatabase.regions;
+      const selectedRegion = regions ? regions.find(r => r.id === contextState.scopeValue) : null;
+
+      if (selectedRegion) {
+        // Apply regional modifier to metrics
+        const regionModifier = selectedRegion.stores.length / 67; // Ratio compared to all stores
+
+        if (filteredData.weeklyMetrics) {
+          filteredData.weeklyMetrics.unique_viewers = Math.round(filteredData.weeklyMetrics.unique_viewers * regionModifier);
+          filteredData.weeklyMetrics.share_total = Math.round(filteredData.weeklyMetrics.share_total * regionModifier);
+          console.log(`📊 Data filtered for region ${selectedRegion.name}, modifier: ${regionModifier.toFixed(2)}`);
+        }
+      }
+    } else if (contextState.scopeLevel === 'store') {
+      // Individual store - significantly reduce numbers
+      const storeModifier = 1 / 67; // Single store out of 67
+
+      if (filteredData.weeklyMetrics) {
+        filteredData.weeklyMetrics.unique_viewers = Math.round(filteredData.weeklyMetrics.unique_viewers * storeModifier);
+        filteredData.weeklyMetrics.share_total = Math.round(filteredData.weeklyMetrics.share_total * storeModifier);
+        console.log(`📊 Data filtered for individual store ${contextState.scopeValue}, modifier: ${storeModifier.toFixed(3)}`);
+      }
+    }
+
+    return filteredData;
   }
 
   /**
@@ -259,9 +465,18 @@ class AnalyticsDashboard {
   /**
    * Load 6 KPI tiles with real data
    */
-  async loadKPITiles() {
-    const weeklyData = mockDatabase.weeklyMetrics;
-    const categories = mockDatabase.categories;
+  async loadKPITiles(contextState) {
+    // Get filtered data based on context
+    const filteredData = this.filterByContext(mockDatabase, contextState);
+    const weeklyData = filteredData.weeklyMetrics;
+    const categories = filteredData.categories || mockDatabase.categories;
+
+    console.log('📊 Loading KPI tiles with filtered data:', {
+      week: contextState.week,
+      scope: `${contextState.scopeLevel}:${contextState.scopeValue}`,
+      performance: weeklyData.performance_score,
+      viewers: weeklyData.unique_viewers
+    });
 
     // Load each KPI tile
     await Promise.all([
@@ -403,11 +618,14 @@ class AnalyticsDashboard {
   /**
    * Load additional panels (performance, categories, promotions)
    */
-  async loadAdditionalPanels() {
+  async loadAdditionalPanels(contextState) {
+    // Get filtered data for additional panels
+    const filteredData = this.filterByContext(mockDatabase, contextState);
+
     await Promise.all([
-      this.loadPerformanceContainerRow(),
-      this.loadCategoriesAndPerformanceRow(),
-      this.loadPromotionsPanel()
+      this.loadPerformanceContainerRow(filteredData),
+      this.loadCategoriesAndPerformanceRow(filteredData),
+      this.loadPromotionsPanel(filteredData)
     ]);
   }
 
@@ -415,7 +633,7 @@ class AnalyticsDashboard {
   /**
    * Load performance container row (new pattern following categories-performance-row)
    */
-  async loadPerformanceContainerRow() {
+  async loadPerformanceContainerRow(filteredData = mockDatabase) {
     // Create the row container following categories-performance-row pattern
     const rowContainer = document.createElement('div');
     rowContainer.className = 'row-container-performance';
@@ -424,7 +642,7 @@ class AnalyticsDashboard {
     const performancePanel = document.createElement('div');
     performancePanel.className = 'card';
 
-    const weeklyData = mockDatabase.weeklyMetrics;
+    const weeklyData = filteredData.weeklyMetrics;
     performancePanel.innerHTML = `
       <div class="card-head">
         <div class="card-head-left">
@@ -577,7 +795,7 @@ ${(() => {
   /**
    * Load Categories and Performance Row
    */
-  async loadCategoriesAndPerformanceRow() {
+  async loadCategoriesAndPerformanceRow(filteredData = mockDatabase) {
     // Create the flex row container
     const rowContainer = document.createElement('div');
     rowContainer.className = 'categories-performance-row';
@@ -587,7 +805,7 @@ ${(() => {
     categoriesContainer.className = 'card chart-card';
     categoriesContainer.id = 'top-categories-card';
 
-    const categories = mockDatabase.categories;
+    const categories = filteredData.categories || mockDatabase.categories;
     const topCategories = categories;
 
     categoriesContainer.innerHTML = `
@@ -635,7 +853,7 @@ ${(() => {
     promotionsContainer.className = 'card chart-card';
     promotionsContainer.id = 'promotion-performance';
 
-    const topPromotions = mockDatabase.getTopPromotions(10, 'composite');
+    const topPromotions = (filteredData.getTopPromotions || mockDatabase.getTopPromotions).call(filteredData, 10, 'composite');
 
     promotionsContainer.innerHTML = `
       <div class="card-head">
@@ -814,7 +1032,7 @@ ${(() => {
   /**
    * Load enhanced promotions panel with prototype_001 design
    */
-  async loadPromotionsPanel() {
+  async loadPromotionsPanel(filteredData = mockDatabase) {
     // Create row container for size-deal section only
     const rowContainer = document.createElement('div');
     rowContainer.className = 'dashboard-row-week';

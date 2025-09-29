@@ -13,6 +13,12 @@ class AnalyticsDashboard {
     };
     this.isInitialized = false;
     this.charts = new Map(); // Store ECharts instances
+
+    // Context integration
+    this.contextStateService = null;
+    this.contextSubscriptions = [];
+    this.lastContextState = null;
+    this.filteredData = null;
   }
 
   /**
@@ -35,6 +41,9 @@ class AnalyticsDashboard {
         });
       }
 
+      // Initialize context state service
+      await this.initializeContextService();
+
       // Initialize components in sequence
       await this.loadDashboardContent();
 
@@ -52,17 +61,521 @@ class AnalyticsDashboard {
   }
 
   /**
-   * Load all dashboard content - no duplications
+   * Initialize context state service
+   */
+  async initializeContextService() {
+    try {
+      if (window.contextStateService) {
+        this.contextStateService = window.contextStateService;
+
+        // Initialize URL synchronization
+        this.contextStateService.initUrlSync();
+
+        // Get initial context state
+        this.lastContextState = this.contextStateService.loadState('dashboard');
+        console.log('🔗 Context service initialized with state:', this.lastContextState);
+
+      } else {
+        console.warn('⚠️ ContextStateService not available');
+      }
+    } catch (error) {
+      console.error('❌ Failed to initialize context service:', error);
+    }
+  }
+
+  /**
+   * Handle context state changes
+   */
+  handleContextChange(newState, oldState) {
+    console.log('🔄 Context changed in dashboard:', { old: oldState, new: newState });
+
+    // Check if we need to reload data
+    const needsDataReload = this.shouldReloadData(newState, oldState);
+
+    if (needsDataReload) {
+      console.log('🔄 Context change requires data reload');
+      this.reloadDashboardWithContext(newState);
+    } else {
+      console.log('ℹ️ Context change does not require data reload');
+    }
+
+    // Update current context for legacy compatibility
+    this.updateLegacyContext(newState);
+
+    this.lastContextState = newState;
+  }
+
+  /**
+   * Determine if data reload is needed based on context changes
+   */
+  shouldReloadData(newState, oldState) {
+    if (!oldState) return true;
+
+    // Check if period changed
+    if (newState.primaryWeek !== oldState.primaryWeek ||
+        newState.periodMode !== oldState.periodMode ||
+        newState.compareWeek !== oldState.compareWeek) {
+      return true;
+    }
+
+    // Check if scope changed
+    if (newState.scopeLevel !== oldState.scopeLevel ||
+        newState.scopeValue !== oldState.scopeValue) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Update legacy context format for backward compatibility
+   */
+  updateLegacyContext(newState) {
+    this.currentContext = {
+      scope: this.mapScopeToLegacy(newState),
+      period: `w${newState.primaryWeek}`,
+      user: this.currentContext.user || { role: 'General Manager' }
+    };
+  }
+
+  /**
+   * Map new scope format to legacy format
+   */
+  mapScopeToLegacy(state) {
+    switch (state.scopeLevel) {
+      case 'all':
+        return 'all_stores';
+      case 'version-group':
+        return `version_group_${state.scopeValue}`;
+      case 'store':
+        return `store_${state.scopeValue}`;
+      default:
+        return 'all_stores';
+    }
+  }
+
+  /**
+   * Reload dashboard with new context
+   */
+  async reloadDashboardWithContext(contextState) {
+    try {
+      console.log('📊 Reloading dashboard with new context...');
+
+      // Filter data based on context
+      const filteredData = this.filterDataByContext(contextState);
+      this.filteredData = filteredData;
+
+      // Update week display in UI
+      this.updateWeekDisplay(contextState);
+
+      // Recreate charts with filtered data
+      if (this.chartsComponent) {
+        // Phase 3A: Recreate Performance Day Chart
+        this.createPerformanceDayChart(filteredData);
+
+        // Phase 3B: Recreate Interaction Rate Chart
+        this.createInteractionRateChart(filteredData);
+
+        // Phase 3C: Recreate Size & Deal Charts
+        this.createSizeAndDealCharts(filteredData);
+      }
+
+      // Update KPIs
+      this.updateKPIDisplays(filteredData, contextState);
+
+      console.log('✅ Dashboard reloaded with context');
+
+    } catch (error) {
+      console.error('❌ Failed to reload dashboard with context:', error);
+    }
+  }
+
+  /**
+   * Filter mock data based on context state
+   */
+  filterDataByContext(contextState) {
+    const baseData = window.mockDatabase || {};
+
+    if (!baseData.promotions) {
+      console.warn('⚠️ No promotions data available');
+      return baseData;
+    }
+
+    let filteredPromotions = [...baseData.promotions];
+
+    // Apply week filtering
+    filteredPromotions = this.filterByWeek(filteredPromotions, contextState);
+
+    // Apply scope filtering
+    filteredPromotions = this.filterByScope(filteredPromotions, contextState);
+
+    // Return filtered data structure
+    return {
+      ...baseData,
+      promotions: filteredPromotions,
+      filteredStats: {
+        originalCount: baseData.promotions.length,
+        filteredCount: filteredPromotions.length,
+        weekFilter: `w${contextState.week}`,
+        scopeFilter: `${contextState.scopeLevel}:${contextState.scopeValue}`
+      }
+    };
+  }
+
+  /**
+   * Filter promotions by week
+   */
+  filterByWeek(promotions, contextState) {
+    // For demo purposes, simulate week-based filtering
+    // In a real system, this would filter by actual week data
+
+    const targetWeek = contextState.week;
+    const currentWeek = this.getCurrentWeek();
+
+    // If selecting current week, return all data
+    if (targetWeek === currentWeek) {
+      return promotions;
+    }
+
+    // For other weeks, simulate reduced data set
+    const reductionFactor = Math.abs(currentWeek - targetWeek) * 0.1;
+    const keepPercentage = Math.max(0.3, 1 - reductionFactor);
+    const keepCount = Math.floor(promotions.length * keepPercentage);
+
+    console.log(`📅 Week ${targetWeek} filter: keeping ${keepCount}/${promotions.length} promotions`);
+
+    return promotions.slice(0, keepCount);
+  }
+
+  /**
+   * Filter promotions by scope (store selection)
+   */
+  filterByScope(promotions, contextState) {
+    const { scopeLevel, scopeValue } = contextState;
+
+    switch (scopeLevel) {
+      case 'all':
+        // No filtering needed for all stores
+        return promotions;
+
+      case 'version-group':
+        return this.filterByVersionGroup(promotions, scopeValue);
+
+      case 'store':
+        return this.filterByStore(promotions, scopeValue);
+
+      default:
+        return promotions;
+    }
+  }
+
+  /**
+   * Filter promotions by version group
+   */
+  filterByVersionGroup(promotions, versionGroupId) {
+    // Get stores in the version group
+    const storeHierarchy = window.DataUtils?.store_hierarchy || window.mockDatabase?.store_hierarchy;
+    if (!storeHierarchy) {
+      console.warn('⚠️ Store hierarchy data not available');
+      return promotions;
+    }
+
+    const versionGroup = storeHierarchy.version_groups.find(r => r.id === versionGroupId);
+    if (!versionGroup) {
+      console.warn(`⚠️ Version-Group ${versionGroupId} not found`);
+      return promotions;
+    }
+
+    // For demo purposes, filter based on version group percentage
+    const versionGroupMultipliers = {
+      'northeast': 0.3,   // 30% of promotions
+      'southeast': 0.25,  // 25% of promotions
+      'midwest': 0.2,     // 20% of promotions
+      'west': 0.25        // 25% of promotions
+    };
+
+    const keepPercentage = versionGroupMultipliers[versionGroupId] || 0.25;
+    const keepCount = Math.floor(promotions.length * keepPercentage);
+
+    console.log(`🏪 Version-Group ${versionGroupId} filter: keeping ${keepCount}/${promotions.length} promotions`);
+
+    return promotions.slice(0, keepCount);
+  }
+
+  /**
+   * Filter promotions by individual store
+   */
+  filterByStore(promotions, storeId) {
+    // For individual store, significantly reduce data set
+    const keepPercentage = 0.02; // 2% of promotions per store
+    const keepCount = Math.max(5, Math.floor(promotions.length * keepPercentage));
+
+    console.log(`🏬 Store ${storeId} filter: keeping ${keepCount}/${promotions.length} promotions`);
+
+    return promotions.slice(0, keepCount);
+  }
+
+  /**
+   * Update week display in the UI
+   */
+  updateWeekDisplay(contextState) {
+    const weekElements = document.querySelectorAll('.week-display, .period-indicator');
+    const weekText = `Week ${contextState.primaryWeek}`;
+
+    weekElements.forEach(element => {
+      if (element) {
+        element.textContent = weekText;
+      }
+    });
+
+    // Update YTD metrics section if present
+    const ytdSection = document.querySelector('.ytd-metrics-section');
+    if (ytdSection && contextState.primaryWeek) {
+      const weekIndicator = ytdSection.querySelector('.week-indicator') ||
+                           this.createWeekIndicator();
+
+      if (!ytdSection.contains(weekIndicator)) {
+        ytdSection.appendChild(weekIndicator);
+      }
+
+      weekIndicator.textContent = `Data for ${weekText}`;
+    }
+  }
+
+  /**
+   * Create week indicator element
+   */
+  createWeekIndicator() {
+    const indicator = document.createElement('div');
+    indicator.className = 'week-indicator';
+    indicator.style.cssText = `
+      font-size: 12px;
+      color: #6c757d;
+      text-align: center;
+      padding: 4px 8px;
+      background: rgba(0,0,0,0.05);
+      border-radius: 4px;
+      margin-top: 8px;
+    `;
+    return indicator;
+  }
+
+  /**
+   * Update KPI displays with filtered data
+   */
+  updateKPIDisplays(filteredData, contextState) {
+    try {
+      const stats = this.calculateKPIStats(filteredData);
+
+      // Update traffic metrics
+      this.updateTrafficKPI(stats);
+
+      // Update digital adoption
+      this.updateDigitalAdoptionKPI(stats);
+
+      // Update print rate
+      this.updatePrintRateKPI(stats);
+
+      // Update weekly KPIs
+      this.updateWeeklyKPIs(stats, contextState);
+
+      console.log('📊 KPI displays updated with filtered data');
+
+    } catch (error) {
+      console.error('❌ Failed to update KPI displays:', error);
+    }
+  }
+
+  /**
+   * Calculate KPI statistics from filtered data
+   */
+  calculateKPIStats(data) {
+    const promotions = data.promotions || [];
+
+    if (promotions.length === 0) {
+      return this.getEmptyStats();
+    }
+
+    // Calculate aggregated metrics
+    const totalViews = promotions.reduce((sum, p) => sum + (p.card_in_view || 0), 0);
+    const totalClicks = promotions.reduce((sum, p) => sum + (p.card_clicked || 0), 0);
+    const totalShares = promotions.reduce((sum, p) => sum + (p.share_count || 0), 0);
+    const totalAddedToList = promotions.reduce((sum, p) => sum + (p.added_to_list || 0), 0);
+
+    const avgCompositeScore = promotions.reduce((sum, p) => sum + (p.composite_score || 0), 0) / promotions.length;
+
+    // Calculate rates
+    const clickRate = totalViews > 0 ? (totalClicks / totalViews) * 100 : 0;
+    const addToListRate = totalViews > 0 ? (totalAddedToList / totalViews) * 100 : 0;
+    const shareRate = totalViews > 0 ? (totalShares / totalViews) * 100 : 0;
+
+    return {
+      totalPromotions: promotions.length,
+      totalViews: totalViews,
+      totalClicks: totalClicks,
+      totalShares: totalShares,
+      totalAddedToList: totalAddedToList,
+      avgCompositeScore: avgCompositeScore,
+      clickRate: clickRate,
+      addToListRate: addToListRate,
+      shareRate: shareRate,
+      digitalAdoption: clickRate + addToListRate, // Simplified calculation
+      printRate: Math.max(0, 100 - (clickRate + addToListRate)) // Inverse of digital
+    };
+  }
+
+  /**
+   * Get empty statistics for no-data state
+   */
+  getEmptyStats() {
+    return {
+      totalPromotions: 0,
+      totalViews: 0,
+      totalClicks: 0,
+      totalShares: 0,
+      totalAddedToList: 0,
+      avgCompositeScore: 0,
+      clickRate: 0,
+      addToListRate: 0,
+      shareRate: 0,
+      digitalAdoption: 0,
+      printRate: 0
+    };
+  }
+
+  /**
+   * Update traffic KPI display
+   */
+  updateTrafficKPI(stats) {
+    const trafficElements = document.querySelectorAll('.ytd-metric .value');
+    if (trafficElements.length > 0) {
+      const trafficValue = `${(stats.totalViews / 1000).toFixed(1)}K views`;
+      trafficElements[0].textContent = trafficValue;
+    }
+  }
+
+  /**
+   * Update digital adoption KPI display
+   */
+  updateDigitalAdoptionKPI(stats) {
+    const digitalElements = document.querySelectorAll('.ytd-metric .value');
+    if (digitalElements.length > 1) {
+      const digitalValue = `${stats.digitalAdoption.toFixed(1)}%`;
+      digitalElements[1].textContent = digitalValue;
+    }
+  }
+
+  /**
+   * Update print rate KPI display
+   */
+  updatePrintRateKPI(stats) {
+    const printElements = document.querySelectorAll('.ytd-metric .value');
+    if (printElements.length > 2) {
+      const printValue = `${stats.printRate.toFixed(1)}%`;
+      printElements[2].textContent = printValue;
+    }
+  }
+
+  /**
+   * Update weekly KPI tiles
+   */
+  updateWeeklyKPIs(stats, contextState) {
+    // Update digital circular performance
+    const digitalPerfElement = document.querySelector('#digital-circular-performance-week .metric-value');
+    if (digitalPerfElement) {
+      digitalPerfElement.textContent = `${stats.avgCompositeScore.toFixed(0)}`;
+    }
+
+    // Update traffic week
+    const trafficWeekElement = document.querySelector('#traffic-week .metric-value');
+    if (trafficWeekElement) {
+      trafficWeekElement.textContent = `${(stats.totalViews / 1000).toFixed(1)}K`;
+    }
+
+    // Update share activity
+    const shareActivityElement = document.querySelector('#share-activity-week .metric-value');
+    if (shareActivityElement) {
+      shareActivityElement.textContent = `${stats.totalShares.toFixed(0)}`;
+    }
+
+    // Add scope indicator to KPI tiles
+    this.addScopeIndicators(contextState);
+  }
+
+  /**
+   * Add scope indicators to KPI tiles
+   */
+  addScopeIndicators(contextState) {
+    const kpiTiles = document.querySelectorAll('.kpi-tile');
+
+    kpiTiles.forEach(tile => {
+      // Remove existing scope indicators
+      const existingIndicator = tile.querySelector('.scope-indicator');
+      if (existingIndicator) {
+        existingIndicator.remove();
+      }
+
+      // Add new scope indicator
+      if (contextState.scopeLevel !== 'all') {
+        const indicator = document.createElement('div');
+        indicator.className = 'scope-indicator';
+        indicator.textContent = contextState.scopeName || contextState.scopeValue;
+        indicator.style.cssText = `
+          font-size: 10px;
+          color: #6c757d;
+          background: rgba(33, 150, 243, 0.1);
+          border-radius: 3px;
+          padding: 2px 6px;
+          margin-top: 4px;
+          display: inline-block;
+        `;
+
+        const metricContent = tile.querySelector('.metric-content');
+        if (metricContent) {
+          metricContent.appendChild(indicator);
+        }
+      }
+    });
+  }
+
+  /**
+   * Get current week number
+   */
+  getCurrentWeek() {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), 0, 1);
+    const diff = now - start;
+    const oneWeek = 1000 * 60 * 60 * 24 * 7;
+    return Math.floor(diff / oneWeek) + 1;
+  }
+
+  /**
+   * Load all dashboard content - updated with context integration
    */
   async loadDashboardContent() {
     console.log('📊 Loading dashboard content...');
 
     try {
       // Initialize charts component
+      console.log('📊 DashboardCharts class available:', typeof DashboardCharts);
       this.chartsComponent = new DashboardCharts();
+      console.log('📊 Charts component initialized:', !!this.chartsComponent);
 
-      // Load data (from 004-data.js)
-      const data = window.mockDatabase || {};
+      // Load data with context filtering
+      const baseData = window.mockDatabase || {};
+      const contextState = this.contextStateService?.loadState('dashboard');
+
+      let data = baseData;
+      if (contextState && this.shouldReloadData(contextState, null)) {
+        data = this.filterDataByContext(contextState);
+        this.filteredData = data;
+      }
+
+      // Update week display
+      if (contextState) {
+        this.updateWeekDisplay(contextState);
+        this.updateKPIDisplays(data, contextState);
+      }
 
       // Phase 3A: Create Performance Day Chart
       this.createPerformanceDayChart(data);
@@ -111,13 +624,30 @@ class AnalyticsDashboard {
    */
   createSizeAndDealCharts(data) {
     console.log('📊 Creating Size & Deal Charts...');
+    console.log('📊 Charts component available:', !!this.chartsComponent);
+    console.log('📊 Data available:', !!data);
+    console.log('📊 ECharts available:', typeof echarts !== 'undefined');
+
+    // Check if chart containers exist
+    const sizeChartContainer = document.getElementById('size-mix-chart');
+    const dealChartContainer = document.getElementById('deal-type-chart');
+    console.log('📊 Size chart container exists:', !!sizeChartContainer);
+    console.log('📊 Deal chart container exists:', !!dealChartContainer);
 
     if (this.chartsComponent) {
       // Size Class Mix donut chart
-      const sizeClassChart = this.chartsComponent.createSizeClassMixChart('size-mix-chart', data);
-      if (sizeClassChart) {
-        console.log('✅ Size Class Mix Chart created successfully');
-      }
+      console.log('📊 Creating size mix chart...');
+      setTimeout(() => {
+        const sizeClassChart = this.chartsComponent.createSizeClassMixChart('size-mix-chart', data);
+        console.log('📊 Size chart result:', !!sizeClassChart);
+        if (sizeClassChart) {
+          console.log('✅ Size Class Mix Chart created successfully');
+          // Force resize after creation
+          setTimeout(() => sizeClassChart.resize(), 100);
+        } else {
+          console.error('❌ Size Class Mix Chart creation failed');
+        }
+      }, 100);
 
       // Size Performance horizontal bars
       const sizePerformanceChart = this.chartsComponent.createSizePerformanceChart('size-performance-chart', data);
@@ -126,10 +656,20 @@ class AnalyticsDashboard {
       }
 
       // Deal Type Preference donut chart
-      const dealTypeChart = this.chartsComponent.createDealTypeChart('deal-type-chart', data);
-      if (dealTypeChart) {
-        console.log('✅ Deal Type Preference Chart created successfully');
-      }
+      console.log('📊 Creating deal type chart...');
+      setTimeout(() => {
+        const dealTypeChart = this.chartsComponent.createDealTypeChart('deal-type-chart', data);
+        console.log('📊 Deal chart result:', !!dealTypeChart);
+        if (dealTypeChart) {
+          console.log('✅ Deal Type Preference Chart created successfully');
+          // Force resize after creation
+          setTimeout(() => dealTypeChart.resize(), 100);
+        } else {
+          console.error('❌ Deal Type Preference Chart creation failed');
+        }
+      }, 200);
+    } else {
+      console.error('❌ Charts component not available');
     }
   }
 
@@ -152,171 +692,82 @@ class AnalyticsDashboard {
   }
 
   /**
-   * Initialize header controls (Phase 4A)
+   * Initialize header controls (Phase 4A) - DISABLED
+   * Header controls removed in Prompt 7.01
    */
   initializeHeaderControls() {
-    console.log('🔗 Setting up header controls...');
-
-    // Initialize dropdown options from data
-    this.populateHeaderDropdowns();
-
-    // Set up event listeners for header controls
-    this.setupHeaderEventListeners();
-
-    // Update header status display
-    this.updateHeaderStatus();
+    // Header controls disabled - elements removed from HTML
+    // this.populateHeaderDropdowns();
+    // this.setupHeaderEventListeners();
+    // this.updateHeaderStatus();
   }
 
   /**
-   * Populate header dropdown options from data
+   * Populate header dropdown options from data - DISABLED
+   * Header dropdowns removed in Prompt 7.01
    */
   populateHeaderDropdowns() {
-    const data = window.mockDatabase || {};
-
-    // Populate week selector with recent weeks
-    this.populateWeekSelector();
-
-    // Populate version selector from promotion data
-    this.populateVersionSelector(data);
-
-    // Populate store selector from store codes
-    this.populateStoreSelector(data);
+    // Header dropdowns disabled - elements removed from HTML
+    // const data = window.mockDatabase || {};
+    // this.populateWeekSelector();
+    // this.populateVersionSelector(data);
+    // this.populateStoreSelector(data);
   }
 
   /**
-   * Populate week selector with recent weeks
+   * Populate week selector with recent weeks - DISABLED
+   * Week selector removed in Prompt 7.01
    */
   populateWeekSelector() {
-    const weekSelect = document.getElementById('week-select');
-    if (!weekSelect) return;
-
-    // Generate last 8 weeks from current week (40)
-    const currentWeek = 40;
-    const weeks = [];
-
-    for (let i = 0; i < 8; i++) {
-      const weekNum = currentWeek - i;
-      const startDate = this.getWeekStartDate(weekNum);
-      const endDate = this.getWeekEndDate(weekNum);
-      const isCurrentWeek = weekNum === currentWeek;
-
-      weeks.push({
-        value: `w${weekNum}`,
-        label: `Week ${weekNum}: ${startDate} - ${endDate}${isCurrentWeek ? ' (Current)' : ''}`,
-        week: weekNum
-      });
-    }
-
-    // Clear existing options and add new ones
-    weekSelect.innerHTML = '';
-    weeks.forEach(week => {
-      const option = document.createElement('option');
-      option.value = week.value;
-      option.textContent = week.label;
-      if (week.week === currentWeek) {
-        option.selected = true;
-      }
-      weekSelect.appendChild(option);
-    });
+    // Week selector disabled - element removed from HTML
+    // const weekSelect = document.getElementById('week-select');
+    // if (!weekSelect) return;
+    return;
   }
 
   /**
-   * Populate version selector from promotion data
+   * Populate version selector from promotion data - DISABLED
+   * Version selector removed in Prompt 7.01
    */
   populateVersionSelector(data) {
-    const versionSelect = document.getElementById('version-select');
-    if (!versionSelect) return;
-
-    // Extract unique versions from promotions
-    const versions = new Set();
-    (data.promotions || []).forEach(promo => {
-      if (promo.version) {
-        versions.add(promo.version);
-      }
-    });
-
-    // Clear existing options and add new ones
-    versionSelect.innerHTML = '<option value="all">All Versions</option>';
-    Array.from(versions).sort().forEach(version => {
-      const option = document.createElement('option');
-      option.value = version;
-      option.textContent = `Version ${version}`;
-      versionSelect.appendChild(option);
-    });
+    // Version selector disabled - element removed from HTML
+    // const versionSelect = document.getElementById('version-select');
+    // if (!versionSelect) return;
+    return;
   }
 
   /**
-   * Populate store selector from store codes
+   * Populate store selector from store codes - DISABLED
+   * Store selector removed in Prompt 7.01
    */
   populateStoreSelector(data) {
-    const storeSelect = document.getElementById('store-select');
-    if (!storeSelect) return;
-
-    // Extract unique store codes from promotions
-    const stores = new Set();
-    (data.promotions || []).forEach(promo => {
-      if (promo.store_codes && Array.isArray(promo.store_codes)) {
-        promo.store_codes.forEach(code => stores.add(code));
-      }
-    });
-
-    // Clear existing options and add new ones
-    storeSelect.innerHTML = '<option value="all">All Stores</option>';
-    Array.from(stores).sort().forEach(store => {
-      const option = document.createElement('option');
-      option.value = store;
-      option.textContent = `Store ${store}`;
-      storeSelect.appendChild(option);
-    });
+    // Store selector disabled - element removed from HTML
+    // const storeSelect = document.getElementById('store-select');
+    // if (!storeSelect) return;
+    return;
   }
 
   /**
-   * Set up event listeners for header controls
+   * Set up event listeners for header controls - DISABLED
+   * Header controls removed in Prompt 7.01
    */
   setupHeaderEventListeners() {
-    const weekSelect = document.getElementById('week-select');
-    const versionSelect = document.getElementById('version-select');
-    const storeSelect = document.getElementById('store-select');
-
-    // Week selection change
-    if (weekSelect) {
-      weekSelect.addEventListener('change', (e) => {
-        console.log('📅 Week changed to:', e.target.value);
-        this.updateContext('period', e.target.value);
-        this.updateHeaderStatus();
-      });
-    }
-
-    // Version selection change
-    if (versionSelect) {
-      versionSelect.addEventListener('change', (e) => {
-        console.log('📋 Version changed to:', e.target.value);
-        this.updateContext('version', e.target.value);
-      });
-    }
-
-    // Store selection change
-    if (storeSelect) {
-      storeSelect.addEventListener('change', (e) => {
-        console.log('🏪 Store changed to:', e.target.value);
-        this.updateContext('scope', e.target.value);
-      });
-    }
+    // Header controls disabled - elements removed from HTML
+    // const weekSelect = document.getElementById('week-select');
+    // const versionSelect = document.getElementById('version-select');
+    // const storeSelect = document.getElementById('store-select');
+    return;
   }
 
   /**
-   * Update header status display
+   * Update header status display - DISABLED
+   * Header status removed in Prompt 7.01
    */
   updateHeaderStatus() {
-    const statusElement = document.getElementById('week-status');
-    const weekSelect = document.getElementById('week-select');
-
-    if (statusElement && weekSelect) {
-      const selectedOption = weekSelect.options[weekSelect.selectedIndex];
-      if (selectedOption) {
-        statusElement.textContent = selectedOption.textContent;
-      }
-    }
+    // Header status disabled - element removed from HTML
+    // const statusElement = document.getElementById('week-status');
+    // const weekSelect = document.getElementById('week-select');
+    return;
   }
 
   /**
@@ -866,11 +1317,57 @@ class AnalyticsDashboard {
       });
     }
   }
+
+  /**
+   * Clean up dashboard resources
+   */
+  destroy() {
+    try {
+      console.log('🧹 Destroying AnalyticsDashboard...');
+
+      // Unsubscribe from context changes
+      this.contextSubscriptions.forEach(unsubscribe => {
+        if (typeof unsubscribe === 'function') {
+          unsubscribe();
+        }
+      });
+      this.contextSubscriptions = [];
+
+      // Clear charts
+      if (this.charts) {
+        this.charts.forEach(chart => {
+          if (chart && typeof chart.dispose === 'function') {
+            chart.dispose();
+          }
+        });
+        this.charts.clear();
+      }
+
+      // Reset state
+      this.isInitialized = false;
+      this.filteredData = null;
+      this.lastContextState = null;
+
+      console.log('✅ AnalyticsDashboard destroyed successfully');
+      return true;
+
+    } catch (error) {
+      console.error('❌ Error destroying AnalyticsDashboard:', error);
+      return false;
+    }
+  }
 }
 
 // Global resize handler for chart responsiveness
 window.addEventListener('resize', () => {
   if (window.dashboardInstance && window.dashboardInstance.charts) {
     window.dashboardInstance.resizeCharts();
+  }
+});
+
+// Auto-cleanup on page unload
+window.addEventListener('beforeunload', () => {
+  if (window.dashboardInstance && typeof window.dashboardInstance.destroy === 'function') {
+    window.dashboardInstance.destroy();
   }
 });

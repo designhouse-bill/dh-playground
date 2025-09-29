@@ -1,0 +1,708 @@
+/**
+ * PeriodSelectorComponent Styles
+ * Overlay panel for period selection with smooth animations
+ *
+ * Features:
+ * - Full-screen overlay backdrop
+ * - Centered modal panel
+ * - Smooth expand/collapse animations
+ * - Mode toggle buttons
+ * - Week dropdown selectors
+ * - Action buttons
+ * - Responsive mobile design
+ *
+ * @version 1.0.0
+ */
+
+/* ===== OVERLAY CONTAINER ===== */
+.period-selector-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1050; /* Above context bar (900) and header (1000) */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg, 24px);
+
+  /* Animation properties */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.period-selector-overlay.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ===== BACKDROP ===== */
+.period-selector-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+
+  cursor: pointer;
+}
+
+/* ===== MODAL PANEL ===== */
+.period-selector-panel {
+  position: relative;
+  z-index: 1051;
+
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+
+  overflow: hidden;
+
+  /* Animation properties */
+  transform: scale(0.9) translateY(-20px);
+  transition: transform 0.3s ease;
+}
+
+.period-selector-panel.visible {
+  transform: scale(1) translateY(0);
+}
+
+/* ===== PANEL HEADER ===== */
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-lg, 24px) var(--space-lg, 24px) var(--space-md, 16px);
+
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-bottom: 1px solid #dee2e6;
+}
+
+.panel-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #212529;
+}
+
+.close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  margin: 0;
+
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+
+  color: #6c757d;
+  font-size: 24px;
+  line-height: 1;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #495057;
+  outline: none;
+}
+
+/* ===== PANEL CONTENT ===== */
+.panel-content {
+  padding: var(--space-lg, 24px);
+  max-height: calc(90vh - 140px); /* Account for header and footer */
+  overflow-y: auto;
+}
+
+/* ===== MODE SELECTION ===== */
+.mode-section {
+  margin-bottom: var(--space-lg, 24px);
+}
+
+.section-label {
+  display: block;
+  margin-bottom: var(--space-sm, 12px);
+  font-size: 14px;
+  font-weight: 600;
+  color: #495057;
+}
+
+.mode-toggle {
+  display: flex;
+  gap: var(--space-sm, 12px);
+}
+
+.mode-option {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs, 8px);
+
+  padding: var(--space-md, 16px) var(--space-sm, 12px);
+  margin: 0;
+
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+
+  color: #6c757d;
+  font-size: 13px;
+  font-weight: 500;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mode-option:hover {
+  background: #e9ecef;
+  border-color: #dee2e6;
+  color: #495057;
+}
+
+.mode-option.active {
+  background: #e3f2fd;
+  border-color: #2196f3;
+  color: #1976d2;
+}
+
+.mode-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.mode-text {
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ===== WEEK SELECTORS ===== */
+.week-selectors {
+  margin-bottom: var(--space-lg, 24px);
+}
+
+.week-selector {
+  margin-bottom: var(--space-md, 16px);
+}
+
+.week-selector:last-child {
+  margin-bottom: 0;
+}
+
+.selector-label {
+  display: block;
+  margin-bottom: var(--space-sm, 8px);
+  font-size: 14px;
+  font-weight: 600;
+  color: #495057;
+}
+
+.week-select {
+  width: 100%;
+  padding: var(--space-sm, 12px) var(--space-md, 16px);
+
+  background: #ffffff;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+
+  color: #495057;
+  font-size: 14px;
+  font-family: inherit;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.week-select:hover {
+  border-color: #dee2e6;
+}
+
+.week-select:focus {
+  outline: none;
+  border-color: #2196f3;
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+}
+
+/* Compare week selector animation */
+.compare-week-selector {
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 80px;
+  }
+}
+
+/* ===== PERIOD PREVIEW ===== */
+.period-preview {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: var(--space-md, 16px);
+}
+
+.preview-content {
+  font-size: 14px;
+  color: #495057;
+  line-height: 1.4;
+  text-align: center;
+}
+
+/* ===== PANEL FOOTER ===== */
+.panel-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-sm, 12px);
+
+  padding: var(--space-md, 16px) var(--space-lg, 24px) var(--space-lg, 24px);
+
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+}
+
+.cancel-btn,
+.apply-btn {
+  padding: var(--space-sm, 10px) var(--space-lg, 24px);
+  margin: 0;
+
+  border: 2px solid transparent;
+  border-radius: 6px;
+
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: none;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn {
+  background: #ffffff;
+  border-color: #dee2e6;
+  color: #6c757d;
+}
+
+.cancel-btn:hover,
+.cancel-btn:focus {
+  background: #f8f9fa;
+  border-color: #adb5bd;
+  color: #495057;
+  outline: none;
+}
+
+.apply-btn {
+  background: #2196f3;
+  border-color: #2196f3;
+  color: #ffffff;
+}
+
+.apply-btn:hover,
+.apply-btn:focus {
+  background: #1976d2;
+  border-color: #1976d2;
+  outline: none;
+}
+
+.apply-btn:active {
+  transform: scale(0.98);
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablet */
+@media (max-width: 768px) {
+  .period-selector-overlay {
+    padding: var(--space-md, 16px);
+  }
+
+  .period-selector-panel {
+    max-width: none;
+    max-height: 95vh;
+  }
+
+  .panel-header,
+  .panel-content,
+  .panel-footer {
+    padding-left: var(--space-md, 16px);
+    padding-right: var(--space-md, 16px);
+  }
+
+  .panel-title {
+    font-size: 18px;
+  }
+
+  .mode-toggle {
+    flex-direction: column;
+    gap: var(--space-xs, 8px);
+  }
+
+  .mode-option {
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: var(--space-sm, 12px) var(--space-md, 16px);
+  }
+
+  .mode-icon {
+    font-size: 18px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .period-selector-overlay {
+    padding: 0; /* Full screen on mobile */
+    align-items: stretch;
+    justify-content: stretch;
+  }
+
+  .period-selector-panel {
+    /* Full screen panel on very small screens */
+    max-width: none;
+    width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+
+    /* Improved animations for full screen */
+    transform: translateY(100%);
+  }
+
+  .period-selector-panel.visible {
+    transform: translateY(0);
+  }
+
+  .panel-header {
+    padding: var(--space-md, 16px);
+    /* Add safe area for notched phones */
+    padding-top: max(var(--space-md, 16px), env(safe-area-inset-top));
+  }
+
+  .panel-content {
+    padding: var(--space-md, 16px);
+    max-height: calc(100vh - 140px);
+    /* Better scrolling on mobile */
+    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
+  }
+
+  .panel-footer {
+    padding: var(--space-md, 16px);
+    /* Add safe area for home indicator */
+    padding-bottom: max(var(--space-md, 16px), env(safe-area-inset-bottom));
+    flex-direction: column-reverse;
+    gap: var(--space-sm, 12px);
+  }
+
+  .cancel-btn,
+  .apply-btn {
+    width: 100%;
+    /* Touch-friendly button height */
+    min-height: 48px;
+    padding: var(--space-md, 14px);
+    font-size: 16px; /* Better readability */
+    border-radius: 12px;
+  }
+
+  .close-btn {
+    /* Larger close button for mobile */
+    width: 40px;
+    height: 40px;
+    font-size: 28px;
+  }
+
+  .panel-title {
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .mode-option {
+    padding: var(--space-md, 14px) var(--space-md, 16px);
+    /* Touch-friendly mode buttons */
+    min-height: 56px;
+    font-size: 14px;
+  }
+
+  .mode-icon {
+    font-size: 24px; /* Larger icons on mobile */
+  }
+
+  .week-select {
+    padding: var(--space-md, 14px) var(--space-sm, 12px);
+    /* Better mobile form controls */
+    min-height: 48px;
+    font-size: 16px; /* Prevent zoom on iOS */
+    border-radius: 12px;
+  }
+
+  .section-label,
+  .selector-label {
+    font-size: 15px; /* Improved readability */
+    font-weight: 600;
+  }
+}
+
+/* ===== ACCESSIBILITY ENHANCEMENTS ===== */
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .period-selector-panel {
+    border: 2px solid #000000;
+  }
+
+  .panel-header {
+    background: #ffffff;
+    border-bottom-color: #000000;
+  }
+
+  .mode-option {
+    border-color: #000000;
+  }
+
+  .mode-option.active {
+    background: #000000;
+    color: #ffffff;
+  }
+
+  .week-select {
+    border-color: #000000;
+  }
+
+  .apply-btn {
+    background: #000000;
+    border-color: #000000;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .period-selector-overlay,
+  .period-selector-panel,
+  .mode-option,
+  .week-select,
+  .cancel-btn,
+  .apply-btn,
+  .close-btn {
+    transition: none;
+  }
+
+  .compare-week-selector {
+    animation: none;
+  }
+
+  .apply-btn:active {
+    transform: none;
+  }
+}
+
+/* Focus visible support */
+.mode-option:focus-visible,
+.week-select:focus-visible,
+.cancel-btn:focus-visible,
+.apply-btn:focus-visible,
+.close-btn:focus-visible {
+  outline: 2px solid #2196f3;
+  outline-offset: 2px;
+}
+
+/* ===== MOBILE-SPECIFIC ENHANCEMENTS ===== */
+
+/* Better tap targets for touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .mode-option {
+    min-height: 60px; /* Larger touch targets */
+  }
+
+  .close-btn {
+    min-width: 48px;
+    min-height: 48px;
+  }
+
+  .cancel-btn,
+  .apply-btn {
+    min-height: 52px; /* Larger touch targets */
+  }
+
+  /* Active states for touch feedback */
+  .mode-option:active {
+    transform: scale(0.98);
+    background: #dee2e6;
+  }
+
+  .mode-option.active:active {
+    background: #bbdefb;
+  }
+
+  .cancel-btn:active,
+  .apply-btn:active {
+    transform: scale(0.98);
+  }
+
+  .close-btn:active {
+    transform: scale(0.95);
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  /* Remove hover states on touch-only devices */
+  .mode-option:hover,
+  .cancel-btn:hover,
+  .apply-btn:hover,
+  .close-btn:hover {
+    transform: none;
+  }
+}
+
+/* Handle device orientation and safe areas */
+@supports (padding: max(0px)) {
+  @media (max-width: 480px) and (orientation: landscape) {
+    .panel-header {
+      padding-top: max(var(--space-md, 16px), env(safe-area-inset-top));
+    }
+
+    .panel-footer {
+      padding-bottom: max(var(--space-md, 16px), env(safe-area-inset-bottom));
+    }
+
+    .period-selector-panel {
+      height: 100vh;
+      max-height: 100vh;
+    }
+  }
+}
+
+/* Improved accessibility for mobile keyboard navigation */
+@media (max-width: 768px) {
+  .mode-option:focus-visible,
+  .cancel-btn:focus-visible,
+  .apply-btn:focus-visible,
+  .close-btn:focus-visible {
+    outline-width: 3px;
+    outline-offset: 3px;
+  }
+
+  .week-select:focus-visible {
+    outline-width: 3px;
+    box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.2);
+  }
+}
+
+/* ===== DARK THEME SUPPORT ===== */
+[data-theme="dark"] .period-selector-backdrop {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+[data-theme="dark"] .period-selector-panel {
+  background: #1a1a1a;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="dark"] .panel-header {
+  background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+  border-bottom-color: #333333;
+}
+
+[data-theme="dark"] .panel-title {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .close-btn {
+  color: #b0b0b0;
+}
+
+[data-theme="dark"] .close-btn:hover,
+[data-theme="dark"] .close-btn:focus {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+[data-theme="dark"] .section-label,
+[data-theme="dark"] .selector-label {
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .mode-option {
+  background: #2d2d2d;
+  border-color: #404040;
+  color: #b0b0b0;
+}
+
+[data-theme="dark"] .mode-option:hover {
+  background: #404040;
+  border-color: #555555;
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .mode-option.active {
+  background: rgba(33, 150, 243, 0.2);
+  border-color: #2196f3;
+  color: #64b5f6;
+}
+
+[data-theme="dark"] .week-select {
+  background: #2d2d2d;
+  border-color: #404040;
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .week-select:hover {
+  border-color: #555555;
+}
+
+[data-theme="dark"] .week-select:focus {
+  border-color: #2196f3;
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2);
+}
+
+[data-theme="dark"] .period-preview {
+  background: #2d2d2d;
+  border-color: #404040;
+}
+
+[data-theme="dark"] .preview-content {
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .panel-footer {
+  background: #2d2d2d;
+  border-top-color: #404040;
+}
+
+[data-theme="dark"] .cancel-btn {
+  background: #404040;
+  border-color: #555555;
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .cancel-btn:hover,
+[data-theme="dark"] .cancel-btn:focus {
+  background: #555555;
+  border-color: #666666;
+  color: #ffffff;
+}

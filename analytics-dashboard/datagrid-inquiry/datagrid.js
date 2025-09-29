@@ -453,11 +453,551 @@ class DataGridComponent {
       }
     };
 
+    // Context integration for week filtering and comparison mode
+    this.contextStateService = null;
+    this.contextSubscription = null;
+    this.currentContextState = null;
+    this.comparisonMode = false;
+    this.originalColumns = [...this.columns]; // Store original column definitions
+
     // Load saved state from localStorage
     this.loadState();
 
     // Parse URL context and apply defaults
     this.parseUrlContext();
+
+    // Initialize context service integration
+    this.initializeContextService();
+  }
+
+  /**
+   * Initialize context service integration for week filtering and comparison
+   */
+  async initializeContextService() {
+    try {
+      // Wait for ContextStateService to be available
+      if (window.contextStateService) {
+        // Get initial context state
+        this.currentContextState = window.contextStateService.loadState('analyze');
+
+        // Listen for context changes
+        document.addEventListener('contextChanged', (event) => {
+          this.handleContextChange(event.detail);
+        });
+
+        this._log('✅ Context service integration initialized for DataGrid', this.currentContextState);
+      } else {
+        this._log('⚠️ ContextStateService not available, skipping context integration');
+        // Set default context state
+        this.currentContextState = {
+          week: 40,
+          scopeLevel: 'all',
+          scopeValue: 'all',
+          comparisonMode: false
+        };
+      }
+    } catch (error) {
+      console.error('❌ Failed to initialize context service in DataGrid:', error);
+    }
+  }
+
+  /**
+   * Handle context changes from context bar
+   */
+  async handleContextChange(contextState) {
+    this._log('📊 Context changed in DataGrid:', contextState);
+
+    // Update current context state
+    const previousState = this.currentContextState;
+    this.currentContextState = contextState;
+
+    // Apply context filtering
+    await this.applyContextFiltering(previousState);
+
+    // Update grid header to show current context
+    this.updateGridHeader();
+
+    // Re-render the grid
+    this.render();
+  }
+
+  /**
+   * Apply context filtering to data
+   */
+  async applyContextFiltering(previousState = null) {
+    if (!this.data || this.data.length === 0) {
+      this._log('⚠️ No data available for context filtering');
+      return;
+    }
+
+    this._setLoading(true);
+
+    try {
+      // Start with original data
+      let filteredData = [...this.data];
+
+      // Apply week filter
+      if (this.currentContextState.week && this.currentContextState.week !== 40) {
+        filteredData = this.filterByWeek(filteredData, this.currentContextState.week);
+      }
+
+      // Apply store scope filter
+      if (this.currentContextState.scopeLevel !== 'all') {
+        filteredData = this.filterByStoreScope(filteredData, this.currentContextState);
+      }
+
+      // Handle comparison mode
+      if (this.currentContextState.comparisonMode && this.currentContextState.compareWeek) {
+        filteredData = await this.addComparisonColumns(filteredData);
+      } else if (previousState && previousState.comparisonMode && !this.currentContextState.comparisonMode) {
+        // Remove comparison columns if comparison mode was turned off
+        this.removeComparisonColumns();
+      }
+
+      // Update filtered data
+      this.filteredData = filteredData;
+
+      // Apply current filters
+      this.applyFilters();
+
+      this._log('✅ Context filtering applied', {
+        originalCount: this.data.length,
+        filteredCount: this.filteredData.length,
+        context: this.currentContextState
+      });
+
+    } catch (error) {
+      console.error('❌ Error applying context filtering:', error);
+    } finally {
+      this._setLoading(false);
+    }
+  }
+
+  /**
+   * Filter data by selected week
+   */
+  filterByWeek(data, selectedWeek) {
+    // For demonstration, we'll simulate different data for different weeks
+    // In a real implementation, this would filter based on actual week data
+
+    return data.map(item => {
+      const weekOffset = selectedWeek - 40;
+      const performanceVariation = 1 + (Math.sin(weekOffset) * 0.15); // ±15% variation
+
+      return {
+        ...item,
+        week: selectedWeek,
+        card_in_view: Math.max(0, Math.round(item.card_in_view * performanceVariation)),
+        card_clicked: Math.max(0, Math.round(item.card_clicked * performanceVariation)),
+        composite_score: Math.max(0, Math.round(item.composite_score * performanceVariation)),
+        added_to_list: Math.max(0, Math.round((item.added_to_list || 0) * performanceVariation)),
+        share_count: Math.max(0, Math.round((item.share_count || 0) * performanceVariation))
+      };
+    });
+  }
+
+  /**
+   * Filter data by store scope
+   */
+  filterByStoreScope(data, contextState) {
+    // Apply store scope filtering based on context
+    let scopeModifier = 1;
+
+    if (contextState.scopeLevel === 'region') {
+      // Find region modifier (assuming regions have different store counts)
+      const regionData = mockDatabase.regions?.find(r => r.id === contextState.scopeValue);
+      if (regionData) {
+        scopeModifier = regionData.stores.length / 67; // Total stores
+      } else {
+        scopeModifier = 0.3; // Default regional modifier
+      }
+    } else if (contextState.scopeLevel === 'store') {
+      scopeModifier = 1 / 67; // Single store
+    }
+
+    return data.map(item => ({
+      ...item,
+      card_in_view: Math.max(0, Math.round(item.card_in_view * scopeModifier)),
+      card_clicked: Math.max(0, Math.round(item.card_clicked * scopeModifier)),
+      added_to_list: Math.max(0, Math.round((item.added_to_list || 0) * scopeModifier)),
+      share_count: Math.max(0, Math.round((item.share_count || 0) * scopeModifier))
+    }));
+  }
+
+  /**
+   * Add comparison columns for comparison mode
+   */
+  async addComparisonColumns(currentWeekData) {
+    if (!this.currentContextState.compareWeek) {
+      return currentWeekData;
+    }
+
+    // Get comparison week data
+    const compareWeekData = this.filterByWeek([...this.data], this.currentContextState.compareWeek);
+
+    // Add comparison columns
+    if (!this.columns.find(col => col.field === 'card_in_view_delta')) {
+      this.columns.splice(-1, 0, // Insert before last column
+        { field: 'card_in_view_delta', label: 'Views Δ', width: 80, visible: true, calculated: true, comparison: true },
+        { field: 'card_clicked_delta', label: 'Clicks Δ', width: 80, visible: true, calculated: true, comparison: true },
+        { field: 'composite_score_delta', label: 'Score Δ', width: 80, visible: true, calculated: true, comparison: true }
+      );
+    }
+
+    // Create lookup map for comparison data
+    const compareMap = new Map();
+    compareWeekData.forEach(item => {
+      compareMap.set(item.card_id, item);
+    });
+
+    // Add delta values to current week data
+    return currentWeekData.map(item => {
+      const compareItem = compareMap.get(item.card_id);
+
+      if (compareItem) {
+        const viewsDelta = item.card_in_view - compareItem.card_in_view;
+        const clicksDelta = item.card_clicked - compareItem.card_clicked;
+        const scoreDelta = item.composite_score - compareItem.composite_score;
+
+        return {
+          ...item,
+          card_in_view_delta: viewsDelta,
+          card_clicked_delta: clicksDelta,
+          composite_score_delta: scoreDelta,
+          card_in_view_change: compareItem.card_in_view > 0 ? Math.round((viewsDelta / compareItem.card_in_view) * 100) : 0,
+          card_clicked_change: compareItem.card_clicked > 0 ? Math.round((clicksDelta / compareItem.card_clicked) * 100) : 0,
+          composite_score_change: compareItem.composite_score > 0 ? Math.round((scoreDelta / compareItem.composite_score) * 100) : 0
+        };
+      }
+
+      return {
+        ...item,
+        card_in_view_delta: 0,
+        card_clicked_delta: 0,
+        composite_score_delta: 0,
+        card_in_view_change: 0,
+        card_clicked_change: 0,
+        composite_score_change: 0
+      };
+    });
+  }
+
+  /**
+   * Remove comparison columns when comparison mode is turned off
+   */
+  removeComparisonColumns() {
+    this.columns = this.columns.filter(col => !col.comparison);
+    this._populateColumnSettings();
+  }
+
+  /**
+   * Update grid header to show current context
+   */
+  updateGridHeader() {
+    const headerElement = document.getElementById('grid-header');
+    if (headerElement && this.currentContextState) {
+      // Grid context header removed per user request
+      headerElement.innerHTML = '';
+    }
+  }
+
+
+  /**
+   * Filter data by week based on context state
+   */
+  filterDataByWeek(data) {
+    if (!this.currentContextState || !this.currentContextState.period) {
+      return data;
+    }
+
+    const periodState = this.currentContextState.period;
+
+    if (periodState.mode === 'single') {
+      // Single week filtering
+      const weekId = periodState.selected?.id || periodState.selected;
+      if (weekId) {
+        return data.filter(item => item.week_id === weekId || item.period === weekId);
+      }
+    } else if (periodState.mode === 'compare') {
+      // Comparison mode - include both weeks
+      const primaryWeek = periodState.selected?.id || periodState.selected;
+      const compareWeek = periodState.compare?.id || periodState.compare;
+
+      if (primaryWeek || compareWeek) {
+        return data.filter(item => {
+          const itemWeek = item.week_id || item.period;
+          return itemWeek === primaryWeek || itemWeek === compareWeek;
+        });
+      }
+    }
+
+    return data;
+  }
+
+  /**
+   * Filter data by scope (store selection) based on context state
+   */
+  filterDataByScope(data) {
+    if (!this.currentContextState || !this.currentContextState.scope) {
+      return data;
+    }
+
+    const scopeState = this.currentContextState.scope;
+
+    if (scopeState.level === 'store' && scopeState.selected) {
+      // Filter by specific store
+      return data.filter(item => {
+        const itemStoreId = item.store_id || item.location_id || item.store;
+        return itemStoreId === scopeState.selected.id || itemStoreId === scopeState.selected;
+      });
+    } else if (scopeState.level === 'region' && scopeState.selected) {
+      // Filter by region (multiple stores)
+      const regionStores = scopeState.stores || [];
+      return data.filter(item => {
+        const itemStoreId = item.store_id || item.location_id || item.store;
+        return regionStores.some(store =>
+          (store.id === itemStoreId) || (store === itemStoreId)
+        );
+      });
+    }
+
+    return data;
+  }
+
+  /**
+   * Update column definitions for comparison mode
+   */
+  updateColumnsForComparison() {
+    if (this.comparisonMode) {
+      // Add comparison columns with delta calculations
+      this.columns = this.createComparisonColumns();
+    } else {
+      // Restore original columns
+      this.columns = [...this.originalColumns];
+    }
+
+    // Update column settings UI if present
+    this._updateColumnSettingsUI();
+
+    this._log('📊 Columns updated for comparison mode:', {
+      comparisonMode: this.comparisonMode,
+      columnCount: this.columns.length
+    });
+  }
+
+  /**
+   * Create comparison column definitions with delta columns
+   */
+  createComparisonColumns() {
+    const comparisonColumns = [];
+    const weekLabels = this.getWeekLabelsForComparison();
+
+    // Start with checkbox and name columns (always visible)
+    comparisonColumns.push(
+      { field: 'checkbox', label: '', width: 40, type: 'checkbox', visible: true, required: true },
+      { field: 'card_name', label: 'Name', width: 200, visible: true, required: true },
+      { field: 'department', label: 'Department', width: 100, visible: true }
+    );
+
+    // Add comparison data columns for numeric fields
+    const numericFields = ['card_price', 'card_in_view', 'card_clicked', 'composite_score'];
+
+    numericFields.forEach(field => {
+      const originalCol = this.originalColumns.find(col => col.field === field);
+      if (!originalCol) return;
+
+      // Current week column
+      comparisonColumns.push({
+        field: `${field}_current`,
+        label: `${originalCol.label} (${weekLabels.current})`,
+        width: originalCol.width + 20,
+        type: 'number',
+        visible: true,
+        comparisonField: field
+      });
+
+      // Previous week column
+      comparisonColumns.push({
+        field: `${field}_compare`,
+        label: `${originalCol.label} (${weekLabels.compare})`,
+        width: originalCol.width + 20,
+        type: 'number',
+        visible: true,
+        comparisonField: field
+      });
+
+      // Delta column
+      comparisonColumns.push({
+        field: `${field}_delta`,
+        label: `Δ ${originalCol.label}`,
+        width: 80,
+        type: 'delta',
+        visible: true,
+        calculated: true,
+        comparisonField: field
+      });
+    });
+
+    return comparisonColumns;
+  }
+
+  /**
+   * Get week labels for comparison headers
+   */
+  getWeekLabelsForComparison() {
+    if (!this.currentContextState || !this.currentContextState.period) {
+      return { current: 'Current', compare: 'Previous' };
+    }
+
+    const periodState = this.currentContextState.period;
+    const currentWeek = periodState.selected;
+    const compareWeek = periodState.compare;
+
+    return {
+      current: currentWeek?.label || currentWeek?.name || 'Current Week',
+      compare: compareWeek?.label || compareWeek?.name || 'Compare Week'
+    };
+  }
+
+  /**
+   * Prepare data for comparison mode display
+   */
+  prepareComparisonData(data) {
+    if (!this.currentContextState || !this.currentContextState.period) {
+      return data;
+    }
+
+    const periodState = this.currentContextState.period;
+    const primaryWeek = periodState.selected?.id || periodState.selected;
+    const compareWeek = periodState.compare?.id || periodState.compare;
+
+    if (!primaryWeek || !compareWeek) {
+      return data;
+    }
+
+    // Group data by card_name to merge weeks
+    const dataByCard = {};
+
+    data.forEach(item => {
+      const cardKey = item.card_name || item.name || item.id;
+      const itemWeek = item.week_id || item.period;
+
+      if (!dataByCard[cardKey]) {
+        dataByCard[cardKey] = {
+          card_name: item.card_name,
+          department: item.department,
+          primary: null,
+          compare: null
+        };
+      }
+
+      if (itemWeek === primaryWeek) {
+        dataByCard[cardKey].primary = item;
+      } else if (itemWeek === compareWeek) {
+        dataByCard[cardKey].compare = item;
+      }
+    });
+
+    // Create comparison rows with calculated delta columns
+    const comparisonData = [];
+
+    Object.entries(dataByCard).forEach(([cardKey, cardData]) => {
+      if (!cardData.primary && !cardData.compare) return;
+
+      const primary = cardData.primary || {};
+      const compare = cardData.compare || {};
+
+      const comparisonRow = {
+        card_id: primary.card_id || compare.card_id || cardKey,
+        card_name: cardData.card_name,
+        department: cardData.department,
+
+        // Current week values
+        card_price_current: primary.card_price || 0,
+        card_in_view_current: primary.card_in_view || 0,
+        card_clicked_current: primary.card_clicked || 0,
+        composite_score_current: primary.composite_score || 0,
+
+        // Compare week values
+        card_price_compare: compare.card_price || 0,
+        card_in_view_compare: compare.card_in_view || 0,
+        card_clicked_compare: compare.card_clicked || 0,
+        composite_score_compare: compare.composite_score || 0,
+
+        // Delta calculations
+        card_price_delta: this.calculateDelta(primary.card_price, compare.card_price),
+        card_in_view_delta: this.calculateDelta(primary.card_in_view, compare.card_in_view),
+        card_clicked_delta: this.calculateDelta(primary.card_clicked, compare.card_clicked),
+        composite_score_delta: this.calculateDelta(primary.composite_score, compare.composite_score)
+      };
+
+      comparisonData.push(comparisonRow);
+    });
+
+    this._log('🔄 Prepared comparison data:', {
+      originalCount: data.length,
+      comparisonCount: comparisonData.length,
+      primaryWeek,
+      compareWeek
+    });
+
+    return comparisonData;
+  }
+
+  /**
+   * Calculate delta value and percentage for comparison
+   */
+  calculateDelta(current, previous) {
+    if (!current && !previous) return { value: 0, percent: 0, trend: 'neutral' };
+    if (!previous) return { value: current || 0, percent: 100, trend: 'up' };
+    if (!current) return { value: -(previous || 0), percent: -100, trend: 'down' };
+
+    const delta = (current || 0) - (previous || 0);
+    const percent = previous !== 0 ? ((delta / previous) * 100) : 100;
+
+    return {
+      value: delta,
+      percent: percent,
+      trend: delta > 0 ? 'up' : delta < 0 ? 'down' : 'neutral'
+    };
+  }
+
+  /**
+   * Update column settings UI when columns change
+   */
+  _updateColumnSettingsUI() {
+    const columnCheckboxes = document.getElementById('column-checkboxes');
+    if (!columnCheckboxes) return;
+
+    // Clear existing checkboxes
+    columnCheckboxes.innerHTML = '';
+
+    // Add checkboxes for each column
+    this.columns.forEach((column, index) => {
+      if (column.required) return; // Skip required columns
+
+      const checkboxContainer = document.createElement('label');
+      checkboxContainer.className = 'column-checkbox-item';
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.checked = column.visible;
+      checkbox.dataset.columnField = column.field;
+
+      const label = document.createElement('span');
+      label.textContent = column.label;
+
+      checkboxContainer.appendChild(checkbox);
+      checkboxContainer.appendChild(label);
+      columnCheckboxes.appendChild(checkboxContainer);
+
+      // Add event listener for column visibility toggle
+      checkbox.addEventListener('change', () => {
+        column.visible = checkbox.checked;
+        this.render();
+        this._saveColumnPreferences();
+      });
+    });
   }
 
   /**
@@ -466,11 +1006,35 @@ class DataGridComponent {
   _log(message, data = null) {
     if (this.debug) {
       if (data) {
-        
+
       } else {
-        
+
       }
     }
+  }
+
+  /**
+   * Cleanup method for destroying the component
+   */
+  destroy() {
+    // Unsubscribe from context changes
+    if (this.contextSubscription) {
+      this.contextStateService.unsubscribe(this.contextSubscription);
+      this.contextSubscription = null;
+    }
+
+    // Clear any cached values
+    if (this.calculatedValues) {
+      this.calculatedValues.clear();
+    }
+
+    // Clear data references
+    this.data = [];
+    this.filteredData = [];
+    this.contextFilteredData = [];
+    this.currentContextState = null;
+
+    this._log('🧹 DataGrid component destroyed and cleaned up');
   }
 
   /**
@@ -1349,19 +1913,6 @@ class DataGridComponent {
         description.textContent = `Analyzing: ${this.currentContext.description}`;
       }
 
-      // Add context hints to banner if available
-      if (this.currentContext.filterHints && banner) {
-        const existingHints = banner.querySelector('.context-hints');
-        if (existingHints) existingHints.remove();
-
-        const hintsDiv = document.createElement('div');
-        hintsDiv.className = 'context-hints';
-        hintsDiv.innerHTML = this.currentContext.filterHints
-          .map(hint => `<span class="hint-chip">${hint}</span>`)
-          .join('');
-
-        banner.querySelector('.banner-content').appendChild(hintsDiv);
-      }
     }
   }
 
@@ -2114,6 +2665,13 @@ class DataGridComponent {
       // Apply pending context defaults now that filters are populated
       setTimeout(() => {
         this.applyPendingContextDefaults();
+
+        // Apply context filtering if context state is available
+        if (this.currentContextState) {
+          this.applyContextFiltering();
+          this.updateGridHeader();
+        }
+
         // Apply initial filters after defaults are set
         this.applyFilters();
         this.render();
@@ -2148,12 +2706,20 @@ class DataGridComponent {
    * Apply all active filters to the data
    */
   applyFilters() {
-    if (!this.data || this.data.length === 0) {
+    // Use context-filtered data as base if available, otherwise use original data
+    const baseData = this.contextFilteredData || this.data;
+
+    if (!baseData || baseData.length === 0) {
       this.filteredData = [];
       return;
     }
 
-    let filtered = [...this.data];
+    let filtered = [...baseData];
+
+    // If in comparison mode, prepare data for comparison display
+    if (this.comparisonMode) {
+      filtered = this.prepareComparisonData(filtered);
+    }
 
     // Apply search filter
     if (this.filters.search) {
@@ -3461,7 +4027,31 @@ class DataGridComponent {
         }
       });
 
-      
+      // Virtual scroll event listener
+      if (virtualViewport) {
+        virtualViewport.addEventListener('scroll', this._debounce((e) => {
+          this._handleVirtualScroll(e);
+        }, 10));
+      }
+
+      // Add select all checkbox listener
+      if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', (e) => {
+          if (e.target.checked) {
+            this.selectAll();
+          } else {
+            this.clearSelection();
+          }
+        });
+      }
+
+      // Add row checkbox listeners
+      rowCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', (e) => {
+          const id = e.target.getAttribute('data-id');
+          this.toggleSelection(id);
+        });
+      });
 
     } catch (error) {
       console.error('🚨 Critical error attaching event listeners:', error);
@@ -3472,32 +4062,6 @@ class DataGridComponent {
         });
       }
     }
-
-    // Virtual scroll event listener
-    if (virtualViewport) {
-      virtualViewport.addEventListener('scroll', this._debounce((e) => {
-        this._handleVirtualScroll(e);
-      }, 10));
-    }
-
-    // Add select all checkbox listener
-    if (selectAllCheckbox) {
-      selectAllCheckbox.addEventListener('change', (e) => {
-        if (e.target.checked) {
-          this.selectAll();
-        } else {
-          this.clearSelection();
-        }
-      });
-    }
-
-    // Add row checkbox listeners
-    rowCheckboxes.forEach(checkbox => {
-      checkbox.addEventListener('change', (e) => {
-        const id = e.target.getAttribute('data-id');
-        this.toggleSelection(id);
-      });
-    });
   }
 
   // Performance optimizations
@@ -3531,6 +4095,7 @@ class DataGridComponent {
   }
 
   _getColumnValue(item, column) {
+    // Handle calculated CTR column
     if (column.calculated && column.field === 'ctr') {
       // Use cached value if available
       const cacheKey = `${item.card_id}_ctr`;
@@ -3542,7 +4107,64 @@ class DataGridComponent {
       this.calculatedValues.set(cacheKey, ctr);
       return ctr + '%';
     }
-    return item[column.field];
+
+    // Handle delta columns in comparison mode
+    if (column.comparison && column.field.includes('_delta')) {
+      const deltaValue = item[column.field] || 0;
+      return this._renderDeltaCell(deltaValue);
+    }
+
+    // Handle regular columns
+    const value = item[column.field];
+
+    // Format number columns
+    if (column.type === 'number' && typeof value === 'number') {
+      return value.toLocaleString();
+    }
+
+    return value;
+  }
+
+  /**
+   * Render delta cell with proper styling
+   */
+  _renderDeltaCell(deltaValue) {
+    if (deltaValue === 0) {
+      return `<span class="delta-neutral">0</span>`;
+    }
+
+    const isPositive = deltaValue > 0;
+    const className = isPositive ? 'delta-positive' : 'delta-negative';
+    const prefix = isPositive ? '+' : '';
+
+    return `<span class="${className}">${prefix}${deltaValue}</span>`;
+  }
+
+  /**
+   * Render delta cell with trend indicators
+   */
+  _renderDeltaCell(deltaData) {
+    if (!deltaData || typeof deltaData !== 'object') {
+      return '—';
+    }
+
+    const { value, percent, trend } = deltaData;
+
+    if (value === 0) {
+      return '<span class="delta-neutral">—</span>';
+    }
+
+    const trendClass = `delta-${trend}`;
+    const trendIcon = trend === 'up' ? '↗' : trend === 'down' ? '↘' : '—';
+    const sign = value > 0 ? '+' : '';
+
+    return `
+      <span class="delta-cell ${trendClass}">
+        <span class="delta-value">${sign}${value}</span>
+        <span class="delta-percent">(${sign}${percent.toFixed(1)}%)</span>
+        <span class="delta-trend">${trendIcon}</span>
+      </span>
+    `;
   }
 
   _precalculateValues() {
@@ -3809,31 +4431,133 @@ function generateTestData(count = 1000) {
 
 // Load data on page load - use test data for virtual scrolling or mockPromotions for normal use
 document.addEventListener('DOMContentLoaded', async function() {
-  let dataToLoad;
+  console.log('📊 DataGrid: DOMContentLoaded event fired');
+  console.log('📊 Grid object available:', !!window.grid);
+  console.log('📊 Grid container exists:', !!document.getElementById('grid-container'));
 
-  // Check URL parameter for test mode
+  let dataToLoad;
   const urlParams = new URLSearchParams(window.location.search);
   const testMode = urlParams.get('test') === 'virtual';
+  const hasNavigation = urlParams.get('source') || urlParams.get('filter');
+
+  console.log('📊 Test mode:', testMode);
+  console.log('📊 Has navigation context:', !!hasNavigation);
+  console.log('📊 mockPromotions available:', !!window.mockPromotions);
 
   if (testMode) {
     // Generate 1000 test rows for virtual scrolling test
     dataToLoad = generateTestData(1000);
-    
+    console.log('📊 Using test data, generated rows:', dataToLoad.length);
   } else if (window.mockPromotions && window.mockPromotions.length > 0) {
     // Use normal mock data
     dataToLoad = window.mockPromotions;
+    console.log('📊 Using mockPromotions data, rows:', dataToLoad.length);
+  } else {
+    console.error('❌ No data available to load');
   }
 
   if (dataToLoad) {
-    await grid.loadData(dataToLoad);
+    console.log('📊 Loading data into grid...');
+    try {
+      await grid.loadData(dataToLoad);
+      console.log('✅ Grid data loaded successfully');
 
-    // Apply initial sort from URL param if exists
-    if (grid.sortBy) {
-      await grid.sortData(grid.sortBy);
+      // Apply default view if no navigation context
+      if (!hasNavigation) {
+        console.log('📊 Applying default "Digital Circular Performance" view using context bar selections');
+
+        // Get current context from context bar (week and store selections)
+        const currentContextState = window.contextStateService ?
+          window.contextStateService.loadState('analyze') : null;
+
+        console.log('📊 Current context state:', currentContextState);
+
+        // Set default filters for Digital Circular Performance
+        grid.tier1Filters = {
+          scope: 'promotion',
+          lens: 'performance',
+          timeframe: currentContextState?.week ? `week-${currentContextState.week}` : 'current-week',
+          entity: 'promotion'
+        };
+
+        // Update UI to reflect default filters
+        const scopeSelect = document.getElementById('scope-filter');
+        const lensSelect = document.getElementById('lens-filter');
+        const timeframeSelect = document.getElementById('timeframe-filter');
+        const entitySelect = document.getElementById('entity-filter');
+
+        if (scopeSelect) {
+          scopeSelect.value = 'promotion';
+          console.log('📊 Set scope select to promotion, selectedIndex:', scopeSelect.selectedIndex);
+        } else {
+          console.log('❌ scope-filter element not found');
+        }
+        if (lensSelect) {
+          lensSelect.value = 'performance';
+          console.log('📊 Set lens select to performance, selectedIndex:', lensSelect.selectedIndex);
+        } else {
+          console.log('❌ lens-filter element not found');
+        }
+        if (timeframeSelect) {
+          timeframeSelect.value = grid.tier1Filters.timeframe;
+          console.log('📊 Set timeframe select to', grid.tier1Filters.timeframe, 'selectedIndex:', timeframeSelect.selectedIndex);
+        } else {
+          console.log('❌ timeframe-filter element not found');
+        }
+        if (entitySelect) {
+          entitySelect.value = 'promotion';
+          console.log('📊 Set entity select to promotion, selectedIndex:', entitySelect.selectedIndex);
+        } else {
+          console.log('❌ entity-filter element not found');
+        }
+
+        // Apply context-based filtering if we have context state
+        if (currentContextState) {
+          // Filter by week if specified
+          if (currentContextState.week && currentContextState.week !== 40) {
+            console.log(`📊 Applying week filter: ${currentContextState.week}`);
+            // Week filtering logic would go here
+          }
+
+          // Filter by store scope if not "all"
+          if (currentContextState.scopeLevel !== 'all') {
+            console.log(`📊 Applying store filter: ${currentContextState.scopeLevel} = ${currentContextState.scopeValue}`);
+            // Store filtering logic would go here
+          }
+        }
+
+        // Update filter chips after UI elements are updated
+        grid.updateAllFilterChips();
+        console.log('📊 Filter chips updated after UI select updates');
+
+        // Set default sort by performance (composite score)
+        grid.sortConfig = { field: 'composite_score', direction: 'desc' };
+
+        // Apply filters and sort
+        grid.applyFilters();
+
+        console.log('✅ Default Digital Circular Performance view applied with context');
+      }
+
+      // Apply initial sort from URL param if exists
+      if (grid.sortBy) {
+        await grid.sortData(grid.sortBy);
+        console.log('✅ Initial sort applied');
+      }
+
+      // Restore filter state from URL parameters
+      grid.restoreFiltersFromURL();
+      console.log('✅ Filters restored from URL');
+
+      // Render the grid
+      grid.render();
+      console.log('✅ Grid rendered');
+
+    } catch (error) {
+      console.error('❌ Error loading grid data:', error);
     }
-
-    // Restore filter state from URL parameters
-    grid.restoreFiltersFromURL();
+  } else {
+    console.error('❌ No data to load into grid');
   }
 });
 

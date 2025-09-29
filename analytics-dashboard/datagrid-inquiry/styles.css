@@ -1,4 +1,61 @@
 /* === Light Lite Theme + Inter === */
+
+/* Context Integration Styles */
+.grid-context-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.context-info {
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Comparison Mode Styles */
+.comparison-column {
+  background-color: #f8fafc;
+  border-left: 2px solid var(--blue);
+}
+
+.comparison-header {
+  background-color: #eff6ff;
+  font-weight: 600;
+}
+
+.delta-positive {
+  color: #059669;
+  font-weight: 600;
+}
+
+.delta-negative {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.delta-neutral {
+  color: var(--muted);
+}
+
+.comparison-cell {
+  position: relative;
+}
+
+.comparison-cell::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background-color: var(--blue);
+  opacity: 0.3;
+}
+
+/* === Light Lite Theme + Inter === */
 :root{
   --bg:#efefef;
   --bg-header: #fcfcfc;
@@ -15,7 +72,7 @@
   --grid-gap:8px;
   --gap-lg:16px;
   --gap-xl:20px;
-  --gap-md:12px;
+  --gap-md:16px;
   --gap-sm:8px;
   --gap-xs:4px;
 
@@ -39,14 +96,7 @@ h1{font-size:22px !important;font-weight:800}
 h2{font-size:18px !important;font-weight:800}
 h3{font-size:12px !important;letter-spacing:.04em;color:var(--muted);font-weight:700;   text-transform: uppercase;}
 .context-banner {padding-top: 0 ;}  
-/* Header */
-.page-header{display:flex;justify-content:space-between;
-  align-items:center;gap:16px;padding:var(--gap-lg) var(--gap-lg);
-  border-bottom:1px solid var(--border);background:var(--bg-header);
- position: sticky;
-        top: 0; /* This is crucial for defining where the element sticks */
-        z-index: 1000; /* Ensure it stays above other content */}
-.title-container h1{margin:0;font-size:16px;font-weight:800; text-transform: uppercase;}
+/* Header overrides - let components.css handle main layout */
 .back-button {
   background: none;
   border: none;
@@ -1427,12 +1477,6 @@ header.page-header .header-center .version select:focus {
 /* ========================================================================== */
 
 /* Header responsive for mobile */
-.page-header {
-  flex-direction: column;
-  align-items: stretch;
-  gap: var(--gap-xl);
-  padding: 12px;
-}
 
 header.page-header .left {
 
@@ -1681,18 +1725,10 @@ button {
   .desktop-only { display: none; }
 
   /* Typography adjustments */
-  h1 { font-size: 24px !important; }
   h2 { font-size: 20px !important; }
   h3 { font-size: 13px !important; }
 
   /* Page header responsive for tablet */
-  .page-header {
-    flex-direction: row;
-    align-items: center;
-
-    justify-content: flex-start;
-    padding: var(--gap-xl) var(--container-padding);
-  }
 
   header.page-header .left {
     align-items: flex-start;
@@ -1846,7 +1882,6 @@ button {
   .desktop-only { display: block; }
 
   /* Typography adjustments */
-  h1 { font-size: 22px !important; }
   h2 { font-size: 18px !important; }
   h3 { font-size: 10px !important; }
 
@@ -1936,5 +1971,84 @@ button {
   .section-title {
     font-size: 18px;
     margin-bottom: 8px;
+  }
+}
+
+/* Delta Cell Styles for Comparison Mode */
+.delta-cell {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.delta-value {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.delta-percent {
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+.delta-trend {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* Delta trend colors */
+.delta-up {
+  color: #059669; /* Green for positive changes */
+}
+
+.delta-up .delta-trend {
+  color: #059669;
+}
+
+.delta-down {
+  color: #dc2626; /* Red for negative changes */
+}
+
+.delta-down .delta-trend {
+  color: #dc2626;
+}
+
+.delta-neutral {
+  color: var(--muted);
+}
+
+/* Comparison mode column headers */
+.comparison-header {
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+  text-align: center;
+}
+
+/* Ensure delta cells are properly formatted in the grid */
+td .delta-cell {
+  width: 100%;
+  text-align: center;
+}
+
+/* Mobile responsiveness for delta cells */
+@media (max-width: 768px) {
+  .delta-cell {
+    font-size: 11px;
+    gap: 1px;
+  }
+
+  .delta-value {
+    font-size: 12px;
+  }
+
+  .delta-percent {
+    font-size: 10px;
+  }
+
+  .delta-trend {
+    font-size: 12px;
   }
 }

@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/components.css">
     <link rel="stylesheet" href="../css/responsive.css">
+    <link rel="stylesheet" href="../components/context-bar/context-bar-v2.styles.css">
+    <link rel="stylesheet" href="../components/context-bar/simple-context-bar.css">
+    <link rel="stylesheet" href="styles.css">
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="../assets/icons/favicon.ico">
@@ -18,50 +21,12 @@
     <link rel="preload" href="datagrid.js" as="script">
 </head>
 <body>
-    <!-- Enhanced header from prototype_001 -->
+    <!-- Simplified header -->
     <header class="dashboard-header page-header" id="app-header">
         <div class="header-container">
             <div class="header-left">
                 <div class="title-container">
                     <h1>Analytics Dashboard</h1>
-                </div>
-            </div>
-            <div class="header-center">
-                <div id="week-context" class="week-context">
-                    <div class="week-line">
-                        <span class="status" id="week-status" style="color:var(--muted)">Week 36: Sep 18-24, 2025 (Day 5 of 7)</span>
-                        <select id="week-select" class="week-select">
-                            <option value="w36">Week 36: Sep 18-24, 2025 (Day 5 of 7)</option>
-                            <option value="w35">Week 35: Sep 11-17, 2025</option>
-                            <option value="w34">Week 34: Sep 4-10, 2025</option>
-                            <option value="w33">Week 33: Aug 28-Sep 3, 2025</option>
-                            <option value="last_month">Last Month</option>
-                            <option value="ytd">Year to Date</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="header-right">
-                <div class="filters-stack">
-                    <div class="filter-row">
-                        <label for="version-select">Version:</label>
-                        <select id="version-select">
-                            <option value="all">All</option>
-                            <option value="v1">Version 1</option>
-                            <option value="v2">Version 2</option>
-                        </select>
-                    </div>
-                    <div class="filter-row">
-                        <label for="store-select">Store:</label>
-                        <select id="store-select">
-                            <option value="all_stores">All Stores</option>
-                            <option value="northeast">Northeast Region</option>
-                            <option value="southeast">Southeast Region</option>
-                            <option value="store_123">Store #123 - Miami Lakes</option>
-                            <option value="store_456">Store #456 - Kendall</option>
-                            <option value="store_789">Store #789 - Hialeah</option>
-                        </select>
-                    </div>
                 </div>
             </div>
         </div>
@@ -78,6 +43,8 @@
 
     <!-- Main content -->
     <main class="dashboard-main main-content">
+        <!-- Context bar container -->
+        <section id="context-bar-container" class="context-bar-v2" role="banner" aria-label="Dashboard Context"></section>
         <div id="datagrid-inquiry-container">
             <div id="grid-header"></div>
 
@@ -93,9 +60,6 @@
                         <span id="source-name">Data Analysis</span>
                         <span class="separator">›</span>
                         <span>Data Analysis</span>
-                    </div>
-                    <div id="context-description" class="context-description">
-                        Analyzing: Detailed data exploration and insights
                     </div>
                 </div>
             </div>
@@ -290,6 +254,12 @@
     <script src="../mock-data/004-data-extended.js"></script>
     <script src="datagrid.js"></script>
 
+    <!-- Context State Service -->
+    <script src="../services/context-state-service.js"></script>
+
+    <!-- Simple Context Bar -->
+    <script src="../components/context-bar/simple-context-bar.js"></script>
+
     <!-- URL Parameter Parsing and Context Setup -->
     <script>
         // Parse URL parameters
@@ -321,6 +291,19 @@
 
         // Pass parameters to grid when it's initialized
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize URL synchronization
+            if (window.contextStateService) {
+                window.contextStateService.initUrlSync();
+                console.log('🔗 URL synchronization initialized for datagrid inquiry');
+            }
+
+            // Initialize Context Bar first
+            const contextBarContainer = document.getElementById('context-bar-container');
+            if (contextBarContainer) {
+                new SimpleContextBar(contextBarContainer);
+                console.log('✅ Simple context bar initialized on inquiry page');
+            }
+
             // Wait for grid to be available
             setTimeout(() => {
                 if (window.grid) {
@@ -338,7 +321,7 @@
                     // Apply filter context if specified
                     if (filter) {
                         // This could be enhanced to apply specific filters based on the filter parameter
-                        console.log('📋 Filter context applied:', filter);
+                        // Filter context applied
                     }
 
                     // Re-render grid with new parameters

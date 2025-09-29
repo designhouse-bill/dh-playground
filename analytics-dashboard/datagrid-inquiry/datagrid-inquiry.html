@@ -69,47 +69,33 @@
                 <!-- Chips added dynamically -->
             </div>
 
-            <!-- Analysis Approach - Tier 1 Filters -->
-            <div id="analysis-approach" class="filter-section">
-                <h4>Analysis Approach</h4>
-                <div class="filter-grid">
-                    <div class="filter-row">
-                        <label for="scope-filter">Scope</label>
-                        <select id="scope-filter" class="form-control">
-                            <option value="promotion">Promotion</option>
-                            <option value="category">Category</option>
-                            <option value="store">Store</option>
-                        </select>
-                    </div>
-                    <div class="filter-row">
-                        <label for="lens-filter">Lens</label>
-                        <select id="lens-filter" class="form-control">
-                            <option value="performance">Performance</option>
-                            <option value="engagement">Engagement</option>
-                            <option value="traffic">Traffic</option>
-                        </select>
-                    </div>
-                    <div class="filter-row">
-                        <label for="timeframe-filter">Time Frame</label>
-                        <select id="timeframe-filter" class="form-control">
-                            <option value="current-week">Current Week</option>
-                            <option value="4-week-trend">4-Week Trend</option>
-                            <option value="ytd">Year to Date</option>
-                        </select>
-                    </div>
-                    <div class="filter-row">
-                        <label for="entity-filter">Entity Level</label>
-                        <select id="entity-filter" class="form-control">
-                            <option value="promotion">Promotion</option>
-                            <option value="subbrand">Subbrand</option>
-                            <option value="category">Category</option>
-                        </select>
+            <!-- Filter Sections Container -->
+            <section class="filters-container">
+                <!-- Analysis Approach - Tier 1 Filters -->
+                <div id="analysis-approach" class="filter-section">
+                    <h4>Analysis Approach</h4>
+                    <div class="filter-grid">
+                        <div class="filter-row">
+                            <label for="scope-filter">Scope</label>
+                            <select id="scope-filter" class="form-control">
+                                <option value="promotion">Promotion</option>
+                                <option value="category">Category</option>
+                                <option value="store">Store</option>
+                            </select>
+                        </div>
+                        <div class="filter-row">
+                            <label for="lens-filter">Lens</label>
+                            <select id="lens-filter" class="form-control">
+                                <option value="performance">Performance</option>
+                                <option value="engagement">Engagement</option>
+                                <option value="traffic">Traffic</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Content Filters - Tier 2 -->
-            <div class="content-filters">
+                <!-- Content Filters - Tier 2 -->
+                <div class="content-filters">
                 <h4>Content Filters</h4>
                 <div class="filter-groups-grid">
                     <!-- Categories Filter Group -->
@@ -226,12 +212,10 @@
                     </div>
                 </div>
             </div>
+            </section>
 
             <div id="filter-bar" class="filter-bar">
                 <input type="search" id="search-box" class="form-control" placeholder="Search...">
-                <select id="dept-filter" class="form-control">
-                    <option value="">All Departments</option>
-                </select>
                 <button id="clear-filters" class="btn btn-secondary">Clear</button>
                 <button id="export-btn" class="btn btn-primary" disabled>Export CSV</button>
                 <button id="generate-report-btn" class="btn btn-primary" disabled>Generate Report</button>

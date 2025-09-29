@@ -1,3 +1,413 @@
+/**
+ * ====================================================================
+ * FILTER CHIPS FEATURE - CODE MAPPING DOCUMENTATION
+ * ====================================================================
+ *
+ * CORE CHIP FUNCTIONS:
+ * - updateAllFilterChips() [line 1720] - Main function: clears all chips, rebuilds from tier1Filters + tier2Filters
+ * - addFilterChip(type, value, label) [line 2380] - Creates chip HTML, adds to activeFilters array, appends to DOM
+ * - removeFilterChip(type, value) [line 2437] - Removes from activeFilters array, animates removal from DOM
+ * - updateTier1FilterChips() [line 1487] - Scans tier1 selects, adds chips for non-default selections
+ * - formatFilterType(type) [line 2579] - Maps filter types to display names (scope->Scope, lens->Lens, etc)
+ * - createClearAllButton() [line 2596] - Creates "Clear All" button when chips exist
+ *
+ * DATA STRUCTURES:
+ * - this.activeFilters = [] - Array storing {type, value, label} objects for active chips
+ * - this.tier1Filters = {} - Object with scope, lens, timeframe, entity filter values
+ * - this.tier2Filters = {} - Object with categories, dealTypes, sizeClasses, positionRanges Sets
+ *
+ * HTML TARGET:
+ * - <div id="active-filters" class="filter-chips"> - Container where chips are rendered
+ *
+ * CSS CLASSES:
+ * - .filter-chips [main.css:736] - Container styling
+ * - .filter-chip [main.css:752] - Individual chip styling
+ * - .filter-chip-type [main.css:779] - Chip type label (Scope, Lens, etc)
+ * - .filter-chip-label [main.css:774] - Chip value label (Promotion, Performance, etc)
+ * - .filter-chip-remove [main.css:788] - Remove button (×)
+ * - .filter-chip.removing [main.css:837] - Animation class for removal
+ *
+ * INTEGRATION POINTS (where chips are updated):
+ * 1. applyContextFilterDefaults() [line 1173] - Adds chips for context defaults
+ * 2. updateFilters() [line 1370, 1379] - Updates chips when tier1 selects change
+ * 3. collectTier1Filters() [line 1476] - Updates chips during tier1 collection
+ * 4. updateTier1FilterChips() [line 1503] - Direct tier1 chip updates
+ * 5. updateFilters() [line 1694] - Called after filter changes
+ * 6. updateAllFilterChips() [line 1737, 1757] - Rebuilds all chips from filter state
+ * 7. handleTier2FilterChange() [line 2014, 2019] - Adds/removes chips for tier2 changes
+ * 8. Default view setup [line 4530] - Updates chips when default view applied
+ * 9. Inline onclick [line 2409] - Remove button calls window.grid.removeFilterChip()
+ *
+ * CURRENT ISSUES:
+ * - Chips not showing for default "Digital Circular Performance" view
+ * - Complex interaction between tier1Filters object and UI select elements
+ * - Timing issues with when updateAllFilterChips() is called
+ * - Multiple entry points make debugging difficult
+ *
+ * TARGET FOR REBUILD:
+ * - Simplify to single source of truth for chip display
+ * - Clear separation of filter state vs chip UI
+ * - Reliable integration with default view
+ * ====================================================================
+ */
+
+/**
+ * ====================================================================
+ * FILTER CHIP REQUIREMENTS - REBUILD SPECIFICATION
+ * ====================================================================
+ *
+ * CORE BEHAVIOR:
+ * - Show Tier 1 filters (Scope, Lens, Timeframe, Entity) when non-default
+ * - Show Tier 2 active filters (Categories, Deal Types, Size Classes, Position Ranges)
+ * - Chips appear IMMEDIATELY on filter change (no delay)
+ * - Each chip has X button to remove specific filter
+ * - Default "Digital Circular Performance" view shows initial context chips
+ * - Chips persist with URL state and navigation
+ * - Clear visual distinction between Tier 1 and Tier 2 chips
+ *
+ * CHIP DATA STRUCTURE:
+ * chipData = {
+ *   type: 'scope|lens|timeframe|entity|category|deal-type|size-class|position-range',
+ *   value: 'actual_filter_value',
+ *   label: 'Human Readable Display Text',
+ *   tier: 1|2,
+ *   removable: true|false
+ * }
+ *
+ * TIER 1 EXAMPLES:
+ * { type: 'scope', value: 'promotion', label: 'Promotion', tier: 1, removable: true }
+ * { type: 'lens', value: 'performance', label: 'Performance', tier: 1, removable: true }
+ * { type: 'timeframe', value: 'week-40', label: 'Week 40', tier: 1, removable: true }
+ * { type: 'entity', value: 'promotion', label: 'Promotion', tier: 1, removable: true }
+ *
+ * TIER 2 EXAMPLES:
+ * { type: 'category', value: 'deli', label: 'Deli', tier: 2, removable: true }
+ * { type: 'deal-type', value: 'bogo', label: 'BOGO', tier: 2, removable: true }
+ * { type: 'size-class', value: 'L', label: 'Large (L)', tier: 2, removable: true }
+ * { type: 'position-range', value: 'top', label: 'Top', tier: 2, removable: true }
+ *
+ * UPDATE TRIGGERS (when chips should update):
+ * 1. Tier 1 select change (scope-filter, lens-filter)
+ * 2. Tier 2 checkbox toggle (any data-filter checkbox)
+ * 3. Default view application (Digital Circular Performance setup)
+ * 4. URL parameter parsing (page load with context)
+ * 5. Context state change (navigation from dashboard)
+ * 6. Filter reset/clear operations
+ * 7. Chip removal (user clicks X button)
+ *
+ * VISUAL REQUIREMENTS:
+ * - Tier 1 chips: Blue background, white text, "Type: Label" format
+ * - Tier 2 chips: Gray background, dark text, "Label" only format
+ * - Smooth slide-in animation when added
+ * - Smooth slide-out animation when removed
+ * - Hover effects for better UX
+ * - Remove button (×) clearly visible and clickable
+ *
+ * INTEGRATION POINTS:
+ * - Must work with existing filter state (tier1Filters, tier2Filters)
+ * - Must sync with UI controls (selects, checkboxes)
+ * - Must integrate with default view context loading
+ * - Must preserve URL state synchronization
+ * - Must not break existing grid filtering functionality
+ *
+ * SUCCESS CRITERIA:
+ * - Default view shows scope="Promotion", lens="Performance" chips immediately
+ * - Manual filter changes create/remove chips instantly
+ * - Clicking chip X button removes filter and updates UI controls
+ * - Navigation preserves chip state correctly
+ * - No console errors or broken functionality
+ * ====================================================================
+ */
+
+/**
+ * FilterChipManager - Simple, reliable chip management system
+ * Handles creation, display, and removal of filter chips
+ */
+class FilterChipManager {
+  constructor(containerSelector) {
+    this.container = document.querySelector(containerSelector);
+    this.chips = new Map(); // Key: 'type-value', Value: chipData
+    this.onChipRemove = null; // Callback for when chip is removed
+    this.onReset = null; // Callback for when reset button is clicked
+
+    if (!this.container) {
+      console.warn('FilterChipManager: Container not found:', containerSelector);
+      return;
+    }
+
+    // Set up event delegation for remove buttons
+    this.container.addEventListener('click', (e) => {
+      if (e.target.classList.contains('chip-remove')) {
+        const chipEl = e.target.closest('.filter-chip');
+        if (chipEl) {
+          this.removeChip(chipEl.dataset.type, chipEl.dataset.value);
+        }
+      }
+    });
+  }
+
+  /**
+   * Create chip HTML markup
+   * @param {Object} chipData - Chip data structure
+   * @returns {string} HTML string for the chip
+   */
+  createChipHTML(chipData) {
+    const tierClass = chipData.tier === 1 ? 'tier-1' : 'tier-2';
+    const typeDisplay = chipData.tier === 1 ? `${this.formatType(chipData.type)}: ` : '';
+
+    return `<span class="filter-chip ${tierClass}"
+                  data-type="${chipData.type}"
+                  data-value="${chipData.value}"
+                  data-tier="${chipData.tier}">
+              ${typeDisplay}${chipData.label}
+              ${chipData.removable ? '<button class="chip-remove" title="Remove filter">×</button>' : ''}
+            </span>`;
+  }
+
+  /**
+   * Format filter type for display
+   * @param {string} type - Filter type
+   * @returns {string} Formatted display name
+   */
+  formatType(type) {
+    const typeMap = {
+      'scope': 'Scope',
+      'lens': 'Lens',
+      'timeframe': 'Time',
+      'entity': 'Entity',
+      'category': 'Category',
+      'deal-type': 'Deal',
+      'size-class': 'Size',
+      'position-range': 'Position'
+    };
+    return typeMap[type] || type.charAt(0).toUpperCase() + type.slice(1);
+  }
+
+  /**
+   * Add a chip to the display
+   * @param {Object} chipData - Chip data structure
+   */
+  addChip(chipData) {
+    const key = `${chipData.type}-${chipData.value}`;
+
+    // Don't add duplicates
+    if (this.chips.has(key)) {
+      return;
+    }
+
+    this.chips.set(key, chipData);
+    this.render();
+
+    // Update URL to persist chip state
+    this.updateURL();
+  }
+
+  /**
+   * Remove a specific chip
+   * @param {string} type - Filter type
+   * @param {string} value - Filter value
+   */
+  removeChip(type, value) {
+    const key = `${type}-${value}`;
+
+    if (this.chips.has(key)) {
+      this.chips.delete(key);
+      this.render();
+
+      // Update URL to persist chip state
+      this.updateURL();
+
+      // Notify parent component of removal
+      if (this.onChipRemove) {
+        this.onChipRemove(type, value);
+      }
+    }
+  }
+
+  /**
+   * Clear all chips
+   */
+  clearAll() {
+    this.chips.clear();
+    this.render();
+
+    // Update URL to persist chip state
+    this.updateURL();
+  }
+
+  /**
+   * Render all chips to the container
+   */
+  render() {
+    if (!this.container) return;
+
+    // Clear existing chips
+    this.container.innerHTML = '';
+
+    // Show/hide container based on chip count
+    this.container.style.display = this.chips.size > 0 ? 'flex' : 'none';
+
+    if (this.chips.size === 0) return;
+
+    // Sort chips: Tier 1 first, then Tier 2, then alphabetical
+    const sortedChips = Array.from(this.chips.values()).sort((a, b) => {
+      if (a.tier !== b.tier) {
+        return a.tier - b.tier; // Tier 1 before Tier 2
+      }
+      return a.label.localeCompare(b.label); // Alphabetical within tier
+    });
+
+    // Add sorted chips to container
+    sortedChips.forEach(chipData => {
+      const chipHTML = this.createChipHTML(chipData);
+      this.container.insertAdjacentHTML('beforeend', chipHTML);
+    });
+
+    // Add reset button after chips
+    this.addResetButton();
+  }
+
+  /**
+   * Add reset button to chip container
+   */
+  addResetButton() {
+    const resetButtonHTML = `
+      <button class="chip-reset-btn" title="Reset to default settings">
+        ↺ Reset
+      </button>
+    `;
+    this.container.insertAdjacentHTML('beforeend', resetButtonHTML);
+
+    // Add click handler for reset button
+    const resetButton = this.container.querySelector('.chip-reset-btn');
+    if (resetButton) {
+      resetButton.addEventListener('click', () => {
+        this.handleReset();
+      });
+    }
+  }
+
+  /**
+   * Handle reset button click - restore default settings
+   */
+  handleReset() {
+    if (this.onReset) {
+      this.onReset();
+    }
+  }
+
+  /**
+   * Set the callback for reset button
+   * @param {Function} callback - Function to call when reset is clicked
+   */
+  setResetCallback(callback) {
+    this.onReset = callback;
+  }
+
+  /**
+   * Get all current chips
+   * @returns {Array} Array of chip data objects
+   */
+  getAllChips() {
+    return Array.from(this.chips.values());
+  }
+
+  /**
+   * Save current chip state to URL parameters
+   */
+  updateURL() {
+    const params = new URLSearchParams(window.location.search);
+
+    // Remove existing filter parameters
+    const keysToRemove = [];
+    params.forEach((value, key) => {
+      if (key.startsWith('filter_')) {
+        keysToRemove.push(key);
+      }
+    });
+    keysToRemove.forEach(key => params.delete(key));
+
+    // Add current chip state to URL
+    this.chips.forEach(chip => {
+      // Skip context chips as they're derived from navigation source
+      if (chip.type !== 'context') {
+        params.append(`filter_${chip.type}`, chip.value);
+      }
+    });
+
+    // Update URL without page reload
+    const newURL = params.toString() ? `${window.location.pathname}?${params.toString()}` : window.location.pathname;
+    history.replaceState(null, '', newURL);
+  }
+
+  /**
+   * Restore chips from URL parameters
+   * @param {Function} onChipRestored - Callback when each chip is restored
+   */
+  restoreFromURL(onChipRestored) {
+    const params = new URLSearchParams(window.location.search);
+    const restoredChips = [];
+
+    params.forEach((value, key) => {
+      if (key.startsWith('filter_')) {
+        const type = key.replace('filter_', '');
+
+        // Create chip data structure (label will be determined by callback)
+        const chipData = {
+          type: type,
+          value: value,
+          label: '', // Will be set by callback
+          tier: this.determineChipTier(type),
+          removable: true
+        };
+
+        restoredChips.push(chipData);
+      }
+    });
+
+    // Restore chips and let callback handle filter UI updates
+    restoredChips.forEach(chipData => {
+      if (onChipRestored) {
+        // Let the callback update the filter UI and provide the label
+        const updatedChipData = onChipRestored(chipData);
+        if (updatedChipData) {
+          this.addChip(updatedChipData);
+        }
+      }
+    });
+
+    return restoredChips;
+  }
+
+  /**
+   * Determine chip tier based on filter type
+   * @param {string} type - Filter type
+   * @returns {number} Tier number (1 or 2)
+   */
+  determineChipTier(type) {
+    const tier1Types = ['scope', 'lens', 'timeframe', 'entity', 'context'];
+    return tier1Types.includes(type) ? 1 : 2;
+  }
+
+  /**
+   * Check if a specific chip exists
+   * @param {string} type - Filter type
+   * @param {string} value - Filter value
+   * @returns {boolean} True if chip exists
+   */
+  hasChip(type, value) {
+    return this.chips.has(`${type}-${value}`);
+  }
+
+  /**
+   * Set the callback for chip removal
+   * @param {Function} callback - Function to call when chip is removed
+   */
+  setRemoveCallback(callback) {
+    this.onChipRemove = callback;
+  }
+}
+
 class DataGridComponent {
   constructor(container) {
     this.container = document.getElementById(container);
@@ -463,8 +873,14 @@ class DataGridComponent {
     // Load saved state from localStorage
     this.loadState();
 
+    // Initialize filter chips system early for default context
+    this.initializeFilterChips();
+
     // Parse URL context and apply defaults
     this.parseUrlContext();
+
+    // Restore filter chips from URL (after defaults are applied)
+    this.restoreChipsFromURL();
 
     // Initialize context service integration
     this.initializeContextService();
@@ -1101,9 +1517,67 @@ class DataGridComponent {
     // Apply context defaults to Tier 1 filters
     this.applyTier1FilterDefaults();
 
+    // Add default context chips
+    this.addDefaultContextChips();
+
     // Apply comprehensive context defaults if available
     if (this.currentContext.defaultFilters) {
       this.applyContextFilterDefaults(this.currentContext.defaultFilters);
+    }
+  }
+
+  /**
+   * Add default context chips for Digital Circular Performance view
+   */
+  addDefaultContextChips() {
+    if (!this.chipManager) return;
+
+    // Check if this is a dashboard navigation
+    const urlParams = new URLSearchParams(window.location.search);
+    const source = urlParams.get('source');
+
+    if (source === 'dashboard' || source === 'digital-circular-performance') {
+      // Add context chip for Digital Circular Performance
+      this.chipManager.addChip({
+        type: 'context',
+        value: 'digital-performance',
+        label: 'Digital Circular Performance',
+        tier: 1,
+        removable: false
+      });
+    }
+
+    // Add default Scope and Lens chips based on current context
+    if (this.currentContext) {
+      // Add Scope chip if default scope is set
+      if (this.currentContext.defaultScope) {
+        const scopeLabel = this.formatFilterTypeForChip('scope');
+        const scopeValue = this.currentContext.defaultScope;
+        const scopeDisplayValue = scopeValue.charAt(0).toUpperCase() + scopeValue.slice(1);
+
+        this.chipManager.addChip({
+          type: 'scope',
+          value: scopeValue,
+          label: `${scopeLabel}: ${scopeDisplayValue}`,
+          tier: 1,
+          removable: true
+        });
+      }
+
+      // Add Lens chip if default lens is set
+      if (this.currentContext.defaultLens) {
+        const lensLabel = this.formatFilterTypeForChip('lens');
+        const lensValue = this.currentContext.defaultLens;
+        const lensDisplayValue = lensValue.charAt(0).toUpperCase() + lensValue.slice(1);
+
+        this.chipManager.addChip({
+          type: 'lens',
+          value: lensValue,
+          label: `${lensLabel}: ${lensDisplayValue}`,
+          tier: 1,
+          removable: true
+        });
+      }
     }
   }
 
@@ -1154,9 +1628,7 @@ class DataGridComponent {
     // Set dropdown values
     const dropdownMappings = [
       { key: 'scope', elementId: 'scope-filter' },
-      { key: 'lens', elementId: 'lens-filter' },
-      { key: 'timeframe', elementId: 'timeframe-filter' },
-      { key: 'entity', elementId: 'entity-filter' }
+      { key: 'lens', elementId: 'lens-filter' }
     ];
 
     dropdownMappings.forEach(({ key, elementId }) => {
@@ -1300,51 +1772,24 @@ class DataGridComponent {
       lensFilter.value = this.currentContext.defaultLens;
     }
 
-    // Set timeframe based on dashboard context
-    const timeframeFilter = document.getElementById('timeframe-filter');
-    if (timeframeFilter && this.dashboardContext) {
-      if (this.dashboardContext.period === 'ytd') {
-        timeframeFilter.value = 'ytd';
-      } else if (this.dashboardContext.period.startsWith('w')) {
-        timeframeFilter.value = 'current-week';
-      } else {
-        timeframeFilter.value = 'current-week';
-      }
-    }
-
-    // Set entity level based on context
-    const entityFilter = document.getElementById('entity-filter');
-    if (entityFilter) {
-      if (this.currentContext.defaultScope === 'category') {
-        entityFilter.value = 'category';
-      } else if (this.currentContext.defaultScope === 'store') {
-        entityFilter.value = 'subbrand';
-      } else {
-        entityFilter.value = 'promotion';
-      }
-    }
-
     // Add event listeners for filter changes
     this.setupTier1FilterListeners();
 
     // Setup Tier 2 content filters
     this.setupTier2ContentFilters();
-
-    // Initialize filter chips system
-    this.initializeFilterChips();
   }
 
   /**
    * Setup event listeners for Tier 1 filter changes
    */
   setupTier1FilterListeners() {
-    const filters = ['scope-filter', 'lens-filter', 'timeframe-filter', 'entity-filter'];
+    const filters = ['scope-filter', 'lens-filter'];
 
     filters.forEach(filterId => {
       const filterElement = document.getElementById(filterId);
       if (filterElement) {
         filterElement.addEventListener('change', (e) => {
-          
+          this.handleTier1FilterChange(filterId, e.target.value);
           this.updateFilters();
         });
       }
@@ -1352,42 +1797,82 @@ class DataGridComponent {
   }
 
   /**
-   * Handle Tier 1 filter changes and update grid accordingly
+   * Handle Tier 1 filter changes and update chips
+   * @param {string} filterId - Filter element ID (e.g., 'scope-filter')
+   * @param {string} value - Selected value
    */
   handleTier1FilterChange(filterId, value) {
-    
+    const filterType = filterId.replace('-filter', '');
+    const selectElement = document.getElementById(filterId);
 
-    // Store filter state
+    if (!selectElement || !this.chipManager) return;
+
+    // Remove existing chip for this filter type
+    if (this.chipManager.hasChip(filterType, this.getPreviousFilterValue(filterType))) {
+      this.chipManager.removeChip(filterType, this.getPreviousFilterValue(filterType));
+    }
+
+    // Add new chip if not default selection
+    if (selectElement.selectedIndex > 0) {
+      const selectedOption = selectElement.selectedOptions[0];
+      const chipLabel = `${this.formatFilterTypeForChip(filterType)}: ${selectedOption.text}`;
+
+      this.chipManager.addChip({
+        type: filterType,
+        value: value,
+        label: chipLabel,
+        tier: 1,
+        removable: true
+      });
+    }
+
+    // Update tier1Filters data structure
     if (!this.tier1Filters) {
       this.tier1Filters = {};
     }
 
-    const filterType = filterId.replace('-filter', '');
-    const previousValue = this.tier1Filters[filterType];
-
-    // Remove previous chip if it exists
-    if (previousValue && previousValue !== value) {
-      this.removeFilterChip(filterType, previousValue);
+    if (selectElement.selectedIndex > 0) {
+      this.tier1Filters[filterType] = value;
+    } else {
+      // Remove from tier1Filters if reset to default
+      delete this.tier1Filters[filterType];
     }
 
-    this.tier1Filters[filterType] = value;
-
-    // Add new filter chip (skip if it's the default/first option)
-    const selectElement = document.getElementById(filterId);
-    if (selectElement && selectElement.selectedIndex > 0) {
-      const selectedOption = selectElement.options[selectElement.selectedIndex];
-      this.addFilterChip(filterType, value, selectedOption.text);
-    }
-
-    // Update context based on filter changes
-    this.updateContextFromFilters();
-
-    // Re-apply data filtering if needed
-    if (this.data && this.data.length > 0) {
-      this.applyFilters();
-      this.render();
-    }
+    // Store current value for next change
+    this.storePreviousFilterValue(filterType, value);
   }
+
+  /**
+   * Get the previous value for a filter type (for chip removal)
+   */
+  getPreviousFilterValue(filterType) {
+    if (!this.previousFilterValues) this.previousFilterValues = {};
+    return this.previousFilterValues[filterType] || '';
+  }
+
+  /**
+   * Store the current filter value as previous for next change
+   */
+  storePreviousFilterValue(filterType, value) {
+    if (!this.previousFilterValues) this.previousFilterValues = {};
+    this.previousFilterValues[filterType] = value;
+  }
+
+  /**
+   * Format filter type for chip display (matching specification)
+   * @param {string} filterType - Filter type
+   * @returns {string} Formatted display name
+   */
+  formatFilterTypeForChip(filterType) {
+    const typeMap = {
+      'scope': 'Scope',
+      'lens': 'Lens',
+      'timeframe': 'Sort', // Timeframe acts as sort in UI
+      'entity': 'Metric'   // Entity acts as metric in UI
+    };
+    return typeMap[filterType] || filterType.charAt(0).toUpperCase() + filterType.slice(1);
+  }
+
 
   /**
    * Update context description based on current filter selections
@@ -1462,7 +1947,7 @@ class DataGridComponent {
       this.tier1Filters = {};
     }
 
-    const filters = ['scope-filter', 'lens-filter', 'timeframe-filter', 'entity-filter'];
+    const filters = ['scope-filter', 'lens-filter'];
 
     filters.forEach(filterId => {
       const filterElement = document.getElementById(filterId);
@@ -1485,25 +1970,7 @@ class DataGridComponent {
    * Update Tier 1 filter chips based on current selections
    */
   updateTier1FilterChips() {
-    const filters = ['scope-filter', 'lens-filter', 'timeframe-filter', 'entity-filter'];
-
-    filters.forEach(filterId => {
-      const filterElement = document.getElementById(filterId);
-      if (filterElement && filterElement.selectedIndex > 0) {
-        const filterType = filterId.replace('-filter', '');
-        const value = filterElement.value;
-        const selectedOption = filterElement.options[filterElement.selectedIndex];
-
-        // Only add chip if it's not already there
-        const existingChip = this.activeFilters.find(filter =>
-          filter.type === filterType && filter.value === value
-        );
-
-        if (!existingChip) {
-          this.addFilterChip(filterType, value, selectedOption.text);
-        }
-      }
-    });
+    // Stub - functionality removed for rebuild
   }
 
   /**
@@ -1718,47 +2185,7 @@ class DataGridComponent {
    * Update all filter chips based on current filter state
    */
   updateAllFilterChips() {
-    // Clear existing chips
-    this.activeFilters = [];
-    const container = document.getElementById('active-filters');
-    if (container) {
-      const chips = container.querySelectorAll('.filter-chip');
-      chips.forEach(chip => chip.remove());
-    }
-
-    // Add Tier 1 chips
-    if (this.tier1Filters) {
-      Object.entries(this.tier1Filters).forEach(([type, value]) => {
-        if (value) {
-          const selectElement = document.getElementById(`${type}-filter`);
-          if (selectElement) {
-            const selectedOption = selectElement.querySelector(`option[value="${value}"]`);
-            if (selectedOption && selectElement.selectedIndex > 0) {
-              this.addFilterChip(type, value, selectedOption.text);
-            }
-          }
-        }
-      });
-    }
-
-    // Add Tier 2 chips
-    if (this.tier2Filters) {
-      Object.entries(this.tier2Filters).forEach(([filterType, valueSet]) => {
-        const filterMapping = {
-          categories: 'category',
-          dealTypes: 'deal-type',
-          sizeClasses: 'size-class',
-          positionRanges: 'position-range'
-        };
-
-        const chipType = filterMapping[filterType];
-        if (chipType) {
-          valueSet.forEach(value => {
-            this.addFilterChip(chipType, value, value);
-          });
-        }
-      });
-    }
+    // Stub - functionality removed for rebuild
   }
 
   /**
@@ -2000,23 +2427,32 @@ class DataGridComponent {
     const value = checkbox.value;
     const isChecked = checkbox.checked;
 
-    
-
     // Update filter state
     const filterKey = this.mapFilterTypeToKey(filterType);
     if (filterKey && this.tier2Filters[filterKey]) {
       if (isChecked) {
         this.tier2Filters[filterKey].add(value);
 
-        // Add filter chip
-        const labelElement = checkbox.nextElementSibling?.nextElementSibling;
-        const label = labelElement ? labelElement.textContent : value;
-        this.addFilterChip(filterType, value, label);
+        // Add chip using new FilterChipManager
+        if (this.chipManager) {
+          const labelElement = checkbox.nextElementSibling?.nextElementSibling;
+          const label = labelElement ? labelElement.textContent.trim() : value;
+
+          this.chipManager.addChip({
+            type: filterType,
+            value: value,
+            label: label,
+            tier: 2,
+            removable: true
+          });
+        }
       } else {
         this.tier2Filters[filterKey].delete(value);
 
-        // Remove filter chip
-        this.removeFilterChip(filterType, value);
+        // Remove chip using new FilterChipManager
+        if (this.chipManager) {
+          this.chipManager.removeChip(filterType, value);
+        }
       }
 
       // Update count display
@@ -2364,11 +2800,188 @@ class DataGridComponent {
    * Initialize filter chips system
    */
   initializeFilterChips() {
-    // Track active filters for chip display
-    this.activeFilters = [];
+    // Initialize the new FilterChipManager
+    this.chipManager = new FilterChipManager('#active-filters');
 
-    // Create clear all button container
-    this.createClearAllButton();
+    // Set up chip removal callback to sync with filter controls
+    this.chipManager.setRemoveCallback((type, value) => {
+      this.handleChipRemoval(type, value);
+    });
+
+    // Set up reset callback to restore default settings
+    this.chipManager.setResetCallback(() => {
+      this.resetToDefaults();
+    });
+
+  }
+
+  /**
+   * Restore filter chips from URL parameters
+   */
+  restoreChipsFromURL() {
+    if (!this.chipManager) {
+      return;
+    }
+
+    // Don't restore if there are existing default chips (to avoid conflicts)
+    if (this.chipManager.getAllChips().length > 0) {
+      return;
+    }
+
+    this.chipManager.restoreFromURL((chipData) => {
+      const { type, value } = chipData;
+
+      // Handle Tier 1 chips (scope, lens)
+      if (['scope', 'lens'].includes(type)) {
+        const selectElement = document.getElementById(`${type}-filter`);
+        if (selectElement) {
+          // Check if the value exists as an option
+          const option = selectElement.querySelector(`option[value="${value}"]`);
+          if (option) {
+            selectElement.value = value;
+
+            // Create proper chip label
+            chipData.label = `${this.formatFilterTypeForChip(type)}: ${option.text}`;
+
+            // Update tier1Filters data structure
+            if (!this.tier1Filters) {
+              this.tier1Filters = {};
+            }
+            this.tier1Filters[type] = value;
+
+            return chipData;
+          }
+        }
+      }
+
+      // Handle Tier 2 chips (categories, deal-types, size-classes, position-ranges)
+      else if (['category', 'deal-type', 'size-class', 'position-range'].includes(type)) {
+        const checkbox = document.querySelector(`input[data-filter="${type}"][value="${value}"]`);
+        if (checkbox) {
+          checkbox.checked = true;
+
+          // Get label from checkbox
+          const labelElement = checkbox.nextElementSibling?.nextElementSibling;
+          chipData.label = labelElement ? labelElement.textContent.trim() : value;
+
+          // Update tier2Filters data structure
+          const filterKey = this.mapFilterTypeToKey(type);
+          if (filterKey && this.tier2Filters[filterKey]) {
+            this.tier2Filters[filterKey].add(value);
+          }
+
+          return chipData;
+        }
+      }
+
+      // Unknown or invalid filter type
+      else {
+        // Silently ignore unknown filter types
+      }
+
+      return null; // Don't create chip for invalid data
+    });
+
+    // Refresh display after restoration
+    this.updateFilters();
+  }
+
+  /**
+   * Handle chip removal by updating corresponding filter controls
+   * @param {string} type - Filter type
+   * @param {string} value - Filter value
+   */
+  handleChipRemoval(type, value) {
+    // Handle context chips (non-removable, but included for completeness)
+    if (type === 'context') {
+      return;
+    }
+
+    // Handle Tier 1 filter removal (scope, lens)
+    if (['scope', 'lens'].includes(type)) {
+      const selectElement = document.getElementById(`${type}-filter`);
+      if (selectElement) {
+        selectElement.selectedIndex = 0; // Reset to first option (default)
+
+        // Update tier1Filters data structure
+        if (this.tier1Filters) {
+          delete this.tier1Filters[type];
+        }
+
+        // Trigger filter update to refresh data and sync other chips
+        this.updateFilters();
+      }
+    }
+
+    // Handle Tier 2 filter removal (categories, deal-types, size-classes, position-ranges)
+    else if (['category', 'deal-type', 'size-class', 'position-range'].includes(type)) {
+      const checkbox = document.querySelector(`input[data-filter="${type}"][value="${value}"]`);
+      if (checkbox) {
+        checkbox.checked = false;
+
+        // Trigger change handler to update tier2Filters and filter counts
+        this.handleTier2FilterChange(checkbox);
+      }
+    }
+
+    // Handle unknown filter types
+    else {
+      // Silently ignore unknown filter types
+    }
+  }
+
+  /**
+   * Reset all filters to default settings
+   */
+  resetToDefaults() {
+
+    // Clear all chips first
+    this.chipManager.clearAll();
+
+    // Reset Tier 1 filters to defaults
+    this.resetTier1Filters();
+
+    // Reset Tier 2 filters to unchecked
+    this.resetTier2Filters();
+
+    // Reapply default context if available
+    if (this.currentContext) {
+      this.addDefaultContextChips();
+    }
+
+    // Update filters and re-render
+    this.updateFilters();
+  }
+
+  /**
+   * Reset Tier 1 dropdown filters to default values
+   */
+  resetTier1Filters() {
+    const tier1Filters = ['scope-filter', 'lens-filter'];
+
+    tier1Filters.forEach(filterId => {
+      const selectElement = document.getElementById(filterId);
+      if (selectElement) {
+        selectElement.selectedIndex = 0; // Reset to first option (default)
+      }
+    });
+  }
+
+  /**
+   * Reset Tier 2 checkbox filters to unchecked
+   */
+  resetTier2Filters() {
+    const checkboxes = document.querySelectorAll('input[data-filter]');
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = false;
+    });
+
+    // Clear tier2Filters data structure
+    Object.keys(this.tier2Filters).forEach(key => {
+      this.tier2Filters[key].clear();
+    });
+
+    // Filter counts will be updated by individual updateFilterCount calls
   }
 
   /**
@@ -2378,55 +2991,7 @@ class DataGridComponent {
    * @param {string} label - Display label for the chip
    */
   addFilterChip(type, value, label) {
-    // Check if chip already exists
-    const existingChip = this.activeFilters.find(filter =>
-      filter.type === type && filter.value === value
-    );
-
-    if (existingChip) {
-      
-      return;
-    }
-
-    // Create filter object
-    const filter = { type, value, label };
-    this.activeFilters.push(filter);
-
-    // Generate chip HTML
-    const chipId = `chip-${type}-${value}`.replace(/[^a-zA-Z0-9-]/g, '-');
-    const chipElement = document.createElement('div');
-    chipElement.className = 'filter-chip';
-    chipElement.id = chipId;
-    chipElement.setAttribute('data-type', type);
-    chipElement.setAttribute('data-value', value);
-
-    // Format type display name
-    const typeDisplay = this.formatFilterType(type);
-
-    chipElement.innerHTML = `
-      <span class="filter-chip-type">${typeDisplay}</span>
-      <span class="filter-chip-label">${label}</span>
-      <button class="filter-chip-remove" onclick="window.grid.removeFilterChip('${type}', '${value}')" title="Remove filter">
-        ×
-      </button>
-    `;
-
-    // Add to container
-    const container = document.getElementById('active-filters');
-    if (container) {
-      // Insert before clear all button if it exists
-      const clearAllButton = container.querySelector('.clear-all-filters');
-      if (clearAllButton) {
-        container.insertBefore(chipElement, clearAllButton);
-      } else {
-        container.appendChild(chipElement);
-      }
-
-      // Show clear all button if not visible
-      this.updateClearAllButton();
-    }
-
-    
+    // Stub - functionality removed for rebuild
   }
 
   /**
@@ -2435,79 +3000,19 @@ class DataGridComponent {
    * @param {string} value - Filter value
    */
   removeFilterChip(type, value) {
-    // Find and remove from activeFilters array
-    const filterIndex = this.activeFilters.findIndex(filter =>
-      filter.type === type && filter.value === value
-    );
-
-    if (filterIndex === -1) {
-      
-      return;
-    }
-
-    this.activeFilters.splice(filterIndex, 1);
-
-    // Find and remove chip element with animation
-    const chipId = `chip-${type}-${value}`.replace(/[^a-zA-Z0-9-]/g, '-');
-    const chipElement = document.getElementById(chipId);
-
-    if (chipElement) {
-      // Add removing animation
-      chipElement.classList.add('removing');
-
-      // Remove after animation completes
-      setTimeout(() => {
-        if (chipElement.parentNode) {
-          chipElement.parentNode.removeChild(chipElement);
-        }
-      }, 200);
-    }
-
-    // Update the corresponding filter control
-    this.syncFilterControl(type, value, false);
-
-    // Update clear all button visibility
-    this.updateClearAllButton();
-
-    // Use master updateFilters for consistency
-    this.updateFilters();
-
-    
+    // Stub - functionality removed for rebuild
   }
 
   /**
    * Remove all filter chips
    */
   clearAllFilters() {
-    
-
-    // Reset all filter states first
+    // Stub - functionality removed for rebuild
+    // Keep the core reset functionality
     this.resetAllFilterStates();
-
-    // Clear activeFilters array
     this.activeFilters = [];
-
-    // Remove all chip elements
-    const container = document.getElementById('active-filters');
-    if (container) {
-      const chips = container.querySelectorAll('.filter-chip');
-      chips.forEach(chip => {
-        chip.classList.add('removing');
-        setTimeout(() => {
-          if (chip.parentNode) {
-            chip.parentNode.removeChild(chip);
-          }
-        }, 200);
-      });
-    }
-
-    // Update clear all button visibility
-    this.updateClearAllButton();
-
-    // Use master updateFilters to refresh everything
     this.updateFilters();
 
-    
   }
 
   /**
@@ -2546,7 +3051,7 @@ class DataGridComponent {
    */
   resetAllFilterStates() {
     // Reset Tier 1 filters
-    ['scope-filter', 'lens-filter', 'timeframe-filter', 'entity-filter'].forEach(id => {
+    ['scope-filter', 'lens-filter'].forEach(id => {
       const element = document.getElementById(id);
       if (element) element.selectedIndex = 0;
     });
@@ -2577,6 +3082,7 @@ class DataGridComponent {
    * Format filter type for display
    */
   formatFilterType(type) {
+    // Stub - basic functionality preserved for compatibility
     const typeMap = {
       'scope': 'Scope',
       'lens': 'Lens',
@@ -2594,32 +3100,14 @@ class DataGridComponent {
    * Create and manage clear all button
    */
   createClearAllButton() {
-    const container = document.getElementById('active-filters');
-    if (!container) return;
-
-    const clearAllButton = document.createElement('button');
-    clearAllButton.className = 'clear-all-filters';
-    clearAllButton.style.display = 'none';
-    clearAllButton.innerHTML = 'Clear All';
-    clearAllButton.onclick = () => this.clearAllFilters();
-
-    container.appendChild(clearAllButton);
+    // Stub - functionality removed for rebuild
   }
 
   /**
    * Update clear all button visibility
    */
   updateClearAllButton() {
-    const container = document.getElementById('active-filters');
-    const clearAllButton = container?.querySelector('.clear-all-filters');
-
-    if (clearAllButton) {
-      if (this.activeFilters.length > 0) {
-        clearAllButton.style.display = 'inline-flex';
-      } else {
-        clearAllButton.style.display = 'none';
-      }
-    }
+    // Stub - functionality removed for rebuild
   }
 
   async loadData(data) {
@@ -4475,16 +4963,12 @@ document.addEventListener('DOMContentLoaded', async function() {
         // Set default filters for Digital Circular Performance
         grid.tier1Filters = {
           scope: 'promotion',
-          lens: 'performance',
-          timeframe: currentContextState?.week ? `week-${currentContextState.week}` : 'current-week',
-          entity: 'promotion'
+          lens: 'performance'
         };
 
         // Update UI to reflect default filters
         const scopeSelect = document.getElementById('scope-filter');
         const lensSelect = document.getElementById('lens-filter');
-        const timeframeSelect = document.getElementById('timeframe-filter');
-        const entitySelect = document.getElementById('entity-filter');
 
         if (scopeSelect) {
           scopeSelect.value = 'promotion';
@@ -4497,18 +4981,6 @@ document.addEventListener('DOMContentLoaded', async function() {
           console.log('📊 Set lens select to performance, selectedIndex:', lensSelect.selectedIndex);
         } else {
           console.log('❌ lens-filter element not found');
-        }
-        if (timeframeSelect) {
-          timeframeSelect.value = grid.tier1Filters.timeframe;
-          console.log('📊 Set timeframe select to', grid.tier1Filters.timeframe, 'selectedIndex:', timeframeSelect.selectedIndex);
-        } else {
-          console.log('❌ timeframe-filter element not found');
-        }
-        if (entitySelect) {
-          entitySelect.value = 'promotion';
-          console.log('📊 Set entity select to promotion, selectedIndex:', entitySelect.selectedIndex);
-        } else {
-          console.log('❌ entity-filter element not found');
         }
 
         // Apply context-based filtering if we have context state
@@ -4526,9 +4998,44 @@ document.addEventListener('DOMContentLoaded', async function() {
           }
         }
 
-        // Update filter chips after UI elements are updated
-        grid.updateAllFilterChips();
-        console.log('📊 Filter chips updated after UI select updates');
+        // Create default view chips for Digital Circular Performance
+        if (grid.chipManager) {
+          grid.chipManager.addChip({
+            type: 'scope',
+            value: 'promotion',
+            label: 'Scope: Promotion',
+            tier: 1,
+            removable: true
+          });
+
+          grid.chipManager.addChip({
+            type: 'lens',
+            value: 'performance',
+            label: 'Lens: Performance',
+            tier: 1,
+            removable: true
+          });
+
+          grid.chipManager.addChip({
+            type: 'entity',
+            value: 'promotion',
+            label: 'Metric: Promotion',
+            tier: 1,
+            removable: true
+          });
+
+          if (currentContextState?.week) {
+            grid.chipManager.addChip({
+              type: 'timeframe',
+              value: grid.tier1Filters.timeframe,
+              label: `Sort: Week ${currentContextState.week}`,
+              tier: 1,
+              removable: true
+            });
+          }
+
+          console.log('📊 Default view chips created for Digital Circular Performance');
+        }
 
         // Set default sort by performance (composite score)
         grid.sortConfig = { field: 'composite_score', direction: 'desc' };

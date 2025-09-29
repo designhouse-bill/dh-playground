@@ -730,11 +730,171 @@ width: 75px;
 }
 
 /* =============================================================================
-   Filter Chips
+   Filter Chips - NEW REBUILD IMPLEMENTATION
    ============================================================================= */
 
+/* Container for filter chips */
 .filter-chips {
   display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+  min-height: 0;
+  padding: 0;
+}
+
+/* Individual filter chip styling */
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  animation: chipSlideIn 0.3s ease;
+}
+
+/* Tier 1 chips (Scope, Lens, etc.) */
+.filter-chip.tier-1 {
+  background: var(--blue);
+  color: white;
+  box-shadow: 0 2px 4px rgba(66, 114, 216, 0.2);
+}
+
+.filter-chip.tier-1:hover {
+  background: var(--blue-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(66, 114, 216, 0.3);
+}
+
+/* Tier 2 chips (Categories, Deal Types, etc.) */
+.filter-chip.tier-2 {
+  background: var(--bg-muted);
+  color: var(--text);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.filter-chip.tier-2:hover {
+  background: var(--border);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* Remove button styling */
+.chip-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  color: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1;
+  margin-left: 4px;
+}
+
+.filter-chip.tier-1 .chip-remove {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.filter-chip.tier-1 .chip-remove:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.filter-chip.tier-2 .chip-remove {
+  background: rgba(0, 0, 0, 0.1);
+  color: var(--text);
+}
+
+.filter-chip.tier-2 .chip-remove:hover {
+  background: rgba(0, 0, 0, 0.2);
+  transform: scale(1.1);
+}
+
+.chip-remove:active {
+  transform: scale(0.95);
+}
+
+/* Reset button styling */
+.chip-reset-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: white;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  margin-left: 8px;
+}
+
+.chip-reset-btn:hover {
+  background: var(--bg-muted);
+  border-color: var(--blue);
+  color: var(--blue);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(66, 114, 216, 0.2);
+}
+
+.chip-reset-btn:active {
+  transform: scale(0.98);
+}
+
+/* Animation for adding chips */
+@keyframes chipSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .filter-chips {
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .filter-chip {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+  .chip-remove {
+    width: 14px;
+    height: 14px;
+    font-size: 11px;
+  }
+}
+
+/* =============================================================================
+   OLD Filter Chips - COMMENTED OUT FOR REFERENCE
+   ============================================================================= */
+
+/*
+.filter-chips {
+  display: none;
   flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 20px;
@@ -811,7 +971,6 @@ width: 75px;
   transform: scale(0.95);
 }
 
-/* Filter chip animations */
 @keyframes chipSlideIn {
   from {
     opacity: 0;
@@ -838,7 +997,6 @@ width: 75px;
   animation: chipSlideOut 0.2s ease forwards;
 }
 
-/* Clear all filters button */
 .clear-all-filters {
   display: inline-flex;
   align-items: center;
@@ -860,7 +1018,6 @@ width: 75px;
   border-color: var(--muted);
 }
 
-/* Responsive filter chips */
 @media (max-width: 768px) {
   .filter-chips {
     gap: 6px;
@@ -880,6 +1037,18 @@ width: 75px;
     font-size: 10px;
   }
 }
+*/
+
+/* =============================================================================
+   Filter Sections Container
+   ============================================================================= */
+
+.filters-container {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  margin-bottom: 20px;
+}
 
 /* =============================================================================
    Analysis Approach - Tier 1 Filters
@@ -890,8 +1059,9 @@ width: 75px;
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 20px;
-  margin-bottom: 20px;
   box-shadow: var(--shadow);
+  flex: 0 0 auto;
+  min-width: 300px;
 }
 
 .filter-section h4 {
@@ -946,14 +1116,23 @@ width: 75px;
 
 /* Responsive filter grid */
 @media (max-width: 768px) {
-  .filter-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
+  .filters-container {
+    flex-direction: column;
+    gap: 16px;
   }
 
   .filter-section {
     padding: 16px;
-    margin-bottom: 16px;
+    min-width: unset;
+  }
+
+  .content-filters {
+    min-width: unset;
+  }
+
+  .filter-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
 
   .filter-section h4 {
@@ -971,8 +1150,9 @@ width: 75px;
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 20px;
-  margin-bottom: 20px;
   box-shadow: var(--shadow);
+  flex: 1;
+  min-width: 400px;
 }
 
 .content-filters h4 {

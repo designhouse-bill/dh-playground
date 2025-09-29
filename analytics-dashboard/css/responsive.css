@@ -111,6 +111,98 @@
    ============================================================================ */
 
 /* ============================================================================
+   EXTRA SMALL DEVICES: 560px and down (small phones)
+   ============================================================================ */
+@media (max-width: 560px) {
+  /* Show only 4 essential columns in datagrid (checkbox, name, views, score) */
+  .dashboard-table th:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(5)):not(:nth-child(8)),
+  .dashboard-table td:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(5)):not(:nth-child(8)) {
+    display: none;
+  }
+
+  /* Full-width buttons */
+  .btn {
+    width: 100%;
+    margin-bottom: var(--space-sm);
+    justify-content: center;
+  }
+
+  .filter-bar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  /* Stack all report layouts */
+  .reports-container {
+    grid-template-columns: 1fr;
+    padding: var(--space-sm);
+  }
+
+  /* Reduce padding on cards for mobile */
+  .card-body {
+    padding: var(--space-sm);
+  }
+
+  .card-header {
+    padding: var(--space-sm);
+  }
+
+  /* Make form controls full width */
+  .form-control {
+    width: 100%;
+    margin-bottom: var(--space-sm);
+  }
+
+  /* Adjust report preview iframe height */
+  .report-preview-frame {
+    height: 400px;
+  }
+
+  /* Better mobile navigation spacing */
+  .nav-list {
+    gap: var(--space-sm);
+  }
+
+  .nav-item {
+    padding: var(--space-sm);
+  }
+
+  /* Ensure touch targets are large enough */
+  .btn,
+  .detail-btn,
+  .nav-item {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Reduce font sizes for mobile */
+  .big-number {
+    font-size: 1.75rem;
+  }
+
+  .medium-number {
+    font-size: 1.25rem;
+  }
+
+  /* Stack datagrid controls */
+  .column-settings {
+    width: 100%;
+    margin-top: var(--space-sm);
+  }
+
+  /* Mobile-friendly table styling */
+  .dashboard-table {
+    font-size: 0.75rem;
+  }
+
+  .dashboard-table th,
+  .dashboard-table td {
+    padding: var(--space-xs) var(--space-sm);
+  }
+}
+
+/* ============================================================================
    SMALL DEVICES: 560px and up (landscape phones, small tablets)
    ============================================================================ */
 @media (min-width: 560px) {
@@ -152,6 +244,62 @@
 /* ============================================================================
    MEDIUM DEVICES: 768px and up (tablets, small desktops)
    ============================================================================ */
+
+@media (max-width: 768px) {
+  /* Datagrid Responsive Styles */
+  .filter-bar {
+    flex-direction: column !important;
+    gap: var(--space-sm);
+    align-items: stretch;
+  }
+
+  .filter-bar > * {
+    width: 100%;
+    margin-bottom: var(--space-sm);
+  }
+
+  .filter-bar .form-control {
+    width: 100%;
+  }
+
+  /* Hide specific datagrid columns on mobile (department, price, percentile) */
+  .dashboard-table th:nth-child(3),
+  .dashboard-table td:nth-child(3),
+  .dashboard-table th:nth-child(4),
+  .dashboard-table td:nth-child(4),
+  .dashboard-table th:nth-child(7),
+  .dashboard-table td:nth-child(7) {
+    display: none;
+  }
+
+  /* Reports responsive adjustments */
+  .reports-container {
+    grid-template-columns: 1fr !important;
+    gap: var(--space-md);
+  }
+
+  .reports-sidebar {
+    order: 3; /* Move sidebar to bottom */
+  }
+
+  .reports-main {
+    order: 1;
+  }
+
+  .reports-preview {
+    order: 2;
+  }
+
+  /* Column settings dropdown full width on mobile */
+  .column-dropdown {
+    position: static !important;
+    width: 100% !important;
+    max-height: none !important;
+    box-shadow: none !important;
+    border: 1px solid var(--border) !important;
+    margin-top: var(--space-sm);
+  }
+}
 
 @media (min-width: 768px) {
   .dashboard-row-week {
@@ -549,5 +697,54 @@
   .heat-cell {
     min-height: 44px;
     min-width: 44px;
+  }
+
+  /* Enhanced touch targets for datagrid and reports */
+  .dashboard-table th[data-field],
+  .row-checkbox,
+  .column-settings-btn,
+  .generate-report-btn,
+  .export-btn,
+  .reset-defaults-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Improve touch experience for table rows */
+  .dashboard-table tr {
+    min-height: 44px;
+  }
+
+  .dashboard-table td {
+    padding: var(--space-sm);
+  }
+
+  /* Better spacing for mobile buttons */
+  .filter-bar .btn {
+    margin: var(--space-xs) 0;
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  /* Enhanced touch areas for report controls */
+  .quick-reports button,
+  .report-actions button,
+  .template-select {
+    min-height: 44px;
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  /* Improve column dropdown touch experience */
+  .column-checkboxes label {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    padding: var(--space-sm);
+  }
+
+  /* Ensure form controls are touch-friendly */
+  select.form-control,
+  input.form-control {
+    min-height: 44px;
+    padding: var(--space-sm) var(--space-md);
   }
 }

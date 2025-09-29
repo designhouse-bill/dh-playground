@@ -7,9 +7,8 @@ This document provides context and background information for the analytics dash
 
 ### Root Level Files
 - `index.html` - Main dashboard entry point (Version 004)
-- `analysis.html` - Unified analysis page (modern implementation)
-- `analyze.html`, `inquiry.html` - Legacy analysis pages (kept for reference)
 - `reports.html` - Reports functionality
+- `datagrid-inquiry/datagrid-inquiry.html` - Data analysis and inquiry interface
 
 ### Directory Structure (Angular-Ready)
 ```

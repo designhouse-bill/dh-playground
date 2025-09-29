@@ -1964,3 +1964,331 @@
     color: var(--text);
     font-weight: 600;
 }
+
+/* ============================================================================
+   DATAGRID TABLE COMPONENTS
+   ============================================================================ */
+
+/* Dashboard table styles */
+.dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.dashboard-table th {
+    background-color: var(--bg);
+    padding: 12px 8px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+}
+
+.dashboard-table td {
+    padding: 12px 8px;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    color: var(--text);
+}
+
+.dashboard-table tbody tr:hover {
+    background-color: var(--bg);
+}
+
+.dashboard-table tbody tr.selected-row {
+    background-color: var(--selection-bg);
+    border-left: 3px solid var(--selection-border);
+}
+
+.dashboard-table tbody tr.selected-row:hover {
+    background-color: var(--selection-bg);
+}
+
+/* Filter bar styling */
+.filter-bar {
+    display: flex;
+    gap: 12px;
+    padding: 16px 0;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.filter-bar .form-control {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: var(--card);
+    color: var(--text);
+}
+
+.filter-bar .form-control:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(66, 114, 216, 0.1);
+}
+
+.filter-bar .btn {
+    padding: 8px 16px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.filter-bar .btn-secondary {
+    background-color: var(--card);
+    color: var(--text);
+}
+
+.filter-bar .btn-secondary:hover {
+    background-color: var(--bg);
+}
+
+.filter-bar .btn-primary {
+    background-color: var(--blue);
+    color: white;
+    border-color: var(--blue);
+}
+
+.filter-bar .btn-primary:hover:not(:disabled) {
+    background-color: var(--blue-dark);
+    border-color: var(--blue-dark);
+}
+
+.filter-bar .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Pagination controls */
+.pagination-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    border-top: 1px solid var(--border);
+    margin-top: 16px;
+}
+
+.pagination-left {
+    display: flex;
+    gap: 8px;
+}
+
+.pagination-center {
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.pagination-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.pagination-controls button {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background-color: var(--card);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.pagination-controls button:hover:not(:disabled) {
+    background-color: var(--bg);
+}
+
+.pagination-controls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination-controls select {
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background-color: var(--card);
+    color: var(--text);
+    font-size: 14px;
+}
+
+/* Column settings dropdown */
+.column-settings {
+    position: relative;
+}
+
+.column-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    box-shadow: var(--shadow);
+    z-index: 1000;
+    min-width: 180px;
+    margin-top: 4px;
+}
+
+.dropdown-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text);
+    background-color: var(--bg);
+}
+
+.column-checkboxes {
+    padding: 8px 0;
+}
+
+.column-checkbox-label {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text);
+    transition: background-color 0.2s ease;
+}
+
+.column-checkbox-label:hover {
+    background-color: var(--bg);
+}
+
+.column-checkbox-label input[type="checkbox"] {
+    margin-right: 8px;
+    margin-left: 0;
+}
+
+/* Loading and error states */
+.loading-container,
+.error-container {
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.loading-table {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.error-message {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.error-message h3 {
+    color: var(--danger-red);
+    margin-bottom: 12px;
+    font-size: 18px;
+}
+
+.error-message p {
+    color: var(--muted);
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+/* Disabled state for controls */
+.filter-bar .form-control:disabled,
+.filter-bar .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: var(--bg);
+}
+
+/* Breadcrumb styling */
+.breadcrumb {
+    padding: 16px 0;
+    font-size: 14px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+}
+
+.breadcrumb::before {
+    content: '🏠';
+    margin-right: 8px;
+}
+
+/* Virtual scrolling styles */
+.virtual-scroll-viewport {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: var(--card);
+}
+
+.virtual-scroll-container {
+    width: 100%;
+    position: relative;
+}
+
+.virtual-table-wrapper {
+    width: 100%;
+}
+
+.virtual-scroll-viewport .dashboard-table {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    margin: 0;
+}
+
+.virtual-scroll-viewport .dashboard-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: var(--bg);
+    border-top: none;
+}
+
+.virtual-scroll-viewport .dashboard-table tbody tr {
+    border-bottom: 1px solid var(--border);
+}
+
+.virtual-scroll-viewport .dashboard-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+/* Virtual scroll spacers */
+.virtual-spacer-top,
+.virtual-spacer-bottom {
+    width: 100%;
+    background-color: transparent;
+}
+
+.virtual-table {
+    width: 100%;
+}
+
+/* Smooth scrolling for virtual viewport */
+.virtual-scroll-viewport {
+    scroll-behavior: auto;
+    will-change: transform;
+    transform: translateZ(0); /* Force hardware acceleration */
+}
+
+/* Performance optimizations */
+.virtual-table-wrapper {
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+.virtual-scroll-container {
+    will-change: scroll-position;
+}

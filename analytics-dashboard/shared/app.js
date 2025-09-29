@@ -102,7 +102,6 @@ class AnalyticsDashboard {
       <div class="nav-container">
         <ul class="nav-list">
           <li><a href="index.html" class="nav-item">Overview</a></li>
-          <li><a href="analysis.html" class="nav-item">Analysis</a></li>
           <li><a href="reports.html" class="nav-item">Reports</a></li>
         </ul>
       </div>
@@ -432,7 +431,7 @@ class AnalyticsDashboard {
           </button>
         </div>
         <div class="card-head-right">
-          <button class="detail-btn" onclick="window.location.href='analyze.html?view=performance'">Inquiry →</button>
+          <button class="detail-btn" onclick="window.location.href='datagrid-inquiry/datagrid-inquiry.html?source=dashboard&filter=performance&sort=composite_score&direction=desc'">Inquiry →</button>
         </div>
       </div>
       <div class="card-body">
@@ -523,7 +522,7 @@ ${(() => {
           </button>
         </div>
         <div class="card-head-right">
-          <button class="detail-btn" onclick="window.location.href='analyze.html?view=interaction'">Inquiry →</button>
+          <button class="detail-btn" onclick="window.location.href='datagrid-inquiry/datagrid-inquiry.html?source=interaction&filter=engagement'">Inquiry →</button>
         </div>
       </div>
       <div class="card-body">
@@ -597,7 +596,7 @@ ${(() => {
           </button>
         </div>
         <div class="card-head-right">
-          <button class="detail-btn" onclick="window.location.href='analyze.html?view=categories'">Inquiry →</button>
+          <button class="detail-btn" onclick="window.location.href='datagrid-inquiry/datagrid-inquiry.html?source=categories&filter=category-performance'">Inquiry →</button>
         </div>
       </div>
       <div class="card-body">
@@ -644,7 +643,7 @@ ${(() => {
           </button>
         </div>
         <div class="card-head-right">
-          <button class="detail-btn" onclick="window.location.href='analyze.html?view=promotions'">Inquiry →</button>
+          <button class="detail-btn" onclick="window.location.href='datagrid-inquiry/datagrid-inquiry.html?source=promotions&filter=promotion-analysis'">Inquiry →</button>
         </div>
       </div>
       <div class="promo-controls">
@@ -947,7 +946,7 @@ ${(() => {
           </button>
         </div>
         <div class="card-head-right">
-          <button class="detail-btn" onclick="window.location.href='analyze.html?view=interaction'">Inquiry →</button>
+          <button class="detail-btn" onclick="window.location.href='datagrid-inquiry/datagrid-inquiry.html?source=interaction&filter=engagement'">Inquiry →</button>
         </div>
       </div>
       <div class="card-body">
@@ -1012,7 +1011,7 @@ ${(() => {
                   </button>
                 </div>
                 <div class="card-head-right">
-                  <button class="detail-btn" onclick="window.location.href='analyze.html?view=size'">Inquiry →</button>
+                  <button class="detail-btn" onclick="window.location.href='datagrid-inquiry/datagrid-inquiry.html?source=size-analysis&filter=size-mix'">Inquiry →</button>
                 </div>
               </div>
               <div class="card-body">
@@ -1046,7 +1045,7 @@ ${(() => {
                   </button>
                 </div>
                 <div class="card-head-right">
-                  <button class="detail-btn" onclick="window.location.href='analyze.html?view=size_performance'">Inquiry →</button>
+                  <button class="detail-btn" onclick="window.location.href='datagrid-inquiry/datagrid-inquiry.html?source=size-performance&filter=performance-ranking'">Inquiry →</button>
                 </div>
               </div>
               <div class="card-body">
@@ -1087,7 +1086,7 @@ ${(() => {
                 </button>
               </div>
               <div class="card-head-right">
-                <button class="detail-btn" onclick="window.location.href='analyze.html?view=deal_preference'">Inquiry →</button>
+                <button class="detail-btn" onclick="window.location.href='datagrid-inquiry/datagrid-inquiry.html?source=deal-preference&filter=deal-type'">Inquiry →</button>
               </div>
             </div>
             <div class="card-body">
@@ -1484,7 +1483,7 @@ ${(() => {
           </button>
         </div>
         <div class="card-head-right">
-          <button class="detail-btn" onclick="window.location.href='analyze.html?view=${config.drillDownFilter || 'all'}'">Inquiry →</button>
+          <button class="detail-btn" onclick="window.location.href='datagrid-inquiry/datagrid-inquiry.html?source=grid-drilldown&filter=${config.drillDownFilter || 'all'}'">Inquiry →</button>
         </div>
       </div>
       <div class="kpi-content">

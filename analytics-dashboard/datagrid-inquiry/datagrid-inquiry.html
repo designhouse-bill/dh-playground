@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datagrid Inquiry - Analytics Dashboard</title>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../assets/icons/favicon.ico">
+
+    <!-- Preload critical resources -->
+    <link rel="preload" href="../mock-data/004-data-extended.js" as="script">
+    <link rel="preload" href="datagrid.js" as="script">
+</head>
+<body>
+    <!-- Enhanced header from prototype_001 -->
+    <header class="dashboard-header page-header" id="app-header">
+        <div class="header-container">
+            <div class="header-left">
+                <div class="title-container">
+                    <h1>Analytics Dashboard</h1>
+                </div>
+            </div>
+            <div class="header-center">
+                <div id="week-context" class="week-context">
+                    <div class="week-line">
+                        <span class="status" id="week-status" style="color:var(--muted)">Week 36: Sep 18-24, 2025 (Day 5 of 7)</span>
+                        <select id="week-select" class="week-select">
+                            <option value="w36">Week 36: Sep 18-24, 2025 (Day 5 of 7)</option>
+                            <option value="w35">Week 35: Sep 11-17, 2025</option>
+                            <option value="w34">Week 34: Sep 4-10, 2025</option>
+                            <option value="w33">Week 33: Aug 28-Sep 3, 2025</option>
+                            <option value="last_month">Last Month</option>
+                            <option value="ytd">Year to Date</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="filters-stack">
+                    <div class="filter-row">
+                        <label for="version-select">Version:</label>
+                        <select id="version-select">
+                            <option value="all">All</option>
+                            <option value="v1">Version 1</option>
+                            <option value="v2">Version 2</option>
+                        </select>
+                    </div>
+                    <div class="filter-row">
+                        <label for="store-select">Store:</label>
+                        <select id="store-select">
+                            <option value="all_stores">All Stores</option>
+                            <option value="northeast">Northeast Region</option>
+                            <option value="southeast">Southeast Region</option>
+                            <option value="store_123">Store #123 - Miami Lakes</option>
+                            <option value="store_456">Store #456 - Kendall</option>
+                            <option value="store_789">Store #789 - Hialeah</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Navigation -->
+        <nav class="main-nav">
+            <ul class="nav-list">
+                <li><a href="../index.html" class="nav-item">Overview</a></li>
+                <li><a href="../reports.html" class="nav-item">Reports</a></li>
+                <li><a href="datagrid-inquiry.html" class="nav-item active">Datagrid Inquiry</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main content -->
+    <main class="dashboard-main main-content">
+        <div id="datagrid-inquiry-container">
+            <div id="grid-header"></div>
+
+            <!-- Context Banner -->
+            <div id="context-banner" class="context-banner">
+                <div class="banner-content">
+                    <div class="breadcrumb">
+                        <a href="../index.html" class="back-link" title="Back to Dashboard">
+                            <span class="back-arrow">←</span>
+                        </a>
+                        <span>Dashboard</span>
+                        <span class="separator">›</span>
+                        <span id="source-name">Data Analysis</span>
+                        <span class="separator">›</span>
+                        <span>Data Analysis</span>
+                    </div>
+                    <div id="context-description" class="context-description">
+                        Analyzing: Detailed data exploration and insights
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Filter Chips -->
+            <div id="active-filters" class="filter-chips">
+                <!-- Chips added dynamically -->
+            </div>
+
+            <!-- Analysis Approach - Tier 1 Filters -->
+            <div id="analysis-approach" class="filter-section">
+                <h4>Analysis Approach</h4>
+                <div class="filter-grid">
+                    <div class="filter-row">
+                        <label for="scope-filter">Scope</label>
+                        <select id="scope-filter" class="form-control">
+                            <option value="promotion">Promotion</option>
+                            <option value="category">Category</option>
+                            <option value="store">Store</option>
+                        </select>
+                    </div>
+                    <div class="filter-row">
+                        <label for="lens-filter">Lens</label>
+                        <select id="lens-filter" class="form-control">
+                            <option value="performance">Performance</option>
+                            <option value="engagement">Engagement</option>
+                            <option value="traffic">Traffic</option>
+                        </select>
+                    </div>
+                    <div class="filter-row">
+                        <label for="timeframe-filter">Time Frame</label>
+                        <select id="timeframe-filter" class="form-control">
+                            <option value="current-week">Current Week</option>
+                            <option value="4-week-trend">4-Week Trend</option>
+                            <option value="ytd">Year to Date</option>
+                        </select>
+                    </div>
+                    <div class="filter-row">
+                        <label for="entity-filter">Entity Level</label>
+                        <select id="entity-filter" class="form-control">
+                            <option value="promotion">Promotion</option>
+                            <option value="subbrand">Subbrand</option>
+                            <option value="category">Category</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Filters - Tier 2 -->
+            <div class="content-filters">
+                <h4>Content Filters</h4>
+                <div class="filter-groups-grid">
+                    <!-- Categories Filter Group -->
+                    <div class="filter-group collapsible">
+                        <div class="filter-group-header" data-target="category-filters">
+                            <h5>Categories</h5>
+                            <span class="count" id="category-count">(0)</span>
+                            <span class="expand-icon">▼</span>
+                        </div>
+                        <div class="filter-options collapsed" id="category-filters">
+                            <div class="checkbox-list">
+                                <!-- Checkboxes generated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Deal Types Filter Group -->
+                    <div class="filter-group collapsible">
+                        <div class="filter-group-header" data-target="deal-type-filters">
+                            <h5>Deal Types</h5>
+                            <span class="count" id="deal-type-count">(0)</span>
+                            <span class="expand-icon">▼</span>
+                        </div>
+                        <div class="filter-options collapsed" id="deal-type-filters">
+                            <div class="checkbox-list">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="bogo" data-filter="deal-type">
+                                    <span class="checkmark"></span>
+                                    <span class="label-text">BOGO</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="discount" data-filter="deal-type">
+                                    <span class="checkmark"></span>
+                                    <span class="label-text">Discount %</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="fixed-price" data-filter="deal-type">
+                                    <span class="checkmark"></span>
+                                    <span class="label-text">Fixed Price</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="premium" data-filter="deal-type">
+                                    <span class="checkmark"></span>
+                                    <span class="label-text">Premium</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Size Classes Filter Group -->
+                    <div class="filter-group collapsible">
+                        <div class="filter-group-header" data-target="size-class-filters">
+                            <h5>Size Classes</h5>
+                            <span class="count" id="size-class-count">(0)</span>
+                            <span class="expand-icon">▼</span>
+                        </div>
+                        <div class="filter-options collapsed" id="size-class-filters">
+                            <div class="checkbox-list">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="S" data-filter="size-class">
+                                    <span class="checkmark"></span>
+                                    <span class="label-text">Small (S)</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="M" data-filter="size-class">
+                                    <span class="checkmark"></span>
+                                    <span class="label-text">Medium (M)</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="L" data-filter="size-class">
+                                    <span class="checkmark"></span>
+                                    <span class="label-text">Large (L)</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="XL" data-filter="size-class">
+                                    <span class="checkmark"></span>
+                                    <span class="label-text">Extra Large (XL)</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Position Ranges Filter Group -->
+                    <div class="filter-group collapsible">
+                        <div class="filter-group-header" data-target="position-range-filters">
+                            <h5>Position Ranges</h5>
+                            <span class="count" id="position-range-count">(0)</span>
+                            <span class="expand-icon">▼</span>
+                        </div>
+                        <div class="filter-options collapsed" id="position-range-filters">
+                            <div class="checkbox-list">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="top" data-filter="position-range">
+                                    <span class="checkmark"></span>
+                                    <span class="label-text">Top</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="upper-mid" data-filter="position-range">
+                                    <span class="checkmark"></span>
+                                    <span class="label-text">Upper Mid</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="lower-mid" data-filter="position-range">
+                                    <span class="checkmark"></span>
+                                    <span class="label-text">Lower Mid</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" value="bottom" data-filter="position-range">
+                                    <span class="checkmark"></span>
+                                    <span class="label-text">Bottom</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="filter-bar" class="filter-bar">
+                <input type="search" id="search-box" class="form-control" placeholder="Search...">
+                <select id="dept-filter" class="form-control">
+                    <option value="">All Departments</option>
+                </select>
+                <button id="clear-filters" class="btn btn-secondary">Clear</button>
+                <button id="export-btn" class="btn btn-primary" disabled>Export CSV</button>
+                <button id="generate-report-btn" class="btn btn-primary" disabled>Generate Report</button>
+                <button id="reset-defaults-btn" class="btn btn-secondary" title="Reset all settings to defaults">Reset Defaults</button>
+                <div class="column-settings">
+                    <button id="column-settings-btn" class="btn btn-secondary" title="Column Settings">⚙️</button>
+                    <div id="column-dropdown" class="column-dropdown" style="display: none;">
+                        <div class="dropdown-header">Show/Hide Columns</div>
+                        <div id="column-checkboxes" class="column-checkboxes"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="grid-container"></div>
+            <div id="grid-footer"></div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="../shared/error-handler.js"></script>
+    <script src="../mock-data/004-data-extended.js"></script>
+    <script src="datagrid.js"></script>
+
+    <!-- URL Parameter Parsing and Context Setup -->
+    <script>
+        // Parse URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const source = urlParams.get('source');
+        const sort = urlParams.get('sort');
+        const filter = urlParams.get('filter');
+        const direction = urlParams.get('direction') || 'desc';
+
+        // Console log navigation for debugging
+        if (source) {
+            console.log('📊 Datagrid Navigation Received:', {
+                source: source,
+                filter: filter,
+                sort: sort,
+                direction: direction,
+                fullURL: window.location.href
+            });
+        }
+
+        // Context banner updates are now handled by DataGridComponent.parseUrlContext()
+        // Legacy grid-header display for backward compatibility
+        if (source) {
+            const filterText = filter ? ` (${filter.replace(/-/g, ' ')})` : '';
+            const sourceFormatted = source.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            document.getElementById('grid-header').innerHTML =
+                `<div class="breadcrumb">Dashboard > ${sourceFormatted}${filterText} > Datagrid Inquiry</div>`;
+        }
+
+        // Pass parameters to grid when it's initialized
+        document.addEventListener('DOMContentLoaded', function() {
+            // Wait for grid to be available
+            setTimeout(() => {
+                if (window.grid) {
+                    console.log('🔧 Applying URL parameters to grid:', {sort, direction, filter});
+
+                    // Apply sort if specified
+                    if (sort) {
+                        window.grid.sortConfig = {
+                            field: sort,
+                            direction: direction
+                        };
+                        console.log('✅ Sort applied:', window.grid.sortConfig);
+                    }
+
+                    // Apply filter context if specified
+                    if (filter) {
+                        // This could be enhanced to apply specific filters based on the filter parameter
+                        console.log('📋 Filter context applied:', filter);
+                    }
+
+                    // Re-render grid with new parameters
+                    window.grid.render();
+                } else {
+                    console.warn('⚠️ Grid not available yet, parameters not applied');
+                }
+            }, 500);
+        });
+    </script>
+</body>
+</html>

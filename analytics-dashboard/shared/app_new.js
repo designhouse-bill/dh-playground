@@ -352,6 +352,118 @@ class AnalyticsDashboard {
 
     // Set up any other navigation elements
     this.setupMainNavigation();
+
+    // Set up datagrid inquiry navigation
+    this.setupDatagridInquiryNavigation();
+  }
+
+  /**
+   * Navigate to Datagrid Inquiry with parameters
+   */
+  navigateToDatagridInquiry(source, config = {}) {
+    const params = new URLSearchParams();
+    params.set('source', source);
+    if (config.sort) params.set('sort', config.sort);
+    if (config.filter) params.set('filter', config.filter);
+    window.location.href = `/datagrid-inquiry/datagrid-inquiry.html?${params}`;
+  }
+
+  /**
+   * Set up datagrid inquiry navigation handlers
+   */
+  setupDatagridInquiryNavigation() {
+    // Define all inquiry button mappings
+    const inquiryMappings = [
+      // YTD Strip buttons (we'll add click handlers to the metrics)
+      {
+        selector: '.ytd-metric:nth-child(1)',
+        source: 'ytd-traffic',
+        config: { sort: 'card_in_view', filter: 'ytd' }
+      },
+      {
+        selector: '.ytd-metric:nth-child(2)',
+        source: 'digital-adoption',
+        config: { sort: 'composite_score', filter: 'digital' }
+      },
+      {
+        selector: '.ytd-metric:nth-child(3)',
+        source: 'print-rate',
+        config: { sort: 'share_count', filter: 'print' }
+      },
+
+      // Main KPI Tiles
+      {
+        selector: '#digital-circular-performance-week .info-btn',
+        source: 'digital-performance',
+        config: { sort: 'composite_score' }
+      },
+      {
+        selector: '#traffic-week .info-btn',
+        source: 'traffic',
+        config: { sort: 'card_in_view' }
+      },
+      {
+        selector: '#share-activity-week .info-btn',
+        source: 'share-activity',
+        config: { sort: 'share_count' }
+      },
+
+      // Chart Sections
+      {
+        selector: '#performance-day-chart-container .detail-btn',
+        source: 'performance-day',
+        config: { sort: 'composite_score', filter: 'daily' }
+      },
+      {
+        selector: '#interaction-rate-chart-container .detail-btn',
+        source: 'interaction-rate',
+        config: { sort: 'ctr', filter: 'interaction' }
+      },
+      {
+        selector: '#top-categories-card .detail-btn',
+        source: 'categories',
+        config: { sort: 'composite_score', filter: 'by-category' }
+      },
+      {
+        selector: '#promotion-performance .detail-btn',
+        source: 'promotions',
+        config: { sort: 'composite_score', filter: 'top-performers' }
+      },
+      {
+        selector: '#size-mix-chart-container .detail-btn',
+        source: 'size-mix',
+        config: { sort: 'composite_score', filter: 'by-size' }
+      },
+
+      // Performance Sections
+      {
+        selector: '#size-performance-chart-container .detail-btn',
+        source: 'size-performance',
+        config: { sort: 'composite_score', filter: 'size-analysis' }
+      },
+      {
+        selector: '#deal-type-chart-container .detail-btn',
+        source: 'deal-preference',
+        config: { sort: 'composite_score', filter: 'by-deal-type' }
+      }
+    ];
+
+    // Add click handlers for all mappings
+    inquiryMappings.forEach(mapping => {
+      const element = document.querySelector(mapping.selector);
+      if (element) {
+        element.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.navigateToDatagridInquiry(mapping.source, mapping.config);
+        });
+
+        // Add cursor pointer for YTD metrics that don't normally have it
+        if (mapping.selector.includes('ytd-metric')) {
+          element.style.cursor = 'pointer';
+          element.title = `View ${mapping.source} details`;
+        }
+      }
+    });
   }
 
   /**
@@ -445,9 +557,14 @@ class AnalyticsDashboard {
     navItems.forEach(item => {
       item.addEventListener('click', (e) => {
         const href = item.getAttribute('href');
-        console.log('🧭 Navigating to:', href);
 
-        // Add current context as URL parameters for state preservation
+        // Skip URL modification when using file:// protocol
+        if (window.location.protocol === 'file:') {
+          // Let the browser handle the navigation normally for file protocol
+          return;
+        }
+
+        // Add current context as URL parameters for state preservation (HTTP only)
         if (href !== 'index.html') {
           e.preventDefault();
 

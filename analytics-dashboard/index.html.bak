@@ -70,6 +70,7 @@
         <nav class="main-nav">
             <ul class="nav-list">
                 <li><a href="index.html" class="nav-item active">Overview</a></li>
+                <li><a href="analysis.html" class="nav-item">Analysis</a></li>
                 <li><a href="reports.html" class="nav-item">Reports</a></li>
                 <li><a href="datagrid-inquiry/datagrid-inquiry.html" class="nav-item">Datagrid Inquiry</a></li>
             </ul>
@@ -113,7 +114,7 @@
                                 </button>
                             </div>
                             <div class="card-head-right">
-                                <button class="detail-btn" onclick="navigateToInquiry('week-performance', 'composite_score', 'desc')">Inquiry →</button>
+                                <button class="detail-btn" onclick="console.log('🔗 Dashboard Navigation: Digital Circular Performance → Datagrid Inquiry'); window.location.href='datagrid-inquiry/datagrid-inquiry.html?source=dashboard&filter=week-performance&sort=composite_score&direction=desc'">Inquiry →</button>
                             </div>
                         </div>
                         <div class="kpi-content">
@@ -140,7 +141,7 @@
                                 </button>
                             </div>
                             <div class="card-head-right">
-                                <button class="detail-btn" onclick="navigateToInquiry('traffic', 'card_in_view', 'desc')">Inquiry →</button>
+                                <button class="detail-btn" onclick="console.log('🔗 Dashboard Navigation: Traffic → Datagrid Inquiry'); window.location.href='datagrid-inquiry/datagrid-inquiry.html?source=dashboard&filter=traffic&sort=card_in_view&direction=desc'">Inquiry →</button>
                             </div>
                         </div>
                         <div class="kpi-content">
@@ -167,7 +168,7 @@
                                 </button>
                             </div>
                             <div class="card-head-right">
-                                <button class="detail-btn" onclick="navigateToInquiry('sharing', 'card_clicked', 'desc')">Inquiry →</button>
+                                <button class="detail-btn" onclick="console.log('🔗 Dashboard Navigation: Share Activity → Datagrid Inquiry'); window.location.href='datagrid-inquiry/datagrid-inquiry.html?source=dashboard&filter=sharing&sort=card_clicked&direction=desc'">Inquiry →</button>
                             </div>
                         </div>
                         <div class="kpi-content">
@@ -201,7 +202,7 @@
                                 </button>
                             </div>
                             <div class="card-head-right">
-                                <button class="detail-btn" onclick="navigateToInquiry('performance', 'composite_score', 'desc')">Inquiry →</button>
+                                <button class="detail-btn" onclick="console.log('🔗 Dashboard Navigation: Performance Overview → Datagrid Inquiry'); window.location.href='datagrid-inquiry/datagrid-inquiry.html?source=dashboard&filter=performance&sort=composite_score&direction=desc'">Inquiry →</button>
                             </div>
                         </div>
                         <div class="card-body">
@@ -219,7 +220,7 @@
                                 </button>
                             </div>
                             <div class="card-head-right">
-                                <button class="detail-btn" onclick="navigateToInquiry('interaction', 'card_clicked', 'desc')">Inquiry →</button>
+                                <button class="detail-btn" onclick="console.log('🔗 Dashboard Navigation: Interaction Analysis → Datagrid Inquiry'); window.location.href='datagrid-inquiry/datagrid-inquiry.html?source=dashboard&filter=interaction&sort=card_clicked&direction=desc'">Inquiry →</button>
                             </div>
                         </div>
                         <div class="card-body">
@@ -244,7 +245,7 @@
                                 </button>
                             </div>
                             <div class="card-head-right">
-                                <button class="detail-btn" onclick="navigateToInquiry('categories', 'composite_score', 'desc')">Inquiry →</button>
+                                <button class="detail-btn" onclick="console.log('🔗 Dashboard Navigation: Top Categories → Datagrid Inquiry'); window.location.href='datagrid-inquiry/datagrid-inquiry.html?source=dashboard&filter=categories&sort=composite_score&direction=desc'">Inquiry →</button>
                             </div>
                         </div>
                         <div class="card-body">
@@ -382,7 +383,7 @@
                                 </button>
                             </div>
                             <div class="card-head-right">
-                                <button class="detail-btn" onclick="navigateToInquiry('promotions', 'composite_score', 'desc')">Inquiry →</button>
+                                <button class="detail-btn" onclick="console.log('🔗 Dashboard Navigation: Top Promotions → Datagrid Inquiry'); window.location.href='datagrid-inquiry/datagrid-inquiry.html?source=dashboard&filter=promotions&sort=composite_score&direction=desc'">Inquiry →</button>
                             </div>
                         </div>
                         <div class="promo-controls">
@@ -579,7 +580,7 @@
                                                 </button>
                                             </div>
                                             <div class="card-head-right">
-                                                <button class="detail-btn" onclick="navigateToInquiry('size', 'card_in_view', 'desc')">Inquiry →</button>
+                                                <button class="detail-btn" onclick="console.log('🔗 Dashboard Navigation: Content Size Analysis → Datagrid Inquiry'); window.location.href='datagrid-inquiry/datagrid-inquiry.html?source=dashboard&filter=size&sort=card_in_view&direction=desc'">Inquiry →</button>
                                             </div>
                                         </div>
                                         <div class="card-body">
@@ -597,7 +598,7 @@
                                                 </button>
                                             </div>
                                             <div class="card-head-right">
-                                                <button class="detail-btn" onclick="navigateToInquiry('size_performance', 'composite_score', 'desc')">Inquiry →</button>
+                                                <button class="detail-btn" onclick="console.log('🔗 Dashboard Navigation: Size Performance → Datagrid Inquiry'); window.location.href='datagrid-inquiry/datagrid-inquiry.html?source=dashboard&filter=size_performance&sort=composite_score&direction=desc'">Inquiry →</button>
                                             </div>
                                         </div>
                                         <div class="card-body">
@@ -620,7 +621,7 @@
                                             </button>
                                         </div>
                                         <div class="card-head-right">
-                                            <button class="detail-btn" onclick="navigateToInquiry('deal-preference', 'composite_score', 'desc')">Inquiry →</button>
+                                            <button class="detail-btn" onclick="console.log('🔗 Dashboard Navigation: Deal Preference → Datagrid Inquiry'); window.location.href='datagrid-inquiry/datagrid-inquiry.html?source=dashboard&filter=deal_preference&sort=composite_score&direction=desc'">Inquiry →</button>
                                         </div>
                                     </div>
                                     <div class="card-body">
@@ -654,53 +655,6 @@
             window.dashboardInstance = new AnalyticsDashboard();
             window.dashboardInstance.init();
         });
-
-        /**
-         * Navigate to inquiry grid with context preservation
-         * @param {string} filter - The filter context from the dashboard tile
-         * @param {string} sort - The sort field
-         * @param {string} direction - Sort direction (asc/desc)
-         */
-        function navigateToInquiry(filter, sort, direction) {
-            // Get current dashboard context
-            const weekSelect = document.getElementById('week-select');
-            const versionSelect = document.getElementById('version-select');
-            const storeSelect = document.getElementById('store-select');
-
-            const currentPeriod = weekSelect ? weekSelect.value : 'w36';
-            const currentVersion = versionSelect ? versionSelect.value : 'all';
-            const currentStore = storeSelect ? storeSelect.value : 'all_stores';
-
-            // Build URL with context preservation
-            const params = new URLSearchParams({
-                source: 'dashboard',
-                filter: filter,
-                sort: sort,
-                direction: direction,
-                period: currentPeriod,
-                version: currentVersion,
-                scope: currentStore
-            });
-
-            // Use proper relative path for file protocol
-            const basePath = window.location.protocol === 'file:' ?
-                './datagrid-inquiry/datagrid-inquiry.html' :
-                'datagrid-inquiry/datagrid-inquiry.html';
-
-            const targetUrl = `${basePath}?${params.toString()}`;
-
-            console.log('📊 Navigating to inquiry with context:', {
-                filter: filter,
-                sort: sort,
-                direction: direction,
-                period: currentPeriod,
-                version: currentVersion,
-                scope: currentStore,
-                url: targetUrl
-            });
-
-            window.location.href = targetUrl;
-        }
     </script>
 </body>
 </html>

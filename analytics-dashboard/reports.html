@@ -177,11 +177,14 @@
                     <div class="card-body">
                         <nav class="quick-reports">
                             <h3>Quick Reports</h3>
-                            <button id="simple-chart-btn" class="btn btn-primary">
-                                📊 Simple Chart
+                            <button id="simple-weekly-btn" class="btn btn-primary">
+                                📊 Weekly Performance
+                            </button>
+                            <button id="simple-chart-btn" class="btn btn-secondary">
+                                📈 Simple Chart
                             </button>
                             <button id="default-weekly-btn" class="btn btn-secondary">
-                                📈 Default Weekly
+                                📋 Default Weekly
                             </button>
                         </nav>
                     </div>
@@ -229,11 +232,13 @@
     <!-- Report Generators -->
     <script src="reports/SimpleChartReport.js"></script>
     <script src="reports/DefaultWeeklyReport.js"></script>
+    <script src="reports/SimpleWeeklyReport.js"></script>
 
     <!-- Initialize Context Bar and Reports -->
     <script>
         let simpleChartReport = null;
         let defaultWeeklyReport = null;
+        let simpleWeeklyReport = null;
         let currentReport = null;
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -265,7 +270,7 @@
                 console.error('❌ Context bar container not found on reports page');
             }
 
-            // Initialize both report types
+            // Initialize all report types
             if (typeof SimpleChartReport !== 'undefined') {
                 simpleChartReport = new SimpleChartReport('preview');
                 console.log('✅ SimpleChartReport initialized');
@@ -276,21 +281,34 @@
                 console.log('✅ DefaultWeeklyReport initialized');
             }
 
-            // Auto-load Simple Chart by default
+            if (typeof SimpleWeeklyReport !== 'undefined') {
+                simpleWeeklyReport = new SimpleWeeklyReport('preview');
+                console.log('✅ SimpleWeeklyReport initialized');
+            }
+
+            // Auto-load Simple Weekly by default
             setTimeout(() => {
-                if (simpleChartReport) {
-                    generateReport(simpleChartReport);
+                if (simpleWeeklyReport) {
+                    simpleWeeklyReport.generateReport();
                 }
             }, 500);
+
+            // Wire up Simple Weekly button
+            const simpleWeeklyBtn = document.getElementById('simple-weekly-btn');
+            if (simpleWeeklyBtn) {
+                simpleWeeklyBtn.addEventListener('click', () => {
+                    setActiveButton('simple-weekly-btn');
+                    if (simpleWeeklyReport) {
+                        simpleWeeklyReport.generateReport();
+                    }
+                });
+            }
 
             // Wire up Simple Chart button
             const simpleChartBtn = document.getElementById('simple-chart-btn');
             if (simpleChartBtn) {
                 simpleChartBtn.addEventListener('click', () => {
-                    simpleChartBtn.classList.add('btn-primary');
-                    simpleChartBtn.classList.remove('btn-secondary');
-                    document.getElementById('default-weekly-btn')?.classList.remove('btn-primary');
-                    document.getElementById('default-weekly-btn')?.classList.add('btn-secondary');
+                    setActiveButton('simple-chart-btn');
                     generateReport(simpleChartReport);
                 });
             }
@@ -299,11 +317,24 @@
             const defaultWeeklyBtn = document.getElementById('default-weekly-btn');
             if (defaultWeeklyBtn) {
                 defaultWeeklyBtn.addEventListener('click', () => {
-                    defaultWeeklyBtn.classList.add('btn-primary');
-                    defaultWeeklyBtn.classList.remove('btn-secondary');
-                    document.getElementById('simple-chart-btn')?.classList.remove('btn-primary');
-                    document.getElementById('simple-chart-btn')?.classList.add('btn-secondary');
+                    setActiveButton('default-weekly-btn');
                     generateReport(defaultWeeklyReport);
+                });
+            }
+
+            // Helper to set active button
+            function setActiveButton(activeId) {
+                ['simple-weekly-btn', 'simple-chart-btn', 'default-weekly-btn'].forEach(id => {
+                    const btn = document.getElementById(id);
+                    if (btn) {
+                        if (id === activeId) {
+                            btn.classList.add('btn-primary');
+                            btn.classList.remove('btn-secondary');
+                        } else {
+                            btn.classList.remove('btn-primary');
+                            btn.classList.add('btn-secondary');
+                        }
+                    }
                 });
             }
         });

@@ -1,0 +1,682 @@
+/**
+ * Context Bar V2 Design System
+ * Modern pill-based design with responsive layout
+ *
+ * Features:
+ * - Pill-shaped components with rounded corners
+ * - Dark background with light pill components
+ * - Responsive breakpoint system
+ * - Typography scaling
+ * - Flexible layout system
+ *
+ * @version 2.0.0
+ */
+
+/* ===== FONT IMPORTS ===== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ===== COMPONENT-SPECIFIC VARIABLES ===== */
+/* Global variables moved to main.css for centralized management */
+/* Component-specific variables that aren't reused globally */
+
+/* ===== BASE CONTEXT BAR CONTAINER ===== */
+.context-bar-v2 {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-context-bar);
+  background-color: var(--context-bg);
+  width: 100%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.context-bar-v2-content {
+  display: flex;
+  gap: var(--gap-desktop);
+  padding: 20px;
+  background: var(--context-bg);
+  width: 100%;
+  margin: 0;
+  align-items: center;
+  flex-wrap: wrap; /* Allow wrapping on very small screens */
+  overflow: hidden; /* Prevent horizontal overflow */
+}
+
+/* ===== PILL COMPONENT BASE CLASS ===== */
+.pill-component {
+  /* Strip default button styling */
+  border: none;
+  outline: none;
+  text-align: left;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  text-decoration: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0;
+
+  /* Pill component styling */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: var(--pill-bg);
+  border-radius: var(--pill-radius);
+  padding: var(--padding-pill-mobile);
+  min-width: var(--pill-min-width);
+  min-height: 44px; /* Minimum touch target size */
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  position: relative;
+  box-sizing: border-box;
+  will-change: transform, box-shadow; /* Optimize for GPU acceleration */
+}
+
+.pill-component:hover {
+  background-color: #e8e9ed;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.pill-component:hover .pill-arrow,
+.pill-component:hover .week-dropdown,
+.pill-component:hover .store-dropdown {
+  transform: translateY(2px);
+}
+
+.pill-component:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.pill-component:active .pill-arrow,
+.pill-component:active .week-dropdown,
+.pill-component:active .store-dropdown {
+  transform: translateY(0);
+}
+
+/* ===== WEEK SELECTOR COMPONENT ===== */
+.week-selector-pill {
+  padding: var(--padding-pill-mobile);
+  gap: 8px;
+}
+
+.week-icon {
+  width: var(--icon-size);
+  height: var(--icon-size);
+  flex-shrink: 0;
+  color: var(--icon-color);
+}
+
+.week-content,
+.week-selector .pill-content {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    gap: 4px;
+    align-items: center;
+}
+
+.week-main {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.week-number,
+.pill-title {
+  font-family: 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: 32px;
+  color: var(--text-primary);
+  line-height: 1.2;
+  margin: 0;
+}
+
+.week-dates,
+.pill-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding-left: 8px;
+  border-left: 1px solid var(--border-color);
+  margin-left: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.date-range {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.date-row {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+}
+
+.date-label {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: var(--text-label-small);
+  line-height: 17px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.date-value {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: var(--text-detail-small);
+  line-height: 17px;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.week-dropdown {
+  width: var(--dropdown-size);
+  height: var(--dropdown-size);
+  flex-shrink: 0;
+  color: var(--dropdown-arrow);
+  margin-left: auto;
+  opacity: 0.6;
+  transition: transform 0.2s ease;
+}
+
+/* ===== STORE SELECTOR COMPONENT ===== */
+.store-selector-pill,
+.store-selector {
+  padding: var(--padding-pill-mobile);
+  gap: 10px;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+/* ===== ICON STYLING ===== */
+.store-icon,
+.pill-icon,
+.week-icon {
+  margin-right: 12px;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  object-fit: contain;
+}
+
+/* SVG specific styling */
+.store-icon,
+.week-icon {
+  filter: brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%);
+}
+
+/* Mobile responsive icon sizing */
+@media (max-width: 768px) {
+  .store-icon,
+  .pill-icon,
+  .week-icon {
+    width: 32px;
+    height: 32px;
+    margin-right: 8px;
+  }
+}
+
+.store-text,
+.pill-text {
+  font-family: 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: 32px;
+  color: var(--text-primary);
+  margin: 0;
+  flex: 1;
+  text-align: left;
+  line-height: 1.2;
+}
+
+/* ===== DROPDOWN ARROW STYLING ===== */
+.store-dropdown,
+.pill-arrow,
+.week-dropdown {
+  font-size: 16px;
+  flex-shrink: 0;
+  color: var(--dropdown-arrow);
+  margin-left: auto;
+  opacity: 0.6;
+  transition: transform 0.2s ease;
+  line-height: 1;
+  min-width: 44px; /* Minimum touch target width */
+  min-height: 44px; /* Minimum touch target height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== ANALYSIS MODE STYLING ===== */
+.analysis-mode .pill-component {
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.analysis-mode .pill-component:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.analysis-mode .pill-component:active {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ===== OVERLAY PANEL INTEGRATION ===== */
+/* Update overlay positioning to align with pill components */
+.period-selector-panel,
+.scope-selector-panel,
+.overlay-panel {
+  top: calc(100% + 8px);
+  border-radius: var(--pill-radius);
+  margin-top: 8px;
+  animation: slideDown 0.3s ease-out;
+}
+
+/* Ensure overlays appear above the new context bar */
+.period-selector-overlay,
+.scope-selector-overlay {
+  z-index: 1001; /* Above context bar z-index of 900 */
+}
+
+/* Align overlay panels with pill components */
+.context-bar-v2 .period-selector-overlay,
+.context-bar-v2 .scope-selector-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.context-bar-v2 .period-selector-panel,
+.context-bar-v2 .scope-selector-panel {
+  border-radius: var(--pill-radius);
+  transform-origin: center top;
+}
+
+/* Enhanced backdrop for v2 design */
+.context-bar-v2 .period-selector-backdrop,
+.context-bar-v2 .scope-selector-backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+/* Button styling integration with v2 design */
+.context-bar-v2 .apply-btn,
+.context-bar-v2 .cancel-btn {
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.context-bar-v2 .apply-btn:hover,
+.context-bar-v2 .cancel-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Small Tablet/Large Mobile Breakpoint (768px-992px) */
+@media (max-width: 992px) and (min-width: 769px) {
+  .context-bar-v2-content {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .pill-component {
+    min-width: 280px;
+  }
+}
+
+/* Mobile Breakpoint (<768px) */
+@media (max-width: 768px) {
+  .context-bar-v2-content {
+    flex-direction: column;
+    gap: var(--gap-mobile);
+    padding: var(--padding-container-mobile);
+    flex-wrap: nowrap;
+  }
+
+  .pill-component {
+    width: 100%;
+    flex: none;
+    /* Ensure proper touch targets on mobile */
+    min-height: 48px;
+  }
+
+  .pill-title,
+  .week-number {
+    font-size: 20px;
+  }
+
+  .store-text,
+  .pill-text {
+    font-size: 20px;
+  }
+
+  .pill-details,
+  .week-dates {
+    font-size: 12px;
+  }
+
+  .pill-icon,
+  .week-icon,
+  .store-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+  }
+
+  .pill-arrow,
+  .week-dropdown,
+  .store-dropdown {
+    font-size: 14px;
+  }
+}
+
+/* Tablet Breakpoint (768px-1440px) */
+@media (max-width: 1440px) {
+
+  .context-bar-v2-content {
+    gap: var(--gap-tablet);
+    padding: var(--padding-container-tablet);
+  }
+
+  .pill-title,
+  .week-number {
+    font-size: 24px;
+  }
+
+  .store-text,
+  .pill-text {
+    font-size: 24px;
+  }
+
+  .pill-details,
+  .week-dates {
+    font-size: 12px;
+  }
+
+  .date-label {
+    font-size: var(--text-label-medium);
+  }
+
+  .date-value {
+    font-size: var(--text-detail-medium);
+  }
+
+  .pill-component {
+    padding: var(--padding-pill-tablet);
+  }
+}
+
+/* Desktop Breakpoint (>1440px) */
+@media (min-width: 1441px) {
+  .context-bar-v2-content {
+    gap: var(--gap-desktop);
+    padding: var(--padding-container-desktop);
+  }
+
+  .pill-component {
+    padding: var(--padding-pill-desktop);
+  }
+
+  .week-number,
+  .pill-title {
+    font-size: 32px;
+  }
+
+  .store-text,
+  .pill-text {
+    font-size: 32px;
+  }
+
+  .pill-details,
+  .week-dates {
+    font-size: 14px;
+  }
+
+  .date-label {
+    font-size: var(--text-label-large);
+  }
+
+  .date-value {
+    font-size: var(--text-detail-large);
+  }
+}
+
+/* ===== ACCESSIBILITY ENHANCEMENTS ===== */
+
+/* Focus States */
+.pill-component:focus {
+  outline: 2px solid var(--icon-color);
+  outline-offset: 2px;
+}
+
+.pill-component:focus-visible {
+  outline: 2px solid var(--icon-color);
+  outline-offset: 2px;
+}
+
+/* Remove focus outline on click but keep it for keyboard navigation */
+.pill-component:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .pill-component {
+    border: 2px solid var(--text-primary) !important;
+  }
+
+  .pill-component:focus,
+  .pill-component:focus-visible {
+    outline: 3px solid var(--text-primary);
+    outline-offset: 2px;
+  }
+
+  .week-icon,
+  .store-icon,
+  .pill-icon {
+    color: var(--text-primary);
+  }
+
+  .week-icon svg,
+  .store-icon svg,
+  .pill-icon svg {
+    stroke: var(--text-primary);
+    fill: var(--text-primary);
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .pill-component {
+    transition: none;
+  }
+
+  .pill-component:hover {
+    transform: none;
+  }
+
+  .period-selector-panel,
+  .scope-selector-panel,
+  .overlay-panel {
+    animation: none;
+  }
+
+  .context-bar-v2.slide-in,
+  .context-bar-v2.fade-out {
+    animation: none;
+  }
+
+  .pill-component.loading::after {
+    animation: none;
+  }
+
+  .pill-component.loading .pill-icon,
+  .pill-component.loading .pill-arrow,
+  .pill-component.loading .week-dropdown,
+  .pill-component.loading .store-dropdown {
+    animation: none;
+  }
+}
+
+/* ===== UTILITY CLASSES ===== */
+
+/* Icon utilities for SVG integration */
+.icon-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  fill: currentColor;
+}
+
+/* SVG color inheritance */
+.pill-icon svg,
+.week-icon svg,
+.store-icon svg {
+  color: inherit;
+}
+
+/* Text utilities */
+.text-uppercase {
+  text-transform: uppercase;
+}
+
+.text-bold {
+  font-weight: 700;
+}
+
+.text-medium {
+  font-weight: 500;
+}
+
+/* Layout utilities */
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ===== ANIMATION CLASSES ===== */
+
+/* Slide in animation for context bar appearance */
+.context-bar-v2.slide-in {
+  animation: slideInFromTop 0.3s ease-out;
+}
+
+@keyframes slideInFromTop {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Slide down animation for overlay panels */
+@keyframes slideDown {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Fade out animation */
+.context-bar-v2.fade-out {
+  animation: fadeOut 0.2s ease-in forwards;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+/* Loading state animations */
+.pill-component.loading {
+  pointer-events: none;
+  background: white;
+  border: 2px solid #ff8c00;
+  animation: loading-border 1.5s infinite ease-in-out;
+}
+
+@keyframes loading-border {
+  0%, 100% {
+    border-color: #ff8c00;
+    box-shadow: 0 0 0 0 rgba(255, 140, 0, 0.4);
+  }
+  50% {
+    border-color: #ffa500;
+    box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.2);
+  }
+}
+
+/* Subtle pulse animation for loading icons */
+.pill-component.loading .pill-icon,
+.pill-component.loading .pill-arrow,
+.pill-component.loading .week-dropdown,
+.pill-component.loading .store-dropdown {
+  animation: subtle-pulse 2s infinite ease-in-out;
+  color: #ff8c00;
+}
+
+@keyframes subtle-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  .context-bar-v2 {
+    position: static !important;
+    background: var(--pill-bg) !important;
+    box-shadow: none !important;
+  }
+
+  .pill-component {
+    background: var(--pill-bg) !important;
+    border: 1px solid var(--text-primary) !important;
+  }
+}

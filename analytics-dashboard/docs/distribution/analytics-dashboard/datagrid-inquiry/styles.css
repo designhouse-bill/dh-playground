@@ -1,0 +1,2059 @@
+/* === Light Lite Theme + Inter === */
+
+/* Context Integration Styles */
+.grid-context-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.context-info {
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Comparison Mode Styles */
+.comparison-column {
+  background-color: #f8fafc;
+  border-left: 2px solid var(--blue);
+}
+
+.comparison-header {
+  background-color: #eff6ff;
+  font-weight: 600;
+}
+
+.delta-positive {
+  color: #059669;
+  font-weight: 600;
+}
+
+.delta-negative {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.delta-neutral {
+  color: var(--muted);
+}
+
+.comparison-cell {
+  position: relative;
+}
+
+.comparison-cell::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background-color: var(--blue);
+  opacity: 0.3;
+}
+
+/* === Light Lite Theme + Inter === */
+:root{
+  --bg:#efefef;
+  --bg-header: #fcfcfc;
+  --card:#ffffff;
+  --text:#0f172a;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --shadow:0 2px 12px rgba(15,23,42,.06);
+  --blue:#4272D8;
+  --blue-dark:#4E5370;
+  --green:#B8D64D;
+
+  /* Responsive spacing variables */
+  --grid-gap:8px;
+  --gap-lg:16px;
+  --gap-xl:20px;
+  --gap-md:16px;
+  --gap-sm:8px;
+  --gap-xs:4px;
+
+  /* Responsive breakpoints */
+  --breakpoint-mobile: 768px;
+  --breakpoint-tablet: 1200px;
+
+  /* Dynamic spacing (will adjust with media queries) */
+  --container-padding: 16px;
+  --card-padding: 16px;
+  --section-gap: 8px;
+
+  /* Touch targets */
+  --touch-target: 44px;
+  --info-btn-size: 20px;
+}
+html,body{margin: 0; padding: 0; font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,"Apple Color Emoji","Segoe UI Emoji";}
+body{background:var(--bg);color:var(--text); position: relative;}
+h1,h2,h3{margin:0}
+h1{font-size:22px !important;font-weight:800}
+h2{font-size:18px !important;font-weight:800}
+h3{font-size:12px !important;letter-spacing:.04em;color:var(--muted);font-weight:700;   text-transform: uppercase;}
+.context-banner {padding-top: 0 ;}  
+/* Header overrides - let components.css handle main layout */
+.back-button {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 4px;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.back-button:hover {
+  color: var(--text);
+}
+.banner h2{margin:0;font-size:20px;font-weight:700;}
+header.page-header .left{display:flex;gap:var(--gap-sm);    flex-direction: column;
+    align-items: flex-start;}
+header.page-header .left .week-context .week-line {
+  display: flex; flex-direction: column;
+align-items: flex-start;
+gap: var(--gap-xs);
+}
+ header.page-header .header-center .week-context .week-line .week-select-wrapper select.week-select {
+
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background-color: transparent;
+    font-size: 1.3rem;
+    }
+header.page-header .header-center .week-context .week-line .status {
+font-size: 0.7rem;
+}
+header.page-header .header-center {
+display: flex; flex-direction: row;
+gap: var(--gap-sm); align-items: stretch;
+}
+header.page-header .header-right .banner h2 {
+font-size: 1.1rem;
+display: none;
+}
+header.page-header .header-right .filters-stack {
+display: flex;
+flex-direction: column;
+gap: 4px;
+}
+header.page-header .header-right .filter-row {
+display: flex;
+align-items: center;
+gap: 8px;
+min-width: 250px;;
+}
+header.page-header .header-right .filter-row label {
+font-size: 1.27rem;
+color: var(--muted);
+text-align: left;
+}
+header.page-header .header-right .filter-row select {
+font-size: 1rem;
+}
+
+
+
+
+/* Containers/rows (flex everywhere) */
+.container{max-width:1360px;margin:0 auto;padding: var(--gap-lg);}
+.container{padding:var(--gap-lg) var(--gap-lg) 0 var(--gap-lg);}
+.section-title {font-weight: 900; width: 100%; border-top: 2px solid gray; padding-top: var(--gap-sm);}
+.row{display:flex;flex-direction:column;gap:0;margin-bottom:var(--gap-sm); }
+.row.row-2, .row.row-category-chart {margin-bottom: 0}
+
+/* Make all cards in all rows use flexible height */
+.card {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body {
+  flex: 1;
+  min-height: 0;
+}
+/*YTD 3-up layout */
+.ytd-container {display:flex;gap:var(--gap-sm);margin-bottom:var(--gap-sm)}
+.ytd-container .grid {
+  display: flex;
+  gap: var(--gap-sm);
+  flex: 2;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.ytd-container .grid.one-up {
+  flex: 1;
+}
+.ytd-container .grid.one-up .card {
+  width: 100%;
+}
+
+/* Category container layout */
+.category-container {display:flex;gap:var(--gap-sm);margin-bottom:var(--gap-sm)}
+.category-container .grid {
+  display: flex;
+  gap: var(--gap-sm);
+  flex: 1;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.category-container .grid .card {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Section category row container layout */
+.section-category-row-container {
+  display: flex;
+  gap: var(--gap-sm);
+  margin-bottom: var(--gap-sm);
+}
+.section-category-row-container .row-category-number {
+  flex: 1;
+}
+.section-category-row-container .row-category-chart {
+  flex: 3;
+}
+.row-category-number .grid.two-up {
+  display: flex;
+  flex-direction: column;
+}
+.row-category-chart .category-container .grid .card {
+  min-width: 300px;
+}
+
+/* Size and Deal section flex properties */
+.size, .deal {
+  flex: 1;
+}
+.size .card.small, .deal .card.small {
+  flex: 1;
+}
+.row.row-2 .three-up .card:nth-child(2) .small {margin-bottom: var(--gap-sm);}
+.row.row-2 .three-up .card:nth-child(2) .small .title {
+  font-size: 12px;
+  font-weight: normal;
+}
+.row.row-2 .three-up .card:nth-child(2) .small .total {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+/* Row 4 layout safety (keeps cards side-by-side using flex) */
+.row.row-4 {
+  display: flex;
+  gap: 0;
+  align-items: stretch;
+}
+/* Row 4 promotions grid - desktop flexbox layout */
+.row.row-4 .grid.cols-2.promotions {
+  display: flex;
+  align-items: stretch; /* Make children fill height */
+  gap: var(--gap-sm);
+}
+
+.row.row-4 .grid.cols-2.promotions > .chart-card {
+  flex: 1; /* Both cards take equal width and fill height */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure chart-card flexes to row height, not content height */
+.row.row-4 .grid.cols-2.promotions .card.chart-card {
+  min-height: 0; /* Allow it to shrink */
+  height: auto; /* Don't set fixed height */
+}
+
+/* Chart-card card-body should expand to fill height */
+.row.row-4 .grid.cols-2.promotions .card.chart-card .card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+/* Heatmap card (fixed size & scroll) */
+.heatmap-card .card-body{padding:0;overflow:auto}
+.heatmap-img{width:100%;display:block}
+.heatmap-card {
+  width: 440px; /* Fixed width for desktop */
+  display: flex;
+  flex-direction: column;
+}
+.chart-card, .heatmap-card {
+  min-height: 600px; /* Fixed height for desktop */
+  max-height: 700px;
+}
+.heatmap-card .card-body.heatmap-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-bottom: 10px;
+}
+
+/* Promotion Performance bars container should match heatmap height */
+.bars-wrap {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+}
+
+.heatmap-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.grid{display:flex;gap:var(--gap-sm)}
+
+.grid.cols-1 > .col, .grid.cols-2 > .col, .grid.cols-3 > .col, .grid.cols-4 > .col{flex:1}
+
+
+/* Cards */
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);margin:0;}
+.card-head{display: flex; flex-direction: row; justify-content: space-between;
+    align-items: center; padding:0 0 var(--gap-xs) var(--gap-xs);border-bottom:1px solid var(--border);}
+
+/* Card header left and right containers */
+.card-head-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-head-right {
+    display: flex;
+    align-items: center;
+}
+
+/* Info button styling */
+.info-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--bg);
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: serif;
+}
+
+.info-btn:hover {
+    background: var(--bg-hover, #f5f5f5);
+    border-color: var(--text);
+    color: var(--text);
+}
+
+.info-btn:focus {
+    outline: 2px solid #4272D8;
+    outline-offset: 2px;
+}
+
+.info-btn[aria-expanded="true"] {
+    background: #4272D8;
+    border-color: #4272D8;
+    color: white;
+}
+
+/* Overlay tooltip system */
+.tooltip-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(15, 23, 42, 0.12);
+    padding: 16px;
+    max-width: 320px;
+    min-width: 240px;
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+}
+
+.tooltip-overlay.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.tooltip-overlay::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 20px;
+    width: 12px;
+    height: 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-right: none;
+    border-bottom: none;
+    transform: rotate(45deg);
+    z-index: -1;
+}
+
+.tooltip-overlay.position-top::before {
+    top: auto;
+    bottom: -6px;
+    transform: rotate(225deg);
+}
+
+.tooltip-overlay.position-left::before {
+    top: 50%;
+    left: auto;
+    right: -6px;
+    transform: translateY(-50%) rotate(135deg);
+}
+
+.tooltip-overlay.position-right::before {
+    top: 50%;
+    left: -6px;
+    transform: translateY(-50%) rotate(-45deg);
+}
+
+.tooltip-overlay .tooltip-title {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.tooltip-overlay .tooltip-content {
+    margin: 0 0 12px 0;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--text);
+}
+
+.tooltip-overlay .tooltip-why-important {
+    margin: 0;
+    padding: 12px 0 0 0;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    line-height: 1.3;
+    color: var(--muted);
+}
+
+.tooltip-overlay .tooltip-why-important strong {
+    color: var(--text);
+    font-weight: 600;
+}
+
+/* Legacy container support - hide for overlay system */
+.card-kpi-container {
+    display: none;
+}
+
+/* Small detail buttons for KPI drill-down */
+.detail-btn {
+  font-size: 11px;
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.detail-btn:hover {
+  background: var(--card);
+  color: var(--text);
+  border-color: var(--blue);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.card-body{padding:var(--gap-lg);}
+.card.trend .card-body, .card.lift .card-body{padding:0 var(--gap-lg);}
+
+/* KPI tiles */
+.card.kpi {
+    min-width: 200px;
+    flex: 1;
+}
+.card.kpi .big{font-size:28px;font-weight:800}
+.card.kpi .small{font-size:16px;font-weight:800}
+.subtext{color:var(--muted);font-size:12px}
+
+/* Chart hosts need a guaranteed height */
+.chart-host{width:100%;flex:1;min-width:0;overflow:visible}
+
+/* Rank block */
+.rank .rank-row{display:flex;gap:var(--gap-sm);align-items:center;font-size:14px}
+.rank .pos{color:var(--green);font-weight:700}
+.rank .neg{color:#d14343;font-weight:700}
+
+/* Bars list (Promotion Performance) */
+.bars{display:flex;flex-direction:column;gap:12px}
+.bar{display:flex;align-items:center;gap:12px}
+.bar .thumb{width:72px;height:48px;object-fit:cover;border-radius:8px}
+.bar .label{flex:1 1 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size: 1rem; max-width: 250px;}
+.bar .meter {flex-grow: 1;}
+.microbar{width:100%}
+.microbar-shell{width:100%;height:16px;background:#f0f0f0;border-radius:999px;overflow:hidden}
+.microbar-fill{height:100%;background:var(--blue);border-radius:999px}
+/* Animate promotion microbars */
+.bars .microbar-fill {
+  transition: width 400ms ease, background-color 250ms ease;
+  will-change: width;
+}
+/* Promotion Performance color by mode */
+#promotion-performance.mode-composite .microbar-fill { background: var(--green); }
+#promotion-performance.mode-percentile .microbar-fill { background: var(--blue); }
+.val{width:48px;text-align:right;font-weight:700; padding: 0 var(--gap-sm); font-size: 1.4rem;}
+button.toggle-btn {
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  text-decoration: none; /* Remove underline for anchor tags */
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-md);
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  background-color: transparent; /* Often no background fill */
+  color: #333; /* A darker text color for contrast */
+  border: 1px solid #ccc; /* A subtle border */
+}
+button.toggle-btn span.swatch.s-upmid {background: var(--blue);}
+button.toggle-btn span.swatch.s-top{background: var(--green);}
+button.toggle-btn.is-active {
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Default box shadow */
+  transition: box-shadow 0.2s ease-in-out; /* Smooth transition for the shadow */
+
+}
+
+/* Hover state for secondary button */
+button.toggle-btn:hover {
+  background-color: #f0f0f0; /* Light background on hover */
+  border-color: #999; /* Slightly darker border on hover */
+}
+
+/* Optional: Disabled state for secondary button */
+button.toggle-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+
+/* Mini stack for Promotion Position Performance */
+.stack-legend{display:flex;flex-direction:column;gap:6px}
+.stack-row{display:flex;align-items:center;gap:8px;font-size:12px}
+.swatch{width:10px;height:10px;border-radius:10px;display:inline-block}
+.s-top{background:var(--blue)}
+.s-upmid{background:#5cc8a1}
+.s-lomid{background:#e0a955}
+.s-bottom{background:#e05555}
+.stack-row .pct{margin-left:auto;color:var(--muted);font-weight:700}
+/* Deal Type HBAR tile: wrapper fills card-body and scrolls if needed */
+.col.deal-type {display: flex;}
+.col.deal-type .card.small {    flex-grow: 1;   display: flex; align-items: stretch; flex-direction: column;}
+
+.col.deal-type .card.small > :nth-child(2) {
+      flex-grow: 1;
+    }
+.col.deal-type .card.small .dealtype-wrap {height: 100%;
+  flex: 1 1 auto;          /* fill the tile body */
+  overflow-y: auto;           /* scroll if there are many deal types */ }
+.col.deal-type .card.small .dealtype-wrap .chart-host {
+  width: 100%;
+  height: 100%;
+}
+/* Tighter category labels for many rows */
+#dealtype-bars .echarts-axis-label {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+
+
+/* Slightly smaller y-axis font on tight widths to avoid crunching */
+@media (max-width: 900px) {
+  .deal-type .card-body .dealtype-wrap .chart-host .ecs-axis-label { 
+    font-size: 12px;
+  }
+}
+
+/* Simple utility widths for 3-up row - handled by responsive system below */
+
+/* Small KPI blocks row (sharing) */
+.slim-kpis{display:flex;gap:var(--gap-sm)}
+.slim-kpis .card{flex:1}
+.slim-kpis .big{font-size:22px}
+
+/* Donut legend text color fix */
+.echarts-legend{color:var(--muted)}
+
+/* PrimeNG-style Multiselect Components */
+.prime-multiselect {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  min-width: 200px;
+}
+
+.prime-multiselect-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 40px;
+}
+
+.prime-multiselect-trigger:hover {
+  border-color: var(--blue);
+}
+
+.prime-multiselect-trigger:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 2px rgba(66, 114, 216, 0.2);
+}
+
+.prime-multiselect-label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  min-height: 20px;
+}
+
+.prime-multiselect-placeholder {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.prime-multiselect-dropdown {
+  display: flex;
+  align-items: center;
+  color: var(--muted);
+  transition: transform 0.2s ease;
+}
+
+.prime-multiselect.open .prime-multiselect-dropdown {
+  transform: rotate(180deg);
+}
+
+.prime-multiselect-overlay {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  max-height: 300px;
+  overflow: hidden;
+  margin-top: 2px;
+}
+
+.prime-multiselect-header {
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+  background: #f8f9fa;
+}
+
+.prime-checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.prime-checkbox-container label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.prime-filter-container {
+  position: relative;
+}
+
+.prime-filter-input {
+  width: 100%;
+  padding: 6px 12px 6px 32px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 13px;
+  background: var(--card);
+  color: var(--text);
+}
+
+.prime-search-icon {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.prime-filter-input:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 1px rgba(66, 114, 216, 0.2);
+}
+
+.prime-multiselect-list {
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.prime-multiselect-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  font-size: 14px;
+}
+
+.prime-multiselect-item:hover {
+  background-color: #f5f5f5;
+}
+
+.prime-multiselect-item.selected {
+  background-color: rgba(66, 114, 216, 0.1);
+}
+
+.prime-multiselect-item input[type="checkbox"] {
+  margin: 0;
+  cursor: pointer;
+}
+
+.prime-multiselect-item label {
+  cursor: pointer;
+  flex: 1;
+  margin: 0;
+  font-size: 14px;
+  color: var(--text);
+}
+
+/* Selected items display */
+.prime-multiselect-value {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.prime-multiselect-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: var(--blue);
+  color: white;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.prime-multiselect-chip-remove {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin-left: 4px;
+}
+
+.prime-multiselect-chip-remove:hover {
+  opacity: 0.7;
+}
+
+/* Scrollbar styling for overlay */
+.prime-multiselect-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.prime-multiselect-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.prime-multiselect-list::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.prime-multiselect-list::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Standard Select Elements - Match PrimeNG Style */
+select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 40px;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+select:hover {
+  border-color: var(--blue);
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 2px rgba(66, 114, 216, 0.2);
+}
+
+/* Specific styling for form controls in filter panels */
+.card-body select,
+#tier1-content select,
+#tier2-content select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 40px;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.card-body select:hover,
+#tier1-content select:hover,
+#tier2-content select:hover {
+  border-color: var(--blue);
+}
+
+.card-body select:focus,
+#tier1-content select:focus,
+#tier2-content select:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 2px rgba(66, 114, 216, 0.2);
+}
+
+/* Override any existing select styling that might conflict */
+header.page-header .header-center .store select,
+header.page-header .header-center .version select {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
+  min-height: 40px;
+  transition: all 0.2s ease;
+}
+
+header.page-header .header-center .store select:hover,
+header.page-header .header-center .version select:hover {
+  border-color: var(--blue);
+}
+
+header.page-header .header-center .store select:focus,
+header.page-header .header-center .version select:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 2px rgba(66, 114, 216, 0.2);
+}
+
+/* PrimeNG TreeTable Styling */
+.p-component {
+  font-family: 'Inter', sans-serif;
+}
+
+.p-treetable {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.p-treetable-header {
+  background: #f8f9fa;
+  border-bottom: 1px solid var(--border);
+  padding: 1rem;
+}
+
+.p-iconfield {
+  position: relative;
+  display: inline-flex;
+}
+
+.p-iconfield-left .p-inputicon {
+  left: 0.75rem;
+}
+
+.p-inputicon {
+  position: absolute;
+  top: 50%;
+  margin-top: -0.5rem;
+  color: var(--muted);
+  line-height: 1;
+}
+
+.p-inputicon.pi-search:before {
+  content: "🔍";
+  font-family: system-ui;
+  font-size: 14px;
+}
+
+.p-inputtext {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--card);
+  padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 250px;
+}
+
+.p-inputtext:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 2px rgba(66, 114, 216, 0.2);
+}
+
+.p-treetable-scrollable-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.p-treetable-scrollable-view {
+  overflow: auto; /* Both horizontal and vertical scroll on main container */
+  max-height: 70vh;
+  width: 100%;
+  position: relative;
+}
+
+.p-treetable-scrollable-header {
+  background: #f8f9fa;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  overflow: visible; /* Allow header to show full width */
+}
+
+.p-treetable-scrollable-header-box {
+  position: relative;
+  width: 2400px; /* Match table width */
+}
+
+.p-treetable-scrollable-header-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.p-treetable-thead th {
+  text-align: left;
+  padding: 1rem 0.75rem;
+  font-weight: 600;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+  background: #f8f9fa;
+  font-size: 14px;
+}
+
+.p-treetable-scrollable-body {
+  overflow: visible; /* Remove overflow from body, let parent handle it */
+  position: relative;
+}
+
+.p-treetable-tbody {
+  background: var(--card);
+}
+
+.p-treetable-tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background-color 0.2s;
+}
+
+.p-treetable-tbody tr:hover {
+  background: #f5f5f5;
+}
+
+.p-treetable-tbody td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  color: var(--text);
+}
+
+/* Column filter inputs */
+.p-treetable-thead tr:nth-child(2) th {
+  padding: 0.5rem 0.75rem;
+  background: #ffffff;
+  border-top: 1px solid var(--border);
+}
+
+.p-column-filter-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 13px;
+  background: var(--card);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.p-column-filter-input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 1px rgba(66, 114, 216, 0.2);
+}
+
+.p-column-filter-input::placeholder {
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* Sortable column headers */
+.p-sortable-column {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+.p-sortable-column:hover {
+  background: #e9ecef;
+}
+
+.p-sortable-column-icon {
+  margin-left: 0.5rem;
+  color: var(--muted);
+}
+
+.p-sortable-column.p-highlight {
+  background: #e3f2fd;
+}
+
+.p-sortable-column.p-highlight .p-sortable-column-icon {
+  color: var(--blue);
+}
+
+/* Row selection and interaction */
+.p-element {
+  outline: none;
+}
+
+.p-element:focus-visible {
+  box-shadow: 0 0 0 2px rgba(66, 114, 216, 0.2);
+}
+
+/* Column Sizing and Alignment */
+.p-treetable-scrollable-header-table,
+.p-treetable-scrollable-body table {
+  table-layout: fixed;
+  width: 2400px; /* 18 columns × 133px = 2400px - Forces horizontal scroll */
+  min-width: 2400px;
+}
+
+/* Equal width columns with max-width */
+.p-treetable-thead th,
+.p-treetable-tbody td {
+  width: 133px; /* Slightly wider for better readability */
+  max-width: 133px;
+  min-width: 133px;
+  text-align: left;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 0.75rem 0.5rem;
+  box-sizing: border-box;
+}
+
+/* Numeric column alignment */
+.number {
+  text-align: right !important;
+}
+
+/* Specific column content alignment only */
+.col-thumbnail {
+  text-align: center !important;
+}
+
+.col-name {
+  /* Allow text wrapping for long names within 120px */
+  white-space: normal !important;
+  word-wrap: break-word;
+  line-height: 1.2;
+}
+
+/* Text columns default to left align */
+.col-category,
+.col-dealtype,
+.col-size,
+.col-posrange,
+.col-performance,
+.col-shared,
+.col-expanded {
+  text-align: left !important;
+}
+
+/* Numeric columns align right */
+.col-position,
+.col-price,
+.col-days,
+.col-civ,
+.col-cc,
+.col-atl,
+.col-composite,
+.col-percentile,
+.col-rank {
+  text-align: right !important;
+}
+
+/* Column content alignment */
+.col-thumbnail img {
+  margin: 0 auto;
+}
+
+/* Ensure content in number cells aligns right */
+.number > * {
+  text-align: right;
+  width: 100%;
+}
+
+/* Special handling for percentile progress bars */
+.col-percentile .flex {
+  justify-content: flex-end;
+}
+
+/* Override Tailwind text alignment for our column classes */
+.col-position,
+.col-price,
+.col-days,
+.col-civ,
+.col-cc,
+.col-atl,
+.col-composite,
+.col-rank {
+  direction: ltr;
+}
+
+/* Semantic Content Classes */
+/* Promotion thumbnail styling */
+.promotion-thumbnail {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Promotion name styling */
+.promotion-name {
+  max-width: 9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+/* Category badge styling */
+.category-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+/* Deal type styling */
+.deal-type {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+/* Position range styling */
+.position-range-top {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.position-range-mid {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.position-range-bottom {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+/* Price formatting */
+.price-value {
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Percentile display styling */
+.percentile-display {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.percentile-value {
+  min-width: 2rem;
+  text-align: right;
+  font-weight: 500;
+}
+
+.percentile-bar {
+  flex: 1;
+  height: 0.5rem;
+  background-color: #e5e7eb;
+  border-radius: 0.25rem;
+  overflow: hidden;
+}
+
+.percentile-progress {
+  height: 100%;
+  background-color: #3b82f6;
+  transition: width 0.3s ease;
+}
+
+/* Rank styling */
+.rank-value {
+  font-weight: 600;
+  color: #374151;
+}
+
+/* Filter Controls Styling */
+.filter-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filter-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.filter-input {
+  width: 100%;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  background-color: white;
+  color: #374151;
+}
+
+.filter-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 1px #3b82f6;
+}
+
+.filter-select {
+  width: 100%;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  background-color: white;
+  color: #374151;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1rem 1rem;
+  padding-right: 2rem;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 1px #3b82f6;
+}
+
+/* Inquiry Chips Styling */
+.inquiry-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  background-color: #f8fafc;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  min-height: 2.5rem;
+  align-items: flex-start;
+  align-content: flex-start;
+}
+
+.inquiry-chips:empty {
+  display: none;
+}
+
+.inquiry-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  background-color: #3b82f6;
+  color: white;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.inquiry-chip:hover {
+  background-color: #2563eb;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.inquiry-chip-label {
+  font-weight: 600;
+  color: #e3e3e3;
+}
+
+.inquiry-chip-value {
+  color: white;
+}
+
+.inquiry-chip-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  margin-left: 0.25rem;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.inquiry-chip-remove:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.inquiry-chip-remove::before {
+  content: "×";
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: white;
+  line-height: 1;
+}
+
+/* Hierarchical chip colors based on filter priority */
+/* 1. Header chips (Week, Store, Version) - #4E5370 */
+.inquiry-chip.chip-header {
+  background-color: #4E5370;
+}
+
+.inquiry-chip.chip-header:hover {
+  background-color: #3d4159;
+}
+
+/* 2. Analysis Approach chips (Scope, Lens, Sort By, Metric) - #4272D8 */
+.inquiry-chip.chip-analysis {
+  background-color: #4272D8;
+}
+
+.inquiry-chip.chip-analysis:hover {
+  background-color: #3461c7;
+}
+
+/* 3. Content Filter chips (Categories, Deal Types, etc.) - Darkened #B8D64D for 4.5:1 contrast */
+.inquiry-chip.chip-content {
+  background-color: #7a9130 !important; /* Darkened version of #B8D64D to meet contrast requirements */
+}
+
+.inquiry-chip.chip-content:hover {
+  background-color: #6b7e2a !important;
+}
+
+/* Responsive behavior */
+@media (max-width: 768px) {
+  .p-treetable-scrollable-header-table,
+  .p-treetable-scrollable-body table {
+    width: 2400px; /* Maintain fixed width on mobile */
+    min-width: 2400px;
+  }
+
+  .p-inputtext {
+    width: 200px;
+  }
+
+  /* Keep 133px column width on mobile */
+  .p-treetable-thead th,
+  .p-treetable-tbody td {
+    width: 133px;
+    max-width: 133px;
+    min-width: 133px;
+  }
+}
+
+/* ========================================================================== */
+/* RESPONSIVE DESIGN - Mobile First Approach */
+/* ========================================================================== */
+
+/* Base styles are mobile-first (below 768px) */
+
+/* Responsive body adjustments */
+
+
+/* Responsive utility classes */
+.responsive-grid {
+  display: grid;
+  gap: var(--grid-gap);
+}
+
+.responsive-flex {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--grid-gap);
+}
+
+/* Hide elements on specific breakpoints */
+.mobile-only { display: block; }
+.tablet-up { display: none; }
+.desktop-only { display: none; }
+
+/* ========================================================================== */
+/* MOBILE STYLES (Base - below 768px) */
+/* ========================================================================== */
+
+/* Header responsive for mobile */
+
+header.page-header .left {
+
+  align-items: center;
+}
+
+header.page-header .header-center {
+  justify-content: center;
+}
+
+
+
+/* Dashboard container responsive */
+.container {
+  padding: var(--container-padding);
+}
+
+/* Original working layout restored */
+.grid{display:flex;gap:var(--gap-sm)}
+.grid.cols-1 > .col, .grid.cols-2 > .col, .grid.cols-3 > .col, .grid.cols-4 > .col{flex:1}
+
+.three-up{display:flex;gap:var(--gap-sm)}
+.three-up > .card{flex:1}
+
+.four-up{display:flex;gap:var(--gap-sm)}
+.four-up > .card{flex:1 1 25%}
+
+.six-up{display:flex;gap:var(--gap-sm);flex-wrap:wrap}
+.six-up > .card{flex:1 1 16.6667%}
+
+.slim-kpis {
+  display: flex;
+  gap: var(--gap-sm);
+}
+
+/* Mobile responsive overrides - only where needed */
+@media (max-width: 767px) {
+  .grid, .three-up, .four-up, .slim-kpis {
+    flex-direction: column;
+  }
+
+  /* Mobile: 2 rows of 3 cards */
+  .six-up > .card {
+    flex: 1 1 33.33%;
+  }
+
+  /* Only rows 2-5 grids should stack vertically on mobile */
+  .row-2 .grid,
+  .row-category-chart .grid,
+  .row-4 .grid,
+  .promotion-container-size-deals .grid {
+    flex-direction: column;
+  }
+
+  /* Row-1 and shared promotion should remain horizontal on mobile */
+  .row-1 .grid,
+  .promotion-container-shared .grid {
+    flex-direction: row;
+  }
+
+  /* Heatmap card responsive on mobile */
+  .heatmap-card {
+    width: 100%; /* Full width on mobile */
+    max-width: 100%;
+    margin: 0;
+  }
+
+  /* Card headers should stack on mobile so info buttons are visible */
+  .card-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .card-head-right {
+    align-self: flex-start;
+  }
+}
+
+/* ========================================================================== */
+/* SMALL MOBILE STYLES (576px and below) */
+/* ========================================================================== */
+@media (max-width: 576px) {
+  /* Small Mobile: 3 rows of 2 cards */
+  .six-up > .card {
+    flex: 1 1 50%;
+  }
+}
+
+/* Row adjustments for mobile */
+.row {
+  margin-bottom: var(--section-gap);
+}
+
+/* Cards responsive */
+.card {
+  padding: var(--card-padding);
+}
+
+/* Chart heights on mobile */
+.chart-host {
+  min-height: 200px;
+  height: auto;
+}
+
+/* Row 2 special adjustments for mobile */
+.row.row-2 .three-up {
+  max-height: none; /* Remove height restriction on mobile */
+}
+
+/* Row 4 promotions layout for mobile */
+.row.row-4 .grid.cols-2.promotions {
+  flex-direction: column;
+  gap: var(--grid-gap);
+}
+
+/* Promotion performance table responsive */
+.bars {
+  gap: 8px; /* Tighter spacing on mobile */
+}
+
+.bar {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  padding: 12px;
+  background: var(--bg);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.bar .thumb {
+  width: 100%;
+  height: 80px;
+  align-self: center;
+  max-width: 120px;
+}
+
+.bar .label {
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  white-space: normal;
+  max-width: none;
+  line-height: 1.3;
+}
+
+.bar .meter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bar .val {
+  font-weight: 700;
+  color: #333333;
+  min-width: 40px;
+  text-align: center;
+}
+
+/* Touch-optimized interactions for mobile */
+.info-btn {
+  width: var(--touch-target);
+  height: var(--touch-target);
+  border-radius: 50%;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Larger touch targets on mobile */
+}
+
+.info-btn:hover,
+.info-btn:focus {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+/* Tooltip enhancements for touch */
+.tooltip-overlay {
+  min-width: 280px;
+  max-width: 90vw;
+  padding: 20px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.tooltip-overlay .tooltip-title {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.tooltip-overlay .tooltip-content {
+  font-size: 16px;
+  margin-bottom: 16px;
+}
+
+.tooltip-overlay .tooltip-why-important {
+  font-size: 14px;
+  padding-top: 16px;
+}
+
+/* Additional mobile refinements */
+/* Prevent horizontal scroll */
+html, body {
+  overflow-x: hidden;
+}
+
+/* Card responsiveness */
+.card {
+  min-width: 0; /* Prevent flex item overflow */
+  word-wrap: break-word;
+}
+
+/* Responsive images */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Better button spacing on touch devices */
+button {
+  touch-action: manipulation; /* Prevents double-tap zoom */
+}
+
+/* Section titles responsive */
+.section-title {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+/* ========================================================================== */
+/* TABLET STYLES (768px - 1199px) */
+/* ========================================================================== */
+@media (min-width: 768px) {
+  :root {
+    --container-padding: 8px;
+    --card-padding: 8px;
+    --section-gap: 8px;
+    --info-btn-size: 24px;
+  }
+
+  /* Show/hide utility classes */
+  .mobile-only { display: none; }
+  .tablet-up { display: block; }
+  .desktop-only { display: none; }
+
+  /* Typography adjustments */
+  h2 { font-size: 20px !important; }
+  h3 { font-size: 13px !important; }
+
+  /* Page header responsive for tablet */
+
+  header.page-header .left {
+    align-items: flex-start;
+  }
+
+  header.page-header .header-center, .header-right {
+    justify-content: flex-start;
+  }
+.header-right, .filters-stack {
+    display: flex;
+    flex-direction: row;
+    gap: var(--gap-lg);
+  }
+
+  /* Tablet adjustments - restore row layout (overrides mobile) */
+  .grid, .three-up, .slim-kpis {
+    flex-direction: row;
+  }
+
+  /* Tablet: 1 row of 6 cards same as desktop */
+  .six-up > .card {
+    flex: 1 1 13.667%;
+  }
+
+
+  /* Row 4 promotions for tablet */
+  .row.row-4 .grid.cols-2.promotions {
+    flex-direction: column; /* Stack vertically on tablet */
+    gap: var(--grid-gap);
+  }
+
+  /* Chart heights for tablet */
+  .chart-host {
+    min-height: 250px;
+  }
+
+
+  /* Promotion performance table for tablet */
+  .bars {
+    gap: 10px;
+  }
+
+  .bar {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+  }
+
+  .bar .thumb {
+    width: 60px;
+    height: 40px;
+    max-width: 60px;
+    align-self: auto;
+  }
+
+  .bar .label {
+    font-size: 13px;
+    font-weight: normal;
+    text-align: left;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .bar .meter {
+    flex-grow: 1;
+    gap: 0;
+  }
+
+  .bar .val {
+    min-width: 35px;
+    text-align: right;
+    font-size: 14px;
+  }
+
+  /* Touch optimizations for tablet */
+  .info-btn {
+    width: var(--info-btn-size);
+    height: var(--info-btn-size);
+    font-size: 14px;
+  }
+
+  .tooltip-overlay {
+    min-width: 320px;
+    max-width: 400px;
+    padding: 16px;
+    font-size: 14px;
+  }
+
+  .tooltip-overlay .tooltip-title {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  .tooltip-overlay .tooltip-content {
+    font-size: 14px;
+    margin-bottom: 14px;
+  }
+
+  .tooltip-overlay .tooltip-why-important {
+    font-size: 13px;
+    padding-top: 14px;
+  }
+
+  /* Section titles for tablet */
+  .section-title {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+}
+
+/* ========================================================================== */
+/* MEDIUM SCREENS (992px - 991px) - Override tablet 6-column layout */
+/* ========================================================================== */
+@media (max-width: 991px) {
+  /* Medium: 2 rows of 3 cards */
+  .six-up > .card {
+    flex: 1 1 33.33%;
+  }
+
+  /* Medium: 2 rows of 2 cards for four-up */
+  .four-up > .card {
+    flex: 1 1 50%;
+  }
+
+  /* Heatmap card responsive on tablet */
+  .heatmap-card {
+    width: 380px; /* Fixed width for tablet */
+  }
+}
+
+/* ========================================================================== */
+/* DESKTOP STYLES (1200px+) */
+/* ========================================================================== */
+@media (min-width: 1200px) {
+  :root {
+    --container-padding: 8px;
+    --card-padding: 8px;
+    --section-gap: 8px;
+    --info-btn-size: 20px; /* Smaller on desktop due to mouse precision */
+  }
+
+  /* Show/hide utility classes */
+  .mobile-only { display: none; }
+  .tablet-up { display: block; }
+  .desktop-only { display: block; }
+
+  /* Typography adjustments */
+  h2 { font-size: 18px !important; }
+  h3 { font-size: 10px !important; }
+
+
+  /* Row 4 back to side-by-side on desktop */
+  .row.row-4 .grid.cols-2.promotions {
+    flex-direction: row; /* Side-by-side on desktop */
+    gap: var(--grid-gap);
+  }
+
+  .row.row-4 .grid.cols-2.promotions > * {
+    width: 440px;
+  }
+
+  /* Slim KPIs optimized for desktop */
+  .slim-kpis {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .slim-kpis > * {
+    flex: 1;
+    min-width: 100px;
+  }
+
+  /* Chart heights for desktop */
+  .chart-host {
+    min-height: 300px;
+  }
+
+  /* Container max-width for very large screens */
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* Promotion performance table for desktop */
+  .bars {
+    gap: 12px;
+  }
+
+  .bar .thumb {
+    width: 72px;
+    height: 48px;
+    max-width: 72px;
+  }
+
+  .bar .label {
+    font-size: 1rem;
+    max-width: 250px;
+  }
+
+  .bar .val {
+    font-size: 16px;
+  }
+
+  /* Desktop optimizations */
+  .info-btn {
+    width: var(--info-btn-size);
+    height: var(--info-btn-size);
+    font-size: 12px;
+  }
+
+  .tooltip-overlay {
+    min-width: 240px;
+    max-width: 320px;
+    padding: 16px;
+    font-size: 13px;
+  }
+
+  .tooltip-overlay .tooltip-title {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .tooltip-overlay .tooltip-content {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .tooltip-overlay .tooltip-why-important {
+    font-size: 12px;
+    padding-top: 12px;
+  }
+
+  /* Section titles for desktop */
+  .section-title {
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+}
+
+/* Delta Cell Styles for Comparison Mode */
+.delta-cell {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.delta-value {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.delta-percent {
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+.delta-trend {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* Delta trend colors */
+.delta-up {
+  color: #059669; /* Green for positive changes */
+}
+
+.delta-up .delta-trend {
+  color: #059669;
+}
+
+.delta-down {
+  color: #dc2626; /* Red for negative changes */
+}
+
+.delta-down .delta-trend {
+  color: #dc2626;
+}
+
+.delta-neutral {
+  color: var(--muted);
+}
+
+/* Comparison mode column headers */
+.comparison-header {
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+  text-align: center;
+}
+
+/* Ensure delta cells are properly formatted in the grid */
+td .delta-cell {
+  width: 100%;
+  text-align: center;
+}
+
+/* Mobile responsiveness for delta cells */
+@media (max-width: 768px) {
+  .delta-cell {
+    font-size: 11px;
+    gap: 1px;
+  }
+
+  .delta-value {
+    font-size: 12px;
+  }
+
+  .delta-percent {
+    font-size: 10px;
+  }
+
+  .delta-trend {
+    font-size: 12px;
+  }
+}
+
+#datagrid-inquiry-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}

@@ -407,6 +407,8 @@ const DataUtils = {
 
 // Weekly metrics object
 const weeklyMetrics = {
+  current_week: 40,  // Current week for context bar
+
   overall: calculateMetrics(allPromotions, 'All Stores Combined'),
 
   by_store: {
@@ -436,6 +438,23 @@ const weeklyMetrics = {
   }
 };
 
+// Transform POC data structure for context bar compatibility
+const contextBarStoreHierarchy = {
+  all_stores: {
+    total_count: storeHierarchyPOC.stores.length
+  },
+  version_groups: storeHierarchyPOC.groups.map(group => ({
+    id: group.group_id,
+    name: group.group_name,
+    count: group.store_count
+  })),
+  individual_stores: storeHierarchyPOC.stores.map(store => ({
+    id: store.store_id,
+    name: store.store_name,
+    versionGroup: store.group_id
+  }))
+};
+
 // Main database object matching 004-data.js structure
 window.mockDatabase = {
   // Core data
@@ -444,7 +463,7 @@ window.mockDatabase = {
 
   // POC-specific additions
   storeHierarchy: storeHierarchyPOC,
-  store_hierarchy: storeHierarchyPOC,  // Compatibility alias for legacy code
+  store_hierarchy: contextBarStoreHierarchy,  // Transformed for context bar
   weeklyMetrics: weeklyMetrics,
 
   // Helper functions

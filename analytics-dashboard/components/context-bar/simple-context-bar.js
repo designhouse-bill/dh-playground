@@ -9,13 +9,17 @@ class SimpleContextBar {
     this.currentWeek = this.getCurrentWeek();
     this.pageType = this.detectPageType();
 
+    // Get store count dynamically from data
+    const hierarchy = this.getStoreHierarchy();
+    const storeCount = hierarchy.all.count;
+
     // Initialize with defaults
     this.selectedWeek = this.currentWeek;
     this.selectedScope = {
       level: 'all', // 'all', 'version-group', 'store'
       id: 'all',
       name: 'All Stores',
-      count: 67
+      count: storeCount
     };
     this.comparisonMode = false;
     this.selectedCompareWeek = null;
@@ -248,13 +252,17 @@ class SimpleContextBar {
   fallbackToDefaults(reason = 'error') {
     this.logWarning(`Falling back to defaults due to: ${reason}`);
 
+    // Get current store count from data
+    const hierarchy = this.getStoreHierarchy();
+    const storeCount = hierarchy.all.count;
+
     const safeDefaults = {
       selectedWeek: this.currentWeek,
       selectedScope: {
         level: 'all',
         id: 'all',
         name: 'All Stores',
-        count: 67
+        count: storeCount
       },
       comparisonMode: false,
       selectedCompareWeek: null
@@ -348,20 +356,37 @@ class SimpleContextBar {
   }
 
   getAvailableWeeks() {
-    // Generate last 12 weeks including current for better demonstration
-    // This allows for more comprehensive testing and scrolling behavior
-    const weeks = [];
-    for (let i = 11; i >= 0; i--) {
-      const weekNumber = this.currentWeek - i;
+    // Get weeks that actually have data from the promotions
+    const mockData = window.mockDatabase;
+    const availableWeekNumbers = new Set();
+
+    if (mockData && mockData.promotions) {
+      // Extract unique weeks from actual data
+      mockData.promotions.forEach(promo => {
+        if (promo.week) {
+          availableWeekNumbers.add(promo.week);
+        }
+      });
+    }
+
+    // If no weeks found in data, default to current week only
+    if (availableWeekNumbers.size === 0) {
+      availableWeekNumbers.add(this.currentWeek);
+    }
+
+    // Generate week objects for each available week
+    const weeks = Array.from(availableWeekNumbers).map(weekNumber => {
       const dateRange = this.getWeekDateRange(weekNumber);
-      weeks.push({
+      return {
         number: weekNumber,
         label: `Week ${weekNumber}: ${dateRange.start}-${dateRange.end}, 2025`,
         isCurrent: weekNumber === this.currentWeek,
         ...dateRange
-      });
-    }
-    return weeks;
+      };
+    });
+
+    // Sort in reverse chronological order (most recent first)
+    return weeks.sort((a, b) => b.number - a.number);
   }
 
   getSelectedWeekInfo() {

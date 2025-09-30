@@ -1485,6 +1485,9 @@ if (typeof window !== 'undefined') {
   // Main dashboard interface (backward compatible with POC data)
   window.mockDatabase = mockDatabaseScaled;
 
+  // Datagrid compatibility - alias for mockPromotions
+  window.mockPromotions = allPromotions;
+
   // Scaled data components
   window.allPromotionsScaled = allPromotions;
   window.storeHierarchyScaled = storeHierarchyScaled;

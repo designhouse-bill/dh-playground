@@ -195,6 +195,7 @@
     rgba(255, 255, 255, 0.05) 10px,
     rgba(255, 255, 255, 0.05) 20px
   );
+  pointer-events: none;
 }
 
 .ytd-metric {
@@ -205,13 +206,34 @@
 
 .ytd-metric .label {
   color: var(--white);
-  display: block;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
   font-size: 0.875rem;
   font-weight: 600;
   margin-bottom: var(--space-xs);
   opacity: 0.9;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.ytd-metric .label .info-btn {
+  position: relative;
+  z-index: 2;
+  color: var(--white);
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  opacity: 0.9;
+  transition: all 0.2s ease;
+}
+
+.ytd-metric .label .info-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  opacity: 1;
+  transform: scale(1.1);
 }
 
 .ytd-metric .value {

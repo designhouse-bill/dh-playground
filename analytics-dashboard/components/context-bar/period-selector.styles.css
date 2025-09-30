@@ -195,13 +195,7 @@
 }
 
 /* ===== WEEK SELECTORS ===== */
-.week-selectors {
-  margin-bottom: var(--space-lg, 24px);
-}
 
-.week-selector {
-  margin-bottom: var(--space-md, 16px);
-}
 
 .week-selector:last-child {
   margin-bottom: 0;

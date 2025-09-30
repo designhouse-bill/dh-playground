@@ -17,7 +17,7 @@
     <link rel="icon" type="image/x-icon" href="../assets/icons/favicon.ico">
 
     <!-- Preload critical resources -->
-    <link rel="preload" href="../mock-data/007-scaled-data.js?v=1.0" as="script">
+    <link rel="preload" href="../mock-data/007-scaled-data.js?v=1759237805" as="script">
     <link rel="preload" href="datagrid.js" as="script">
 </head>
 <body>
@@ -235,7 +235,7 @@
 
     <!-- Scripts -->
     <script src="../shared/error-handler.js"></script>
-    <script src="../mock-data/007-scaled-data.js?v=1.0"></script>
+    <script src="../mock-data/007-scaled-data.js?v=1759237805"></script>
     <script src="datagrid.js"></script>
 
     <!-- Context State Service -->
@@ -284,12 +284,12 @@
             // Initialize Context Bar first
             const contextBarContainer = document.getElementById('context-bar-container');
             if (contextBarContainer) {
-                new SimpleContextBar(contextBarContainer);
+                new SimpleContextBar(contextBarContainer, { basePath: '../' });
                 console.log('✅ Simple context bar initialized on inquiry page');
             }
 
-            // Wait for grid to be available
-            setTimeout(() => {
+            // Wait for grid to be available with polling
+            const waitForGrid = (attempts = 0, maxAttempts = 20) => {
                 if (window.grid) {
                     console.log('🔧 Applying URL parameters to grid:', {sort, direction, filter});
 
@@ -305,15 +305,21 @@
                     // Apply filter context if specified
                     if (filter) {
                         // This could be enhanced to apply specific filters based on the filter parameter
-                        // Filter context applied
+                        console.log('✅ Filter context:', filter);
                     }
 
                     // Re-render grid with new parameters
                     window.grid.render();
+                    console.log('✅ Grid rendered with navigation parameters');
+                } else if (attempts < maxAttempts) {
+                    console.log(`⏳ Waiting for grid (attempt ${attempts + 1}/${maxAttempts})...`);
+                    setTimeout(() => waitForGrid(attempts + 1, maxAttempts), 200);
                 } else {
-                    console.warn('⚠️ Grid not available yet, parameters not applied');
+                    console.error('❌ Grid not available after maximum attempts');
                 }
-            }, 500);
+            };
+
+            waitForGrid();
         });
     </script>
 </body>

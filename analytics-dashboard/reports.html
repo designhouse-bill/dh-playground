@@ -19,6 +19,7 @@
     <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
 
     <!-- CDN Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
@@ -176,49 +177,38 @@
                     <div class="card-body">
                         <nav class="quick-reports">
                             <h3>Quick Reports</h3>
-                            <button class="btn btn-secondary">Weekly Summary</button>
-                            <button class="btn btn-secondary">Category Report</button>
+                            <button id="simple-chart-btn" class="btn btn-primary">
+                                📊 Simple Chart
+                            </button>
+                            <button id="default-weekly-btn" class="btn btn-secondary">
+                                📈 Default Weekly
+                            </button>
                         </nav>
                     </div>
                 </section>
             </aside>
 
-            <!-- Main area for report configuration -->
-            <main id="reports-main" class="reports-main">
-                <section class="card">
-                    <header class="card-header">
-                        <h2>Report Configuration</h2>
-                    </header>
-                    <div class="card-body">
-                        <form class="report-config">
-                            <div class="form-group">
-                                <label for="template">Template:</label>
-                                <select id="template" class="form-control">
-                                    <option value="">Select a template</option>
-                                    <option value="weekly">Weekly Summary</option>
-                                    <option value="category">Category Report</option>
-                                    <option value="custom">Custom Report</option>
-                                </select>
-                            </div>
-                            <div id="options" class="report-options">
-                                <!-- Options will be populated based on template selection -->
-                                <p class="text-muted">Select a template to see configuration options</p>
-                            </div>
-                        </form>
-                    </div>
-                </section>
-            </main>
-
             <!-- Preview area for report output -->
-            <aside id="reports-preview" class="reports-preview">
+            <aside id="reports-preview" class="reports-preview" style="grid-column: span 2;">
                 <section class="card">
-                    <header class="card-header">
+                    <header class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
                         <h2>Report Preview</h2>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button id="export-pdf-btn" class="btn btn-secondary" style="display: none;">
+                                📄 PDF
+                            </button>
+                            <button id="export-excel-btn" class="btn btn-secondary" style="display: none;">
+                                📊 Spreadsheet
+                            </button>
+                        </div>
                     </header>
-                    <div class="card-body">
-                        <iframe id="preview" class="report-preview-frame" src="about:blank" frameborder="0">
-                            Your browser does not support iframes.
-                        </iframe>
+                    <div class="card-body" style="padding: 0;">
+                        <div id="preview" style="min-height: 600px; background: var(--bg);">
+                            <div style="display: flex; align-items: center; justify-content: center; height: 600px; color: var(--muted); flex-direction: column;">
+                                <div style="font-size: 48px; margin-bottom: 1rem;">📊</div>
+                                <div>Click "Weekly Performance" to generate report</div>
+                            </div>
+                        </div>
                     </div>
                 </section>
             </aside>
@@ -236,8 +226,16 @@
     <!-- Simple Context Bar -->
     <script src="components/context-bar/simple-context-bar.js"></script>
 
-    <!-- Initialize Context Bar -->
+    <!-- Report Generators -->
+    <script src="reports/SimpleChartReport.js"></script>
+    <script src="reports/DefaultWeeklyReport.js"></script>
+
+    <!-- Initialize Context Bar and Reports -->
     <script>
+        let simpleChartReport = null;
+        let defaultWeeklyReport = null;
+        let currentReport = null;
+
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize URL synchronization
             if (window.contextStateService) {
@@ -266,7 +264,198 @@
             } else {
                 console.error('❌ Context bar container not found on reports page');
             }
+
+            // Initialize both report types
+            if (typeof SimpleChartReport !== 'undefined') {
+                simpleChartReport = new SimpleChartReport('preview');
+                console.log('✅ SimpleChartReport initialized');
+            }
+
+            if (typeof DefaultWeeklyReport !== 'undefined') {
+                defaultWeeklyReport = new DefaultWeeklyReport('preview');
+                console.log('✅ DefaultWeeklyReport initialized');
+            }
+
+            // Auto-load Simple Chart by default
+            setTimeout(() => {
+                if (simpleChartReport) {
+                    generateReport(simpleChartReport);
+                }
+            }, 500);
+
+            // Wire up Simple Chart button
+            const simpleChartBtn = document.getElementById('simple-chart-btn');
+            if (simpleChartBtn) {
+                simpleChartBtn.addEventListener('click', () => {
+                    simpleChartBtn.classList.add('btn-primary');
+                    simpleChartBtn.classList.remove('btn-secondary');
+                    document.getElementById('default-weekly-btn')?.classList.remove('btn-primary');
+                    document.getElementById('default-weekly-btn')?.classList.add('btn-secondary');
+                    generateReport(simpleChartReport);
+                });
+            }
+
+            // Wire up Default Weekly button
+            const defaultWeeklyBtn = document.getElementById('default-weekly-btn');
+            if (defaultWeeklyBtn) {
+                defaultWeeklyBtn.addEventListener('click', () => {
+                    defaultWeeklyBtn.classList.add('btn-primary');
+                    defaultWeeklyBtn.classList.remove('btn-secondary');
+                    document.getElementById('simple-chart-btn')?.classList.remove('btn-primary');
+                    document.getElementById('simple-chart-btn')?.classList.add('btn-secondary');
+                    generateReport(defaultWeeklyReport);
+                });
+            }
         });
+
+        /**
+         * Generate report with current context
+         */
+        function generateReport(reportInstance) {
+            if (!reportInstance) return;
+
+            currentReport = reportInstance;
+
+            // Get current context
+            const contextState = window.contextBar ? {
+                week: window.contextBar.selectedWeek || 40,
+                scopeLevel: window.contextBar.selectedScope?.level || 'all',
+                scopeValue: window.contextBar.selectedScope?.id || 'all',
+                scopeName: window.contextBar.selectedScope?.name || 'All Stores'
+            } : {
+                week: 40,
+                scopeLevel: 'all',
+                scopeValue: 'all',
+                scopeName: 'All Stores'
+            };
+
+            // Update report context
+            reportInstance.currentWeek = contextState.week;
+            reportInstance.currentScope = {
+                level: contextState.scopeLevel,
+                value: contextState.scopeValue,
+                name: contextState.scopeName
+            };
+
+            // Generate report
+            reportInstance.generateReport();
+
+            // Show export buttons
+            document.getElementById('export-pdf-btn').style.display = 'block';
+            document.getElementById('export-excel-btn').style.display = 'block';
+
+            console.log('📊 Report generated');
+        }
+
+        // Wire up PDF export button (after DOM loaded)
+        document.addEventListener('DOMContentLoaded', function() {
+            const pdfBtn = document.getElementById('export-pdf-btn');
+            if (pdfBtn) {
+                pdfBtn.addEventListener('click', () => {
+                    console.log('📄 Exporting PDF...');
+                    exportReportAsPDF();
+                });
+            }
+
+            // Wire up Excel export button
+            const excelBtn = document.getElementById('export-excel-btn');
+            if (excelBtn) {
+                excelBtn.addEventListener('click', () => {
+                    console.log('📊 Exporting spreadsheet...');
+                    exportReportAsExcel();
+                });
+            }
+        });
+
+        /**
+         * Export report as PDF
+         */
+        function exportReportAsPDF() {
+            const previewElement = document.getElementById('preview');
+            if (!previewElement) return;
+
+            // Use html2canvas + jsPDF
+            if (typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined') {
+                alert('PDF export libraries not loaded');
+                return;
+            }
+
+            html2canvas(previewElement, {
+                scale: 2,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new window.jspdf.jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+
+                const imgWidth = 210; // A4 width in mm
+                const pageHeight = 297; // A4 height in mm
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+
+                const filename = `Weekly_Report_Week${currentReport?.currentWeek || 40}_${new Date().toISOString().split('T')[0]}.pdf`;
+                pdf.save(filename);
+
+                console.log('✅ PDF exported:', filename);
+            }).catch(error => {
+                console.error('❌ PDF export failed:', error);
+                alert('Failed to export PDF: ' + error.message);
+            });
+        }
+
+        /**
+         * Export report data as Excel spreadsheet
+         */
+        function exportReportAsExcel() {
+            if (!currentReport || typeof XLSX === 'undefined') {
+                alert('Excel export not available');
+                return;
+            }
+
+            // Get filtered promotions
+            const promotions = currentReport.filterPromotions(
+                currentReport.currentWeek,
+                currentReport.currentScope
+            );
+
+            if (promotions.length === 0) {
+                alert('No data to export');
+                return;
+            }
+
+            // Format data for Excel
+            const excelData = promotions.map(promo => ({
+                'Week': promo.week,
+                'Store': promo.storeId,
+                'Store Group': promo.storeGroup,
+                'Product': promo.productName,
+                'Category': promo.category,
+                'Views': promo.views,
+                'Clicks': promo.clicks,
+                'CTR': ((promo.clicks / promo.views) * 100).toFixed(2) + '%',
+                'Composite Score': promo.compositeScore.toFixed(1),
+                'Rank': promo.rank
+            }));
+
+            // Create workbook and worksheet
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(excelData);
+
+            // Add worksheet to workbook
+            XLSX.utils.book_append_sheet(wb, ws, 'Weekly Report');
+
+            // Generate filename
+            const filename = `Weekly_Report_Week${currentReport.currentWeek}_${currentReport.currentScope.name}_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+            // Download
+            XLSX.writeFile(wb, filename);
+
+            console.log('✅ Excel exported:', filename);
+        }
     </script>
 </body>
 </html>

@@ -829,23 +829,6 @@ class AnalyticsDashboard {
   setupDatagridInquiryNavigation() {
     // Define all inquiry button mappings
     const inquiryMappings = [
-      // YTD Strip buttons (we'll add click handlers to the metrics)
-      {
-        selector: '.ytd-metric:nth-child(1)',
-        source: 'ytd-traffic',
-        config: { sort: 'card_in_view', filter: 'ytd' }
-      },
-      {
-        selector: '.ytd-metric:nth-child(2)',
-        source: 'digital-adoption',
-        config: { sort: 'composite_score', filter: 'digital' }
-      },
-      {
-        selector: '.ytd-metric:nth-child(3)',
-        source: 'print-rate',
-        config: { sort: 'share_count', filter: 'print' }
-      },
-
       // Main KPI Tiles
       {
         selector: '#digital-circular-performance-week .info-btn',
@@ -908,6 +891,10 @@ class AnalyticsDashboard {
       const element = document.querySelector(mapping.selector);
       if (element) {
         element.addEventListener('click', (e) => {
+          // Don't navigate if clicking on info-btn or its children
+          if (e.target.closest('.info-btn')) {
+            return;
+          }
           e.preventDefault();
           this.navigateToDatagridInquiry(mapping.source, mapping.config);
         });

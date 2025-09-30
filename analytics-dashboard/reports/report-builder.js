@@ -74,37 +74,8 @@ function generateSampleData() {
  * Set up event listeners for buttons and form elements
  */
 function setupEventListeners() {
-    // Weekly Summary button
-    const weeklyBtn = document.querySelector('.quick-reports button:first-of-type');
-    if (weeklyBtn) {
-        weeklyBtn.addEventListener('click', function() {
-            console.log('Generating Weekly Report...');
-            generateAndPreviewWeeklyReport();
-        });
-    }
-
-    // Category Report button - generates Excel export
-    const categoryBtn = document.querySelector('.quick-reports button:last-of-type');
-    if (categoryBtn) {
-        categoryBtn.addEventListener('click', function() {
-            console.log('Generating Category Report (Excel)...');
-
-            // Clear preview and show info message
-            clearPreview();
-            showExcelOnlyMessage();
-
-            // Generate Excel immediately
-            generateAndDownloadExcel({ reportType: 'category' });
-        });
-    }
-
-    // Template selector
-    const templateSelect = document.getElementById('template');
-    if (templateSelect) {
-        templateSelect.addEventListener('change', function() {
-            handleTemplateChange(this.value);
-        });
-    }
+    // Note: Weekly Performance button is now handled in reports.html
+    // No automatic downloads on button click
 }
 
 /**

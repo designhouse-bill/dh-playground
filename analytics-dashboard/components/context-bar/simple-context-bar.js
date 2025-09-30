@@ -4,10 +4,11 @@
  */
 
 class SimpleContextBar {
-  constructor(container) {
+  constructor(container, options = {}) {
     this.container = container;
     this.currentWeek = this.getCurrentWeek();
     this.pageType = this.detectPageType();
+    this.basePath = options.basePath || ''; // For subfolders like datagrid-inquiry
 
     // Get store count dynamically from data
     const hierarchy = this.getStoreHierarchy();
@@ -625,14 +626,14 @@ class SimpleContextBar {
       <div class="context-bar-v2-content">
         <!-- Week Selector -->
         <button class="pill-component week-selector ${weekClasses}" data-action="period">
-          <img src="../images/Calendar-week-icon.svg" alt="Calendar" class="week-icon" onerror="this.src='images/Calendar-week-icon.svg'">
+          <img src="${this.basePath}images/Calendar-week-icon.svg" alt="Calendar" class="week-icon" onerror="this.style.display='none'">
           ${weekDisplay}
           <span class="pill-arrow">▼</span>
         </button>
 
         <!-- Store Selector -->
         <button class="pill-component store-selector ${storeClasses}" data-action="scope">
-          <img src="images/store-icon.svg" alt="Store" class="store-icon" onerror="this.style.display='none'">
+          <img src="${this.basePath}images/store-icon.svg" alt="Store" class="store-icon" onerror="this.style.display='none'">
           <span class="pill-text">${this.selectedScope.name} (${this.selectedScope.count})</span>
           <span class="pill-arrow">▼</span>
         </button>

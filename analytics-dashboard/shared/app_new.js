@@ -168,6 +168,12 @@ class AnalyticsDashboard {
       // Update week display in UI
       this.updateWeekDisplay(contextState);
 
+      // Update YTD metrics with new context
+      if (this.componentsLoader) {
+        const baseData = window.mockDatabase || {};
+        this.componentsLoader.loadYTDMetrics(baseData, contextState);
+      }
+
       // Recreate charts with filtered data
       if (this.chartsComponent) {
         // Phase 3A: Recreate Performance Day Chart
@@ -226,25 +232,14 @@ class AnalyticsDashboard {
    * Filter promotions by week
    */
   filterByWeek(promotions, contextState) {
-    // For demo purposes, simulate week-based filtering
-    // In a real system, this would filter by actual week data
-
     const targetWeek = contextState.week;
-    const currentWeek = this.getCurrentWeek();
 
-    // If selecting current week, return all data
-    if (targetWeek === currentWeek) {
-      return promotions;
-    }
+    // Filter by actual week field in promotions
+    const filtered = promotions.filter(promo => promo.week === targetWeek);
 
-    // For other weeks, simulate reduced data set
-    const reductionFactor = Math.abs(currentWeek - targetWeek) * 0.1;
-    const keepPercentage = Math.max(0.3, 1 - reductionFactor);
-    const keepCount = Math.floor(promotions.length * keepPercentage);
+    console.log(`📅 Week ${targetWeek} filter: ${filtered.length}/${promotions.length} promotions`);
 
-    console.log(`📅 Week ${targetWeek} filter: keeping ${keepCount}/${promotions.length} promotions`);
-
-    return promotions.slice(0, keepCount);
+    return filtered;
   }
 
   /**
@@ -367,16 +362,10 @@ class AnalyticsDashboard {
     try {
       const stats = this.calculateKPIStats(filteredData);
 
-      // Update traffic metrics
-      this.updateTrafficKPI(stats);
+      // NOTE: YTD metrics (traffic, digital adoption, print rate) are handled by loadYTDMetrics()
+      // Do NOT update them here as they should show aggregate YTD data, not filtered data
 
-      // Update digital adoption
-      this.updateDigitalAdoptionKPI(stats);
-
-      // Update print rate
-      this.updatePrintRateKPI(stats);
-
-      // Update weekly KPIs
+      // Update weekly KPIs only
       this.updateWeeklyKPIs(stats, contextState);
 
       console.log('📊 KPI displays updated with filtered data');
@@ -556,19 +545,34 @@ class AnalyticsDashboard {
     console.log('📊 Loading dashboard content...');
 
     try {
-      // Initialize charts component
+      // Initialize components
       console.log('📊 DashboardCharts class available:', typeof DashboardCharts);
       this.chartsComponent = new DashboardCharts();
       console.log('📊 Charts component initialized:', !!this.chartsComponent);
+
+      console.log('📊 DashboardComponents class available:', typeof DashboardComponents);
+      this.componentsLoader = new DashboardComponents();
+      console.log('📊 Components loader initialized:', !!this.componentsLoader);
 
       // Load data with context filtering
       const baseData = window.mockDatabase || {};
       const contextState = this.contextStateService?.loadState('dashboard');
 
+      console.log('📊 Base data promotions:', baseData.promotions?.length);
+      console.log('📊 Context state:', contextState);
+
       let data = baseData;
       if (contextState && this.shouldReloadData(contextState, null)) {
         data = this.filterDataByContext(contextState);
         this.filteredData = data;
+        console.log('📊 Filtered data promotions:', data.promotions?.length);
+      } else {
+        console.log('📊 Using base data (no filtering)');
+      }
+
+      // Load YTD metrics with context
+      if (this.componentsLoader) {
+        this.componentsLoader.loadYTDMetrics(baseData, contextState);
       }
 
       // Update week display
@@ -583,8 +587,8 @@ class AnalyticsDashboard {
       // Phase 3B: Create Interaction Rate Chart
       this.createInteractionRateChart(data);
 
-      // Phase 3C: Create Size & Deal Charts
-      this.createSizeAndDealCharts(data);
+      // Phase 3C: Create Size & Deal Charts - use baseData for aggregated views
+      this.createSizeAndDealCharts(baseData);
 
     } catch (error) {
       console.error('Error loading dashboard content:', error);

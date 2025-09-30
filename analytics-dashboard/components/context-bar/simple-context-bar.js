@@ -632,7 +632,7 @@ class SimpleContextBar {
 
         <!-- Store Selector -->
         <button class="pill-component store-selector ${storeClasses}" data-action="scope">
-          <img src="../images/store-icon.svg" alt="Store" class="store-icon" onerror="this.src='images/store-icon.svg'">
+          <img src="images/store-icon.svg" alt="Store" class="store-icon" onerror="this.style.display='none'">
           <span class="pill-text">${this.selectedScope.name} (${this.selectedScope.count})</span>
           <span class="pill-arrow">▼</span>
         </button>

@@ -16,8 +16,9 @@
     <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
 
     <!-- Preload critical resources -->
-    <link rel="preload" href="mock-data/005-data-poc-NEW.js?v=poc11" as="script">
-    <link rel="preload" href="shared/app_new.js" as="script">
+    <link rel="preload" href="mock-data/007-scaled-data.js?v=1759236872" as="script">
+    <link rel="preload" href="shared/app_new.js?v=1759236872" as="script">
+    <link rel="preload" href="components/components_new.js?v=1759236872" as="script">
 </head>
 <body>
     <!-- Simplified header -->
@@ -603,10 +604,21 @@
 
     <!-- Scripts -->
     <script src="vendor/echarts.min.js"></script>
-    <script src="mock-data/005-data-poc-NEW.js?v=poc11"></script>
-    <script src="components/charts_new.js"></script>
-    <script src="components/components_new.js"></script>
-    <script src="shared/app_new.js"></script>
+    <script src="mock-data/007-scaled-data.js?v=1759236872"></script>
+    <script>
+        // Verify data loaded correctly
+        if (window.mockDatabase) {
+            console.log('✅ mockDatabase loaded');
+            console.log('Store count:', window.mockDatabase.store_hierarchy?.all_stores?.total_count);
+            console.log('Promotions count:', window.mockDatabase.promotions?.length);
+            console.log('YTD metrics:', window.mockDatabase.ytdMetrics);
+        } else {
+            console.error('❌ mockDatabase NOT loaded');
+        }
+    </script>
+    <script src="components/charts_new.js?v=1759235604"></script>
+    <script src="components/components_new.js?v=1759236872"></script>
+    <script src="shared/app_new.js?v=1759236872"></script>
 
     <!-- Context State Service -->
     <script src="services/context-state-service.js"></script>

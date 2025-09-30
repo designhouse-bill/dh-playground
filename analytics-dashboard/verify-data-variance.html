@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Variance Verification</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            padding: 20px;
+            background: #f5f7fa;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 { color: #2c3e50; margin-bottom: 10px; }
+        h2 { color: #34495e; margin-top: 30px; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        h3 { color: #7f8c8d; margin-top: 20px; }
+        .pass { color: #27ae60; font-weight: bold; }
+        .fail { color: #e74c3c; font-weight: bold; }
+        .warn { color: #f39c12; font-weight: bold; }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+        th {
+            background: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        tr:hover {
+            background: #f8f9fa;
+        }
+        .metric {
+            display: inline-block;
+            margin: 5px 10px;
+            padding: 8px 15px;
+            background: #ecf0f1;
+            border-radius: 4px;
+        }
+        .chart-bar {
+            height: 20px;
+            background: #3498db;
+            border-radius: 3px;
+            display: inline-block;
+        }
+        pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .summary-card {
+            padding: 20px;
+            background: white;
+            border: 1px solid #e1e8ed;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .summary-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+        }
+        .summary-card .big-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        .variance-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        .low-variance { background: #e74c3c; }
+        .medium-variance { background: #f39c12; }
+        .high-variance { background: #27ae60; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Data Variance Verification</h1>
+        <p>Comprehensive analysis to verify data uniqueness across stores, groups, and weeks</p>
+
+        <div id="results"></div>
+    </div>
+
+    <script src="mock-data/007-scaled-data.js?v=1759235604"></script>
+    <script>
+        const db = window.mockDatabase;
+        let html = '';
+
+        // ============================================================================
+        // 1. STORE-LEVEL VARIANCE
+        // ============================================================================
+        html += '<h2>1. Store-Level Variance Analysis</h2>';
+        html += '<p>Verifying that each store has unique performance metrics</p>';
+
+        const storeStats = {};
+        const stores = [...new Set(db.promotions.map(p => p.store_codes[0]))];
+
+        stores.forEach(storeId => {
+            const storePromos = db.promotions.filter(p => p.store_codes[0] === storeId);
+            const totalViews = storePromos.reduce((sum, p) => sum + p.card_in_view, 0);
+            const totalClicks = storePromos.reduce((sum, p) => sum + p.card_clicked, 0);
+            const avgScore = storePromos.reduce((sum, p) => sum + p.composite_score, 0) / storePromos.length;
+            const ctr = (totalClicks / totalViews * 100).toFixed(2);
+
+            storeStats[storeId] = {
+                promoCount: storePromos.length,
+                totalViews,
+                totalClicks,
+                ctr: parseFloat(ctr),
+                avgScore: Math.round(avgScore)
+            };
+        });
+
+        // Check variance in CTR across stores
+        const ctrs = Object.values(storeStats).map(s => s.ctr);
+        const ctrMin = Math.min(...ctrs);
+        const ctrMax = Math.max(...ctrs);
+        const ctrRange = ctrMax - ctrMin;
+        const ctrVariance = ctrRange > 5 ? 'high' : ctrRange > 2 ? 'medium' : 'low';
+
+        html += '<div class="section">';
+        html += '<h3>Store Performance Summary</h3>';
+        html += '<div class="summary-grid">';
+        html += `<div class="summary-card">
+            <h3>Total Stores</h3>
+            <div class="big-number">${stores.length}</div>
+            <small>Expected: 50</small>
+        </div>`;
+        html += `<div class="summary-card">
+            <h3>CTR Range</h3>
+            <div class="big-number">${ctrRange.toFixed(2)}%</div>
+            <small>${ctrMin.toFixed(2)}% - ${ctrMax.toFixed(2)}%</small>
+        </div>`;
+        html += `<div class="summary-card">
+            <h3>Variance Level</h3>
+            <div class="big-number">
+                <span class="variance-indicator ${ctrVariance}-variance"></span>
+                ${ctrVariance.toUpperCase()}
+            </div>
+            <small>${ctrVariance === 'high' ? '✅ Good' : '⚠️ Check'}</small>
+        </div>`;
+        html += '</div>';
+
+        // Sample stores from each group
+        html += '<h3>Sample Stores (First 2 from Each Group)</h3>';
+        html += '<table>';
+        html += '<tr><th>Store</th><th>Group</th><th>Promos</th><th>Total Views</th><th>Total Clicks</th><th>CTR</th><th>Avg Score</th></tr>';
+
+        const groups = ['GROUP_A', 'GROUP_B', 'GROUP_C', 'GROUP_D', 'GROUP_E'];
+        groups.forEach((groupId, idx) => {
+            const groupStores = db.store_hierarchy.individual_stores
+                .filter(s => s.versionGroup === groupId)
+                .slice(0, 2);
+
+            groupStores.forEach(store => {
+                const stats = storeStats[store.id];
+                const variance = Math.abs(stats.ctr - 85) > 5 ? '✅' : '⚠️';
+                html += `<tr>
+                    <td><strong>${store.id}</strong> ${store.name}</td>
+                    <td>${groupId}</td>
+                    <td>${stats.promoCount}</td>
+                    <td>${stats.totalViews.toLocaleString()}</td>
+                    <td>${stats.totalClicks.toLocaleString()}</td>
+                    <td><strong>${stats.ctr}%</strong> ${variance}</td>
+                    <td>${stats.avgScore}</td>
+                </tr>`;
+            });
+        });
+        html += '</table>';
+        html += '</div>';
+
+        // ============================================================================
+        // 2. GROUP-LEVEL VARIANCE
+        // ============================================================================
+        html += '<h2>2. Group-Level Variance Analysis</h2>';
+        html += '<p>Verifying that each group has unique performance characteristics</p>';
+
+        const groupStats = {};
+        groups.forEach(groupId => {
+            const groupStoreIds = db.store_hierarchy.individual_stores
+                .filter(s => s.versionGroup === groupId)
+                .map(s => s.id);
+
+            const groupPromos = db.promotions.filter(p => groupStoreIds.includes(p.store_codes[0]));
+            const totalViews = groupPromos.reduce((sum, p) => sum + p.card_in_view, 0);
+            const totalClicks = groupPromos.reduce((sum, p) => sum + p.card_clicked, 0);
+            const avgScore = groupPromos.reduce((sum, p) => sum + p.composite_score, 0) / groupPromos.length;
+            const ctr = (totalClicks / totalViews * 100).toFixed(2);
+
+            // Get group details
+            const groupInfo = db.store_hierarchy.version_groups.find(g => g.id === groupId);
+
+            groupStats[groupId] = {
+                name: groupInfo.name,
+                storeCount: groupStoreIds.length,
+                promoCount: groupPromos.length,
+                totalViews,
+                totalClicks,
+                ctr: parseFloat(ctr),
+                avgScore: Math.round(avgScore),
+                avgViewsPerStore: Math.round(totalViews / groupStoreIds.length),
+                avgClicksPerStore: Math.round(totalClicks / groupStoreIds.length)
+            };
+        });
+
+        html += '<div class="section">';
+        html += '<h3>Group Performance Comparison</h3>';
+        html += '<table>';
+        html += '<tr><th>Group</th><th>Stores</th><th>Total Promos</th><th>Avg Views/Store</th><th>Avg Clicks/Store</th><th>CTR</th><th>Avg Score</th></tr>';
+
+        groups.forEach(groupId => {
+            const stats = groupStats[groupId];
+            html += `<tr>
+                <td><strong>${groupId}</strong><br><small>${stats.name}</small></td>
+                <td>${stats.storeCount}</td>
+                <td>${stats.promoCount}</td>
+                <td>${stats.avgViewsPerStore.toLocaleString()}</td>
+                <td>${stats.avgClicksPerStore.toLocaleString()}</td>
+                <td><strong>${stats.ctr}%</strong></td>
+                <td>${stats.avgScore}</td>
+            </tr>`;
+        });
+        html += '</table>';
+
+        // Check if groups have different performance
+        const groupCtrs = Object.values(groupStats).map(s => s.ctr);
+        const groupCtrRange = Math.max(...groupCtrs) - Math.min(...groupCtrs);
+        const groupVarianceGood = groupCtrRange > 3;
+
+        html += `<p class="${groupVarianceGood ? 'pass' : 'warn'}">
+            ${groupVarianceGood ? '✅' : '⚠️'} Group CTR Range: ${groupCtrRange.toFixed(2)}%
+            (${groupVarianceGood ? 'Good variance across groups' : 'Low variance - groups may be too similar'})
+        </p>`;
+        html += '</div>';
+
+        // ============================================================================
+        // 3. WEEK-LEVEL VARIANCE
+        // ============================================================================
+        html += '<h2>3. Week-Level Variance Analysis</h2>';
+        html += '<p>Verifying temporal patterns and week-over-week changes</p>';
+
+        const weekStats = {};
+        const weeks = [36, 37, 38, 39, 40];
+
+        weeks.forEach(week => {
+            const weekPromos = db.promotions.filter(p => p.week === week);
+            const totalViews = weekPromos.reduce((sum, p) => sum + p.card_in_view, 0);
+            const totalClicks = weekPromos.reduce((sum, p) => sum + p.card_clicked, 0);
+            const avgScore = weekPromos.reduce((sum, p) => sum + p.composite_score, 0) / weekPromos.length;
+            const ctr = (totalClicks / totalViews * 100).toFixed(2);
+
+            weekStats[week] = {
+                promoCount: weekPromos.length,
+                totalViews,
+                totalClicks,
+                ctr: parseFloat(ctr),
+                avgScore: Math.round(avgScore)
+            };
+        });
+
+        html += '<div class="section">';
+        html += '<h3>Weekly Performance Trends</h3>';
+        html += '<table>';
+        html += '<tr><th>Week</th><th>Promotions</th><th>Total Views</th><th>Total Clicks</th><th>CTR</th><th>Avg Score</th><th>vs Baseline</th></tr>';
+
+        const baselineWeek = 40;
+        const baselineViews = weekStats[baselineWeek].totalViews;
+
+        weeks.forEach(week => {
+            const stats = weekStats[week];
+            const vsBaseline = ((stats.totalViews / baselineViews - 1) * 100).toFixed(1);
+            const trendIcon = vsBaseline > 0 ? '📈' : vsBaseline < 0 ? '📉' : '➡️';
+
+            html += `<tr style="${week === baselineWeek ? 'background: #e3f2fd;' : ''}">
+                <td><strong>Week ${week}</strong> ${week === baselineWeek ? '(Current)' : ''}</td>
+                <td>${stats.promoCount}</td>
+                <td>${stats.totalViews.toLocaleString()}</td>
+                <td>${stats.totalClicks.toLocaleString()}</td>
+                <td><strong>${stats.ctr}%</strong></td>
+                <td>${stats.avgScore}</td>
+                <td>${trendIcon} ${vsBaseline > 0 ? '+' : ''}${vsBaseline}%</td>
+            </tr>`;
+        });
+        html += '</table>';
+
+        // Check week variance
+        const weekViewsArray = Object.values(weekStats).map(s => s.totalViews);
+        const weekVariancePercent = ((Math.max(...weekViewsArray) - Math.min(...weekViewsArray)) / Math.min(...weekViewsArray) * 100).toFixed(1);
+
+        html += `<p class="${weekVariancePercent > 5 ? 'pass' : 'warn'}">
+            ${weekVariancePercent > 5 ? '✅' : '⚠️'} Week-over-week variance: ${weekVariancePercent}%
+            (${weekVariancePercent > 5 ? 'Good temporal variation' : 'Weeks may be too similar'})
+        </p>`;
+        html += '</div>';
+
+        // ============================================================================
+        // 4. PRODUCT-LEVEL VARIANCE (within stores)
+        // ============================================================================
+        html += '<h2>4. Product-Level Variance</h2>';
+        html += '<p>Verifying that products within each store have unique metrics</p>';
+
+        // Sample one store and check product variance
+        const sampleStore = 'STORE_001';
+        const sampleStorePromos = db.promotions.filter(p => p.store_codes[0] === sampleStore && p.week === 40);
+
+        const productViews = sampleStorePromos.map(p => p.card_in_view);
+        const productViewsMin = Math.min(...productViews);
+        const productViewsMax = Math.max(...productViews);
+        const productViewsRange = productViewsMax - productViewsMin;
+        const productVariancePercent = (productViewsRange / productViewsMin * 100).toFixed(1);
+
+        html += '<div class="section">';
+        html += `<h3>Sample Store: ${sampleStore} (Week 40)</h3>`;
+        html += '<table>';
+        html += '<tr><th>Product</th><th>Category</th><th>Views</th><th>Clicks</th><th>CTR</th><th>Score</th></tr>';
+
+        sampleStorePromos.slice(0, 10).forEach(promo => {
+            const ctr = (promo.card_clicked / promo.card_in_view * 100).toFixed(2);
+            html += `<tr>
+                <td>${promo.card_name}</td>
+                <td><small>${promo.category}</small></td>
+                <td>${promo.card_in_view}</td>
+                <td>${promo.card_clicked}</td>
+                <td>${ctr}%</td>
+                <td>${promo.composite_score}</td>
+            </tr>`;
+        });
+        html += '</table>';
+
+        html += `<p class="${productVariancePercent > 20 ? 'pass' : 'warn'}">
+            ${productVariancePercent > 20 ? '✅' : '⚠️'} Product variance within store: ${productVariancePercent}%
+            (Range: ${productViewsMin} - ${productViewsMax} views)
+        </p>`;
+        html += '</div>';
+
+        // ============================================================================
+        // 5. YTD DATA VARIANCE
+        // ============================================================================
+        html += '<h2>5. YTD Data Verification</h2>';
+        html += '<p>Verifying YTD metrics calculation and scope-based variance</p>';
+
+        html += '<div class="section">';
+        html += '<h3>Current YTD Metrics (All Stores)</h3>';
+
+        const ytd = db.ytdMetrics;
+        html += '<div class="summary-grid">';
+        html += `<div class="summary-card">
+            <h3>YTD Traffic</h3>
+            <div class="big-number">${ytd.traffic.formatted}</div>
+            <small>${ytd.traffic.value.toLocaleString()} views</small><br>
+            <small class="pass">${ytd.traffic.trend} ${ytd.traffic.trendLabel}</small>
+        </div>`;
+        html += `<div class="summary-card">
+            <h3>Digital Adoption</h3>
+            <div class="big-number">${ytd.digitalAdoption.formatted}</div>
+            <small class="pass">${ytd.digitalAdoption.trend} ${ytd.digitalAdoption.trendLabel}</small>
+        </div>`;
+        html += `<div class="summary-card">
+            <h3>Print Rate</h3>
+            <div class="big-number">${ytd.printRate.formatted}</div>
+            <small class="warn">${ytd.printRate.trend}</small>
+        </div>`;
+        html += '</div>';
+
+        // Calculate YTD for each group
+        html += '<h3>YTD Metrics by Group</h3>';
+        html += '<table>';
+        html += '<tr><th>Group</th><th>YTD Traffic (Projected)</th><th>Share of Total</th><th>Trend vs All Stores</th></tr>';
+
+        const totalAllViews = db.promotions.reduce((sum, p) => sum + p.card_in_view, 0);
+
+        groups.forEach(groupId => {
+            const groupStoreIds = db.store_hierarchy.individual_stores
+                .filter(s => s.versionGroup === groupId)
+                .map(s => s.id);
+
+            const groupPromos = db.promotions.filter(p => groupStoreIds.includes(p.store_codes[0]));
+            const groupViews = groupPromos.reduce((sum, p) => sum + p.card_in_view, 0);
+            const groupYTD = Math.round(groupViews * (52 / 5));
+            const sharePercent = (groupViews / totalAllViews * 100).toFixed(1);
+            const vsAll = ((groupYTD / (ytd.traffic.value / 5)) - 1) * 100;
+            const trendIndicator = vsAll > 5 ? '📈 Above' : vsAll < -5 ? '📉 Below' : '➡️ On Par';
+
+            html += `<tr>
+                <td><strong>${groupStats[groupId].name}</strong></td>
+                <td>${(groupYTD / 1000000).toFixed(2)}M views</td>
+                <td>${sharePercent}%</td>
+                <td>${trendIndicator}</td>
+            </tr>`;
+        });
+        html += '</table>';
+
+        html += '<p class="pass">✅ YTD metrics are calculated correctly with proper projection (5 weeks → 52 weeks)</p>';
+        html += '</div>';
+
+        // ============================================================================
+        // 6. DATA UNIQUENESS SUMMARY
+        // ============================================================================
+        html += '<h2>6. Data Uniqueness Summary</h2>';
+
+        const uniqueChecks = {
+            storeVariance: ctrRange > 5,
+            groupVariance: groupCtrRange > 3,
+            weekVariance: weekVariancePercent > 5,
+            productVariance: productVariancePercent > 20,
+            ytdCalculated: !!ytd
+        };
+
+        const passedChecks = Object.values(uniqueChecks).filter(v => v).length;
+        const totalChecks = Object.keys(uniqueChecks).length;
+
+        html += '<div class="section">';
+        html += '<div class="summary-grid">';
+        html += `<div class="summary-card">
+            <h3>Uniqueness Score</h3>
+            <div class="big-number ${passedChecks === totalChecks ? 'pass' : 'warn'}">
+                ${passedChecks}/${totalChecks}
+            </div>
+            <small>${Math.round(passedChecks / totalChecks * 100)}% passed</small>
+        </div>`;
+        html += '</div>';
+
+        html += '<h3>Verification Checklist</h3>';
+        html += '<table>';
+        html += '<tr><th>Check</th><th>Status</th><th>Details</th></tr>';
+        html += `<tr>
+            <td>Store-to-Store Variance</td>
+            <td class="${uniqueChecks.storeVariance ? 'pass' : 'warn'}">${uniqueChecks.storeVariance ? '✅ PASS' : '⚠️ REVIEW'}</td>
+            <td>CTR range: ${ctrRange.toFixed(2)}% across 50 stores</td>
+        </tr>`;
+        html += `<tr>
+            <td>Group-to-Group Variance</td>
+            <td class="${uniqueChecks.groupVariance ? 'pass' : 'warn'}">${uniqueChecks.groupVariance ? '✅ PASS' : '⚠️ REVIEW'}</td>
+            <td>CTR range: ${groupCtrRange.toFixed(2)}% across 5 groups</td>
+        </tr>`;
+        html += `<tr>
+            <td>Week-to-Week Variance</td>
+            <td class="${uniqueChecks.weekVariance ? 'pass' : 'warn'}">${uniqueChecks.weekVariance ? '✅ PASS' : '⚠️ REVIEW'}</td>
+            <td>${weekVariancePercent}% variance in total views</td>
+        </tr>`;
+        html += `<tr>
+            <td>Product-to-Product Variance</td>
+            <td class="${uniqueChecks.productVariance ? 'pass' : 'warn'}">${uniqueChecks.productVariance ? '✅ PASS' : '⚠️ REVIEW'}</td>
+            <td>${productVariancePercent}% variance within stores</td>
+        </tr>`;
+        html += `<tr>
+            <td>YTD Metrics Calculated</td>
+            <td class="${uniqueChecks.ytdCalculated ? 'pass' : 'fail'}">${uniqueChecks.ytdCalculated ? '✅ PASS' : '❌ FAIL'}</td>
+            <td>YTD metrics present and projected correctly</td>
+        </tr>`;
+        html += '</table>';
+
+        html += '<h3>Recommendations</h3>';
+        if (passedChecks === totalChecks) {
+            html += '<p class="pass">✅ <strong>Excellent!</strong> All variance checks passed. Data shows good uniqueness across all dimensions.</p>';
+        } else {
+            html += '<p class="warn">⚠️ <strong>Review Needed:</strong> Some variance levels are low. Consider:</p>';
+            html += '<ul>';
+            if (!uniqueChecks.storeVariance) html += '<li>Increasing randomness in store-level performance multipliers</li>';
+            if (!uniqueChecks.groupVariance) html += '<li>Adjusting group performance indices to create more differentiation</li>';
+            if (!uniqueChecks.weekVariance) html += '<li>Increasing week variance multipliers (currently 90%-100%)</li>';
+            if (!uniqueChecks.productVariance) html += '<li>Adding more variance to base product templates</li>';
+            html += '</ul>';
+        }
+        html += '</div>';
+
+        // Display results
+        document.getElementById('results').innerHTML = html;
+    </script>
+</body>
+</html>

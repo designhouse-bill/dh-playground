@@ -1,0 +1,19 @@
+{
+  "dropboxPath": "/PATH/TO/DROPBOX/FOLDER",
+  "database": {
+    "path": "../database/payments.db"
+  },
+  "server": {
+    "port": 3000,
+    "host": "localhost"
+  },
+  "fileWatcher": {
+    "enabled": false,
+    "watchExtensions": [".pdf", ".jpg", ".png", ".jpeg", ".csv"],
+    "pollInterval": 5000
+  },
+  "parsing": {
+    "autoProcess": true,
+    "ocrLanguage": "eng"
+  }
+}

@@ -34,7 +34,17 @@
         <!-- Main Navigation -->
         <nav class="main-nav">
             <ul class="nav-list">
-                <li><a href="../index.html" class="nav-item">Overview</a></li>
+                <li class="nav-dropdown">
+                    <button class="nav-dropdown-toggle" onclick="toggleDropdown(this)">
+                        Overview
+                        <span class="nav-dropdown-arrow">▼</span>
+                    </button>
+                    <div class="nav-dropdown-menu">
+                        <a href="../index.html" class="nav-dropdown-item">Overview V1</a>
+                        <a href="../overview-v2/index.html" class="nav-dropdown-item">Overview V2</a>
+                        <a href="../overview-v3/index.html" class="nav-dropdown-item">Overview V3</a>
+                    </div>
+                </li>
                 <li><a href="../reports.html" class="nav-item">Reports</a></li>
                 <li><a href="datagrid-inquiry.html" class="nav-item active">Datagrid Inquiry</a></li>
             </ul>
@@ -320,6 +330,30 @@
             };
 
             waitForGrid();
+        });
+
+        /**
+         * Toggle navigation dropdown menu
+         * @param {HTMLElement} button - The dropdown toggle button
+         */
+        function toggleDropdown(button) {
+            const dropdown = button.closest('.nav-dropdown');
+            const isActive = dropdown.classList.contains('active');
+
+            // Close all dropdowns
+            document.querySelectorAll('.nav-dropdown').forEach(d => d.classList.remove('active'));
+
+            // Toggle current dropdown
+            if (!isActive) {
+                dropdown.classList.add('active');
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.nav-dropdown')) {
+                document.querySelectorAll('.nav-dropdown').forEach(d => d.classList.remove('active'));
+            }
         });
     </script>
 </body>

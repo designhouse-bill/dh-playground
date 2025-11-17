@@ -622,18 +622,22 @@ class SimpleContextBar {
     const weekClasses = this.getWeekSelectorClasses();
     const storeClasses = this.getStoreSelectorClasses();
 
+    // Construct correct icon paths based on basePath
+    const calendarIconPath = this.basePath ? `${this.basePath}images/Calendar-week-icon.svg` : 'images/Calendar-week-icon.svg';
+    const storeIconPath = this.basePath ? `${this.basePath}images/store-icon.svg` : 'images/store-icon.svg';
+
     this.container.innerHTML = `
       <div class="context-bar-v2-content">
         <!-- Week Selector -->
         <button class="pill-component week-selector ${weekClasses}" data-action="period">
-          <img src="${this.basePath}images/Calendar-week-icon.svg" alt="Calendar" class="week-icon" onerror="this.style.display='none'">
+          <img src="${calendarIconPath}" alt="Calendar" class="week-icon" onerror="this.style.display='none'">
           ${weekDisplay}
           <span class="pill-arrow">▼</span>
         </button>
 
         <!-- Store Selector -->
         <button class="pill-component store-selector ${storeClasses}" data-action="scope">
-          <img src="${this.basePath}images/store-icon.svg" alt="Store" class="store-icon" onerror="this.style.display='none'">
+          <img src="${storeIconPath}" alt="Store" class="store-icon" onerror="this.style.display='none'">
           <span class="pill-text">${this.selectedScope.name} (${this.selectedScope.count})</span>
           <span class="pill-arrow">▼</span>
         </button>

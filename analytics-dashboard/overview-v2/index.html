@@ -3,22 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analytics Dashboard - Weekly Circular Performance</title>
+    <title>Analytics Dashboard - Overview V2</title>
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/responsive.css">
-    <link rel="stylesheet" href="components/context-bar/context-bar-v2.styles.css">
-    <link rel="stylesheet" href="components/context-bar/simple-context-bar.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <link rel="stylesheet" href="../components/context-bar/context-bar-v2.styles.css">
+    <link rel="stylesheet" href="../components/context-bar/simple-context-bar.css">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="../assets/icons/favicon.ico">
 
     <!-- Preload critical resources -->
-    <link rel="preload" href="mock-data/007-scaled-data.js?v=1759236872" as="script">
-    <link rel="preload" href="shared/app_new.js?v=1759237711" as="script">
-    <link rel="preload" href="components/components_new.js?v=1759236872" as="script">
+    <link rel="preload" href="../mock-data/007-scaled-data.js?v=1759236872" as="script">
 </head>
 <body>
     <!-- Simplified header -->
@@ -40,13 +38,13 @@
                         <span class="nav-dropdown-arrow">▼</span>
                     </button>
                     <div class="nav-dropdown-menu">
-                        <a href="index.html" class="nav-dropdown-item active">Overview V1</a>
-                        <a href="overview-v2/index.html" class="nav-dropdown-item">Overview V2</a>
-                        <a href="overview-v3/index.html" class="nav-dropdown-item">Overview V3</a>
+                        <a href="../index.html" class="nav-dropdown-item">Overview V1</a>
+                        <a href="index.html" class="nav-dropdown-item active">Overview V2</a>
+                        <a href="../overview-v3/index.html" class="nav-dropdown-item">Overview V3</a>
                     </div>
                 </li>
-                <li><a href="reports.html" class="nav-item">Reports</a></li>
-                <li><a href="datagrid-inquiry/datagrid-inquiry.html" class="nav-item">Datagrid Inquiry</a></li>
+                <li><a href="../reports.html" class="nav-item">Reports</a></li>
+                <li><a href="../datagrid-inquiry/datagrid-inquiry.html" class="nav-item">Datagrid Inquiry</a></li>
             </ul>
         </nav>
 
@@ -56,48 +54,13 @@
 
     <!-- Main dashboard content -->
     <main class="dashboard-main main-content">
-        <!-- YTD Performance Strip - copied exactly -->
-        <section class="ytd-metrics-section">
-            <div class="ytd-strip">
-                <div class="ytd-metric">
-                    <span class="label">
-                        YTD Traffic:
-                        <button class="info-btn" aria-label="Show definition for YTD Traffic" tabindex="0" data-tooltip-content="%7B%22title%22%3A%22YTD%20Traffic%22%2C%22tooltip%22%3A%22Total%20unique%20visitors%20across%20all%20stores%20viewing%20digital%20circular%20content%20projected%20to%20full%20year%20(52%20weeks)%22%2C%22whyImportant%22%3A%22Monitor%20overall%20audience%20reach%20and%20engagement%20trends%20to%20identify%20seasonal%20patterns%20and%20marketing%20effectiveness%22%7D">
-                            <span aria-hidden="true">i</span>
-                        </button>
-                    </span>
-                    <span class="value">2.8M views</span>
-                    <span class="trend positive">+12.4% YoY</span>
-                </div>
-                <div class="ytd-metric">
-                    <span class="label">
-                        Digital Adoption:
-                        <button class="info-btn" aria-label="Show definition for Digital Adoption" tabindex="0" data-tooltip-content="%7B%22title%22%3A%22Digital%20Adoption%22%2C%22tooltip%22%3A%22Percentage%20of%20users%20engaging%20with%20digital%20circular%20content%20through%20clicks%20and%20add-to-list%20actions%22%2C%22whyImportant%22%3A%22Understand%20digital%20channel%20effectiveness%20and%20customer%20preference%20for%20online%20vs.%20print%20interactions%22%7D">
-                            <span aria-hidden="true">i</span>
-                        </button>
-                    </span>
-                    <span class="value">73.2%</span>
-                    <span class="trend positive">+8% from 2024</span>
-                </div>
-                <div class="ytd-metric">
-                    <span class="label">
-                        Print Rate:
-                        <button class="info-btn" aria-label="Show definition for Print Rate" tabindex="0" data-tooltip-content="%7B%22title%22%3A%22Print%20Rate%22%2C%22tooltip%22%3A%22Percentage%20of%20users%20who%20printed%20or%20downloaded%20physical%20versions%20of%20promotions%22%2C%22whyImportant%22%3A%22Reveals%20continued%20demand%20for%20traditional%20print%20materials%20and%20helps%20balance%20omnichannel%20strategy%22%7D">
-                            <span aria-hidden="true">i</span>
-                        </button>
-                    </span>
-                    <span class="value">18.5%</span>
-                    <span class="trend negative">-3%</span>
-                </div>
-            </div>
-        </section>
 
-        <!-- KPI Tiles - exactly 3 tiles, no duplicates -->
+        <!-- Top Row: 3 KPI Tiles -->
         <section class="kpi-tiles-section">
             <div class="container">
                 <div class="dashboard-row-week">
                     <!-- Digital Circular Performance (Week) -->
-                    <div class="kpi-tile positive" id="digital-circular-performance-week">
+                    <div class="kpi-tile positive" id="circular-performance-week">
                         <div class="card-head">
                             <div class="card-head-left">
                                 <h3>Digital Circular Performance <br>(Week)</h3>
@@ -123,23 +86,23 @@
                         </div>
                     </div>
 
-                    <!-- Traffic (Week) -->
-                    <div class="kpi-tile positive" id="traffic-week">
+                    <!-- Total Sessions -->
+                    <div class="kpi-tile positive" id="total-sessions">
                         <div class="card-head">
                             <div class="card-head-left">
-                                <h3>Traffic <br>(Week)</h3>
-                                <button class="info-btn" aria-label="Show definition for Traffic (Week)" tabindex="0" data-tooltip-content="%7B%22title%22%3A%22Traffic%20%3Cbr%3E(Week)%22%2C%22tooltip%22%3A%22Total%20unique%20visitors%20across%20all%20stores%20viewing%20digital%20circular%20content%20this%20week%20compared%20to%20last%20week%22%2C%22whyImportant%22%3A%22Monitor%20overall%20audience%20reach%20and%20engagement%20trends%20to%20identify%20seasonal%20patterns%20and%20marketing%20effectiveness%22%7D">
+                                <h3>Total Sessions <br>(Week)</h3>
+                                <button class="info-btn" aria-label="Show definition for Total Sessions" tabindex="0" data-tooltip-content="%7B%22title%22%3A%22Total%20Sessions%20%3Cbr%3E(Week)%22%2C%22tooltip%22%3A%22Total%20number%20of%20user%20sessions%20across%20all%20stores%20viewing%20digital%20circular%20content%20this%20week%22%2C%22whyImportant%22%3A%22Monitor%20overall%20audience%20reach%20and%20engagement%20trends%20to%20identify%20seasonal%20patterns%20and%20marketing%20effectiveness%22%7D">
                                     <span aria-hidden="true">i</span>
                                 </button>
                             </div>
                             <div class="card-head-right">
-                                <button class="detail-btn" onclick="navigateToInquiry('traffic', 'card_in_view', 'desc')">Inquiry →</button>
+                                <button class="detail-btn" onclick="navigateToInquiry('sessions', 'card_in_view', 'desc')">Inquiry →</button>
                             </div>
                         </div>
                         <div class="kpi-content">
                             <div class="big-number-container">
                                 <div class="big-number">31,240</div>
-                                <div class="sub-text">Total Visitors</div>
+                                <div class="sub-text">User Sessions</div>
                             </div>
                             <div class="trend positive">
                                 +9.4% vs Week 39
@@ -150,29 +113,29 @@
                         </div>
                     </div>
 
-                    <!-- Share Activity (Week) -->
-                    <div class="kpi-tile positive" id="share-activity-week">
+                    <!-- Average Session Duration -->
+                    <div class="kpi-tile positive" id="avg-session-duration">
                         <div class="card-head">
                             <div class="card-head-left">
-                                <h3>Share Activity <br>(Week)</h3>
-                                <button class="info-btn" aria-label="Show definition for Share Activity (Week)" tabindex="0" data-tooltip-content="%7B%22title%22%3A%22Share%20Activity%20%3Cbr%3E(Week)%22%2C%22tooltip%22%3A%22Tracks%20how%20often%20customers%20share%20your%20promotions%20socially%2C%20indicating%20brand%20amplification%22%2C%22whyImportant%22%3A%22Understand%20which%20promotions%20generate%20word-of-mouth%20marketing%20beyond%20your%20direct%20reach%22%7D">
+                                <h3>Avg Session Duration <br>(Week)</h3>
+                                <button class="info-btn" aria-label="Show definition for Average Session Duration" tabindex="0" data-tooltip-content="%7B%22title%22%3A%22Average%20Session%20Duration%20%3Cbr%3E(Week)%22%2C%22tooltip%22%3A%22Average%20time%20users%20spend%20viewing%20digital%20circular%20content%20per%20session%22%2C%22whyImportant%22%3A%22Understand%20engagement%20depth%20and%20content%20effectiveness%20-%20longer%20sessions%20indicate%20higher%20interest%22%7D">
                                     <span aria-hidden="true">i</span>
                                 </button>
                             </div>
                             <div class="card-head-right">
-                                <button class="detail-btn" onclick="navigateToInquiry('sharing', 'card_clicked', 'desc')">Inquiry →</button>
+                                <button class="detail-btn" onclick="navigateToInquiry('duration', 'card_clicked', 'desc')">Inquiry →</button>
                             </div>
                         </div>
                         <div class="kpi-content">
                             <div class="big-number-container">
-                                <div class="big-number">178</div>
-                                <div class="sub-text">Total Promotions Shared</div>
+                                <div class="big-number">2:34</div>
+                                <div class="sub-text">Minutes:Seconds</div>
                             </div>
                             <div class="trend positive">
-                                +18% vs last week
+                                +12% vs last week
                             </div>
                             <div class="week-day">
-                                Social amplification metric
+                                Quality engagement metric
                             </div>
                         </div>
                     </div>
@@ -180,54 +143,59 @@
             </div>
         </section>
 
-        <!-- Performance Charts (Day + Interaction Rate) -->
-        <section class="performance-charts-section">
+        <!-- Middle Row: Circular Engagement Tree Map -->
+        <section class="treemap-section">
             <div class="container">
-                <div class="row-container-performance">
-                    <!-- Digital Circular Performance (Day) - ECharts implementation in Phase 3A -->
-                    <div class="card" id="performance-day-chart-container">
-                        <div class="card-head">
-                            <div class="card-head-left">
-                                <h3>Digital Circular Performance (Day)</h3>
-                                <button class="info-btn" aria-label="Show definition for Digital Circular Performance" tabindex="0" data-tooltip-content="%7B%22title%22%3A%22Digital%20Circular%20Performance%20%3Cbr%3E(Day)%22%2C%22tooltip%22%3A%22Daily%20trend%20of%20promotion%20engagement%20showing%20performance%20fluctuations%20throughout%20the%20week%22%2C%22whyImportant%22%3A%22Identify%20daily%20patterns%20and%20optimize%20promotion%20timing%20for%20maximum%20engagement%22%7D">
-                                    <span aria-hidden="true">i</span>
-                                </button>
-                            </div>
-                            <div class="card-head-right">
-                                <button class="detail-btn" onclick="navigateToInquiry('performance', 'composite_score', 'desc')">Inquiry →</button>
-                            </div>
+                <div class="card chart-card" id="circular-engagement-treemap">
+                    <div class="card-head">
+                        <div class="card-head-left">
+                            <h3>Circular Engagement Tree Map</h3>
+                            <button class="info-btn" aria-label="Show definition for Circular Engagement Tree Map" tabindex="0" data-tooltip-content="%7B%22title%22%3A%22Circular%20Engagement%20Tree%20Map%22%2C%22tooltip%22%3A%22Visual%20representation%20of%20promotion%20engagement%20showing%20relative%20size%20and%20performance%20of%20each%20item%20in%20the%20circular%22%2C%22whyImportant%22%3A%22Quickly%20identify%20high%20and%20low%20performing%20promotions%20with%20visual%20size%20and%20color%20coding%20for%20instant%20insights%22%7D">
+                                <span aria-hidden="true">i</span>
+                            </button>
                         </div>
-                        <div class="card-body">
-                            <div id="performance-day-chart" style="width: 100%; height: 300px;"></div>
+                        <div class="card-head-right">
+                            <button class="detail-btn" onclick="navigateToInquiry('treemap', 'composite_score', 'desc')">Inquiry →</button>
                         </div>
                     </div>
-
-                    <!-- Interaction Rate - ECharts implementation in Phase 3B -->
-                    <div class="card" id="interaction-rate-chart-container">
-                        <div class="card-head">
-                            <div class="card-head-left">
-                                <h3>Interaction Rate</h3>
-                                <button class="info-btn" aria-label="Show definition for Interaction Rate" tabindex="0" data-tooltip-content="%7B%22title%22%3A%22Interaction%20Rate%20Funnel%22%2C%22tooltip%22%3A%224-segment%20funnel%20tracking%20user%20engagement%20from%20never%20viewed%20to%20added%20to%20list%2C%20showing%20complete%20interaction%20journey.%22%2C%22whyImportant%22%3A%22Reveals%20where%20users%20drop%20off%20in%20the%20engagement%20process%20and%20identifies%20optimization%20opportunities.%22%7D">
-                                    <span aria-hidden="true">i</span>
-                                </button>
+                    <div class="card-body">
+                        <!-- Summary Stats -->
+                        <div id="treemap-summary" style="display: flex; gap: 24px; margin-bottom: 16px; padding: 12px; background: var(--bg); border-radius: var(--radius-md); flex-wrap: wrap;">
+                            <div style="flex: 1; min-width: 150px;">
+                                <div style="font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Total Categories</div>
+                                <div id="summary-categories" style="font-size: 24px; font-weight: 900; color: black;">-</div>
                             </div>
-                            <div class="card-head-right">
-                                <button class="detail-btn" onclick="navigateToInquiry('interaction', 'card_clicked', 'desc')">Inquiry →</button>
+                            <div style="flex: 1; min-width: 150px;">
+                                <div style="font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Total Promotions</div>
+                                <div id="summary-promotions" style="font-size: 24px; font-weight: 900; color: black;">-</div>
+                            </div>
+                            <div style="flex: 1; min-width: 150px;">
+                                <div style="font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Total Views</div>
+                                <div id="summary-views" style="font-size: 24px; font-weight: 900; color: black;">-</div>
+                            </div>
+                            <div style="flex: 1; min-width: 150px;">
+                                <div style="font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Total Clicks</div>
+                                <div id="summary-clicks" style="font-size: 24px; font-weight: 900; color: black;">-</div>
+                            </div>
+                            <div style="flex: 1; min-width: 150px;">
+                                <div style="font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Avg CTR</div>
+                                <div id="summary-ctr" style="font-size: 24px; font-weight: 900; color: black;">-</div>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <div id="interaction-rate-chart" style="width: 100%; height: 300px;"></div>
+
+                        <!-- Treemap Chart -->
+                        <div id="treemap-chart" style="height: 100%; background: var(--bg); border-radius: var(--radius-md);">
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Categories and Promotions - Copied exactly from working version -->
+        <!-- Bottom Row: Categories and Promotions -->
         <section class="categories-promotions-section">
             <div class="container">
                 <div class="categories-performance-row">
-                    <!-- Top Performing Categories - copied exactly -->
+                    <!-- Top Performing Categories -->
                     <div class="card chart-card" id="top-categories-card">
                         <div class="card-head">
                             <div class="card-head-left">
@@ -365,7 +333,7 @@
                         </div>
                     </div>
 
-                    <!-- Top Performing Promotions - copied exactly -->
+                    <!-- Top Performing Promotions -->
                     <div class="card chart-card" id="promotion-performance">
                         <div class="card-head">
                             <div class="card-head-left">
@@ -398,7 +366,7 @@
                                 <div class="promotion-item">
                                     <div class="promotion-rank">1.</div>
                                     <div class="promotion-thumbnail">
-                                        <img src="assets/mock-image.png" alt="Premium Ribeye Steak" onerror="this.src='assets/mock-image.png'">
+                                        <img src="../assets/mock-image.png" alt="Premium Ribeye Steak" onerror="this.src='../assets/mock-image.png'">
                                     </div>
                                     <div class="promotion-details">
                                         <div class="promotion-name">Premium Ribeye Steak</div>
@@ -413,7 +381,7 @@
                                 <div class="promotion-item">
                                     <div class="promotion-rank">2.</div>
                                     <div class="promotion-thumbnail">
-                                        <img src="assets/mock-image.png" alt="Fresh Maine Lobster" onerror="this.src='assets/mock-image.png'">
+                                        <img src="../assets/mock-image.png" alt="Fresh Maine Lobster" onerror="this.src='../assets/mock-image.png'">
                                     </div>
                                     <div class="promotion-details">
                                         <div class="promotion-name">Fresh Maine Lobster</div>
@@ -428,7 +396,7 @@
                                 <div class="promotion-item">
                                     <div class="promotion-rank">3.</div>
                                     <div class="promotion-thumbnail">
-                                        <img src="assets/mock-image.png" alt="Organic Free-Range Chicken" onerror="this.src='assets/mock-image.png'">
+                                        <img src="../assets/mock-image.png" alt="Organic Free-Range Chicken" onerror="this.src='../assets/mock-image.png'">
                                     </div>
                                     <div class="promotion-details">
                                         <div class="promotion-name">Organic Free-Range Chicken</div>
@@ -443,7 +411,7 @@
                                 <div class="promotion-item">
                                     <div class="promotion-rank">4.</div>
                                     <div class="promotion-thumbnail">
-                                        <img src="assets/mock-image.png" alt="Fresh Maine Lobster" onerror="this.src='assets/mock-image.png'">
+                                        <img src="../assets/mock-image.png" alt="Fresh Maine Lobster" onerror="this.src='../assets/mock-image.png'">
                                     </div>
                                     <div class="promotion-details">
                                         <div class="promotion-name">Fresh Maine Lobster</div>
@@ -458,7 +426,7 @@
                                 <div class="promotion-item">
                                     <div class="promotion-rank">5.</div>
                                     <div class="promotion-thumbnail">
-                                        <img src="assets/mock-image.png" alt="Farm Fresh Eggs" onerror="this.src='assets/mock-image.png'">
+                                        <img src="../assets/mock-image.png" alt="Farm Fresh Eggs" onerror="this.src='../assets/mock-image.png'">
                                     </div>
                                     <div class="promotion-details">
                                         <div class="promotion-name">Farm Fresh Eggs</div>
@@ -473,7 +441,7 @@
                                 <div class="promotion-item">
                                     <div class="promotion-rank">6.</div>
                                     <div class="promotion-thumbnail">
-                                        <img src="assets/mock-image.png" alt="Premium Ribeye Steak" onerror="this.src='assets/mock-image.png'">
+                                        <img src="../assets/mock-image.png" alt="Premium Ribeye Steak" onerror="this.src='../assets/mock-image.png'">
                                     </div>
                                     <div class="promotion-details">
                                         <div class="promotion-name">Premium Ribeye Steak</div>
@@ -488,7 +456,7 @@
                                 <div class="promotion-item">
                                     <div class="promotion-rank">7.</div>
                                     <div class="promotion-thumbnail">
-                                        <img src="assets/mock-image.png" alt="Premium Ribeye Steak" onerror="this.src='assets/mock-image.png'">
+                                        <img src="../assets/mock-image.png" alt="Premium Ribeye Steak" onerror="this.src='../assets/mock-image.png'">
                                     </div>
                                     <div class="promotion-details">
                                         <div class="promotion-name">Premium Ribeye Steak</div>
@@ -503,7 +471,7 @@
                                 <div class="promotion-item">
                                     <div class="promotion-rank">8.</div>
                                     <div class="promotion-thumbnail">
-                                        <img src="assets/mock-image.png" alt="Fresh Maine Lobster" onerror="this.src='assets/mock-image.png'">
+                                        <img src="../assets/mock-image.png" alt="Fresh Maine Lobster" onerror="this.src='../assets/mock-image.png'">
                                     </div>
                                     <div class="promotion-details">
                                         <div class="promotion-name">Fresh Maine Lobster</div>
@@ -518,7 +486,7 @@
                                 <div class="promotion-item">
                                     <div class="promotion-rank">9.</div>
                                     <div class="promotion-thumbnail">
-                                        <img src="assets/mock-image.png" alt="Local Tomatoes" onerror="this.src='assets/mock-image.png'">
+                                        <img src="../assets/mock-image.png" alt="Local Tomatoes" onerror="this.src='../assets/mock-image.png'">
                                     </div>
                                     <div class="promotion-details">
                                         <div class="promotion-name">Local Tomatoes</div>
@@ -533,7 +501,7 @@
                                 <div class="promotion-item">
                                     <div class="promotion-rank">10.</div>
                                     <div class="promotion-thumbnail">
-                                        <img src="assets/mock-image.png" alt="Organic Free-Range Chicken" onerror="this.src='assets/mock-image.png'">
+                                        <img src="../assets/mock-image.png" alt="Organic Free-Range Chicken" onerror="this.src='../assets/mock-image.png'">
                                     </div>
                                     <div class="promotion-details">
                                         <div class="promotion-name">Organic Free-Range Chicken</div>
@@ -551,86 +519,11 @@
                 </div>
             </div>
         </section>
-
-        <!-- Analytics Charts (Size + Deal) - ECharts implementation in Phase 3C -->
-        <section class="analytics-charts-section">
-            <div class="container">
-                <div class="dashboard-row-week">
-                    <div class="size-deal">
-                        <div class="grid two-up">
-                            <!-- Card Size Section -->
-                            <div class="size">
-                                <h5 class="subsection-header">Card Size</h5>
-                                <div class="grid two-col">
-                                    <!-- Size Class Mix - ECharts donut -->
-                                    <div class="card small" id="size-mix-chart-container">
-                                        <div class="card-head">
-                                            <div class="card-head-left">
-                                                <h3>Size Class Mix</h3>
-                                                <button class="info-btn" aria-label="Show definition for Size Class Mix" tabindex="0" data-tooltip-content="%7B%22title%22%3A%22Size%20Class%20Mix%22%2C%22tooltip%22%3A%22Distribution%20of%20promotion%20card%20sizes%20showing%20the%20percentage%20breakdown%20across%20all%20sizes%20(1X1%2C%202X1%2C%203X2%2C%20etc.)%22%2C%22whyImportant%22%3A%22Helps%20optimize%20circular%20layout%20by%20understanding%20which%20sizes%20are%20most%20commonly%20used%20and%20their%20effectiveness.%22%7D">
-                                                    <span aria-hidden="true">i</span>
-                                                </button>
-                                            </div>
-                                            <div class="card-head-right">
-                                                <button class="detail-btn" onclick="navigateToInquiry('size', 'card_in_view', 'desc')">Inquiry →</button>
-                                            </div>
-                                        </div>
-                                        <div class="card-body">
-                                            <div id="size-mix-chart" style="width: 100%; height: 250px;"></div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Size Performance - ECharts horizontal bars -->
-                                    <div class="card small" id="size-performance-chart-container">
-                                        <div class="card-head">
-                                            <div class="card-head-left">
-                                                <h3>Size Performance</h3>
-                                                <button class="info-btn" aria-label="Show definition for Size Performance" tabindex="0" data-tooltip-content="%7B%22title%22%3A%22Size%20Performance%22%2C%22tooltip%22%3A%22Average%20composite%20performance%20scores%20by%20card%20size%2C%20ranked%20from%20highest%20to%20lowest%20performing%20sizes.%22%2C%22whyImportant%22%3A%22Identifies%20which%20card%20sizes%20drive%20the%20best%20engagement%20and%20conversion%20rates%20for%20strategic%20layout%20planning.%22%7D">
-                                                    <span aria-hidden="true">i</span>
-                                                </button>
-                                            </div>
-                                            <div class="card-head-right">
-                                                <button class="detail-btn" onclick="navigateToInquiry('size_performance', 'composite_score', 'desc')">Inquiry →</button>
-                                            </div>
-                                        </div>
-                                        <div class="card-body">
-                                            <div id="size-performance-chart" style="width: 100%; height: 250px;"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Deal Type Section -->
-                            <div class="deal">
-                                <h5 class="subsection-header">Deal Type</h5>
-                                <!-- Deal Type Preference - ECharts donut -->
-                                <div class="card small" id="deal-type-chart-container">
-                                    <div class="card-head">
-                                        <div class="card-head-left">
-                                            <h3>Deal Type Preference</h3>
-                                            <button class="info-btn" aria-label="Show definition for Deal Type Preference" tabindex="0" data-tooltip-content="%7B%22title%22%3A%22Deal%20Type%20Preference%22%2C%22tooltip%22%3A%22Distribution%20of%20deal%20types%20across%20all%20promotions%20showing%20customer%20preference%20patterns%20(Fixed%20Price%2C%20Club%20Price%2C%20BOGO%2C%20etc.)%22%2C%22whyImportant%22%3A%22Reveals%20which%20deal%20structures%20are%20most%20popular%20and%20helps%20optimize%20promotional%20strategy%20mix.%22%7D">
-                                                <span aria-hidden="true">i</span>
-                                            </button>
-                                        </div>
-                                        <div class="card-head-right">
-                                            <button class="detail-btn" onclick="navigateToInquiry('deal-preference', 'composite_score', 'desc')">Inquiry →</button>
-                                        </div>
-                                    </div>
-                                    <div class="card-body">
-                                        <div id="deal-type-chart" style="width: 100%; height: 250px;"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
     </main>
 
     <!-- Scripts -->
-    <script src="vendor/echarts.min.js"></script>
-    <script src="mock-data/007-scaled-data.js?v=1759236872"></script>
+    <script src="../vendor/echarts.min.js"></script>
+    <script src="../mock-data/007-scaled-data.js?v=1759236872"></script>
     <script>
         // Verify data loaded correctly
         if (window.mockDatabase) {
@@ -642,15 +535,15 @@
             console.error('❌ mockDatabase NOT loaded');
         }
     </script>
-    <script src="components/charts_new.js?v=1759235604"></script>
-    <script src="components/components_new.js?v=1759236872"></script>
-    <script src="shared/app_new.js?v=1759237711"></script>
 
     <!-- Context State Service -->
-    <script src="services/context-state-service.js"></script>
+    <script src="../services/context-state-service.js"></script>
 
     <!-- Simple Context Bar -->
-    <script src="components/context-bar/simple-context-bar.js"></script>
+    <script src="../components/context-bar/simple-context-bar.js"></script>
+
+    <!-- Overview V2 Treemap Chart -->
+    <script src="overview-v2.js"></script>
 
     <!-- Initialize Application -->
     <script>
@@ -658,24 +551,17 @@
             // Initialize URL synchronization
             if (window.contextStateService) {
                 window.contextStateService.initUrlSync();
-                console.log('🔗 URL synchronization initialized for dashboard');
+                console.log('🔗 URL synchronization initialized for Overview V2');
             }
 
-            // Single initialization point
-            if (window.dashboardInstance) {
-                console.log('⚠️ Dashboard instance already exists');
-                return;
-            }
-
-            window.dashboardInstance = new AnalyticsDashboard();
-            window.dashboardInstance.init();
-
-            // Initialize Simple Context Bar
+            // Initialize Simple Context Bar with basePath for subdirectory
             const contextBarContainer = document.getElementById('context-bar-container');
             if (contextBarContainer) {
-                new SimpleContextBar(contextBarContainer);
+                new SimpleContextBar(contextBarContainer, { basePath: '../' });
                 console.log('✅ Simple context bar initialized');
             }
+
+            // Overview V2 initializes itself via overview-v2.js
         });
 
         /**
@@ -739,8 +625,8 @@
 
             // Use proper relative path for file protocol
             const basePath = window.location.protocol === 'file:' ?
-                './datagrid-inquiry/datagrid-inquiry.html' :
-                'datagrid-inquiry/datagrid-inquiry.html';
+                '../datagrid-inquiry/datagrid-inquiry.html' :
+                '../datagrid-inquiry/datagrid-inquiry.html';
 
             const targetUrl = `${basePath}?${params.toString()}`;
 

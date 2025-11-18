@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theme Presets - Digital Circular Style Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@700&family=Montserrat:wght@700&family=Roboto+Slab:wght@700&family=Noto+Sans:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #E2141E;
+            --text: #1D2325;
+            --text-light: #4A5358;
+            --bg: #FFFFFF;
+            --bg-secondary: #F2F3F3;
+            --border: #E4E5E5;
+            --shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            background: var(--bg-secondary);
+        }
+
+        .nav-header {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: var(--primary); }
+
+        .back-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .description {
+            color: var(--text-light);
+            font-size: 1.125rem;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 2rem;
+            background: white;
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-num {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        .search-filter {
+            background: white;
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .filter-tags {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-tag {
+            padding: 0.5rem 1rem;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .filter-tag:hover {
+            border-color: var(--primary);
+        }
+
+        .filter-tag.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .theme-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s;
+        }
+
+        .theme-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+
+        .theme-preview {
+            height: 200px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            position: relative;
+        }
+
+        .theme-header-bar {
+            height: 50px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .theme-price-sticker {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            border: 3px solid;
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+        }
+
+        .theme-info {
+            padding: 1.5rem;
+        }
+
+        .theme-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .theme-details {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .theme-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .theme-tag {
+            padding: 0.25rem 0.75rem;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .theme-tag.special {
+            background: rgba(226, 20, 30, 0.1);
+            color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .theme-grid {
+                grid-template-columns: 1fr;
+            }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-header">
+        <div class="nav-content">
+            <a href="index.html" class="back-link">← Style Guide Home</a>
+            <ul class="nav-links">
+                <li><a href="colors-fonts.html">Colors & Fonts</a></li>
+                <li><a href="price-stickers.html">Price Stickers</a></li>
+                <li><a href="deal-types.html">Deal Types</a></li>
+                <li><a href="components.html">Components</a></li>
+                <li><a href="themes.html">Themes</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>Theme Presets</h1>
+            <p class="description">Browse all 81 available themes with custom configurations and brand-specific styling</p>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat">
+                <div class="stat-num">81</div>
+                <div class="stat-label">Total Themes</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">56</div>
+                <div class="stat-label">With Custom Components</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">19</div>
+                <div class="stat-label">CSS Only</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">15+</div>
+                <div class="stat-label">Special Features</div>
+            </div>
+        </div>
+
+        <div class="search-filter">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search themes by name..." onkeyup="filterThemes()">
+            <div class="filter-tags">
+                <div class="filter-tag active" onclick="filterByType('all')">All Themes</div>
+                <div class="filter-tag" onclick="filterByType('custom')">Custom Components</div>
+                <div class="filter-tag" onclick="filterByType('css')">CSS Only</div>
+                <div class="filter-tag" onclick="filterByType('special')">Special Features</div>
+            </div>
+        </div>
+
+        <div class="theme-grid" id="themeGrid">
+            <!-- Default Theme -->
+            <div class="theme-card" data-type="custom">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+                    <div class="theme-header-bar" style="background: #E2141E;">DEFAULT THEME</div>
+                    <div class="theme-price-sticker" style="background: #E2141E; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
+                </div>
+                <div class="theme-info">
+                    <div class="theme-name">Default</div>
+                    <div class="theme-details">Base theme with Open Sans & Oswald fonts, circular stickers</div>
+                    <div class="theme-tags">
+                        <div class="theme-tag">CSS & Components</div>
+                        <div class="theme-tag special">15 Variants</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gelsons -->
+            <div class="theme-card" data-type="custom special">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #2C3E50 0%, #4CA1AF 100%);">
+                    <div class="theme-header-bar" style="background: #D82027; font-family: serif;">GELSON'S</div>
+                    <div class="theme-price-sticker" style="background: #D82027; color: #FFCF16; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
+                </div>
+                <div class="theme-info">
+                    <div class="theme-name">Gelsons</div>
+                    <div class="theme-details">Premium market theme with Apex Serif font, seasonal menu items</div>
+                    <div class="theme-tags">
+                        <div class="theme-tag special">Seasonal Menu</div>
+                        <div class="theme-tag special">Custom Font</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Northgate -->
+            <div class="theme-card" data-type="custom special">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #F39C12 0%, #E74C3C 100%);">
+                    <div class="theme-header-bar" style="background: #E74C3C; font-family: 'Impact', sans-serif;">NORTHGATE</div>
+                    <div class="theme-price-sticker" style="background: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22><rect fill=%22%23F39C12%22 width=%22100%22 height=%22100%22/></svg>'); color: white; border-color: white; aspect-ratio: 2.5; border-radius: 20%;">2/$10</div>
+                </div>
+                <div class="theme-info">
+                    <div class="theme-name">Northgate / Northgate Mercado</div>
+                    <div class="theme-details">Unique texture stickers (paint/wood), 15 color variants, dual language</div>
+                    <div class="theme-tags">
+                        <div class="theme-tag special">Texture Stickers</div>
+                        <div class="theme-tag special">Dual Language</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Festival Foods -->
+            <div class="theme-card" data-type="custom special">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #8E44AD 0%, #3498DB 100%);">
+                    <div class="theme-header-bar" style="background: #3a823d; font-family: 'Impact', sans-serif;">FESTIVAL FOODS</div>
+                    <div class="theme-price-sticker" style="background: #3a823d; color: white; border-color: white; aspect-ratio: 1.5; border-radius: 10px 0;">$9<sup style="font-size: 1rem;">99</sup></div>
+                </div>
+                <div class="theme-info">
+                    <div class="theme-name">Festival Foods</div>
+                    <div class="theme-details">Custom Flyer font, kiosk footer, coupon CSS variables, horizontal price tags</div>
+                    <div class="theme-tags">
+                        <div class="theme-tag special">Custom Font</div>
+                        <div class="theme-tag special">Kiosk Footer</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weis Markets -->
+            <div class="theme-card" data-type="custom special">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%);">
+                    <div class="theme-header-bar" style="background: #1E3A8A; font-family: 'Noto Sans', sans-serif;">WEIS MARKETS</div>
+                    <div class="theme-price-sticker" style="background: #1E3A8A; color: white; border-color: white; border-radius: 8px; aspect-ratio: 1.5;">$9<sup style="font-size: 1rem;">99</sup></div>
+                </div>
+                <div class="theme-info">
+                    <div class="theme-name">Weis Markets</div>
+                    <div class="theme-details">Modular header with 8 SCSS partials, Noto Sans font, simple price tag style</div>
+                    <div class="theme-tags">
+                        <div class="theme-tag special">Modular Header</div>
+                        <div class="theme-tag">Simple Pricing</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dollar General -->
+            <div class="theme-card" data-type="custom">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #FED500 0%, #FDB913 100%);">
+                    <div class="theme-header-bar" style="background: #1D1D1D; font-family: 'Montserrat', sans-serif;">DOLLAR GENERAL</div>
+                    <div class="theme-price-sticker" style="background: #FED500; color: #1D1D1D; border-color: #1D1D1D; border-radius: 5%;">$9<sup style="font-size: 1rem;">99</sup></div>
+                </div>
+                <div class="theme-info">
+                    <div class="theme-name">Dollar General</div>
+                    <div class="theme-details">Montserrat font, 5% rounded corners, medium shadow</div>
+                    <div class="theme-tags">
+                        <div class="theme-tag">Discount Retailer</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ace Hardware -->
+            <div class="theme-card" data-type="custom">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #C41E3A 0%, #8B1538 100%);">
+                    <div class="theme-header-bar" style="background: #C41E3A; font-family: 'Roboto Slab', serif;">ACE HARDWARE</div>
+                    <div class="theme-price-sticker" style="background: #C41E3A; color: white; border-color: white; border-radius: 0; aspect-ratio: 1.5;">$9<sup style="font-size: 1rem;">99</sup></div>
+                </div>
+                <div class="theme-info">
+                    <div class="theme-name">Ace Hardware</div>
+                    <div class="theme-details">Roboto Slab font, rectangular stickers (3:2), horizontal pricing</div>
+                    <div class="theme-tags">
+                        <div class="theme-tag">Hardware</div>
+                        <div class="theme-tag">Rectangular</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wakefern ShopRite -->
+            <div class="theme-card" data-type="custom special">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #E31837 0%, #C1272D 100%);">
+                    <div class="theme-header-bar" style="background: #E31837; font-family: 'Georgia', serif;">SHOPRITE</div>
+                    <div class="theme-price-sticker" style="background: #E31837; color: white; border-color: white; border-radius: 8px;">$9<sup style="font-size: 1rem;">99</sup></div>
+                </div>
+                <div class="theme-info">
+                    <div class="theme-name">Wakefern ShopRite</div>
+                    <div class="theme-details">Publico font, custom category header with flex layout, 3px red border</div>
+                    <div class="theme-tags">
+                        <div class="theme-tag special">Custom Category Header</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACI Albertsons -->
+            <div class="theme-card" data-type="custom">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #0066B2 0%, #004E8F 100%);">
+                    <div class="theme-header-bar" style="background: #0066B2;">ALBERTSONS</div>
+                    <div class="theme-price-sticker" style="background: #0066B2; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
+                </div>
+                <div class="theme-info">
+                    <div class="theme-name">ACI Albertsons</div>
+                    <div class="theme-details">National grocery chain theme with custom components</div>
+                    <div class="theme-tags">
+                        <div class="theme-tag">Grocery</div>
+                        <div class="theme-tag">National Chain</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACI Safeway -->
+            <div class="theme-card" data-type="custom">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #E31837 0%, #C1272D 100%);">
+                    <div class="theme-header-bar" style="background: #E31837;">SAFEWAY</div>
+                    <div class="theme-price-sticker" style="background: #E31837; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
+                </div>
+                <div class="theme-info">
+                    <div class="theme-name">ACI Safeway</div>
+                    <div class="theme-details">National grocery chain theme with custom components</div>
+                    <div class="theme-tags">
+                        <div class="theme-tag">Grocery</div>
+                        <div class="theme-tag">National Chain</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Costco -->
+            <div class="theme-card" data-type="custom">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #0066B2 0%, #004E8F 100%);">
+                    <div class="theme-header-bar" style="background: #E31837;">COSTCO</div>
+                    <div class="theme-price-sticker" style="background: #E31837; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
+                </div>
+                <div class="theme-info">
+                    <div class="theme-name">Costco</div>
+                    <div class="theme-details">Warehouse club theme with custom components</div>
+                    <div class="theme-tags">
+                        <div class="theme-tag">Warehouse</div>
+                        <div class="theme-tag">Membership</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Winn-Dixie -->
+            <div class="theme-card" data-type="custom">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #E31837 0%, #C1272D 100%);">
+                    <div class="theme-header-bar" style="background: #E31837;">WINN-DIXIE</div>
+                    <div class="theme-price-sticker" style="background: #E31837; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
+                </div>
+                <div class="theme-info">
+                    <div class="theme-name">Winn-Dixie</div>
+                    <div class="theme-details">Regional grocery chain theme</div>
+                    <div class="theme-tags">
+                        <div class="theme-tag">Grocery</div>
+                        <div class="theme-tag">Regional</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Family Dollar -->
+            <div class="theme-card" data-type="custom">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #FDB913 0%, #FED500 100%);">
+                    <div class="theme-header-bar" style="background: #1D1D1D;">FAMILY DOLLAR</div>
+                    <div class="theme-price-sticker" style="background: #FED500; color: #1D1D1D; border-color: #1D1D1D;">$9<sup style="font-size: 1rem;">99</sup></div>
+                </div>
+                <div class="theme-info">
+                    <div class="theme-name">Family Dollar</div>
+                    <div class="theme-details">Discount retailer theme</div>
+                    <div class="theme-tags">
+                        <div class="theme-tag">Discount</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coborns -->
+            <div class="theme-card" data-type="custom">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #006747 0%, #004D35 100%);">
+                    <div class="theme-header-bar" style="background: #006747;">COBORNS</div>
+                    <div class="theme-price-sticker" style="background: #006747; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
+                </div>
+                <div class="theme-info">
+                    <div class="theme-name">Coborns</div>
+                    <div class="theme-details">Regional grocery chain with multiple banner themes (Cashwise, Hornbachers)</div>
+                    <div class="theme-tags">
+                        <div class="theme-tag">Multi-Banner</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- IGA Default -->
+            <div class="theme-card" data-type="custom">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #E31837 0%, #C1272D 100%);">
+                    <div class="theme-header-bar" style="background: #E31837;">IGA</div>
+                    <div class="theme-price-sticker" style="background: #E31837; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
+                </div>
+                <div class="theme-info">
+                    <div class="theme-name">IGA Default</div>
+                    <div class="theme-details">Independent grocers alliance theme</div>
+                    <div class="theme-tags">
+                        <div class="theme-tag">Independent</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- UNFI Default -->
+            <div class="theme-card" data-type="custom">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #0066B2 0%, #004E8F 100%);">
+                    <div class="theme-header-bar" style="background: #0066B2;">UNFI</div>
+                    <div class="theme-price-sticker" style="background: #0066B2; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
+                </div>
+                <div class="theme-info">
+                    <div class="theme-name">UNFI Default</div>
+                    <div class="theme-details">Multi-banner distributor theme (Major Market, Metcalfes, My County Market, Stumps)</div>
+                    <div class="theme-tags">
+                        <div class="theme-tag">Distributor</div>
+                        <div class="theme-tag">Multi-Banner</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CSS Only Themes -->
+            <div class="theme-card" data-type="css">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #313131 0%, #000000 100%);">
+                    <div class="theme-header-bar" style="background: rgba(255,255,255,0.2);">CSS ONLY THEMES</div>
+                    <div class="theme-price-sticker" style="background: white; color: #313131; border-color: #313131;">$9<sup style="font-size: 1rem;">99</sup></div>
+                </div>
+                <div class="theme-info">
+                    <div class="theme-name">CSS Only Themes (19 Total)</div>
+                    <div class="theme-details">Token overrides only: Colts, Crops Marketplace, Daves Markets, Foodtown, Geisslers, Golden Pantry, Greenway Market, Harvest Fare, Hollister, Johnsons, Kesslers, Lambs, Lucky's Markets Ohio, Pickrite, United Markets, Valley Fresh</div>
+                    <div class="theme-tags">
+                        <div class="theme-tag">Token Overrides</div>
+                        <div class="theme-tag">No Custom Components</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MDI Galaxy -->
+            <div class="theme-card" data-type="custom">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
+                    <div class="theme-header-bar" style="background: linear-gradient(90deg, #0f3460 0%, #16213e 100%);">GALAXY</div>
+                    <div class="theme-price-sticker" style="background: #0f3460; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
+                </div>
+                <div class="theme-info">
+                    <div class="theme-name">MDI Galaxy</div>
+                    <div class="theme-details">Modern dark theme with multiple light variants (Galaxy Light, Galaxy Light Green)</div>
+                    <div class="theme-tags">
+                        <div class="theme-tag">Dark Mode</div>
+                        <div class="theme-tag">Multi-Variant</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OXXO -->
+            <div class="theme-card" data-type="custom">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #FFD100 0%, #FFA500 100%);">
+                    <div class="theme-header-bar" style="background: #E31837;">OXXO</div>
+                    <div class="theme-price-sticker" style="background: #E31837; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
+                </div>
+                <div class="theme-info">
+                    <div class="theme-name">OXXO</div>
+                    <div class="theme-details">Convenience store theme with separate desktop/mobile SCSS</div>
+                    <div class="theme-tags">
+                        <div class="theme-tag">Convenience</div>
+                        <div class="theme-tag">Mexico</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sedanos -->
+            <div class="theme-card" data-type="custom">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #E31837 0%, #C1272D 100%);">
+                    <div class="theme-header-bar" style="background: #E31837;">SEDANO'S</div>
+                    <div class="theme-price-sticker" style="background: #E31837; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
+                </div>
+                <div class="theme-info">
+                    <div class="theme-name">Sedanos</div>
+                    <div class="theme-details">Hispanic market theme with Tikal Sans font</div>
+                    <div class="theme-tags">
+                        <div class="theme-tag">Hispanic Market</div>
+                        <div class="theme-tag">Custom Font</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Super King -->
+            <div class="theme-card" data-type="custom">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);">
+                    <div class="theme-header-bar" style="background: #E31837;">SUPER KING</div>
+                    <div class="theme-price-sticker" style="background: #E31837; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
+                </div>
+                <div class="theme-info">
+                    <div class="theme-name">Super King</div>
+                    <div class="theme-details">Ethnic supermarket theme</div>
+                    <div class="theme-tags">
+                        <div class="theme-tag">Ethnic Market</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hardings -->
+            <div class="theme-card" data-type="custom">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #003DA5 0%, #002D7A 100%);">
+                    <div class="theme-header-bar" style="background: #003DA5;">HARDING'S</div>
+                    <div class="theme-price-sticker" style="background: #E31837; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
+                </div>
+                <div class="theme-info">
+                    <div class="theme-name">Hardings</div>
+                    <div class="theme-details">Friendly market theme</div>
+                    <div class="theme-tags">
+                        <div class="theme-tag">Regional</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentFilter = 'all';
+
+        function filterThemes() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.theme-card');
+
+            cards.forEach(card => {
+                const themeName = card.querySelector('.theme-name').textContent.toLowerCase();
+                const themeDetails = card.querySelector('.theme-details').textContent.toLowerCase();
+                const matchesSearch = themeName.includes(searchTerm) || themeDetails.includes(searchTerm);
+                const matchesFilter = currentFilter === 'all' || card.dataset.type.includes(currentFilter);
+
+                card.style.display = matchesSearch && matchesFilter ? 'block' : 'none';
+            });
+        }
+
+        function filterByType(type) {
+            currentFilter = type;
+
+            // Update active tag
+            document.querySelectorAll('.filter-tag').forEach(tag => {
+                tag.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            filterThemes();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grocery Industry - Digital Circular Style Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@700&family=Montserrat:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #E2141E;
+            --text: #1D2325;
+            --text-light: #4A5358;
+            --bg: #FFFFFF;
+            --bg-secondary: #F2F3F3;
+            --border: #E4E5E5;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            background: var(--bg-secondary);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #E2141E 0%, #BA1218 100%);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        h1 { font-size: 3rem; margin-bottom: 1rem; }
+
+        .subtitle {
+            font-size: 1.25rem;
+            opacity: 0.95;
+            line-height: 1.6;
+        }
+
+        .section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .theme-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .theme-card {
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .theme-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+
+        .theme-preview {
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            position: relative;
+        }
+
+        .theme-info {
+            padding: 1.5rem;
+            background: white;
+        }
+
+        .theme-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .theme-description {
+            color: var(--text-light);
+            font-size: 0.875rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .theme-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .feature-tag {
+            background: var(--bg-secondary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .feature-tag.highlight {
+            background: rgba(226, 20, 30, 0.1);
+            color: var(--primary);
+        }
+
+        .price-sticker {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            border: 3px solid;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
+
+        .deal-examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .deal-card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .deal-label {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .deal-display {
+            font-family: 'Oswald', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1.2;
+        }
+
+        .deal-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #313131 0%, #000000 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+
+        .info-box h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .info-box p {
+            line-height: 1.6;
+            opacity: 0.95;
+        }
+
+        .recommendation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .recommendation-card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .recommendation-card h4 {
+            font-size: 1.125rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .recommendation-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .recommendation-card li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .recommendation-card li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .client-examples {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .client-example {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .client-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .client-config {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .config-item {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 6px;
+        }
+
+        .config-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-light);
+            margin-bottom: 0.25rem;
+        }
+
+        .config-value {
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <script src="../shared-nav.js"></script>
+
+    <div class="container">
+        <div class="header">
+            <h1>🛒 Grocery Industry Themes</h1>
+            <p class="subtitle">
+                Optimized configurations for grocery stores, supermarkets, and food retailers.
+                These themes emphasize fresh deals, promotional pricing, and loyalty programs.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>🎯</span>
+                Why These Choices Work for Grocery
+            </h2>
+
+            <div class="info-box">
+                <h3>Industry-Specific Requirements</h3>
+                <p>
+                    Grocery circulars need to communicate time-sensitive promotions, loyalty pricing,
+                    and digital coupons clearly. Customers scan quickly for deals on perishables,
+                    so bold pricing and clear value propositions are essential. The themes below are
+                    optimized for high-volume promotional content with emphasis on freshness and savings.
+                </p>
+            </div>
+
+            <div class="recommendation-grid">
+                <div class="recommendation-card">
+                    <h4>🏷️ Price Sticker Strategy</h4>
+                    <ul>
+                        <li>Circular shapes (50% radius) for traditional feel</li>
+                        <li>Bold Oswald font for price legibility</li>
+                        <li>High contrast red/white combinations</li>
+                        <li>Multi-buy deals (2 for $5, 3/$10)</li>
+                    </ul>
+                </div>
+
+                <div class="recommendation-card">
+                    <h4>💰 Deal Type Focus</h4>
+                    <ul>
+                        <li>NumFor - Volume discounts (2 for $5)</li>
+                        <li>BOGO - Customer acquisition</li>
+                        <li>SaveX - Clear savings message</li>
+                        <li>Loyalty pricing - Member exclusives</li>
+                    </ul>
+                </div>
+
+                <div class="recommendation-card">
+                    <h4>🎨 Color Psychology</h4>
+                    <ul>
+                        <li>Red - Creates urgency and appetite</li>
+                        <li>Yellow - Highlights savings/value</li>
+                        <li>Green - Fresh produce association</li>
+                        <li>Orange - Energy and freshness</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>🏪</span>
+                Featured Grocery Themes
+            </h2>
+
+            <div class="theme-showcase">
+                <!-- Gelsons -->
+                <div class="theme-card">
+                    <div class="theme-preview" style="background: linear-gradient(135deg, #cd612b 0%, #442415 100%);">
+                        🥩
+                        <div class="price-sticker" style="background: #D82027; color: #FFCF16; border-color: white;">
+                            $9<sup style="font-size: 1rem;">99</sup>
+                        </div>
+                    </div>
+                    <div class="theme-info">
+                        <div class="theme-name">Gelson's Markets</div>
+                        <div class="theme-description">
+                            Premium Southern California grocer with custom Montserrat font and Apex Serif for headlines.
+                            Features seasonal menu items and upscale brand positioning.
+                        </div>
+                        <div class="theme-features">
+                            <span class="feature-tag highlight">Custom Fonts</span>
+                            <span class="feature-tag highlight">Seasonal Menu</span>
+                            <span class="feature-tag">Montserrat</span>
+                            <span class="feature-tag">Premium</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Festival Foods -->
+                <div class="theme-card">
+                    <div class="theme-preview" style="background: linear-gradient(135deg, #3a823d 0%, #8BC34A 100%);">
+                        🥛
+                        <div class="price-sticker" style="background: #3a823d; color: white; border-color: white;">
+                            $3<sup style="font-size: 1rem;">49</sup>
+                        </div>
+                    </div>
+                    <div class="theme-info">
+                        <div class="theme-name">Festival Foods</div>
+                        <div class="theme-description">
+                            Wisconsin-based grocer with custom Flyer font. Horizontal price tag layout with
+                            rectangle stickers (aspect ratio 3:2). Green brand colors emphasize freshness.
+                        </div>
+                        <div class="theme-features">
+                            <span class="feature-tag highlight">Horizontal Tags</span>
+                            <span class="feature-tag highlight">Custom Font</span>
+                            <span class="feature-tag">Green Theme</span>
+                            <span class="feature-tag">Kiosk Footer</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Albertsons -->
+                <div class="theme-card">
+                    <div class="theme-preview" style="background: linear-gradient(135deg, #0066B2 0%, #004E8F 100%);">
+                        🧀
+                        <div class="price-sticker" style="background: #0066B2; color: white; border-color: white;">
+                            2/$5
+                        </div>
+                    </div>
+                    <div class="theme-info">
+                        <div class="theme-name">Albertsons / Safeway</div>
+                        <div class="theme-description">
+                            National chain with comprehensive loyalty program integration. Supports Just for U
+                            digital coupons and member exclusive pricing.
+                        </div>
+                        <div class="theme-features">
+                            <span class="feature-tag highlight">Loyalty Program</span>
+                            <span class="feature-tag highlight">Digital Coupons</span>
+                            <span class="feature-tag">National Chain</span>
+                            <span class="feature-tag">Multi-Banner</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- IGA -->
+                <div class="theme-card">
+                    <div class="theme-preview" style="background: linear-gradient(135deg, #E31837 0%, #C1272D 100%);">
+                        🍎
+                        <div class="price-sticker" style="background: #E31837; color: white; border-color: white;">
+                            $1<sup style="font-size: 1rem;">99</sup>
+                        </div>
+                    </div>
+                    <div class="theme-info">
+                        <div class="theme-name">IGA</div>
+                        <div class="theme-description">
+                            Independent Grocers Alliance template. Flexible configuration for independent stores
+                            with local branding while maintaining chain consistency.
+                        </div>
+                        <div class="theme-features">
+                            <span class="feature-tag">Independent</span>
+                            <span class="feature-tag">Flexible</span>
+                            <span class="feature-tag">Local Branding</span>
+                            <span class="feature-tag">Chain Support</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weis Markets -->
+                <div class="theme-card">
+                    <div class="theme-preview" style="background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%);">
+                        🥖
+                        <div class="price-sticker" style="background: #1E3A8A; color: white; border-color: white; border-radius: 8px; aspect-ratio: 1.5;">
+                            $2<sup style="font-size: 1rem;">99</sup>
+                        </div>
+                    </div>
+                    <div class="theme-info">
+                        <div class="theme-name">Weis Markets</div>
+                        <div class="theme-description">
+                            Mid-Atlantic grocer with simple price tag style (aspect 1.5) and Noto Sans font.
+                            Modular header design with 8 SCSS partials for maintainability.
+                        </div>
+                        <div class="theme-features">
+                            <span class="feature-tag highlight">Simple Pricing</span>
+                            <span class="feature-tag highlight">Modular Header</span>
+                            <span class="feature-tag">Noto Sans</span>
+                            <span class="feature-tag">Blue Theme</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ShopRite -->
+                <div class="theme-card">
+                    <div class="theme-preview" style="background: linear-gradient(135deg, #E31837 0%, #C1272D 100%);">
+                        🍗
+                        <div class="price-sticker" style="background: #E31837; color: white; border-color: white; border-radius: 8px;">
+                            $7<sup style="font-size: 1rem;">99</sup>
+                        </div>
+                    </div>
+                    <div class="theme-info">
+                        <div class="theme-name">ShopRite (Wakefern)</div>
+                        <div class="theme-description">
+                            Publico font with custom category headers. 3px red borders with rounded corners.
+                            Emphasis on value pricing and member-only deals.
+                        </div>
+                        <div class="theme-features">
+                            <span class="feature-tag highlight">Custom Headers</span>
+                            <span class="feature-tag">Publico Font</span>
+                            <span class="feature-tag">Value Focus</span>
+                            <span class="feature-tag">Member Deals</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>📋</span>
+                Common Grocery Deal Types
+            </h2>
+
+            <div class="deal-examples">
+                <div class="deal-card">
+                    <div class="deal-label">Multi-Buy Discount</div>
+                    <div class="deal-display">2 FOR $5</div>
+                    <div class="deal-subtitle">NumFor deal type</div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="deal-label">Buy One Get One</div>
+                    <div class="deal-display" style="font-size: 1.5rem;">BUY 1<br>GET 1<br>FREE</div>
+                    <div class="deal-subtitle">BOGO deal type</div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="deal-label">Weight-Based Pricing</div>
+                    <div class="deal-display">$3<sup style="font-size: 1.5rem;">.49</sup><div style="font-size: 1rem; margin-top: 0.25rem;">lb</div></div>
+                    <div class="deal-subtitle">Amount + text</div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="deal-label">Savings Highlight</div>
+                    <div class="deal-display" style="font-size: 1.75rem;">SAVE<br>$2</div>
+                    <div class="deal-subtitle">SaveX deal type</div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="deal-label">Member Exclusive</div>
+                    <div class="deal-display" style="font-size: 2rem; color: #007B8A;">$4<sup style="font-size: 1.25rem;">.99</sup><div style="font-size: 0.875rem; margin-top: 0.5rem;">🎯 WITH CARD</div></div>
+                    <div class="deal-subtitle">Loyalty pricing</div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="deal-label">Slash Pricing</div>
+                    <div class="deal-display">3/$10</div>
+                    <div class="deal-subtitle">NumSlash deal type</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>⚙️</span>
+                Actual Client Configurations
+            </h2>
+
+            <div class="client-examples">
+                <div class="client-example">
+                    <div class="client-name">Gelson's Markets Configuration</div>
+                    <p style="color: var(--text-light); margin-bottom: 1rem;">
+                        Premium California grocer emphasizing quality and freshness
+                    </p>
+                    <div class="client-config">
+                        <div class="config-item">
+                            <div class="config-label">Primary Color</div>
+                            <div class="config-value">#cd612b</div>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">Coupon Alt Color</div>
+                            <div class="config-value">#D82027</div>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">Font Family</div>
+                            <div class="config-value">Montserrat</div>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">Display Font</div>
+                            <div class="config-value">Apex Serif</div>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">Card Radius</div>
+                            <div class="config-value">0px (square)</div>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">Special Feature</div>
+                            <div class="config-value">Seasonal Menu</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="client-example">
+                    <div class="client-name">Festival Foods Configuration</div>
+                    <p style="color: var(--text-light); margin-bottom: 1rem;">
+                        Wisconsin grocer with strong local presence and fresh focus
+                    </p>
+                    <div class="client-config">
+                        <div class="config-item">
+                            <div class="config-label">Primary Color</div>
+                            <div class="config-value">#3a823d</div>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">Coupon Color</div>
+                            <div class="config-value">#3a823d (green)</div>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">Font Family</div>
+                            <div class="config-value">Flyer (custom)</div>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">Price Tag Style</div>
+                            <div class="config-value">horizontal</div>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">Sticker Aspect</div>
+                            <div class="config-value">3:2 (rectangle)</div>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">Special Feature</div>
+                            <div class="config-value">Kiosk Footer</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="client-example">
+                    <div class="client-name">Weis Markets Configuration</div>
+                    <p style="color: var(--text-light); margin-bottom: 1rem;">
+                        Mid-Atlantic chain with emphasis on simplicity and clarity
+                    </p>
+                    <div class="client-config">
+                        <div class="config-item">
+                            <div class="config-label">Primary Color</div>
+                            <div class="config-value">#1E3A8A</div>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">Font Family</div>
+                            <div class="config-value">Noto Sans</div>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">Price Tag Style</div>
+                            <div class="config-value">simple</div>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">Sticker Aspect</div>
+                            <div class="config-value">1.5 (wide)</div>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">Border Radius</div>
+                            <div class="config-value">8px</div>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">Header Design</div>
+                            <div class="config-value">8 SCSS Partials</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>✅</span>
+                Recommended Configurations
+            </h2>
+
+            <div class="info-box">
+                <h3>Best Practices for Grocery Circulars</h3>
+                <p style="margin-bottom: 1rem;">
+                    <strong>Price Tag Style:</strong> Use circular stickers (50% radius) for traditional grocery feel,
+                    or horizontal/rectangle shapes for modern, space-efficient layouts.
+                </p>
+                <p style="margin-bottom: 1rem;">
+                    <strong>Digital Coupons:</strong> Yellow (#FFCF16) for coupon backgrounds with high contrast.
+                    Red alt coupons (#EB0000) for special promotions.
+                </p>
+                <p style="margin-bottom: 1rem;">
+                    <strong>Loyalty Programs:</strong> Use teal/cyan (#007B8A) for member-exclusive pricing to
+                    differentiate from standard promotional pricing.
+                </p>
+                <p>
+                    <strong>Font Choices:</strong> Oswald for prices (bold, condensed, high legibility),
+                    Open Sans or Montserrat for body text (clean, professional).
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add back-to-main link
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.querySelector('.container');
+            const backLink = document.createElement('div');
+            backLink.style.cssText = 'text-align: center; padding: 2rem;';
+            backLink.innerHTML = '<a href="../index.html" style="color: #E2141E; text-decoration: none; font-weight: 600;">← Back to Style Guide Home</a>';
+            container.appendChild(backLink);
+        });
+    </script>
+</body>
+</html>

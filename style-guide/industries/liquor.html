@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liquor Industry - Digital Circular Style Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Trade+Winds&family=Raleway:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0072bb;
+            --primary-dark: #00619d;
+            --text: #1D2325;
+            --text-light: #4A5358;
+            --bg: #FFFFFF;
+            --bg-secondary: #F2F3F3;
+            --border: #E4E5E5;
+            --shadow: 0 2px 4px rgba(0,0,0,0.1);
+            --accent: #f9e7bf;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            background: var(--bg-secondary);
+            padding-top: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0072bb 0%, #00619d 100%);
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            color: white;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .industry-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .description {
+            font-size: 1.125rem;
+            line-height: 1.6;
+            opacity: 0.95;
+        }
+
+        .section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border);
+            color: var(--text);
+        }
+
+        .subsection-title {
+            font-size: 1.25rem;
+            margin: 2rem 0 1rem;
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .theme-showcase {
+            background: linear-gradient(135deg, #333 0%, #1a1a1a 100%);
+            padding: 3rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .theme-name {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #f9e7bf;
+            margin-bottom: 0.5rem;
+            font-family: 'Trade Winds', cursive;
+        }
+
+        .theme-tagline {
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 2rem;
+            font-size: 1.125rem;
+        }
+
+        .price-display {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+
+        /* Price Sticker - Following design-system structure */
+        .price-sticker {
+            display: inline-flex;
+            align-items: flex-end;
+            justify-content: flex-end;
+            width: 180px;
+            height: auto;
+            position: relative;
+            user-select: none;
+        }
+
+        .price-sticker .sticker {
+            box-sizing: border-box;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 1;
+            width: 100%;
+            height: auto;
+            font-family: 'Trade Winds', cursive;
+            font-weight: 400;
+            border-radius: 50%;
+            padding: 14%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .price-sticker.captain .sticker {
+            background: rgba(255, 255, 255, 0.875);
+            color: #1D2325;
+            border: none;
+        }
+
+        .price-sticker.captain-reversed .sticker {
+            background: rgba(0, 0, 0, 0.875);
+            color: white;
+            border: none;
+        }
+
+        .price-container {
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            width: 100%;
+        }
+
+        .content {
+            box-sizing: border-box;
+            display: flex;
+            width: fit-content;
+            height: fit-content;
+            font-size: 2.5rem;
+        }
+
+        /* Amount component with grid layout */
+        .amount {
+            display: grid;
+            grid-auto-flow: column;
+            grid-auto-columns: auto;
+            grid-auto-rows: 1fr;
+            align-items: center;
+            width: fit-content;
+            height: fit-content;
+            line-height: 1;
+            gap: 0;
+        }
+
+        .amount .symbol {
+            grid-row: 1;
+            font-size: 0.5em;
+            display: inline-flex;
+        }
+
+        .amount .whole-number {
+            grid-row: 1 / span 2;
+            font-size: 1em;
+            display: inline-flex;
+        }
+
+        .amount .decimal {
+            grid-row: 1;
+            font-size: 0.5em;
+            display: inline-flex;
+        }
+
+        .amount .subtext {
+            grid-row: 2;
+            align-self: end;
+            font-size: 0.375em;
+            font-weight: 400;
+            text-transform: uppercase;
+            display: inline-flex;
+        }
+
+        .theme-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .detail-card {
+            background: rgba(255,255,255,0.05);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .detail-title {
+            font-weight: 700;
+            color: #f9e7bf;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .detail-value {
+            color: white;
+            font-size: 1.125rem;
+        }
+
+        .color-swatch {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            border: 2px solid rgba(255,255,255,0.3);
+            vertical-align: middle;
+            margin-left: 0.5rem;
+        }
+
+        .deal-types-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .deal-card {
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            background: white;
+            transition: all 0.3s;
+        }
+
+        .deal-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .deal-title {
+            font-weight: 700;
+            font-size: 1.125rem;
+            margin-bottom: 0.5rem;
+            color: #0072bb;
+        }
+
+        .deal-example {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 1rem 0;
+            color: var(--text);
+        }
+
+        .deal-description {
+            color: var(--text-light);
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .best-practices {
+            background: linear-gradient(135deg, #0072bb 0%, #00619d 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+        }
+
+        .best-practices h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .best-practices ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .best-practices li {
+            padding: 0.75rem 0;
+            padding-left: 2rem;
+            position: relative;
+        }
+
+        .best-practices li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .info-callout {
+            background: #E8F4FD;
+            border-left: 4px solid #0072bb;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 4px;
+        }
+
+        .info-callout-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #004d7a;
+        }
+
+        .warning-callout {
+            background: #FFF3CD;
+            border-left: 4px solid #FFC107;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 4px;
+        }
+
+        .warning-callout-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #856404;
+        }
+
+        .config-code {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .config-line {
+            margin: 0.25rem 0;
+        }
+
+        .config-comment {
+            color: #6a9955;
+        }
+
+        .config-property {
+            color: #9cdcfe;
+        }
+
+        .config-value {
+            color: #ce9178;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .comparison-card {
+            background: #F8F9FA;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+        }
+
+        .comparison-title {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .comparison-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-list li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-light);
+        }
+
+        .comparison-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #0072bb;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .price-display {
+                flex-direction: column;
+            }
+
+            .price-sticker {
+                width: 150px;
+            }
+
+            .content {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script src="../shared-nav.js"></script>
+
+    <div class="container">
+        <div class="header">
+            <div class="industry-icon">🍷</div>
+            <h1>Liquor & Wine Industry Themes</h1>
+            <p class="description">
+                Liquor retail demands a sophisticated, premium aesthetic while navigating strict regulatory requirements.
+                Digital circulars must balance promotional messaging with compliance, using design to convey quality,
+                value, and brand personality. The Captain Liquor theme demonstrates how specialty fonts and refined
+                color palettes can elevate the shopping experience.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Featured Liquor Theme</h2>
+
+            <div class="theme-showcase">
+                <div class="theme-name">Captain Liquor</div>
+                <div class="theme-tagline">Coborn's Inc. - Premium Spirits & Wine</div>
+
+                <div class="price-display">
+                    <div>
+                        <div class="price-sticker captain">
+                            <div class="sticker">
+                                <div class="price-container">
+                                    <div class="content">
+                                        <div class="amount">
+                                            <span class="symbol">$</span>
+                                            <span class="whole-number">29</span>
+                                            <span class="decimal">99</span>
+                                            <span class="subtext">750ml</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="color: rgba(255,255,255,0.6); margin-top: 1rem; font-size: 0.875rem;">Standard Style</div>
+                    </div>
+
+                    <div>
+                        <div class="price-sticker captain-reversed">
+                            <div class="sticker">
+                                <div class="price-container">
+                                    <div class="content">
+                                        <div class="amount">
+                                            <span class="symbol">$</span>
+                                            <span class="whole-number">19</span>
+                                            <span class="decimal">99</span>
+                                            <span class="subtext">Sale</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="color: rgba(255,255,255,0.6); margin-top: 1rem; font-size: 0.875rem;">Reversed Style</div>
+                    </div>
+                </div>
+
+                <div class="theme-details">
+                    <div class="detail-card">
+                        <div class="detail-title">Primary Color</div>
+                        <div class="detail-value">
+                            #0072bb (Ocean Blue)
+                            <span class="color-swatch" style="background: #0072bb;"></span>
+                        </div>
+                    </div>
+
+                    <div class="detail-card">
+                        <div class="detail-title">Accent Color</div>
+                        <div class="detail-value">
+                            #f9e7bf (Champagne)
+                            <span class="color-swatch" style="background: #f9e7bf;"></span>
+                        </div>
+                    </div>
+
+                    <div class="detail-card">
+                        <div class="detail-title">Display Font</div>
+                        <div class="detail-value">Trade Winds (Cursive)</div>
+                    </div>
+
+                    <div class="detail-card">
+                        <div class="detail-title">Body Font</div>
+                        <div class="detail-value">Raleway (Sans-serif)</div>
+                    </div>
+
+                    <div class="detail-card">
+                        <div class="detail-title">Price Tag Shape</div>
+                        <div class="detail-value">Circular (1:1)</div>
+                    </div>
+
+                    <div class="detail-card">
+                        <div class="detail-title">Background Style</div>
+                        <div class="detail-value">Semi-transparent (87.5%)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Why These Choices Work for Liquor Retail</h2>
+
+            <div class="info-callout">
+                <div class="info-callout-title">Industry Context</div>
+                Liquor stores serve discerning customers seeking premium products, special occasion purchases, and
+                knowledgeable staff recommendations. Unlike commodity grocery items, spirits and wine shopping is
+                exploratory and experience-focused. Design must convey sophistication, trust, and expertise while
+                complying with advertising regulations.
+            </div>
+
+            <h3 class="subsection-title">Design Philosophy</h3>
+            <div class="deal-types-grid">
+                <div class="deal-card">
+                    <div class="deal-title">Premium Typography</div>
+                    <div class="deal-example">Trade Winds</div>
+                    <div class="deal-description">
+                        The decorative cursive font evokes nautical themes and craftsmanship, perfect for a specialty
+                        liquor brand. It conveys personality and premium quality without being overly formal.
+                    </div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="deal-title">Sophisticated Colors</div>
+                    <div class="deal-example">Ocean Blue + Champagne</div>
+                    <div class="deal-description">
+                        Blue (#0072bb) suggests trust and refinement, while champagne gold (#f9e7bf) adds elegance
+                        and warmth. This palette works for both spirits and wine promotions.
+                    </div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="deal-title">Semi-Transparent Tags</div>
+                    <div class="deal-example">87.5% Opacity</div>
+                    <div class="deal-description">
+                        Slight transparency allows product imagery to show through, keeping focus on the bottles
+                        while maintaining price readability. Creates a modern, layered aesthetic.
+                    </div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="deal-title">Dark UI Elements</div>
+                    <div class="deal-example">Header BG: #333</div>
+                    <div class="deal-description">
+                        Dark headers and navigation evoke upscale bar/lounge aesthetics, creating contrast that
+                        makes product photography pop. Common in premium retail experiences.
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Common Liquor Deal Types</h3>
+            <div class="deal-types-grid">
+                <div class="deal-card">
+                    <div class="deal-title">Volume Discounts</div>
+                    <div class="deal-example">Buy 6+ Save 15%</div>
+                    <div class="deal-description">
+                        Case discounts encourage bulk purchases of wine. Often displayed as "Mix & Match 6 bottles"
+                        to let customers build their own variety cases.
+                    </div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="deal-title">Featured Selections</div>
+                    <div class="deal-example">Staff Pick $24.99</div>
+                    <div class="deal-description">
+                        Curated recommendations from sommeliers or staff highlight expertise and guide discovery.
+                        Builds trust and encourages customers to try new products.
+                    </div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="deal-title">Limited Releases</div>
+                    <div class="deal-example">Small Batch - Only 24 bottles</div>
+                    <div class="deal-description">
+                        Scarcity messaging for allocated spirits, rare wines, or seasonal releases. Creates urgency
+                        and appeals to collectors and enthusiasts.
+                    </div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="deal-title">Price Per Unit</div>
+                    <div class="deal-example">$29.99 / 750ml</div>
+                    <div class="deal-description">
+                        Standardized unit pricing (per 750ml, per liter) enables comparison across bottle sizes
+                        and formats. Required by regulation in some jurisdictions.
+                    </div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="deal-title">Seasonal Promotions</div>
+                    <div class="deal-example">Holiday Gift Sets</div>
+                    <div class="deal-description">
+                        Time-based offers tied to holidays, seasons, or events (Super Bowl, New Year's, summer BBQ).
+                        Often includes bundled glassware or accessories.
+                    </div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="deal-title">Clearance / Closeout</div>
+                    <div class="deal-example">Final Case - 30% Off</div>
+                    <div class="deal-description">
+                        Discontinued products or last bottles must move quickly. Appeals to value seekers and
+                        customers willing to try unfamiliar brands at reduced risk.
+                    </div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="deal-title">Loyalty Rewards</div>
+                    <div class="deal-example">Member Price: $19.99</div>
+                    <div class="deal-description">
+                        Exclusive pricing for loyalty program members. Encourages sign-ups and repeat visits.
+                        Often combined with points or rewards for future purchases.
+                    </div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="deal-title">Tasting Events</div>
+                    <div class="deal-example">Free Tasting - Sat 2-5pm</div>
+                    <div class="deal-description">
+                        In-store experiences that drive foot traffic and product trials. Digital circular promotes
+                        the event and featured products available for purchase.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Actual Client Configuration</h2>
+            <p style="color: var(--text-light); margin-bottom: 2rem;">
+                Below is the actual configuration from Captain Liquor (Coborn's Inc.) in the themes repository.
+            </p>
+
+            <div class="config-code">
+<span class="config-line"><span class="config-comment">// Captain Liquor - themes/coborns-inc-captainliquor/theme.scss</span></span>
+<span class="config-line">@import url(<span class="config-value">'https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;700&family=Trade+Winds'</span>);</span>
+<span class="config-line"></span>
+<span class="config-line"><span class="config-comment">// Unique cursive font for prices and headers</span></span>
+<span class="config-line">@include token.set(token.<span class="config-property">$font-prices</span>, <span class="config-value">'Trade Winds'</span>, cursive);</span>
+<span class="config-line">@include token.set(token.<span class="config-property">$category-header-font</span>, <span class="config-value">'Trade Winds'</span>, cursive);</span>
+<span class="config-line"></span>
+<span class="config-line"><span class="config-comment">// Brand colors</span></span>
+<span class="config-line">@include token.set(token.<span class="config-property">$color-brand</span>, <span class="config-value">#0072bb</span>);</span>
+<span class="config-line">@include token.set(token.<span class="config-property">$color-brand-hover</span>, <span class="config-value">#0069aa</span>);</span>
+<span class="config-line">@include token.set(token.<span class="config-property">$color-brand-alt</span>, <span class="config-value">#f9e7bf</span>);</span>
+<span class="config-line">@include token.set(token.<span class="config-property">$color-link-on-dark</span>, <span class="config-value">#359fe1</span>);</span>
+<span class="config-line"></span>
+<span class="config-line"><span class="config-comment">// Dark UI theme</span></span>
+<span class="config-line">@include token.set(token.<span class="config-property">$menu-bar-bg</span>, <span class="config-value">#333</span>);</span>
+<span class="config-line">@include token.set(token.<span class="config-property">$app-header-bg</span>, token.$color-bg-dark);</span>
+<span class="config-line">@include token.set(token.<span class="config-property">$app-header-text-color</span>, token.$color-text-on-dark);</span>
+<span class="config-line"></span>
+<span class="config-line"><span class="config-comment">// Semi-transparent price stickers</span></span>
+<span class="config-line">@include token.set(token.<span class="config-property">$price-sticker-bg</span>, rgba(<span class="config-value">255, 255, 255, 0.875</span>));</span>
+<span class="config-line">@include token.set(token.<span class="config-property">$price-sticker-text-color</span>, token.$color-text);</span>
+<span class="config-line">@include token.set(token.<span class="config-property">$price-sticker-reversed-bg</span>, rgba(<span class="config-value">0, 0, 0, 0.875</span>));</span>
+<span class="config-line">@include token.set(token.<span class="config-property">$price-sticker-reversed-text-color</span>, token.$color-text-on-dark);</span>
+<span class="config-line">@include token.set(token.<span class="config-property">$price-sticker-border-width</span>, <span class="config-value">0</span>);</span>
+<span class="config-line"></span>
+<span class="config-line"><span class="config-comment">// Vertical offset for Trade Winds font</span></span>
+<span class="config-line">--dh-amount-font-top-offset: <span class="config-value">0.125em</span>;</span>
+<span class="config-line"></span>
+<span class="config-line"><span class="config-comment">// Dark card details</span></span>
+<span class="config-line">@include token.set(token.<span class="config-property">$card-details-bg</span>, token.$color-bg-dark);</span>
+<span class="config-line">@include token.set(token.<span class="config-property">$card-details-text-color</span>, token.$color-text-on-dark);</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Liquor vs. Grocery Design Comparison</h2>
+
+            <div class="comparison-grid">
+                <div class="comparison-card">
+                    <div class="comparison-title">Liquor Retail Focus</div>
+                    <ul class="comparison-list">
+                        <li>Premium, sophisticated aesthetics</li>
+                        <li>Decorative, personality-driven fonts</li>
+                        <li>Dark UI elements for upscale feel</li>
+                        <li>Product imagery takes priority</li>
+                        <li>Semi-transparent overlays</li>
+                        <li>Curated selection emphasis</li>
+                        <li>Scarcity and exclusivity messaging</li>
+                        <li>Staff recommendations prominent</li>
+                        <li>Experience-focused (tastings, events)</li>
+                        <li>Compliance with advertising regulations</li>
+                    </ul>
+                </div>
+
+                <div class="comparison-card">
+                    <div class="comparison-title">Grocery Retail Focus</div>
+                    <ul class="comparison-list">
+                        <li>Bright, energetic aesthetics</li>
+                        <li>Clear, readable sans-serif fonts</li>
+                        <li>Light, clean backgrounds</li>
+                        <li>Price and savings take priority</li>
+                        <li>Solid, opaque backgrounds</li>
+                        <li>Wide variety emphasis</li>
+                        <li>Volume and availability messaging</li>
+                        <li>Weekly deals prominent</li>
+                        <li>Value-focused (BOGOs, discounts)</li>
+                        <li>Nutrition and freshness highlights</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="warning-callout">
+                <div class="warning-callout-title">Regulatory Compliance</div>
+                Liquor advertising is subject to strict regulations that vary by jurisdiction. Always ensure your
+                digital circular includes required disclaimers, age verification where applicable, and complies with
+                local laws regarding promotional messaging, imagery, and pricing display. Consult legal counsel
+                before launching liquor-related digital circulars.
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Liquor Industry Best Practices</h2>
+
+            <div class="best-practices">
+                <h3>Recommended Configurations</h3>
+                <ul>
+                    <li>Use sophisticated typography that conveys premium quality (decorative fonts for headers, clean sans-serifs for body)</li>
+                    <li>Implement dark UI elements (headers, navigation) to create upscale, lounge-like aesthetics</li>
+                    <li>Choose refined color palettes (blues, golds, deep reds) that suggest quality and craftsmanship</li>
+                    <li>Use semi-transparent price tags to keep focus on product photography and bottle design</li>
+                    <li>Feature staff picks and curated selections to demonstrate expertise and guide discovery</li>
+                    <li>Highlight limited releases and allocated products with scarcity messaging</li>
+                    <li>Implement standardized unit pricing (per 750ml) for easy comparison across products</li>
+                    <li>Promote experiential elements (tastings, classes) to drive foot traffic and engagement</li>
+                    <li>Use seasonal promotions tied to holidays and events for timely relevance</li>
+                    <li>Ensure all advertising complies with local regulations regarding liquor promotion</li>
+                </ul>
+            </div>
+
+            <div class="info-callout">
+                <div class="info-callout-title">Performance & Accessibility</div>
+                Decorative fonts like Trade Winds should be subset to include only necessary characters, reducing
+                file size. Always provide fallback fonts for critical text. Ensure sufficient color contrast on
+                semi-transparent backgrounds for accessibility. Test dark UI themes with screen readers to verify
+                proper contrast ratios for WCAG compliance.
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colors & Fonts - Digital Circular Style Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;600;700&family=Oswald:wght@700&family=Montserrat:wght@300;400;700;900&family=Noto+Sans:wght@400;700&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #E2141E;
+            --primary-dark: #BA1218;
+            --text: #1D2325;
+            --text-light: #4A5358;
+            --bg: #FFFFFF;
+            --bg-secondary: #F2F3F3;
+            --border: #E4E5E5;
+            --shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            background: var(--bg-secondary);
+        }
+
+        .nav-header {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .back-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .description {
+            color: var(--text-light);
+            font-size: 1.125rem;
+        }
+
+        .section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .color-card {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .color-swatch {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .color-info {
+            padding: 1rem;
+            background: var(--bg-secondary);
+        }
+
+        .color-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .color-value {
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        .font-showcase {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .font-card {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 2rem;
+        }
+
+        .font-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .font-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .font-usage {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .font-samples {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .font-sample {
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+        }
+
+        .sample-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .token-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .token-table th,
+        .token-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .token-table th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+        }
+
+        .token-table code {
+            background: var(--bg-secondary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.875rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-light);
+            transition: all 0.2s;
+            margin-bottom: -2px;
+        }
+
+        .tab:hover {
+            color: var(--text);
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .color-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-header">
+        <div class="nav-content">
+            <a href="index.html" class="back-link">← Style Guide Home</a>
+            <ul class="nav-links">
+                <li><a href="colors-fonts.html">Colors & Fonts</a></li>
+                <li><a href="price-stickers.html">Price Stickers</a></li>
+                <li><a href="deal-types.html">Deal Types</a></li>
+                <li><a href="components.html">Components</a></li>
+                <li><a href="themes.html">Themes</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>Colors & Fonts</h1>
+            <p class="description">Design tokens and typography options for brand identity customization</p>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Core Brand Colors</h2>
+            <div class="color-grid">
+                <div class="color-card">
+                    <div class="color-swatch" style="background: #E2141E; color: white;">Brand Primary</div>
+                    <div class="color-info">
+                        <div class="color-name">ColorBrand</div>
+                        <div class="color-value">#E2141E</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background: #BA1218; color: white;">Brand Hover</div>
+                    <div class="color-info">
+                        <div class="color-name">ColorBrandHover</div>
+                        <div class="color-value">#BA1218</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background: hsl(123, 39%, 57%); color: white;">Brand Alt</div>
+                    <div class="color-info">
+                        <div class="color-name">ColorBrandAlt</div>
+                        <div class="color-value">hsl(123, 39%, 57%)</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background: #FFD600; color: #1D2325;">Emphasis</div>
+                    <div class="color-info">
+                        <div class="color-name">ColorEmphasis</div>
+                        <div class="color-value">#FFD600</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background: #64C52D; color: white;">Added</div>
+                    <div class="color-info">
+                        <div class="color-name">ColorAdded</div>
+                        <div class="color-value">#64C52D</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background: #FFCF16; color: #1D2325;">Coupon</div>
+                    <div class="color-info">
+                        <div class="color-name">ColorCoupon</div>
+                        <div class="color-value">#FFCF16</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background: #EB0000; color: white;">Coupon Alt</div>
+                    <div class="color-info">
+                        <div class="color-name">ColorCouponAlt</div>
+                        <div class="color-value">#EB0000</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background: #007B8A; color: white;">Loyalty</div>
+                    <div class="color-info">
+                        <div class="color-name">ColorLoyalty</div>
+                        <div class="color-value">#007B8A</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Text & Background Colors</h2>
+            <div class="color-grid">
+                <div class="color-card">
+                    <div class="color-swatch" style="background: #1D2325; color: white;">Text Primary</div>
+                    <div class="color-info">
+                        <div class="color-name">ColorText</div>
+                        <div class="color-value">#1D2325</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background: #4A5358; color: white;">Text Low Contrast</div>
+                    <div class="color-info">
+                        <div class="color-name">ColorTextLowContrast</div>
+                        <div class="color-value">#4A5358</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background: #FFFFFF; color: #1D2325; border: 1px solid #E4E5E5;">Background</div>
+                    <div class="color-info">
+                        <div class="color-name">ColorBg</div>
+                        <div class="color-value">#FFFFFF</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background: #F2F3F3; color: #1D2325;">BG Secondary</div>
+                    <div class="color-info">
+                        <div class="color-name">ColorBgSecondary</div>
+                        <div class="color-value">#F2F3F3</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background: rgb(33, 33, 33); color: white;">BG Dark</div>
+                    <div class="color-info">
+                        <div class="color-name">ColorBgDark</div>
+                        <div class="color-value">rgb(33, 33, 33)</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background: #E4E5E5; color: #1D2325;">Line X Low</div>
+                    <div class="color-info">
+                        <div class="color-name">ColorLineXLowContrast</div>
+                        <div class="color-value">#E4E5E5</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Typography System</h2>
+
+            <div class="font-showcase">
+                <div class="font-card">
+                    <div class="font-header">
+                        <div class="font-name" style="font-family: 'Open Sans', sans-serif;">Open Sans</div>
+                        <div class="font-usage">Base Font (Default)</div>
+                    </div>
+                    <div class="font-samples">
+                        <div class="font-sample">
+                            <div class="sample-label">Heading (700)</div>
+                            <div style="font-family: 'Open Sans', sans-serif; font-size: 2rem; font-weight: 700;">
+                                The quick brown fox jumps
+                            </div>
+                        </div>
+                        <div class="font-sample">
+                            <div class="sample-label">Body (400)</div>
+                            <div style="font-family: 'Open Sans', sans-serif; font-size: 1rem; font-weight: 400;">
+                                Pack my box with five dozen liquor jugs. The quick brown fox jumps over the lazy dog.
+                            </div>
+                        </div>
+                        <div class="font-sample">
+                            <div class="sample-label">Light (300)</div>
+                            <div style="font-family: 'Open Sans', sans-serif; font-size: 1rem; font-weight: 300;">
+                                Sphinx of black quartz, judge my vow. The five boxing wizards jump quickly.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="font-card">
+                    <div class="font-header">
+                        <div class="font-name" style="font-family: 'Oswald', sans-serif;">Oswald</div>
+                        <div class="font-usage">Price Font (Default)</div>
+                    </div>
+                    <div class="font-samples">
+                        <div class="font-sample">
+                            <div class="sample-label">Price Display (700)</div>
+                            <div style="font-family: 'Oswald', sans-serif; font-size: 3rem; font-weight: 700; line-height: 1;">
+                                $9.99
+                            </div>
+                        </div>
+                        <div class="font-sample">
+                            <div class="sample-label">Large Format</div>
+                            <div style="font-family: 'Oswald', sans-serif; font-size: 4rem; font-weight: 700; line-height: 0.9;">
+                                2 FOR $20
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="font-card">
+                    <div class="font-header">
+                        <div class="font-name" style="font-family: 'Montserrat', sans-serif;">Montserrat</div>
+                        <div class="font-usage">Alternative (Dollar General, etc.)</div>
+                    </div>
+                    <div class="font-samples">
+                        <div class="font-sample">
+                            <div class="sample-label">Bold (700)</div>
+                            <div style="font-family: 'Montserrat', sans-serif; font-size: 2rem; font-weight: 700;">
+                                Fresh Deals Today
+                            </div>
+                        </div>
+                        <div class="font-sample">
+                            <div class="sample-label">Regular (400)</div>
+                            <div style="font-family: 'Montserrat', sans-serif; font-size: 1rem; font-weight: 400;">
+                                Save more on your favorite products with exclusive offers and weekly specials.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="font-card">
+                    <div class="font-header">
+                        <div class="font-name" style="font-family: 'Roboto Slab', serif;">Roboto Slab</div>
+                        <div class="font-usage">Alternative (Ace Hardware)</div>
+                    </div>
+                    <div class="font-samples">
+                        <div class="font-sample">
+                            <div class="sample-label">Bold (700)</div>
+                            <div style="font-family: 'Roboto Slab', serif; font-size: 2rem; font-weight: 700;">
+                                Quality Hardware & Tools
+                            </div>
+                        </div>
+                        <div class="font-sample">
+                            <div class="sample-label">Regular (400)</div>
+                            <div style="font-family: 'Roboto Slab', serif; font-size: 1rem; font-weight: 400;">
+                                Your neighborhood hardware store with expert advice and quality products.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="font-card">
+                    <div class="font-header">
+                        <div class="font-name" style="font-family: 'Noto Sans', sans-serif;">Noto Sans</div>
+                        <div class="font-usage">Alternative (Weis Markets)</div>
+                    </div>
+                    <div class="font-samples">
+                        <div class="font-sample">
+                            <div class="sample-label">Bold (700)</div>
+                            <div style="font-family: 'Noto Sans', sans-serif; font-size: 2rem; font-weight: 700;">
+                                Weekly Savings
+                            </div>
+                        </div>
+                        <div class="font-sample">
+                            <div class="sample-label">Regular (400)</div>
+                            <div style="font-family: 'Noto Sans', sans-serif; font-size: 1rem; font-weight: 400;">
+                                Discover incredible deals on fresh produce, quality meats, and everyday essentials.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Design Tokens Reference</h2>
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab(event, 'spacing')">Spacing</button>
+                <button class="tab" onclick="switchTab(event, 'radius')">Radius</button>
+                <button class="tab" onclick="switchTab(event, 'shadows')">Shadows</button>
+                <button class="tab" onclick="switchTab(event, 'font-sizes')">Font Sizes</button>
+            </div>
+
+            <div id="spacing" class="tab-content active">
+                <table class="token-table">
+                    <thead>
+                        <tr>
+                            <th>Token</th>
+                            <th>Value</th>
+                            <th>Visual</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>$space-none</code></td>
+                            <td>0px</td>
+                            <td><div style="width: 0px; height: 20px; background: var(--primary);"></div></td>
+                        </tr>
+                        <tr>
+                            <td><code>$space-3xs</code></td>
+                            <td>2px</td>
+                            <td><div style="width: 2px; height: 20px; background: var(--primary);"></div></td>
+                        </tr>
+                        <tr>
+                            <td><code>$space-2xs</code></td>
+                            <td>4px</td>
+                            <td><div style="width: 4px; height: 20px; background: var(--primary);"></div></td>
+                        </tr>
+                        <tr>
+                            <td><code>$space-xs</code></td>
+                            <td>8px</td>
+                            <td><div style="width: 8px; height: 20px; background: var(--primary);"></div></td>
+                        </tr>
+                        <tr>
+                            <td><code>$space-sm</code></td>
+                            <td>12px</td>
+                            <td><div style="width: 12px; height: 20px; background: var(--primary);"></div></td>
+                        </tr>
+                        <tr>
+                            <td><code>$space-md</code></td>
+                            <td>16px</td>
+                            <td><div style="width: 16px; height: 20px; background: var(--primary);"></div></td>
+                        </tr>
+                        <tr>
+                            <td><code>$space-lg</code></td>
+                            <td>24px</td>
+                            <td><div style="width: 24px; height: 20px; background: var(--primary);"></div></td>
+                        </tr>
+                        <tr>
+                            <td><code>$space-xl</code></td>
+                            <td>32px</td>
+                            <td><div style="width: 32px; height: 20px; background: var(--primary);"></div></td>
+                        </tr>
+                        <tr>
+                            <td><code>$space-2xl</code></td>
+                            <td>48px</td>
+                            <td><div style="width: 48px; height: 20px; background: var(--primary);"></div></td>
+                        </tr>
+                        <tr>
+                            <td><code>$space-3xl</code></td>
+                            <td>64px</td>
+                            <td><div style="width: 64px; height: 20px; background: var(--primary);"></div></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="radius" class="tab-content">
+                <table class="token-table">
+                    <thead>
+                        <tr>
+                            <th>Token</th>
+                            <th>Value</th>
+                            <th>Visual</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>$radius-none</code></td>
+                            <td>0</td>
+                            <td><div style="width: 60px; height: 60px; background: var(--primary); border-radius: 0;"></div></td>
+                        </tr>
+                        <tr>
+                            <td><code>$radius-xs</code></td>
+                            <td>2px</td>
+                            <td><div style="width: 60px; height: 60px; background: var(--primary); border-radius: 2px;"></div></td>
+                        </tr>
+                        <tr>
+                            <td><code>$radius-sm</code></td>
+                            <td>4px</td>
+                            <td><div style="width: 60px; height: 60px; background: var(--primary); border-radius: 4px;"></div></td>
+                        </tr>
+                        <tr>
+                            <td><code>$radius-md</code></td>
+                            <td>8px</td>
+                            <td><div style="width: 60px; height: 60px; background: var(--primary); border-radius: 8px;"></div></td>
+                        </tr>
+                        <tr>
+                            <td><code>$radius-lg</code></td>
+                            <td>16px</td>
+                            <td><div style="width: 60px; height: 60px; background: var(--primary); border-radius: 16px;"></div></td>
+                        </tr>
+                        <tr>
+                            <td><code>$radius-xl</code></td>
+                            <td>32px</td>
+                            <td><div style="width: 60px; height: 60px; background: var(--primary); border-radius: 32px;"></div></td>
+                        </tr>
+                        <tr>
+                            <td><code>$radius-pill</code></td>
+                            <td>99999px</td>
+                            <td><div style="width: 60px; height: 60px; background: var(--primary); border-radius: 99999px;"></div></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="shadows" class="tab-content">
+                <table class="token-table">
+                    <thead>
+                        <tr>
+                            <th>Token</th>
+                            <th>Value</th>
+                            <th>Visual</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>$shadow-2xs</code></td>
+                            <td>Multi-layer subtle</td>
+                            <td><div style="width: 100px; height: 60px; background: white; box-shadow: 0 0.25px 0.5px rgba(0, 0, 0, 0.1), 0 0.5px 1px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.1);"></div></td>
+                        </tr>
+                        <tr>
+                            <td><code>$shadow-xs</code></td>
+                            <td>Small elevation</td>
+                            <td><div style="width: 100px; height: 60px; background: white; box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.1);"></div></td>
+                        </tr>
+                        <tr>
+                            <td><code>$shadow-sm</code></td>
+                            <td>Medium elevation</td>
+                            <td><div style="width: 100px; height: 60px; background: white; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1);"></div></td>
+                        </tr>
+                        <tr>
+                            <td><code>$shadow-md</code></td>
+                            <td>Card elevation</td>
+                            <td><div style="width: 100px; height: 60px; background: white; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);"></div></td>
+                        </tr>
+                        <tr>
+                            <td><code>$shadow-lg</code></td>
+                            <td>Large elevation</td>
+                            <td><div style="width: 100px; height: 60px; background: white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1), 0 16px 32px rgba(0, 0, 0, 0.1);"></div></td>
+                        </tr>
+                        <tr>
+                            <td><code>$shadow-xl</code></td>
+                            <td>Maximum elevation</td>
+                            <td><div style="width: 100px; height: 60px; background: white; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1), 0 16px 32px rgba(0, 0, 0, 0.1), 0 32px 64px rgba(0, 0, 0, 0.1);"></div></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="font-sizes" class="tab-content">
+                <table class="token-table">
+                    <thead>
+                        <tr>
+                            <th>Token</th>
+                            <th>Value</th>
+                            <th>Visual</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>$font-size-2xs</code></td>
+                            <td>10px</td>
+                            <td><span style="font-size: 10px;">Sample Text</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>$font-size-xs</code></td>
+                            <td>12px</td>
+                            <td><span style="font-size: 12px;">Sample Text</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>$font-size-sm</code></td>
+                            <td>14px</td>
+                            <td><span style="font-size: 14px;">Sample Text</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>$font-size-md</code></td>
+                            <td>16px</td>
+                            <td><span style="font-size: 16px;">Sample Text</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>$font-size-lg</code></td>
+                            <td>20px</td>
+                            <td><span style="font-size: 20px;">Sample Text</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>$font-size-xl</code></td>
+                            <td>24px</td>
+                            <td><span style="font-size: 24px;">Sample Text</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>$font-size-2xl</code></td>
+                            <td>32px</td>
+                            <td><span style="font-size: 32px;">Sample Text</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>$font-size-3xl</code></td>
+                            <td>48px</td>
+                            <td><span style="font-size: 48px;">Sample</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>$font-size-4xl</code></td>
+                            <td>64px</td>
+                            <td><span style="font-size: 64px;">Big</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(event, tabId) {
+            // Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Show selected tab content
+            document.getElementById(tabId).classList.add('active');
+
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hardware Industry - Digital Circular Style Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Slab:wght@700&family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #E2141E;
+            --primary-dark: #BA1218;
+            --text: #1D2325;
+            --text-light: #4A5358;
+            --bg: #FFFFFF;
+            --bg-secondary: #F2F3F3;
+            --border: #E4E5E5;
+            --shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            background: var(--bg-secondary);
+            padding-top: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #C41E3A;
+        }
+
+        .industry-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .description {
+            color: var(--text-light);
+            font-size: 1.125rem;
+            line-height: 1.6;
+        }
+
+        .section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .subsection-title {
+            font-size: 1.25rem;
+            margin: 2rem 0 1rem;
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .theme-card {
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .theme-card:hover {
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .theme-header {
+            padding: 1.5rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .theme-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .theme-meta {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .theme-preview {
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            background: #FAFAFA;
+        }
+
+        /* Price Sticker - Following design-system structure */
+        .price-sticker {
+            display: inline-flex;
+            align-items: flex-end;
+            justify-content: flex-end;
+            width: 180px;
+            height: auto;
+            position: relative;
+            user-select: none;
+        }
+
+        .price-sticker .sticker {
+            box-sizing: border-box;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 3/2;
+            width: 100%;
+            height: auto;
+            font-family: 'Roboto Slab', sans-serif;
+            font-weight: 700;
+            padding: 7.5% 10%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .price-sticker.ace .sticker {
+            background: #e63339;
+            color: white;
+            border: none;
+        }
+
+        .price-sticker.ace .sticker::before {
+            content: "";
+            position: absolute;
+            display: block;
+            width: 15%;
+            height: 100%;
+            left: -14.5%;
+            z-index: 0;
+            transform-origin: bottom left;
+            transform: skew(-10deg, 0deg);
+            top: 0;
+            background: #e63339;
+        }
+
+        .price-sticker.sutherlands .sticker {
+            background: #148059;
+            color: white;
+            border-radius: 10%;
+            font-family: 'aktiv-grotesk-condensed', sans-serif;
+        }
+
+        .price-sticker.waters .sticker {
+            background: white;
+            color: #0d6d13;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .price-container {
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            width: 100%;
+        }
+
+        .content {
+            box-sizing: border-box;
+            display: flex;
+            width: fit-content;
+            height: fit-content;
+            font-size: 2.5rem;
+            z-index: 1;
+        }
+
+        /* Amount component with grid layout */
+        .amount {
+            display: grid;
+            grid-auto-flow: column;
+            grid-auto-columns: auto;
+            grid-auto-rows: 1fr;
+            align-items: center;
+            width: fit-content;
+            height: fit-content;
+            line-height: 1;
+            gap: 0;
+        }
+
+        .amount .symbol {
+            grid-row: 1;
+            font-size: 0.5em;
+            display: inline-flex;
+        }
+
+        .amount .whole-number {
+            grid-row: 1 / span 2;
+            font-size: 1em;
+            display: inline-flex;
+        }
+
+        .amount .decimal {
+            grid-row: 1;
+            font-size: 0.5em;
+            display: inline-flex;
+        }
+
+        .amount .subtext {
+            grid-row: 2;
+            align-self: end;
+            font-size: 0.375em;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-flex;
+        }
+
+        .theme-details {
+            padding: 1.5rem;
+            background: #FAFAFA;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .detail-value {
+            font-family: 'Monaco', monospace;
+            font-size: 0.875rem;
+            color: var(--text);
+        }
+
+        .color-swatch {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            vertical-align: middle;
+            margin-left: 0.5rem;
+        }
+
+        .deal-types-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .deal-card {
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            background: white;
+        }
+
+        .deal-title {
+            font-weight: 700;
+            font-size: 1.125rem;
+            margin-bottom: 0.5rem;
+            color: #C41E3A;
+        }
+
+        .deal-example {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 1rem 0;
+            color: var(--text);
+        }
+
+        .deal-description {
+            color: var(--text-light);
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .best-practices {
+            background: linear-gradient(135deg, #C41E3A 0%, #8B1429 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+        }
+
+        .best-practices h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .best-practices ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .best-practices li {
+            padding: 0.75rem 0;
+            padding-left: 2rem;
+            position: relative;
+        }
+
+        .best-practices li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .info-callout {
+            background: #FFF9E6;
+            border-left: 4px solid #FFD600;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 4px;
+        }
+
+        .info-callout-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #856404;
+        }
+
+        .config-code {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .config-line {
+            margin: 0.25rem 0;
+        }
+
+        .config-comment {
+            color: #6a9955;
+        }
+
+        .config-property {
+            color: #9cdcfe;
+        }
+
+        .config-value {
+            color: #ce9178;
+        }
+
+        @media (max-width: 768px) {
+            .theme-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .price-sticker {
+                width: 150px;
+            }
+
+            .content {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script src="../shared-nav.js"></script>
+
+    <div class="container">
+        <div class="header">
+            <div class="industry-icon">🔨</div>
+            <h1>Hardware Industry Themes</h1>
+            <p class="description">
+                Hardware retail requires a distinct approach to digital circulars. Customers are project-focused,
+                comparing specifications and pricing across tools, materials, and supplies. The design must convey
+                reliability, value, and practical information clearly—especially for contractor and DIY audiences.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Featured Hardware Themes</h2>
+            <p class="description" style="margin-bottom: 2rem;">
+                These themes are configured specifically for hardware retailers, emphasizing rectangular price tags,
+                bold typography, and colors that convey trust and value.
+            </p>
+
+            <div class="theme-grid">
+                <!-- Ace Hardware -->
+                <div class="theme-card">
+                    <div class="theme-header" style="background: #e63339; color: white;">
+                        <div class="theme-name">Ace Hardware</div>
+                        <div class="theme-meta">Industry Leader - Project Pricing</div>
+                    </div>
+                    <div class="theme-preview">
+                        <div class="price-sticker ace">
+                            <div class="sticker">
+                                <div class="price-container">
+                                    <div class="content">
+                                        <div class="amount">
+                                            <span class="symbol">$</span>
+                                            <span class="whole-number">24</span>
+                                            <span class="decimal">99</span>
+                                            <span class="subtext">Each</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="theme-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Primary Color</span>
+                            <span class="detail-value">
+                                #e63339
+                                <span class="color-swatch" style="background: #e63339;"></span>
+                            </span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Font</span>
+                            <span class="detail-value">Roboto Slab</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Price Shape</span>
+                            <span class="detail-value">3:2 Rectangle with Skew</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Border</span>
+                            <span class="detail-value">None</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Special Feature</span>
+                            <span class="detail-value">Loyalty Card Badge</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sutherlands -->
+                <div class="theme-card">
+                    <div class="theme-header" style="background: #148059; color: white;">
+                        <div class="theme-name">Sutherlands</div>
+                        <div class="theme-meta">Regional Chain - Builder Focus</div>
+                    </div>
+                    <div class="theme-preview">
+                        <div class="price-sticker sutherlands">
+                            <div class="sticker">
+                                <div class="price-container">
+                                    <div class="content">
+                                        <div class="amount">
+                                            <span class="symbol">$</span>
+                                            <span class="whole-number">18</span>
+                                            <span class="decimal">50</span>
+                                            <span class="subtext">Each</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="theme-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Primary Color</span>
+                            <span class="detail-value">
+                                #148059
+                                <span class="color-swatch" style="background: #148059;"></span>
+                            </span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Font</span>
+                            <span class="detail-value">aktiv-grotesk-condensed</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Price Shape</span>
+                            <span class="detail-value">Square with 10% Radius</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Aspect Ratio</span>
+                            <span class="detail-value">1:1 (default)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Waters Hardware -->
+                <div class="theme-card">
+                    <div class="theme-header" style="background: #0d6d13; color: white;">
+                        <div class="theme-name">Waters Hardware</div>
+                        <div class="theme-meta">Local Store - Clean Design</div>
+                    </div>
+                    <div class="theme-preview">
+                        <div class="price-sticker waters">
+                            <div class="sticker">
+                                <div class="price-container">
+                                    <div class="content">
+                                        <div class="amount">
+                                            <span class="symbol">$</span>
+                                            <span class="whole-number">32</span>
+                                            <span class="decimal">99</span>
+                                            <span class="subtext">Each</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="theme-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Primary Color</span>
+                            <span class="detail-value">
+                                #0d6d13
+                                <span class="color-swatch" style="background: #0d6d13;"></span>
+                            </span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Font</span>
+                            <span class="detail-value">Roboto</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Price Shape</span>
+                            <span class="detail-value">3:2 Rectangle</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Style</span>
+                            <span class="detail-value">Reversed (White BG)</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Shadow</span>
+                            <span class="detail-value">Large (elevated)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Why These Choices Work for Hardware</h2>
+
+            <div class="info-callout">
+                <div class="info-callout-title">Industry Context</div>
+                Hardware retail serves two primary audiences: DIY homeowners and professional contractors.
+                Both groups prioritize clear pricing, project-based value calculations, and trustworthy information.
+                Unlike grocery impulse purchases, hardware shopping is deliberate and comparison-heavy.
+            </div>
+
+            <h3 class="subsection-title">Design Philosophy</h3>
+            <div class="deal-types-grid">
+                <div class="deal-card">
+                    <div class="deal-title">Rectangular Price Tags</div>
+                    <div class="deal-example">3:2 Aspect Ratio</div>
+                    <div class="deal-description">
+                        Rectangle shapes (instead of circles) provide more space for SKU numbers, unit pricing,
+                        and project quantity information—critical for hardware comparisons.
+                    </div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="deal-title">Bold Typography</div>
+                    <div class="deal-example">Roboto Slab / Condensed</div>
+                    <div class="deal-description">
+                        Hardware brands favor strong, readable fonts that work well in print and digital.
+                        Roboto Slab conveys reliability; condensed fonts maximize information density.
+                    </div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="deal-title">Trust Colors</div>
+                    <div class="deal-example">Red, Green, Blue</div>
+                    <div class="deal-description">
+                        Red (#e63339) signals value and urgency. Green (#148059, #0d6d13) evokes growth and
+                        eco-friendliness. These colors are proven to build trust in hardware retail.
+                    </div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="deal-title">Minimal Borders</div>
+                    <div class="deal-example">border-width: 0</div>
+                    <div class="deal-description">
+                        Clean, borderless tags reduce visual clutter, allowing customers to focus on pricing
+                        and specifications rather than decorative elements.
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Common Hardware Deal Types</h3>
+            <div class="deal-types-grid">
+                <div class="deal-card">
+                    <div class="deal-title">Project Pricing</div>
+                    <div class="deal-example">$24.99 / sheet</div>
+                    <div class="deal-description">
+                        Unit pricing for bulk materials (lumber, drywall, flooring). Often includes
+                        "price per square foot" or "price per linear foot" calculations.
+                    </div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="deal-title">Multi-Buy Discounts</div>
+                    <div class="deal-example">Buy 3+ Save 15%</div>
+                    <div class="deal-description">
+                        Volume discounts encourage project-sized purchases. Common for paint, fasteners,
+                        electrical components, and plumbing fittings.
+                    </div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="deal-title">Contractor Pricing</div>
+                    <div class="deal-example">Pro Price: $18.50</div>
+                    <div class="deal-description">
+                        Loyalty pricing for registered contractors or Pro members. Often displayed with
+                        a special badge or card indicator (as seen in Ace theme).
+                    </div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="deal-title">Seasonal Sales</div>
+                    <div class="deal-example">Spring Save 20%</div>
+                    <div class="deal-description">
+                        Time-based promotions tied to project seasons (spring gardening, winter heating,
+                        summer outdoor projects). Often use emphasis colors.
+                    </div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="deal-title">Clearance / Overstock</div>
+                    <div class="deal-example">Was $49.99 Now $32.99</div>
+                    <div class="deal-description">
+                        Discontinuing models or seasonal inventory must move quickly. Before/after pricing
+                        shows clear savings for budget-conscious shoppers.
+                    </div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="deal-title">Bundle Deals</div>
+                    <div class="deal-example">Tool + Battery $89</div>
+                    <div class="deal-description">
+                        Complete project bundles (drill + bits, paint + supplies) or ecosystem bundles
+                        (tool + compatible battery). Increases average transaction value.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Actual Client Configurations</h2>
+            <p class="description" style="margin-bottom: 2rem;">
+                Below are excerpts from actual theme.scss files in the themes repository, showing how these
+                hardware retailers configure their digital circulars.
+            </p>
+
+            <h3 class="subsection-title">Ace Hardware Configuration</h3>
+            <div class="config-code">
+<span class="config-line"><span class="config-comment">// Ace Hardware - themes/ace/theme.scss</span></span>
+<span class="config-line"><span class="config-property">$default:</span> <span class="config-value">#e63339</span>;</span>
+<span class="config-line"><span class="config-property">$alt:</span> <span class="config-value">#1a1a1a</span>;</span>
+<span class="config-line"><span class="config-property">$emphasis:</span> <span class="config-value">#ffcf16</span>;</span>
+<span class="config-line"><span class="config-property">$added-color:</span> <span class="config-value">#147f95</span>;</span>
+<span class="config-line"></span>
+<span class="config-line"><span class="config-comment">// Price sticker customization</span></span>
+<span class="config-line">@include token.set(token.<span class="config-property">$font-prices</span>, <span class="config-value">'Roboto Slab'</span>, sans-serif);</span>
+<span class="config-line">@include token.set(token.<span class="config-property">$price-sticker-aspect-ratio</span>, calc(<span class="config-value">3/2</span>));</span>
+<span class="config-line">@include token.set(token.<span class="config-property">$price-sticker-border-width</span>, <span class="config-value">0</span>);</span>
+<span class="config-line">@include token.set(token.<span class="config-property">$price-sticker-radius-tl</span>, <span class="config-value">0</span>);</span>
+<span class="config-line"></span>
+<span class="config-line"><span class="config-comment">// Special skewed accent (before pseudo-element)</span></span>
+<span class="config-line">dh-price-sticker .sticker::before {</span>
+<span class="config-line">  transform: skew(-10deg, 0deg);</span>
+<span class="config-line">  background: token.$color-brand;</span>
+<span class="config-line">}</span>
+            </div>
+
+            <h3 class="subsection-title">Sutherlands Configuration</h3>
+            <div class="config-code">
+<span class="config-line"><span class="config-comment">// Sutherlands - themes/sutherlands/theme.scss</span></span>
+<span class="config-line">@include token.set(token.<span class="config-property">$color-brand</span>, <span class="config-value">#148059</span>);</span>
+<span class="config-line">@include token.set(token.<span class="config-property">$font</span>, <span class="config-value">'Roboto'</span>, sans-serif);</span>
+<span class="config-line">@include token.set(token.<span class="config-property">$price-sticker-font</span>, <span class="config-value">'aktiv-grotesk-condensed'</span>, sans-serif);</span>
+<span class="config-line"></span>
+<span class="config-line"><span class="config-comment">// Rounded corners (10% radius on all corners)</span></span>
+<span class="config-line">@include token.set(token.<span class="config-property">$price-sticker-radius-tl</span>, <span class="config-value">10%</span>);</span>
+<span class="config-line">@include token.set(token.<span class="config-property">$price-sticker-radius-tr</span>, <span class="config-value">10%</span>);</span>
+<span class="config-line">@include token.set(token.<span class="config-property">$price-sticker-radius-br</span>, <span class="config-value">10%</span>);</span>
+<span class="config-line">@include token.set(token.<span class="config-property">$price-sticker-radius-bl</span>, <span class="config-value">10%</span>);</span>
+            </div>
+
+            <h3 class="subsection-title">Waters Hardware Configuration</h3>
+            <div class="config-code">
+<span class="config-line"><span class="config-comment">// Waters Hardware - themes/watershardware/theme.scss</span></span>
+<span class="config-line"><span class="config-property">$default:</span> <span class="config-value">#0d6d13</span>;</span>
+<span class="config-line"><span class="config-property">$alt:</span> <span class="config-value">hsl(240, 1%, 25%)</span>;</span>
+<span class="config-line"></span>
+<span class="config-line"><span class="config-comment">// Reversed (white background) style</span></span>
+<span class="config-line">@include token.set(token.<span class="config-property">$price-sticker-bg</span>, rgb(<span class="config-value">255, 255, 255</span>));</span>
+<span class="config-line">@include token.set(token.<span class="config-property">$price-sticker-text-color</span>, rgb(<span class="config-value">3, 3, 3</span>));</span>
+<span class="config-line"></span>
+<span class="config-line"><span class="config-comment">// Alternate uses brand green</span></span>
+<span class="config-line">@include token.set(token.<span class="config-property">$price-sticker-alt-bg</span>, $default);</span>
+<span class="config-line">@include token.set(token.<span class="config-property">$price-sticker-alt-text-color</span>, rgb(<span class="config-value">255, 255, 255</span>));</span>
+<span class="config-line"></span>
+<span class="config-line"><span class="config-comment">// Elevated shadow for depth</span></span>
+<span class="config-line">@include token.set(token.<span class="config-property">$price-sticker-shadow</span>, token.$shadow-lg);</span>
+<span class="config-line">@include token.set(token.<span class="config-property">$price-sticker-aspect-ratio</span>, calc(<span class="config-value">3/2</span>));</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Hardware Industry Best Practices</h2>
+
+            <div class="best-practices">
+                <h3>Recommended Configurations</h3>
+                <ul>
+                    <li>Use rectangular price stickers (3:2 aspect ratio) to accommodate unit pricing and SKU information</li>
+                    <li>Choose bold, readable fonts like Roboto Slab or condensed sans-serifs for maximum clarity</li>
+                    <li>Implement contractor/loyalty pricing with distinctive badges or card indicators</li>
+                    <li>Use trust-building colors: red for value, green for eco-products, blue for reliability</li>
+                    <li>Minimize decorative borders to focus attention on pricing and specifications</li>
+                    <li>Display volume discounts prominently for project-based purchases</li>
+                    <li>Include "per unit" pricing for materials sold in bulk (lumber, tile, carpet)</li>
+                    <li>Use seasonal deal types to align with project timing (spring planting, winter heating)</li>
+                    <li>Provide clear before/after pricing on clearance items to show value</li>
+                    <li>Consider ecosystem bundles (tool + battery) to increase transaction value</li>
+                </ul>
+            </div>
+
+            <div class="info-callout">
+                <div class="info-callout-title">Performance Considerations</div>
+                Hardware circulars often feature high SKU counts and detailed specifications. Ensure your theme
+                uses efficient typography (system fonts or web fonts with subset loading) and optimizes images
+                for product photos. The rectangular price sticker format helps maintain information density without
+                sacrificing readability.
+            </div>
+        </div>
+    </div>
+</body>
+</html>

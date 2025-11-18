@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Circular Style Guide - Professional Design System Documentation</title>
+    <meta name="description" content="Comprehensive design system documentation for digital circulars featuring 885+ design tokens, 81 themes, interactive tools, and industry-specific examples.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Grayscale color system */
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-400: #9CA3AF;
+            --gray-500: #6B7280;
+            --gray-600: #4B5563;
+            --gray-700: #374151;
+            --gray-800: #1F2937;
+            --gray-900: #111827;
+
+            /* Semantic colors */
+            --text: var(--gray-900);
+            --text-light: var(--gray-600);
+            --text-muted: var(--gray-500);
+            --bg: #FFFFFF;
+            --bg-secondary: var(--gray-50);
+            --bg-tertiary: var(--gray-100);
+            --border: var(--gray-200);
+            --border-hover: var(--gray-300);
+
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+
+            /* Transitions */
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: var(--text);
+            background: var(--bg-secondary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .page-wrapper {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 100%);
+            color: white;
+            padding: 4rem 2rem;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-badge {
+            display: inline-block;
+            background: var(--gray-700);
+            color: white;
+            padding: 0.375rem 0.875rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-family: 'Inter', sans-serif;
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.25rem;
+            opacity: 0.85;
+            font-weight: 400;
+            max-width: 600px;
+        }
+
+        /* Search Bar */
+        .search-container {
+            max-width: 1400px;
+            margin: -2rem auto 0;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .search-box {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-xl);
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border: 2px solid transparent;
+            transition: var(--transition);
+        }
+
+        .search-box:focus-within {
+            border-color: var(--gray-900);
+            box-shadow: var(--shadow-xl), 0 0 0 3px var(--gray-100);
+        }
+
+        .search-icon {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            color: var(--text);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-count {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            padding: 0.375rem 0.75rem;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem 2rem;
+            flex: 1;
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--border-hover);
+        }
+
+        .stat-value {
+            font-family: 'Inter', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--gray-900);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.875rem;
+            color: var(--text-light);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Section Headers */
+        .section-header {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .section-description {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        /* Navigation Grid */
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .nav-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.75rem;
+            text-decoration: none;
+            color: var(--text);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gray-900);
+            transform: scaleX(0);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: left;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--gray-900);
+        }
+
+        .nav-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .nav-card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .nav-icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .nav-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text);
+            margin: 0;
+        }
+
+        .nav-badge {
+            display: inline-block;
+            background: var(--gray-100);
+            color: var(--text);
+            padding: 0.25rem 0.625rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-left: auto;
+        }
+
+        .nav-badge.new {
+            background: var(--gray-900);
+            color: white;
+        }
+
+        .nav-description {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9375rem;
+            color: var(--text-light);
+            line-height: 1.6;
+            flex: 1;
+            margin-bottom: 1rem;
+        }
+
+        .nav-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+        }
+
+        .nav-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .nav-meta-icon {
+            font-size: 0.875rem;
+        }
+
+        /* Loading State */
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--border);
+            border-top-color: var(--gray-900);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Tooltip */
+        [data-tooltip] {
+            position: relative;
+            cursor: help;
+            border-bottom: 1px dotted var(--text-muted);
+        }
+
+        [data-tooltip]::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-8px);
+            padding: 0.5rem 0.75rem;
+            background: var(--gray-900);
+            color: white;
+            border-radius: 6px;
+            font-size: 0.8125rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s, transform 0.2s;
+            z-index: 1000;
+        }
+
+        [data-tooltip]:hover::after {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-4px);
+        }
+
+        /* No Results */
+        .no-results {
+            text-align: center;
+            padding: 4rem 2rem;
+            display: none;
+        }
+
+        .no-results.show {
+            display: block;
+        }
+
+        .no-results-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        .no-results-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .no-results-text {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-light);
+        }
+
+        /* Footer */
+        footer {
+            background: white;
+            border-top: 1px solid var(--border);
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .footer-link:hover {
+            color: var(--text);
+        }
+
+        .footer-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                padding: 3rem 1.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .container {
+                padding: 2rem 1.5rem;
+            }
+
+            .search-container {
+                padding: 0 1.5rem;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            .nav-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .nav-card {
+                padding: 1.5rem;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .search-container,
+            footer {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <header>
+            <div class="header-content">
+                <div class="header-badge">Design System Documentation</div>
+                <h1>Digital Circular Style Guide</h1>
+                <p class="subtitle">
+                    Comprehensive design system featuring <span data-tooltip="Organized across 10 categories including colors, typography, spacing, and more">885+ design tokens</span>,
+                    81 themes, and interactive tools for digital circular platforms.
+                </p>
+            </div>
+        </header>
+
+        <div class="search-container">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input
+                    type="text"
+                    class="search-input"
+                    id="searchInput"
+                    placeholder="Search components, themes, tokens, or features..."
+                    aria-label="Search the style guide"
+                    autocomplete="off"
+                >
+                <span class="search-count" id="searchCount">14 pages</span>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="stats">
+                <div class="stat" data-tooltip="Across colors, typography, spacing, shadows, and more">
+                    <div class="stat-value">885+</div>
+                    <div class="stat-label">Design Tokens</div>
+                </div>
+                <div class="stat" data-tooltip="Production themes from grocery, hardware, and liquor retailers">
+                    <div class="stat-value">81</div>
+                    <div class="stat-label">Themes</div>
+                </div>
+                <div class="stat" data-tooltip="6 variants × 16 components = 96 total configurations">
+                    <div class="stat-value">96</div>
+                    <div class="stat-label">Price Tags</div>
+                </div>
+                <div class="stat" data-tooltip="Amount, NumFor, BOGO, SaveX, NumSlash, FromNum, None">
+                    <div class="stat-value">7</div>
+                    <div class="stat-label">Deal Types</div>
+                </div>
+                <div class="stat" data-tooltip="Card layouts with multiple states and variants">
+                    <div class="stat-value">17</div>
+                    <div class="stat-label">Components</div>
+                </div>
+                <div class="stat" data-tooltip="Referenced from design-system Storybook">
+                    <div class="stat-value">64</div>
+                    <div class="stat-label">Stories</div>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <h2 class="section-title">Core Documentation</h2>
+                <p class="section-description">Essential design system resources and component libraries</p>
+            </div>
+
+            <div class="nav-grid" id="navGrid">
+                <a href="colors-fonts.html" class="nav-card" data-keywords="colors fonts typography tokens palette brand">
+                    <div class="nav-card-header">
+                        <span class="nav-icon">🎨</span>
+                        <h3 class="nav-title">Colors & Fonts</h3>
+                    </div>
+                    <p class="nav-description">
+                        Explore the complete color palette and typography system with all design tokens from 81 theme configurations.
+                    </p>
+                    <div class="nav-meta">
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">📊</span>
+                            10 token categories
+                        </span>
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">✨</span>
+                            Multiple fonts
+                        </span>
+                    </div>
+                </a>
+
+                <a href="price-stickers-interactive.html" class="nav-card" data-keywords="price stickers tags interactive builder controls">
+                    <div class="nav-card-header">
+                        <span class="nav-icon">🏷️</span>
+                        <h3 class="nav-title">Price Stickers</h3>
+                        <span class="nav-badge">Interactive</span>
+                    </div>
+                    <p class="nav-description">
+                        Interactive price tag builder with real-time controls for variants, pricing, units, and loyalty overlays.
+                    </p>
+                    <div class="nav-meta">
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">🎛️</span>
+                            6 variants
+                        </span>
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">👁️</span>
+                            Live preview
+                        </span>
+                    </div>
+                </a>
+
+                <a href="deal-types.html" class="nav-card" data-keywords="deals discounts bogo numfor savings promotions">
+                    <div class="nav-card-header">
+                        <span class="nav-icon">💰</span>
+                        <h3 class="nav-title">Deal Types</h3>
+                    </div>
+                    <p class="nav-description">
+                        Visual examples and documentation for all 7 deal types including BOGO, NumFor, SaveX, and more.
+                    </p>
+                    <div class="nav-meta">
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">🎯</span>
+                            7 deal types
+                        </span>
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">📐</span>
+                            With examples
+                        </span>
+                    </div>
+                </a>
+
+                <a href="components.html" class="nav-card" data-keywords="components cards layouts ui elements">
+                    <div class="nav-card-header">
+                        <span class="nav-icon">🧩</span>
+                        <h3 class="nav-title">Components</h3>
+                    </div>
+                    <p class="nav-description">
+                        Complete card component library with multiple layouts, states, and responsive configurations.
+                    </p>
+                    <div class="nav-meta">
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">📦</span>
+                            17 components
+                        </span>
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">🔄</span>
+                            Multiple states
+                        </span>
+                    </div>
+                </a>
+
+                <a href="themes-interactive.html" class="nav-card" data-keywords="themes presets switcher colors customization">
+                    <div class="nav-card-header">
+                        <span class="nav-icon">🎭</span>
+                        <h3 class="nav-title">Theme Presets</h3>
+                        <span class="nav-badge">Interactive</span>
+                    </div>
+                    <p class="nav-description">
+                        Interactive theme switcher with real-time color customization and before/after comparisons.
+                    </p>
+                    <div class="nav-meta">
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">🎨</span>
+                            81 themes
+                        </span>
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">⚡</span>
+                            Live updates
+                        </span>
+                    </div>
+                </a>
+
+                <a href="extracted-components.html" class="nav-card" data-keywords="extracted real components production code">
+                    <div class="nav-card-header">
+                        <span class="nav-icon">📦</span>
+                        <h3 class="nav-title">Extracted Components</h3>
+                    </div>
+                    <p class="nav-description">
+                        Real component HTML and CSS extracted directly from the design-system repository with actual token values.
+                    </p>
+                    <div class="nav-meta">
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">🔬</span>
+                            Production code
+                        </span>
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">✅</span>
+                            Real tokens
+                        </span>
+                    </div>
+                </a>
+
+                <a href="config-export.html" class="nav-card" data-keywords="export config generator builder scss json download">
+                    <div class="nav-card-header">
+                        <span class="nav-icon">⚙️</span>
+                        <h3 class="nav-title">Configuration Export</h3>
+                        <span class="nav-badge new">New</span>
+                    </div>
+                    <p class="nav-description">
+                        Interactive configuration builder with live preview. Export customized themes as SCSS or JSON files.
+                    </p>
+                    <div class="nav-meta">
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">⬇️</span>
+                            Download configs
+                        </span>
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">📝</span>
+                            SCSS & JSON
+                        </span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="section-header">
+                <h2 class="section-title">Industry-Specific Themes</h2>
+                <p class="section-description">Tailored design patterns and best practices for retail verticals</p>
+            </div>
+
+            <div class="nav-grid">
+                <a href="industries/grocery.html" class="nav-card" data-keywords="grocery retail food supermarket themes">
+                    <div class="nav-card-header">
+                        <span class="nav-icon">🛒</span>
+                        <h3 class="nav-title">Grocery Retail</h3>
+                    </div>
+                    <p class="nav-description">
+                        6 featured grocery themes including Gelson's, Festival Foods, and Weis Markets with common deal types and best practices.
+                    </p>
+                    <div class="nav-meta">
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">🏪</span>
+                            6 themes
+                        </span>
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">💳</span>
+                            Loyalty deals
+                        </span>
+                    </div>
+                </a>
+
+                <a href="industries/hardware.html" class="nav-card" data-keywords="hardware tools ace retail contractor">
+                    <div class="nav-card-header">
+                        <span class="nav-icon">🔨</span>
+                        <h3 class="nav-title">Hardware Retail</h3>
+                    </div>
+                    <p class="nav-description">
+                        Hardware-specific themes from Ace, Sutherlands, and Waters with project pricing and contractor deals.
+                    </p>
+                    <div class="nav-meta">
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">🏗️</span>
+                            3 themes
+                        </span>
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">📐</span>
+                            Rectangular tags
+                        </span>
+                    </div>
+                </a>
+
+                <a href="industries/liquor.html" class="nav-card" data-keywords="liquor wine spirits alcohol retail">
+                    <div class="nav-card-header">
+                        <span class="nav-icon">🍷</span>
+                        <h3 class="nav-title">Liquor & Wine</h3>
+                    </div>
+                    <p class="nav-description">
+                        Premium liquor retail theme with sophisticated typography, dark UI elements, and regulatory compliance notes.
+                    </p>
+                    <div class="nav-meta">
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">✨</span>
+                            Premium design
+                        </span>
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">⚖️</span>
+                            Compliance
+                        </span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="section-header" style="margin-top: 3rem;">
+                <h2 class="section-title">Technical Resources</h2>
+                <p class="section-description">Raw data and documentation for developers</p>
+            </div>
+
+            <div class="nav-grid">
+                <a href="audit-results.json" class="nav-card" target="_blank" data-keywords="json data audit tokens raw export">
+                    <div class="nav-card-header">
+                        <span class="nav-icon">📊</span>
+                        <h3 class="nav-title">Audit Data (JSON)</h3>
+                    </div>
+                    <p class="nav-description">
+                        Complete JSON export with all 885+ design tokens, theme configurations, and component specifications.
+                    </p>
+                    <div class="nav-meta">
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">💾</span>
+                            Full data export
+                        </span>
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">📄</span>
+                            JSON format
+                        </span>
+                    </div>
+                </a>
+
+                <a href="README.md" class="nav-card" target="_blank" data-keywords="readme documentation guide help">
+                    <div class="nav-card-header">
+                        <span class="nav-icon">📖</span>
+                        <h3 class="nav-title">Documentation</h3>
+                    </div>
+                    <p class="nav-description">
+                        Comprehensive README with usage instructions, configuration mappings, deployment guide, and update workflow.
+                    </p>
+                    <div class="nav-meta">
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">📝</span>
+                            Complete guide
+                        </span>
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">🚀</span>
+                            Deployment
+                        </span>
+                    </div>
+                </a>
+
+                <a href="DEPLOYMENT.md" class="nav-card" target="_blank" data-keywords="deployment hosting production server">
+                    <div class="nav-card-header">
+                        <span class="nav-icon">🚀</span>
+                        <h3 class="nav-title">Deployment Guide</h3>
+                    </div>
+                    <p class="nav-description">
+                        Step-by-step deployment instructions for GitHub Pages, Netlify, AWS S3, and other hosting platforms.
+                    </p>
+                    <div class="nav-meta">
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">☁️</span>
+                            5+ methods
+                        </span>
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">✅</span>
+                            Checklists
+                        </span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="no-results" id="noResults">
+                <div class="no-results-icon">🔍</div>
+                <div class="no-results-title">No results found</div>
+                <p class="no-results-text">Try searching for components, themes, colors, or features</p>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="README.md" class="footer-link" target="_blank">Documentation</a>
+                    <a href="DEPLOYMENT.md" class="footer-link" target="_blank">Deployment Guide</a>
+                    <a href="audit-results.json" class="footer-link" target="_blank">Raw Data</a>
+                    <a href="config-export.html" class="footer-link">Export Config</a>
+                </div>
+                <p class="footer-text">
+                    Digital Circular Style Guide &copy; 2025 &bull; Generated from design-system, themes, and DigitalCircular2 repositories
+                </p>
+                <p class="footer-text" style="margin-top: 0.5rem; opacity: 0.7;">
+                    Last updated: November 17, 2025 &bull; Version 1.0.0 &bull; 14 Pages &bull; 885+ Tokens &bull; 81 Themes
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const searchCount = document.getElementById('searchCount');
+        const navCards = document.querySelectorAll('.nav-card');
+        const noResults = document.getElementById('noResults');
+
+        let totalCards = navCards.length;
+
+        function performSearch(query) {
+            query = query.toLowerCase().trim();
+            let visibleCount = 0;
+
+            if (query === '') {
+                // Show all cards
+                navCards.forEach(card => {
+                    card.style.display = '';
+                });
+                visibleCount = totalCards;
+                noResults.classList.remove('show');
+            } else {
+                // Filter cards
+                navCards.forEach(card => {
+                    const title = card.querySelector('.nav-title').textContent.toLowerCase();
+                    const description = card.querySelector('.nav-description').textContent.toLowerCase();
+                    const keywords = card.dataset.keywords || '';
+                    const searchText = title + ' ' + description + ' ' + keywords;
+
+                    if (searchText.includes(query)) {
+                        card.style.display = '';
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                // Show/hide no results message
+                if (visibleCount === 0) {
+                    noResults.classList.add('show');
+                } else {
+                    noResults.classList.remove('show');
+                }
+            }
+
+            // Update count
+            searchCount.textContent = visibleCount === 1 ? '1 page' : `${visibleCount} pages`;
+        }
+
+        // Debounce search
+        let searchTimeout;
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                performSearch(e.target.value);
+            }, 300);
+        });
+
+        // Keyboard navigation
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                searchInput.value = '';
+                performSearch('');
+                searchInput.blur();
+            }
+        });
+
+        // Focus search on '/' key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '/' && e.target !== searchInput) {
+                e.preventDefault();
+                searchInput.focus();
+            }
+        });
+    </script>
+</body>
+</html>

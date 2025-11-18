@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Components - Digital Circular Style Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #E2141E;
+            --primary-dark: #BA1218;
+            --text: #1D2325;
+            --text-light: #4A5358;
+            --bg: #FFFFFF;
+            --bg-secondary: #F2F3F3;
+            --border: #E4E5E5;
+            --shadow: 0 2px 4px rgba(0,0,0,0.1);
+            --added: #64C52D;
+            --coupon: #FFCF16;
+            --loyalty: #007B8A;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            background: var(--bg-secondary);
+        }
+
+        .nav-header {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: var(--primary); }
+
+        .back-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .description {
+            color: var(--text-light);
+            font-size: 1.125rem;
+        }
+
+        .section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        /* Card Components */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .deal-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .deal-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+
+        .card-image {
+            width: 100%;
+            aspect-ratio: 1;
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            position: relative;
+        }
+
+        .card-headline {
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+        }
+
+        .card-sticker {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background: var(--primary);
+            color: white;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            border: 3px solid white;
+            box-shadow: var(--shadow);
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        .card-title {
+            font-size: 0.875rem;
+            line-height: 1.4;
+            margin-bottom: 0.75rem;
+            min-height: 2.8rem;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.625rem 1rem;
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-added {
+            background: var(--added);
+            color: white;
+            border-color: var(--added);
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 0.75rem;
+            left: 0.75rem;
+            background: var(--coupon);
+            color: var(--text);
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            border: 2px solid var(--text);
+        }
+
+        .card-icons {
+            position: absolute;
+            bottom: 0.75rem;
+            left: 0.75rem;
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .card-icon {
+            width: 32px;
+            height: 32px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: var(--shadow);
+        }
+
+        /* Item Card */
+        .item-card {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            background: white;
+        }
+
+        .item-image {
+            width: 85px;
+            height: 85px;
+            flex-shrink: 0;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .item-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .item-title {
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            flex: 1;
+        }
+
+        .item-price {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .item-actions .btn {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.75rem;
+        }
+
+        /* Size Grid */
+        .size-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .size-card {
+            aspect-ratio: 1;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .size-card:hover {
+            border-color: var(--primary);
+            background: rgba(226, 20, 30, 0.05);
+        }
+
+        .size-card.tall {
+            aspect-ratio: 0.5;
+        }
+
+        .size-card.wide {
+            aspect-ratio: 2;
+        }
+
+        .size-card.large {
+            aspect-ratio: 1.5;
+        }
+
+        /* State Toggle */
+        .state-toggle {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .state-btn {
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .state-btn:hover {
+            border-color: var(--primary);
+        }
+
+        .state-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .preview-area {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 8px;
+            min-height: 400px;
+        }
+
+        @media (max-width: 768px) {
+            .card-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-header">
+        <div class="nav-content">
+            <a href="index.html" class="back-link">← Style Guide Home</a>
+            <ul class="nav-links">
+                <li><a href="colors-fonts.html">Colors & Fonts</a></li>
+                <li><a href="price-stickers.html">Price Stickers</a></li>
+                <li><a href="deal-types.html">Deal Types</a></li>
+                <li><a href="components.html">Components</a></li>
+                <li><a href="themes.html">Themes</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>Components</h1>
+            <p class="description">Card components, layouts, and states</p>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Deal Card Variants</h2>
+            <div class="card-grid">
+                <div class="deal-card">
+                    <div class="card-image">
+                        🥩
+                        <div class="card-sticker">$9<sup style="font-size: 1rem;">99</sup></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title">Fresh Ground Beef 80/20 Family Pack</div>
+                        <div class="card-actions">
+                            <button class="btn">Add to List</button>
+                            <button class="btn">Share</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="card-headline">SALE ENDS TODAY</div>
+                    <div class="card-image">
+                        🥛
+                        <div class="card-sticker" style="background: hsl(123, 39%, 57%);">$3<sup style="font-size: 1rem;">99</sup></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title">Organic Whole Milk 1 Gallon</div>
+                        <div class="card-actions">
+                            <button class="btn">Add to List</button>
+                            <button class="btn">Share</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="card-image">
+                        🧀
+                        <div class="card-sticker" style="background: #FFD600; color: #1D2325; border-color: #1D2325;">2/$5</div>
+                        <div class="card-icons">
+                            <div class="card-icon">🌱</div>
+                            <div class="card-icon">🥗</div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title">Shredded Cheese Variety 8oz</div>
+                        <div class="card-actions">
+                            <button class="btn btn-added">✓ In My List (2)</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="card-image" style="background: linear-gradient(135deg, #313131 0%, #000000 100%);">
+                        <div style="color: white; font-size: 1.5rem; font-weight: 700; text-align: center; padding: 1rem;">
+                            DIGITAL COUPON
+                        </div>
+                        <div class="card-badge">CLIP</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title">Save $2 on Any Purchase of $10 or More</div>
+                        <div class="card-actions">
+                            <button class="btn btn-primary">Clip Coupon</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="card-headline">LOYALTY MEMBER EXCLUSIVE</div>
+                    <div class="card-image">
+                        🍞
+                        <div class="card-sticker" style="background: #007B8A;">$2<sup style="font-size: 1rem;">99</sup></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title">Artisan Bread Fresh Baked Daily</div>
+                        <div class="card-actions">
+                            <button class="btn">Add to List</button>
+                            <button class="btn">Share</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="deal-card">
+                    <div class="card-image">
+                        🍎
+                        <div class="card-sticker">$1<sup style="font-size: 1rem;">99</sup><div style="font-size: 0.75rem;">lb</div></div>
+                        <div class="card-icons">
+                            <div class="card-icon">🌱</div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title">Organic Honeycrisp Apples</div>
+                        <div class="card-actions">
+                            <button class="btn">Add to List</button>
+                            <button class="btn">Share</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Item Card (List View)</h2>
+            <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px;">
+                <div class="item-card">
+                    <div class="item-image">🥩</div>
+                    <div class="item-content">
+                        <div class="item-title">Fresh Ground Beef 80/20 Family Pack - Must buy 2</div>
+                        <div class="item-price">$9.99 <span style="font-size: 0.875rem; font-weight: 400; color: var(--text-light);">Each</span></div>
+                        <div class="item-actions">
+                            <button class="btn">Add to List</button>
+                            <button class="btn">Share</button>
+                            <button class="btn">Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="item-card">
+                    <div class="item-image">🧀</div>
+                    <div class="item-content">
+                        <div class="item-title">Shredded Cheese Variety 8oz - Limit 4</div>
+                        <div class="item-price">2/$5</div>
+                        <div class="item-actions">
+                            <button class="btn btn-added">✓ In My List (2)</button>
+                            <button class="btn">Share</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="item-card">
+                    <div class="item-image" style="background: linear-gradient(135deg, #FFCF16 0%, #EB0000 100%);"></div>
+                    <div class="item-content">
+                        <div class="item-title">Digital Coupon - Save $2 on purchase of $10 or more</div>
+                        <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="background: #FFCF16; color: #1D2325; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700;">SAVE $2</div>
+                            <div style="font-size: 0.75rem; color: var(--text-light);">Expires 12/31/2025</div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-primary">Clip Coupon</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Card Sizes</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--text-light);">Deal cards support various size configurations</p>
+            <div class="size-grid">
+                <div class="size-card">
+                    1×1<br>
+                    <span style="font-size: 0.75rem; color: var(--text-light);">10×10rem</span>
+                </div>
+                <div class="size-card tall">
+                    1×2<br>
+                    <span style="font-size: 0.75rem; color: var(--text-light);">10×20rem</span>
+                </div>
+                <div class="size-card wide">
+                    2×1<br>
+                    <span style="font-size: 0.75rem; color: var(--text-light);">20×10rem</span>
+                </div>
+                <div class="size-card">
+                    2×2<br>
+                    <span style="font-size: 0.75rem; color: var(--text-light);">20×20rem</span>
+                </div>
+                <div class="size-card large">
+                    3×2<br>
+                    <span style="font-size: 0.75rem; color: var(--text-light);">30×20rem</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Interactive Card States</h2>
+            <div class="state-toggle">
+                <button class="state-btn active" onclick="showState('default')">Default</button>
+                <button class="state-btn" onclick="showState('added')">In My List</button>
+                <button class="state-btn" onclick="showState('coupon')">Coupon</button>
+                <button class="state-btn" onclick="showState('clipped')">Clipped</button>
+                <button class="state-btn" onclick="showState('expanded')">Expanded</button>
+            </div>
+            <div class="preview-area">
+                <div id="state-preview">
+                    <div class="deal-card" style="max-width: 320px; margin: 0 auto;">
+                        <div class="card-image">
+                            🥩
+                            <div class="card-sticker">$9<sup style="font-size: 1rem;">99</sup></div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-title">Fresh Ground Beef 80/20 Family Pack</div>
+                            <div class="card-actions">
+                                <button class="btn">Add to List</button>
+                                <button class="btn">Share</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Component Properties</h2>
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: var(--bg-secondary);">
+                        <th style="padding: 1rem; text-align: left; border-bottom: 1px solid var(--border);">Property</th>
+                        <th style="padding: 1rem; text-align: left; border-bottom: 1px solid var(--border);">Type</th>
+                        <th style="padding: 1rem; text-align: left; border-bottom: 1px solid var(--border);">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--border);"><code>numInMyList</code></td>
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--border);">number</td>
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--border);">Number of items in user's list (default: 0)</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--border);"><code>expanded</code></td>
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--border);">boolean</td>
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--border);">Show expanded view with details</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--border);"><code>coupon</code></td>
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--border);">boolean</td>
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--border);">Display as coupon card</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--border);"><code>couponClipped</code></td>
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--border);">boolean</td>
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--border);">Coupon has been clipped</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--border);"><code>cardTitle</code></td>
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--border);">string</td>
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--border);">Product title text</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--border);"><code>iconLabels</code></td>
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--border);">string[]</td>
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--border);">Array of icon labels to display</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--border);"><code>hideShare</code></td>
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--border);">boolean</td>
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--border);">Hide share button</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--border);"><code>showBuyOnlineUI</code></td>
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--border);">boolean</td>
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--border);">Show buy online button</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function showState(state) {
+            // Update active button
+            document.querySelectorAll('.state-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            const preview = document.getElementById('state-preview');
+
+            switch(state) {
+                case 'default':
+                    preview.innerHTML = `
+                        <div class="deal-card" style="max-width: 320px; margin: 0 auto;">
+                            <div class="card-image">
+                                🥩
+                                <div class="card-sticker">$9<sup style="font-size: 1rem;">99</sup></div>
+                            </div>
+                            <div class="card-body">
+                                <div class="card-title">Fresh Ground Beef 80/20 Family Pack</div>
+                                <div class="card-actions">
+                                    <button class="btn">Add to List</button>
+                                    <button class="btn">Share</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'added':
+                    preview.innerHTML = `
+                        <div class="deal-card" style="max-width: 320px; margin: 0 auto;">
+                            <div class="card-image">
+                                🥩
+                                <div class="card-sticker">$9<sup style="font-size: 1rem;">99</sup></div>
+                            </div>
+                            <div class="card-body" style="background: rgba(100, 197, 45, 0.1);">
+                                <div class="card-title">Fresh Ground Beef 80/20 Family Pack</div>
+                                <div class="card-actions">
+                                    <button class="btn btn-added">✓ In My List (2)</button>
+                                    <button class="btn">Share</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'coupon':
+                    preview.innerHTML = `
+                        <div class="deal-card" style="max-width: 320px; margin: 0 auto;">
+                            <div class="card-image" style="background: linear-gradient(135deg, #313131 0%, #000000 100%);">
+                                <div style="color: white; font-size: 1.5rem; font-weight: 700; text-align: center; padding: 1rem;">
+                                    DIGITAL COUPON
+                                </div>
+                                <div class="card-badge">CLIP</div>
+                            </div>
+                            <div class="card-body">
+                                <div class="card-title">Save $2 on Any Purchase of $10 or More</div>
+                                <div class="card-actions">
+                                    <button class="btn btn-primary">Clip Coupon</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'clipped':
+                    preview.innerHTML = `
+                        <div class="deal-card" style="max-width: 320px; margin: 0 auto;">
+                            <div class="card-image" style="background: linear-gradient(135deg, #313131 0%, #000000 100%);">
+                                <div style="color: white; font-size: 1.5rem; font-weight: 700; text-align: center; padding: 1rem;">
+                                    DIGITAL COUPON
+                                </div>
+                                <div class="card-badge" style="background: #64C52D; border-color: white; color: white;">✓ CLIPPED</div>
+                            </div>
+                            <div class="card-body" style="background: rgba(100, 197, 45, 0.1);">
+                                <div class="card-title">Save $2 on Any Purchase of $10 or More</div>
+                                <div style="font-size: 0.875rem; color: var(--text-light); margin-bottom: 0.75rem;">✓ Coupon clipped! Will be applied at checkout</div>
+                                <div class="card-actions">
+                                    <button class="btn">Remove</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'expanded':
+                    preview.innerHTML = `
+                        <div class="deal-card" style="max-width: 400px; margin: 0 auto;">
+                            <div class="card-headline">SALE ENDS TODAY</div>
+                            <div class="card-image">
+                                🥩
+                                <div class="card-sticker">$9<sup style="font-size: 1rem;">99</sup></div>
+                            </div>
+                            <div class="card-body">
+                                <div class="card-title">Fresh Ground Beef 80/20 Family Pack</div>
+                                <div style="padding: 1rem; background: var(--bg-secondary); border-radius: 4px; margin: 1rem 0; font-size: 0.875rem;">
+                                    <div style="margin-bottom: 0.5rem;"><strong>Details:</strong></div>
+                                    <div style="color: var(--text-light);">Premium quality ground beef. Perfect for burgers, tacos, and more. Family pack size saves you money.</div>
+                                    <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border);">
+                                        <div><strong>Must Buy:</strong> 2</div>
+                                        <div><strong>Valid Until:</strong> Dec 31, 2025</div>
+                                    </div>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn">Add to List</button>
+                                    <button class="btn">Share</button>
+                                    <button class="btn">Collapse</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+            }
+        }
+    </script>
+</body>
+</html>

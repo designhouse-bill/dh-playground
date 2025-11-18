@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Themes - Digital Circular Style Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@700&family=Montserrat:wght@700&family=Roboto+Slab:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Default theme colors */
+            --theme-primary: #E2141E;
+            --theme-primary-text: #FFFFFF;
+            --theme-secondary: hsl(123, 39%, 57%);
+            --theme-emphasis: #FFD600;
+            --theme-text: #1D2325;
+            --text-light: #4A5358;
+            --bg: #FFFFFF;
+            --bg-secondary: #F2F3F3;
+            --border: #E4E5E5;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--theme-text);
+            background: var(--bg-secondary);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+
+        .section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        /* Theme Switcher */
+        .theme-switcher {
+            background: linear-gradient(135deg, #313131 0%, #000000 100%);
+            padding: 2rem;
+            border-radius: 12px;
+            color: white;
+            margin-bottom: 2rem;
+        }
+
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .theme-btn {
+            padding: 1rem;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .theme-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .theme-btn.active {
+            background: white;
+            color: #313131;
+            border-color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .theme-preview-box {
+            width: 100%;
+            height: 40px;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+        }
+
+        .theme-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        /* Color Customizer */
+        .color-customizer {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .color-control {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .color-label {
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-light);
+        }
+
+        .color-picker-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .color-picker {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            border: 3px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .color-picker:hover {
+            transform: scale(1.05);
+            border-color: var(--theme-primary);
+        }
+
+        .color-value {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.875rem;
+        }
+
+        .color-value:focus {
+            outline: none;
+            border-color: var(--theme-primary);
+        }
+
+        /* Live Preview */
+        .live-preview {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-top: 2rem;
+        }
+
+        .preview-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .preview-header {
+            background: var(--theme-primary);
+            color: var(--theme-primary-text);
+            padding: 1rem;
+            font-weight: 600;
+        }
+
+        .preview-image {
+            aspect-ratio: 1;
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            position: relative;
+        }
+
+        .preview-sticker {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 100px;
+            height: 100px;
+            background: var(--theme-primary);
+            color: var(--theme-primary-text);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .preview-body {
+            padding: 1rem;
+        }
+
+        .preview-title {
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+            color: var(--theme-text);
+        }
+
+        .preview-button {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--theme-primary);
+            color: var(--theme-primary-text);
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .preview-button:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        /* Comparison View */
+        .comparison-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .comparison-item {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 12px;
+        }
+
+        .comparison-label {
+            font-weight: 700;
+            font-size: 1.125rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .reset-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--theme-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .theme-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .comparison-container {
+                grid-template-columns: 1fr;
+            }
+
+            .color-customizer {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script src="shared-nav.js"></script>
+
+    <div class="container">
+        <div class="header">
+            <h1>Interactive Theme Builder</h1>
+            <p style="color: var(--text-light); font-size: 1.125rem;">Create and customize themes with live preview</p>
+        </div>
+
+        <div class="section theme-switcher">
+            <h2 style="margin-bottom: 1rem;">Quick Theme Presets</h2>
+            <p style="opacity: 0.9; margin-bottom: 1rem;">Click a theme to apply it instantly</p>
+
+            <div class="theme-grid">
+                <button class="theme-btn active" onclick="applyTheme('default')">
+                    <div class="theme-preview-box" style="background: #E2141E;"></div>
+                    <div class="theme-name">Default</div>
+                </button>
+
+                <button class="theme-btn" onclick="applyTheme('gelsons')">
+                    <div class="theme-preview-box" style="background: linear-gradient(135deg, #D82027 0%, #FFCF16 100%);"></div>
+                    <div class="theme-name">Gelsons</div>
+                </button>
+
+                <button class="theme-btn" onclick="applyTheme('northgate')">
+                    <div class="theme-preview-box" style="background: linear-gradient(135deg, #F39C12 0%, #E74C3C 100%);"></div>
+                    <div class="theme-name">Northgate</div>
+                </button>
+
+                <button class="theme-btn" onclick="applyTheme('festival')">
+                    <div class="theme-preview-box" style="background: #3a823d;"></div>
+                    <div class="theme-name">Festival Foods</div>
+                </button>
+
+                <button class="theme-btn" onclick="applyTheme('dollar')">
+                    <div class="theme-preview-box" style="background: linear-gradient(135deg, #FED500 0%, #1D1D1D 100%);"></div>
+                    <div class="theme-name">Dollar General</div>
+                </button>
+
+                <button class="theme-btn" onclick="applyTheme('weis')">
+                    <div class="theme-preview-box" style="background: #1E3A8A;"></div>
+                    <div class="theme-name">Weis Markets</div>
+                </button>
+
+                <button class="theme-btn" onclick="applyTheme('ace')">
+                    <div class="theme-preview-box" style="background: #C41E3A;"></div>
+                    <div class="theme-name">Ace Hardware</div>
+                </button>
+
+                <button class="theme-btn" onclick="applyTheme('shoprite')">
+                    <div class="theme-preview-box" style="background: #E31837;"></div>
+                    <div class="theme-name">ShopRite</div>
+                </button>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Custom Color Builder</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--text-light);">Fine-tune colors with real-time preview</p>
+
+            <div class="color-customizer">
+                <div class="color-control">
+                    <label class="color-label">Primary Brand Color</label>
+                    <div class="color-picker-group">
+                        <input type="color" id="primaryColor" class="color-picker" value="#E2141E" oninput="updateColor('primary', this.value)">
+                        <input type="text" id="primaryValue" class="color-value" value="#E2141E" oninput="updateColorFromText('primary', this.value)">
+                    </div>
+                </div>
+
+                <div class="color-control">
+                    <label class="color-label">Secondary Color</label>
+                    <div class="color-picker-group">
+                        <input type="color" id="secondaryColor" class="color-picker" value="#76C893" oninput="updateColor('secondary', this.value)">
+                        <input type="text" id="secondaryValue" class="color-value" value="#76C893" oninput="updateColorFromText('secondary', this.value)">
+                    </div>
+                </div>
+
+                <div class="color-control">
+                    <label class="color-label">Emphasis Color</label>
+                    <div class="color-picker-group">
+                        <input type="color" id="emphasisColor" class="color-picker" value="#FFD600" oninput="updateColor('emphasis', this.value)">
+                        <input type="text" id="emphasisValue" class="color-value" value="#FFD600" oninput="updateColorFromText('emphasis', this.value)">
+                    </div>
+                </div>
+
+                <div class="color-control">
+                    <label class="color-label">Text Color</label>
+                    <div class="color-picker-group">
+                        <input type="color" id="textColor" class="color-picker" value="#1D2325" oninput="updateColor('text', this.value)">
+                        <input type="text" id="textValue" class="color-value" value="#1D2325" oninput="updateColorFromText('text', this.value)">
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem; text-align: center;">
+                <button class="reset-btn" onclick="resetColors()">Reset to Default</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Live Preview</h2>
+
+            <div class="live-preview">
+                <div class="preview-card">
+                    <div class="preview-header">Weekly Deals</div>
+                    <div class="preview-image">
+                        🥩
+                        <div class="preview-sticker">$9<sup style="font-size: 1rem; vertical-align: super;">99</sup></div>
+                    </div>
+                    <div class="preview-body">
+                        <div class="preview-title">Fresh Ground Beef 80/20 Family Pack</div>
+                        <button class="preview-button">Add to My List</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Before & After Comparison</h2>
+
+            <div class="comparison-container">
+                <div class="comparison-item">
+                    <div class="comparison-label">Default Theme</div>
+                    <div id="beforePreview"></div>
+                </div>
+
+                <div class="comparison-item">
+                    <div class="comparison-label">Custom Theme</div>
+                    <div id="afterPreview"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Responsive Preview -->
+        <div class="section">
+            <h2 class="section-title">Responsive Preview</h2>
+            <div id="responsivePreview"></div>
+        </div>
+    </div>
+
+    <script src="responsive-preview.js"></script>
+    <script>
+        const themes = {
+            default: {
+                primary: '#E2141E',
+                primaryText: '#FFFFFF',
+                secondary: '#76C893',
+                emphasis: '#FFD600',
+                text: '#1D2325'
+            },
+            gelsons: {
+                primary: '#D82027',
+                primaryText: '#FFFFFF',
+                secondary: '#FFCF16',
+                emphasis: '#FFD600',
+                text: '#1D2325'
+            },
+            northgate: {
+                primary: '#E74C3C',
+                primaryText: '#FFFFFF',
+                secondary: '#F39C12',
+                emphasis: '#FFD600',
+                text: '#1D2325'
+            },
+            festival: {
+                primary: '#3a823d',
+                primaryText: '#FFFFFF',
+                secondary: '#8BC34A',
+                emphasis: '#FFEB3B',
+                text: '#1D2325'
+            },
+            dollar: {
+                primary: '#FED500',
+                primaryText: '#1D1D1D',
+                secondary: '#1D1D1D',
+                emphasis: '#FED500',
+                text: '#1D1D1D'
+            },
+            weis: {
+                primary: '#1E3A8A',
+                primaryText: '#FFFFFF',
+                secondary: '#3B82F6',
+                emphasis: '#60A5FA',
+                text: '#1D2325'
+            },
+            ace: {
+                primary: '#C41E3A',
+                primaryText: '#FFFFFF',
+                secondary: '#8B1538',
+                emphasis: '#FFD700',
+                text: '#1D2325'
+            },
+            shoprite: {
+                primary: '#E31837',
+                primaryText: '#FFFFFF',
+                secondary: '#C1272D',
+                emphasis: '#FFD700',
+                text: '#1D2325'
+            }
+        };
+
+        let defaultTheme = { ...themes.default };
+
+        function applyTheme(themeName) {
+            const theme = themes[themeName];
+
+            // Update CSS variables
+            document.documentElement.style.setProperty('--theme-primary', theme.primary);
+            document.documentElement.style.setProperty('--theme-primary-text', theme.primaryText);
+            document.documentElement.style.setProperty('--theme-secondary', theme.secondary);
+            document.documentElement.style.setProperty('--theme-emphasis', theme.emphasis);
+            document.documentElement.style.setProperty('--theme-text', theme.text);
+
+            // Update color pickers
+            document.getElementById('primaryColor').value = theme.primary;
+            document.getElementById('primaryValue').value = theme.primary;
+            document.getElementById('secondaryColor').value = theme.secondary;
+            document.getElementById('secondaryValue').value = theme.secondary;
+            document.getElementById('emphasisColor').value = theme.emphasis;
+            document.getElementById('emphasisValue').value = theme.emphasis;
+            document.getElementById('textColor').value = theme.text;
+            document.getElementById('textValue').value = theme.text;
+
+            // Update active button
+            document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.theme-btn').classList.add('active');
+
+            updateComparison();
+        }
+
+        function updateColor(type, value) {
+            document.documentElement.style.setProperty(`--theme-${type}`, value);
+
+            if (type === 'primary') {
+                document.getElementById('primaryValue').value = value;
+            } else if (type === 'secondary') {
+                document.getElementById('secondaryValue').value = value;
+            } else if (type === 'emphasis') {
+                document.getElementById('emphasisValue').value = value;
+            } else if (type === 'text') {
+                document.getElementById('textValue').value = value;
+            }
+
+            updateComparison();
+        }
+
+        function updateColorFromText(type, value) {
+            if (/^#[0-9A-F]{6}$/i.test(value)) {
+                document.documentElement.style.setProperty(`--theme-${type}`, value);
+
+                if (type === 'primary') {
+                    document.getElementById('primaryColor').value = value;
+                } else if (type === 'secondary') {
+                    document.getElementById('secondaryColor').value = value;
+                } else if (type === 'emphasis') {
+                    document.getElementById('emphasisColor').value = value;
+                } else if (type === 'text') {
+                    document.getElementById('textColor').value = value;
+                }
+
+                updateComparison();
+            }
+        }
+
+        function resetColors() {
+            applyTheme('default');
+        }
+
+        function updateComparison() {
+            const beforeHTML = createComparisonCard(defaultTheme);
+            const afterHTML = createComparisonCard({
+                primary: getComputedStyle(document.documentElement).getPropertyValue('--theme-primary').trim(),
+                primaryText: getComputedStyle(document.documentElement).getPropertyValue('--theme-primary-text').trim(),
+                secondary: getComputedStyle(document.documentElement).getPropertyValue('--theme-secondary').trim(),
+                emphasis: getComputedStyle(document.documentElement).getPropertyValue('--theme-emphasis').trim(),
+                text: getComputedStyle(document.documentElement).getPropertyValue('--theme-text').trim()
+            });
+
+            document.getElementById('beforePreview').innerHTML = beforeHTML;
+            document.getElementById('afterPreview').innerHTML = afterHTML;
+
+            updateResponsivePreview();
+        }
+
+        function createComparisonCard(theme) {
+            return `
+                <div class="preview-card" style="margin: 0;">
+                    <div class="preview-header" style="background: ${theme.primary}; color: ${theme.primaryText};">Weekly Deals</div>
+                    <div class="preview-image">
+                        🥩
+                        <div class="preview-sticker" style="background: ${theme.primary}; color: ${theme.primaryText};">
+                            $9<sup style="font-size: 1rem; vertical-align: super;">99</sup>
+                        </div>
+                    </div>
+                    <div class="preview-body">
+                        <div class="preview-title" style="color: ${theme.text};">Fresh Ground Beef 80/20</div>
+                        <button class="preview-button" style="background: ${theme.primary}; color: ${theme.primaryText};">
+                            Add to My List
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateResponsivePreview() {
+            if (window.responsivePreview) {
+                const currentTheme = {
+                    primary: getComputedStyle(document.documentElement).getPropertyValue('--theme-primary').trim(),
+                    primaryText: getComputedStyle(document.documentElement).getPropertyValue('--theme-primary-text').trim()
+                };
+
+                const previewHTML = `
+                    <div style="display: flex; gap: 2rem; flex-wrap: wrap; justify-content: center; padding: 2rem;">
+                        ${createComparisonCard(currentTheme)}
+                    </div>
+                `;
+                responsivePreview.setContent(previewHTML);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            window.responsivePreview = new ResponsivePreview('#responsivePreview');
+            updateComparison();
+        });
+    </script>
+</body>
+</html>

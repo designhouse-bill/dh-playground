@@ -1,0 +1,1667 @@
+{
+  "audit_date": "2025-11-17",
+  "repositories": {
+    "design_system": "/Users/billklingensmith/Code/design-system",
+    "themes": "/Users/billklingensmith/Code/themes",
+    "digital_circular": "/Users/billklingensmith/Code/DigitalCircular2"
+  },
+  "design_system": {
+    "summary": {
+      "total_story_files": 64,
+      "total_price_tag_components": 16,
+      "total_card_components": 17,
+      "deal_types": 7,
+      "amount_types": 4,
+      "token_categories": 10,
+      "total_design_tokens": "885+"
+    },
+    "storybook_stories": {
+      "price_tag_components": [
+        {
+          "component": "PriceStickerComponent",
+          "path": "lib/price-tag/price-sticker/price-sticker.component.stories.ts",
+          "selector": "dh-price-sticker",
+          "stories": [
+            "SimplePrice",
+            "PriceEach",
+            "LongPrice",
+            "TwoForTwenty",
+            "TenHalfOff",
+            "TenSlashHalfOff",
+            "BogoForTwo",
+            "AlternateStyle",
+            "AlternateReversedStyle",
+            "EmphasisStyle",
+            "EmphasisReversedStyle"
+          ],
+          "variants": [
+            "default",
+            "alternate",
+            "alternate-reversed",
+            "emphasis",
+            "emphasis-reversed"
+          ],
+          "key_props": {
+            "containerType": "size",
+            "accepts_content": "ng-content (price components)"
+          }
+        },
+        {
+          "component": "AmountComponent",
+          "path": "lib/price-tag/amount/amount.component.stories.ts",
+          "selector": "dh-amount",
+          "key_props": {
+            "amount": "number",
+            "type": "AmountType (Dollars|Cents|Percent|Free)",
+            "text": "string (e.g., 'Each', 'lb')",
+            "showDecimal": "'always' | 'auto'",
+            "layout": "'simple' | 'condensed'",
+            "showDollarSign": "boolean"
+          }
+        },
+        {
+          "component": "BogoComponent",
+          "path": "lib/price-tag/bogo/bogo.component.stories.ts",
+          "selector": "dh-bogo",
+          "stories": [
+            "Default",
+            "PercentOff",
+            "DollarsPerPound",
+            "CentsPerPack",
+            "HighBuyNumber",
+            "HighGetNumber",
+            "VerticalLayout",
+            "HideDollarSign",
+            "ShowDecimalsAlways",
+            "ShowDecimalsAuto",
+            "ShowDecimalsWithCents",
+            "CustomAmountTemplate",
+            "CustomAmountTemplateVertical"
+          ],
+          "key_props": {
+            "buyNumber": "number",
+            "getNumber": "number",
+            "amount": "number",
+            "amountType": "AmountType",
+            "amountText": "string",
+            "layout": "'horizontal' | 'vertical'",
+            "showDollarSigns": "boolean",
+            "showDecimals": "'always' | 'auto'",
+            "amountTemplate": "TemplateRef<any>"
+          }
+        },
+        {
+          "component": "CouponTagComponent",
+          "path": "lib/price-tag/coupon-tag/coupon-tag.component.stories.ts",
+          "selector": "dh-coupon-tag",
+          "variants": [
+            "default",
+            "alt"
+          ],
+          "key_props": {
+            "dealType": "DealType",
+            "amount": "number",
+            "amountType": "AmountType",
+            "amountText": "string",
+            "couponDescription": "string",
+            "couponTitle": "string",
+            "couponSubTitle": "string",
+            "buyNumber": "number",
+            "getNumber": "number",
+            "selected": "boolean",
+            "couponLimit": "string",
+            "layout": "'default' | 'horizontal' | 'simple'",
+            "showDecimals": "'always' | 'auto'"
+          },
+          "stories_count": 38
+        },
+        {
+          "component": "DealComponent",
+          "path": "lib/price-tag/deal/deal.component.ts",
+          "selector": "dh-deal",
+          "key_props": {
+            "dealType": "DealType (amount|numfor|bogo|save-x|numslash|from-num|none)",
+            "amount": "number (optional)",
+            "buyNumber": "number (optional)",
+            "getNumber": "number (optional)",
+            "amountText": "string (optional)",
+            "amountType": "AmountType (default: Dollars)",
+            "layout": "'default' | 'horizontal' | 'simple'",
+            "showDollarSigns": "'always' | 'auto'",
+            "showDecimals": "'always' | 'auto'",
+            "bogoAmountTemplate": "TemplateRef<any> (optional)",
+            "minimum": "number (optional)",
+            "maximum": "number (optional)"
+          }
+        },
+        {
+          "component": "NumForComponent",
+          "selector": "dh-num-for"
+        },
+        {
+          "component": "NumSlashComponent",
+          "selector": "dh-num-slash"
+        },
+        {
+          "component": "FromNumComponent",
+          "selector": "dh-from-num"
+        },
+        {
+          "component": "SaveXComponent",
+          "selector": "dh-save-x"
+        },
+        {
+          "component": "CouponComboTagComponent",
+          "selector": "dh-coupon-combo-tag"
+        },
+        {
+          "component": "LoyaltyComboTagComponent",
+          "selector": "dh-loyalty-combo-tag"
+        },
+        {
+          "component": "LoyaltyCouponComboTagComponent",
+          "selector": "dh-loyalty-coupon-combo-tag"
+        },
+        {
+          "component": "CouponPointsTagComponent",
+          "selector": "dh-coupon-points-tag"
+        },
+        {
+          "component": "CouponPointsRequiredComponent",
+          "selector": "dh-coupon-points-required"
+        },
+        {
+          "component": "CouponPointsTotalComponent",
+          "selector": "dh-coupon-points-total"
+        },
+        {
+          "component": "ItemCardDealComponent",
+          "selector": "dh-item-card-deal"
+        }
+      ],
+      "card_components": [
+        {
+          "component": "DealCardComponent",
+          "path": "lib/cards/deal-card/deal-card.component.stories.ts",
+          "selector": "dh-deal-card",
+          "stories": [
+            "Default",
+            "WithIcon",
+            "MultipleIcons",
+            "Expanded",
+            "InMyList",
+            "KitchenSink",
+            "Headline",
+            "EndsToday",
+            "EndsTodaySmall",
+            "NoBadge",
+            "SizeSmall1x1",
+            "Size1x1",
+            "Size1x2",
+            "Size2x1",
+            "Size2x2",
+            "Size2x3",
+            "Size3x2",
+            "Size3x3",
+            "LoyaltyCombo",
+            "CouponCombo",
+            "CouponComboClipped",
+            "CouponComboExpanded",
+            "CouponTag",
+            "CouponTagExpanded",
+            "PriceTagAnnouncementsIndex"
+          ],
+          "key_props": {
+            "numInMyList": "number (default: 0)",
+            "expanded": "boolean (default: false)",
+            "hideCollapseButton": "boolean (default: false)",
+            "bleed": "boolean (default: false)",
+            "coupon": "boolean (default: false)",
+            "couponClipped": "boolean (default: false)",
+            "clickable": "boolean (default: false)",
+            "cardTitle": "string (optional)",
+            "cardPrice": "string (optional)",
+            "productTitle": "string (optional)",
+            "iconLabels": "string[] (optional)"
+          },
+          "child_components": [
+            "CardActionsComponent",
+            "ItemCardDescriptionComponent",
+            "ItemCardCollapseComponent",
+            "CardHeadlineComponent",
+            "CardImageComponent",
+            "CardIconComponent",
+            "CardIconGroupComponent",
+            "CardCouponActionsComponent"
+          ]
+        },
+        {
+          "component": "ItemCardComponent",
+          "path": "lib/cards/item-card/item-card.component.stories.ts",
+          "selector": "dh-item-card",
+          "stories": [
+            "Default",
+            "MustBuy",
+            "NoPrice",
+            "LongTitle",
+            "AllDealPrice",
+            "couponOriginalAmount",
+            "couponDeal",
+            "couponTotal",
+            "ListItem",
+            "itemDescription",
+            "ItemDescriptionWithLongText",
+            "itemDescriptionShowBuyOnline",
+            "LoyaltyDeal",
+            "CouponPointsDeal",
+            "CouponOnlyDeal",
+            "CouponCentsOnlyDeal",
+            "HideQuantity"
+          ],
+          "key_props": {
+            "expanded": "boolean (default: false)",
+            "title": "string (required)",
+            "dealPrice": "string (optional)",
+            "numInMyList": "number (default: 0)",
+            "imageSrc": "string (required)",
+            "imageSrcFallback": "string (optional)",
+            "imageAlt": "string (required)",
+            "imageSrcModal": "string (optional)",
+            "couponOriginalAmount": "string (optional)",
+            "couponDeal": "string (optional)",
+            "couponTotal": "string (optional)",
+            "mustBuy": "number (optional)",
+            "limit": "number (optional)",
+            "description": "string (optional)",
+            "validUntilDate": "string (optional)",
+            "showBuyOnlineUI": "boolean (default: false)",
+            "actionsDisabled": "boolean (default: false)",
+            "buyOnlineLink": "string (optional)",
+            "hideShare": "boolean (default: false)",
+            "disableTermsAndConditionsLinks": "boolean (default: false)",
+            "hideQuantity": "boolean (default: false)",
+            "loyaltyOriginalPrice": "string (optional)",
+            "loyaltyRewardPrice": "string (optional)",
+            "couponPointsValue": "string (optional)",
+            "couponPointsAmount": "string (optional)",
+            "couponOnlyValue": "string (optional)"
+          },
+          "deal_types": [
+            "loyalty",
+            "coupon-points",
+            "coupon"
+          ]
+        },
+        {
+          "component": "StaticCardComponent",
+          "selector": "dh-static-card"
+        },
+        {
+          "component": "CardImageComponent",
+          "selector": "dh-card-image"
+        },
+        {
+          "component": "CardVideoComponent",
+          "selector": "dh-card-video"
+        },
+        {
+          "component": "CardIconComponent",
+          "selector": "dh-card-icon"
+        },
+        {
+          "component": "CardIconGroupComponent",
+          "selector": "dh-card-icon-group"
+        },
+        {
+          "component": "CardHeadlineComponent",
+          "selector": "dh-card-headline"
+        },
+        {
+          "component": "CardDetailsComponent",
+          "selector": "dh-card-details"
+        },
+        {
+          "component": "CardActionsComponent",
+          "selector": "dh-card-actions"
+        },
+        {
+          "component": "CardCouponActionsComponent",
+          "selector": "dh-card-coupon-actions"
+        },
+        {
+          "component": "CategoryHeaderComponent",
+          "selector": "dh-category-header"
+        },
+        {
+          "component": "ItemCardHeaderComponent",
+          "selector": "dh-item-card-header"
+        },
+        {
+          "component": "ItemCardDescriptionComponent",
+          "selector": "dh-item-card-description"
+        },
+        {
+          "component": "ItemCardCollapseComponent",
+          "selector": "dh-item-card-collapse"
+        },
+        {
+          "component": "ItemCardDialogComponent",
+          "selector": "dh-item-card-dialog"
+        },
+        {
+          "component": "PromotionItemsRowComponent",
+          "selector": "dh-promotion-items-row"
+        }
+      ]
+    },
+    "design_tokens": {
+      "source_files": {
+        "typescript": "tokens/tokens.ts",
+        "scss": "tokens/variables.scss"
+      },
+      "colors": {
+        "background": {
+          "ColorBg": "#FFFFFF",
+          "ColorBgSecondary": "#F2F3F3",
+          "ColorBgSecondaryHover": "#E4E5E5",
+          "ColorBgSecondaryPressed": "#D3D4D4",
+          "ColorBgTertiary": "#E7E9E9",
+          "ColorBgHover": "#F2F3F3",
+          "ColorBgPressed": "#E4E5E5",
+          "ColorBgDark": "rgb(33, 33, 33)",
+          "ColorBgDarkSecondary": "rgb(44, 44, 44)",
+          "ColorBgDarkTertiary": "rgb(55, 55, 55)",
+          "ColorBgDarkHover": "rgb(22, 22, 22)",
+          "ColorBgDarkPressed": "rgb(11, 11, 11)",
+          "ColorBgElevated": "#FFFFFF",
+          "ColorBgElevatedHover": "#F2F3F3",
+          "ColorBgElevatedPressed": "#E4E5E5",
+          "ColorCircularBg": "#F2F3F3",
+          "ColorCircularBgComponent": "transparent"
+        },
+        "text": {
+          "ColorText": "#1D2325",
+          "ColorTextLowContrast": "#4A5358",
+          "ColorTextXLowContrast": "#6C7377",
+          "ColorTextOnDark": "#FFFFFF",
+          "ColorTextOnDarkLowContrast": "rgb(198, 198, 198)",
+          "ColorTextOnDarkXLowContrast": "rgb(158, 158, 158)"
+        },
+        "link": {
+          "ColorLink": "#E2141E",
+          "ColorLinkHover": "#BA1218",
+          "ColorLinkPressed": "#CE0F1A",
+          "ColorLinkOnDark": "#E2141E",
+          "ColorLinkOnDarkHover": "#BA1218",
+          "ColorLinkOnDarkPressed": "#CE0F1A"
+        },
+        "line": {
+          "ColorLine": "#1D2325",
+          "ColorLineLowContrast": "#8E9497",
+          "ColorLineXLowContrast": "#E4E5E5",
+          "ColorLineOnDark": "#FFFFFF",
+          "ColorLineOnDarkLowContrast": "rgb(198, 198, 198)",
+          "ColorLineOnDarkXLowContrast": "rgb(158, 158, 158)"
+        },
+        "brand": {
+          "ColorBrand": "#E2141E",
+          "ColorBrandContrast": "#FFFFFF",
+          "ColorBrandHover": "#BA1218",
+          "ColorBrandPressed": "#CE0F1A",
+          "ColorBrandOnDark": "#E2141E",
+          "ColorBrandOnDarkContrast": "#FFFFFF",
+          "ColorBrandOnDarkHover": "#BA1218",
+          "ColorBrandOnDarkPressed": "#CE0F1A",
+          "ColorBrandAlt": "hsl(123, 39%, 57%)",
+          "ColorBrandAltContrast": "#FFFFFF",
+          "ColorBrandAltHover": "hsl(123, 39%, 47%)",
+          "ColorBrandAltPressed": "hsl(123, 39%, 37%)",
+          "ColorBrandAltOnDark": "hsl(123, 39%, 57%)",
+          "ColorBrandAltOnDarkContrast": "#FFFFFF",
+          "ColorBrandAltOnDarkHover": "hsl(123, 39%, 47%)",
+          "ColorBrandAltOnDarkPressed": "hsl(123, 39%, 37%)"
+        },
+        "emphasis": {
+          "ColorEmphasis": "#FFD600",
+          "ColorEmphasisHover": "#E5C100",
+          "ColorEmphasisPressed": "#CCAB00",
+          "ColorEmphasisContrast": "#1D2325",
+          "ColorEmphasisOnDark": "#FFD600",
+          "ColorEmphasisOnDarkHover": "#E5C100",
+          "ColorEmphasisOnDarkPressed": "#CCAB00",
+          "ColorEmphasisOnDarkContrast": "#1D2325"
+        },
+        "highlight": {
+          "ColorHighlight": "rgba(0, 0, 0, 0.2)",
+          "ColorHighlightTransparent": "rgba(0, 0, 0, 0)",
+          "ColorHighlightThick": "rgba(0, 0, 0, 0.35)",
+          "ColorHighlightXThick": "rgba(0, 0, 0, 0.5)",
+          "ColorHighlightSolid": "#3388FF",
+          "ColorHighlightContrast": "#FFFFFF",
+          "ColorFocusOutline": "rgba(0, 0, 0, 0.5)"
+        },
+        "added": {
+          "ColorAdded": "#64C52D",
+          "ColorAddedHover": "#74CB42",
+          "ColorAddedPressed": "#83D157",
+          "ColorAddedContrast": "#1D2325"
+        },
+        "coupon": {
+          "ColorCoupon": "#FFCF16",
+          "ColorCouponHover": "hsl(48, 100%, 50%)",
+          "ColorCouponPressed": "hsl(48, 100%, 45%)",
+          "ColorCouponContrast": "#1D2325",
+          "ColorCouponAlt": "#EB0000",
+          "ColorCouponAltHover": "hsl(0, 100%, 40%)",
+          "ColorCouponAltPressed": "hsl(0, 100%, 35%)",
+          "ColorCouponAltContrast": "#FFFFFF",
+          "ColorCouponClipped": "#1D2325",
+          "ColorCouponClippedHover": "rgb(22, 22, 22)",
+          "ColorCouponClippedPressed": "rgb(11, 11, 11)",
+          "ColorCouponClippedContrast": "#FFCF16"
+        },
+        "loyalty": {
+          "ColorLoyalty": "#007B8A",
+          "ColorLoyaltyHover": "#007B8A",
+          "ColorLoyaltyPressed": "#007B8A",
+          "ColorLoyaltyContrast": "#FFFFFF"
+        },
+        "coupon_points": {
+          "ColorCouponPointsBg": "#F59237",
+          "ColorCouponPointsTextColor": "#000000",
+          "ColorCouponPointsNotEnoughBg": "#D9D9D9",
+          "ColorCouponPointsNotEnoughTextColor": "#000000",
+          "ColorCouponPointsRequiredBg": "#D0EDE6",
+          "ColorCouponPointsRequiredTextColor": "#000000"
+        }
+      },
+      "typography": {
+        "fonts": {
+          "Font": "'Open Sans', sans-serif",
+          "FontPrices": "'Oswald', sans-serif",
+          "FontDisplay": "'Open Sans', sans-serif"
+        },
+        "font_sizes": {
+          "FontSize2xs": "10px",
+          "FontSizeXs": "12px",
+          "FontSizeSm": "14px",
+          "FontSizeMd": "16px",
+          "FontSizeLg": "20px",
+          "FontSizeXl": "24px",
+          "FontSize2xl": "32px",
+          "FontSize3xl": "48px",
+          "FontSize4xl": "64px"
+        },
+        "line_heights": {
+          "LineHeight2xs": 0.75,
+          "LineHeightXs": 0.875,
+          "LineHeightSm": 1,
+          "LineHeightMd": 1.25,
+          "LineHeightLg": 1.5,
+          "LineHeightXl": 2
+        },
+        "font_weights": {
+          "FontWeight": 400,
+          "FontWeightPrices": 700
+        }
+      },
+      "spacing": {
+        "SpaceNone": "0px",
+        "Space3xs": "2px",
+        "Space2xs": "4px",
+        "SpaceXs": "8px",
+        "SpaceSm": "12px",
+        "SpaceMd": "16px",
+        "SpaceLg": "24px",
+        "SpaceXl": "32px",
+        "Space2xl": "48px",
+        "Space3xl": "64px"
+      },
+      "radius": {
+        "RadiusNone": 0,
+        "RadiusXs": "2px",
+        "RadiusSm": "4px",
+        "RadiusMd": "8px",
+        "RadiusLg": "16px",
+        "RadiusXl": "32px",
+        "RadiusPill": "99999px"
+      },
+      "shadows": {
+        "Shadow2xs": "0 0.25px 0.5px rgba(0, 0, 0, 0.1), 0 0.5px 1px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.1)",
+        "ShadowXs": "0 0.5px 1px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.1)",
+        "ShadowSm": "0 1px 2px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1)",
+        "ShadowMd": "0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1)",
+        "ShadowLg": "0 4px 8px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1), 0 16px 32px rgba(0, 0, 0, 0.1)",
+        "ShadowXl": "0 8px 16px rgba(0, 0, 0, 0.1), 0 16px 32px rgba(0, 0, 0, 0.1), 0 32px 64px rgba(0, 0, 0, 0.1)"
+      },
+      "price_sticker": {
+        "PriceStickerAspectRatio": "1",
+        "PriceStickerFont": "'Oswald', sans-serif",
+        "PriceStickerFontWeight": "700",
+        "PriceStickerRadiusTl": "99999px",
+        "PriceStickerRadiusTr": "99999px",
+        "PriceStickerRadiusBr": "99999px",
+        "PriceStickerRadiusBl": "99999px",
+        "PriceStickerPaddingY": "14%",
+        "PriceStickerPaddingX": "14%",
+        "PriceStickerMarginRight": "0.25em",
+        "PriceStickerMarginBottom": "0.25em",
+        "PriceStickerBg": "#E2141E",
+        "PriceStickerTextColor": "#FFFFFF",
+        "PriceStickerBorderColor": "#FFFFFF",
+        "PriceStickerBorderWidth": "0.125em",
+        "PriceStickerShadow": "0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1)",
+        "variants": {
+          "reversed": {
+            "PriceStickerReversedBg": "#FFFFFF",
+            "PriceStickerReversedTextColor": "#E2141E",
+            "PriceStickerReversedBorderColor": "#E2141E"
+          },
+          "alt": {
+            "PriceStickerAltBg": "hsl(123, 39%, 57%)",
+            "PriceStickerAltTextColor": "#FFFFFF",
+            "PriceStickerAltBorderColor": "#FFFFFF"
+          },
+          "alt_reversed": {
+            "PriceStickerAltReversedBg": "#FFFFFF",
+            "PriceStickerAltReversedTextColor": "hsl(123, 39%, 57%)",
+            "PriceStickerAltReversedBorderColor": "hsl(123, 39%, 57%)"
+          },
+          "emphasis": {
+            "PriceStickerEmphasisBg": "#FFD600",
+            "PriceStickerEmphasisTextColor": "#1D2325",
+            "PriceStickerEmphasisBorderColor": "#1D2325"
+          },
+          "emphasis_reversed": {
+            "PriceStickerEmphasisReversedBg": "#1D2325",
+            "PriceStickerEmphasisReversedTextColor": "#FFD600",
+            "PriceStickerEmphasisReversedBorderColor": "#FFD600"
+          }
+        }
+      },
+      "cards": {
+        "CardBg": "#FFFFFF",
+        "CardImageBg": "#F2F3F3",
+        "CardShadow": "0 1px 2px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1)",
+        "CardRadiusTl": 0,
+        "CardRadiusTr": 0,
+        "CardRadiusBl": 0,
+        "CardRadiusBr": 0,
+        "CardTitleFontSize": "14px",
+        "CardHeadlineBg": "#E2141E",
+        "CardHeadlineTextColor": "#FFFFFF",
+        "CardGridGap": "8px",
+        "CardGridGapMobile": "4px",
+        "ItemCardGap": "8px",
+        "ItemCardBorderBottomColor": "#cccccc",
+        "ItemCardBorderBottomWidth": "1px",
+        "ItemCardImageWidth": "85px",
+        "ItemCardImageHeight": "85px",
+        "ItemCardShadow": "0 1px 2px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1)",
+        "ItemCardPaddingX": "8px",
+        "ItemCardPaddingY": "8px"
+      },
+      "coupon_tag": {
+        "CouponTagMarginY": "16px",
+        "CouponTagMarginX": "8px",
+        "CouponTagBg": "#EB0000",
+        "CouponTagBorder": "#1D2325",
+        "CouponTagBorderWidth": ".125em",
+        "CouponTagBorderRadiusTl": "0.5em",
+        "CouponTagBorderRadiusTr": 0,
+        "CouponTagBorderRadiusBr": "0.5em",
+        "CouponTagBorderRadiusBl": 0,
+        "CouponTagTextColor": "#FFFFFF",
+        "CouponTagPriceColor": "#FFFFFF",
+        "CouponTagFont": "'Open Sans', sans-serif",
+        "CouponTagPriceFont": "'Oswald', sans-serif",
+        "CouponTagPriceFontSize": "2em",
+        "CouponTagFontSize": "1.5em",
+        "CouponTagWidth": "11em",
+        "CouponTagSelectedWidth": "16em",
+        "CouponTagGap": "4px",
+        "CouponTagTextTransform": "uppercase"
+      },
+      "loyalty_combo_tag": {
+        "LoyaltyComboTagMarginRight": "8px",
+        "LoyaltyComboTagMarginBottom": "8px",
+        "LoyaltyComboTagFont": "'Open Sans', sans-serif",
+        "LoyaltyComboTagPriceFont": "'Oswald', sans-serif",
+        "LoyaltyComboTagBg": "#FFFFFF",
+        "LoyaltyComboTagPaddingX": "8px",
+        "LoyaltyComboTagPaddingY": "8px",
+        "LoyaltyComboTagBorder": "#E2141E",
+        "LoyaltyComboTagBorderWidth": "0.125em",
+        "LoyaltyComboTagBorderColor": "#E2141E",
+        "LoyaltyComboTagRadiusTl": "0.5em",
+        "LoyaltyComboTagRadiusTr": "0.5em",
+        "LoyaltyComboTagRadiusBr": "0.5em",
+        "LoyaltyComboTagRadiusBl": "0.5em",
+        "LoyaltyComboTagDealBg": "#FFFFFF",
+        "LoyaltyComboTagDealBorderWidth": "0",
+        "LoyaltyComboTagDealBorderColor": "#FFFFFF",
+        "LoyaltyComboTagDealTextColor": "#E2141E",
+        "LoyaltyComboTagDealPriceColor": "#FFFFFF",
+        "LoyaltyComboTagDealFontSize": "4em",
+        "LoyaltyComboTagDealGap": "8px",
+        "LoyaltyComboTagLoyaltyBg": "#007B8A",
+        "LoyaltyComboTagLoyaltyBorderWidth": "0.125em",
+        "LoyaltyComboTagLoyaltyBorderColor": "#FFFFFF",
+        "LoyaltyComboTagLoyaltyTextColor": "#FFFFFF",
+        "LoyaltyComboTagLoyaltyPriceColor": "#FFFFFF",
+        "LoyaltyComboTagLoyaltyFontSize": "3em",
+        "LoyaltyComboTagLoyaltyGap": ".25em"
+      },
+      "coupon_combo_tag": {
+        "CouponComboTagMarginRight": "8px",
+        "CouponComboTagMarginBottom": "8px",
+        "CouponComboTagBg": "#FFCF16",
+        "CouponComboTagBorder": "#1D2325",
+        "CouponComboTagBorderWidth": "0.125em",
+        "CouponComboTagBorderColor": "#1D2325",
+        "CouponComboTagBorderRadiusTl": "1em",
+        "CouponComboTagBorderRadiusTr": 0,
+        "CouponComboTagBorderRadiusBr": "1em",
+        "CouponComboTagBorderRadiusBl": 0,
+        "CouponComboTagTextColor": "#1D2325",
+        "CouponComboTagPriceColor": "#1D2325",
+        "CouponComboTagFont": "'Open Sans', sans-serif",
+        "CouponComboTagPriceFont": "'Oswald', sans-serif",
+        "CouponComboTagFontSize": "1em",
+        "CouponComboTagDealBg": "#FFCF16",
+        "CouponComboTagDealTextColor": "#1D2325",
+        "CouponComboTagDealPriceColor": "#1D2325",
+        "CouponComboTagDealFontSize": "2em",
+        "CouponComboTagDigitalCouponBg": "#EB0000",
+        "CouponComboTagDigitalCouponTextColor": "#FFFFFF",
+        "CouponComboTagDigitalCouponPriceColor": "#FFFFFF",
+        "CouponComboTagDigitalCouponFontSize": "2em",
+        "CouponComboTagTotalBg": "#FFCF16",
+        "CouponComboTagTotalTextColor": "#1D2325",
+        "CouponComboTagTotalPriceColor": "#1D2325",
+        "CouponComboTagTotalFontSize": "3em"
+      }
+    },
+    "deal_types": {
+      "enum": "DealType",
+      "values": [
+        {
+          "name": "Amount",
+          "value": "amount",
+          "description": "Simple amount pricing (e.g., $9.99)"
+        },
+        {
+          "name": "NumFor",
+          "value": "numfor",
+          "description": "Multiple items for a price (e.g., 2 for $5)"
+        },
+        {
+          "name": "Bogo",
+          "value": "bogo",
+          "description": "Buy One Get One deals"
+        },
+        {
+          "name": "SaveX",
+          "value": "save-x",
+          "description": "Save X amount or percent"
+        },
+        {
+          "name": "NumSlash",
+          "value": "numslash",
+          "description": "Slash pricing (e.g., 3/$10)"
+        },
+        {
+          "name": "FromNum",
+          "value": "from-num",
+          "description": "Starting from price (e.g., From $9.99)"
+        },
+        {
+          "name": "None",
+          "value": "none",
+          "description": "No deal type"
+        }
+      ]
+    },
+    "amount_types": {
+      "enum": "AmountType",
+      "values": [
+        "Dollars",
+        "Cents",
+        "Percent",
+        "Free"
+      ]
+    },
+    "card_variants": {
+      "deal_card": {
+        "sizes": [
+          "100x100",
+          "10rem x 10rem (1×1)",
+          "10rem x 20rem (1×2)",
+          "20rem x 10rem (2×1)",
+          "20rem x 20rem (2×2)",
+          "20rem x 30rem (2×3)",
+          "30rem x 20rem (3×2)",
+          "30rem x 30rem (3×3)"
+        ],
+        "states": [
+          "collapsed",
+          "expanded",
+          "coupon",
+          "couponClipped"
+        ],
+        "features": [
+          "icons",
+          "headline",
+          "badge",
+          "numInMyList",
+          "bleed",
+          "clickable"
+        ]
+      },
+      "item_card": {
+        "deal_types": [
+          "loyalty",
+          "coupon-points",
+          "coupon",
+          "standard"
+        ],
+        "states": [
+          "collapsed",
+          "expanded"
+        ],
+        "features": [
+          "mustBuy",
+          "limit",
+          "description",
+          "showBuyOnlineUI",
+          "hideQuantity",
+          "hideShare"
+        ]
+      }
+    }
+  },
+  "themes": {
+    "summary": {
+      "total_themes": 81,
+      "themes_with_custom_components": 56,
+      "css_only_themes": 19,
+      "repository_path": "/Users/billklingensmith/Code/themes"
+    },
+    "all_themes": [
+      "ace",
+      "aci-albertsons",
+      "aci-safeway",
+      "afs-dansfoods",
+      "afs-dicksmarket",
+      "afs-freshmarket",
+      "afs-linsgrocery",
+      "afs-maceys",
+      "ars-foodtown",
+      "brookshire-brothers",
+      "cob-cashwise",
+      "cob-coborns",
+      "cob-hornbachers",
+      "cob-marketplacefoodswi",
+      "coborns-inc-captainliquor",
+      "colts",
+      "costco",
+      "cropsmarketplace",
+      "davesmarkets",
+      "default",
+      "dollargeneral",
+      "euro",
+      "familydollar",
+      "festival-foods",
+      "foodtown",
+      "geisslers",
+      "geisslers-2025",
+      "gelsons",
+      "gelsons-default",
+      "gelsons-instacart",
+      "goldenpantry",
+      "greenwaymkt",
+      "hardings",
+      "harvestfare",
+      "harveyssupermarkets",
+      "hollister",
+      "hornbachers",
+      "iga-default",
+      "johnsonshg",
+      "junglejims",
+      "kesslersgrocery",
+      "kjsmarket",
+      "l-and-m-supply",
+      "lambsfreshmarket",
+      "landb-pilot",
+      "luckysmarketsohio",
+      "lundsandbyerlys",
+      "mackenthuns",
+      "mdi-galaxy",
+      "mdi-galaxy-light",
+      "mdi-galaxy-light-green",
+      "mdi-iga-light",
+      "mdi-piggly-wiggly",
+      "northgate",
+      "northgate-mercado",
+      "oxxo",
+      "payless-markets",
+      "pickrite",
+      "secor",
+      "sedanos",
+      "seg-default",
+      "strack-and-vantil",
+      "super-king",
+      "superecono",
+      "sutherlands",
+      "test-theme",
+      "unfi-default",
+      "unfi-majormarket",
+      "unfi-metcalfes",
+      "unfi-mycountymkt",
+      "unfi-stumpsfamily",
+      "unitedmarkets",
+      "valleyfresh",
+      "wakefern-fairwaymarket",
+      "wakefern-pricerite",
+      "wakefern-shoprite",
+      "watershardware",
+      "weis-markets",
+      "winn-dixie",
+      "your"
+    ],
+    "theme_manifest": {
+      "file": "theme-manifest.json",
+      "schema_file": "theme-manifest-schema.json",
+      "properties": {
+        "css": {
+          "type": "string",
+          "description": "Path to compiled CSS file",
+          "example": "/themes/gelsons/theme.css"
+        },
+        "fonts": {
+          "type": "array",
+          "description": "URLs or paths to font files (Google Fonts, Adobe Typekit, or local)",
+          "examples": [
+            "https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,700;0,900&display=swap",
+            "https://use.typekit.net/smb8sli.css",
+            "/themes/gelsons/apex-serif.css"
+          ]
+        },
+        "components": {
+          "type": "string",
+          "description": "Path to Angular module federation remoteEntry.js for custom components",
+          "example": "/themes/gelsons/remoteEntry.js"
+        },
+        "configurations": {
+          "type": "object",
+          "properties": {
+            "priceTagStyle": {
+              "type": "string",
+              "enum": [
+                "default",
+                "horizontal",
+                "simple"
+              ],
+              "description": "Style of price tags on circulars"
+            },
+            "showDollarSigns": {
+              "type": "string",
+              "enum": [
+                "always",
+                "auto"
+              ],
+              "description": "Whether to show dollar signs in price tags"
+            },
+            "showDecimals": {
+              "type": "string",
+              "enum": [
+                "always",
+                "auto"
+              ],
+              "description": "Whether to show decimals in prices (auto = only on non-whole numbers)"
+            },
+            "showBuyOnlineUI": {
+              "type": "boolean",
+              "description": "Whether to show e-commerce UI (buy online button/in-store only icon)"
+            }
+          }
+        }
+      }
+    },
+    "price_sticker_implementations": {
+      "customization_method": "SCSS token overrides via @include token.set()",
+      "available_tokens": {
+        "fonts": [
+          "$font-prices",
+          "$price-sticker-font",
+          "$price-sticker-font-weight"
+        ],
+        "colors": {
+          "default": [
+            "$price-sticker-bg",
+            "$price-sticker-text-color",
+            "$price-sticker-reversed-bg",
+            "$price-sticker-reversed-text-color",
+            "$price-sticker-border-color"
+          ],
+          "alternate": [
+            "$price-sticker-alt-bg",
+            "$price-sticker-alt-text-color",
+            "$price-sticker-alt-reversed-bg",
+            "$price-sticker-alt-reversed-text-color",
+            "$price-sticker-alt-border-color"
+          ],
+          "emphasis": [
+            "$price-sticker-emphasis-bg",
+            "$price-sticker-emphasis-text-color",
+            "$price-sticker-emphasis-reversed-bg",
+            "$price-sticker-emphasis-reversed-text-color",
+            "$price-sticker-emphasis-border-color"
+          ]
+        },
+        "shape": [
+          "$price-sticker-aspect-ratio",
+          "$price-sticker-margin-right",
+          "$price-sticker-margin-bottom",
+          "$price-sticker-radius-tl",
+          "$price-sticker-radius-tr",
+          "$price-sticker-radius-br",
+          "$price-sticker-radius-bl"
+        ],
+        "spacing": [
+          "$price-sticker-padding-x",
+          "$price-sticker-padding-y",
+          "$price-sticker-alt-padding-x",
+          "$price-sticker-alt-padding-y",
+          "$price-sticker-emphasis-padding-x",
+          "$price-sticker-emphasis-padding-y"
+        ],
+        "borders": [
+          "$price-sticker-border-width",
+          "$price-sticker-alt-border-width",
+          "$price-sticker-alt-reversed-border-width",
+          "$price-sticker-emphasis-border-width",
+          "$price-sticker-emphasis-reversed-border-width"
+        ],
+        "shadows": [
+          "$price-sticker-shadow",
+          "$price-sticker-alt-shadow",
+          "$price-sticker-emphasis-shadow"
+        ]
+      },
+      "special_implementations": {
+        "northgate": {
+          "description": "Custom paint/wood texture stickers plus 15 color variants",
+          "texture_variants": [
+            "paint-green",
+            "paint-blue",
+            "paint-orange",
+            "wood"
+          ],
+          "color_variant_count": 15,
+          "aspect_ratio": "2.5"
+        },
+        "default": {
+          "legacy_variants": [
+            "standard",
+            "standard2",
+            "standard3",
+            "standard4",
+            "standard5"
+          ]
+        }
+      },
+      "example_configurations": {
+        "ace": {
+          "font": "Roboto Slab",
+          "aspect_ratio": "calc(3/2)",
+          "border_radius": "0 (all corners)",
+          "priceTagStyle": "horizontal"
+        },
+        "festival-foods": {
+          "font": "Flyer (custom font)",
+          "aspect_ratio": "calc(3/2)",
+          "border_radius_tl": "token.$radius-md",
+          "priceTagStyle": "horizontal"
+        },
+        "dollargeneral": {
+          "font": "Montserrat",
+          "border_radius": "5%",
+          "shadow": "token.$shadow-md"
+        },
+        "weis-markets": {
+          "font": "Noto Sans",
+          "aspect_ratio": "1.5",
+          "priceTagStyle": "simple"
+        }
+      }
+    },
+    "coupon_loyalty_stickers": {
+      "customization_method": "SCSS token overrides via @include token.set()",
+      "coupon_tokens": {
+        "fonts": [
+          "$coupon-tag-price-font",
+          "$coupon-combo-tag-price-font"
+        ],
+        "base_colors": [
+          "$color-coupon",
+          "$color-coupon-hover",
+          "$color-coupon-pressed",
+          "$color-coupon-contrast"
+        ],
+        "alternate_colors": [
+          "$color-coupon-alt",
+          "$color-coupon-alt-hover",
+          "$color-coupon-alt-pressed",
+          "$color-coupon-alt-contrast"
+        ],
+        "single_coupon": [
+          "$coupon-tag-bg",
+          "$coupon-tag-text-color",
+          "$coupon-tag-price-color",
+          "$coupon-tag-border"
+        ],
+        "combo_coupon": {
+          "top_row": [
+            "$coupon-combo-tag-bg",
+            "$coupon-combo-tag-text-color",
+            "$coupon-combo-tag-price-color"
+          ],
+          "digital_row": [
+            "$coupon-combo-tag-digital-coupon-bg",
+            "$coupon-combo-tag-digital-coupon-text-color",
+            "$coupon-combo-tag-digital-coupon-price-color"
+          ],
+          "total_row": [
+            "$coupon-combo-tag-total-bg",
+            "$coupon-combo-tag-total-text-color",
+            "$coupon-combo-tag-total-price-color"
+          ]
+        },
+        "border_radius": [
+          "$coupon-tag-border-radius-tl",
+          "$coupon-tag-border-radius-tr",
+          "$coupon-tag-border-radius-br",
+          "$coupon-tag-border-radius-bl",
+          "$coupon-combo-tag-border-radius-tl",
+          "$coupon-combo-tag-border-radius-tr",
+          "$coupon-combo-tag-border-radius-br",
+          "$coupon-combo-tag-border-radius-bl"
+        ]
+      },
+      "loyalty_tokens": [
+        "$color-loyalty",
+        "$color-loyalty-hover",
+        "$color-loyalty-pressed",
+        "$color-loyalty-contrast"
+      ],
+      "example_implementations": {
+        "gelsons": {
+          "coupon_tag_bg": "$color-coupon-alt (#D82027)",
+          "coupon_tag_text_color": "$color-coupon-alt-contrast",
+          "coupon_tag_price_color": "$color-coupon (yellow)",
+          "combo_digital_bg": "$color-coupon (yellow)",
+          "combo_total_bg": "$color-coupon-alt (red)",
+          "combo_total_price_color": "$color-coupon (yellow)"
+        },
+        "festival-foods": {
+          "base_coupon_color": "#3a823d (green)",
+          "combo_digital_bg": "white",
+          "combo_digital_text": "$color-coupon (green)",
+          "uses_css_variables": "var(--dh-coupon-sale-price), var(--dh-coupon-final-price)"
+        }
+      }
+    },
+    "theme_token_overrides": {
+      "description": "All themes override design tokens via SCSS @include token.set() statements",
+      "token_categories": {
+        "typography": {
+          "fonts": [
+            "$font (base font)",
+            "$font-prices (price/numeric font)",
+            "$font-display (display/heading font)",
+            "$category-header-font"
+          ],
+          "weights": [
+            "$price-sticker-font-weight",
+            "$category-header-font-weight-desktop",
+            "$category-header-font-weight-mobile"
+          ]
+        },
+        "brand_colors": {
+          "primary": [
+            "$color-brand",
+            "$color-brand-hover",
+            "$color-brand-pressed",
+            "$color-brand-contrast"
+          ],
+          "alternate": [
+            "$color-brand-alt",
+            "$color-brand-alt-hover",
+            "$color-brand-alt-pressed",
+            "$color-brand-alt-contrast"
+          ],
+          "emphasis": [
+            "$color-emphasis",
+            "$color-emphasis-hover",
+            "$color-emphasis-pressed",
+            "$color-emphasis-contrast"
+          ],
+          "added_to_cart": [
+            "$color-added",
+            "$color-added-hover",
+            "$color-added-pressed",
+            "$color-added-contrast"
+          ]
+        },
+        "layout_colors": [
+          "$color-circular-bg",
+          "$color-bg-secondary",
+          "$color-bg-dark",
+          "$color-bg-dark-hover",
+          "$color-bg-dark-pressed",
+          "$panel-container-text-color"
+        ],
+        "header_tokens": [
+          "$app-header-bg",
+          "$app-header-text-color",
+          "$app-header-bottom-stripe-color",
+          "$app-header-bottom-stripe-width"
+        ],
+        "category_header_tokens": [
+          "$category-header-bg",
+          "$category-header-font",
+          "$category-header-radius-tl",
+          "$category-header-font-weight-desktop",
+          "$category-header-font-weight-mobile"
+        ],
+        "my_list_button_tokens": [
+          "$my-list-button-bg",
+          "$my-list-button-bg-hover",
+          "$my-list-button-bg-pressed",
+          "$my-list-button-my-list-color",
+          "$my-list-button-icon-color",
+          "$my-list-button-items-color",
+          "$my-list-button-number-color",
+          "$my-list-button-separator-color",
+          "$my-list-button-font"
+        ],
+        "menu_bar_tokens": [
+          "$menu-bar-max-width",
+          "$menu-bar-text-color",
+          "$menu-bar-font",
+          "$menu-bar-bg",
+          "$menu-bar-font-size"
+        ],
+        "card_tokens": {
+          "buttons": [
+            "$card-button-bg",
+            "$card-button-text-color",
+            "$card-button-border-color",
+            "$card-added-button-bg",
+            "$card-added-button-text-color",
+            "$card-added-button-border-color"
+          ],
+          "shape": [
+            "$button-radius-tl",
+            "$button-radius-tr",
+            "$button-radius-br",
+            "$button-radius-bl",
+            "$card-radius-tl",
+            "$card-radius-tr",
+            "$card-radius-br",
+            "$card-radius-bl"
+          ],
+          "sections": [
+            "$card-headline-bg",
+            "$card-headline-text-color",
+            "$card-details-bg",
+            "$card-details-text-color",
+            "$card-added-details-bg",
+            "$card-added-details-text-color"
+          ]
+        }
+      }
+    },
+    "header_styles": {
+      "themes_with_custom_headers": 56,
+      "component_structure": {
+        "typescript": "src/header/header.component.ts",
+        "template": "src/header/header.component.html",
+        "styles": "src/header/header.component.scss",
+        "stories": "src/header/header.component.stories.ts"
+      },
+      "configuration_tokens": [
+        "$app-header-bg",
+        "$app-header-text-color",
+        "$app-header-bottom-stripe-color",
+        "$app-header-bottom-stripe-width",
+        "$menu-bar-max-width",
+        "$menu-bar-text-color",
+        "$menu-bar-font",
+        "$menu-bar-bg",
+        "$menu-bar-font-size"
+      ],
+      "css_variables": [
+        "--dh-header-d-header-font",
+        "--dh-header-d-header-nav-text-color",
+        "--dh-header-d-header-nav-text-color-hover",
+        "--dh-header-d-header-nav-bg-color-hover",
+        "--dh-header-d-mobile-bg",
+        "--dh-header-d-bottom-bg",
+        "--dh-header-d-bottom-search-input-bg",
+        "--dh-header-d-bottom-search-text",
+        "--dh-header-d-search-icon-color",
+        "--dh-header-d-logo-width",
+        "--dh-header-d-mobile-logo-width"
+      ],
+      "complexity_examples": {
+        "simple": [
+          "colts",
+          "davesmarkets",
+          "foodtown",
+          "geisslers",
+          "goldenpantry"
+        ],
+        "moderate": [
+          "gelsons",
+          "northgate",
+          "festival-foods"
+        ],
+        "complex": [
+          "weis-markets",
+          "oxxo",
+          "landb-pilot",
+          "lundsandbyerlys",
+          "wakefern-shoprite"
+        ]
+      }
+    },
+    "special_features": {
+      "festival-foods": {
+        "custom_components": [
+          "kiosk-footer"
+        ],
+        "custom_font": "Flyer",
+        "unique_tokens": "CSS variables for coupon pricing"
+      },
+      "northgate": {
+        "texture_stickers": "Paint and wood background images",
+        "extensive_color_variants": "15 standard color combinations",
+        "dual_language": "Northgate vs Northgate Mercado variants"
+      },
+      "wakefern-shoprite": {
+        "custom_category_header": "Flex layout with Publico font",
+        "custom_border_styling": "3px solid red border with rounded corners"
+      },
+      "weis-markets": {
+        "modular_header": "Split into 8 SCSS partials for maintainability",
+        "priceTagStyle": "simple"
+      },
+      "gelsons": {
+        "seasonal_menu": "Date-based navigation items",
+        "custom_font_stack": "Apex Serif for headings"
+      }
+    },
+    "assets_and_resources": {
+      "common_asset_types": [
+        "Custom fonts (local .css files)",
+        "Background images (png, jpg)",
+        "Texture overlays (for price stickers)",
+        "Logo files"
+      ],
+      "examples": {
+        "northgate": [
+          "css-assets/paint-green.png",
+          "css-assets/paint-blue.png",
+          "css-assets/paint-orange.png",
+          "css-assets/wood.png",
+          "gotham-black.css",
+          "luchador.css"
+        ],
+        "gelsons": [
+          "apex-serif.css"
+        ],
+        "festival-foods": [
+          "flyer.css"
+        ]
+      }
+    }
+  },
+  "digital_circular": {
+    "summary": {
+      "repository_path": "/Users/billklingensmith/Code/DigitalCircular2",
+      "design_system_package": "@thedesignhouse/design-system",
+      "design_system_version": "^7.12.3",
+      "themes_found": true,
+      "demo_data_found": true,
+      "design_system_integration": true
+    },
+    "theme_loading": {
+      "mechanism": "Dynamic CDN loading with module federation support",
+      "key_services": [
+        {
+          "name": "ThemeService",
+          "path": "src/app/theme/services/theme.service.ts",
+          "purpose": "Main theme orchestration service",
+          "key_functions": [
+            "manifestUrl() - Returns theme manifest JSON URL from CDN",
+            "themeUrl() - Returns theme CSS file URL",
+            "remoteEntryUrl() - Returns theme components module federation entry point",
+            "loadCustomComponents() - Dynamically loads remote theme components",
+            "loadThemeFonts() - Injects custom font imports",
+            "loadSvgAssets() - Loads SVG sprite assets",
+            "configureHeaderComponent() - Configures custom theme header",
+            "configureFooterComponent() - Configures custom theme footer"
+          ]
+        },
+        {
+          "name": "ThemeLinkService",
+          "path": "src/app/theme/services/theme-link.service.ts",
+          "purpose": "Injects theme CSS link tags into shadow DOM"
+        },
+        {
+          "name": "CustomStyleService",
+          "path": "src/app/theme/services/custom-style.service.ts",
+          "purpose": "Applies custom brand colors and fonts using CSS custom properties"
+        }
+      ],
+      "cdn_environments": {
+        "dev": "themes.qadigital-circular.com",
+        "qa": "themes.qadigital-circular.com",
+        "staging": "themes.staging.sale",
+        "production": "themes.ideal.sale"
+      }
+    },
+    "theme_selection": {
+      "flow": [
+        "Brand is loaded from Firestore (BrandRepoService)",
+        "ThemeService subscribes to currentBrand observable",
+        "Theme name comes from brand.theme property",
+        "Theme manifest fetched from CDN at {themeDomain}/theme-manifest.json",
+        "Specific theme selected from manifest using brand.theme key",
+        "Custom styles loaded from Firestore 'theme' collection by brandId"
+      ],
+      "configuration_sources": [
+        "Firestore brand.theme property",
+        "CDN theme-manifest.json",
+        "Firestore theme collection (custom colors/fonts)"
+      ]
+    },
+    "theme_configuration": {
+      "manifest_interface": "src/app/theme/contracts/theme-manifest.interface.ts",
+      "theme_interface": "src/app/theme/contracts/theme.interface.ts",
+      "custom_styles_interface": "src/app/theme/contracts/custom-styles.interface.ts",
+      "configuration_options": {
+        "priceTagStyle": "Controls price tag display style (default|horizontal|simple)",
+        "showDollarSigns": "Controls dollar sign display (always|auto)",
+        "showDecimals": "Controls decimal display (always|auto)",
+        "showBuyOnlineUI": "Toggles online shopping UI elements",
+        "fonts": "Array of custom font URLs to load",
+        "components": "Path to module federation remote entry for custom components"
+      },
+      "custom_styles_fields": {
+        "colors": {
+          "default": "Default brand color (--dh-color-brand)",
+          "alternate": "Alternate brand color (--dh-color-brand-alt)",
+          "emphasis": "Emphasis color (--dh-color-emphasis)",
+          "loyalty": "Loyalty color (--dh-color-loyalty)"
+        },
+        "fonts": {
+          "normalFontName": "Default font family name",
+          "normalFontUrl": "Font-face URL for default font",
+          "priceFontName": "Price font family name",
+          "priceFontUrl": "Font-face URL for price font",
+          "displayFontName": "Display font family name",
+          "displayFontUrl": "Font-face URL for display font"
+        }
+      }
+    },
+    "theme_components": {
+      "interface": "src/app/theme/contracts/theme-components-module.interface.ts",
+      "available_slots": [
+        "getHeaderComponent() - Custom header component",
+        "getFooterComponent() - Custom footer component",
+        "getKioskFooterComponent() - Custom kiosk footer component",
+        "getCardDetailsComponent() - Custom card details/description component",
+        "getSvgAssets() - Returns array of SVG sprite strings to inject"
+      ],
+      "component_bindings": {
+        "header_bindings": "src/app/theme/enums/theme-header-component-bindings.enum.ts",
+        "footer_bindings": "src/app/theme/enums/theme-footer-component-bindings.enum.ts",
+        "nav_action_types": "src/app/theme/enums/theme-header-nav-action-types.enum.ts"
+      }
+    },
+    "demo_data": {
+      "birdzi_integration": {
+        "file": "src/app/integrations/birdzi/mockedData/birdzi-demo-data.ts",
+        "description": "Mock coupon data for Birdzi integration testing",
+        "sample_count": "13 demo coupons",
+        "fields": [
+          "couponid",
+          "title",
+          "description",
+          "rules",
+          "mediapath",
+          "value",
+          "discounttypeid",
+          "quantity",
+          "tags",
+          "upcs",
+          "categorycode/categoryname",
+          "startdate/enddate",
+          "isclippable/isclipped",
+          "pointrequirement"
+        ]
+      },
+      "menu_data": {
+        "description": "Static menu data for various brand templates",
+        "templates": [
+          "albertsons",
+          "familydollar",
+          "savealot",
+          "iga",
+          "samsclub"
+        ]
+      },
+      "maps_styling": {
+        "file": "src/assets/maps/styling.json",
+        "purpose": "Google Maps styling configuration"
+      }
+    },
+    "component_integration": {
+      "design_system_modules": [
+        "IconsModule",
+        "ButtonsModule",
+        "CardsModule",
+        "DialogModule",
+        "PriceTagModule",
+        "TypographyModule",
+        "OverflowModule",
+        "SkeletonModule",
+        "SpinnerModule"
+      ],
+      "primary_imports": [
+        "src/app/app.module.ts",
+        "src/app/shared/shared.module.ts"
+      ],
+      "components_used": [
+        {
+          "component": "DealCardComponent",
+          "mapped_to": "CircularDealCardComponent",
+          "usage": "Main circular card wrapper component"
+        },
+        {
+          "component": "CardActionsComponent",
+          "mapped_to": "CircularCardActionsComponent",
+          "usage": "Card action buttons (add to list, share, etc.)"
+        },
+        {
+          "component": "CardCouponActionsComponent",
+          "mapped_to": "CircularCardCouponActionsComponent",
+          "usage": "Coupon-specific action buttons (clip coupon)"
+        },
+        {
+          "component": "CardImageComponent",
+          "mapped_to": "CircularCardImageComponent, CircularCardCouponImageComponent",
+          "usage": "Item/coupon image display"
+        },
+        {
+          "component": "CardVideoComponent",
+          "mapped_to": "CircularCardInlineVideoComponent",
+          "usage": "Inline video player for cards"
+        },
+        {
+          "component": "CardHeadlineComponent",
+          "mapped_to": "CircularCardHeadlineComponent",
+          "usage": "Card headline/title display"
+        },
+        {
+          "component": "ItemCardDescriptionComponent",
+          "mapped_to": "CircularCardDescriptionComponent, CircularCardCouponDescriptionComponent",
+          "usage": "Item/coupon description text"
+        },
+        {
+          "component": "CardIconGroupComponent",
+          "mapped_to": "CircularCardLogoComponent",
+          "usage": "Icon/logo display on cards"
+        },
+        {
+          "component": "PriceStickerComponent",
+          "usage": "Price tag/sticker display"
+        }
+      ],
+      "services_used": [
+        {
+          "service": "DialogService",
+          "usage": "Opening modal dialogs",
+          "file_count": "50+"
+        },
+        {
+          "service": "DialogRef",
+          "usage": "Dialog component reference for closing/data passing",
+          "file_count": "30+"
+        },
+        {
+          "service": "ResizeObserverService",
+          "usage": "Observing element resize events"
+        }
+      ],
+      "types_used": [
+        {
+          "type": "AmountType",
+          "usage": "Price amount type definitions"
+        },
+        {
+          "type": "DealType",
+          "usage": "Deal/pricing type definitions"
+        },
+        {
+          "type": "MenuItem",
+          "usage": "Navigation menu item structure"
+        },
+        {
+          "type": "DesignTokens",
+          "usage": "Design token constants"
+        },
+        {
+          "type": "DIALOG_DATA",
+          "usage": "Injection token for dialog data"
+        }
+      ],
+      "configuration_services": [
+        {
+          "name": "CircularCardComponentManagerService",
+          "path": "src/app/circulars/cards/services/circular-card-component-manager.service.ts",
+          "purpose": "Orchestrates all card part components and their configuration"
+        },
+        {
+          "name": "ActionsComponentConfiguratorService",
+          "path": "src/app/circulars/cards/services/card-parts/actions-component-configurator.service.ts",
+          "purpose": "Configures CardActionsComponent and CardCouponActionsComponent"
+        },
+        {
+          "name": "ImageComponentConfiguratorService",
+          "path": "src/app/circulars/cards/services/card-parts/image-component-configurator.service.ts",
+          "purpose": "Configures CardImageComponent and CardVideoComponent"
+        },
+        {
+          "name": "PricingComponentConfiguratorService",
+          "path": "src/app/circulars/cards/services/card-parts/pricing-component-configurator.service.ts",
+          "purpose": "Configures PriceStickerComponent with price data"
+        },
+        {
+          "name": "DescriptionComponentConfiguratorService",
+          "path": "src/app/circulars/cards/services/card-parts/description-component-configurator.service.ts",
+          "purpose": "Configures ItemCardDescriptionComponent"
+        },
+        {
+          "name": "CardHeadlineComponentConfiguratorService",
+          "path": "src/app/circulars/cards/services/card-parts/card-headline-component-configurator.service.ts",
+          "purpose": "Configures CardHeadlineComponent"
+        },
+        {
+          "name": "LogoComponentConfiguratorService",
+          "path": "src/app/circulars/cards/services/card-parts/logo-component-configurator.service.ts",
+          "purpose": "Configures CardIconGroupComponent"
+        }
+      ],
+      "component_mapping": {
+        "service": "BrandTemplatingService",
+        "path": "src/app/services/brand-templating.service.ts",
+        "purpose": "Maps string template names to actual design-system component classes",
+        "template_mappings": {
+          "CircularDealCardComponent": "DealCardComponent",
+          "CircularCardActionsComponent": "CardActionsComponent",
+          "CircularCardImageComponent": "CardImageComponent",
+          "CircularCardInlineVideoComponent": "CardVideoComponent",
+          "CircularCardLogoComponent": "CardIconGroupComponent",
+          "CircularCardHeadlineComponent": "CardHeadlineComponent",
+          "CircularCardDescriptionComponent": "ItemCardDescriptionComponent",
+          "CircularCardCouponActionsComponent": "CardCouponActionsComponent",
+          "CircularCardCouponImageComponent": "CardImageComponent",
+          "CircularCardCouponDescriptionComponent": "ItemCardDescriptionComponent"
+        }
+      }
+    },
+    "static_theme_files": {
+      "description": "Built-in SCSS theme files for specific brands (legacy/fallback)",
+      "location": "src/styles/",
+      "count": "40+",
+      "examples": [
+        "default-theme.scss",
+        "grocery-theme.scss",
+        "cashwise-theme.scss",
+        "iga-theme.scss",
+        "new-theme.scss"
+      ],
+      "note": "Dynamic themes from CDN are preferred over these static files"
+    },
+    "key_directories": {
+      "theme_system": "src/app/theme/",
+      "theme_styles": "src/styles/",
+      "circular_cards": "src/app/circulars/cards/",
+      "shared_components": "src/app/shared/",
+      "integrations": "src/app/integrations/",
+      "brand_templates": "src/app/templates/",
+      "services": "src/app/services/",
+      "environments": "src/environments/"
+    }
+  },
+  "integration_summary": {
+    "architecture": "Design system provides base components and tokens, themes override tokens via SCSS, DigitalCircular2 consumes both through Angular modules and dynamic theme loading",
+    "customization_layers": [
+      "Design System - Base tokens and components",
+      "Themes - Token overrides and custom components via module federation",
+      "Firestore - Runtime color/font overrides",
+      "DigitalCircular2 - Application logic and data transformation"
+    ],
+    "key_patterns": {
+      "tokens": "SCSS @include token.set() for compile-time customization",
+      "css_variables": "Runtime CSS custom properties for dynamic theming",
+      "module_federation": "Remote Angular components loaded dynamically from CDN",
+      "configurators": "Services that transform application data into design-system component inputs",
+      "component_mapping": "String-based template names resolved to component classes at runtime"
+    }
+  }
+}

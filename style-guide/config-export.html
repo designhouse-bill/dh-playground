@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuration Export - Digital Circular Style Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #E2141E;
+            --primary-dark: #BA1218;
+            --text: #1D2325;
+            --text-light: #4A5358;
+            --bg: #FFFFFF;
+            --bg-secondary: #F2F3F3;
+            --border: #E4E5E5;
+            --shadow: 0 2px 4px rgba(0,0,0,0.1);
+            --success: #10B981;
+            --info: #3B82F6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            background: var(--bg-secondary);
+            padding-top: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .description {
+            font-size: 1.125rem;
+            line-height: 1.6;
+            opacity: 0.95;
+        }
+
+        .section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .config-panel {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .form-help {
+            display: block;
+            font-size: 0.875rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(226, 20, 30, 0.1);
+        }
+
+        .color-input-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .color-picker {
+            width: 60px;
+            height: 42px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .preset-btn {
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .preset-btn:hover {
+            border-color: var(--primary);
+            background: rgba(226, 20, 30, 0.05);
+        }
+
+        .preset-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .preview-panel {
+            position: sticky;
+            top: 2rem;
+        }
+
+        .preview-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .preview-sticker {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 14%;
+            aspect-ratio: var(--preview-aspect-ratio, 1);
+            background: var(--preview-bg, #E2141E);
+            color: var(--preview-color, white);
+            border-radius: var(--preview-radius-tl, 50%) var(--preview-radius-tr, 50%)
+                          var(--preview-radius-br, 50%) var(--preview-radius-bl, 50%);
+            border: var(--preview-border-width, 0) solid var(--preview-border-color, transparent);
+            box-shadow: var(--preview-shadow, 0 2px 4px rgba(0,0,0,0.1));
+            font-family: var(--preview-font, 'Inter', sans-serif);
+            font-weight: 700;
+            width: 200px;
+            margin: 2rem auto;
+            transition: all 0.3s;
+        }
+
+        .preview-dollars {
+            font-size: 3rem;
+            line-height: 0.9;
+        }
+
+        .preview-cents {
+            font-size: 1.75rem;
+            vertical-align: super;
+        }
+
+        .preview-text {
+            font-size: 1rem;
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .code-output {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .code-line {
+            margin: 0.25rem 0;
+            white-space: pre;
+        }
+
+        .code-comment { color: #6a9955; }
+        .code-property { color: #9cdcfe; }
+        .code-value { color: #ce9178; }
+        .code-keyword { color: #569cd6; }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(226, 20, 30, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .info-callout {
+            background: #E8F4FD;
+            border-left: 4px solid var(--info);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 4px;
+        }
+
+        .info-callout-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #1E40AF;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--success);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transform: translateY(100px);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 1024px) {
+            .config-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-panel {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script src="shared-nav.js"></script>
+
+    <div class="container">
+        <div class="header">
+            <h1>⚙️ Configuration Export</h1>
+            <p class="description">
+                Customize your digital circular theme and export a ready-to-use configuration file.
+                Adjust colors, fonts, shapes, and more, then download the generated SCSS or JSON config.
+            </p>
+        </div>
+
+        <div class="section">
+            <div class="info-callout">
+                <div class="info-callout-title">How It Works</div>
+                Choose a preset theme or customize individual properties. The live preview updates in real-time,
+                and you can download a configuration file formatted to match the themes repository structure.
+                Use the generated file as a starting point for your custom theme.
+            </div>
+
+            <div class="config-grid">
+                <div>
+                    <div class="config-panel">
+                        <h2 class="preview-title">Presets</h2>
+                        <div class="preset-buttons" id="presetButtons"></div>
+
+                        <h2 class="preview-title" style="margin-top: 2rem;">Brand Colors</h2>
+
+                        <div class="form-group">
+                            <label class="form-label">Primary Brand Color</label>
+                            <span class="form-help">Main brand color used for headers and primary elements</span>
+                            <div class="color-input-group">
+                                <input type="color" id="colorBrand" class="color-picker">
+                                <input type="text" id="colorBrandText" class="form-input" placeholder="#E2141E">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Alternate Color</label>
+                            <span class="form-help">Secondary brand color for contrast and variety</span>
+                            <div class="color-input-group">
+                                <input type="color" id="colorAlt" class="color-picker">
+                                <input type="text" id="colorAltText" class="form-input" placeholder="#1A1A1A">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Emphasis Color</label>
+                            <span class="form-help">Highlight color for special deals and promotions</span>
+                            <div class="color-input-group">
+                                <input type="color" id="colorEmphasis" class="color-picker">
+                                <input type="text" id="colorEmphasisText" class="form-input" placeholder="#FFD600">
+                            </div>
+                        </div>
+
+                        <h2 class="preview-title" style="margin-top: 2rem;">Typography</h2>
+
+                        <div class="form-group">
+                            <label class="form-label">Price Font</label>
+                            <span class="form-help">Font family for price displays</span>
+                            <select id="fontPrices" class="form-select">
+                                <option value="'Inter', sans-serif">Inter (Default)</option>
+                                <option value="'Oswald', sans-serif">Oswald</option>
+                                <option value="'Roboto Slab', sans-serif">Roboto Slab</option>
+                                <option value="'Trade Winds', cursive">Trade Winds</option>
+                                <option value="'aktiv-grotesk-condensed', sans-serif">Aktiv Grotesk Condensed</option>
+                                <option value="'Montserrat', sans-serif">Montserrat</option>
+                                <option value="'Raleway', sans-serif">Raleway</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Body Font</label>
+                            <span class="form-help">Font family for body text and descriptions</span>
+                            <select id="fontBody" class="form-select">
+                                <option value="'Inter', sans-serif">Inter (Default)</option>
+                                <option value="'Open Sans', sans-serif">Open Sans</option>
+                                <option value="'Roboto', sans-serif">Roboto</option>
+                                <option value="'Raleway', sans-serif">Raleway</option>
+                                <option value="'Montserrat', sans-serif">Montserrat</option>
+                                <option value="'Noto Sans', sans-serif">Noto Sans</option>
+                            </select>
+                        </div>
+
+                        <h2 class="preview-title" style="margin-top: 2rem;">Price Tag Shape</h2>
+
+                        <div class="form-group">
+                            <label class="form-label">Aspect Ratio</label>
+                            <span class="form-help">Shape of price tags (1 = circle, 1.5 = wide rectangle)</span>
+                            <select id="aspectRatio" class="form-select">
+                                <option value="1">1:1 (Circle/Square)</option>
+                                <option value="1.33">4:3 (Slightly Wide)</option>
+                                <option value="1.5">3:2 (Rectangle)</option>
+                                <option value="2">2:1 (Very Wide)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Border Radius</label>
+                            <span class="form-help">Corner roundness (0% = square, 50% = circular)</span>
+                            <select id="borderRadius" class="form-select">
+                                <option value="0">0% (Sharp Corners)</option>
+                                <option value="10">10% (Slightly Rounded)</option>
+                                <option value="25">25% (Rounded)</option>
+                                <option value="50">50% (Circular)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Border Width</label>
+                            <span class="form-help">Thickness of border around price tags</span>
+                            <select id="borderWidth" class="form-select">
+                                <option value="0">None</option>
+                                <option value="2px">Thin (2px)</option>
+                                <option value="4px">Medium (4px)</option>
+                                <option value="6px">Thick (6px)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Shadow Style</label>
+                            <span class="form-help">Drop shadow for depth</span>
+                            <select id="shadowStyle" class="form-select">
+                                <option value="none">None</option>
+                                <option value="0 2px 4px rgba(0,0,0,0.1)">Light</option>
+                                <option value="0 4px 8px rgba(0,0,0,0.15)">Medium</option>
+                                <option value="0 8px 16px rgba(0,0,0,0.2)">Large</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="preview-panel">
+                        <div class="config-panel">
+                            <h2 class="preview-title">Live Preview</h2>
+                            <div class="preview-sticker" id="previewSticker">
+                                <div class="preview-dollars">$9<sup class="preview-cents">99</sup></div>
+                                <div class="preview-text">Each</div>
+                            </div>
+
+                            <h2 class="preview-title">Generated Configuration</h2>
+                            <div class="action-buttons">
+                                <button class="btn btn-secondary" onclick="switchFormat('scss')" id="btnScss">SCSS</button>
+                                <button class="btn btn-secondary" onclick="switchFormat('json')" id="btnJson">JSON</button>
+                            </div>
+                            <div class="code-output" id="codeOutput"></div>
+
+                            <div class="action-buttons">
+                                <button class="btn btn-primary" onclick="downloadConfig()">
+                                    ⬇️ Download Config
+                                </button>
+                                <button class="btn btn-success" onclick="copyToClipboard()">
+                                    📋 Copy Code
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">Copied to clipboard!</div>
+
+    <script>
+        const PRESETS = {
+            default: {
+                name: 'Default',
+                colorBrand: '#E2141E',
+                colorAlt: '#1A1A1A',
+                colorEmphasis: '#FFD600',
+                fontPrices: "'Inter', sans-serif",
+                fontBody: "'Inter', sans-serif",
+                aspectRatio: '1',
+                borderRadius: '50',
+                borderWidth: '0',
+                shadowStyle: '0 2px 4px rgba(0,0,0,0.1)'
+            },
+            gelsons: {
+                name: "Gelson's",
+                colorBrand: '#cd612b',
+                colorAlt: '#D82027',
+                colorEmphasis: '#FFA500',
+                fontPrices: "'Montserrat', sans-serif",
+                fontBody: "'Montserrat', sans-serif",
+                aspectRatio: '1',
+                borderRadius: '50',
+                borderWidth: '0',
+                shadowStyle: '0 2px 4px rgba(0,0,0,0.1)'
+            },
+            ace: {
+                name: 'Ace Hardware',
+                colorBrand: '#e63339',
+                colorAlt: '#1a1a1a',
+                colorEmphasis: '#ffcf16',
+                fontPrices: "'Roboto Slab', sans-serif",
+                fontBody: "'Open Sans', sans-serif",
+                aspectRatio: '1.5',
+                borderRadius: '0',
+                borderWidth: '0',
+                shadowStyle: 'none'
+            },
+            captain: {
+                name: 'Captain Liquor',
+                colorBrand: '#0072bb',
+                colorAlt: '#f9e7bf',
+                colorEmphasis: '#359fe1',
+                fontPrices: "'Trade Winds', cursive",
+                fontBody: "'Raleway', sans-serif",
+                aspectRatio: '1',
+                borderRadius: '50',
+                borderWidth: '0',
+                shadowStyle: '0 2px 4px rgba(0,0,0,0.1)'
+            },
+            festival: {
+                name: 'Festival Foods',
+                colorBrand: '#3a823d',
+                colorAlt: '#1a1a1a',
+                colorEmphasis: '#FFD700',
+                fontPrices: "'Oswald', sans-serif",
+                fontBody: "'Open Sans', sans-serif",
+                aspectRatio: '1.5',
+                borderRadius: '0',
+                borderWidth: '0',
+                shadowStyle: '0 2px 4px rgba(0,0,0,0.1)'
+            }
+        };
+
+        let currentPreset = 'default';
+        let currentFormat = 'scss';
+
+        // Initialize
+        function init() {
+            renderPresetButtons();
+            loadPreset('default');
+            setupEventListeners();
+            updatePreview();
+            updateCodeOutput();
+        }
+
+        function renderPresetButtons() {
+            const container = document.getElementById('presetButtons');
+            container.innerHTML = Object.keys(PRESETS).map(key => `
+                <button class="preset-btn ${key === currentPreset ? 'active' : ''}"
+                        onclick="loadPreset('${key}')"
+                        data-preset="${key}">
+                    ${PRESETS[key].name}
+                </button>
+            `).join('');
+        }
+
+        function loadPreset(presetKey) {
+            currentPreset = presetKey;
+            const preset = PRESETS[presetKey];
+
+            // Update form fields
+            document.getElementById('colorBrand').value = preset.colorBrand;
+            document.getElementById('colorBrandText').value = preset.colorBrand;
+            document.getElementById('colorAlt').value = preset.colorAlt;
+            document.getElementById('colorAltText').value = preset.colorAlt;
+            document.getElementById('colorEmphasis').value = preset.colorEmphasis;
+            document.getElementById('colorEmphasisText').value = preset.colorEmphasis;
+            document.getElementById('fontPrices').value = preset.fontPrices;
+            document.getElementById('fontBody').value = preset.fontBody;
+            document.getElementById('aspectRatio').value = preset.aspectRatio;
+            document.getElementById('borderRadius').value = preset.borderRadius;
+            document.getElementById('borderWidth').value = preset.borderWidth;
+            document.getElementById('shadowStyle').value = preset.shadowStyle;
+
+            // Update button states
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.preset === presetKey);
+            });
+
+            updatePreview();
+            updateCodeOutput();
+        }
+
+        function setupEventListeners() {
+            // Color pickers
+            ['colorBrand', 'colorAlt', 'colorEmphasis'].forEach(id => {
+                document.getElementById(id).addEventListener('input', (e) => {
+                    document.getElementById(id + 'Text').value = e.target.value;
+                    updatePreview();
+                    updateCodeOutput();
+                });
+
+                document.getElementById(id + 'Text').addEventListener('input', (e) => {
+                    const color = e.target.value;
+                    if (/^#[0-9A-F]{6}$/i.test(color)) {
+                        document.getElementById(id).value = color;
+                        updatePreview();
+                        updateCodeOutput();
+                    }
+                });
+            });
+
+            // All other inputs
+            ['fontPrices', 'fontBody', 'aspectRatio', 'borderRadius', 'borderWidth', 'shadowStyle'].forEach(id => {
+                document.getElementById(id).addEventListener('change', () => {
+                    updatePreview();
+                    updateCodeOutput();
+                });
+            });
+        }
+
+        function updatePreview() {
+            const sticker = document.getElementById('previewSticker');
+            const config = getCurrentConfig();
+
+            sticker.style.setProperty('--preview-bg', config.colorBrand);
+            sticker.style.setProperty('--preview-color', 'white');
+            sticker.style.setProperty('--preview-aspect-ratio', config.aspectRatio);
+            sticker.style.setProperty('--preview-radius-tl', config.borderRadius + '%');
+            sticker.style.setProperty('--preview-radius-tr', config.borderRadius + '%');
+            sticker.style.setProperty('--preview-radius-br', config.borderRadius + '%');
+            sticker.style.setProperty('--preview-radius-bl', config.borderRadius + '%');
+            sticker.style.setProperty('--preview-border-width', config.borderWidth);
+            sticker.style.setProperty('--preview-border-color', config.colorAlt);
+            sticker.style.setProperty('--preview-shadow', config.shadowStyle);
+            sticker.style.setProperty('--preview-font', config.fontPrices);
+        }
+
+        function getCurrentConfig() {
+            return {
+                colorBrand: document.getElementById('colorBrandText').value || '#E2141E',
+                colorAlt: document.getElementById('colorAltText').value || '#1A1A1A',
+                colorEmphasis: document.getElementById('colorEmphasisText').value || '#FFD600',
+                fontPrices: document.getElementById('fontPrices').value,
+                fontBody: document.getElementById('fontBody').value,
+                aspectRatio: document.getElementById('aspectRatio').value,
+                borderRadius: document.getElementById('borderRadius').value,
+                borderWidth: document.getElementById('borderWidth').value,
+                shadowStyle: document.getElementById('shadowStyle').value
+            };
+        }
+
+        function switchFormat(format) {
+            currentFormat = format;
+            document.getElementById('btnScss').classList.toggle('active', format === 'scss');
+            document.getElementById('btnJson').classList.toggle('active', format === 'json');
+            updateCodeOutput();
+        }
+
+        function updateCodeOutput() {
+            const config = getCurrentConfig();
+            const output = currentFormat === 'scss' ? generateSCSS(config) : generateJSON(config);
+            document.getElementById('codeOutput').innerHTML = output;
+        }
+
+        function generateSCSS(config) {
+            const radiusValue = config.borderRadius === '50' ? '50%' : (config.borderRadius === '0' ? '0' : `${config.borderRadius}%`);
+            const aspectCalc = config.aspectRatio === '1' ? '1' : `calc(${config.aspectRatio}/1)`;
+
+            return `<span class="code-line"><span class="code-comment">// Generated Theme Configuration</span></span>
+<span class="code-line"><span class="code-keyword">@use</span> <span class="code-value">'@thedesignhouse/design-system/tokens'</span> <span class="code-keyword">as</span> token;</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-keyword">:root</span>, <span class="code-keyword">:host</span> {</span>
+<span class="code-line">  <span class="code-comment">// Brand Colors</span></span>
+<span class="code-line">  <span class="code-keyword">@include</span> token.set(token.<span class="code-property">$color-brand</span>, <span class="code-value">${config.colorBrand}</span>);</span>
+<span class="code-line">  <span class="code-keyword">@include</span> token.set(token.<span class="code-property">$color-brand-alt</span>, <span class="code-value">${config.colorAlt}</span>);</span>
+<span class="code-line">  <span class="code-keyword">@include</span> token.set(token.<span class="code-property">$color-emphasis</span>, <span class="code-value">${config.colorEmphasis}</span>);</span>
+<span class="code-line"></span>
+<span class="code-line">  <span class="code-comment">// Typography</span></span>
+<span class="code-line">  <span class="code-keyword">@include</span> token.set(token.<span class="code-property">$font</span>, <span class="code-value">${config.fontBody}</span>);</span>
+<span class="code-line">  <span class="code-keyword">@include</span> token.set(token.<span class="code-property">$font-prices</span>, <span class="code-value">${config.fontPrices}</span>);</span>
+<span class="code-line"></span>
+<span class="code-line">  <span class="code-comment">// Price Tag Shape</span></span>
+<span class="code-line">  <span class="code-keyword">@include</span> token.set(token.<span class="code-property">$price-sticker-aspect-ratio</span>, <span class="code-value">${aspectCalc}</span>);</span>
+<span class="code-line">  <span class="code-keyword">@include</span> token.set(token.<span class="code-property">$price-sticker-radius-tl</span>, <span class="code-value">${radiusValue}</span>);</span>
+<span class="code-line">  <span class="code-keyword">@include</span> token.set(token.<span class="code-property">$price-sticker-radius-tr</span>, <span class="code-value">${radiusValue}</span>);</span>
+<span class="code-line">  <span class="code-keyword">@include</span> token.set(token.<span class="code-property">$price-sticker-radius-br</span>, <span class="code-value">${radiusValue}</span>);</span>
+<span class="code-line">  <span class="code-keyword">@include</span> token.set(token.<span class="code-property">$price-sticker-radius-bl</span>, <span class="code-value">${radiusValue}</span>);</span>
+<span class="code-line">  <span class="code-keyword">@include</span> token.set(token.<span class="code-property">$price-sticker-border-width</span>, <span class="code-value">${config.borderWidth}</span>);</span>
+<span class="code-line">  <span class="code-keyword">@include</span> token.set(token.<span class="code-property">$price-sticker-shadow</span>, <span class="code-value">${config.shadowStyle}</span>);</span>
+<span class="code-line">}</span>`;
+        }
+
+        function generateJSON(config) {
+            const obj = {
+                name: "Custom Theme",
+                colors: {
+                    brand: config.colorBrand,
+                    brandAlt: config.colorAlt,
+                    emphasis: config.colorEmphasis
+                },
+                typography: {
+                    fontBody: config.fontBody,
+                    fontPrices: config.fontPrices
+                },
+                priceTag: {
+                    aspectRatio: parseFloat(config.aspectRatio),
+                    borderRadius: config.borderRadius + '%',
+                    borderWidth: config.borderWidth,
+                    shadow: config.shadowStyle
+                }
+            };
+
+            return '<span class="code-line">' +
+                   JSON.stringify(obj, null, 2)
+                       .split('\n')
+                       .map(line => {
+                           let formatted = line
+                               .replace(/(".*?")/g, '<span class="code-value">$1</span>')
+                               .replace(/(\d+\.?\d*)/g, '<span class="code-value">$1</span>');
+                           return formatted;
+                       })
+                       .join('</span>\n<span class="code-line">') +
+                   '</span>';
+        }
+
+        function downloadConfig() {
+            const config = getCurrentConfig();
+            const content = currentFormat === 'scss'
+                ? generateSCSSFile(config)
+                : JSON.stringify(getCurrentConfigObject(), null, 2);
+
+            const filename = currentFormat === 'scss' ? 'theme.scss' : 'theme-config.json';
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+
+            showToast('Configuration downloaded!');
+        }
+
+        function generateSCSSFile(config) {
+            const radiusValue = config.borderRadius === '50' ? '50%' : (config.borderRadius === '0' ? '0' : `${config.borderRadius}%`);
+            const aspectCalc = config.aspectRatio === '1' ? '1' : `calc(${config.aspectRatio}/1)`;
+
+            return `@use '@thedesignhouse/design-system/tokens' as token;
+
+:root, :host {
+  // Brand Colors
+  @include token.set(token.$color-brand, ${config.colorBrand});
+  @include token.set(token.$color-brand-alt, ${config.colorAlt});
+  @include token.set(token.$color-emphasis, ${config.colorEmphasis});
+
+  // Typography
+  @include token.set(token.$font, ${config.fontBody});
+  @include token.set(token.$font-prices, ${config.fontPrices});
+
+  // Price Tag Shape
+  @include token.set(token.$price-sticker-aspect-ratio, ${aspectCalc});
+  @include token.set(token.$price-sticker-radius-tl, ${radiusValue});
+  @include token.set(token.$price-sticker-radius-tr, ${radiusValue});
+  @include token.set(token.$price-sticker-radius-br, ${radiusValue});
+  @include token.set(token.$price-sticker-radius-bl, ${radiusValue});
+  @include token.set(token.$price-sticker-border-width, ${config.borderWidth});
+  @include token.set(token.$price-sticker-shadow, ${config.shadowStyle});
+}
+`;
+        }
+
+        function getCurrentConfigObject() {
+            const config = getCurrentConfig();
+            return {
+                name: "Custom Theme",
+                colors: {
+                    brand: config.colorBrand,
+                    brandAlt: config.colorAlt,
+                    emphasis: config.colorEmphasis
+                },
+                typography: {
+                    fontBody: config.fontBody,
+                    fontPrices: config.fontPrices
+                },
+                priceTag: {
+                    aspectRatio: parseFloat(config.aspectRatio),
+                    borderRadius: config.borderRadius + '%',
+                    borderWidth: config.borderWidth,
+                    shadow: config.shadowStyle
+                }
+            };
+        }
+
+        function copyToClipboard() {
+            const config = getCurrentConfig();
+            const content = currentFormat === 'scss'
+                ? generateSCSSFile(config)
+                : JSON.stringify(getCurrentConfigObject(), null, 2);
+
+            navigator.clipboard.writeText(content).then(() => {
+                showToast('Copied to clipboard!');
+            });
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

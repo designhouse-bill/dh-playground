@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deal Types - Digital Circular Style Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #E2141E;
+            --text: #1D2325;
+            --text-light: #4A5358;
+            --bg: #FFFFFF;
+            --bg-secondary: #F2F3F3;
+            --border: #E4E5E5;
+            --shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            background: var(--bg-secondary);
+        }
+
+        .nav-header {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: var(--primary); }
+
+        .back-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .description {
+            color: var(--text-light);
+            font-size: 1.125rem;
+        }
+
+        .deal-grid {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .deal-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .deal-header {
+            background: linear-gradient(135deg, var(--primary) 0%, #BA1218 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+        }
+
+        .deal-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .deal-subtitle {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .deal-body {
+            padding: 2rem;
+        }
+
+        .deal-examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .example-card {
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .example-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        .example-label {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .price-display {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 3rem;
+            line-height: 1;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .price-sub {
+            font-size: 1.5rem;
+            vertical-align: super;
+        }
+
+        .deal-text {
+            font-size: 1rem;
+            color: var(--text);
+            margin-top: 0.5rem;
+        }
+
+        .bogo-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+        }
+
+        .bogo-buy {
+            font-size: 2rem;
+            color: var(--text);
+        }
+
+        .bogo-text {
+            font-size: 1.25rem;
+            text-transform: uppercase;
+            color: var(--text-light);
+        }
+
+        .bogo-get {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .code-block {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.875rem;
+            margin-top: 1rem;
+            overflow-x: auto;
+        }
+
+        .props-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .props-table th,
+        .props-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .props-table th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+        }
+
+        .props-table code {
+            background: var(--bg-secondary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 768px) {
+            .deal-examples {
+                grid-template-columns: 1fr;
+            }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-header">
+        <div class="nav-content">
+            <a href="index.html" class="back-link">← Style Guide Home</a>
+            <ul class="nav-links">
+                <li><a href="colors-fonts.html">Colors & Fonts</a></li>
+                <li><a href="price-stickers.html">Price Stickers</a></li>
+                <li><a href="deal-types.html">Deal Types</a></li>
+                <li><a href="components.html">Components</a></li>
+                <li><a href="themes.html">Themes</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>Deal Types</h1>
+            <p class="description">Visual examples of all 7 deal types with configuration options</p>
+        </div>
+
+        <div class="deal-grid">
+            <!-- Amount Deal -->
+            <div class="deal-card">
+                <div class="deal-header">
+                    <div class="deal-title">Amount</div>
+                    <div class="deal-subtitle">Simple amount pricing (e.g., $9.99)</div>
+                </div>
+                <div class="deal-body">
+                    <p>The most basic deal type showing a simple price. Used for standard pricing without special offers.</p>
+
+                    <div class="deal-examples">
+                        <div class="example-card">
+                            <div class="example-label">Simple Price</div>
+                            <div class="price-display">$9<span class="price-sub">99</span></div>
+                        </div>
+                        <div class="example-card">
+                            <div class="example-label">With Label</div>
+                            <div class="price-display">$4<span class="price-sub">99</span></div>
+                            <div class="deal-text">Each</div>
+                        </div>
+                        <div class="example-card">
+                            <div class="example-label">Per Pound</div>
+                            <div class="price-display">$3<span class="price-sub">49</span></div>
+                            <div class="deal-text">lb</div>
+                        </div>
+                    </div>
+
+                    <div class="code-block">dealType: "amount"
+amount: 9.99
+amountType: "Dollars"
+amountText: "Each" (optional)</div>
+                </div>
+            </div>
+
+            <!-- NumFor Deal -->
+            <div class="deal-card">
+                <div class="deal-header">
+                    <div class="deal-title">NumFor</div>
+                    <div class="deal-subtitle">Multiple items for a price (e.g., 2 for $5)</div>
+                </div>
+                <div class="deal-body">
+                    <p>Quantity-based pricing where customers get multiple items for a single price.</p>
+
+                    <div class="deal-examples">
+                        <div class="example-card">
+                            <div class="example-label">Two For</div>
+                            <div class="price-display" style="font-size: 2rem;">2 FOR $5</div>
+                        </div>
+                        <div class="example-card">
+                            <div class="example-label">Three For</div>
+                            <div class="price-display" style="font-size: 2rem;">3 FOR $10</div>
+                        </div>
+                        <div class="example-card">
+                            <div class="example-label">Five For</div>
+                            <div class="price-display" style="font-size: 2rem;">5 FOR $20</div>
+                        </div>
+                    </div>
+
+                    <div class="code-block">dealType: "numfor"
+buyNumber: 2
+amount: 5.00
+amountType: "Dollars"</div>
+                </div>
+            </div>
+
+            <!-- BOGO Deal -->
+            <div class="deal-card">
+                <div class="deal-header">
+                    <div class="deal-title">BOGO (Buy One Get One)</div>
+                    <div class="deal-subtitle">Buy X Get Y promotional deals</div>
+                </div>
+                <div class="deal-body">
+                    <p>Classic promotional format where purchasing one or more items gets you additional items free or at a discount.</p>
+
+                    <div class="deal-examples">
+                        <div class="example-card">
+                            <div class="example-label">BOGO Free</div>
+                            <div class="bogo-display">
+                                <span class="bogo-buy">BUY 1</span>
+                                <span class="bogo-text">GET</span>
+                                <span class="bogo-get">1 FREE</span>
+                            </div>
+                        </div>
+                        <div class="example-card">
+                            <div class="example-label">BOGO 50% Off</div>
+                            <div class="bogo-display">
+                                <span class="bogo-buy">BUY 1</span>
+                                <span class="bogo-text">GET</span>
+                                <span class="bogo-get">1 50% OFF</span>
+                            </div>
+                        </div>
+                        <div class="example-card">
+                            <div class="example-label">Buy 2 Get 1</div>
+                            <div class="bogo-display">
+                                <span class="bogo-buy">BUY 2</span>
+                                <span class="bogo-text">GET</span>
+                                <span class="bogo-get">1 FREE</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="code-block">dealType: "bogo"
+buyNumber: 1
+getNumber: 1
+amount: 0 (for free) or 50 (for 50% off)
+amountType: "Free" or "Percent"</div>
+                </div>
+            </div>
+
+            <!-- SaveX Deal -->
+            <div class="deal-card">
+                <div class="deal-header">
+                    <div class="deal-title">SaveX</div>
+                    <div class="deal-subtitle">Save a specific amount or percentage</div>
+                </div>
+                <div class="deal-body">
+                    <p>Highlights the savings amount rather than the final price. Great for emphasizing discounts.</p>
+
+                    <div class="deal-examples">
+                        <div class="example-card">
+                            <div class="example-label">Save Dollars</div>
+                            <div class="deal-text" style="font-size: 1.25rem;">SAVE</div>
+                            <div class="price-display">$5</div>
+                        </div>
+                        <div class="example-card">
+                            <div class="example-label">Save Percent</div>
+                            <div class="deal-text" style="font-size: 1.25rem;">SAVE</div>
+                            <div class="price-display">25<span class="price-sub">%</span></div>
+                        </div>
+                        <div class="example-card">
+                            <div class="example-label">Save Up To</div>
+                            <div class="deal-text" style="font-size: 1rem;">SAVE UP TO</div>
+                            <div class="price-display" style="font-size: 2.5rem;">$10</div>
+                        </div>
+                    </div>
+
+                    <div class="code-block">dealType: "save-x"
+amount: 5.00
+amountType: "Dollars" or "Percent"</div>
+                </div>
+            </div>
+
+            <!-- NumSlash Deal -->
+            <div class="deal-card">
+                <div class="deal-header">
+                    <div class="deal-title">NumSlash</div>
+                    <div class="deal-subtitle">Slash pricing format (e.g., 3/$10)</div>
+                </div>
+                <div class="deal-body">
+                    <p>Compact format showing quantity and price separated by a slash. Common in grocery circulars.</p>
+
+                    <div class="deal-examples">
+                        <div class="example-card">
+                            <div class="example-label">Three Slash</div>
+                            <div class="price-display" style="font-size: 3.5rem;">3/$10</div>
+                        </div>
+                        <div class="example-card">
+                            <div class="example-label">Two Slash</div>
+                            <div class="price-display" style="font-size: 3.5rem;">2/$6</div>
+                        </div>
+                        <div class="example-card">
+                            <div class="example-label">Five Slash</div>
+                            <div class="price-display" style="font-size: 3.5rem;">5/$25</div>
+                        </div>
+                    </div>
+
+                    <div class="code-block">dealType: "numslash"
+buyNumber: 3
+amount: 10.00
+amountType: "Dollars"</div>
+                </div>
+            </div>
+
+            <!-- FromNum Deal -->
+            <div class="deal-card">
+                <div class="deal-header">
+                    <div class="deal-title">FromNum</div>
+                    <div class="deal-subtitle">Starting price (e.g., From $9.99)</div>
+                </div>
+                <div class="deal-body">
+                    <p>Indicates a starting price, useful for products with variable pricing or multiple options.</p>
+
+                    <div class="deal-examples">
+                        <div class="example-card">
+                            <div class="example-label">Starting Price</div>
+                            <div class="deal-text" style="font-size: 1.25rem;">FROM</div>
+                            <div class="price-display">$9<span class="price-sub">99</span></div>
+                        </div>
+                        <div class="example-card">
+                            <div class="example-label">As Low As</div>
+                            <div class="deal-text" style="font-size: 1rem;">AS LOW AS</div>
+                            <div class="price-display" style="font-size: 2.5rem;">$4<span class="price-sub">99</span></div>
+                        </div>
+                        <div class="example-card">
+                            <div class="example-label">Starting At</div>
+                            <div class="deal-text" style="font-size: 1rem;">STARTING AT</div>
+                            <div class="price-display" style="font-size: 2.5rem;">$19<span class="price-sub">99</span></div>
+                        </div>
+                    </div>
+
+                    <div class="code-block">dealType: "from-num"
+amount: 9.99
+amountType: "Dollars"</div>
+                </div>
+            </div>
+
+            <!-- None Deal -->
+            <div class="deal-card">
+                <div class="deal-header">
+                    <div class="deal-title">None</div>
+                    <div class="deal-subtitle">No pricing display</div>
+                </div>
+                <div class="deal-body">
+                    <p>Used when no price should be displayed. Useful for informational cards, banners, or products with variable pricing.</p>
+
+                    <div class="deal-examples">
+                        <div class="example-card">
+                            <div class="example-label">No Price</div>
+                            <div class="deal-text" style="font-size: 1.5rem; color: var(--text-light);">See store for pricing</div>
+                        </div>
+                        <div class="example-card">
+                            <div class="example-label">Custom Message</div>
+                            <div class="deal-text" style="font-size: 1.5rem; font-weight: 600; color: var(--primary);">ASK FOR DETAILS</div>
+                        </div>
+                        <div class="example-card">
+                            <div class="example-label">Informational</div>
+                            <div class="deal-text" style="font-size: 1.25rem; color: var(--text);">While supplies last</div>
+                        </div>
+                    </div>
+
+                    <div class="code-block">dealType: "none"</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Configuration Reference -->
+        <div class="deal-card" style="margin-top: 2rem;">
+            <div class="deal-header" style="background: linear-gradient(135deg, #313131 0%, #000000 100%);">
+                <div class="deal-title">Component Properties Reference</div>
+                <div class="deal-subtitle">Common properties across all deal types</div>
+            </div>
+            <div class="deal-body">
+                <table class="props-table">
+                    <thead>
+                        <tr>
+                            <th>Property</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>dealType</code></td>
+                            <td>DealType</td>
+                            <td>Type of deal to display</td>
+                            <td>"amount" | "numfor" | "bogo" | "save-x" | "numslash" | "from-num" | "none"</td>
+                        </tr>
+                        <tr>
+                            <td><code>amount</code></td>
+                            <td>number</td>
+                            <td>Price or discount amount</td>
+                            <td>9.99</td>
+                        </tr>
+                        <tr>
+                            <td><code>amountType</code></td>
+                            <td>AmountType</td>
+                            <td>Type of amount</td>
+                            <td>"Dollars" | "Cents" | "Percent" | "Free"</td>
+                        </tr>
+                        <tr>
+                            <td><code>buyNumber</code></td>
+                            <td>number</td>
+                            <td>Quantity to buy (numfor, bogo, numslash)</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td><code>getNumber</code></td>
+                            <td>number</td>
+                            <td>Quantity received (bogo)</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td><code>amountText</code></td>
+                            <td>string</td>
+                            <td>Additional text label</td>
+                            <td>"Each", "lb", "pk"</td>
+                        </tr>
+                        <tr>
+                            <td><code>layout</code></td>
+                            <td>string</td>
+                            <td>Display layout</td>
+                            <td>"default" | "horizontal" | "simple"</td>
+                        </tr>
+                        <tr>
+                            <td><code>showDollarSigns</code></td>
+                            <td>string</td>
+                            <td>When to show $ symbol</td>
+                            <td>"always" | "auto"</td>
+                        </tr>
+                        <tr>
+                            <td><code>showDecimals</code></td>
+                            <td>string</td>
+                            <td>When to show decimal places</td>
+                            <td>"always" | "auto"</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

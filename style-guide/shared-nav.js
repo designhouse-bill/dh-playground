@@ -5,16 +5,10 @@
 
 const NAVIGATION_ITEMS = [
     { path: 'index.html', label: 'Home', icon: '🏠' },
-    { path: 'colors-fonts.html', label: 'Colors & Fonts', icon: '🎨' },
     { path: 'price-stickers.html', label: 'Price Stickers', icon: '🏷️' },
     { path: 'deal-types.html', label: 'Deal Types', icon: '💰' },
-    { path: 'components.html', label: 'Components', icon: '🧩' },
-    { path: 'themes.html', label: 'Themes', icon: '🎭' },
-    { path: 'extracted-components.html', label: 'Extracted', icon: '📦' },
-    { path: 'config-export.html', label: 'Export Config', icon: '⚙️' },
-    { path: 'industries/grocery.html', label: 'Grocery', icon: '🛒' },
-    { path: 'industries/hardware.html', label: 'Hardware', icon: '🔨' },
-    { path: 'industries/liquor.html', label: 'Liquor', icon: '🍷' }
+    { path: 'colors-fonts.html', label: 'Colors', icon: '🎨' },
+    { path: 'themes.html', label: 'Themes', icon: '🎭' }
 ];
 
 class SharedNavigation {

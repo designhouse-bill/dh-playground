@@ -62,6 +62,48 @@
             flex-direction: column;
         }
 
+        /* Navigation Header */
+        .nav-header {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--gray-900);
+        }
+
+        .back-link {
+            color: var(--gray-900);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
         /* Header */
         header {
             background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 100%);
@@ -473,6 +515,10 @@
 
         /* Responsive */
         @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
             header {
                 padding: 3rem 1.5rem;
             }
@@ -491,11 +537,6 @@
 
             .search-container {
                 padding: 0 1.5rem;
-            }
-
-            .stats {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1rem;
             }
 
             .nav-grid {
@@ -524,6 +565,17 @@
 </head>
 <body>
     <div class="page-wrapper">
+        <nav class="nav-header">
+            <div class="nav-content">
+                <ul class="nav-links">
+                    <li><a href="price-stickers.html">Price Stickers</a></li>
+                    <li><a href="colors-fonts.html">Colors</a></li>
+                    <li><a href="deal-types.html">Deal Types</a></li>
+                    <li><a href="themes.html">Themes</a></li>
+                </ul>
+            </div>
+        </nav>
+
         <header>
             <div class="header-content">
                 <div class="header-badge">Design System Documentation</div>
@@ -551,62 +603,14 @@
         </div>
 
         <div class="container">
-            <div class="stats">
-                <div class="stat" data-tooltip="Across colors, typography, spacing, shadows, and more">
-                    <div class="stat-value">885+</div>
-                    <div class="stat-label">Design Tokens</div>
-                </div>
-                <div class="stat" data-tooltip="Production themes from grocery, hardware, and liquor retailers">
-                    <div class="stat-value">81</div>
-                    <div class="stat-label">Themes</div>
-                </div>
-                <div class="stat" data-tooltip="6 variants × 16 components = 96 total configurations">
-                    <div class="stat-value">96</div>
-                    <div class="stat-label">Price Tags</div>
-                </div>
-                <div class="stat" data-tooltip="Amount, NumFor, BOGO, SaveX, NumSlash, FromNum, None">
-                    <div class="stat-value">7</div>
-                    <div class="stat-label">Deal Types</div>
-                </div>
-                <div class="stat" data-tooltip="Card layouts with multiple states and variants">
-                    <div class="stat-value">17</div>
-                    <div class="stat-label">Components</div>
-                </div>
-                <div class="stat" data-tooltip="Referenced from design-system Storybook">
-                    <div class="stat-value">64</div>
-                    <div class="stat-label">Stories</div>
-                </div>
-            </div>
-
             <div class="section-header">
                 <h2 class="section-title">Core Documentation</h2>
                 <p class="section-description">Essential design system resources and component libraries</p>
             </div>
 
             <div class="nav-grid" id="navGrid">
-                <a href="colors-fonts.html" class="nav-card" data-keywords="colors fonts typography tokens palette brand">
+                <a href="price-stickers.html" class="nav-card" data-keywords="price stickers tags interactive builder controls">
                     <div class="nav-card-header">
-                        <span class="nav-icon">🎨</span>
-                        <h3 class="nav-title">Colors & Fonts</h3>
-                    </div>
-                    <p class="nav-description">
-                        Explore the complete color palette and typography system with all design tokens from 81 theme configurations.
-                    </p>
-                    <div class="nav-meta">
-                        <span class="nav-meta-item">
-                            <span class="nav-meta-icon">📊</span>
-                            10 token categories
-                        </span>
-                        <span class="nav-meta-item">
-                            <span class="nav-meta-icon">✨</span>
-                            Multiple fonts
-                        </span>
-                    </div>
-                </a>
-
-                <a href="price-stickers-interactive.html" class="nav-card" data-keywords="price stickers tags interactive builder controls">
-                    <div class="nav-card-header">
-                        <span class="nav-icon">🏷️</span>
                         <h3 class="nav-title">Price Stickers</h3>
                         <span class="nav-badge">Interactive</span>
                     </div>
@@ -625,9 +629,27 @@
                     </div>
                 </a>
 
+                <a href="colors-fonts.html" class="nav-card" data-keywords="colors fonts typography tokens palette brand">
+                    <div class="nav-card-header">
+                        <h3 class="nav-title">Colors & Fonts</h3>
+                    </div>
+                    <p class="nav-description">
+                        Explore the complete color palette and typography system with all design tokens from 81 theme configurations.
+                    </p>
+                    <div class="nav-meta">
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">📊</span>
+                            10 token categories
+                        </span>
+                        <span class="nav-meta-item">
+                            <span class="nav-meta-icon">✨</span>
+                            Multiple fonts
+                        </span>
+                    </div>
+                </a>
+
                 <a href="deal-types.html" class="nav-card" data-keywords="deals discounts bogo numfor savings promotions">
                     <div class="nav-card-header">
-                        <span class="nav-icon">💰</span>
                         <h3 class="nav-title">Deal Types</h3>
                     </div>
                     <p class="nav-description">
@@ -647,7 +669,6 @@
 
                 <a href="components.html" class="nav-card" data-keywords="components cards layouts ui elements">
                     <div class="nav-card-header">
-                        <span class="nav-icon">🧩</span>
                         <h3 class="nav-title">Components</h3>
                     </div>
                     <p class="nav-description">
@@ -665,9 +686,8 @@
                     </div>
                 </a>
 
-                <a href="themes-interactive.html" class="nav-card" data-keywords="themes presets switcher colors customization">
+                <a href="themes.html" class="nav-card" data-keywords="themes presets switcher colors customization">
                     <div class="nav-card-header">
-                        <span class="nav-icon">🎭</span>
                         <h3 class="nav-title">Theme Presets</h3>
                         <span class="nav-badge">Interactive</span>
                     </div>
@@ -686,29 +706,8 @@
                     </div>
                 </a>
 
-                <a href="extracted-components.html" class="nav-card" data-keywords="extracted real components production code">
-                    <div class="nav-card-header">
-                        <span class="nav-icon">📦</span>
-                        <h3 class="nav-title">Extracted Components</h3>
-                    </div>
-                    <p class="nav-description">
-                        Real component HTML and CSS extracted directly from the design-system repository with actual token values.
-                    </p>
-                    <div class="nav-meta">
-                        <span class="nav-meta-item">
-                            <span class="nav-meta-icon">🔬</span>
-                            Production code
-                        </span>
-                        <span class="nav-meta-item">
-                            <span class="nav-meta-icon">✅</span>
-                            Real tokens
-                        </span>
-                    </div>
-                </a>
-
                 <a href="config-export.html" class="nav-card" data-keywords="export config generator builder scss json download">
                     <div class="nav-card-header">
-                        <span class="nav-icon">⚙️</span>
                         <h3 class="nav-title">Configuration Export</h3>
                         <span class="nav-badge new">New</span>
                     </div>
@@ -823,7 +822,6 @@
 
                 <a href="README.md" class="nav-card" target="_blank" data-keywords="readme documentation guide help">
                     <div class="nav-card-header">
-                        <span class="nav-icon">📖</span>
                         <h3 class="nav-title">Documentation</h3>
                     </div>
                     <p class="nav-description">
@@ -840,26 +838,6 @@
                         </span>
                     </div>
                 </a>
-
-                <a href="DEPLOYMENT.md" class="nav-card" target="_blank" data-keywords="deployment hosting production server">
-                    <div class="nav-card-header">
-                        <span class="nav-icon">🚀</span>
-                        <h3 class="nav-title">Deployment Guide</h3>
-                    </div>
-                    <p class="nav-description">
-                        Step-by-step deployment instructions for GitHub Pages, Netlify, AWS S3, and other hosting platforms.
-                    </p>
-                    <div class="nav-meta">
-                        <span class="nav-meta-item">
-                            <span class="nav-meta-icon">☁️</span>
-                            5+ methods
-                        </span>
-                        <span class="nav-meta-item">
-                            <span class="nav-meta-icon">✅</span>
-                            Checklists
-                        </span>
-                    </div>
-                </a>
             </div>
 
             <div class="no-results" id="noResults">
@@ -873,7 +851,6 @@
             <div class="footer-content">
                 <div class="footer-links">
                     <a href="README.md" class="footer-link" target="_blank">Documentation</a>
-                    <a href="DEPLOYMENT.md" class="footer-link" target="_blank">Deployment Guide</a>
                     <a href="audit-results.json" class="footer-link" target="_blank">Raw Data</a>
                     <a href="config-export.html" class="footer-link">Export Config</a>
                 </div>

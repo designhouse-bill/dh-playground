@@ -100,7 +100,7 @@
         }
 
         .deal-header {
-            background: linear-gradient(135deg, var(--primary) 0%, #BA1218 100%);
+            background: linear-gradient(135deg, #6e6e6e 0%, #171717 100%);
             color: white;
             padding: 1.5rem 2rem;
         }
@@ -148,6 +148,59 @@
             letter-spacing: 0.05em;
         }
 
+        /* Design system amount component styles */
+        .dh-amount {
+            display: grid;
+            grid-auto-flow: column;
+            grid-auto-columns: auto;
+            grid-auto-rows: auto auto;
+            align-items: baseline;
+            width: fit-content;
+            height: fit-content;
+            font-family: 'Oswald', sans-serif;
+            font-size: 4em;
+            font-weight: 700;
+            line-height: 1;
+            color: var(--primary);
+            gap: 0;
+            margin: 0 auto;
+        }
+
+        .dh-amount .symbol {
+            grid-row: 1;
+            font-size: 0.5em;
+            display: inline-flex;
+            align-self: start;
+            margin-top: 0.15em;
+        }
+
+        .dh-amount .whole-number {
+            grid-row: 1 / span 2;
+            font-size: 1em;
+            display: inline-flex;
+            align-self: start;
+        }
+
+        .dh-amount .decimal {
+            grid-row: 1;
+            font-size: 0.5em;
+            display: inline-flex;
+            align-self: start;
+            margin-top: 0.11em;
+        }
+
+        .dh-amount .subtext {
+            grid-row: 2;
+            align-self: end;
+            font-size: 0.375em;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-flex;
+            margin-bottom: 0.05em;
+            margin-top: -0.1em;
+            justify-content: center;
+        }
+
         .price-display {
             font-family: 'Oswald', sans-serif;
             font-weight: 700;
@@ -155,11 +208,6 @@
             line-height: 1;
             color: var(--primary);
             margin-bottom: 0.5rem;
-        }
-
-        .price-sub {
-            font-size: 1.5rem;
-            vertical-align: super;
         }
 
         .deal-text {
@@ -242,10 +290,9 @@
         <div class="nav-content">
             <a href="index.html" class="back-link">← Style Guide Home</a>
             <ul class="nav-links">
-                <li><a href="colors-fonts.html">Colors & Fonts</a></li>
                 <li><a href="price-stickers.html">Price Stickers</a></li>
                 <li><a href="deal-types.html">Deal Types</a></li>
-                <li><a href="components.html">Components</a></li>
+                <li><a href="colors-fonts.html">Colors</a></li>
                 <li><a href="themes.html">Themes</a></li>
             </ul>
         </div>
@@ -270,24 +317,36 @@
                     <div class="deal-examples">
                         <div class="example-card">
                             <div class="example-label">Simple Price</div>
-                            <div class="price-display">$9<span class="price-sub">99</span></div>
+                            <div class="dh-amount">
+                                <span class="symbol">$</span>
+                                <span class="whole-number">9</span>
+                                <span class="decimal">99</span>
+                            </div>
                         </div>
                         <div class="example-card">
                             <div class="example-label">With Label</div>
-                            <div class="price-display">$4<span class="price-sub">99</span></div>
-                            <div class="deal-text">Each</div>
+                            <div class="dh-amount">
+                                <span class="symbol">$</span>
+                                <span class="whole-number">4</span>
+                                <span class="decimal">99</span>
+                                <span class="subtext">EA</span>
+                            </div>
                         </div>
                         <div class="example-card">
                             <div class="example-label">Per Pound</div>
-                            <div class="price-display">$3<span class="price-sub">49</span></div>
-                            <div class="deal-text">lb</div>
+                            <div class="dh-amount">
+                                <span class="symbol">$</span>
+                                <span class="whole-number">3</span>
+                                <span class="decimal">49</span>
+                                <span class="subtext">lb</span>
+                            </div>
                         </div>
                     </div>
 
                     <div class="code-block">dealType: "amount"
 amount: 9.99
 amountType: "Dollars"
-amountText: "Each" (optional)</div>
+amountText: "EA" (optional)</div>
                 </div>
             </div>
 
@@ -379,17 +438,28 @@ amountType: "Free" or "Percent"</div>
                         <div class="example-card">
                             <div class="example-label">Save Dollars</div>
                             <div class="deal-text" style="font-size: 1.25rem;">SAVE</div>
-                            <div class="price-display">$5</div>
+                            <div class="dh-amount" style="font-size: 3em;">
+                                <span class="symbol">$</span>
+                                <span class="whole-number">5</span>
+                                <span class="decimal">00</span>
+                            </div>
                         </div>
                         <div class="example-card">
                             <div class="example-label">Save Percent</div>
                             <div class="deal-text" style="font-size: 1.25rem;">SAVE</div>
-                            <div class="price-display">25<span class="price-sub">%</span></div>
+                            <div class="dh-amount" style="font-size: 3em;">
+                                <span class="whole-number">25</span>
+                                <span class="symbol">%</span>
+                            </div>
                         </div>
                         <div class="example-card">
                             <div class="example-label">Save Up To</div>
                             <div class="deal-text" style="font-size: 1rem;">SAVE UP TO</div>
-                            <div class="price-display" style="font-size: 2.5rem;">$10</div>
+                            <div class="dh-amount" style="font-size: 2.5em;">
+                                <span class="symbol">$</span>
+                                <span class="whole-number">10</span>
+                                <span class="decimal">00</span>
+                            </div>
                         </div>
                     </div>
 
@@ -443,17 +513,29 @@ amountType: "Dollars"</div>
                         <div class="example-card">
                             <div class="example-label">Starting Price</div>
                             <div class="deal-text" style="font-size: 1.25rem;">FROM</div>
-                            <div class="price-display">$9<span class="price-sub">99</span></div>
+                            <div class="dh-amount">
+                                <span class="symbol">$</span>
+                                <span class="whole-number">9</span>
+                                <span class="decimal">99</span>
+                            </div>
                         </div>
                         <div class="example-card">
                             <div class="example-label">As Low As</div>
                             <div class="deal-text" style="font-size: 1rem;">AS LOW AS</div>
-                            <div class="price-display" style="font-size: 2.5rem;">$4<span class="price-sub">99</span></div>
+                            <div class="dh-amount" style="font-size: 3em;">
+                                <span class="symbol">$</span>
+                                <span class="whole-number">4</span>
+                                <span class="decimal">99</span>
+                            </div>
                         </div>
                         <div class="example-card">
                             <div class="example-label">Starting At</div>
                             <div class="deal-text" style="font-size: 1rem;">STARTING AT</div>
-                            <div class="price-display" style="font-size: 2.5rem;">$19<span class="price-sub">99</span></div>
+                            <div class="dh-amount" style="font-size: 3em;">
+                                <span class="symbol">$</span>
+                                <span class="whole-number">19</span>
+                                <span class="decimal">99</span>
+                            </div>
                         </div>
                     </div>
 
@@ -543,7 +625,7 @@ amountType: "Dollars"</div>
                             <td><code>amountText</code></td>
                             <td>string</td>
                             <td>Additional text label</td>
-                            <td>"Each", "lb", "pk"</td>
+                            <td>"EA", "lb", "pk"</td>
                         </tr>
                         <tr>
                             <td><code>layout</code></td>

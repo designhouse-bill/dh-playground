@@ -142,13 +142,12 @@
             margin-bottom: 1rem;
         }
 
-        /* Price Sticker - Following design-system structure */
+        /* Price Sticker - Following design-system structure with em-based scaling */
         .price-sticker {
             display: inline-flex;
             align-items: flex-end;
             justify-content: flex-end;
-            width: 150px;
-            height: auto;
+            font-size: 100px;
             position: relative;
             user-select: none;
         }
@@ -158,52 +157,102 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            aspect-ratio: 1;
-            width: 100%;
-            height: auto;
+            aspect-ratio: 1 / 1;
+            width: 1em;
+            height: 1em;
             border-style: solid;
             font-family: 'Oswald', sans-serif;
             font-weight: 700;
             border-radius: 50%;
-            padding: 14%;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
+            border-width: 0.047em;
+            padding: 0;
+            box-shadow: 0 0.03em 0.06em rgba(0, 0, 0, 0.1), 0 0.06em 0.125em rgba(0, 0, 0, 0.1), 0 0.125em 0.25em rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
+        }
+
+        /* Shape variations */
+        .price-sticker.shape-circle .sticker {
+            border-radius: 50%;
+            aspect-ratio: 1;
+        }
+
+        .price-sticker.shape-square .sticker {
+            border-radius: 0;
+            aspect-ratio: 1;
+        }
+
+        .price-sticker.shape-rounded-square .sticker {
+            border-radius: 20%;
+            aspect-ratio: 1;
+        }
+
+        .price-sticker.shape-rectangle .sticker {
+            border-radius: 0;
+            aspect-ratio: 3/2;
+            padding: 10% 14%;
+        }
+
+        .price-sticker.shape-pill .sticker {
+            border-radius: 100px;
+            aspect-ratio: 2/1;
+            padding: 8% 14%;
+        }
+
+        /* Size variations */
+        .price-sticker.size-small {
+            font-size: 48px;
+        }
+
+        .price-sticker.size-medium {
+            font-size: 64px;
+        }
+
+        .price-sticker.size-large {
+            font-size: 96px;
+        }
+
+        .price-sticker.size-xlarge {
+            font-size: 128px;
+        }
+
+        .price-sticker.size-xxlarge {
+            font-size: 192px;
         }
 
         .price-sticker.default .sticker {
             background: var(--primary);
             color: white;
-            border: 3px solid white;
+            border-color: white;
         }
 
         .price-sticker.reversed .sticker {
             background: white;
             color: var(--primary);
-            border: 3px solid var(--primary);
+            border-color: var(--primary);
         }
 
         .price-sticker.alternate .sticker {
             background: var(--brand-alt);
             color: white;
-            border: 3px solid white;
+            border-color: white;
         }
 
         .price-sticker.alternate-reversed .sticker {
             background: white;
             color: var(--brand-alt);
-            border: 3px solid var(--brand-alt);
+            border-color: var(--brand-alt);
         }
 
         .price-sticker.emphasis .sticker {
             background: var(--emphasis);
             color: var(--text);
-            border: 3px solid var(--text);
+            border-color: var(--text);
         }
 
         .price-sticker.emphasis-reversed .sticker {
             background: var(--text);
             color: var(--emphasis);
-            border: 3px solid var(--emphasis);
+            border-color: var(--emphasis);
         }
 
         .price-container {
@@ -213,6 +262,8 @@
             justify-content: center;
             flex-grow: 1;
             width: 100%;
+            height: 100%;
+            padding: 0;
         }
 
         .content {
@@ -220,7 +271,8 @@
             display: flex;
             width: fit-content;
             height: fit-content;
-            font-size: 2.5rem;
+            font-size: 0.5em;
+            margin: 14%;
         }
 
         /* Amount component with grid layout */
@@ -228,8 +280,8 @@
             display: grid;
             grid-auto-flow: column;
             grid-auto-columns: auto;
-            grid-auto-rows: 1fr;
-            align-items: center;
+            grid-auto-rows: auto auto;
+            align-items: baseline;
             width: fit-content;
             height: fit-content;
             line-height: 1;
@@ -240,18 +292,23 @@
             grid-row: 1;
             font-size: 0.5em;
             display: inline-flex;
+            align-self: start;
+            margin-top: 0.15em;
         }
 
         .amount .whole-number {
             grid-row: 1 / span 2;
             font-size: 1em;
             display: inline-flex;
+            align-self: start;
         }
 
         .amount .decimal {
             grid-row: 1;
             font-size: 0.5em;
             display: inline-flex;
+            align-self: start;
+            margin-top: 0.11em;
         }
 
         .amount .subtext {
@@ -261,6 +318,9 @@
             font-weight: 700;
             text-transform: uppercase;
             display: inline-flex;
+            margin-bottom: 0.05em;
+            margin-top: -0.1em;
+            justify-content: center;
         }
 
         .sticker-code {
@@ -268,8 +328,9 @@
             padding: 1rem;
             border-radius: 4px;
             font-family: 'Monaco', 'Courier New', monospace;
-            font-size: 0.875rem;
+            font-size: 0.675rem;
             overflow-x: auto;
+            white-space: pre-line;
         }
 
         .interactive-demo {
@@ -340,6 +401,115 @@
             background: rgba(226, 20, 30, 0.05);
         }
 
+        /* Interactive Builder Styles */
+        .builder-container {
+            background: linear-gradient(135deg, #6e6e6e 0%, #171717 100%);
+            padding: 2rem;
+            border-radius: 12px;
+            color: white;
+        }
+
+        .builder-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .builder-controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .builder-control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .control-label {
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .control-input, .control-select {
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 2px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .control-input::placeholder {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .control-input:focus, .control-select:focus {
+            outline: none;
+            border-color: white;
+            background: rgba(255,255,255,0.2);
+        }
+
+        .toggle-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .toggle-btn {
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            border: none;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .toggle-btn.active {
+            background: white;
+            color: #313131;
+            border-color: white;
+        }
+
+        .builder-preview {
+            background: white;
+            border-radius: 12px;
+            padding: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            position: relative;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .comparison-item {
+            text-align: center;
+        }
+
+        .comparison-label {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+        }
+
         @media (max-width: 768px) {
             .sticker-showcase {
                 grid-template-columns: 1fr;
@@ -347,6 +517,10 @@
 
             .nav-links {
                 display: none;
+            }
+
+            .builder-controls {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -356,10 +530,9 @@
         <div class="nav-content">
             <a href="index.html" class="back-link">← Style Guide Home</a>
             <ul class="nav-links">
-                <li><a href="colors-fonts.html">Colors & Fonts</a></li>
                 <li><a href="price-stickers.html">Price Stickers</a></li>
+                <li><a href="colors-fonts.html">Colors</a></li>
                 <li><a href="deal-types.html">Deal Types</a></li>
-                <li><a href="components.html">Components</a></li>
                 <li><a href="themes.html">Themes</a></li>
             </ul>
         </div>
@@ -385,7 +558,7 @@
                                             <span class="symbol">$</span>
                                             <span class="whole-number">9</span>
                                             <span class="decimal">99</span>
-                                            <span class="subtext">Each</span>
+                                            <span class="subtext">EA</span>
                                         </div>
                                     </div>
                                 </div>
@@ -410,7 +583,7 @@ border: 3px solid #FFFFFF
                                             <span class="symbol">$</span>
                                             <span class="whole-number">9</span>
                                             <span class="decimal">99</span>
-                                            <span class="subtext">Each</span>
+                                            <span class="subtext">EA</span>
                                         </div>
                                     </div>
                                 </div>
@@ -435,7 +608,7 @@ border: 3px solid #E2141E
                                             <span class="symbol">$</span>
                                             <span class="whole-number">9</span>
                                             <span class="decimal">99</span>
-                                            <span class="subtext">Each</span>
+                                            <span class="subtext">EA</span>
                                         </div>
                                     </div>
                                 </div>
@@ -460,7 +633,7 @@ border: 3px solid #FFFFFF
                                             <span class="symbol">$</span>
                                             <span class="whole-number">9</span>
                                             <span class="decimal">99</span>
-                                            <span class="subtext">Each</span>
+                                            <span class="subtext">EA</span>
                                         </div>
                                     </div>
                                 </div>
@@ -485,7 +658,7 @@ border: 3px solid hsl(123, 39%, 57%)
                                             <span class="symbol">$</span>
                                             <span class="whole-number">9</span>
                                             <span class="decimal">99</span>
-                                            <span class="subtext">Each</span>
+                                            <span class="subtext">EA</span>
                                         </div>
                                     </div>
                                 </div>
@@ -510,7 +683,7 @@ border: 3px solid #1D2325
                                             <span class="symbol">$</span>
                                             <span class="whole-number">9</span>
                                             <span class="decimal">99</span>
-                                            <span class="subtext">Each</span>
+                                            <span class="subtext">EA</span>
                                         </div>
                                     </div>
                                 </div>
@@ -527,60 +700,13 @@ border: 3px solid #FFD600
         </div>
 
         <div class="section">
-            <h2 class="section-title">Interactive Price Builder</h2>
-            <div class="interactive-demo">
-                <div class="demo-controls">
-                    <div class="control-group">
-                        <label for="variant">Variant Style</label>
-                        <select id="variant" onchange="updateSticker()">
-                            <option value="default">Default</option>
-                            <option value="reversed">Reversed</option>
-                            <option value="alternate">Alternate</option>
-                            <option value="alternate-reversed">Alternate Reversed</option>
-                            <option value="emphasis">Emphasis</option>
-                            <option value="emphasis-reversed">Emphasis Reversed</option>
-                        </select>
-                    </div>
-                    <div class="control-group">
-                        <label for="dollars">Dollars</label>
-                        <input type="number" id="dollars" value="9" min="0" max="999" onchange="updateSticker()">
-                    </div>
-                    <div class="control-group">
-                        <label for="cents">Cents</label>
-                        <input type="number" id="cents" value="99" min="0" max="99" onchange="updateSticker()">
-                    </div>
-                    <div class="control-group">
-                        <label for="text">Text Label</label>
-                        <input type="text" id="text" value="Each" onchange="updateSticker()">
-                    </div>
-                </div>
-                <div class="demo-preview">
-                    <div id="interactive-sticker" class="price-sticker default">
-                        <div class="sticker">
-                            <div class="price-container">
-                                <div class="content">
-                                    <div class="amount">
-                                        <span class="symbol">$</span>
-                                        <span class="whole-number">9</span>
-                                        <span class="decimal">99</span>
-                                        <span class="subtext">Each</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="section">
             <h2 class="section-title">Shape Variations</h2>
             <div class="variant-grid">
                 <div class="variant-item" onclick="changeShape('circle')">
                     <div class="price-sticker default" style="width: 120px;">
                         <div class="sticker" style="border-radius: 50%;">
                             <div class="price-container">
-                                <div class="content" style="font-size: 2rem;">
+                                <div class="content">
                                     <div class="amount">
                                         <span class="symbol">$</span>
                                         <span class="whole-number">9</span>
@@ -597,7 +723,7 @@ border: 3px solid #FFD600
                     <div class="price-sticker default" style="width: 120px;">
                         <div class="sticker" style="border-radius: 16px;">
                             <div class="price-container">
-                                <div class="content" style="font-size: 2rem;">
+                                <div class="content">
                                     <div class="amount">
                                         <span class="symbol">$</span>
                                         <span class="whole-number">9</span>
@@ -614,7 +740,7 @@ border: 3px solid #FFD600
                     <div class="price-sticker default" style="width: 120px;">
                         <div class="sticker" style="border-radius: 0;">
                             <div class="price-container">
-                                <div class="content" style="font-size: 2rem;">
+                                <div class="content">
                                     <div class="amount">
                                         <span class="symbol">$</span>
                                         <span class="whole-number">9</span>
@@ -631,7 +757,7 @@ border: 3px solid #FFD600
                     <div class="price-sticker default" style="width: 160px;">
                         <div class="sticker" style="aspect-ratio: 1.6; border-radius: 8px;">
                             <div class="price-container">
-                                <div class="content" style="font-size: 2rem;">
+                                <div class="content">
                                     <div class="amount">
                                         <span class="symbol">$</span>
                                         <span class="whole-number">9</span>
@@ -679,7 +805,7 @@ border: 3px solid #FFD600
                                             <span class="symbol">$</span>
                                             <span class="whole-number">4</span>
                                             <span class="decimal">99</span>
-                                            <span class="subtext">Each</span>
+                                            <span class="subtext">EA</span>
                                         </div>
                                     </div>
                                 </div>
@@ -819,33 +945,6 @@ border: 3px solid #FFD600
     </div>
 
     <script>
-        function updateSticker() {
-            const variant = document.getElementById('variant').value;
-            const dollars = document.getElementById('dollars').value;
-            const cents = document.getElementById('cents').value;
-            const text = document.getElementById('text').value;
-
-            const sticker = document.getElementById('interactive-sticker');
-            sticker.className = `price-sticker ${variant}`;
-
-            let html = `
-                <div class="sticker">
-                    <div class="price-container">
-                        <div class="content">
-                            <div class="amount">
-                                <span class="symbol">$</span>
-                                <span class="whole-number">${dollars}</span>
-                                <span class="decimal">${cents.padStart(2, '0')}</span>
-                                ${text ? `<span class="subtext">${text}</span>` : ''}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            sticker.innerHTML = html;
-        }
-
         function changeShape(shape) {
             // Remove selected class from all variants
             document.querySelectorAll('.variant-item').forEach(item => {
@@ -883,6 +982,116 @@ border: 3px solid #FFD600
                     sticker.style.height = '125px';
                     break;
             }
+        }
+    </script>
+
+    <!-- Interactive Price Sticker Builder -->
+    <div class="section">
+        <h2 class="section-title">Interactive Price Sticker Builder</h2>
+
+        <div class="builder-container">
+            <div class="builder-grid">
+                <div class="builder-controls">
+                    <div class="builder-control-group">
+                        <label class="control-label" for="builderVariant">Variant Style</label>
+                        <select id="builderVariant" class="control-select" onchange="updateBuilderPreview()">
+                            <option value="default">Default</option>
+                            <option value="reversed">Reversed</option>
+                            <option value="alternate">Alternate</option>
+                            <option value="alternate-reversed">Alternate Reversed</option>
+                            <option value="emphasis">Emphasis</option>
+                            <option value="emphasis-reversed">Emphasis Reversed</option>
+                        </select>
+                    </div>
+
+                    <div class="builder-control-group">
+                        <label class="control-label" for="builderShape">Shape Variation</label>
+                        <select id="builderShape" class="control-select" onchange="updateBuilderPreview()">
+                            <option value="circle">Circle</option>
+                            <option value="square">Square</option>
+                            <option value="rounded-square">Rounded Square</option>
+                            <option value="rectangle">Rectangle</option>
+                            <option value="pill">Pill</option>
+                        </select>
+                    </div>
+
+                    <div class="builder-control-group">
+                        <label class="control-label" for="builderSize">Size</label>
+                        <select id="builderSize" class="control-select" onchange="updateBuilderPreview()">
+                            <option value="small">Small (48px)</option>
+                            <option value="medium">Medium (64px)</option>
+                            <option value="large">Large (96px)</option>
+                            <option value="xlarge">X-Large (128px)</option>
+                            <option value="xxlarge" selected>XX-Large (192px)</option>
+                        </select>
+                    </div>
+
+                    <div class="builder-control-group">
+                        <label class="control-label" for="builderDollars">Dollars</label>
+                        <input type="number" id="builderDollars" class="control-input" value="9" min="0" max="999" oninput="updateBuilderPreview()">
+                    </div>
+
+                    <div class="builder-control-group">
+                        <label class="control-label" for="builderCents">Cents</label>
+                        <input type="number" id="builderCents" class="control-input" value="99" min="0" max="99" oninput="updateBuilderPreview()">
+                    </div>
+
+                    <div class="builder-control-group">
+                        <label class="control-label" for="builderUnit">Text Label</label>
+                        <input type="text" id="builderUnit" class="control-input" value="EA" placeholder="EA, lb, pk, etc." oninput="updateBuilderPreview()">
+                    </div>
+                </div>
+
+                <div class="builder-preview">
+                    <div id="liveSticker" class="price-sticker default size-xxlarge">
+                        <div class="sticker">
+                            <div class="price-container">
+                                <div class="content">
+                                    <div class="amount">
+                                        <span class="symbol">$</span>
+                                        <span class="whole-number">9</span>
+                                        <span class="decimal">99</span>
+                                        <span class="subtext">EA</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateBuilderPreview() {
+            const sticker = document.getElementById('liveSticker');
+            const variant = document.getElementById('builderVariant').value;
+            const shape = document.getElementById('builderShape').value;
+            const size = document.getElementById('builderSize').value;
+            const dollars = document.getElementById('builderDollars').value;
+            const cents = document.getElementById('builderCents').value;
+            const unit = document.getElementById('builderUnit').value;
+
+            // Update class with variant, shape, and size
+            sticker.className = `price-sticker ${variant} shape-${shape} size-${size}`;
+
+            // Build HTML with proper grid structure
+            let html = `
+                <div class="sticker">
+                    <div class="price-container">
+                        <div class="content">
+                            <div class="amount">
+                                <span class="symbol">$</span>
+                                <span class="whole-number">${dollars}</span>
+                                <span class="decimal">${cents.padStart(2, '0')}</span>
+                                ${unit ? `<span class="subtext">${unit}</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            sticker.innerHTML = html;
         }
     </script>
 </body>

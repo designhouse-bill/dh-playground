@@ -176,6 +176,9 @@
             overflow: hidden;
             box-shadow: var(--shadow);
             transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
         }
 
         .theme-card:hover {
@@ -193,6 +196,7 @@
         }
 
         .theme-header-bar {
+            background: linear-gradient(135deg, #6e6e6e 0%, #171717 100%);
             height: 50px;
             border-radius: 6px;
             display: flex;
@@ -255,6 +259,20 @@
             color: var(--primary);
         }
 
+        .theme-url {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.75rem;
+            color: var(--primary);
+            margin-top: 0.5rem;
+            text-decoration: none;
+        }
+
+        .theme-url:hover {
+            text-decoration: underline;
+        }
+
         @media (max-width: 768px) {
             .theme-grid {
                 grid-template-columns: 1fr;
@@ -268,10 +286,9 @@
         <div class="nav-content">
             <a href="index.html" class="back-link">← Style Guide Home</a>
             <ul class="nav-links">
-                <li><a href="colors-fonts.html">Colors & Fonts</a></li>
                 <li><a href="price-stickers.html">Price Stickers</a></li>
                 <li><a href="deal-types.html">Deal Types</a></li>
-                <li><a href="components.html">Components</a></li>
+                <li><a href="colors-fonts.html">Colors</a></li>
                 <li><a href="themes.html">Themes</a></li>
             </ul>
         </div>
@@ -329,56 +346,59 @@
                 </div>
             </div>
 
-            <!-- Gelsons -->
-            <div class="theme-card" data-type="custom special">
-                <div class="theme-preview" style="background: linear-gradient(135deg, #2C3E50 0%, #4CA1AF 100%);">
-                    <div class="theme-header-bar" style="background: #D82027; font-family: serif;">GELSON'S</div>
-                    <div class="theme-price-sticker" style="background: #D82027; color: #FFCF16; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
+            <!-- Ace Hardware (Turneys) -->
+            <a href="https://turneys.ideal.sale/" target="_blank" class="theme-card" data-type="custom">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #C41E3A 0%, #8B1538 100%);">
+                    <div class="theme-header-bar" style="background: #C41E3A; font-family: 'Roboto Slab', serif;">ACE HARDWARE</div>
+                    <div class="theme-price-sticker" style="background: #ed2024; color: white; border-color: white; border-radius: 0; aspect-ratio: 1.5; transform: rotate(-5deg);">$9<sup style="font-size: 1rem;">99</sup></div>
                 </div>
                 <div class="theme-info">
-                    <div class="theme-name">Gelsons</div>
-                    <div class="theme-details">Premium market theme with Apex Serif font, seasonal menu items</div>
+                    <div class="theme-name">Ace Hardware (Turneys)</div>
+                    <div class="theme-details">Roboto Slab font, horizontal-angle stickers, angled pricing</div>
                     <div class="theme-tags">
-                        <div class="theme-tag special">Seasonal Menu</div>
-                        <div class="theme-tag special">Custom Font</div>
+                        <div class="theme-tag">Hardware</div>
+                        <div class="theme-tag">Horizontal-Angle</div>
                     </div>
+                    <div class="theme-url">→ turneys.ideal.sale</div>
                 </div>
-            </div>
+            </a>
 
             <!-- Northgate -->
-            <div class="theme-card" data-type="custom special">
+            <a href="https://northgate.ideal.sale/" target="_blank" class="theme-card" data-type="custom special">
                 <div class="theme-preview" style="background: linear-gradient(135deg, #F39C12 0%, #E74C3C 100%);">
                     <div class="theme-header-bar" style="background: #E74C3C; font-family: 'Impact', sans-serif;">NORTHGATE</div>
                     <div class="theme-price-sticker" style="background: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22><rect fill=%22%23F39C12%22 width=%22100%22 height=%22100%22/></svg>'); color: white; border-color: white; aspect-ratio: 2.5; border-radius: 20%;">2/$10</div>
                 </div>
                 <div class="theme-info">
                     <div class="theme-name">Northgate / Northgate Mercado</div>
-                    <div class="theme-details">Unique texture stickers (paint/wood), 15 color variants, dual language</div>
+                    <div class="theme-details">Unique texture stickers (paint/wood), 15 color variants, dual language, GothamBlack font</div>
                     <div class="theme-tags">
                         <div class="theme-tag special">Texture Stickers</div>
                         <div class="theme-tag special">Dual Language</div>
                     </div>
+                    <div class="theme-url">→ northgate.ideal.sale</div>
                 </div>
-            </div>
+            </a>
 
-            <!-- Festival Foods -->
-            <div class="theme-card" data-type="custom special">
-                <div class="theme-preview" style="background: linear-gradient(135deg, #8E44AD 0%, #3498DB 100%);">
-                    <div class="theme-header-bar" style="background: #3a823d; font-family: 'Impact', sans-serif;">FESTIVAL FOODS</div>
-                    <div class="theme-price-sticker" style="background: #3a823d; color: white; border-color: white; aspect-ratio: 1.5; border-radius: 10px 0;">$9<sup style="font-size: 1rem;">99</sup></div>
+            <!-- Colts -->
+            <a href="https://colts.ideal.sale/" target="_blank" class="theme-card" data-type="css">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #002C5F 0%, #003D82 100%);">
+                    <div class="theme-header-bar" style="background-image: url('https://example.com/colts-bg.jpg'); background-size: cover;">COLTS</div>
+                    <div class="theme-price-sticker" style="background: #002C5F; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
                 </div>
                 <div class="theme-info">
-                    <div class="theme-name">Festival Foods</div>
-                    <div class="theme-details">Custom Flyer font, kiosk footer, coupon CSS variables, horizontal price tags</div>
+                    <div class="theme-name">Colts</div>
+                    <div class="theme-details">CSS only theme with background image header</div>
                     <div class="theme-tags">
-                        <div class="theme-tag special">Custom Font</div>
-                        <div class="theme-tag special">Kiosk Footer</div>
+                        <div class="theme-tag">CSS Only</div>
+                        <div class="theme-tag">BG Image</div>
                     </div>
+                    <div class="theme-url">→ colts.ideal.sale</div>
                 </div>
-            </div>
+            </a>
 
             <!-- Weis Markets -->
-            <div class="theme-card" data-type="custom special">
+            <a href="https://weismarkets.ideal.sale/" target="_blank" class="theme-card" data-type="custom special">
                 <div class="theme-preview" style="background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%);">
                     <div class="theme-header-bar" style="background: #1E3A8A; font-family: 'Noto Sans', sans-serif;">WEIS MARKETS</div>
                     <div class="theme-price-sticker" style="background: #1E3A8A; color: white; border-color: white; border-radius: 8px; aspect-ratio: 1.5;">$9<sup style="font-size: 1rem;">99</sup></div>
@@ -390,195 +410,280 @@
                         <div class="theme-tag special">Modular Header</div>
                         <div class="theme-tag">Simple Pricing</div>
                     </div>
+                    <div class="theme-url">→ weismarkets.ideal.sale</div>
                 </div>
-            </div>
+            </a>
 
-            <!-- Dollar General -->
-            <div class="theme-card" data-type="custom">
-                <div class="theme-preview" style="background: linear-gradient(135deg, #FED500 0%, #FDB913 100%);">
-                    <div class="theme-header-bar" style="background: #1D1D1D; font-family: 'Montserrat', sans-serif;">DOLLAR GENERAL</div>
-                    <div class="theme-price-sticker" style="background: #FED500; color: #1D1D1D; border-color: #1D1D1D; border-radius: 5%;">$9<sup style="font-size: 1rem;">99</sup></div>
+            <!-- Crops Marketplace -->
+            <a href="https://cropsmarketplace.ideal.sale/" target="_blank" class="theme-card" data-type="css">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #f20000 0%, #c00 100%);">
+                    <div class="theme-header-bar" style="background-image: url('https://example.com/crops-bg.jpg'); background-size: cover;">CROPS MARKETPLACE</div>
+                    <div class="theme-price-sticker" style="background: #f20000; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
                 </div>
                 <div class="theme-info">
-                    <div class="theme-name">Dollar General</div>
-                    <div class="theme-details">Montserrat font, 5% rounded corners, medium shadow</div>
+                    <div class="theme-name">Crops Marketplace</div>
+                    <div class="theme-details">IGA brand adjacent, Oswald font, circle opaque stroke stickers, BG image header</div>
                     <div class="theme-tags">
-                        <div class="theme-tag">Discount Retailer</div>
+                        <div class="theme-tag">IGA</div>
+                        <div class="theme-tag">CSS Only</div>
                     </div>
+                    <div class="theme-url">→ cropsmarketplace.ideal.sale</div>
                 </div>
-            </div>
+            </a>
 
-            <!-- Ace Hardware -->
-            <div class="theme-card" data-type="custom">
-                <div class="theme-preview" style="background: linear-gradient(135deg, #C41E3A 0%, #8B1538 100%);">
-                    <div class="theme-header-bar" style="background: #C41E3A; font-family: 'Roboto Slab', serif;">ACE HARDWARE</div>
-                    <div class="theme-price-sticker" style="background: #C41E3A; color: white; border-color: white; border-radius: 0; aspect-ratio: 1.5;">$9<sup style="font-size: 1rem;">99</sup></div>
+            <!-- Foodtown -->
+            <a href="https://foodtown.ideal.sale/" target="_blank" class="theme-card" data-type="css">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #f20000 0%, #c00 100%);">
+                    <div class="theme-header-bar" style="background-image: url('https://example.com/foodtown-bg.jpg'); background-size: cover;">FOODTOWN</div>
+                    <div class="theme-price-sticker" style="background: #f20000; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
                 </div>
                 <div class="theme-info">
-                    <div class="theme-name">Ace Hardware</div>
-                    <div class="theme-details">Roboto Slab font, rectangular stickers (3:2), horizontal pricing</div>
+                    <div class="theme-name">Foodtown</div>
+                    <div class="theme-details">Allegiance brand, Oswald font, circle stickers, BG image header</div>
                     <div class="theme-tags">
-                        <div class="theme-tag">Hardware</div>
-                        <div class="theme-tag">Rectangular</div>
+                        <div class="theme-tag">CSS Only</div>
+                        <div class="theme-tag">BG Image</div>
                     </div>
+                    <div class="theme-url">→ foodtown.ideal.sale</div>
                 </div>
-            </div>
+            </a>
 
             <!-- Wakefern ShopRite -->
-            <div class="theme-card" data-type="custom special">
+            <a href="https://shoprite.ideal.sale/" target="_blank" class="theme-card" data-type="custom special">
                 <div class="theme-preview" style="background: linear-gradient(135deg, #E31837 0%, #C1272D 100%);">
                     <div class="theme-header-bar" style="background: #E31837; font-family: 'Georgia', serif;">SHOPRITE</div>
-                    <div class="theme-price-sticker" style="background: #E31837; color: white; border-color: white; border-radius: 8px;">$9<sup style="font-size: 1rem;">99</sup></div>
+                    <div class="theme-price-sticker" style="background: #f42836; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
                 </div>
                 <div class="theme-info">
                     <div class="theme-name">Wakefern ShopRite</div>
-                    <div class="theme-details">Publico font, custom category header with flex layout, 3px red border</div>
+                    <div class="theme-details">Wakefern brand, Oswald font, custom category header, opaque/solid circle stickers</div>
                     <div class="theme-tags">
                         <div class="theme-tag special">Custom Category Header</div>
+                        <div class="theme-tag">Wakefern</div>
                     </div>
+                    <div class="theme-url">→ shoprite.ideal.sale</div>
                 </div>
-            </div>
+            </a>
 
-            <!-- ACI Albertsons -->
-            <div class="theme-card" data-type="custom">
+            <!-- PriceRite -->
+            <a href="https://priceritemarketplace.ideal.sale/" target="_blank" class="theme-card" data-type="custom">
                 <div class="theme-preview" style="background: linear-gradient(135deg, #0066B2 0%, #004E8F 100%);">
-                    <div class="theme-header-bar" style="background: #0066B2;">ALBERTSONS</div>
+                    <div class="theme-header-bar" style="background: #0066B2;">PRICERITE</div>
                     <div class="theme-price-sticker" style="background: #0066B2; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
                 </div>
                 <div class="theme-info">
-                    <div class="theme-name">ACI Albertsons</div>
-                    <div class="theme-details">National grocery chain theme with custom components</div>
+                    <div class="theme-name">PriceRite Marketplace</div>
+                    <div class="theme-details">Wakefern brand with custom components</div>
                     <div class="theme-tags">
-                        <div class="theme-tag">Grocery</div>
-                        <div class="theme-tag">National Chain</div>
+                        <div class="theme-tag">Wakefern</div>
+                        <div class="theme-tag">Custom</div>
                     </div>
+                    <div class="theme-url">→ priceritemarketplace.ideal.sale</div>
                 </div>
-            </div>
+            </a>
 
-            <!-- ACI Safeway -->
-            <div class="theme-card" data-type="custom">
-                <div class="theme-preview" style="background: linear-gradient(135deg, #E31837 0%, #C1272D 100%);">
-                    <div class="theme-header-bar" style="background: #E31837;">SAFEWAY</div>
-                    <div class="theme-price-sticker" style="background: #E31837; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
+            <!-- Fairway Market -->
+            <a href="https://fairwaymarket.ideal.sale/" target="_blank" class="theme-card" data-type="custom">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #d97e3f 0%, #b86430 100%);">
+                    <div class="theme-header-bar" style="background: #d97e3f;">FAIRWAY MARKET</div>
+                    <div class="theme-price-sticker" style="background: rgba(217,126,63,0.9); color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
                 </div>
                 <div class="theme-info">
-                    <div class="theme-name">ACI Safeway</div>
-                    <div class="theme-details">National grocery chain theme with custom components</div>
+                    <div class="theme-name">Fairway Market</div>
+                    <div class="theme-details">Wakefern brand, Oswald font, transparent/alpha circle stickers</div>
                     <div class="theme-tags">
-                        <div class="theme-tag">Grocery</div>
-                        <div class="theme-tag">National Chain</div>
+                        <div class="theme-tag">Wakefern</div>
+                        <div class="theme-tag">Transparent</div>
                     </div>
+                    <div class="theme-url">→ fairwaymarket.ideal.sale</div>
                 </div>
-            </div>
+            </a>
 
-            <!-- Costco -->
-            <div class="theme-card" data-type="custom">
-                <div class="theme-preview" style="background: linear-gradient(135deg, #0066B2 0%, #004E8F 100%);">
-                    <div class="theme-header-bar" style="background: #E31837;">COSTCO</div>
-                    <div class="theme-price-sticker" style="background: #E31837; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
+            <!-- Golden Pantry -->
+            <a href="https://goldenpantry.ideal.sale/" target="_blank" class="theme-card" data-type="css">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);">
+                    <div class="theme-header-bar" style="background: #4caf50;">GOLDEN PANTRY</div>
+                    <div class="theme-price-sticker" style="background: #4caf50; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
                 </div>
                 <div class="theme-info">
-                    <div class="theme-name">Costco</div>
-                    <div class="theme-details">Warehouse club theme with custom components</div>
+                    <div class="theme-name">Golden Pantry</div>
+                    <div class="theme-details">CSS only, Oswald font, circle opaque stroke, BG color header</div>
                     <div class="theme-tags">
-                        <div class="theme-tag">Warehouse</div>
-                        <div class="theme-tag">Membership</div>
+                        <div class="theme-tag">CSS Only</div>
+                        <div class="theme-tag">Green Theme</div>
                     </div>
+                    <div class="theme-url">→ goldenpantry.ideal.sale</div>
                 </div>
-            </div>
+            </a>
 
-            <!-- Winn-Dixie -->
-            <div class="theme-card" data-type="custom">
-                <div class="theme-preview" style="background: linear-gradient(135deg, #E31837 0%, #C1272D 100%);">
-                    <div class="theme-header-bar" style="background: #E31837;">WINN-DIXIE</div>
-                    <div class="theme-price-sticker" style="background: #E31837; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
+            <!-- Geisslers -->
+            <a href="https://geisslers.ideal.sale/" target="_blank" class="theme-card" data-type="css">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #f20000 0%, #c00 100%);">
+                    <div class="theme-header-bar" style="background-image: url('https://example.com/geisslers-bg.jpg'); background-size: cover;">GEISSLERS</div>
+                    <div class="theme-price-sticker" style="background: #f20000; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
                 </div>
                 <div class="theme-info">
-                    <div class="theme-name">Winn-Dixie</div>
-                    <div class="theme-details">Regional grocery chain theme</div>
+                    <div class="theme-name">Geisslers</div>
+                    <div class="theme-details">IGA brand, Oswald font, opaque/solid circle stickers, BG image header</div>
                     <div class="theme-tags">
-                        <div class="theme-tag">Grocery</div>
-                        <div class="theme-tag">Regional</div>
+                        <div class="theme-tag">IGA</div>
+                        <div class="theme-tag">CSS Only</div>
                     </div>
+                    <div class="theme-url">→ geisslers.ideal.sale</div>
                 </div>
-            </div>
+            </a>
 
             <!-- Family Dollar -->
-            <div class="theme-card" data-type="custom">
+            <a href="https://familydollar.ideal.sale/" target="_blank" class="theme-card" data-type="custom">
                 <div class="theme-preview" style="background: linear-gradient(135deg, #FDB913 0%, #FED500 100%);">
-                    <div class="theme-header-bar" style="background: #1D1D1D;">FAMILY DOLLAR</div>
-                    <div class="theme-price-sticker" style="background: #FED500; color: #1D1D1D; border-color: #1D1D1D;">$9<sup style="font-size: 1rem;">99</sup></div>
+                    <div class="theme-header-bar" style="background: #0a255a; font-family: 'Impact', sans-serif;">FAMILY DOLLAR</div>
+                    <div class="theme-price-sticker" style="background: #0a255a; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
                 </div>
                 <div class="theme-info">
                     <div class="theme-name">Family Dollar</div>
-                    <div class="theme-details">Discount retailer theme</div>
+                    <div class="theme-details">Discount retailer, Agenda font, opaque/solid circle stickers, custom header</div>
                     <div class="theme-tags">
                         <div class="theme-tag">Discount</div>
+                        <div class="theme-tag">Custom</div>
                     </div>
+                    <div class="theme-url">→ familydollar.ideal.sale</div>
                 </div>
-            </div>
+            </a>
 
             <!-- Coborns -->
-            <div class="theme-card" data-type="custom">
-                <div class="theme-preview" style="background: linear-gradient(135deg, #006747 0%, #004D35 100%);">
-                    <div class="theme-header-bar" style="background: #006747;">COBORNS</div>
-                    <div class="theme-price-sticker" style="background: #006747; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
+            <a href="https://coborns.ideal.sale/" target="_blank" class="theme-card" data-type="custom">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #e63136 0%, #c1272d 100%);">
+                    <div class="theme-header-bar" style="background: #e63136;">COBORNS</div>
+                    <div class="theme-price-sticker" style="background: rgba(230,49,54,0.9); color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
                 </div>
                 <div class="theme-info">
                     <div class="theme-name">Coborns</div>
-                    <div class="theme-details">Regional grocery chain with multiple banner themes (Cashwise, Hornbachers)</div>
+                    <div class="theme-details">Coborns Inc, Oswald font, transparent/alpha stickers, custom header (Cashwise, Hornbachers, Marketplace)</div>
                     <div class="theme-tags">
                         <div class="theme-tag">Multi-Banner</div>
+                        <div class="theme-tag">Custom</div>
                     </div>
+                    <div class="theme-url">→ coborns.ideal.sale</div>
                 </div>
-            </div>
+            </a>
 
             <!-- IGA Default -->
-            <div class="theme-card" data-type="custom">
+            <a href="https://iga.ideal.sale/" target="_blank" class="theme-card" data-type="custom">
                 <div class="theme-preview" style="background: linear-gradient(135deg, #E31837 0%, #C1272D 100%);">
                     <div class="theme-header-bar" style="background: #E31837;">IGA</div>
                     <div class="theme-price-sticker" style="background: #E31837; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
                 </div>
                 <div class="theme-info">
                     <div class="theme-name">IGA Default</div>
-                    <div class="theme-details">Independent grocers alliance theme</div>
+                    <div class="theme-details">Independent grocers alliance theme (Old Fair Value, United Markets, Valley Fresh, Geisslers, etc.)</div>
                     <div class="theme-tags">
                         <div class="theme-tag">Independent</div>
+                        <div class="theme-tag">Multi-Banner</div>
                     </div>
+                    <div class="theme-url">→ iga.ideal.sale</div>
                 </div>
-            </div>
+            </a>
 
-            <!-- UNFI Default -->
-            <div class="theme-card" data-type="custom">
+            <!-- Dave's Marketplace -->
+            <a href="https://davesmarketplace.ideal.sale/" target="_blank" class="theme-card" data-type="custom">
                 <div class="theme-preview" style="background: linear-gradient(135deg, #0066B2 0%, #004E8F 100%);">
-                    <div class="theme-header-bar" style="background: #0066B2;">UNFI</div>
+                    <div class="theme-header-bar" style="background: #0066B2;">DAVE'S</div>
                     <div class="theme-price-sticker" style="background: #0066B2; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
                 </div>
                 <div class="theme-info">
-                    <div class="theme-name">UNFI Default</div>
-                    <div class="theme-details">Multi-banner distributor theme (Major Market, Metcalfes, My County Market, Stumps)</div>
+                    <div class="theme-name">Dave's Marketplace</div>
+                    <div class="theme-details">UNFI brand with custom components</div>
                     <div class="theme-tags">
-                        <div class="theme-tag">Distributor</div>
-                        <div class="theme-tag">Multi-Banner</div>
+                        <div class="theme-tag">UNFI</div>
+                        <div class="theme-tag">Custom</div>
                     </div>
+                    <div class="theme-url">→ davesmarketplace.ideal.sale</div>
                 </div>
-            </div>
+            </a>
 
-            <!-- CSS Only Themes -->
-            <div class="theme-card" data-type="css">
-                <div class="theme-preview" style="background: linear-gradient(135deg, #313131 0%, #000000 100%);">
-                    <div class="theme-header-bar" style="background: rgba(255,255,255,0.2);">CSS ONLY THEMES</div>
-                    <div class="theme-price-sticker" style="background: white; color: #313131; border-color: #313131;">$9<sup style="font-size: 1rem;">99</sup></div>
+            <!-- More CSS Themes -->
+            <a href="https://greenwaymarkets.ideal.sale/" target="_blank" class="theme-card" data-type="css">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #71a140 0%, #5a8033 100%);">
+                    <div class="theme-header-bar" style="background: #71a140;">GREENWAY MARKETS</div>
+                    <div class="theme-price-sticker" style="background: #71a140; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
                 </div>
                 <div class="theme-info">
-                    <div class="theme-name">CSS Only Themes (19 Total)</div>
-                    <div class="theme-details">Token overrides only: Colts, Crops Marketplace, Daves Markets, Foodtown, Geisslers, Golden Pantry, Greenway Market, Harvest Fare, Hollister, Johnsons, Kesslers, Lambs, Lucky's Markets Ohio, Pickrite, United Markets, Valley Fresh</div>
+                    <div class="theme-name">Greenway Markets</div>
+                    <div class="theme-details">Allegiance brand, CSS only, Oswald font, opaque stroke stickers</div>
                     <div class="theme-tags">
-                        <div class="theme-tag">Token Overrides</div>
-                        <div class="theme-tag">No Custom Components</div>
+                        <div class="theme-tag">CSS Only</div>
                     </div>
+                    <div class="theme-url">→ greenwaymarkets.ideal.sale</div>
                 </div>
-            </div>
+            </a>
+
+            <!-- Hollister Super -->
+            <a href="https://hollistersuper.ideal.sale/" target="_blank" class="theme-card" data-type="css">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #f47f5e 0%, #c66449 100%);">
+                    <div class="theme-header-bar" style="background: #f47f5e;">HOLLISTER SUPER</div>
+                    <div class="theme-price-sticker" style="background: #f47f5e; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
+                </div>
+                <div class="theme-info">
+                    <div class="theme-name">Hollister Super</div>
+                    <div class="theme-details">IGA brand, CSS only, Oswald font, opaque stroke stickers</div>
+                    <div class="theme-tags">
+                        <div class="theme-tag">IGA</div>
+                        <div class="theme-tag">CSS Only</div>
+                    </div>
+                    <div class="theme-url">→ hollistersuper.ideal.sale</div>
+                </div>
+            </a>
+
+            <!-- Kesslers -->
+            <a href="https://kesslersgrocery.ideal.sale/" target="_blank" class="theme-card" data-type="css">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #782f40 0%, #5a2330 100%);">
+                    <div class="theme-header-bar" style="background-image: url('https://example.com/kesslers-bg.jpg'); background-size: cover;">KESSLERS</div>
+                    <div class="theme-price-sticker" style="background: #782f40; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
+                </div>
+                <div class="theme-info">
+                    <div class="theme-name">Kesslers Grocery</div>
+                    <div class="theme-details">CSS only, Oswald font, opaque stroke stickers, BG image header</div>
+                    <div class="theme-tags">
+                        <div class="theme-tag">CSS Only</div>
+                        <div class="theme-tag">BG Image</div>
+                    </div>
+                    <div class="theme-url">→ kesslersgrocery.ideal.sale</div>
+                </div>
+            </a>
+
+            <!-- United Markets -->
+            <a href="https://unitedmarkets.ideal.sale/" target="_blank" class="theme-card" data-type="css">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #ffc 0%, #dda 100%);">
+                    <div class="theme-header-bar" style="background: #fc0;">UNITED MARKETS</div>
+                    <div class="theme-price-sticker" style="background: #fc0; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
+                </div>
+                <div class="theme-info">
+                    <div class="theme-name">United Markets</div>
+                    <div class="theme-details">IGA brand, CSS only, Oswald font, yellow/white stickers, BG color header</div>
+                    <div class="theme-tags">
+                        <div class="theme-tag">IGA</div>
+                        <div class="theme-tag">CSS Only</div>
+                    </div>
+                    <div class="theme-url">→ unitedmarkets.ideal.sale</div>
+                </div>
+            </a>
+
+            <!-- Valley Fresh -->
+            <a href="https://valleyfresh.ideal.sale/" target="_blank" class="theme-card" data-type="css">
+                <div class="theme-preview" style="background: #edede6;">
+                    <div class="theme-header-bar" style="background: #fc0;">VALLEY FRESH</div>
+                    <div class="theme-price-sticker" style="background: #fc0; color: white; border-color: white;">$9<sup style="font-size: 1rem;">99</sup></div>
+                </div>
+                <div class="theme-info">
+                    <div class="theme-name">Valley Fresh</div>
+                    <div class="theme-details">IGA brand, CSS only with BG color #edede6, yellow stickers, BG color header</div>
+                    <div class="theme-tags">
+                        <div class="theme-tag">IGA</div>
+                        <div class="theme-tag">CSS Only</div>
+                    </div>
+                    <div class="theme-url">→ valleyfresh.ideal.sale</div>
+                </div>
+            </a>
 
             <!-- MDI Galaxy -->
             <div class="theme-card" data-type="custom">

@@ -3,24 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Analytics Dashboard - v6 Production</title>
+  <title>Analytics Dashboard - Stand-alone Version</title>
 
   <!-- Design Tokens & Base Styles -->
-  <link rel="stylesheet" href="./shared/design-tokens.css">
-  <link rel="stylesheet" href="./shared/base.css">
+  <link rel="stylesheet" href="./styles/design-tokens.css">
+  <link rel="stylesheet" href="./styles/base.css">
 
   <!-- Google Material Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 
-  <!-- v6 Production Styles -->
-  <link rel="stylesheet" href="styles.css">
+  <!-- Main Application Styles -->
+  <link rel="stylesheet" href="./styles/main.css">
 </head>
 <body>
   <div class="app">
 
     <!-- ========================================
-         VARIATION 1 HEADER: Inline Filters
-         Foundation context + integrated filter chips
+         HEADER: Inline Filters
          ======================================== -->
     <header class="header">
 
@@ -139,7 +138,6 @@
 
     <!-- ========================================
          VIEW BY: CATEGORIES - Two-Column Layout
-         Left: Category Data Grid | Right: Category Details
          ======================================== -->
     <main class="layout layout--categories" id="categories-layout">
 
@@ -171,7 +169,6 @@
 
     <!-- ========================================
          VIEW BY: PROMOTIONS - Three-Column Layout
-         Left: Categories | Center: Promotions | Right: Detail
          ======================================== -->
     <main class="layout layout--promotions" id="promotions-layout" style="display: none;">
 
@@ -208,7 +205,7 @@
         </div>
       </section>
 
-      <!-- Right Panel: Detail View (Hidden until selection) -->
+      <!-- Right Panel: Detail View -->
       <aside class="panel panel--right panel--collapsed" id="detail-panel" role="complementary" aria-label="Promotion details">
         <div class="panel-header">
           <h2 class="panel-title">Details</h2>
@@ -225,7 +222,6 @@
 
     <!-- ========================================
          MODE: GRID - Full Width Data Grid
-         Deep Inquiry Mode - No side panels
          ======================================== -->
     <main class="layout layout--grid" id="grid-layout" style="display: none;">
 
@@ -260,7 +256,7 @@
           </div>
         </div>
 
-        <!-- Grid Table Wrapper (horizontal scroll) -->
+        <!-- Grid Table Wrapper -->
         <div class="grid-table-wrapper" id="grid-table-wrapper">
           <table class="grid-table" id="grid-data-table">
             <thead id="grid-table-head">
@@ -330,13 +326,10 @@
 
         <!-- By Week Content -->
         <div class="date-tab-content active" id="week-tab-content">
-          <!-- Search -->
           <div class="week-search">
             <span class="material-symbols-outlined">search</span>
             <input type="text" id="week-search-input" placeholder="Search weeks..." oninput="filterWeeks(this.value)">
           </div>
-
-          <!-- Week List -->
           <div class="week-list" id="week-list">
             <!-- Populated by JavaScript -->
           </div>
@@ -390,13 +383,10 @@
 
         <!-- Nodes Tab Content -->
         <div class="entity-tab-content active" id="nodes-tab-content">
-          <!-- Search -->
           <div class="entity-search" style="margin: var(--space-4) var(--space-6);">
             <span class="material-symbols-outlined">search</span>
             <input type="text" id="entity-search-input" placeholder="Search entities..." oninput="filterEntities(this.value)">
           </div>
-
-          <!-- Tree Table -->
           <div class="tree-table-container">
             <table class="tree-table">
               <thead>
@@ -417,18 +407,13 @@
 
         <!-- Groups Tab Content -->
         <div class="entity-tab-content" id="groups-tab-content">
-          <!-- Search -->
           <div class="entity-search" style="margin: var(--space-4) var(--space-6);">
             <span class="material-symbols-outlined">search</span>
             <input type="text" id="group-search-input" placeholder="Search groups..." oninput="filterGroups(this.value)">
           </div>
-
-          <!-- Groups List -->
           <div class="group-list" id="group-list" style="padding: 0 var(--space-6);">
             <!-- Populated by JavaScript -->
           </div>
-
-          <!-- Create New Group Button -->
           <div class="group-actions" style="padding: var(--space-4) var(--space-6);">
             <button class="create-group-btn" onclick="openCreateGroupModal()">
               <span class="material-symbols-outlined">add</span>
@@ -500,11 +485,26 @@
     </div>
   </div>
 
-  <!-- Scripts -->
-  <script src="./shared/promotion-records-data.js"></script>
-  <script src="./shared/mock-data.js"></script>
-  <script src="cache-manager.js"></script>
-  <script src="data-service.js"></script>
-  <script src="app.js"></script>
+  <!-- ========================================
+       SCRIPTS - Load in correct order
+       ======================================== -->
+
+  <!-- Utilities (no dependencies) -->
+  <script src="./utils/event-bus.js"></script>
+  <script src="./utils/formatters.js"></script>
+  <script src="./utils/dom-helpers.js"></script>
+
+  <!-- Data (no dependencies) -->
+  <script src="./data/promotion-records.js"></script>
+  <script src="./data/mock-data.js"></script>
+
+  <!-- Services (depend on utilities) -->
+  <script src="./services/cache-manager.js"></script>
+  <script src="./services/data-service.js"></script>
+  <script src="./services/state-manager.js"></script>
+
+  <!-- Main Application (depends on all above) -->
+  <script src="./app.js"></script>
+
 </body>
 </html>

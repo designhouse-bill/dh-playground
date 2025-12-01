@@ -1,0 +1,3559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Header Variations - Context Bar Concepts</title>
+  <link rel="stylesheet" href="../shared/design-tokens.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--color-gray-100);
+      padding: var(--space-6);
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: var(--space-8);
+    }
+
+    .page-header h1 {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-2);
+    }
+
+    .page-header p {
+      font-size: var(--font-size-md);
+      color: var(--color-text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .variation {
+      background-color: var(--color-surface);
+      border-radius: var(--radius-xl);
+      margin-bottom: var(--space-8);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .variation__label {
+      padding: var(--space-3) var(--space-4);
+      background-color: var(--color-gray-900);
+      color: white;
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .variation__desc {
+      font-weight: var(--font-weight-normal);
+      color: var(--color-gray-400);
+    }
+
+    .content-placeholder {
+      padding: var(--space-8);
+      background-color: var(--color-gray-50);
+      text-align: center;
+      color: var(--color-text-tertiary);
+      font-size: var(--font-size-sm);
+      border-top: 1px dashed var(--color-border);
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: var(--space-6);
+      color: var(--color-primary-600);
+      text-decoration: none;
+      font-size: var(--font-size-sm);
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    /* =====================================================
+       VARIATION 1: Horizontal Cards with Inline Filters
+       Filters appear as additional chips within context row
+       ===================================================== */
+    .v1-header {
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .v1-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-4) var(--space-5);
+    }
+
+    .v1-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .v1-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-700));
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .v1-title {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary);
+    }
+
+    .v1-actions {
+      display: flex;
+      gap: var(--space-1);
+    }
+
+    .v1-action-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      background: none;
+      border: none;
+      cursor: pointer;
+      border-radius: var(--radius-md);
+    }
+
+    .v1-action-btn:hover {
+      background-color: var(--color-gray-100);
+    }
+
+    /* Context Row with Integrated Filters */
+    .v1-context-row {
+      display: flex;
+      align-items: stretch;
+      gap: var(--space-3);
+      padding: var(--space-4) var(--space-5);
+      background: linear-gradient(180deg, var(--color-gray-50), var(--color-surface));
+    }
+
+    .v1-context-card {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      padding: var(--space-4);
+      background-color: var(--color-surface);
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      width: 30%;
+      min-width: 200px;
+      flex-shrink: 0;
+    }
+
+    .v1-context-card--date {
+      width: 30%;
+    }
+
+    .v1-card-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .v1-context-card:hover {
+      border-color: var(--color-primary-400);
+      box-shadow: var(--shadow-md);
+    }
+
+    .v1-card-icon {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--color-primary-100);
+      color: var(--color-primary-600);
+      border-radius: var(--radius-lg);
+    }
+
+    .v1-card-icon--entity {
+      background-color: var(--color-success-100);
+      color: var(--color-success-600);
+    }
+
+    .v1-card-content {
+      flex: 1;
+      text-align: left;
+    }
+
+    .v1-card-label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      text-align: left;
+    }
+
+    .v1-card-value {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary);
+      line-height: 1.2;
+    }
+
+    .v1-card-sub {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+    }
+
+    .v1-card-breadcrumb {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-secondary);
+      letter-spacing: 0.02em;
+    }
+
+    .v1-card-arrow {
+      color: var(--color-text-tertiary);
+    }
+
+    /* Inline Filter Chips - Same Level as Context */
+    .v1-filter-separator {
+      width: 1px;
+      height: 48px;
+      background-color: var(--color-border);
+      margin: 0 var(--space-2);
+      align-self: center;
+    }
+
+    .v1-filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      padding: var(--space-4);
+      background-color: var(--color-surface);
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      width: 40%;
+      min-width: 200px;
+    }
+
+    .v1-filter-chips {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
+
+    .v1-filter-label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Filter Type Colors */
+    .v1-filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-2) var(--space-2) var(--space-3);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      border-radius: var(--radius-full);
+    }
+
+    .v1-filter-chip--category {
+      background-color: var(--color-primary-50);
+      border: 1px solid var(--color-primary-200);
+      color: var(--color-primary-700);
+    }
+
+    .v1-filter-chip--category button {
+      background-color: var(--color-primary-200);
+      color: var(--color-primary-700);
+    }
+
+    .v1-filter-chip--category button:hover {
+      background-color: var(--color-primary-300);
+    }
+
+    .v1-filter-chip--deal {
+      background-color: var(--color-success-50);
+      border: 1px solid var(--color-success-200);
+      color: var(--color-success-700);
+    }
+
+    .v1-filter-chip--deal button {
+      background-color: var(--color-success-200);
+      color: var(--color-success-700);
+    }
+
+    .v1-filter-chip--deal button:hover {
+      background-color: var(--color-success-300);
+    }
+
+    .v1-filter-chip--size {
+      background-color: var(--color-warning-50);
+      border: 1px solid var(--color-warning-200);
+      color: var(--color-warning-700);
+    }
+
+    .v1-filter-chip--size button {
+      background-color: var(--color-warning-200);
+      color: var(--color-warning-700);
+    }
+
+    .v1-filter-chip--size button:hover {
+      background-color: var(--color-warning-300);
+    }
+
+    .v1-filter-chip button {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+    }
+
+    .v1-add-filter {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-primary-600);
+      background-color: transparent;
+      border: 2px dashed var(--color-primary-300);
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .v1-add-filter:hover {
+      background-color: var(--color-primary-50);
+      border-style: solid;
+    }
+
+    /* Control Bar */
+    .v1-control-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-3) var(--space-5);
+      background-color: var(--color-surface);
+      border-top: 1px solid var(--color-border);
+    }
+
+    .v1-view-search {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .v1-segment-wrapper {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .v1-segment-label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .v1-segment {
+      display: flex;
+      background-color: var(--color-gray-100);
+      border-radius: var(--radius-lg);
+      padding: 3px;
+    }
+
+    .v1-segment-btn {
+      padding: var(--space-2) var(--space-4);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      background: none;
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .v1-segment-btn:hover {
+      color: var(--color-text-primary);
+    }
+
+    .v1-segment-btn.active {
+      background-color: var(--color-primary-600);
+      color: white;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .v1-search-box {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-4);
+      background-color: var(--color-gray-100);
+      border-radius: var(--radius-lg);
+      width: 300px;
+    }
+
+    .v1-search-box input {
+      flex: 1;
+      border: none;
+      background: none;
+      font-size: var(--font-size-sm);
+    }
+
+    .v1-search-box .material-symbols-outlined {
+      color: var(--color-text-tertiary);
+      font-size: 20px;
+    }
+
+    .v1-view-modes {
+      display: flex;
+      gap: var(--space-1);
+    }
+
+    .v1-mode-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-4);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      background: none;
+      border: 1px solid transparent;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+    }
+
+    .v1-mode-btn:hover {
+      background-color: var(--color-gray-50);
+    }
+
+    .v1-mode-btn.active {
+      color: var(--color-primary-600);
+      background-color: var(--color-primary-50);
+      border-color: var(--color-primary-200);
+    }
+
+    .v1-mode-btn .material-symbols-outlined {
+      font-size: 18px;
+    }
+
+    /* =====================================================
+       VARIATION 2: Compact Bar with Scrollable Filter Tray
+       Clean header with dedicated scrollable filter row
+       ===================================================== */
+    .v2-header {
+      background-color: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    /* Row 1: Brand + Context Cards + Actions */
+    .v2-row-1 {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-3) var(--space-5);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .v2-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .v2-logo {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-700));
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .v2-logo .material-symbols-outlined {
+      font-size: 20px;
+    }
+
+    .v2-title {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary);
+    }
+
+    /* Context Cards - Prominent Display */
+    .v2-context-cards {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .v2-context-card {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-2) var(--space-4);
+      background-color: var(--color-surface);
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .v2-context-card:hover {
+      border-color: var(--color-primary-400);
+      box-shadow: var(--shadow-md);
+    }
+
+    .v2-card-icon {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--color-primary-100);
+      color: var(--color-primary-600);
+      border-radius: var(--radius-lg);
+    }
+
+    .v2-card-icon--entity {
+      background-color: var(--color-success-100);
+      color: var(--color-success-600);
+    }
+
+    .v2-card-icon .material-symbols-outlined {
+      font-size: 22px;
+    }
+
+    .v2-card-content {
+      text-align: left;
+    }
+
+    .v2-card-label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .v2-card-value {
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary);
+      line-height: 1.2;
+    }
+
+    .v2-card-sub {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-secondary);
+    }
+
+    .v2-card-breadcrumb {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-secondary);
+      letter-spacing: 0.02em;
+    }
+
+    .v2-card-arrow {
+      color: var(--color-text-tertiary);
+    }
+
+    .v2-card-arrow .material-symbols-outlined {
+      font-size: 20px;
+    }
+
+    .v2-actions {
+      display: flex;
+      gap: var(--space-1);
+    }
+
+    .v2-action-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      background: none;
+      border: none;
+      cursor: pointer;
+      border-radius: var(--radius-md);
+    }
+
+    .v2-action-btn:hover {
+      background-color: var(--color-gray-100);
+    }
+
+    .v2-action-btn .material-symbols-outlined {
+      font-size: 18px;
+    }
+
+    /* Row 2: Filter Tray - Scrollable chips */
+    .v2-filter-tray {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-5);
+      background-color: var(--color-gray-50);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .v2-filter-tray-label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+
+    .v2-filter-tray-label .material-symbols-outlined {
+      font-size: 18px;
+      color: var(--color-text-tertiary);
+    }
+
+    .v2-filter-scroll-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      overflow-x: auto;
+      padding: var(--space-1) 0;
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-gray-300) transparent;
+    }
+
+    .v2-filter-scroll-container::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .v2-filter-scroll-container::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .v2-filter-scroll-container::-webkit-scrollbar-thumb {
+      background-color: var(--color-gray-300);
+      border-radius: var(--radius-full);
+    }
+
+    .v2-filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-2) var(--space-2) var(--space-3);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-primary-200);
+      border-radius: var(--radius-full);
+      color: var(--color-primary-700);
+      white-space: nowrap;
+    }
+
+    .v2-filter-chip-type {
+      font-size: var(--font-size-xs);
+      color: var(--color-primary-500);
+    }
+
+    .v2-filter-chip-value {
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary-700);
+    }
+
+    .v2-filter-chip-remove {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--color-primary-100);
+      border: none;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      color: var(--color-primary-600);
+      transition: all var(--transition-fast);
+    }
+
+    .v2-filter-chip-remove:hover {
+      background-color: var(--color-error-100);
+      color: var(--color-error-600);
+    }
+
+    .v2-filter-chip-remove .material-symbols-outlined {
+      font-size: 14px;
+    }
+
+    .v2-add-filter {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-primary-600);
+      background-color: transparent;
+      border: 2px dashed var(--color-primary-300);
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      white-space: nowrap;
+    }
+
+    .v2-add-filter:hover {
+      background-color: var(--color-primary-50);
+      border-style: solid;
+    }
+
+    .v2-add-filter .material-symbols-outlined {
+      font-size: 18px;
+    }
+
+    .v2-clear-filters {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-tertiary);
+      background: none;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .v2-clear-filters:hover {
+      color: var(--color-error-600);
+    }
+
+    /* Row 3: Search, Toggle, View Modes */
+    .v2-control-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-3) var(--space-5);
+    }
+
+    .v2-left-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .v2-segment-toggle {
+      display: flex;
+      background-color: var(--color-gray-100);
+      border-radius: var(--radius-lg);
+      padding: 3px;
+    }
+
+    .v2-segment-btn {
+      padding: var(--space-2) var(--space-4);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      background: none;
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+    }
+
+    .v2-segment-btn.active {
+      background-color: var(--color-surface);
+      color: var(--color-text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .v2-search-box {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-4);
+      background-color: var(--color-gray-100);
+      border-radius: var(--radius-lg);
+      width: 280px;
+    }
+
+    .v2-search-box .material-symbols-outlined {
+      font-size: 20px;
+      color: var(--color-text-tertiary);
+    }
+
+    .v2-search-box input {
+      flex: 1;
+      border: none;
+      background: none;
+      font-size: var(--font-size-sm);
+    }
+
+    .v2-search-box input::placeholder {
+      color: var(--color-text-tertiary);
+    }
+
+    .v2-view-modes {
+      display: flex;
+      gap: var(--space-1);
+    }
+
+    .v2-view-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-4);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      background: none;
+      border: 1px solid transparent;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+    }
+
+    .v2-view-btn:hover {
+      background-color: var(--color-gray-50);
+    }
+
+    .v2-view-btn.active {
+      color: var(--color-primary-600);
+      background-color: var(--color-primary-50);
+      border-color: var(--color-primary-200);
+    }
+
+    .v2-view-btn .material-symbols-outlined {
+      font-size: 18px;
+    }
+
+    /* =====================================================
+       VARIATION 3: Expanded Context Grid
+       Filters as a dedicated column with full visibility
+       ===================================================== */
+    .v3-header {
+      background-color: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .v3-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-3) var(--space-5);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .v3-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .v3-logo {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-700));
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .v3-logo .material-symbols-outlined {
+      font-size: 20px;
+    }
+
+    .v3-title {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-primary);
+    }
+
+    .v3-actions {
+      display: flex;
+      gap: var(--space-1);
+    }
+
+    .v3-action-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      background: none;
+      border: none;
+      cursor: pointer;
+      border-radius: var(--radius-md);
+    }
+
+    .v3-action-btn:hover {
+      background-color: var(--color-gray-100);
+    }
+
+    .v3-action-btn .material-symbols-outlined {
+      font-size: 18px;
+    }
+
+    /* Context Grid - 3 Columns */
+    .v3-context-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: var(--space-4);
+      padding: var(--space-4) var(--space-5);
+      background-color: var(--color-gray-50);
+    }
+
+    .v3-context-box {
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      padding: var(--space-4);
+    }
+
+    .v3-box-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-3);
+    }
+
+    .v3-box-title {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .v3-box-title .material-symbols-outlined {
+      font-size: 16px;
+    }
+
+    .v3-change-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: var(--font-size-xs);
+      color: var(--color-primary-600);
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .v3-change-btn .material-symbols-outlined {
+      font-size: 14px;
+    }
+
+    .v3-box-value {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-1);
+    }
+
+    .v3-box-sub {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+    }
+
+    .v3-box-breadcrumb {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-secondary);
+      letter-spacing: 0.02em;
+    }
+
+    /* Quick Options */
+    .v3-quick-options {
+      display: flex;
+      gap: var(--space-2);
+      margin-top: var(--space-3);
+      padding-top: var(--space-3);
+      border-top: 1px solid var(--color-border);
+    }
+
+    .v3-quick-btn {
+      padding: var(--space-1) var(--space-3);
+      font-size: var(--font-size-xs);
+      color: var(--color-text-secondary);
+      background-color: var(--color-gray-100);
+      border: none;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+    }
+
+    .v3-quick-btn:hover {
+      background-color: var(--color-gray-200);
+    }
+
+    .v3-quick-btn.active {
+      background-color: var(--color-primary-100);
+      color: var(--color-primary-700);
+    }
+
+    /* Filters Box - Full Column */
+    .v3-filters-box {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .v3-filters-box .v3-box-header {
+      margin-bottom: var(--space-2);
+    }
+
+    .v3-filter-list {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .v3-filter-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-2) var(--space-3);
+      background-color: var(--color-gray-50);
+      border-radius: var(--radius-lg);
+    }
+
+    .v3-filter-item-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .v3-filter-item-type {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-tertiary);
+    }
+
+    .v3-filter-item-value {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-primary);
+    }
+
+    .v3-filter-item-remove {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--color-gray-200);
+      border: none;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      color: var(--color-text-secondary);
+    }
+
+    .v3-filter-item-remove:hover {
+      background-color: var(--color-error-100);
+      color: var(--color-error-600);
+    }
+
+    .v3-filter-item-remove .material-symbols-outlined {
+      font-size: 14px;
+    }
+
+    .v3-add-filter-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      padding: var(--space-2);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-primary-600);
+      background-color: var(--color-primary-50);
+      border: 1px dashed var(--color-primary-300);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      margin-top: auto;
+    }
+
+    .v3-add-filter-btn:hover {
+      background-color: var(--color-primary-100);
+      border-style: solid;
+    }
+
+    .v3-add-filter-btn .material-symbols-outlined {
+      font-size: 18px;
+    }
+
+    /* Control Bar */
+    .v3-control-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-3) var(--space-5);
+      background-color: var(--color-surface);
+    }
+
+    .v3-search-toggle {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .v3-search {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-4);
+      background-color: var(--color-gray-100);
+      border-radius: var(--radius-lg);
+      width: 320px;
+    }
+
+    .v3-search input {
+      flex: 1;
+      border: none;
+      background: none;
+      font-size: var(--font-size-sm);
+    }
+
+    .v3-search .material-symbols-outlined {
+      font-size: 20px;
+      color: var(--color-text-tertiary);
+    }
+
+    .v3-list-switch {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-1);
+      background-color: var(--color-gray-100);
+      border-radius: var(--radius-lg);
+    }
+
+    .v3-switch-btn {
+      padding: var(--space-2) var(--space-4);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      background: none;
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+    }
+
+    .v3-switch-btn.active {
+      background-color: var(--color-surface);
+      color: var(--color-text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .v3-view-modes {
+      display: flex;
+      gap: var(--space-2);
+    }
+
+    .v3-view-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-4);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      background: none;
+      border: 1px solid transparent;
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+    }
+
+    .v3-view-btn:hover {
+      background-color: var(--color-gray-50);
+    }
+
+    .v3-view-btn.active {
+      background-color: var(--color-primary-50);
+      border-color: var(--color-primary-200);
+      color: var(--color-primary-600);
+    }
+
+    .v3-view-btn .material-symbols-outlined {
+      font-size: 18px;
+    }
+
+    /* =====================================================
+       SHARED: Modal & Dropdown Styles
+       ===================================================== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all var(--transition-normal);
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      background-color: var(--color-surface);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-xl);
+      max-width: 480px;
+      width: 90%;
+      max-height: 90vh;
+      overflow: hidden;
+      transform: scale(0.95) translateY(10px);
+      transition: transform var(--transition-normal);
+    }
+
+    .modal-overlay.active .modal {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-4) var(--space-5);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .modal-header h3 {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-primary);
+    }
+
+    .modal-header h3 .material-symbols-outlined {
+      font-size: 24px;
+      color: var(--color-primary-600);
+    }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      border-radius: var(--radius-md);
+      color: var(--color-text-tertiary);
+    }
+
+    .modal-close:hover {
+      background-color: var(--color-gray-100);
+      color: var(--color-text-primary);
+    }
+
+    .modal-body {
+      padding: var(--space-5);
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-4) var(--space-5);
+      border-top: 1px solid var(--color-border);
+      background-color: var(--color-gray-50);
+    }
+
+    .modal-btn {
+      padding: var(--space-2) var(--space-4);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .modal-btn--secondary {
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      color: var(--color-text-secondary);
+    }
+
+    .modal-btn--secondary:hover {
+      background-color: var(--color-gray-100);
+    }
+
+    .modal-btn--primary {
+      background-color: var(--color-primary-600);
+      border: 1px solid var(--color-primary-600);
+      color: white;
+    }
+
+    .modal-btn--primary:hover {
+      background-color: var(--color-primary-700);
+    }
+
+    .modal-btn--reset {
+      background-color: transparent;
+      border: 1px solid var(--color-error-300);
+      color: var(--color-error-600);
+    }
+
+    .modal-btn--reset:hover {
+      background-color: var(--color-error-50);
+      border-color: var(--color-error-400);
+    }
+
+    .modal-footer-right {
+      display: flex;
+      gap: var(--space-2);
+    }
+
+    /* =====================================================
+       Entity Selector Modal & Table
+       ===================================================== */
+
+    /* Modal specific sizing for entity selector */
+    #entity-selector-modal .modal {
+      max-width: 1200px;
+      width: 90vw;
+      max-height: 90vh;
+    }
+
+    #entity-selector-modal .modal-body {
+      padding: 0;
+      max-height: calc(90vh - 140px);
+      overflow: hidden;
+    }
+
+    /* Entity selector header controls */
+    .entity-selector-controls {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: var(--space-4) var(--space-5);
+      border-bottom: 1px solid var(--color-border);
+      background-color: var(--color-gray-50);
+    }
+
+    .show-groups-toggle {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      font-weight: var(--font-weight-medium);
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      background-color: var(--color-primary-500);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background-color var(--transition-fast);
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      background-color: white;
+      border-radius: 50%;
+      transition: transform var(--transition-fast);
+    }
+
+    .toggle-switch.off {
+      background-color: var(--color-gray-300);
+    }
+
+    .toggle-switch.off::after {
+      transform: translateX(20px);
+    }
+
+    /* Entity Table Container */
+    .entity-table-container {
+      overflow: auto;
+      max-height: calc(90vh - 220px);
+    }
+
+    .entity-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--font-size-sm);
+    }
+
+    /* Table Header */
+    .entity-table-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background-color: var(--color-gray-100);
+    }
+
+    .entity-table-header th {
+      padding: var(--space-3) var(--space-4);
+      text-align: left;
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-secondary);
+      border-bottom: 2px solid var(--color-border);
+      font-size: var(--font-size-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+
+    .entity-table-header th.col-name {
+      width: 35%;
+    }
+
+    .entity-table-header th.col-type {
+      width: 12%;
+    }
+
+    .entity-table-header th.col-title {
+      width: 18%;
+    }
+
+    .entity-table-header th.col-subdomain {
+      width: 18%;
+    }
+
+    .entity-table-header th.col-path {
+      width: 17%;
+    }
+
+    /* Column Header with Filter */
+    .column-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      cursor: pointer;
+    }
+
+    .column-header:hover .filter-icon {
+      opacity: 1;
+    }
+
+    .filter-icon {
+      opacity: 0.5;
+      font-size: 16px;
+      transition: opacity var(--transition-fast);
+    }
+
+    /* Table Body */
+    .entity-table tbody tr {
+      border-bottom: 1px solid var(--color-border);
+      transition: background-color var(--transition-fast);
+    }
+
+    .entity-table tbody tr:hover {
+      background-color: var(--color-gray-50);
+    }
+
+    .entity-table tbody tr.selectable {
+      cursor: pointer;
+    }
+
+    .entity-table tbody tr.selectable:hover {
+      background-color: var(--color-primary-50);
+    }
+
+    .entity-table tbody tr.selected {
+      background-color: var(--color-primary-100);
+    }
+
+    .entity-table tbody td {
+      padding: var(--space-3) var(--space-4);
+      color: var(--color-text-primary);
+    }
+
+    /* Tree Structure - Name Column */
+    .entity-tree-cell {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .entity-tree-toggle {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--color-text-tertiary);
+      padding: 0;
+      flex-shrink: 0;
+    }
+
+    .entity-tree-toggle:hover {
+      color: var(--color-text-primary);
+    }
+
+    .entity-tree-toggle .material-symbols-outlined {
+      font-size: 20px;
+      transition: transform var(--transition-fast);
+    }
+
+    .entity-tree-toggle.expanded .material-symbols-outlined {
+      transform: rotate(90deg);
+    }
+
+    .entity-indent {
+      display: inline-block;
+    }
+
+    /* Tree level indentation */
+    .indent-0 { padding-left: 0; }
+    .indent-1 { padding-left: var(--space-6); }
+    .indent-2 { padding-left: calc(var(--space-6) * 2); }
+    .indent-3 { padding-left: calc(var(--space-6) * 3); }
+
+    /* Row state visibility */
+    tr.collapsed {
+      display: none;
+    }
+
+    /* Type badges */
+    .entity-type-badge {
+      display: inline-block;
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .type-brand {
+      background-color: var(--color-primary-100);
+      color: var(--color-primary-700);
+    }
+
+    .type-group {
+      background-color: var(--color-purple-100);
+      color: var(--color-purple-700);
+    }
+
+    .type-subbrand {
+      background-color: var(--color-blue-100);
+      color: var(--color-blue-700);
+    }
+
+    .type-store {
+      background-color: var(--color-success-100);
+      color: var(--color-success-700);
+    }
+
+    .type-brandgroup {
+      background-color: var(--color-orange-100);
+      color: var(--color-orange-700);
+    }
+
+    .type-subgroup {
+      background-color: var(--color-teal-100);
+      color: var(--color-teal-700);
+    }
+
+    /* Date Picker Styles */
+    .date-picker-tabs {
+      display: flex;
+      gap: var(--space-1);
+      margin-bottom: var(--space-4);
+      background-color: var(--color-gray-100);
+      padding: 3px;
+      border-radius: var(--radius-lg);
+    }
+
+    .date-picker-tab {
+      flex: 1;
+      padding: var(--space-2);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      background: none;
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+    }
+
+    .date-picker-tab.active {
+      background-color: var(--color-surface);
+      color: var(--color-text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .week-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      max-height: 320px;
+      overflow-y: auto;
+    }
+
+    .week-search {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      background-color: var(--color-gray-100);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--space-3);
+    }
+
+    .week-search .material-symbols-outlined {
+      font-size: 20px;
+      color: var(--color-text-tertiary);
+    }
+
+    .week-search input {
+      flex: 1;
+      border: none;
+      background: none;
+      font-size: var(--font-size-sm);
+    }
+
+    .week-search input::placeholder {
+      color: var(--color-text-tertiary);
+    }
+
+    .week-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-3) var(--space-4);
+      background-color: var(--color-gray-50);
+      border: 2px solid transparent;
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .week-option:hover {
+      background-color: var(--color-primary-50);
+      border-color: var(--color-primary-200);
+    }
+
+    .week-option.selected {
+      background-color: var(--color-primary-100);
+      border-color: var(--color-primary-500);
+    }
+
+    .week-option-left {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .week-option-label {
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-primary);
+    }
+
+    .week-option-dates {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+    }
+
+    .week-option-check {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--color-primary-600);
+      color: white;
+      border-radius: var(--radius-full);
+      opacity: 0;
+    }
+
+    .week-option.selected .week-option-check {
+      opacity: 1;
+    }
+
+    /* Custom Date Range */
+    .custom-date-inputs {
+      display: none;
+      gap: var(--space-4);
+      margin-top: var(--space-4);
+    }
+
+    .custom-date-inputs.active {
+      display: flex;
+    }
+
+    .date-input-group {
+      flex: 1;
+    }
+
+    .date-input-group label {
+      display: block;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--space-2);
+    }
+
+    .date-input-group input {
+      width: 100%;
+      padding: var(--space-3);
+      font-size: var(--font-size-sm);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+    }
+
+    .date-input-group input:focus {
+      outline: none;
+      border-color: var(--color-primary-400);
+      box-shadow: 0 0 0 3px var(--color-primary-100);
+    }
+
+    /* Add Filter Modal Styles */
+    .filter-type-select {
+      margin-bottom: var(--space-4);
+    }
+
+    .filter-type-select label {
+      display: block;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--space-2);
+    }
+
+    .filter-type-buttons {
+      display: flex;
+      gap: var(--space-2);
+    }
+
+    .filter-type-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      padding: var(--space-3);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      background-color: var(--color-gray-50);
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .filter-type-btn:hover {
+      background-color: var(--color-gray-100);
+    }
+
+    .filter-type-btn.active {
+      background-color: var(--color-primary-50);
+      border-color: var(--color-primary-500);
+      color: var(--color-primary-700);
+    }
+
+    .filter-type-btn .material-symbols-outlined {
+      font-size: 20px;
+    }
+
+    .filter-value-select {
+      display: none;
+    }
+
+    .filter-value-select.active {
+      display: block;
+    }
+
+    .filter-value-select label {
+      display: block;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--space-2);
+    }
+
+    .filter-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+
+    .filter-option {
+      padding: var(--space-2) var(--space-4);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      background-color: var(--color-gray-100);
+      border: none;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .filter-option:hover {
+      background-color: var(--color-gray-200);
+    }
+
+    .filter-option.selected {
+      background-color: var(--color-primary-600);
+      color: white;
+    }
+
+    /* Dropdown Panel (for V2) */
+    .dropdown-panel {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: var(--space-2);
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-xl);
+      min-width: 320px;
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all var(--transition-fast);
+    }
+
+    .dropdown-panel.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .dropdown-panel-title {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-primary);
+    }
+
+    .dropdown-panel-body {
+      padding: var(--space-3) var(--space-4);
+    }
+
+    .dropdown-filter-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      margin-bottom: var(--space-3);
+    }
+
+    .dropdown-filter-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-2) var(--space-3);
+      background-color: var(--color-gray-50);
+      border-radius: var(--radius-md);
+    }
+
+    .dropdown-add-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      width: 100%;
+      padding: var(--space-2);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-primary-600);
+      background-color: var(--color-primary-50);
+      border: 1px dashed var(--color-primary-300);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+    }
+
+    .dropdown-add-btn:hover {
+      background-color: var(--color-primary-100);
+      border-style: solid;
+    }
+
+    .dropdown-add-btn .material-symbols-outlined {
+      font-size: 18px;
+    }
+
+    /* Position wrapper for dropdowns */
+    .v2-filter-dropdown {
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+  <a href="../index.html" class="back-link">← Back to Dashboard</a>
+
+  <div class="page-header">
+    <h1>Header & Context Bar Variations</h1>
+    <p>3 concepts for prominent Date/Entity context, Category/Promotion toggle, and improved filter integration using Material Icons.</p>
+  </div>
+
+  <!-- VARIATION 1: Horizontal Cards with Inline Filters -->
+  <div class="variation">
+    <div class="variation__label">
+      <span>Variation 1: Inline Filters</span>
+      <span class="variation__desc">Filters appear as chips alongside context cards at the same visual level</span>
+    </div>
+    <div class="variation__content">
+      <div class="v1-header">
+        <div class="v1-topbar">
+          <div class="v1-brand">
+            <div class="v1-logo">
+              <span class="material-symbols-outlined">analytics</span>
+            </div>
+            <span class="v1-title">Analytics Dashboard</span>
+          </div>
+          <div class="v1-actions">
+            <button class="v1-action-btn">
+              <span class="material-symbols-outlined">download</span>
+              Export
+            </button>
+            <button class="v1-action-btn">
+              <span class="material-symbols-outlined">share</span>
+              Share
+            </button>
+          </div>
+        </div>
+
+        <div class="v1-context-row">
+          <button class="v1-context-card v1-context-card--date">
+            <div class="v1-card-label">Date Range</div>
+            <div class="v1-card-row">
+              <div class="v1-card-icon">
+                <span class="material-symbols-outlined">calendar_month</span>
+              </div>
+              <div class="v1-card-content">
+                <div class="v1-card-value">Week 47</div>
+                <div class="v1-card-sub">Nov 18-24, 2025</div>
+              </div>
+              <span class="v1-card-arrow">
+                <span class="material-symbols-outlined">expand_more</span>
+              </span>
+            </div>
+          </button>
+
+          <button class="v1-context-card" onclick="openEntitySelector()">
+            <div class="v1-card-label">Entity</div>
+            <div class="v1-card-row">
+              <div class="v1-card-icon v1-card-icon--entity">
+                <span class="material-symbols-outlined">store</span>
+              </div>
+              <div class="v1-card-content">
+                <div class="v1-card-breadcrumb">BRAND > SUB-BRAND</div>
+                <div class="v1-card-value">All Stores</div>
+                <div class="v1-card-sub">67 locations</div>
+              </div>
+              <span class="v1-card-arrow">
+                <span class="material-symbols-outlined">expand_more</span>
+              </span>
+            </div>
+          </button>
+
+          <div class="v1-filter-group">
+            <div class="v1-filter-label">Filters</div>
+            <div class="v1-filter-chips">
+              <span class="v1-filter-chip v1-filter-chip--category">
+                Category: All
+                <button onclick="removeChip(this)"><span class="material-symbols-outlined" style="font-size: 14px;">close</span></button>
+              </span>
+              <span class="v1-filter-chip v1-filter-chip--deal">
+                Deal Type: All
+                <button onclick="removeChip(this)"><span class="material-symbols-outlined" style="font-size: 14px;">close</span></button>
+              </span>
+              <span class="v1-filter-chip v1-filter-chip--size">
+                Card Size: All
+                <button onclick="removeChip(this)"><span class="material-symbols-outlined" style="font-size: 14px;">close</span></button>
+              </span>
+              <button class="v1-add-filter">
+                <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+                Add Filter
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="v1-control-bar">
+          <div class="v1-view-search">
+            <div class="v1-segment-wrapper">
+              <span class="v1-segment-label">View by</span>
+              <div class="v1-segment">
+                <button class="v1-segment-btn active">Categories</button>
+                <button class="v1-segment-btn">Promotions</button>
+              </div>
+            </div>
+            <div class="v1-search-box">
+              <span class="material-symbols-outlined">search</span>
+              <input type="text" placeholder="Search categories...">
+            </div>
+          </div>
+          <div class="v1-view-modes">
+            <button class="v1-mode-btn active">
+              <span class="material-symbols-outlined">view_list</span>
+              Base
+            </button>
+            <button class="v1-mode-btn">
+              <span class="material-symbols-outlined">table_chart</span>
+              Grid
+            </button>
+            <button class="v1-mode-btn">
+              <span class="material-symbols-outlined">compare</span>
+              Compare
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="content-placeholder">Content area - Categories or Promotions list</div>
+  </div>
+
+  <!-- VARIATION 2: Compact Bar with Scrollable Filter Tray -->
+  <div class="variation">
+    <div class="variation__label">
+      <span>Variation 2: Scrollable Filter Tray</span>
+      <span class="variation__desc">Dedicated filter row with scrollable chips, clear remove buttons, and prominent context cards</span>
+    </div>
+    <div class="variation__content">
+      <div class="v2-header">
+        <!-- Row 1: Brand + Context Cards + Actions -->
+        <div class="v2-row-1">
+          <div class="v2-brand">
+            <div class="v2-logo">
+              <span class="material-symbols-outlined">analytics</span>
+            </div>
+            <span class="v2-title">Analytics Dashboard</span>
+          </div>
+
+          <div class="v2-context-cards">
+            <button class="v2-context-card" id="v2-date-card">
+              <div class="v2-card-icon">
+                <span class="material-symbols-outlined">calendar_month</span>
+              </div>
+              <div class="v2-card-content">
+                <div class="v2-card-label">Date Range</div>
+                <div class="v2-card-value">Week 47</div>
+                <div class="v2-card-sub">Nov 18-24, 2025</div>
+              </div>
+              <span class="v2-card-arrow">
+                <span class="material-symbols-outlined">expand_more</span>
+              </span>
+            </button>
+
+            <button class="v2-context-card">
+              <div class="v2-card-icon v2-card-icon--entity">
+                <span class="material-symbols-outlined">store</span>
+              </div>
+              <div class="v2-card-content">
+                <div class="v2-card-label">Entity</div>
+                <div class="v2-card-breadcrumb">BRAND > SUB-BRAND</div>
+                <div class="v2-card-value">All Stores</div>
+                <div class="v2-card-sub">67 locations</div>
+              </div>
+              <span class="v2-card-arrow">
+                <span class="material-symbols-outlined">expand_more</span>
+              </span>
+            </button>
+          </div>
+
+          <div class="v2-actions">
+            <button class="v2-action-btn">
+              <span class="material-symbols-outlined">download</span>
+              Export
+            </button>
+            <button class="v2-action-btn">
+              <span class="material-symbols-outlined">share</span>
+              Share
+            </button>
+          </div>
+        </div>
+
+        <!-- Row 2: Filter Tray with Scrollable Chips -->
+        <div class="v2-filter-tray">
+          <div class="v2-filter-tray-label">
+            <span class="material-symbols-outlined">filter_list</span>
+            Filters
+          </div>
+
+          <div class="v2-filter-scroll-container" id="v2-filter-container">
+            <div class="v2-filter-chip">
+              <span class="v2-filter-chip-type">Category:</span>
+              <span class="v2-filter-chip-value">All</span>
+              <button class="v2-filter-chip-remove" onclick="removeV2Chip(this)">
+                <span class="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <div class="v2-filter-chip">
+              <span class="v2-filter-chip-type">Deal Type:</span>
+              <span class="v2-filter-chip-value">All</span>
+              <button class="v2-filter-chip-remove" onclick="removeV2Chip(this)">
+                <span class="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <div class="v2-filter-chip">
+              <span class="v2-filter-chip-type">Card Size:</span>
+              <span class="v2-filter-chip-value">All</span>
+              <button class="v2-filter-chip-remove" onclick="removeV2Chip(this)">
+                <span class="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <button class="v2-add-filter" id="v2-add-filter">
+              <span class="material-symbols-outlined">add</span>
+              Add Filter
+            </button>
+          </div>
+
+          <button class="v2-clear-filters" onclick="clearV2Filters()">Clear all</button>
+        </div>
+
+        <!-- Row 3: Toggle, Search, View Modes -->
+        <div class="v2-control-bar">
+          <div class="v2-left-controls">
+            <div class="v2-segment-toggle">
+              <button class="v2-segment-btn active">Categories</button>
+              <button class="v2-segment-btn">Promotions</button>
+            </div>
+            <div class="v2-search-box">
+              <span class="material-symbols-outlined">search</span>
+              <input type="text" placeholder="Search categories...">
+            </div>
+          </div>
+          <div class="v2-view-modes">
+            <button class="v2-view-btn active">
+              <span class="material-symbols-outlined">view_list</span>
+              Base
+            </button>
+            <button class="v2-view-btn">
+              <span class="material-symbols-outlined">table_chart</span>
+              Grid
+            </button>
+            <button class="v2-view-btn">
+              <span class="material-symbols-outlined">compare</span>
+              Compare
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="content-placeholder">Content area - Categories or Promotions list</div>
+  </div>
+
+  <!-- VARIATION 3: Expanded Context Grid -->
+  <div class="variation">
+    <div class="variation__label">
+      <span>Variation 3: Full Context Grid</span>
+      <span class="variation__desc">Date, Entity, and Filters as equal columns with full visibility and quick options</span>
+    </div>
+    <div class="variation__content">
+      <div class="v3-header">
+        <div class="v3-topbar">
+          <div class="v3-brand">
+            <div class="v3-logo">
+              <span class="material-symbols-outlined">analytics</span>
+            </div>
+            <span class="v3-title">Analytics Dashboard</span>
+          </div>
+          <div class="v3-actions">
+            <button class="v3-action-btn">
+              <span class="material-symbols-outlined">download</span>
+              Export
+            </button>
+            <button class="v3-action-btn">
+              <span class="material-symbols-outlined">share</span>
+              Share
+            </button>
+          </div>
+        </div>
+
+        <div class="v3-context-grid">
+          <div class="v3-context-box">
+            <div class="v3-box-header">
+              <span class="v3-box-title">
+                <span class="material-symbols-outlined">calendar_month</span>
+                Date Range
+              </span>
+              <button class="v3-change-btn">
+                Change
+                <span class="material-symbols-outlined">expand_more</span>
+              </button>
+            </div>
+            <div class="v3-box-value">Week 47</div>
+            <div class="v3-box-sub">November 18-24, 2025</div>
+            <div class="v3-quick-options">
+              <button class="v3-quick-btn">Week 46</button>
+              <button class="v3-quick-btn active">Week 47</button>
+              <button class="v3-quick-btn">Week 48</button>
+              <button class="v3-quick-btn">Custom...</button>
+            </div>
+          </div>
+
+          <div class="v3-context-box">
+            <div class="v3-box-header">
+              <span class="v3-box-title">
+                <span class="material-symbols-outlined">store</span>
+                Entity
+              </span>
+              <button class="v3-change-btn">
+                Change
+                <span class="material-symbols-outlined">expand_more</span>
+              </button>
+            </div>
+            <div class="v3-box-breadcrumb">BRAND > SUB-BRAND</div>
+            <div class="v3-box-value">All Stores</div>
+            <div class="v3-box-sub">67 locations across all regions</div>
+            <div class="v3-quick-options">
+              <button class="v3-quick-btn active">All</button>
+              <button class="v3-quick-btn">Region A</button>
+              <button class="v3-quick-btn">Region B</button>
+              <button class="v3-quick-btn">Single...</button>
+            </div>
+          </div>
+
+          <div class="v3-context-box v3-filters-box">
+            <div class="v3-box-header">
+              <span class="v3-box-title">
+                <span class="material-symbols-outlined">filter_list</span>
+                Active Filters
+              </span>
+              <button class="v3-change-btn" onclick="clearV3Filters()">Clear all</button>
+            </div>
+            <div class="v3-filter-list">
+              <div class="v3-filter-item">
+                <div class="v3-filter-item-left">
+                  <span class="v3-filter-item-type">Category:</span>
+                  <span class="v3-filter-item-value">All</span>
+                </div>
+                <button class="v3-filter-item-remove" onclick="removeV3Filter(this)">
+                  <span class="material-symbols-outlined">close</span>
+                </button>
+              </div>
+              <div class="v3-filter-item">
+                <div class="v3-filter-item-left">
+                  <span class="v3-filter-item-type">Deal Type:</span>
+                  <span class="v3-filter-item-value">All</span>
+                </div>
+                <button class="v3-filter-item-remove" onclick="removeV3Filter(this)">
+                  <span class="material-symbols-outlined">close</span>
+                </button>
+              </div>
+              <div class="v3-filter-item">
+                <div class="v3-filter-item-left">
+                  <span class="v3-filter-item-type">Card Size:</span>
+                  <span class="v3-filter-item-value">All</span>
+                </div>
+                <button class="v3-filter-item-remove" onclick="removeV3Filter(this)">
+                  <span class="material-symbols-outlined">close</span>
+                </button>
+              </div>
+              <button class="v3-add-filter-btn">
+                <span class="material-symbols-outlined">add</span>
+                Add Filter
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="v3-control-bar">
+          <div class="v3-search-toggle">
+            <div class="v3-list-switch">
+              <button class="v3-switch-btn active">Categories</button>
+              <button class="v3-switch-btn">Promotions</button>
+            </div>
+            <div class="v3-search">
+              <span class="material-symbols-outlined">search</span>
+              <input type="text" placeholder="Search categories...">
+            </div>
+          </div>
+
+          <div class="v3-view-modes">
+            <button class="v3-view-btn active">
+              <span class="material-symbols-outlined">view_list</span>
+              Base View
+            </button>
+            <button class="v3-view-btn">
+              <span class="material-symbols-outlined">table_chart</span>
+              Data Grid
+            </button>
+            <button class="v3-view-btn">
+              <span class="material-symbols-outlined">compare</span>
+              Compare
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="content-placeholder">Content area - Categories or Promotions list</div>
+  </div>
+
+  <!-- =====================================================
+       SHARED MODALS
+       ===================================================== -->
+
+  <!-- Date Picker Modal -->
+  <div class="modal-overlay" id="date-picker-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>
+          <span class="material-symbols-outlined">calendar_month</span>
+          Select Date Range
+        </h3>
+        <button class="modal-close" onclick="closeDatePicker()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="date-picker-tabs">
+          <button class="date-picker-tab active" onclick="switchDateTab('week')">By Week</button>
+          <button class="date-picker-tab" onclick="switchDateTab('custom')">Custom Range</button>
+        </div>
+
+        <div class="week-search">
+          <span class="material-symbols-outlined">search</span>
+          <input type="text" id="week-search-input" placeholder="Search week number..." oninput="filterWeeks(this.value)">
+        </div>
+
+        <div class="week-list" id="week-list">
+          <div class="week-option" data-week="49" onclick="selectWeek(this)">
+            <div class="week-option-left">
+              <span class="week-option-label">Week 49</span>
+              <span class="week-option-dates">Dec 2-8, 2025</span>
+            </div>
+            <div class="week-option-check">
+              <span class="material-symbols-outlined" style="font-size: 16px;">check</span>
+            </div>
+          </div>
+          <div class="week-option" data-week="48" onclick="selectWeek(this)">
+            <div class="week-option-left">
+              <span class="week-option-label">Week 48</span>
+              <span class="week-option-dates">Nov 25 - Dec 1, 2025</span>
+            </div>
+            <div class="week-option-check">
+              <span class="material-symbols-outlined" style="font-size: 16px;">check</span>
+            </div>
+          </div>
+          <div class="week-option selected" data-week="47" onclick="selectWeek(this)">
+            <div class="week-option-left">
+              <span class="week-option-label">Week 47</span>
+              <span class="week-option-dates">Nov 18-24, 2025</span>
+            </div>
+            <div class="week-option-check">
+              <span class="material-symbols-outlined" style="font-size: 16px;">check</span>
+            </div>
+          </div>
+          <div class="week-option" data-week="46" onclick="selectWeek(this)">
+            <div class="week-option-left">
+              <span class="week-option-label">Week 46</span>
+              <span class="week-option-dates">Nov 11-17, 2025</span>
+            </div>
+            <div class="week-option-check">
+              <span class="material-symbols-outlined" style="font-size: 16px;">check</span>
+            </div>
+          </div>
+          <div class="week-option" data-week="45" onclick="selectWeek(this)">
+            <div class="week-option-left">
+              <span class="week-option-label">Week 45</span>
+              <span class="week-option-dates">Nov 4-10, 2025</span>
+            </div>
+            <div class="week-option-check">
+              <span class="material-symbols-outlined" style="font-size: 16px;">check</span>
+            </div>
+          </div>
+          <div class="week-option" data-week="44" onclick="selectWeek(this)">
+            <div class="week-option-left">
+              <span class="week-option-label">Week 44</span>
+              <span class="week-option-dates">Oct 28 - Nov 3, 2025</span>
+            </div>
+            <div class="week-option-check">
+              <span class="material-symbols-outlined" style="font-size: 16px;">check</span>
+            </div>
+          </div>
+          <div class="week-option" data-week="43" onclick="selectWeek(this)">
+            <div class="week-option-left">
+              <span class="week-option-label">Week 43</span>
+              <span class="week-option-dates">Oct 21-27, 2025</span>
+            </div>
+            <div class="week-option-check">
+              <span class="material-symbols-outlined" style="font-size: 16px;">check</span>
+            </div>
+          </div>
+          <div class="week-option" data-week="42" onclick="selectWeek(this)">
+            <div class="week-option-left">
+              <span class="week-option-label">Week 42</span>
+              <span class="week-option-dates">Oct 14-20, 2025</span>
+            </div>
+            <div class="week-option-check">
+              <span class="material-symbols-outlined" style="font-size: 16px;">check</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="custom-date-inputs" id="custom-date-inputs">
+          <div class="date-input-group">
+            <label>Start Date</label>
+            <input type="date" id="start-date" value="2025-11-18">
+          </div>
+          <div class="date-input-group">
+            <label>End Date</label>
+            <input type="date" id="end-date" value="2025-11-24">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn modal-btn--secondary" onclick="closeDatePicker()">Cancel</button>
+        <button class="modal-btn modal-btn--primary" onclick="applyDateSelection()">Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Entity Selector Modal -->
+  <div class="modal-overlay" id="entity-selector-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>
+          <span class="material-symbols-outlined">store</span>
+          Change Location/Node
+        </h3>
+        <button class="modal-close" onclick="closeEntitySelector()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Controls Row -->
+        <div class="entity-selector-controls">
+          <div class="show-groups-toggle">
+            <span>Show Store Groups:</span>
+            <div class="toggle-switch" onclick="toggleShowGroups()" id="groups-toggle"></div>
+          </div>
+        </div>
+
+        <!-- Entity Table -->
+        <div class="entity-table-container">
+          <table class="entity-table">
+            <thead class="entity-table-header">
+              <tr>
+                <th class="col-name">
+                  <div class="column-header">
+                    Name
+                    <span class="material-symbols-outlined filter-icon">filter_alt</span>
+                  </div>
+                </th>
+                <th class="col-type">
+                  <div class="column-header">
+                    Type
+                    <span class="material-symbols-outlined filter-icon">filter_alt</span>
+                  </div>
+                </th>
+                <th class="col-title">
+                  <div class="column-header">
+                    Title
+                    <span class="material-symbols-outlined filter-icon">filter_alt</span>
+                  </div>
+                </th>
+                <th class="col-subdomain">
+                  <div class="column-header">
+                    Subdomain
+                    <span class="material-symbols-outlined filter-icon">filter_alt</span>
+                  </div>
+                </th>
+                <th class="col-path">
+                  <div class="column-header">
+                    Path
+                    <span class="material-symbols-outlined filter-icon">filter_alt</span>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody id="entity-table-body">
+              <!-- Populated by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn modal-btn--secondary" onclick="closeEntitySelector()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Filter Modal -->
+  <div class="modal-overlay" id="add-filter-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>
+          <span class="material-symbols-outlined">filter_list</span>
+          Add Filter
+        </h3>
+        <button class="modal-close" onclick="closeFilterModal()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="filter-type-select">
+          <label>Filter Type</label>
+          <div class="filter-type-buttons">
+            <button class="filter-type-btn active" data-type="category" onclick="selectFilterType(this)">
+              <span class="material-symbols-outlined">category</span>
+              Category
+            </button>
+            <button class="filter-type-btn" data-type="deal" onclick="selectFilterType(this)">
+              <span class="material-symbols-outlined">local_offer</span>
+              Deal Type
+            </button>
+            <button class="filter-type-btn" data-type="size" onclick="selectFilterType(this)">
+              <span class="material-symbols-outlined">aspect_ratio</span>
+              Card Size
+            </button>
+          </div>
+        </div>
+
+        <div class="filter-value-select active" id="category-options">
+          <label>Select Category</label>
+          <div class="filter-options">
+            <button class="filter-option selected" onclick="selectFilterValue(this)">All</button>
+            <button class="filter-option" onclick="selectFilterValue(this)">Produce</button>
+            <button class="filter-option" onclick="selectFilterValue(this)">Dairy</button>
+            <button class="filter-option" onclick="selectFilterValue(this)">Meat & Seafood</button>
+            <button class="filter-option" onclick="selectFilterValue(this)">Bakery</button>
+            <button class="filter-option" onclick="selectFilterValue(this)">Frozen Foods</button>
+            <button class="filter-option" onclick="selectFilterValue(this)">Beverages</button>
+            <button class="filter-option" onclick="selectFilterValue(this)">Snacks & Candy</button>
+            <button class="filter-option" onclick="selectFilterValue(this)">Household</button>
+          </div>
+        </div>
+
+        <div class="filter-value-select" id="deal-options">
+          <label>Select Deal Type</label>
+          <div class="filter-options">
+            <button class="filter-option selected" onclick="selectFilterValue(this)">All</button>
+            <button class="filter-option" onclick="selectFilterValue(this)">BOGO</button>
+            <button class="filter-option" onclick="selectFilterValue(this)">BOGO 50%</button>
+            <button class="filter-option" onclick="selectFilterValue(this)">$ Off</button>
+            <button class="filter-option" onclick="selectFilterValue(this)">% Off</button>
+            <button class="filter-option" onclick="selectFilterValue(this)">Multi-Buy</button>
+            <button class="filter-option" onclick="selectFilterValue(this)">Mix & Match</button>
+          </div>
+        </div>
+
+        <div class="filter-value-select" id="size-options">
+          <label>Select Card Size</label>
+          <div class="filter-options">
+            <button class="filter-option selected" onclick="selectFilterValue(this)">All</button>
+            <button class="filter-option" onclick="selectFilterValue(this)">1x1</button>
+            <button class="filter-option" onclick="selectFilterValue(this)">2x1</button>
+            <button class="filter-option" onclick="selectFilterValue(this)">2x2</button>
+            <button class="filter-option" onclick="selectFilterValue(this)">3x2</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn modal-btn--reset" onclick="resetFiltersToDefault(); closeFilterModal();">Reset to Default</button>
+        <div class="modal-footer-right">
+          <button class="modal-btn modal-btn--secondary" onclick="closeFilterModal()">Cancel</button>
+          <button class="modal-btn modal-btn--primary" onclick="applyFilter()">Add Filter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =====================================================
+    // Date Picker Functions
+    // =====================================================
+    let currentVariation = null;
+
+    function openDatePicker(variation) {
+      currentVariation = variation;
+      document.getElementById('date-picker-modal').classList.add('active');
+    }
+
+    function closeDatePicker() {
+      document.getElementById('date-picker-modal').classList.remove('active');
+      currentVariation = null;
+    }
+
+    function switchDateTab(tab) {
+      const tabs = document.querySelectorAll('.date-picker-tab');
+      tabs.forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+
+      const weekList = document.getElementById('week-list');
+      const customInputs = document.getElementById('custom-date-inputs');
+
+      if (tab === 'week') {
+        weekList.style.display = 'flex';
+        customInputs.classList.remove('active');
+      } else {
+        weekList.style.display = 'none';
+        customInputs.classList.add('active');
+      }
+    }
+
+    function selectWeek(element) {
+      document.querySelectorAll('.week-option').forEach(w => w.classList.remove('selected'));
+      element.classList.add('selected');
+    }
+
+    function filterWeeks(searchValue) {
+      const weekOptions = document.querySelectorAll('.week-option');
+      const query = searchValue.toLowerCase().trim();
+
+      weekOptions.forEach(option => {
+        const weekNum = option.dataset.week;
+        const label = option.querySelector('.week-option-label').textContent.toLowerCase();
+        const dates = option.querySelector('.week-option-dates').textContent.toLowerCase();
+
+        if (query === '' || weekNum.includes(query) || label.includes(query) || dates.includes(query)) {
+          option.style.display = 'flex';
+        } else {
+          option.style.display = 'none';
+        }
+      });
+    }
+
+    function applyDateSelection() {
+      const selectedWeek = document.querySelector('.week-option.selected');
+      if (selectedWeek) {
+        const weekNum = selectedWeek.dataset.week;
+        const weekLabel = selectedWeek.querySelector('.week-option-label').textContent;
+        const weekDates = selectedWeek.querySelector('.week-option-dates').textContent;
+
+        // Update all variations with new date
+        updateDateDisplay(weekLabel, weekDates);
+      }
+      closeDatePicker();
+    }
+
+    function updateDateDisplay(weekLabel, weekDates) {
+      // V1 updates
+      const v1Value = document.querySelector('.v1-context-card .v1-card-value');
+      const v1Sub = document.querySelector('.v1-context-card .v1-card-sub');
+      if (v1Value) v1Value.textContent = weekLabel;
+      if (v1Sub) v1Sub.textContent = weekDates;
+
+      // V2 updates
+      const v2Value = document.querySelector('.v2-context-card .v2-card-value');
+      const v2Sub = document.querySelector('.v2-context-card .v2-card-sub');
+      if (v2Value) v2Value.textContent = weekLabel;
+      if (v2Sub) v2Sub.textContent = weekDates;
+
+      // V3 updates
+      const v3Value = document.querySelector('.v3-box-value');
+      const v3Sub = document.querySelector('.v3-box-sub');
+      if (v3Value) v3Value.textContent = weekLabel;
+      if (v3Sub) v3Sub.textContent = weekDates;
+
+      // Update quick buttons in V3
+      document.querySelectorAll('.v3-quick-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.textContent === weekLabel) {
+          btn.classList.add('active');
+        }
+      });
+    }
+
+    // =====================================================
+    // Add Filter Functions
+    // =====================================================
+    let selectedFilterType = 'category';
+    let selectedFilterValue = null;
+
+    function openFilterModal() {
+      document.getElementById('add-filter-modal').classList.add('active');
+      // Reset state
+      selectedFilterType = 'category';
+      selectedFilterValue = null;
+      document.querySelectorAll('.filter-type-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector('[data-type="category"]').classList.add('active');
+      document.querySelectorAll('.filter-value-select').forEach(s => s.classList.remove('active'));
+      document.getElementById('category-options').classList.add('active');
+      document.querySelectorAll('.filter-option').forEach(o => o.classList.remove('selected'));
+    }
+
+    function closeFilterModal() {
+      document.getElementById('add-filter-modal').classList.remove('active');
+    }
+
+    function selectFilterType(element) {
+      document.querySelectorAll('.filter-type-btn').forEach(b => b.classList.remove('active'));
+      element.classList.add('active');
+      selectedFilterType = element.dataset.type;
+
+      // Show corresponding options
+      document.querySelectorAll('.filter-value-select').forEach(s => s.classList.remove('active'));
+      document.getElementById(`${selectedFilterType}-options`).classList.add('active');
+
+      // Clear selected value
+      selectedFilterValue = null;
+      document.querySelectorAll('.filter-option').forEach(o => o.classList.remove('selected'));
+    }
+
+    function selectFilterValue(element) {
+      // Toggle selection in same group
+      const parent = element.closest('.filter-options');
+      parent.querySelectorAll('.filter-option').forEach(o => o.classList.remove('selected'));
+      element.classList.add('selected');
+      selectedFilterValue = element.textContent;
+    }
+
+    function applyFilter() {
+      if (!selectedFilterValue) {
+        alert('Please select a filter value');
+        return;
+      }
+
+      const typeLabels = {
+        'category': 'Category',
+        'deal': 'Deal',
+        'size': 'Size'
+      };
+
+      const filterLabel = `${typeLabels[selectedFilterType]}: ${selectedFilterValue}`;
+
+      // Add chip to V1 with color class based on type
+      const v1FilterGroup = document.querySelector('.v1-filter-group');
+      if (v1FilterGroup) {
+        const addBtn = v1FilterGroup.querySelector('.v1-add-filter');
+        const newChip = document.createElement('span');
+        const colorClass = selectedFilterType === 'category' ? 'v1-filter-chip--category'
+                         : selectedFilterType === 'deal' ? 'v1-filter-chip--deal'
+                         : 'v1-filter-chip--size';
+        newChip.className = `v1-filter-chip ${colorClass}`;
+        newChip.innerHTML = `
+          ${filterLabel}
+          <button onclick="removeChip(this)"><span class="material-symbols-outlined" style="font-size: 14px;">close</span></button>
+        `;
+        addBtn.before(newChip);
+      }
+
+      // Add chip to V2
+      const v2Container = document.getElementById('v2-filter-container');
+      if (v2Container) {
+        const addBtn = v2Container.querySelector('.v2-add-filter');
+        const newChip = document.createElement('div');
+        newChip.className = 'v2-filter-chip';
+        newChip.innerHTML = `
+          <span class="v2-filter-chip-type">${typeLabels[selectedFilterType]}:</span>
+          <span class="v2-filter-chip-value">${selectedFilterValue}</span>
+          <button class="v2-filter-chip-remove" onclick="removeV2Chip(this)">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        `;
+        addBtn.before(newChip);
+      }
+
+      // Add to V3 filter list
+      const v3FilterList = document.querySelector('.v3-filter-list');
+      if (v3FilterList) {
+        const addBtn = v3FilterList.querySelector('.v3-add-filter-btn');
+        const newItem = document.createElement('div');
+        newItem.className = 'v3-filter-item';
+        newItem.innerHTML = `
+          <div class="v3-filter-item-left">
+            <span class="v3-filter-item-type">${typeLabels[selectedFilterType]}:</span>
+            <span class="v3-filter-item-value">${selectedFilterValue}</span>
+          </div>
+          <button class="v3-filter-item-remove" onclick="removeV3Filter(this)">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        `;
+        addBtn.before(newItem);
+      }
+
+      closeFilterModal();
+    }
+
+    function removeChip(button) {
+      button.closest('.v1-filter-chip').remove();
+    }
+
+    function removeV2Chip(button) {
+      button.closest('.v2-filter-chip').remove();
+    }
+
+    function clearV2Filters() {
+      resetFiltersToDefault();
+    }
+
+    function removeV3Filter(button) {
+      button.closest('.v3-filter-item').remove();
+    }
+
+    function clearV1Filters() {
+      resetFiltersToDefault();
+    }
+
+    function clearV3Filters() {
+      resetFiltersToDefault();
+    }
+
+    function resetFiltersToDefault() {
+      // Reset V1 filters
+      const v1FilterChips = document.querySelector('.v1-filter-chips');
+      if (v1FilterChips) {
+        v1FilterChips.querySelectorAll('.v1-filter-chip').forEach(chip => chip.remove());
+        const addBtn = v1FilterChips.querySelector('.v1-add-filter');
+        const defaultChips = `
+          <span class="v1-filter-chip v1-filter-chip--category">
+            Category: All
+            <button onclick="removeChip(this)"><span class="material-symbols-outlined" style="font-size: 14px;">close</span></button>
+          </span>
+          <span class="v1-filter-chip v1-filter-chip--deal">
+            Deal Type: All
+            <button onclick="removeChip(this)"><span class="material-symbols-outlined" style="font-size: 14px;">close</span></button>
+          </span>
+          <span class="v1-filter-chip v1-filter-chip--size">
+            Card Size: All
+            <button onclick="removeChip(this)"><span class="material-symbols-outlined" style="font-size: 14px;">close</span></button>
+          </span>
+        `;
+        addBtn.insertAdjacentHTML('beforebegin', defaultChips);
+      }
+
+      // Reset V2 filters
+      const v2Container = document.getElementById('v2-filter-container');
+      if (v2Container) {
+        v2Container.querySelectorAll('.v2-filter-chip').forEach(chip => chip.remove());
+        const addBtn = v2Container.querySelector('.v2-add-filter');
+        const defaultChips = `
+          <div class="v2-filter-chip">
+            <span class="v2-filter-chip-type">Category:</span>
+            <span class="v2-filter-chip-value">All</span>
+            <button class="v2-filter-chip-remove" onclick="removeV2Chip(this)">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+          <div class="v2-filter-chip">
+            <span class="v2-filter-chip-type">Deal Type:</span>
+            <span class="v2-filter-chip-value">All</span>
+            <button class="v2-filter-chip-remove" onclick="removeV2Chip(this)">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+          <div class="v2-filter-chip">
+            <span class="v2-filter-chip-type">Card Size:</span>
+            <span class="v2-filter-chip-value">All</span>
+            <button class="v2-filter-chip-remove" onclick="removeV2Chip(this)">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+        `;
+        addBtn.insertAdjacentHTML('beforebegin', defaultChips);
+      }
+
+      // Reset V3 filters
+      const v3FilterList = document.querySelector('.v3-filter-list');
+      if (v3FilterList) {
+        v3FilterList.querySelectorAll('.v3-filter-item').forEach(item => item.remove());
+        const addBtn = v3FilterList.querySelector('.v3-add-filter-btn');
+        const defaultItems = `
+          <div class="v3-filter-item">
+            <div class="v3-filter-item-left">
+              <span class="v3-filter-item-type">Category:</span>
+              <span class="v3-filter-item-value">All</span>
+            </div>
+            <button class="v3-filter-item-remove" onclick="removeV3Filter(this)">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+          <div class="v3-filter-item">
+            <div class="v3-filter-item-left">
+              <span class="v3-filter-item-type">Deal Type:</span>
+              <span class="v3-filter-item-value">All</span>
+            </div>
+            <button class="v3-filter-item-remove" onclick="removeV3Filter(this)">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+          <div class="v3-filter-item">
+            <div class="v3-filter-item-left">
+              <span class="v3-filter-item-type">Card Size:</span>
+              <span class="v3-filter-item-value">All</span>
+            </div>
+            <button class="v3-filter-item-remove" onclick="removeV3Filter(this)">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+        `;
+        addBtn.insertAdjacentHTML('beforebegin', defaultItems);
+      }
+    }
+
+    // =====================================================
+    // Event Listeners
+    // =====================================================
+    document.addEventListener('DOMContentLoaded', function() {
+      // V1 Date Picker
+      const v1DateCard = document.querySelector('.v1-context-card');
+      if (v1DateCard) {
+        v1DateCard.addEventListener('click', () => openDatePicker('v1'));
+      }
+
+      // V1 Add Filter
+      const v1AddFilter = document.querySelector('.v1-add-filter');
+      if (v1AddFilter) {
+        v1AddFilter.addEventListener('click', openFilterModal);
+      }
+
+      // V2 Date Picker
+      const v2DateCard = document.getElementById('v2-date-card');
+      if (v2DateCard) {
+        v2DateCard.addEventListener('click', () => openDatePicker('v2'));
+      }
+
+      // V2 Add Filter
+      const v2AddFilter = document.getElementById('v2-add-filter');
+      if (v2AddFilter) {
+        v2AddFilter.addEventListener('click', openFilterModal);
+      }
+
+      // V3 Date Picker (Change button)
+      const v3ChangeBtn = document.querySelector('.v3-context-box .v3-change-btn');
+      if (v3ChangeBtn) {
+        v3ChangeBtn.addEventListener('click', () => openDatePicker('v3'));
+      }
+
+      // V3 Quick week buttons
+      document.querySelectorAll('.v3-quick-options .v3-quick-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          if (this.textContent === 'Custom...') {
+            openDatePicker('v3');
+            // Switch to custom tab
+            setTimeout(() => {
+              const customTab = document.querySelectorAll('.date-picker-tab')[1];
+              customTab.click();
+            }, 100);
+          } else {
+            // Quick select week
+            document.querySelectorAll('.v3-quick-options .v3-quick-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            // Find matching week in modal and update
+            const weekNum = this.textContent.replace('Week ', '');
+            const weekOption = document.querySelector(`.week-option[data-week="${weekNum}"]`);
+            if (weekOption) {
+              selectWeek(weekOption);
+              const weekLabel = weekOption.querySelector('.week-option-label').textContent;
+              const weekDates = weekOption.querySelector('.week-option-dates').textContent;
+              updateDateDisplay(weekLabel, weekDates);
+            }
+          }
+        });
+      });
+
+      // V3 Add Filter
+      const v3AddFilter = document.querySelector('.v3-add-filter-btn');
+      if (v3AddFilter) {
+        v3AddFilter.addEventListener('click', openFilterModal);
+      }
+
+      // Close modals on overlay click
+      document.querySelectorAll('.modal-overlay').forEach(overlay => {
+        overlay.addEventListener('click', function(e) {
+          if (e.target === this) {
+            this.classList.remove('active');
+          }
+        });
+      });
+
+      // Close modals on Escape key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.classList.remove('active');
+          });
+        }
+      });
+    });
+
+    // =====================================================
+    // Entity Selector Modal Functions
+    // =====================================================
+
+    // Entity Hierarchy Data
+    const entityHierarchy = [
+      {
+        id: "BRAND_001",
+        name: "1 THEMES - New",
+        type: "Brand",
+        subdomain: "1-new-themes",
+        logo: "themes-brand",
+        title: "",
+        path: "",
+        children: [
+          // Brand-level Group (sibling to SubBrands)
+          {
+            id: "BRANDGROUP_001",
+            name: "Premium Markets",
+            type: "BrandGroup",
+            subdomain: "",
+            logo: "multi",
+            title: "",
+            path: "",
+            storeIds: ["STORE_001", "STORE_006", "STORE_010"], // Stores from multiple SubBrands
+            storeCount: 3,
+            children: []
+          },
+          // SubBrand #1
+          {
+            id: "SUBBRAND_001",
+            name: "AFS dansfoods",
+            type: "SubBrand",
+            subdomain: "dansfoods",
+            logo: "dansfoods",
+            title: "",
+            path: "",
+            children: [
+              { id: "STORE_001", name: "1016 W Spruce St", type: "Store", subdomain: "dansfoods", logo: "dansfoods", title: "Downtown Spruce", path: "25599" },
+              { id: "STORE_002", name: "2714 E Cleveland St", type: "Store", subdomain: "dansfoods", logo: "dansfoods", title: "East Cleveland", path: "32585" },
+              { id: "STORE_003", name: "514 E Pershing Ave", type: "Store", subdomain: "dansfoods", logo: "dansfoods", title: "Pershing Plaza", path: "27046" },
+              // SubBrand-level Group (sibling to Stores)
+              {
+                id: "SUBGROUP_001",
+                name: "Downtown Cluster",
+                type: "SubGroup",
+                subdomain: "",
+                logo: "dansfoods",
+                title: "",
+                path: "",
+                storeIds: ["STORE_001", "STORE_002"], // Only from this SubBrand
+                storeCount: 2,
+                children: []
+              },
+              { id: "STORE_004", name: "727 Us Highway 14", type: "Store", subdomain: "dansfoods", logo: "dansfoods", title: "Highway 14 Market", path: "32836" },
+              { id: "STORE_005", name: "740 S Seneca Ave", type: "Store", subdomain: "dansfoods", logo: "dansfoods", title: "Seneca South", path: "27127" }
+            ]
+          },
+          // SubBrand #2 (empty)
+          {
+            id: "SUBBRAND_002",
+            name: "AFS dicksmarket",
+            type: "SubBrand",
+            subdomain: "dicksmarket",
+            logo: "dicksmarket",
+            title: "",
+            path: "",
+            children: []
+          },
+          // SubBrand #3 (empty)
+          {
+            id: "SUBBRAND_003",
+            name: "AFS linsgrocery",
+            type: "SubBrand",
+            subdomain: "linsgrocery",
+            logo: "linsgrocery",
+            title: "",
+            path: "",
+            children: []
+          },
+          // SubBrand #4 (empty)
+          {
+            id: "SUBBRAND_004",
+            name: "AFS maceys",
+            type: "SubBrand",
+            subdomain: "maceys",
+            logo: "maceys",
+            title: "",
+            path: "",
+            children: []
+          },
+          // SubBrand #5
+          {
+            id: "SUBBRAND_005",
+            name: "AFS-freshmarket",
+            type: "SubBrand",
+            subdomain: "freshmarketstores",
+            logo: "freshmarket",
+            title: "",
+            path: "",
+            children: [
+              { id: "STORE_006", name: "225 Grandview Dr", type: "Store", subdomain: "freshmarketstores", logo: "freshmarket", title: "Grandview Heights", path: "26809" },
+              { id: "STORE_007", name: "324 N 6th St", type: "Store", subdomain: "freshmarketstores", logo: "freshmarket", title: "North Sixth", path: "30817" },
+              { id: "STORE_008", name: "520 E Pine Ave", type: "Store", subdomain: "freshmarketstores", logo: "freshmarket", title: "Pine Avenue", path: "29163" },
+              { id: "STORE_009", name: "93 E Whalen", type: "Store", subdomain: "freshmarketstores", logo: "freshmarket", title: "Whalen East", path: "32498" }
+            ]
+          }
+        ]
+      },
+      // Second Brand
+      {
+        id: "BRAND_002",
+        name: "FreshMart",
+        type: "Brand",
+        subdomain: "freshmart",
+        logo: "freshmart-brand",
+        title: "",
+        path: "",
+        children: [
+          {
+            id: "SUBBRAND_006",
+            name: "FreshMart Metro",
+            type: "SubBrand",
+            subdomain: "metro",
+            logo: "metro",
+            title: "",
+            path: "",
+            children: [
+              { id: "STORE_010", name: "1234 Downtown Ave", type: "Store", subdomain: "metro", logo: "metro", title: "Downtown Metro", path: "10001" },
+              { id: "STORE_011", name: "5678 Midtown Blvd", type: "Store", subdomain: "metro", logo: "metro", title: "Midtown Central", path: "10002" },
+              { id: "STORE_012", name: "9012 Financial District", type: "Store", subdomain: "metro", logo: "metro", title: "Financial Hub", path: "10003" }
+            ]
+          },
+          {
+            id: "SUBBRAND_007",
+            name: "FreshMart Commons",
+            type: "SubBrand",
+            subdomain: "commons",
+            logo: "commons",
+            title: "",
+            path: "",
+            children: [
+              { id: "STORE_013", name: "2345 Valley Rd", type: "Store", subdomain: "commons", logo: "commons", title: "Valley Commons", path: "20001" },
+              { id: "STORE_014", name: "6789 Springs Blvd", type: "Store", subdomain: "commons", logo: "commons", title: "Springs Market", path: "20002" }
+            ]
+          }
+        ]
+      }
+    ];
+
+    let expandedNodes = new Set(['BRAND_001', 'SUBBRAND_001']);
+    let selectedEntityId = null;
+    let showStoreGroups = true;
+
+    /**
+     * Find entity by ID anywhere in hierarchy
+     */
+    function findEntityById(entityId, nodes = entityHierarchy) {
+      for (const node of nodes) {
+        if (node.id === entityId) {
+          return node;
+        }
+
+        if (node.children && node.children.length > 0) {
+          const found = findEntityById(entityId, node.children);
+          if (found) return found;
+        }
+      }
+      return null;
+    }
+
+    /**
+     * Calculate store count for any entity type
+     */
+    function calculateStoreCount(entity) {
+      if (!entity) return 0;
+
+      switch (entity.type) {
+        case 'Store':
+          return 1;
+
+        case 'SubGroup':
+        case 'BrandGroup':
+          // Groups: use pre-set count or count referenced stores
+          if (entity.storeCount) return entity.storeCount;
+          return entity.storeIds ? entity.storeIds.length : 0;
+
+        case 'SubBrand':
+          // SubBrand: count all direct Store children (not SubGroups)
+          let subBrandCount = 0;
+          if (entity.children) {
+            entity.children.forEach(child => {
+              if (child.type === 'Store') {
+                subBrandCount++;
+              }
+            });
+          }
+          return subBrandCount;
+
+        case 'Brand':
+          // Brand: count all stores across all SubBrand children
+          let brandCount = 0;
+          if (entity.children) {
+            entity.children.forEach(child => {
+              if (child.type === 'SubBrand') {
+                brandCount += calculateStoreCount(child);
+              }
+              // Don't count BrandGroups - they're just alternate views of same stores
+            });
+          }
+          return brandCount;
+
+        default:
+          return 0;
+      }
+    }
+
+    /**
+     * Get SubBrand parent for a given entity
+     */
+    function getSubBrandParent(entityId, nodes = entityHierarchy, parent = null) {
+      for (const node of nodes) {
+        if (node.id === entityId) {
+          // Found the entity, return the SubBrand parent
+          return parent && parent.type === 'SubBrand' ? parent : null;
+        }
+
+        if (node.children && node.children.length > 0) {
+          const found = getSubBrandParent(entityId, node.children, node);
+          if (found) return found;
+        }
+      }
+      return null;
+    }
+
+    /**
+     * Get Brand parent for a given entity
+     */
+    function getBrandParent(entityId, nodes = entityHierarchy, parent = null) {
+      for (const node of nodes) {
+        if (node.id === entityId) {
+          // Found the entity, return the Brand parent
+          return parent && parent.type === 'Brand' ? parent : null;
+        }
+
+        if (node.children && node.children.length > 0) {
+          const found = getBrandParent(entityId, node.children, node);
+          if (found) return found;
+        }
+      }
+      return null;
+    }
+
+    /**
+     * Render the entity hierarchy table
+     */
+    function renderEntityTable() {
+      const tbody = document.getElementById('entity-table-body');
+      if (!tbody) return;
+
+      tbody.innerHTML = '';
+
+      function renderNode(node, level, parentExpanded) {
+        const isExpanded = expandedNodes.has(node.id);
+        const hasChildren = node.children && node.children.length > 0;
+        const shouldShow = level === 0 || parentExpanded;
+        const isGroup = node.type === 'Group';
+        const shouldHide = isGroup && !showStoreGroups;
+
+        if (shouldHide) return;
+
+        const tr = document.createElement('tr');
+        tr.dataset.id = node.id;
+        tr.dataset.level = level;
+
+        // All entity types are selectable
+        tr.classList.add('selectable');
+
+        if (!shouldShow) {
+          tr.classList.add('collapsed');
+        }
+        if (selectedEntityId === node.id) {
+          tr.classList.add('selected');
+        }
+
+        // Name column with tree structure
+        const tdName = document.createElement('td');
+        const nameCell = document.createElement('div');
+        nameCell.className = 'entity-tree-cell';
+
+        const indent = `<span class="entity-indent indent-${level}"></span>`;
+
+        // Groups don't have expandable children (they use references)
+        const isExpandable = hasChildren && node.type !== 'BrandGroup' && node.type !== 'SubGroup';
+
+        const toggleBtn = isExpandable ? `
+          <button class="entity-tree-toggle ${isExpanded ? 'expanded' : ''}" onclick="toggleEntityNode('${node.id}')">
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+        ` : '<span style="width: 20px; display: inline-block;"></span>';
+
+        nameCell.innerHTML = `${indent}${toggleBtn}<span>${node.name}</span>`;
+        tdName.appendChild(nameCell);
+
+        // Type column
+        const tdType = document.createElement('td');
+        let typeLabel = node.type;
+        if (node.type === 'BrandGroup') typeLabel = 'Brand Group';
+        if (node.type === 'SubGroup') typeLabel = 'Sub Group';
+        tdType.innerHTML = `<span class="entity-type-badge type-${node.type.toLowerCase()}">${typeLabel}</span>`;
+
+        // Title column
+        const tdTitle = document.createElement('td');
+        tdTitle.textContent = node.title || '';
+
+        // Subdomain column
+        const tdSubdomain = document.createElement('td');
+        tdSubdomain.textContent = node.subdomain || '';
+
+        // Path column
+        const tdPath = document.createElement('td');
+        tdPath.textContent = node.path || '';
+
+        tr.appendChild(tdName);
+        tr.appendChild(tdType);
+        tr.appendChild(tdTitle);
+        tr.appendChild(tdSubdomain);
+        tr.appendChild(tdPath);
+
+        // All types selectable
+        tr.onclick = () => selectEntity(node);
+
+        tbody.appendChild(tr);
+
+        // Render children (skip for Groups since they use references)
+        if (hasChildren && node.type !== 'BrandGroup' && node.type !== 'SubGroup') {
+          node.children.forEach(child => {
+            renderNode(child, level + 1, isExpanded);
+          });
+        }
+      }
+
+      entityHierarchy.forEach(brand => renderNode(brand, 0, true));
+    }
+
+    /**
+     * Toggle expansion of a tree node
+     */
+    function toggleEntityNode(nodeId) {
+      if (expandedNodes.has(nodeId)) {
+        expandedNodes.delete(nodeId);
+      } else {
+        expandedNodes.add(nodeId);
+      }
+      renderEntityTable();
+    }
+
+    /**
+     * Find parent hierarchy path for breadcrumb
+     */
+    function findEntityPath(entityId, hierarchy = entityHierarchy, path = []) {
+      for (const node of hierarchy) {
+        const currentPath = [...path, node];
+
+        if (node.id === entityId) {
+          return currentPath;
+        }
+
+        if (node.children) {
+          const found = findEntityPath(entityId, node.children, currentPath);
+          if (found) return found;
+        }
+      }
+      return null;
+    }
+
+    /**
+     * Select an entity (Store, SubBrand, SubGroup, BrandGroup, or Brand)
+     */
+    function selectEntity(entity) {
+      selectedEntityId = entity.id;
+
+      // Find the parent hierarchy
+      const path = findEntityPath(entity.id);
+
+      // Update the entity card elements
+      const breadcrumb = document.querySelector('.v1-card-breadcrumb');
+      const cardValue = document.querySelector('.v1-context-card:not(.v1-context-card--date) .v1-card-value');
+      const cardSub = document.querySelector('.v1-context-card:not(.v1-context-card--date) .v1-card-sub');
+      const cardIcon = document.querySelector('.v1-card-icon--entity .material-symbols-outlined');
+
+      let breadcrumbText = 'BRAND > SUB-BRAND';
+      let cardValueText = '';
+      let cardSubText = '';
+      let iconName = 'store'; // Default icon
+
+      // Get parent entities for breadcrumb building
+      const brand = path ? path.find(p => p.type === 'Brand') : null;
+      const subbrand = path ? path.find(p => p.type === 'SubBrand') : null;
+
+      // Handle each entity type
+      switch (entity.type) {
+        case 'Store':
+          // Store: Show title and address
+          // Breadcrumb: BRAND > SUB-BRAND
+          if (brand && subbrand) {
+            breadcrumbText = `${brand.name.toUpperCase()} > ${subbrand.name.toUpperCase()}`;
+          }
+          cardValueText = entity.title || entity.name;
+          cardSubText = entity.name;
+          iconName = 'store';
+          break;
+
+        case 'SubBrand':
+          // SubBrand: "All Stores" with count
+          // Breadcrumb: BRAND > SUB-BRAND
+          if (brand) {
+            breadcrumbText = `${brand.name.toUpperCase()} > ${entity.name.toUpperCase()}`;
+          }
+          cardValueText = 'All Stores';
+          const subBrandCount = calculateStoreCount(entity);
+          cardSubText = `${entity.name} (${subBrandCount} store${subBrandCount !== 1 ? 's' : ''})`;
+          iconName = 'store'; // SubBrand logo
+          break;
+
+        case 'SubGroup':
+          // SubGroup: Group name with store count
+          // Breadcrumb: BRAND > SUB-BRAND
+          const subGroupSubBrand = getSubBrandParent(entity.id);
+          const subGroupBrand = getBrandParent(entity.id);
+
+          if (subGroupBrand && subGroupSubBrand) {
+            breadcrumbText = `${subGroupBrand.name.toUpperCase()} > ${subGroupSubBrand.name.toUpperCase()}`;
+          }
+          cardValueText = entity.name;
+          const subGroupCount = calculateStoreCount(entity);
+          cardSubText = `${subGroupCount} store${subGroupCount !== 1 ? 's' : ''}`;
+          iconName = 'store'; // Inherits SubBrand logo
+          break;
+
+        case 'BrandGroup':
+          // BrandGroup: Group name with store count
+          // Breadcrumb: BRAND > GROUP NAME
+          const brandGroupBrand = getBrandParent(entity.id);
+
+          if (brandGroupBrand) {
+            breadcrumbText = `${brandGroupBrand.name.toUpperCase()} > ${entity.name.toUpperCase()}`;
+          }
+          cardValueText = entity.name;
+          const brandGroupCount = calculateStoreCount(entity);
+          cardSubText = `${brandGroupCount} store${brandGroupCount !== 1 ? 's' : ''}`;
+          iconName = 'business'; // Multi-logo indicator
+          break;
+
+        case 'Brand':
+          // Brand: "All Stores" with total count
+          // Breadcrumb: BRAND
+          breadcrumbText = entity.name.toUpperCase();
+          cardValueText = 'All Stores';
+          const brandCount = calculateStoreCount(entity);
+          cardSubText = `${entity.name} (${brandCount} store${brandCount !== 1 ? 's' : ''})`;
+          iconName = 'business'; // Brand logo
+          break;
+
+        default:
+          cardValueText = entity.name;
+          cardSubText = '';
+      }
+
+      // Update DOM
+      if (breadcrumb) breadcrumb.textContent = breadcrumbText;
+      if (cardValue) cardValue.textContent = cardValueText;
+      if (cardSub) cardSub.textContent = cardSubText;
+      if (cardIcon) cardIcon.textContent = iconName;
+
+      renderEntityTable();
+      closeEntitySelector();
+    }
+
+    /**
+     * Toggle show/hide store groups
+     */
+    function toggleShowGroups() {
+      showStoreGroups = !showStoreGroups;
+      const toggle = document.getElementById('groups-toggle');
+      if (toggle) {
+        if (showStoreGroups) {
+          toggle.classList.remove('off');
+        } else {
+          toggle.classList.add('off');
+        }
+      }
+      renderEntityTable();
+    }
+
+    /**
+     * Open entity selector modal
+     */
+    function openEntitySelector() {
+      const modal = document.getElementById('entity-selector-modal');
+      if (modal) {
+        modal.classList.add('active');
+        renderEntityTable();
+      }
+    }
+
+    /**
+     * Close entity selector modal
+     */
+    function closeEntitySelector() {
+      const modal = document.getElementById('entity-selector-modal');
+      if (modal) {
+        modal.classList.remove('active');
+      }
+    }
+  </script>
+
+</body>
+</html>

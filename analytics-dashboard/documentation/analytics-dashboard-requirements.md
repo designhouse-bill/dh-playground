@@ -127,6 +127,34 @@ Filters answer: "What subset are we examining?"
 - Panel A context persists back to source view
 - Explicit option to adopt Panel B context before exit
 
+### 3.4 Context Persistence
+
+**Principle:** User context persists across all view changes. Switching views should never lose the user's current focus.
+
+**Context Elements:**
+| Element | Scope | Persistence |
+|---------|-------|-------------|
+| Date Range (Week) | Global | Persists across all views and view modes |
+| Entity Selection | Global | Persists across all views and view modes |
+| Category Selection | Cross-view | Syncs between Categories view and Promotions view |
+| Applied Filters | View-specific | Persists within view mode, cleared on mode change |
+| Search Query | View-specific | Clears on view change |
+| Detail Panel State | View-specific | Closes on view change, re-opens with context |
+
+**View Change Behavior:**
+
+| From → To | Context Behavior |
+|-----------|------------------|
+| Categories → Promotions | Selected category → pre-filters promotions, highlights sidebar |
+| Promotions → Categories | Active category → selects row, opens detail panel |
+| Base → Data Grid | All filters preserved, category selection preserved |
+| Any → Compare | Current context becomes Panel A starting point |
+
+**Implementation Notes:**
+- State variables `activeCategory` and `selectedCategoryId` are synchronized
+- Week and Entity selections are global and never reset by view changes
+- "View Promotions" from category detail sets both filter state AND switches view
+
 ---
 
 ## 4. Component Specifications
@@ -165,12 +193,12 @@ Always visible across all views. Never hidden or collapsed.
 
 **Primary Display:** Current entity name with level indicator
 
-**Selection Method:** Modal or panel using Node Mapping UI pattern
+**Selection Method:** Extra-wide modal (960px) using tree table pattern
 
 **Structure (Tabbed):**
 | Tab | Purpose |
 |-----|---------|
-| Nodes | Select from hierarchy (Brand → Sub-brand → Store) |
+| Nodes | Select from hierarchy using tree table with accordion |
 | Groups | Select from saved custom groups or create new |
 
 **Entity Hierarchy:**
@@ -184,6 +212,24 @@ Custom Analytics Group
 ├── Can contain sub-brands
 ├── Can contain stores (same or different sub-brands)
 ```
+
+**Tree Table UI (Nodes Tab):**
+
+| Column | Brand | SubBrand | Store |
+|--------|-------|----------|-------|
+| Name | Brand name | SubBrand name | Street address |
+| Type | Badge: "Brand" (blue) | Badge: "SubBrand" (gray) | Badge: "Store" (green) |
+| Title | — | — | Store display name |
+| Subdomain | Brand subdomain | SubBrand ID | SubBrand ID |
+| Path | — | — | Store number |
+
+**Tree Table Features:**
+- Accordion expand/collapse for Brand and SubBrand rows
+- Indentation by hierarchy level (0px, 24px, 48px)
+- Type badges with color coding (Brand=info blue, SubBrand=gray, Store=success green)
+- Search filters across Name, Title fields
+- Click row to select entity
+- Selected row highlighted with primary color
 
 **Behavior:** Single selection at a time. Selection displays that level and below.
 
@@ -422,6 +468,10 @@ Available across all views. Toolbar placement: top-right.
 
 ---
 
-*Document Version: 1.0*
-*Last Updated: [Current Date]*
+*Document Version: 1.2*
+*Last Updated: 2025-11-30*
 *Status: Ready for Prototype Development*
+
+**Change Log:**
+- v1.2 (2025-11-30): Added Section 3.4 Context Persistence - view change behavior and state management
+- v1.1 (2025-11-30): Updated Section 4.3 Entity Selector with tree table UI specification

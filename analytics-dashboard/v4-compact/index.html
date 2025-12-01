@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V4 Compact Density - Analytics Dashboard</title>
+  <link rel="stylesheet" href="../shared/design-tokens.css">
+  <link rel="stylesheet" href="../shared/base.css">
+  <link rel="stylesheet" href="../shared/context-bar.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="app-header__left">
+        <a href="../index.html" class="back-link">← Back</a>
+        <h1 class="app-header__title">Compact View</h1>
+      </div>
+      <div class="app-header__right">
+        <span class="version-badge">Concept 4</span>
+        <div class="density-toggle">
+          <span class="density-label">Density:</span>
+          <button class="density-btn active" data-density="compact">Compact</button>
+          <button class="density-btn" data-density="comfortable">Comfortable</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Foundation Context -->
+    <div class="context-bar context-bar--compact">
+      <div class="context-bar__foundation">
+        <div class="context-selector context-selector--compact">
+          <button class="context-selector__button context-selector__button--compact">
+            <span id="date-display">Week 47 • Nov 18-24</span>
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M4 6l4 4 4-4H4z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="context-selector context-selector--compact">
+          <button class="context-selector__button context-selector__button--compact">
+            <span id="entity-display">All Stores (67)</span>
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M4 6l4 4 4-4H4z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="context-bar__actions">
+        <div class="search-compact">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.868-3.834z"/>
+          </svg>
+          <input type="text" class="search-compact__input" placeholder="Search..." id="search-input">
+        </div>
+        <span class="row-indicator" id="row-indicator">155 promotions</span>
+      </div>
+    </div>
+
+    <!-- Filter Chips -->
+    <div class="filter-chips-row" id="filter-chips-row" style="display: none;">
+      <div class="filter-chips" id="filter-chips"></div>
+      <button class="clear-all-btn" id="clear-filters">Clear all</button>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="compact-grid">
+        <table class="compact-table" id="compact-table">
+          <thead class="compact-table__head">
+            <tr>
+              <th class="compact-table__th compact-table__th--sortable" data-sort="name">
+                Promotion
+                <span class="sort-icon"></span>
+              </th>
+              <th class="compact-table__th">Cat</th>
+              <th class="compact-table__th compact-table__th--sortable compact-table__th--number" data-sort="civ">
+                CIV
+                <span class="sort-icon"></span>
+              </th>
+              <th class="compact-table__th compact-table__th--sortable compact-table__th--number" data-sort="cc">
+                CC
+                <span class="sort-icon"></span>
+              </th>
+              <th class="compact-table__th compact-table__th--sortable compact-table__th--number" data-sort="atl">
+                ATL
+                <span class="sort-icon"></span>
+              </th>
+              <th class="compact-table__th compact-table__th--sortable compact-table__th--number" data-sort="ctr">
+                CTR
+                <span class="sort-icon"></span>
+              </th>
+              <th class="compact-table__th compact-table__th--sortable compact-table__th--number" data-sort="compositeScore">
+                Score
+                <span class="sort-icon"></span>
+              </th>
+              <th class="compact-table__th compact-table__th--sortable" data-sort="percentile">
+                %ile
+                <span class="sort-icon"></span>
+              </th>
+              <th class="compact-table__th">Deal</th>
+              <th class="compact-table__th">Size</th>
+            </tr>
+          </thead>
+          <tbody class="compact-table__body" id="table-body">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Quick View Panel -->
+      <div class="quick-view" id="quick-view">
+        <div class="quick-view__header">
+          <h3 class="quick-view__title" id="qv-title"></h3>
+          <button class="quick-view__close" id="close-quick-view">×</button>
+        </div>
+        <div class="quick-view__content">
+          <img class="quick-view__image" id="qv-image" src="" alt="">
+          <div class="quick-view__stats" id="qv-stats"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../shared/mock-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

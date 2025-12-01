@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics Dashboard - UI Concepts</title>
+  <link rel="stylesheet" href="shared/design-tokens.css">
+  <link rel="stylesheet" href="shared/base.css">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: var(--space-8);
+    }
+
+    .container {
+      max-width: 1000px;
+      width: 100%;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: var(--space-10);
+    }
+
+    .header__title {
+      font-size: var(--font-size-4xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-3);
+      letter-spacing: -0.025em;
+    }
+
+    .header__subtitle {
+      font-size: var(--font-size-md);
+      color: var(--color-text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: var(--line-height-relaxed);
+    }
+
+    .header__note {
+      margin-top: var(--space-4);
+      padding: var(--space-3) var(--space-4);
+      background-color: var(--color-primary-50);
+      border-radius: var(--radius-lg);
+      font-size: var(--font-size-sm);
+      color: var(--color-primary-700);
+      display: inline-block;
+    }
+
+    .versions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--space-6);
+    }
+
+    .version-card {
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      transition: all var(--transition-normal);
+      text-decoration: none;
+    }
+
+    .version-card:hover {
+      border-color: var(--color-primary-400);
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+
+    .version-card__preview {
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--color-gray-100), var(--color-gray-200));
+      font-size: 48px;
+    }
+
+    .version-card__content {
+      padding: var(--space-5);
+    }
+
+    .version-card__number {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary-600);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--space-1);
+    }
+
+    .version-card__title {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-2);
+    }
+
+    .version-card__description {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      line-height: var(--line-height-relaxed);
+      margin-bottom: var(--space-4);
+    }
+
+    .version-card__features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+
+    .feature-tag {
+      font-size: var(--font-size-xs);
+      padding: var(--space-1) var(--space-2);
+      background-color: var(--color-gray-100);
+      color: var(--color-gray-600);
+      border-radius: var(--radius-full);
+    }
+
+    .footer {
+      margin-top: var(--space-10);
+      text-align: center;
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+    }
+
+    .footer a {
+      color: var(--color-primary-600);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1 class="header__title">Analytics Dashboard</h1>
+      <p class="header__subtitle">
+        Five UI concepts for the Digital Circular Analytics Dashboard.
+        Each version demonstrates a different aspect of the requirements specification.
+      </p>
+      <div class="header__note">
+        Light theme only • Inter font • Filter chips • Hero/Thumb images
+      </div>
+    </header>
+
+    <div class="versions">
+      <a href="v1-base-view/index.html" class="version-card">
+        <div class="version-card__preview">📋</div>
+        <div class="version-card__content">
+          <div class="version-card__number">Concept 1</div>
+          <h2 class="version-card__title">Base View</h2>
+          <p class="version-card__description">
+            Category and Promotion lists with right-side Detail Panel.
+            Click rows to see KPIs, trends, top stores, and action buttons.
+          </p>
+          <div class="version-card__features">
+            <span class="feature-tag">Detail Panel</span>
+            <span class="feature-tag">Hero Images</span>
+            <span class="feature-tag">Filter Chips</span>
+            <span class="feature-tag">Drill Navigation</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="v2-data-grid/index.html" class="version-card">
+        <div class="version-card__preview">📊</div>
+        <div class="version-card__content">
+          <div class="version-card__number">Concept 2</div>
+          <h2 class="version-card__title">Data Grid</h2>
+          <p class="version-card__description">
+            Full dataset visibility with sortable columns, row selection,
+            search, and export capabilities. Spreadsheet-like experience.
+          </p>
+          <div class="version-card__features">
+            <span class="feature-tag">Sortable</span>
+            <span class="feature-tag">Selectable</span>
+            <span class="feature-tag">Searchable</span>
+            <span class="feature-tag">Export Ready</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="v3-comparison/index.html" class="version-card">
+        <div class="version-card__preview">⚖️</div>
+        <div class="version-card__content">
+          <div class="version-card__number">Concept 3</div>
+          <h2 class="version-card__title">A/B Comparison</h2>
+          <p class="version-card__description">
+            Slide-over panel for side-by-side analysis.
+            Compare different dates, entities, or items with synced context.
+          </p>
+          <div class="version-card__features">
+            <span class="feature-tag">Split View</span>
+            <span class="feature-tag">Context Inherit</span>
+            <span class="feature-tag">Swap Panels</span>
+            <span class="feature-tag">Delta Display</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="v4-compact/index.html" class="version-card">
+        <div class="version-card__preview">🔲</div>
+        <div class="version-card__content">
+          <div class="version-card__number">Concept 4</div>
+          <h2 class="version-card__title">Compact Density</h2>
+          <p class="version-card__description">
+            Higher information density for power users.
+            More rows visible, tighter spacing, optimized for quick scanning.
+          </p>
+          <div class="version-card__features">
+            <span class="feature-tag">Dense Layout</span>
+            <span class="feature-tag">More Rows</span>
+            <span class="feature-tag">Quick Scan</span>
+            <span class="feature-tag">Power User</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="v5-wide/index.html" class="version-card">
+        <div class="version-card__preview">🖥️</div>
+        <div class="version-card__content">
+          <div class="version-card__number">Concept 5</div>
+          <h2 class="version-card__title">Wide Monitor</h2>
+          <p class="version-card__description">
+            Optimized for large displays with persistent detail panel,
+            maximizing horizontal real estate and parallel information display.
+          </p>
+          <div class="version-card__features">
+            <span class="feature-tag">Always Panel</span>
+            <span class="feature-tag">Max Width</span>
+            <span class="feature-tag">Parallel View</span>
+            <span class="feature-tag">Large Display</span>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="versions" style="margin-top: var(--space-8);">
+      <a href="header-variations/index.html" class="version-card" style="border-color: var(--color-warning-400); background-color: var(--color-warning-50);">
+        <div class="version-card__preview" style="background: linear-gradient(135deg, var(--color-warning-100), var(--color-warning-200));">🎯</div>
+        <div class="version-card__content">
+          <div class="version-card__number" style="color: var(--color-warning-600);">NEW - Header Focus</div>
+          <h2 class="version-card__title">Context Bar Variations</h2>
+          <p class="version-card__description">
+            5 concepts for making Date Range and Entity more prominent.
+            Includes Category/Promotion toggle and clear filter access.
+          </p>
+          <div class="version-card__features">
+            <span class="feature-tag">Larger Context</span>
+            <span class="feature-tag">Cat/Promo Toggle</span>
+            <span class="feature-tag">Filter Access</span>
+            <span class="feature-tag">Search Integration</span>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <footer class="footer">
+      <p>Based on <a href="analytics-dashboard-requirements.md">analytics-dashboard-requirements.md</a></p>
+      <p>Previous iterations saved in <a href="../analytics-dashboard-process/">analytics-dashboard-process/</a></p>
+    </footer>
+  </div>
+</body>
+</html>

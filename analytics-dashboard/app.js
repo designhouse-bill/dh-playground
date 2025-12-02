@@ -839,15 +839,41 @@
       }
     }
 
+    // Get percentile bar color
+    const getPercentileBarColor = (percentile) => {
+      if (percentile >= 90) return 'linear-gradient(90deg, #22c55e 0%, #4ade80 100%)';
+      if (percentile >= 70) return 'linear-gradient(90deg, #84cc16 0%, #a3e635 100%)';
+      if (percentile >= 50) return 'linear-gradient(90deg, #eab308 0%, #facc15 100%)';
+      return 'linear-gradient(90deg, #ef4444 0%, #f87171 100%)';
+    };
+
+    // Get percentile text color
+    const getPercentileTextColor = (percentile) => {
+      if (percentile >= 70) return '#16a34a';
+      if (percentile >= 50) return '#ca8a04';
+      return '#dc2626';
+    };
+
     elements.detailContent.innerHTML = `
       <div class="detail-hero">
         <img src="${promo.heroImage}" alt="${escapeHtml(promo.name)}">
       </div>
       <div class="detail-body">
         <h2 class="detail-title">${escapeHtml(promo.name)}</h2>
-        <p class="detail-meta">
-          ${escapeHtml(promo.categoryName)} • ${escapeHtml(promo.dealType)} • ${escapeHtml(promo.cardSize)}
-        </p>
+
+        <div class="detail-tags">
+          <span class="detail-tag detail-tag--category">${escapeHtml(promo.categoryName)}</span>
+          <span class="detail-tag detail-tag--deal">${escapeHtml(promo.dealType)}</span>
+        </div>
+
+        <div class="detail-percentile-row">
+          <img src="./assets/chart-bar.svg" alt="Percentile" class="percentile-icon">
+          <span class="percentile-value" style="color: ${getPercentileTextColor(promo.percentile)}">${promo.percentile}%</span>
+          <div class="percentile-bar">
+            <div class="percentile-bar-fill" style="width: ${promo.percentile}%; background: ${getPercentileBarColor(promo.percentile)};"></div>
+          </div>
+          <span class="percentile-score">${promo.compositeScore}</span>
+        </div>
 
         <div class="detail-kpis">
           <div class="detail-kpi">
@@ -871,68 +897,274 @@
         ${comparisonSectionHTML}
 
         <div class="detail-section">
-          <div class="detail-section__title">Performance</div>
-          <div style="display: flex; align-items: center; gap: var(--space-4); margin-top: var(--space-2);">
-            ${getPercentileBadgeHTML(promo.percentile)}
-            <span style="font-size: var(--font-size-sm); color: var(--color-text-secondary);">
-              Score: ${promo.compositeScore}
-            </span>
-          </div>
+          <div class="detail-section__title">Interaction Rate</div>
+          <div class="detail-chart-container" id="interaction-rate-chart" style="width: 100%; height: 200px;"></div>
         </div>
 
         <div class="detail-section">
           <div class="detail-section__title">7-Day Trend</div>
-          <div class="mini-chart" id="trend-chart"></div>
+          <div class="detail-chart-container" id="trend-chart" style="width: 100%; height: 180px;"></div>
         </div>
 
         <div class="detail-section">
           <div class="detail-section__title">Top Performing Stores</div>
-          <div class="store-list">
-            ${MockData.topStores.slice(0, 5).map(store => `
-              <div class="store-item">
-                <span class="store-item__name">${escapeHtml(store.name)}</span>
-                <span class="store-item__score">${store.score}</span>
-              </div>
-            `).join('')}
+          <div class="top-stores">
+            <div class="top-stores__list">
+              ${MockData.topStores.slice(0, 5).map((store, index) => `
+                <div class="top-stores__item">
+                  <span class="top-stores__rank">${index + 1}</span>
+                  <span class="top-stores__name">${escapeHtml(store.name)}</span>
+                </div>
+              `).join('')}
+            </div>
           </div>
-        </div>
-
-        <div class="detail-actions">
-          <button class="btn btn--outline" onclick="window.print()">
-            <span class="material-symbols-outlined">print</span>
-            Print
-          </button>
-          <button class="btn btn--primary" onclick="comparePromotion('${promo.id}')">
-            <span class="material-symbols-outlined">compare</span>
-            Compare
-          </button>
         </div>
       </div>
     `;
 
-    // Render the trend chart after DOM update
-    setTimeout(() => renderTrendChart(), 0);
+    // Render the charts after DOM update
+    setTimeout(() => {
+      renderInteractionRateChart(promo);
+      renderTrendChart();
+    }, 0);
   }
 
   /**
-   * Render trend chart mini visualization
+   * Chart colors matching the process design
+   */
+  const chartColors = [
+    '#4272D8', // Primary Blue
+    '#B8D64D', // Success Green
+    '#F39C12', // Warning Amber
+    '#E74C3C', // Danger Red
+    '#9B59B6', // Accent Purple
+    '#06B6D4', // Cyan
+    '#84CC16', // Lime
+    '#F97316'  // Orange
+  ];
+
+  /**
+   * Render Interaction Rate donut chart (ECharts)
+   */
+  function renderInteractionRateChart(promo) {
+    const container = document.getElementById('interaction-rate-chart');
+    if (!container || typeof echarts === 'undefined') {
+      console.warn('ECharts not available for interaction rate chart');
+      return;
+    }
+
+    // Dispose existing chart if any
+    const existingChart = echarts.getInstanceByDom(container);
+    if (existingChart) {
+      existingChart.dispose();
+    }
+
+    // Initialize ECharts instance
+    const chart = echarts.init(container);
+
+    // Get metrics from promotion
+    const views = promo.civ || 0;
+    const clicks = promo.cc || 0;
+    const added = promo.atl || 0;
+
+    // Donut chart data - Views, Clicks, Added
+    const donutData = [
+      {
+        name: 'Views',
+        value: views,
+        itemStyle: { color: '#E74C3C' } // Coral red
+      },
+      {
+        name: 'Clicks',
+        value: clicks,
+        itemStyle: { color: '#F39C12' } // Orange
+      },
+      {
+        name: 'Added',
+        value: added,
+        itemStyle: { color: '#B8D64D' } // Yellow-green
+      }
+    ]
+
+    // Chart configuration
+    const option = {
+      tooltip: {
+        trigger: 'item',
+        backgroundColor: '#ffffff',
+        borderColor: '#e5e7eb',
+        borderWidth: 1,
+        textStyle: {
+          color: '#0f172a',
+          fontFamily: 'inherit',
+          fontSize: 12
+        },
+        formatter: function(params) {
+          return `${params.name}: ${formatNumber(params.value)}`;
+        }
+      },
+      legend: {
+        orient: 'horizontal',
+        bottom: 0,
+        left: 'center',
+        textStyle: {
+          color: '#6b7280',
+          fontSize: 11,
+          fontFamily: 'inherit',
+          fontWeight: 400
+        },
+        itemGap: 16,
+        itemWidth: 10,
+        itemHeight: 10
+      },
+      series: [{
+        name: 'Interaction Rate',
+        type: 'pie',
+        radius: ['40%', '70%'],
+        center: ['50%', '42%'],
+        avoidLabelOverlap: false,
+        label: { show: false },
+        labelLine: { show: false },
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 8,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.1)'
+          }
+        },
+        data: donutData
+      }]
+    };
+
+    chart.setOption(option);
+
+    // Handle responsive resize
+    const resizeObserver = new ResizeObserver(() => {
+      chart.resize();
+    });
+    resizeObserver.observe(container);
+  }
+
+  /**
+   * Render 7-Day Trend bar chart (ECharts)
    */
   function renderTrendChart() {
     const container = document.getElementById('trend-chart');
     if (!container || !MockData.weeklyTrend) return;
 
-    const maxValue = Math.max(...MockData.weeklyTrend.map(d => d.value));
+    // Check if ECharts is available
+    if (typeof echarts === 'undefined') {
+      // Fallback to simple bars if ECharts not available
+      const maxValue = Math.max(...MockData.weeklyTrend.map(d => d.value));
+      const bars = MockData.weeklyTrend.map(day => {
+        const height = (day.value / maxValue) * 100;
+        return `<div class="chart-bar"
+                     style="height: ${height}%"
+                     title="${day.day}: ${day.value}"
+                     role="img"
+                     aria-label="${day.day}: ${day.value} views"></div>`;
+      });
+      container.innerHTML = `<div class="mini-chart">${bars.join('')}</div>`;
+      return;
+    }
 
-    const bars = MockData.weeklyTrend.map(day => {
-      const height = (day.value / maxValue) * 100;
-      return `<div class="chart-bar"
-                   style="height: ${height}%"
-                   title="${day.day}: ${day.value}"
-                   role="img"
-                   aria-label="${day.day}: ${day.value} views"></div>`;
+    // Dispose existing chart if any
+    const existingChart = echarts.getInstanceByDom(container);
+    if (existingChart) {
+      existingChart.dispose();
+    }
+
+    // Initialize ECharts instance
+    const chart = echarts.init(container);
+
+    // Prepare data
+    const dayLabels = MockData.weeklyTrend.map(d => d.day);
+    const dailyData = MockData.weeklyTrend.map(d => d.value);
+    const currentDay = dailyData.filter(v => v !== null && v !== undefined).length;
+
+    // Chart configuration matching Digital Circular Performance (Day)
+    const option = {
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '12%',
+        top: '8%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'category',
+        data: dayLabels,
+        axisLine: {
+          show: true,
+          lineStyle: { color: '#e5e7eb' }
+        },
+        axisTick: { show: false },
+        axisLabel: {
+          color: '#6b7280',
+          fontSize: 11,
+          fontFamily: 'inherit'
+        }
+      },
+      yAxis: {
+        type: 'value',
+        axisLine: { show: false },
+        axisTick: { show: false },
+        axisLabel: {
+          color: '#6b7280',
+          fontSize: 11,
+          fontFamily: 'inherit'
+        },
+        splitLine: {
+          show: true,
+          lineStyle: {
+            color: '#f3f4f6',
+            type: 'solid'
+          }
+        }
+      },
+      tooltip: {
+        trigger: 'axis',
+        backgroundColor: '#ffffff',
+        borderColor: '#e5e7eb',
+        borderWidth: 1,
+        textStyle: {
+          color: '#0f172a',
+          fontFamily: 'inherit',
+          fontSize: 12
+        },
+        formatter: function(params) {
+          if (params[0] && params[0].value !== null) {
+            return `${params[0].axisValue}: ${params[0].value.toLocaleString()}`;
+          }
+          return `${params[0].axisValue}: No data`;
+        }
+      },
+      series: [{
+        name: 'Daily Performance',
+        type: 'bar',
+        data: dailyData.map((value, index) => ({
+          value: value,
+          itemStyle: {
+            color: index < currentDay ? chartColors[0] : '#f3f4f6'
+          }
+        })),
+        barWidth: '60%',
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 8,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.1)'
+          }
+        }
+      }]
+    };
+
+    chart.setOption(option);
+
+    // Handle responsive resize
+    const resizeObserver = new ResizeObserver(() => {
+      chart.resize();
     });
-
-    container.innerHTML = bars.join('');
+    resizeObserver.observe(container);
   }
 
   /**
@@ -1084,6 +1316,21 @@
       moreDataToggle.addEventListener('change', function(e) {
         state.moreDataEnabled = e.target.checked;
         renderCategoryGrid();
+      });
+    }
+
+    // Card View toggle for promotions (checkbox toggle switch)
+    const cardViewToggle = document.getElementById('card-view-toggle');
+    if (cardViewToggle) {
+      cardViewToggle.addEventListener('change', function(e) {
+        const view = e.target.checked ? 'cards' : 'table';
+        state.promoViewMode = view;
+
+        // Toggle visibility
+        if (elements.promotionGrid && elements.promotionTable) {
+          elements.promotionGrid.style.display = view === 'cards' ? '' : 'none';
+          elements.promotionTable.style.display = view === 'table' ? '' : 'none';
+        }
       });
     }
 

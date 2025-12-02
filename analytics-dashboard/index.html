@@ -146,6 +146,10 @@
               <span class="material-symbols-outlined">download</span>
               Export
             </button>
+            <button class="panel-action-btn" id="panel-print-btn">
+              <span class="material-symbols-outlined">print</span>
+              Print
+            </button>
             <button class="panel-action-btn" id="panel-share-btn">
               <span class="material-symbols-outlined">share</span>
               Share
@@ -191,17 +195,30 @@
 
       <!-- Center Panel: Promotions Grid -->
       <section class="panel panel--center" role="main" aria-label="Promotions">
-        <div class="panel-header">
-          <h2 class="panel-title">Promotions</h2>
-          <span class="panel-count" id="promo-count" aria-live="polite">0</span>
-          <div class="view-toggle">
-            <button class="view-toggle__btn" data-promo-view="cards" aria-label="Card view">
-              <span class="material-symbols-outlined">grid_view</span>
-              <span class="view-toggle__label">Cards</span>
+        <div class="panel-header panel-header--promotions">
+          <div class="panel-header__left">
+            <button class="panel-breadcrumb" id="panel-breadcrumb-promotions">
+              <span class="breadcrumb-text">BASE > Promotions</span>
+              <span class="material-symbols-outlined">expand_more</span>
             </button>
-            <button class="view-toggle__btn active" data-promo-view="table" aria-label="Table view">
-              <span class="material-symbols-outlined">table_rows</span>
-              <span class="view-toggle__label">Table</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="card-view-toggle">
+              <span class="toggle-slider"></span>
+            </label>
+            <span class="toggle-label">Card View</span>
+          </div>
+          <div class="panel-header__right">
+            <button class="panel-action-btn" id="promo-export-btn">
+              <span class="material-symbols-outlined">download</span>
+              Export
+            </button>
+            <button class="panel-action-btn" id="promo-print-btn">
+              <span class="material-symbols-outlined">print</span>
+              Print
+            </button>
+            <button class="panel-action-btn" id="promo-share-btn">
+              <span class="material-symbols-outlined">share</span>
+              Share
             </button>
           </div>
         </div>
@@ -215,7 +232,7 @@
 
       <!-- Right Panel: Detail View (Hidden until selection) -->
       <aside class="panel panel--right panel--collapsed" id="detail-panel" role="complementary" aria-label="Promotion details">
-        <div class="panel-header">
+        <div class="panel-header panel-header--detail">
           <h2 class="panel-title">Details</h2>
           <button class="panel-close" onclick="closeDetailPanel()" aria-label="Close details">
             <span class="material-symbols-outlined">close</span>
@@ -223,6 +240,20 @@
         </div>
         <div class="detail-content" id="detail-content">
           <!-- Populated by JavaScript -->
+        </div>
+        <div class="detail-footer">
+          <button class="detail-footer__btn">
+            <span class="material-symbols-outlined">print</span>
+            Print
+          </button>
+          <button class="detail-footer__btn">
+            <span class="material-symbols-outlined">table_chart</span>
+            Grid Inquiry
+          </button>
+          <button class="detail-footer__btn">
+            <span class="material-symbols-outlined">compare</span>
+            Compare
+          </button>
         </div>
       </aside>
 
@@ -506,6 +537,7 @@
   </div>
 
   <!-- Scripts -->
+  <script src="./process/vendor/echarts.min.js"></script>
   <script src="./shared/promotion-records-data.js"></script>
   <script src="./shared/mock-data.js"></script>
   <script src="cache-manager.js"></script>

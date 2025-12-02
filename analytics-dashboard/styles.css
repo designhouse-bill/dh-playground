@@ -676,6 +676,11 @@ body.app-mode-grid .view-search {
   display: flex;
 }
 
+/* Hide left panel in promotions view - remove this rule to reactivate */
+.layout--promotions .panel--left {
+  display: none;
+}
+
 /* Panel Base Styles */
 .panel {
   display: flex;
@@ -692,6 +697,10 @@ body.app-mode-grid .view-search {
 
 .panel--right {
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
   border-left: 1px solid var(--color-border);
   transition: width var(--transition-normal), opacity var(--transition-normal);
 }
@@ -1518,6 +1527,7 @@ body.app-mode-grid .view-search {
    ============================================ */
 .detail-content {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
 }
 
@@ -1564,9 +1574,9 @@ body.app-mode-grid .view-search {
 
 .detail-title {
   font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
+  font-weight: 600;
   color: var(--color-text-primary);
-  margin: 0 0 var(--space-1) 0;
+  margin: 0 0 var(--space-2) 0;
   line-height: 1.3;
 }
 
@@ -1595,7 +1605,7 @@ body.app-mode-grid .view-search {
 
 .detail-kpi__value {
   font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-semibold);
+  font-weight: 700;
   color: var(--color-text-primary);
   display: block;
   margin-bottom: 4px;
@@ -1646,7 +1656,14 @@ body.app-mode-grid .view-search {
   margin-bottom: var(--space-2);
 }
 
-/* Mini Chart */
+/* Detail Chart Container (ECharts) */
+.detail-chart-container {
+  background-color: var(--color-gray-50);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2);
+}
+
+/* Mini Chart (Fallback) */
 .mini-chart {
   display: flex;
   align-items: flex-end;
@@ -1667,6 +1684,17 @@ body.app-mode-grid .view-search {
 
 .chart-bar:hover {
   background-color: var(--color-primary-600);
+}
+
+/* Responsive chart sizing */
+@media (max-width: 768px) {
+  .detail-chart-container {
+    height: 150px !important;
+  }
+
+  #interaction-rate-chart {
+    height: 180px !important;
+  }
 }
 
 /* Store List */
@@ -1709,6 +1737,174 @@ body.app-mode-grid .view-search {
 
 .detail-actions .btn {
   flex: 1;
+}
+
+/* Promotions Panel Header */
+.panel-header--promotions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background-color: white;
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Detail Panel Header */
+.panel-header--detail {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.panel-header--detail .panel-title {
+  font-weight: 700;
+  font-size: var(--font-size-base);
+}
+
+/* Detail Footer (Fixed) */
+.detail-footer {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+  flex-shrink: 0;
+}
+
+.detail-footer__btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.detail-footer__btn:hover {
+  background: var(--color-gray-50);
+  border-color: var(--color-gray-400);
+}
+
+.detail-footer__btn .material-symbols-outlined {
+  font-size: 18px;
+}
+
+/* Detail Tags */
+.detail-tags {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.detail-tag {
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.detail-tag--category {
+  background: var(--color-gray-100);
+  color: var(--color-text-secondary);
+}
+
+.detail-tag--deal {
+  background: var(--color-gray-800);
+  color: white;
+}
+
+/* Detail Percentile Row */
+.detail-percentile-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.detail-percentile-row .percentile-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.detail-percentile-row .percentile-value {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-success-600);
+}
+
+.detail-percentile-row .percentile-bar {
+  flex: 1;
+  height: 8px;
+  background: var(--color-gray-200);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.detail-percentile-row .percentile-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+}
+
+.detail-percentile-row .percentile-score {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+/* Top Performing Stores */
+.top-stores {
+  background: transparent;
+}
+
+.top-stores__list {
+  display: flex;
+  flex-direction: column;
+}
+
+.top-stores__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.top-stores__item:last-child {
+  border-bottom: none;
+}
+
+.top-stores__rank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: var(--color-gray-100);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.top-stores__name {
+  flex: 1;
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  color: var(--color-text-primary);
 }
 
 /* ============================================

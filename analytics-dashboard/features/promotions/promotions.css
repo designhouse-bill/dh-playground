@@ -1,0 +1,18 @@
+/**
+ * Promotions Feature Styles
+ * Imports shared layout styles and adds promotions-specific styling
+ */
+
+/* Import shared layout styles from main styles.css */
+@import url('../../styles.css');
+
+/* Promotions-specific overrides */
+.layout--promotions {
+  display: flex;
+  height: calc(100vh - 140px); /* Account for header height */
+}
+
+/* Hide left panel in promotions view by default */
+.layout--promotions .panel--left {
+  display: none;
+}

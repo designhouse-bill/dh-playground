@@ -24,26 +24,45 @@
          ======================================== -->
     <header class="header">
 
-      <!-- Top Bar: Branding + Actions -->
+      <!-- Top Bar: Branding + Controls -->
       <div class="topbar">
-        <div class="brand">
-          <div class="logo">
-            <span class="material-symbols-outlined">analytics</span>
+        <div class="topbar__left">
+          <div class="brand">
+            <div class="logo">
+              <span class="material-symbols-outlined">analytics</span>
+            </div>
+            <h1 class="title">Analytics Dashboard</h1>
           </div>
-          <h1 class="title">Analytics Dashboard</h1>
+          <span class="topbar__separator">|</span>
+          <button class="performance-dropdown" id="performance-type-dropdown">
+            <span class="performance-dropdown__text">Circular Performance</span>
+            <span class="material-symbols-outlined">expand_more</span>
+          </button>
         </div>
-        <div class="actions">
-          <button class="comparison-toggle" id="comparison-toggle" aria-label="Toggle week-over-week comparison" aria-pressed="false">
-            <span class="material-symbols-outlined">trending_up</span>
-            <span class="comparison-toggle__text">vs. Last Week</span>
+
+        <div class="view-modes">
+          <!-- BASE group with sub-tabs -->
+          <div class="mode-group mode-group--base active" data-mode="base">
+            <button class="mode-btn mode-btn--primary active" data-mode="base" aria-label="Base view">
+              <span class="material-symbols-outlined">view_list</span>
+              BASE
+            </button>
+            <div class="mode-subtabs" role="tablist">
+              <button class="subtab active" data-view="categories" role="tab" aria-selected="true">Categories</button>
+              <button class="subtab" data-view="promotions" role="tab" aria-selected="false">Promotions</button>
+            </div>
+          </div>
+
+          <!-- GRID standalone -->
+          <button class="mode-btn mode-btn--outline" data-mode="grid" aria-label="Data grid view">
+            <span class="material-symbols-outlined">table_chart</span>
+            GRID
           </button>
-          <button class="action-btn" id="export-btn">
-            <span class="material-symbols-outlined">download</span>
-            Export
-          </button>
-          <button class="action-btn" id="share-btn">
-            <span class="material-symbols-outlined">share</span>
-            Share
+
+          <!-- COMPARE standalone -->
+          <button class="mode-btn mode-btn--outline" data-mode="compare" aria-label="Comparison view">
+            <span class="material-symbols-outlined">compare</span>
+            COMPARE
           </button>
         </div>
       </div>
@@ -100,41 +119,6 @@
 
       </div>
 
-      <!-- Control Bar: View Toggle + Search -->
-      <div class="control-bar">
-        <div class="view-search">
-          <div class="segment-wrapper">
-            <span class="segment-label">View by</span>
-            <div class="segment" role="tablist">
-              <button class="segment-btn active" data-view="categories" role="tab" aria-selected="true">
-                Categories
-              </button>
-              <button class="segment-btn" data-view="promotions" role="tab" aria-selected="false">
-                Promotions
-              </button>
-            </div>
-          </div>
-          <div class="search-box">
-            <span class="material-symbols-outlined">search</span>
-            <input type="text" id="search-input" placeholder="Search..." aria-label="Search promotions or categories">
-          </div>
-        </div>
-        <div class="view-modes">
-          <button class="mode-btn active" data-mode="base" aria-label="Base view">
-            <span class="material-symbols-outlined">view_list</span>
-            Base
-          </button>
-          <button class="mode-btn" data-mode="grid" aria-label="Data grid view">
-            <span class="material-symbols-outlined">table_chart</span>
-            Grid
-          </button>
-          <button class="mode-btn" data-mode="compare" aria-label="Comparison view">
-            <span class="material-symbols-outlined">compare</span>
-            Compare
-          </button>
-        </div>
-      </div>
-
     </header>
 
     <!-- ========================================
@@ -145,9 +129,28 @@
 
       <!-- Category Data Grid Panel -->
       <section class="panel panel--category-grid" role="main" aria-label="Categories">
-        <div class="panel-header">
-          <h2 class="panel-title">Categories</h2>
-          <span class="panel-count" id="category-grid-count" aria-live="polite">8</span>
+        <div class="panel-header panel-header--categories">
+          <div class="panel-header__left">
+            <button class="panel-breadcrumb" id="panel-breadcrumb">
+              <span class="breadcrumb-text">BASE > Categories</span>
+              <span class="material-symbols-outlined">expand_more</span>
+            </button>
+            <label class="toggle-switch">
+              <input type="checkbox" id="more-data-toggle">
+              <span class="toggle-slider"></span>
+            </label>
+            <span class="toggle-label">More Data</span>
+          </div>
+          <div class="panel-header__right">
+            <button class="panel-action-btn" id="panel-export-btn">
+              <span class="material-symbols-outlined">download</span>
+              Export
+            </button>
+            <button class="panel-action-btn" id="panel-share-btn">
+              <span class="material-symbols-outlined">share</span>
+              Share
+            </button>
+          </div>
         </div>
         <div class="category-data-grid" id="category-data-grid">
           <!-- Table with sortable headers populated by JavaScript -->
@@ -194,9 +197,11 @@
           <div class="view-toggle">
             <button class="view-toggle__btn" data-promo-view="cards" aria-label="Card view">
               <span class="material-symbols-outlined">grid_view</span>
+              <span class="view-toggle__label">Cards</span>
             </button>
             <button class="view-toggle__btn active" data-promo-view="table" aria-label="Table view">
               <span class="material-symbols-outlined">table_rows</span>
+              <span class="view-toggle__label">Table</span>
             </button>
           </div>
         </div>
@@ -212,7 +217,7 @@
       <aside class="panel panel--right panel--collapsed" id="detail-panel" role="complementary" aria-label="Promotion details">
         <div class="panel-header">
           <h2 class="panel-title">Details</h2>
-          <button class="panel-close" aria-label="Close details">
+          <button class="panel-close" onclick="closeDetailPanel()" aria-label="Close details">
             <span class="material-symbols-outlined">close</span>
           </button>
         </div>
@@ -403,7 +408,7 @@
                 <tr>
                   <th class="tree-col-name">Name</th>
                   <th class="tree-col-type">Type</th>
-                  <th class="tree-col-title">Title</th>
+                  <th class="tree-col-address">Address</th>
                   <th class="tree-col-subdomain">Subdomain</th>
                   <th class="tree-col-path">Path</th>
                 </tr>

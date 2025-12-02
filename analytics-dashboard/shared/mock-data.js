@@ -36,18 +36,18 @@ const MockData = (() => {
           id: 'subbrand-safeway-west',
           name: 'Safeway West',
           stores: [
-            { id: 'store-101', name: 'SF Market St', title: 'SF Market St', size: 'large', storeNumber: 101 },
-            { id: 'store-102', name: 'SF Mission', title: 'SF Mission', size: 'medium', storeNumber: 102 },
-            { id: 'store-103', name: 'Oakland Downtown', title: 'Oakland Downtown', size: 'large', storeNumber: 103 }
+            { id: 'store-101', name: 'SF Market St', title: 'SF Market St', size: 'large', storeNumber: 101, address: '2020 Market St, San Francisco, CA 94114' },
+            { id: 'store-102', name: 'SF Mission', title: 'SF Mission', size: 'medium', storeNumber: 102, address: '4950 Mission St, San Francisco, CA 94112' },
+            { id: 'store-103', name: 'Oakland Downtown', title: 'Oakland Downtown', size: 'large', storeNumber: 103, address: '1500 Broadway, Oakland, CA 94612' }
           ]
         },
         {
           id: 'subbrand-safeway-east',
           name: 'Safeway East',
           stores: [
-            { id: 'store-104', name: 'Berkeley', title: 'Berkeley', size: 'medium', storeNumber: 104 },
-            { id: 'store-105', name: 'Walnut Creek', title: 'Walnut Creek', size: 'large', storeNumber: 105 },
-            { id: 'store-106', name: 'Concord', title: 'Concord', size: 'medium', storeNumber: 106 }
+            { id: 'store-104', name: 'Berkeley', title: 'Berkeley', size: 'medium', storeNumber: 104, address: '1550 Shattuck Ave, Berkeley, CA 94709' },
+            { id: 'store-105', name: 'Walnut Creek', title: 'Walnut Creek', size: 'large', storeNumber: 105, address: '1350 N California Blvd, Walnut Creek, CA 94596' },
+            { id: 'store-106', name: 'Concord', title: 'Concord', size: 'medium', storeNumber: 106, address: '785 Oak Grove Rd, Concord, CA 94518' }
           ]
         }
       ]
@@ -60,18 +60,18 @@ const MockData = (() => {
           id: 'subbrand-vons-socal',
           name: 'Vons SoCal',
           stores: [
-            { id: 'store-201', name: 'LA Downtown', title: 'LA Downtown', size: 'large', storeNumber: 201 },
-            { id: 'store-202', name: 'Santa Monica', title: 'Santa Monica', size: 'large', storeNumber: 202 },
-            { id: 'store-203', name: 'Pasadena', title: 'Pasadena', size: 'medium', storeNumber: 203 }
+            { id: 'store-201', name: 'LA Downtown', title: 'LA Downtown', size: 'large', storeNumber: 201, address: '645 W 9th St, Los Angeles, CA 90015' },
+            { id: 'store-202', name: 'Santa Monica', title: 'Santa Monica', size: 'large', storeNumber: 202, address: '1311 Wilshire Blvd, Santa Monica, CA 90403' },
+            { id: 'store-203', name: 'Pasadena', title: 'Pasadena', size: 'medium', storeNumber: 203, address: '2355 E Colorado Blvd, Pasadena, CA 91107' }
           ]
         },
         {
           id: 'subbrand-vons-sd',
           name: 'Vons San Diego',
           stores: [
-            { id: 'store-204', name: 'SD Gaslamp', title: 'SD Gaslamp', size: 'medium', storeNumber: 204 },
-            { id: 'store-205', name: 'La Jolla', title: 'La Jolla', size: 'large', storeNumber: 205 },
-            { id: 'store-206', name: 'Chula Vista', title: 'Chula Vista', size: 'medium', storeNumber: 206 }
+            { id: 'store-204', name: 'SD Gaslamp', title: 'SD Gaslamp', size: 'medium', storeNumber: 204, address: '643 5th Ave, San Diego, CA 92101' },
+            { id: 'store-205', name: 'La Jolla', title: 'La Jolla', size: 'large', storeNumber: 205, address: '7544 Girard Ave, La Jolla, CA 92037' },
+            { id: 'store-206', name: 'Chula Vista', title: 'Chula Vista', size: 'medium', storeNumber: 206, address: '1260 3rd Ave, Chula Vista, CA 91911' }
           ]
         }
       ]
@@ -84,18 +84,18 @@ const MockData = (() => {
           id: 'subbrand-albertsons-norcal',
           name: 'Albertsons NorCal',
           stores: [
-            { id: 'store-301', name: 'Sacramento', title: 'Sacramento', size: 'large', storeNumber: 301 },
-            { id: 'store-302', name: 'Fresno', title: 'Fresno', size: 'medium', storeNumber: 302 },
-            { id: 'store-303', name: 'Stockton', title: 'Stockton', size: 'small', storeNumber: 303 }
+            { id: 'store-301', name: 'Sacramento', title: 'Sacramento', size: 'large', storeNumber: 301, address: '1725 Arden Way, Sacramento, CA 95815' },
+            { id: 'store-302', name: 'Fresno', title: 'Fresno', size: 'medium', storeNumber: 302, address: '7155 N Cedar Ave, Fresno, CA 93720' },
+            { id: 'store-303', name: 'Stockton', title: 'Stockton', size: 'small', storeNumber: 303, address: '6521 Pacific Ave, Stockton, CA 95207' }
           ]
         },
         {
           id: 'subbrand-albertsons-pnw',
           name: 'Albertsons PNW',
           stores: [
-            { id: 'store-304', name: 'Portland', title: 'Portland', size: 'large', storeNumber: 304 },
-            { id: 'store-305', name: 'Seattle', title: 'Seattle', size: 'large', storeNumber: 305 },
-            { id: 'store-306', name: 'Tacoma', title: 'Tacoma', size: 'medium', storeNumber: 306 }
+            { id: 'store-304', name: 'Portland', title: 'Portland', size: 'large', storeNumber: 304, address: '4828 SE Hawthorne Blvd, Portland, OR 97215' },
+            { id: 'store-305', name: 'Seattle', title: 'Seattle', size: 'large', storeNumber: 305, address: '2550 32nd Ave W, Seattle, WA 98199' },
+            { id: 'store-306', name: 'Tacoma', title: 'Tacoma', size: 'medium', storeNumber: 306, address: '3520 S 23rd St, Tacoma, WA 98405' }
           ]
         }
       ]
@@ -108,17 +108,17 @@ const MockData = (() => {
           id: 'subbrand-jewelosco-chicago',
           name: 'Jewel-Osco Chicago',
           stores: [
-            { id: 'store-401', name: 'Chicago Loop', title: 'Chicago Loop', size: 'large', storeNumber: 401 },
-            { id: 'store-402', name: 'Evanston', title: 'Evanston', size: 'medium', storeNumber: 402 },
-            { id: 'store-403', name: 'Oak Park', title: 'Oak Park', size: 'medium', storeNumber: 403 }
+            { id: 'store-401', name: 'Chicago Loop', title: 'Chicago Loop', size: 'large', storeNumber: 401, address: '225 W Washington St, Chicago, IL 60606' },
+            { id: 'store-402', name: 'Evanston', title: 'Evanston', size: 'medium', storeNumber: 402, address: '1128 Chicago Ave, Evanston, IL 60202' },
+            { id: 'store-403', name: 'Oak Park', title: 'Oak Park', size: 'medium', storeNumber: 403, address: '1155 Lake St, Oak Park, IL 60301' }
           ]
         },
         {
           id: 'subbrand-jewelosco-suburbs',
           name: 'Jewel-Osco Suburbs',
           stores: [
-            { id: 'store-404', name: 'Naperville', title: 'Naperville', size: 'large', storeNumber: 404 },
-            { id: 'store-405', name: 'Schaumburg', title: 'Schaumburg', size: 'medium', storeNumber: 405 }
+            { id: 'store-404', name: 'Naperville', title: 'Naperville', size: 'large', storeNumber: 404, address: '2855 95th St, Naperville, IL 60564' },
+            { id: 'store-405', name: 'Schaumburg', title: 'Schaumburg', size: 'medium', storeNumber: 405, address: '1020 E Golf Rd, Schaumburg, IL 60173' }
           ]
         }
       ]
@@ -131,16 +131,16 @@ const MockData = (() => {
           id: 'subbrand-acme-philly',
           name: 'Acme Philadelphia',
           stores: [
-            { id: 'store-501', name: 'Center City', title: 'Center City', size: 'medium', storeNumber: 501 },
-            { id: 'store-502', name: 'University City', title: 'University City', size: 'small', storeNumber: 502 }
+            { id: 'store-501', name: 'Center City', title: 'Center City', size: 'medium', storeNumber: 501, address: '1500 Walnut St, Philadelphia, PA 19102' },
+            { id: 'store-502', name: 'University City', title: 'University City', size: 'small', storeNumber: 502, address: '3401 Walnut St, Philadelphia, PA 19104' }
           ]
         },
         {
           id: 'subbrand-acme-nj',
           name: 'Acme New Jersey',
           stores: [
-            { id: 'store-503', name: 'Cherry Hill', title: 'Cherry Hill', size: 'large', storeNumber: 503 },
-            { id: 'store-504', name: 'Princeton', title: 'Princeton', size: 'medium', storeNumber: 504 }
+            { id: 'store-503', name: 'Cherry Hill', title: 'Cherry Hill', size: 'large', storeNumber: 503, address: '1900 Marlton Pike E, Cherry Hill, NJ 08003' },
+            { id: 'store-504', name: 'Princeton', title: 'Princeton', size: 'medium', storeNumber: 504, address: '301 N Harrison St, Princeton, NJ 08540' }
           ]
         }
       ]
@@ -153,16 +153,16 @@ const MockData = (() => {
           id: 'subbrand-shaws-boston',
           name: "Shaw's Boston",
           stores: [
-            { id: 'store-601', name: 'Boston Back Bay', title: 'Boston Back Bay', size: 'medium', storeNumber: 601 },
-            { id: 'store-602', name: 'Cambridge', title: 'Cambridge', size: 'medium', storeNumber: 602 }
+            { id: 'store-601', name: 'Boston Back Bay', title: 'Boston Back Bay', size: 'medium', storeNumber: 601, address: '53 Huntington Ave, Boston, MA 02116' },
+            { id: 'store-602', name: 'Cambridge', title: 'Cambridge', size: 'medium', storeNumber: 602, address: '20 Sidney St, Cambridge, MA 02139' }
           ]
         },
         {
           id: 'subbrand-shaws-ne',
           name: "Shaw's New England",
           stores: [
-            { id: 'store-603', name: 'Providence', title: 'Providence', size: 'medium', storeNumber: 603 },
-            { id: 'store-604', name: 'Hartford', title: 'Hartford', size: 'small', storeNumber: 604 }
+            { id: 'store-603', name: 'Providence', title: 'Providence', size: 'medium', storeNumber: 603, address: '261 Waterman St, Providence, RI 02906' },
+            { id: 'store-604', name: 'Hartford', title: 'Hartford', size: 'small', storeNumber: 604, address: '1489 New Britain Ave, West Hartford, CT 06110' }
           ]
         }
       ]
@@ -376,6 +376,7 @@ const MockData = (() => {
             id: store.id,
             name: store.name,
             title: store.title,
+            address: store.address || '',
             storeNumber: store.storeNumber,
             subBrand: subBrand.id,
             brandId: brand.id

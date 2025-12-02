@@ -30,14 +30,14 @@
      GRID MODE COLUMN CONFIGURATION
      ============================================ */
   const GRID_COLUMNS = [
-    { key: 'name', label: 'Promotion', type: 'text', sortable: true, sticky: true, visible: true },
+    { key: 'name', label: 'Promotion', type: 'promotion', sortable: true, sticky: true, visible: true },
     { key: 'categoryName', label: 'Category', type: 'category', sortable: true, sticky: false, visible: true },
     { key: 'dealType', label: 'Deal Type', type: 'deal', sortable: true, sticky: false, visible: true },
     { key: 'civ', label: 'CIV', type: 'currency', sortable: true, sticky: false, visible: true },
     { key: 'cc', label: 'CC', type: 'number', sortable: true, sticky: false, visible: true },
     { key: 'atl', label: 'ATL', type: 'currency', sortable: true, sticky: false, visible: true },
     { key: 'percentile', label: 'Percentile', type: 'number', sortable: true, sticky: false, visible: true },
-    { key: 'compositeScore', label: 'Score', type: 'number', sortable: true, sticky: false, visible: true },
+    { key: 'compositeScore', label: 'Performance', type: 'performance', sortable: true, sticky: false, visible: true },
     { key: 'cardSize', label: 'Card Size', type: 'text', sortable: true, sticky: false, visible: false },
     { key: 'originalPrice', label: 'Original Price', type: 'currency', sortable: true, sticky: false, visible: false },
     { key: 'salePrice', label: 'Sale Price', type: 'currency', sortable: true, sticky: false, visible: false },
@@ -52,6 +52,7 @@
     allPromotions: [],
     filteredPromotions: [],
     categories: [],
+    filteredCategories: [],
 
     // Active selections
     activeCategory: null,
@@ -114,8 +115,12 @@
       visibleColumns: [], // Column keys that are visible
       sortColumn: null,
       sortDirection: 'asc',
-      columnsDropdownOpen: false
-    }
+      columnsDropdownOpen: false,
+      columnFilters: {} // Per-column filters: { columnKey: filterValue }
+    },
+
+    // More Data toggle for category grid
+    moreDataEnabled: false
   };
 
   /* ============================================
@@ -200,6 +205,7 @@
       ]);
 
       state.categories = categories || [];
+      state.filteredCategories = [...state.categories];
       state.allPromotions = promotions || [];
       state.filteredPromotions = [...state.allPromotions];
       state.loadError = null;
@@ -245,10 +251,10 @@
   function renderCategories() {
     if (!elements.categoryList) return;
 
-    // "All Promotions" item
+    // "All Categories" item
     const allItem = createCategoryItem({
       id: 'all',
-      name: 'All Promotions',
+      name: 'All Categories',
       promotionCount: state.allPromotions.length,
       isAll: true
     });
@@ -305,12 +311,17 @@
 
   /**
    * Render the category data grid for "View By: Categories"
+   * Supports "More Data" toggle to show/hide additional columns
    */
   function renderCategoryGrid() {
     const gridContainer = document.getElementById('category-data-grid');
     if (!gridContainer) return;
 
-    let categories = state.categories;
+    // Use filtered categories if filters are active, otherwise use all categories
+    let categories = state.filteredCategories.length > 0 || state.activeFilters.length > 0
+      ? state.filteredCategories
+      : state.categories;
+
     if (!categories || categories.length === 0) {
       gridContainer.innerHTML = `
         <div class="table-empty">
@@ -337,7 +348,7 @@
             data-category-id="${cat.id}"
             onclick="selectCategoryGridRow('${cat.id}')">
           <td class="col-num">
-            <span class="table-position">${index + 1}</span>
+            <span class="row-number">${index + 1}</span>
           </td>
           <td class="col-category">
             <div class="category-name">
@@ -347,33 +358,41 @@
               <span class="category-label">${escapeHtml(cat.name)}</span>
             </div>
           </td>
-          <td class="col-perf table-performance">
-            <div class="perf-bar table-bar--wide">
-              <div class="perf-bar__track">
+          <td class="col-views">${formatNumber(cat.civ)}</td>
+          <td class="col-clicks">${formatNumber(cat.cc)}</td>
+          <td class="col-added">${formatNumber(cat.atl)}</td>
+          <td class="col-perf">
+            <div class="perf-bar">
+              <div class="perf-bar__track perf-bar__track--${perfClass}">
                 <div class="perf-bar__fill perf-bar__fill--${perfClass}" style="width: ${perfPercent}%"></div>
               </div>
               <span class="perf-bar__value">${formatNumber(cat.compositeScore)}</span>
             </div>
           </td>
-          <td class="col-metric table-metric">${formatNumber(cat.civ)}</td>
-          <td class="col-metric table-metric">${formatNumber(cat.cc)}</td>
-          <td class="col-metric table-metric">${formatNumber(cat.atl)}</td>
-          <td class="col-metric table-metric">${cat.percentile}%</td>
+          <td class="col-percentile">
+            <div class="percentile-badge">
+              <img src="./assets/chart-bar.svg" alt="" class="percentile-badge__icon">
+              <span class="percentile-badge__value percentile-badge__value--${perfClass}">${cat.percentile}%</span>
+            </div>
+          </td>
         </tr>
       `;
     });
 
+    // Maintain more-data-enabled class if set
+    const moreDataClass = state.moreDataEnabled ? 'more-data-enabled' : '';
+
     gridContainer.innerHTML = `
-      <table class="data-table data-table--sortable">
+      <table class="category-grid-table data-table--sortable ${moreDataClass}">
         <thead>
           <tr>
             <th class="col-num">#</th>
             ${getCategorySortableHeaderHTML('Category', 'name', 'col-category')}
-            ${getCategorySortableHeaderHTML('Performance', 'compositeScore', 'col-perf th-performance')}
-            ${getCategorySortableHeaderHTML('Views', 'civ', 'col-metric')}
-            ${getCategorySortableHeaderHTML('Clicks', 'cc', 'col-metric')}
-            ${getCategorySortableHeaderHTML('Added', 'atl', 'col-metric')}
-            ${getCategorySortableHeaderHTML('%tile', 'percentile', 'col-metric')}
+            ${getCategorySortableHeaderHTML('Views', 'civ', 'col-views')}
+            ${getCategorySortableHeaderHTML('Clicks', 'cc', 'col-clicks')}
+            ${getCategorySortableHeaderHTML('Added', 'atl', 'col-added')}
+            ${getCategorySortableHeaderHTML('Performance', 'compositeScore', 'col-perf')}
+            ${getCategorySortableHeaderHTML('%tile', 'percentile', 'col-percentile')}
           </tr>
         </thead>
         <tbody id="category-grid-body">
@@ -382,10 +401,8 @@
       </table>
     `;
 
-    // Update count
-    if (elements.categoryGridCount) {
-      elements.categoryGridCount.textContent = categories.length;
-    }
+    // Apply more-data-enabled class to container for CSS styling
+    gridContainer.classList.toggle('more-data-enabled', state.moreDataEnabled);
   }
 
   /**
@@ -525,21 +542,56 @@
   }
 
   /**
-   * Open Inquiry Data Grid for category (placeholder)
+   * Open Inquiry Data Grid for category
    */
   function openCategoryInquiry(categoryId) {
     console.log(`Opening Inquiry Grid for category: ${categoryId}`);
-    // TODO: Switch to Grid mode filtered by category
-    alert(`Inquiry Data Grid for "${state.categories.find(c => c.id === categoryId)?.name}" - Coming soon`);
+
+    // Get category name for filter
+    const category = state.categories.find(c => c.id === categoryId);
+    if (category) {
+      // Set category filter in Grid mode
+      state.gridMode.columnFilters.categoryName = category.name;
+    }
+
+    // Switch to Grid mode
+    handleModeChange('grid');
   }
 
   /**
-   * Open Compare view for category (placeholder)
+   * Open Compare view for category
    */
   function compareCategoryAction(categoryId) {
     console.log(`Opening Compare for category: ${categoryId}`);
-    // TODO: Switch to Compare mode for category
-    alert(`Compare view for "${state.categories.find(c => c.id === categoryId)?.name}" - Coming soon`);
+
+    // Enable comparison mode
+    state.comparisonEnabled = true;
+
+    // Update comparison toggle button
+    if (elements.comparisonToggle) {
+      elements.comparisonToggle.classList.add('active');
+    }
+
+    // Switch to compare mode
+    handleModeChange('compare');
+  }
+
+  /**
+   * Open Compare view for a promotion
+   */
+  function comparePromotion(promoId) {
+    console.log(`Opening Compare for promotion: ${promoId}`);
+
+    // Enable comparison mode
+    state.comparisonEnabled = true;
+
+    // Update comparison toggle button
+    if (elements.comparisonToggle) {
+      elements.comparisonToggle.classList.add('active');
+    }
+
+    // Switch to compare mode
+    handleModeChange('compare');
   }
 
   /**
@@ -580,6 +632,7 @@
 
     // Calculate performance bar width (based on percentile)
     const performanceWidth = promo.percentile;
+    const perfClass = promo.percentile >= 75 ? 'high' : promo.percentile >= 50 ? 'medium' : 'low';
 
     // Get comparison data if comparison mode is enabled
     let comparisonHTML = '';
@@ -630,11 +683,11 @@
             </div>
           </div>
           <div class="promo-card__chart">
-            <div class="promo-bar">
-              <span class="promo-bar__label">Perf</span>
-              <div class="promo-bar__track">
-                <div class="promo-bar__fill promo-bar__fill--views" style="width: ${performanceWidth}%"></div>
+            <div class="perf-bar">
+              <div class="perf-bar__track perf-bar__track--${perfClass}">
+                <div class="perf-bar__fill perf-bar__fill--${perfClass}" style="width: ${performanceWidth}%"></div>
               </div>
+              <span class="perf-bar__value">${promo.compositeScore || Math.round(performanceWidth)}</span>
             </div>
           </div>
           ${comparisonHTML}
@@ -653,8 +706,8 @@
     let displayPromotions = applyColumnFilters(state.filteredPromotions);
     displayPromotions = sortPromotions(displayPromotions, state.sortColumn, state.sortDirection);
 
-    // Only show filters in "All Promotions" view (no category selected)
-    const showFilters = !state.activeCategory;
+    // Always show filters in the table
+    const showFilters = true;
 
     if (displayPromotions.length === 0) {
       elements.promotionTable.innerHTML = `
@@ -666,9 +719,13 @@
       return;
     }
 
+    // Calculate max composite score for performance bars
+    const maxScore = Math.max(...displayPromotions.map(p => p.compositeScore || 0));
+
     const rows = displayPromotions.map((promo, index) => {
       const isActive = state.activePromotion === promo.id;
-      const performanceWidth = promo.percentile;
+      const perfPercent = maxScore > 0 ? ((promo.compositeScore || 0) / maxScore * 100) : 0;
+      const perfClass = promo.percentile >= 75 ? 'high' : promo.percentile >= 50 ? 'medium' : 'low';
 
       return `
         <tr class="${isActive ? 'active' : ''}" data-id="${promo.id}">
@@ -680,22 +737,23 @@
               <img class="table-thumb" src="${promo.thumbImage}" alt="${escapeHtml(promo.name)}">
               <div class="table-info">
                 <div class="table-title">${escapeHtml(promo.name)}</div>
-                <div class="table-meta">${escapeHtml(promo.categoryName)}</div>
               </div>
             </div>
           </td>
-          <td class="table-performance">
-            <div class="table-bar table-bar--wide">
-              <div class="table-bar__track">
-                <div class="table-bar__fill" style="width: ${performanceWidth}%"></div>
-              </div>
-            </div>
-          </td>
+          <td><span class="table-category">${escapeHtml(promo.categoryName)}</span></td>
           <td><span class="table-deal">${escapeHtml(promo.dealType)}</span></td>
           <td class="table-metric">${formatNumber(promo.civ)}</td>
           <td class="table-metric">${formatNumber(promo.cc)}</td>
           <td class="table-metric">${formatNumber(promo.atl)}</td>
           <td>${getPercentileBadgeHTML(promo.percentile)}</td>
+          <td class="col-perf table-performance">
+            <div class="perf-bar table-bar--wide">
+              <div class="perf-bar__track perf-bar__track--${perfClass}">
+                <div class="perf-bar__fill perf-bar__fill--${perfClass}" style="width: ${perfPercent}%"></div>
+              </div>
+              <span class="perf-bar__value">${formatNumber(promo.compositeScore)}</span>
+            </div>
+          </td>
         </tr>
       `;
     }).join('');
@@ -705,13 +763,14 @@
         <thead>
           <tr>
             <th>#</th>
-            ${getSortableHeaderHTML('Promotion', 'name', showFilters, 'category')}
-            <th class="th-performance">Performance</th>
+            ${getSortableHeaderHTML('Promotion', 'name', true, 'text')}
+            ${getSortableHeaderHTML('Category', 'categoryName', showFilters, 'category')}
             ${getSortableHeaderHTML('Deal', 'dealType', showFilters, 'dealType')}
             ${getSortableHeaderHTML('Views', 'civ')}
             ${getSortableHeaderHTML('Clicks', 'cc')}
             ${getSortableHeaderHTML('Added', 'atl')}
             ${getSortableHeaderHTML('%ile', 'percentile')}
+            ${getSortableHeaderHTML('Performance', 'compositeScore', false, null)}
           </tr>
         </thead>
         <tbody>
@@ -843,7 +902,7 @@
             <span class="material-symbols-outlined">print</span>
             Print
           </button>
-          <button class="btn btn--primary">
+          <button class="btn btn--primary" onclick="comparePromotion('${promo.id}')">
             <span class="material-symbols-outlined">compare</span>
             Compare
           </button>
@@ -1019,6 +1078,25 @@
       elements.entitySelector.addEventListener('click', openEntitySelector);
     }
 
+    // More Data toggle for category grid
+    const moreDataToggle = document.getElementById('more-data-toggle');
+    if (moreDataToggle) {
+      moreDataToggle.addEventListener('change', function(e) {
+        state.moreDataEnabled = e.target.checked;
+        renderCategoryGrid();
+      });
+    }
+
+    // Subtab navigation (Categories/Promotions within BASE mode)
+    document.querySelectorAll('.subtab').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const view = this.dataset.view;
+        if (view) {
+          handleSegmentChange({ target: this });
+        }
+      });
+    });
+
     // Modal overlay clicks (close on backdrop click)
     document.querySelectorAll('.modal-overlay').forEach(overlay => {
       overlay.addEventListener('click', function(e) {
@@ -1113,10 +1191,23 @@
       state.activeCategory = null;
       state.selectedCategoryId = null; // Sync with Categories view
       state.filteredPromotions = [...state.allPromotions];
+      // Remove any category filter chips when selecting "All"
+      state.activeFilters = state.activeFilters.filter(f => f.type !== 'category');
     } else {
       state.activeCategory = categoryId;
       state.selectedCategoryId = categoryId; // Sync with Categories view
       state.filteredPromotions = state.allPromotions.filter(p => p.category === categoryId);
+
+      // Add category as a filter chip (remove existing category filter first)
+      state.activeFilters = state.activeFilters.filter(f => f.type !== 'category');
+      const categoryData = state.categories.find(c => c.id === categoryId);
+      if (categoryData) {
+        state.activeFilters.push({
+          type: 'category',
+          value: categoryId,
+          label: 'Category'
+        });
+      }
     }
 
     // Apply search filter if active
@@ -1126,6 +1217,7 @@
 
     // Re-render
     renderCategories();
+    renderFilterChips();
     renderPromotions();
     updateCounts();
 
@@ -1280,18 +1372,30 @@
    * Only applies in Base mode
    */
   function handleSegmentChange(e) {
-    const btn = e.currentTarget;
+    const btn = e.currentTarget || e.target;
     const view = btn.dataset.view;
 
     if (state.viewMode === view) return;
 
     state.viewMode = view;
 
-    // Update button states
+    // Update button states (old segment buttons)
     elements.segmentBtns.forEach(b => {
-      b.classList.toggle('active', b === btn);
-      b.setAttribute('aria-selected', b === btn);
+      b.classList.toggle('active', b.dataset.view === view);
+      b.setAttribute('aria-selected', b.dataset.view === view);
     });
+
+    // Update subtab states (new design)
+    document.querySelectorAll('.subtab').forEach(tab => {
+      tab.classList.toggle('active', tab.dataset.view === view);
+      tab.setAttribute('aria-selected', tab.dataset.view === view);
+    });
+
+    // Update panel breadcrumb text
+    const breadcrumb = document.querySelector('.breadcrumb-text');
+    if (breadcrumb) {
+      breadcrumb.textContent = view === 'categories' ? 'BASE > Categories' : 'BASE > Promotions';
+    }
 
     // Only switch layouts if in Base mode
     if (state.appMode !== 'base') return;
@@ -1305,8 +1409,17 @@
         // CONTEXT PERSISTENCE: Sync category selection from Promotions view
         if (state.activeCategory && state.activeCategory !== 'all') {
           state.selectedCategoryId = state.activeCategory;
-          // Re-render grid with selection and show detail panel
+        }
+
+        // Re-render with current filters applied
+        if (state.activeFilters.length > 0) {
+          applyFilters();
+        } else {
           renderCategoryGrid();
+        }
+
+        // Show detail panel if a category is selected
+        if (state.selectedCategoryId) {
           renderCategoryDetail(state.selectedCategoryId);
           if (elements.categoryDetailPanel) {
             elements.categoryDetailPanel.classList.remove('panel--collapsed');
@@ -1434,6 +1547,10 @@
 
   /**
    * Update the entity display in the header
+   * Patterns:
+   * - Brand/All: "BRAND" breadcrumb, table_rows icon, entity name, "X locations"
+   * - Sub-brand: Parent brand name breadcrumb, storefront icon, entity name, "X locations"
+   * - Store: "BRAND > SUBBRAND" breadcrumb, storefront icon, store name, "1 Location"
    */
   function updateEntityDisplay() {
     const entityCard = elements.entitySelector;
@@ -1446,28 +1563,40 @@
     const iconEl = entityCard.querySelector('.card-icon .material-symbols-outlined');
 
     if (valueEl) valueEl.textContent = entity.name;
-    if (subEl) subEl.textContent = `${entity.count || MockData.entities.brand.storeCount} locations`;
+
+    const locationCount = entity.count || MockData.entities.stores.length;
+    if (subEl) subEl.textContent = `${locationCount} ${locationCount === 1 ? 'Location' : 'locations'}`;
 
     // Update icon and breadcrumb based on entity level
-    if (entity.level === 'brand') {
-      if (iconEl) iconEl.textContent = 'corporate_fare';
+    if (entity.level === 'all' || entity.level === 'brand') {
+      // Brand level: "BRAND" label with grid icon
+      if (iconEl) iconEl.textContent = 'table_rows';
       if (breadcrumbEl) breadcrumbEl.textContent = 'BRAND';
     } else if (entity.level === 'sub-brand') {
-      if (iconEl) iconEl.textContent = 'store';
-      if (breadcrumbEl) breadcrumbEl.textContent = 'BRAND > SUB-BRAND';
-    } else if (entity.level === 'store') {
+      // Sub-brand level: Parent brand name as breadcrumb
       if (iconEl) iconEl.textContent = 'storefront';
-      // Find the sub-brand for this store
+      // Find the parent brand for this sub-brand
+      const subBrand = MockData.entities.subBrands.find(sb => sb.id === entity.id);
+      const parentBrand = subBrand ? MockData.entities.brands.find(b => b.id === subBrand.brandId) : null;
+      const parentBrandName = parentBrand ? parentBrand.name : 'Brand';
+      if (breadcrumbEl) breadcrumbEl.textContent = parentBrandName;
+    } else if (entity.level === 'store') {
+      // Store level: "BRAND > SUBBRAND" breadcrumb
+      if (iconEl) iconEl.textContent = 'storefront';
+      // Find the sub-brand and brand for this store
       const store = MockData.entities.stores.find(s => s.id === entity.id);
       const subBrand = store ? MockData.entities.subBrands.find(sb => sb.id === store.subBrand) : null;
-      const subBrandName = subBrand ? subBrand.name : '';
-      if (breadcrumbEl) breadcrumbEl.textContent = `BRAND > ${subBrandName.toUpperCase()} > STORE`;
+      const parentBrand = subBrand ? MockData.entities.brands.find(b => b.id === subBrand.brandId) : null;
+      const brandName = parentBrand ? parentBrand.name.toUpperCase() : 'BRAND';
+      const subBrandName = subBrand ? subBrand.name.toUpperCase() : 'SUB-BRAND';
+      if (breadcrumbEl) breadcrumbEl.textContent = `${brandName} > ${subBrandName}`;
     } else if (entity.level === 'brand-group' || entity.level === 'sub-brand-group') {
       if (iconEl) iconEl.textContent = 'workspaces';
       if (breadcrumbEl) breadcrumbEl.textContent = 'GROUP';
     } else {
-      if (iconEl) iconEl.textContent = 'store';
-      if (breadcrumbEl) breadcrumbEl.textContent = 'BRAND > SUB-BRAND';
+      // Default fallback
+      if (iconEl) iconEl.textContent = 'table_rows';
+      if (breadcrumbEl) breadcrumbEl.textContent = 'BRAND';
     }
   }
 
@@ -1559,13 +1688,14 @@
         <tr class="tree-row--brand ${isAllSelected ? 'selected' : ''}"
             data-entity-id="all"
             data-level="all"
-            data-parent="">
+            data-parent=""
+            onclick="selectTreeEntity('all', 'all', 'All Stores', ${totalStoreCount})">
           <td class="tree-indent-0">
             <div class="tree-name-cell">
               <button class="tree-toggle ${isAllExpanded ? '' : 'collapsed'}" onclick="toggleTreeRow('all', event)">
                 <span class="material-symbols-outlined">expand_more</span>
               </button>
-              <span onclick="selectTreeEntity('all', 'all', 'All Stores', ${totalStoreCount})">All Stores</span>
+              <span>All Stores</span>
             </div>
           </td>
           <td><span class="type-badge type-badge--brand">All</span></td>
@@ -1587,13 +1717,14 @@
           <tr class="tree-row--brand ${isBrandSelected ? 'selected' : ''} ${brandHidden}"
               data-entity-id="${brand.id}"
               data-level="brand"
-              data-parent="all">
+              data-parent="all"
+              onclick="selectTreeEntity('${brand.id}', 'brand', '${escapeHtml(brand.name)}', ${brand.storeCount})">
             <td class="tree-indent-1">
               <div class="tree-name-cell">
                 <button class="tree-toggle ${isBrandExpanded ? '' : 'collapsed'}" onclick="toggleTreeRow('${brand.id}', event)">
                   <span class="material-symbols-outlined">expand_more</span>
                 </button>
-                <span onclick="selectTreeEntity('${brand.id}', 'brand', '${escapeHtml(brand.name)}', ${brand.storeCount})">${escapeHtml(brand.name)}</span>
+                <span>${escapeHtml(brand.name)}</span>
               </div>
             </td>
             <td><span class="type-badge type-badge--brand">Brand</span></td>
@@ -1623,13 +1754,14 @@
             <tr class="tree-row--subbrand ${isSubSelected ? 'selected' : ''} ${subHidden}"
                 data-entity-id="${subBrand.id}"
                 data-level="subbrand"
-                data-parent="${brand.id}">
+                data-parent="${brand.id}"
+                onclick="selectTreeEntity('${subBrand.id}', 'sub-brand', '${escapeHtml(subBrand.name)}', ${subBrand.storeCount})">
               <td class="tree-indent-2">
                 <div class="tree-name-cell">
                   <button class="tree-toggle ${isSubExpanded ? '' : 'collapsed'}" onclick="toggleTreeRow('${subBrand.id}', event)">
                     <span class="material-symbols-outlined">expand_more</span>
                   </button>
-                  <span onclick="selectTreeEntity('${subBrand.id}', 'sub-brand', '${escapeHtml(subBrand.name)}', ${subBrand.storeCount})">${escapeHtml(subBrand.name)}</span>
+                  <span>${escapeHtml(subBrand.name)}</span>
                 </div>
               </td>
               <td><span class="type-badge type-badge--subbrand">SubBrand</span></td>
@@ -1649,15 +1781,16 @@
               <tr class="tree-row--store ${isStoreSelected ? 'selected' : ''} ${storeHidden}"
                   data-entity-id="${store.id}"
                   data-level="store"
-                  data-parent="${subBrand.id}">
+                  data-parent="${subBrand.id}"
+                  onclick="selectTreeEntity('${store.id}', 'store', '${escapeHtml(store.title)}', 1)">
                 <td class="tree-indent-3">
                   <div class="tree-name-cell">
                     <span class="tree-toggle-placeholder"></span>
-                    <span onclick="selectTreeEntity('${store.id}', 'store', '${escapeHtml(store.title)}', 1)">${escapeHtml(store.name)}</span>
+                    <span>${escapeHtml(store.name)}</span>
                   </div>
                 </td>
                 <td><span class="type-badge type-badge--store">Store</span></td>
-                <td>${escapeHtml(store.title)}</td>
+                <td class="tree-address-cell" title="${escapeHtml(store.address || '')}">${escapeHtml(store.address || '')}</td>
                 <td>${subBrand.id}</td>
                 <td>${store.storeNumber}</td>
               </tr>
@@ -1859,14 +1992,26 @@
 
     // Reload data from MockData (now filtered by new week)
     state.categories = MockData.categories || [];
+    state.filteredCategories = [...state.categories];
     state.allPromotions = MockData.promotions || [];
     state.filteredPromotions = [...state.allPromotions];
 
-    // Re-render all views
-    renderCategoryGrid();  // View By: Categories
-    renderCategories();    // View By: Promotions sidebar
-    renderPromotions();
-    updateCounts();
+    // Re-apply active filters to maintain filter state
+    if (state.activeFilters.length > 0) {
+      applyFilters();
+    } else {
+      // Re-render all views
+      renderCategoryGrid();  // View By: Categories
+      renderCategories();    // View By: Promotions sidebar
+      renderPromotions();
+      updateCounts();
+
+      // Re-render Grid Mode if active
+      if (state.appMode === 'grid') {
+        state.gridMode.currentPage = 1; // Reset to first page
+        renderGridTable();
+      }
+    }
 
     if (CONFIG.DEBUG) {
       console.log('Data refreshed for date change:', state.selectedWeekId, 'Records:', state.allPromotions.length);
@@ -2002,8 +2147,8 @@
     });
 
     // Clear entity tree selection
-    document.querySelectorAll('.entity-item').forEach(el => {
-      el.classList.remove('selected');
+    document.querySelectorAll('#entity-tree-body tr').forEach(row => {
+      row.classList.remove('selected');
     });
   }
 
@@ -2019,9 +2164,9 @@
     state.selectedEntityId = entityId;
     state.currentEntity = { id: entityId, level: level, name: name, count: count };
 
-    // Update UI selection for entities
-    document.querySelectorAll('.entity-item').forEach(el => {
-      el.classList.toggle('selected', el.dataset.entityId === entityId);
+    // Update UI selection for entities in tree table
+    document.querySelectorAll('#entity-tree-body tr').forEach(row => {
+      row.classList.toggle('selected', row.dataset.entityId === entityId);
     });
 
     // Clear group selection
@@ -2058,14 +2203,26 @@
 
     // Reload data from MockData (now filtered by new entity)
     state.categories = MockData.categories || [];
+    state.filteredCategories = [...state.categories];
     state.allPromotions = MockData.promotions || [];
     state.filteredPromotions = [...state.allPromotions];
 
-    // Re-render all views
-    renderCategoryGrid();  // View By: Categories
-    renderCategories();    // View By: Promotions sidebar
-    renderPromotions();
-    updateCounts();
+    // Re-apply active filters to maintain filter state
+    if (state.activeFilters.length > 0) {
+      applyFilters();
+    } else {
+      // Re-render all views
+      renderCategoryGrid();  // View By: Categories
+      renderCategories();    // View By: Promotions sidebar
+      renderPromotions();
+      updateCounts();
+
+      // Re-render Grid Mode if active
+      if (state.appMode === 'grid') {
+        state.gridMode.currentPage = 1; // Reset to first page
+        renderGridTable();
+      }
+    }
 
     if (CONFIG.DEBUG) {
       console.log('Data refreshed for entity change:', state.currentEntity, 'Records:', state.allPromotions.length);
@@ -2163,11 +2320,12 @@
     const chipsHTML = state.activeFilters.map((filter, index) => {
       const colorClass = filter.type === 'category' ? 'filter-chip--category'
                        : filter.type === 'deal' ? 'filter-chip--deal'
+                       : filter.type === 'promotion' ? 'filter-chip--promotion'
                        : 'filter-chip--size';
 
       // Get display name for category
       let displayValue = filter.value;
-      if (filter.type === 'category') {
+      if (filter.type === 'category' && !filter.fromColumn) {
         const cat = state.categories.find(c => c.id === filter.value);
         if (cat) displayValue = cat.name;
       }
@@ -2203,13 +2361,34 @@
    * Remove a filter by index
    */
   function removeFilter(index) {
+    const filter = state.activeFilters[index];
+
+    // If this was a column filter, also clear the column filter state
+    if (filter && filter.fromColumn) {
+      if (filter.type === 'promotion') {
+        state.columnFilters.name = null;
+      } else if (filter.type === 'category') {
+        state.columnFilters.category = null;
+      } else if (filter.type === 'deal') {
+        state.columnFilters.dealType = null;
+      }
+    }
+
+    // If removing a category filter from sidebar selection, also clear activeCategory
+    if (filter && filter.type === 'category' && !filter.fromColumn) {
+      state.activeCategory = null;
+      state.selectedCategoryId = null;
+      renderCategories();
+    }
+
     state.activeFilters.splice(index, 1);
     renderFilterChips();
     applyFilters();
+    renderPromotions();
   }
 
   /**
-   * Apply all active filters to promotions
+   * Apply all active filters to promotions and categories
    */
   function applyFilters() {
     // Start with category filter if active
@@ -2217,7 +2396,7 @@
       ? state.allPromotions.filter(p => p.category === state.activeCategory)
       : [...state.allPromotions];
 
-    // Apply each active filter
+    // Apply each active filter to promotions
     state.activeFilters.forEach(filter => {
       switch (filter.type) {
         case 'category':
@@ -2242,6 +2421,19 @@
     }
 
     state.filteredPromotions = filtered;
+
+    // Filter categories based on which ones have promotions after filtering
+    if (state.activeFilters.length > 0) {
+      // Get unique category IDs from filtered promotions
+      const activeCategoryIds = new Set(filtered.map(p => p.category));
+      state.filteredCategories = state.categories.filter(cat => activeCategoryIds.has(cat.id));
+    } else {
+      // No filters active - show all categories
+      state.filteredCategories = [...state.categories];
+    }
+
+    // Re-render views
+    renderCategoryGrid();
     renderPromotions();
     updateCounts();
 
@@ -2252,7 +2444,7 @@
     }
 
     if (CONFIG.DEBUG) {
-      console.log(`Filters applied: ${state.activeFilters.length} filters, ${filtered.length} results`);
+      console.log(`Filters applied: ${state.activeFilters.length} filters, ${filtered.length} promotions, ${state.filteredCategories.length} categories`);
     }
   }
 
@@ -2283,6 +2475,39 @@
    */
   function getGridData() {
     let data = [...state.filteredPromotions];
+
+    // Apply column filters
+    const filters = state.gridMode.columnFilters;
+    Object.keys(filters).forEach(key => {
+      const filterValue = filters[key];
+      if (filterValue === null || filterValue === '' || filterValue === undefined) return;
+
+      const col = GRID_COLUMNS.find(c => c.key === key);
+      if (!col) return;
+
+      data = data.filter(item => {
+        const value = item[key];
+        if (value == null) return false;
+
+        // Type-specific filtering
+        if (col.type === 'text') {
+          return String(value).toLowerCase().includes(filterValue.toLowerCase());
+        } else if (col.type === 'category' || col.type === 'deal') {
+          return value === filterValue;
+        } else if (col.type === 'number' || col.type === 'currency') {
+          // For numeric, filter value can be ">=50" or "<=100" or just a number
+          const numValue = parseFloat(value) || 0;
+          if (filterValue.startsWith('>=')) {
+            return numValue >= parseFloat(filterValue.slice(2));
+          } else if (filterValue.startsWith('<=')) {
+            return numValue <= parseFloat(filterValue.slice(2));
+          } else {
+            return numValue >= parseFloat(filterValue);
+          }
+        }
+        return true;
+      });
+    });
 
     // Apply sorting
     if (state.gridMode.sortColumn) {
@@ -2343,22 +2568,13 @@
     const columns = getVisibleGridColumns();
     const { data, total, start, end, totalPages } = getGridPageData();
 
-    // Render header
-    const headerHtml = `<tr>${columns.map(col => {
-      const isSorted = state.gridMode.sortColumn === col.key;
-      const sortClass = isSorted ? `sorted ${state.gridMode.sortDirection}` : '';
-      const sortableClass = col.sortable ? 'sortable' : '';
-      return `
-        <th class="${sortableClass} ${sortClass}" data-column="${col.key}" onclick="sortGridColumn('${col.key}')">
-          <span class="th-content">
-            ${escapeHtml(col.label)}
-            ${col.sortable ? '<span class="material-symbols-outlined sort-icon">arrow_upward</span>' : ''}
-          </span>
-        </th>
-      `;
-    }).join('')}</tr>`;
+    // Render header row using same structure as Base Mode
+    const headerRowHtml = `<tr>${columns.map(col => renderGridHeaderCell(col)).join('')}</tr>`;
 
-    elements.gridTableHead.innerHTML = headerHtml;
+    elements.gridTableHead.innerHTML = headerRowHtml;
+
+    // Calculate max composite score for performance bars
+    const maxScore = Math.max(...data.map(p => p.compositeScore || 0), 1);
 
     // Render body
     if (data.length === 0) {
@@ -2376,7 +2592,7 @@
     } else {
       elements.gridTableBody.innerHTML = data.map(promo => `
         <tr data-promo-id="${promo.id}">
-          ${columns.map(col => renderGridCell(promo, col)).join('')}
+          ${columns.map(col => renderGridCell(promo, col, maxScore)).join('')}
         </tr>
       `).join('');
     }
@@ -2388,12 +2604,20 @@
   /**
    * Render a single Grid cell
    */
-  function renderGridCell(promo, col) {
+  function renderGridCell(promo, col, maxScore) {
     const value = promo[col.key];
     let displayValue = '';
     let cellClass = '';
 
     switch (col.type) {
+      case 'promotion':
+        // Promotion cell with thumbnail and name
+        cellClass = 'col-promotion';
+        const thumbHtml = promo.thumbImage
+          ? `<img class="grid-thumb" src="${promo.thumbImage}" alt="${escapeHtml(promo.name)}" loading="lazy">`
+          : '';
+        displayValue = `<div class="promotion-cell">${thumbHtml}<span class="promotion-name">${escapeHtml(value)}</span></div>`;
+        break;
       case 'currency':
         displayValue = value != null ? `$${formatNumber(value)}` : '-';
         cellClass = 'col-currency';
@@ -2415,6 +2639,19 @@
         break;
       case 'category':
         displayValue = value ? `<span class="grid-category-badge">${escapeHtml(value)}</span>` : '-';
+        break;
+      case 'performance':
+        const perfPercent = maxScore > 0 ? ((value || 0) / maxScore * 100) : 0;
+        const perfClass = promo.percentile >= 75 ? 'high' : promo.percentile >= 50 ? 'medium' : 'low';
+        cellClass = 'col-perf';
+        displayValue = `
+          <div class="perf-bar">
+            <div class="perf-bar__track perf-bar__track--${perfClass}">
+              <div class="perf-bar__fill perf-bar__fill--${perfClass}" style="width: ${perfPercent}%"></div>
+            </div>
+            <span class="perf-bar__value">${formatNumber(value)}</span>
+          </div>
+        `;
         break;
       default:
         displayValue = value != null ? escapeHtml(String(value)) : '-';
@@ -2486,6 +2723,202 @@
         </div>
       `;
     }).join('');
+  }
+
+  /**
+   * Render a single grid header cell matching Base Mode structure
+   */
+  function renderGridHeaderCell(col) {
+    const isSorted = state.gridMode.sortColumn === col.key;
+    const direction = isSorted ? state.gridMode.sortDirection : null;
+    const sortIcon = direction === 'asc' ? 'arrow_upward' : direction === 'desc' ? 'arrow_downward' : 'unfold_more';
+    const activeClass = isSorted ? 'th-sort--active' : '';
+
+    // Build filter HTML based on column type
+    let filterHTML = '';
+    const currentValue = state.gridMode.columnFilters[col.key] || '';
+
+    if (col.type === 'promotion') {
+      // Text input filter for promotion name
+      filterHTML = `
+        <input type="text" class="th-filter-input" placeholder="Filter..."
+               value="${escapeHtml(currentValue)}"
+               onchange="applyGridFilter('${col.key}', this.value)"
+               onclick="event.stopPropagation()">
+      `;
+    } else if (col.type === 'category') {
+      const categories = [...new Set(state.allPromotions.map(p => p.categoryName).filter(Boolean))].sort();
+      filterHTML = `
+        <select class="th-filter" onchange="applyGridFilter('${col.key}', this.value)" onclick="event.stopPropagation()">
+          <option value="">All</option>
+          ${categories.map(cat => `<option value="${escapeHtml(cat)}" ${currentValue === cat ? 'selected' : ''}>${escapeHtml(cat)}</option>`).join('')}
+        </select>
+      `;
+    } else if (col.type === 'deal') {
+      const dealTypes = [...new Set(state.allPromotions.map(p => p.dealType).filter(Boolean))].sort();
+      filterHTML = `
+        <select class="th-filter" onchange="applyGridFilter('${col.key}', this.value)" onclick="event.stopPropagation()">
+          <option value="">All</option>
+          ${dealTypes.map(dt => `<option value="${escapeHtml(dt)}" ${currentValue === dt ? 'selected' : ''}>${escapeHtml(dt)}</option>`).join('')}
+        </select>
+      `;
+    }
+    // No filter for number/currency/performance columns
+
+    if (!col.sortable) {
+      // Non-sortable column (like row number)
+      return `<th>${escapeHtml(col.label)}</th>`;
+    }
+
+    return `
+      <th class="th-sortable ${activeClass}" data-column="${col.key}">
+        <div class="th-content">
+          <div class="th-header header-sort" onclick="sortGridColumn('${col.key}')">
+            <span class="th-label">${escapeHtml(col.label)}</span>
+            <span class="th-sort-icon material-symbols-outlined">${sortIcon}</span>
+          </div>
+          ${filterHTML}
+        </div>
+      </th>
+    `;
+  }
+
+  /**
+   * Render filter input for a grid column based on its type
+   * @deprecated Use renderGridHeaderCell instead
+   */
+  function renderGridFilterInput(col) {
+    const currentValue = state.gridMode.columnFilters[col.key] || '';
+
+    switch (col.type) {
+      case 'text':
+        return `<input type="text" class="grid-filter-input" placeholder="Filter..."
+                  value="${escapeHtml(currentValue)}"
+                  onchange="applyGridFilter('${col.key}', this.value)"
+                  onclick="event.stopPropagation()">`;
+
+      case 'category':
+        const categories = [...new Set(state.allPromotions.map(p => p.categoryName).filter(Boolean))].sort();
+        return `<select class="grid-filter-select" onchange="applyGridFilter('${col.key}', this.value)" onclick="event.stopPropagation()">
+                  <option value="">All</option>
+                  ${categories.map(cat => `<option value="${escapeHtml(cat)}" ${currentValue === cat ? 'selected' : ''}>${escapeHtml(cat)}</option>`).join('')}
+                </select>`;
+
+      case 'deal':
+        const dealTypes = [...new Set(state.allPromotions.map(p => p.dealType).filter(Boolean))].sort();
+        return `<select class="grid-filter-select" onchange="applyGridFilter('${col.key}', this.value)" onclick="event.stopPropagation()">
+                  <option value="">All</option>
+                  ${dealTypes.map(dt => `<option value="${escapeHtml(dt)}" ${currentValue === dt ? 'selected' : ''}>${escapeHtml(dt)}</option>`).join('')}
+                </select>`;
+
+      case 'number':
+      case 'currency':
+        return `<input type="text" class="grid-filter-input grid-filter-input--number" placeholder="≥ value"
+                  value="${escapeHtml(currentValue)}"
+                  onchange="applyGridFilter('${col.key}', this.value)"
+                  onclick="event.stopPropagation()">`;
+
+      default:
+        return '';
+    }
+  }
+
+  /**
+   * Apply a filter to a grid column
+   */
+  function applyGridFilter(columnKey, value) {
+    if (value === '' || value === null) {
+      delete state.gridMode.columnFilters[columnKey];
+    } else {
+      state.gridMode.columnFilters[columnKey] = value;
+    }
+    state.gridMode.currentPage = 1; // Reset to first page
+    renderGridTable();
+    syncGridFiltersToChips();
+  }
+
+  /**
+   * Clear all grid column filters
+   */
+  function clearGridFilters() {
+    state.gridMode.columnFilters = {};
+    state.gridMode.currentPage = 1;
+    renderGridTable();
+    syncGridFiltersToChips();
+  }
+
+  /**
+   * Sync grid column filters to header filter chips
+   * Creates chips in .filter-chips for each active column filter
+   */
+  function syncGridFiltersToChips() {
+    const filterChipsContainer = document.getElementById('filter-chips');
+    if (!filterChipsContainer) return;
+
+    // Remove existing grid filter chips
+    clearGridFilterChips();
+
+    const filters = state.gridMode.columnFilters;
+    const addFilterBtn = filterChipsContainer.querySelector('.add-filter');
+
+    // Create a chip for each active filter
+    Object.keys(filters).forEach(key => {
+      const value = filters[key];
+      if (value === null || value === '' || value === undefined) return;
+
+      const col = GRID_COLUMNS.find(c => c.key === key);
+      if (!col) return;
+
+      // Format display value based on column type
+      let displayValue = value;
+      if (col.type === 'number' || col.type === 'currency') {
+        displayValue = `≥ ${value}`;
+      }
+
+      const chip = document.createElement('div');
+      chip.className = 'filter-chip filter-chip--grid';
+      chip.dataset.column = key;
+      chip.innerHTML = `
+        <span class="filter-chip__label">${escapeHtml(col.label)}</span>
+        <span class="filter-chip__value">${escapeHtml(displayValue)}</span>
+        <button class="filter-chip__remove" onclick="removeGridFilterChip('${key}')" aria-label="Remove filter">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      `;
+
+      // Insert before the Add Filter button
+      if (addFilterBtn) {
+        filterChipsContainer.insertBefore(chip, addFilterBtn);
+      } else {
+        filterChipsContainer.appendChild(chip);
+      }
+    });
+  }
+
+  /**
+   * Clear all grid filter chips from the header
+   */
+  function clearGridFilterChips() {
+    const filterChipsContainer = document.getElementById('filter-chips');
+    if (!filterChipsContainer) return;
+
+    const gridChips = filterChipsContainer.querySelectorAll('.filter-chip--grid');
+    gridChips.forEach(chip => chip.remove());
+  }
+
+  /**
+   * Remove a grid filter chip and clear the corresponding column filter
+   */
+  function removeGridFilterChip(columnKey) {
+    // Clear the column filter
+    delete state.gridMode.columnFilters[columnKey];
+    state.gridMode.currentPage = 1;
+
+    // Re-render grid table
+    renderGridTable();
+
+    // Update chips
+    syncGridFiltersToChips();
   }
 
   /**
@@ -2575,7 +3008,12 @@
   function handleModeChange(mode) {
     if (state.appMode === mode) return;
 
+    const previousMode = state.appMode;
     state.appMode = mode;
+
+    // Update body class for CSS styling hooks
+    document.body.classList.remove('app-mode-base', 'app-mode-grid', 'app-mode-compare');
+    document.body.classList.add(`app-mode-${mode}`);
 
     // Update button states
     elements.modeBtns.forEach(btn => {
@@ -2587,13 +3025,26 @@
     if (elements.promotionsLayout) elements.promotionsLayout.style.display = 'none';
     if (elements.gridLayout) elements.gridLayout.style.display = 'none';
 
+    // Clear grid filter chips when leaving grid mode
+    if (previousMode === 'grid' && mode !== 'grid') {
+      clearGridFilterChips();
+    }
+
     // Show appropriate layout based on mode
     if (mode === 'base') {
       // Show current view mode (categories or promotions)
       if (state.viewMode === 'categories') {
         if (elements.categoriesLayout) elements.categoriesLayout.style.display = '';
+        // Re-apply filters to ensure categories view is up to date
+        if (state.activeFilters.length > 0) {
+          applyFilters();
+        }
       } else {
         if (elements.promotionsLayout) elements.promotionsLayout.style.display = '';
+        // Re-apply filters to ensure promotions view is up to date
+        if (state.activeFilters.length > 0) {
+          applyFilters();
+        }
       }
     } else if (mode === 'grid') {
       // Initialize Grid if needed
@@ -2603,6 +3054,8 @@
       if (elements.gridLayout) elements.gridLayout.style.display = '';
       renderGridColumnsDropdown();
       renderGridTable();
+      // Sync existing column filters to header chips
+      syncGridFiltersToChips();
     } else if (mode === 'compare') {
       // Compare mode - show message for now
       if (elements.categoriesLayout) {
@@ -2640,12 +3093,14 @@
   window.selectFilterOption = selectFilterOption;
   window.applyFilter = applyFilter;
   window.removeFilter = removeFilter;
+  window.closeDetailPanel = closeDetailPanel;
   // Category grid functions
   window.selectCategoryGridRow = selectCategoryGridRow;
   window.closeCategoryDetail = closeCategoryDetail;
   window.viewCategoryPromotions = viewCategoryPromotions;
   window.openCategoryInquiry = openCategoryInquiry;
   window.compareCategoryAction = compareCategoryAction;
+  window.comparePromotion = comparePromotion;
   // Grid Mode functions
   window.sortGridColumn = sortGridColumn;
   window.toggleGridColumn = toggleGridColumn;
@@ -2654,6 +3109,9 @@
   window.gridNextPage = gridNextPage;
   window.changeGridRowsPerPage = changeGridRowsPerPage;
   window.toggleColumnsDropdown = toggleColumnsDropdown;
+  window.applyGridFilter = applyGridFilter;
+  window.clearGridFilters = clearGridFilters;
+  window.removeGridFilterChip = removeGridFilterChip;
 
   /* ============================================
      UTILITY FUNCTIONS
@@ -2675,8 +3133,8 @@
     const colorClass = getPercentileClass(percentile);
     return `
       <div class="percentile-badge">
-        <span class="material-symbols-outlined percentile-badge__icon">bar_chart</span>
-        <span class="percentile-badge__value percentile-badge__value--${colorClass}">${percentile}</span>
+        <img src="./assets/chart-bar.svg" alt="" class="percentile-badge__icon">
+        <span class="percentile-badge__value percentile-badge__value--${colorClass}">${percentile}%</span>
       </div>
     `;
   }
@@ -2773,6 +3231,11 @@
   function applyColumnFilters(promotions) {
     let result = promotions;
 
+    if (state.columnFilters.name) {
+      const searchTerm = state.columnFilters.name.toLowerCase();
+      result = result.filter(p => p.name.toLowerCase().includes(searchTerm));
+    }
+
     if (state.columnFilters.dealType) {
       result = result.filter(p => p.dealType === state.columnFilters.dealType);
     }
@@ -2803,7 +3266,49 @@
    */
   function handleColumnFilter(filterType, value) {
     state.columnFilters[filterType] = value || null;
+
+    // Sync column filters to context filter chips
+    syncColumnFiltersToChips();
+
     renderPromotions();
+  }
+
+  /**
+   * Sync column filters to context filter chips
+   */
+  function syncColumnFiltersToChips() {
+    // Remove existing column-based filters from activeFilters
+    state.activeFilters = state.activeFilters.filter(f => !f.fromColumn);
+
+    // Add column filters as chips
+    if (state.columnFilters.name) {
+      state.activeFilters.push({
+        type: 'promotion',
+        value: state.columnFilters.name,
+        label: 'Promotion',
+        fromColumn: true
+      });
+    }
+
+    if (state.columnFilters.category) {
+      state.activeFilters.push({
+        type: 'category',
+        value: state.columnFilters.category,
+        label: 'Category',
+        fromColumn: true
+      });
+    }
+
+    if (state.columnFilters.dealType) {
+      state.activeFilters.push({
+        type: 'deal',
+        value: state.columnFilters.dealType,
+        label: 'Deal Type',
+        fromColumn: true
+      });
+    }
+
+    renderFilterChips();
   }
 
   /**
@@ -2817,22 +3322,36 @@
 
     let filterHTML = '';
     if (filterable && filterType) {
-      const options = filterType === 'dealType' ? getUniqueDealTypes() : getUniqueCategories();
-      const currentValue = state.columnFilters[filterType] || '';
+      if (filterType === 'text') {
+        // Text input filter for promotion name
+        const currentValue = state.columnFilters.name || '';
+        filterHTML = `
+          <input type="text" class="th-filter-input" placeholder="Filter..."
+                 value="${escapeHtml(currentValue)}"
+                 onchange="window.__handleColumnFilter && window.__handleColumnFilter('name', this.value)"
+                 onclick="event.stopPropagation()">
+        `;
+      } else {
+        // Dropdown filter for category/dealType
+        const options = filterType === 'dealType' ? getUniqueDealTypes() : getUniqueCategories();
+        const currentValue = state.columnFilters[filterType] || '';
 
-      filterHTML = `
-        <select class="th-filter" data-filter="${filterType}" onchange="window.__handleColumnFilter && window.__handleColumnFilter('${filterType}', this.value)">
-          <option value="">All</option>
-          ${options.map(opt => `<option value="${escapeHtml(opt)}" ${currentValue === opt ? 'selected' : ''}>${escapeHtml(opt)}</option>`).join('')}
-        </select>
-      `;
+        filterHTML = `
+          <select class="th-filter" data-filter="${filterType}" onchange="window.__handleColumnFilter && window.__handleColumnFilter('${filterType}', this.value)">
+            <option value="">All</option>
+            ${options.map(opt => `<option value="${escapeHtml(opt)}" ${currentValue === opt ? 'selected' : ''}>${escapeHtml(opt)}</option>`).join('')}
+          </select>
+        `;
+      }
     }
 
     return `
       <th class="th-sortable ${activeClass}" data-column="${column}">
         <div class="th-content">
-          <span class="th-label" onclick="window.__handleColumnSort && window.__handleColumnSort('${column}')">${label}</span>
-          <span class="th-sort-icon material-symbols-outlined" onclick="window.__handleColumnSort && window.__handleColumnSort('${column}')">${sortIcon}</span>
+          <div class="th-header header-sort" onclick="window.__handleColumnSort && window.__handleColumnSort('${column}')">
+            <span class="th-label">${label}</span>
+            <span class="th-sort-icon material-symbols-outlined">${sortIcon}</span>
+          </div>
           ${filterHTML}
         </div>
       </th>
@@ -2916,8 +3435,10 @@
     return `
       <th class="th-sortable ${activeClass} ${cssClass}" data-column="${column}">
         <div class="th-content">
-          <span class="th-label" onclick="window.__handleCategoryColumnSort && window.__handleCategoryColumnSort('${column}')">${label}</span>
-          <span class="th-sort-icon material-symbols-outlined" onclick="window.__handleCategoryColumnSort && window.__handleCategoryColumnSort('${column}')">${sortIcon}</span>
+          <div class="th-header header-sort" onclick="window.__handleCategoryColumnSort && window.__handleCategoryColumnSort('${column}')">
+            <span class="th-label">${label}</span>
+            <span class="th-sort-icon material-symbols-outlined">${sortIcon}</span>
+          </div>
         </div>
       </th>
     `;

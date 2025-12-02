@@ -508,13 +508,26 @@
    * Switch to Promotions view filtered by category
    */
   function viewCategoryPromotions(categoryId) {
+    // Get category details for filter
+    const category = state.categories.find(c => c.id === categoryId);
+    if (!category) return;
+
     // Set the active category filter
     state.activeCategory = categoryId;
+    state.selectedCategoryId = categoryId;
 
     // Switch to Promotions view
     state.viewMode = 'promotions';
 
-    // Update segment buttons
+    // Update mode-subtabs (Categories/Promotions tabs in view-modes)
+    const subtabs = document.querySelectorAll('.mode-subtabs .subtab');
+    subtabs.forEach(tab => {
+      const isPromotions = tab.dataset.view === 'promotions';
+      tab.classList.toggle('active', isPromotions);
+      tab.setAttribute('aria-selected', isPromotions ? 'true' : 'false');
+    });
+
+    // Update segment buttons (legacy support)
     elements.segmentBtns.forEach(btn => {
       const isPromotions = btn.dataset.view === 'promotions';
       btn.classList.toggle('active', isPromotions);
@@ -526,6 +539,23 @@
       elements.categoriesLayout.style.display = 'none';
       elements.promotionsLayout.style.display = 'flex';
     }
+
+    // Add category filter chip to context row
+    // First remove any existing category filters
+    state.activeFilters = state.activeFilters.filter(f => f.type !== 'category');
+    // Add the new category filter
+    state.activeFilters.push({
+      type: 'category',
+      value: categoryId,
+      label: 'Category',
+      fromColumn: false
+    });
+
+    // Also set the column filter for the table header dropdown
+    state.columnFilters.category = category.name;
+
+    // Render filter chips in context row
+    renderFilterChips();
 
     // Update promotions sidebar selection
     renderCategories();
@@ -2610,22 +2640,20 @@
   function removeFilter(index) {
     const filter = state.activeFilters[index];
 
-    // If this was a column filter, also clear the column filter state
-    if (filter && filter.fromColumn) {
+    // Clear column filter state for ANY filter of this type (not just fromColumn)
+    // This ensures the TH dropdown/input also resets
+    if (filter) {
       if (filter.type === 'promotion') {
         state.columnFilters.name = null;
       } else if (filter.type === 'category') {
         state.columnFilters.category = null;
+        // Also clear category-related state
+        state.activeCategory = null;
+        state.selectedCategoryId = null;
+        renderCategories();
       } else if (filter.type === 'deal') {
         state.columnFilters.dealType = null;
       }
-    }
-
-    // If removing a category filter from sidebar selection, also clear activeCategory
-    if (filter && filter.type === 'category' && !filter.fromColumn) {
-      state.activeCategory = null;
-      state.selectedCategoryId = null;
-      renderCategories();
     }
 
     state.activeFilters.splice(index, 1);
@@ -3262,10 +3290,22 @@
     document.body.classList.remove('app-mode-base', 'app-mode-grid', 'app-mode-compare');
     document.body.classList.add(`app-mode-${mode}`);
 
-    // Update button states
+    // Update button states for all mode buttons
     elements.modeBtns.forEach(btn => {
       btn.classList.toggle('active', btn.dataset.mode === mode);
     });
+
+    // Update mode-group active state (for BASE group container)
+    const modeGroups = document.querySelectorAll('.mode-group');
+    modeGroups.forEach(group => {
+      group.classList.toggle('active', group.dataset.mode === mode);
+    });
+
+    // Show/hide subtabs - only visible when BASE is active
+    const subtabsContainer = document.querySelector('.mode-subtabs');
+    if (subtabsContainer) {
+      subtabsContainer.style.display = mode === 'base' ? '' : 'none';
+    }
 
     // Hide all layouts
     if (elements.categoriesLayout) elements.categoriesLayout.style.display = 'none';
@@ -3279,6 +3319,18 @@
 
     // Show appropriate layout based on mode
     if (mode === 'base') {
+      // When switching TO Base from Grid or Compare, default to Categories view
+      if (previousMode === 'grid' || previousMode === 'compare') {
+        state.viewMode = 'categories';
+        // Update subtab active states
+        const subtabs = document.querySelectorAll('.subtab');
+        subtabs.forEach(tab => {
+          const isActive = tab.dataset.view === 'categories';
+          tab.classList.toggle('active', isActive);
+          tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        });
+      }
+
       // Show current view mode (categories or promotions)
       if (state.viewMode === 'categories') {
         if (elements.categoriesLayout) elements.categoriesLayout.style.display = '';
@@ -3524,8 +3576,17 @@
    * Sync column filters to context filter chips
    */
   function syncColumnFiltersToChips() {
-    // Remove existing column-based filters from activeFilters
-    state.activeFilters = state.activeFilters.filter(f => !f.fromColumn);
+    // SINGLE FILTER PER TYPE: Remove ALL existing filters of these types (not just fromColumn)
+    // Only one filter per type (promotion, category, deal) is allowed
+    if (state.columnFilters.name) {
+      state.activeFilters = state.activeFilters.filter(f => f.type !== 'promotion');
+    }
+    if (state.columnFilters.category) {
+      state.activeFilters = state.activeFilters.filter(f => f.type !== 'category');
+    }
+    if (state.columnFilters.dealType) {
+      state.activeFilters = state.activeFilters.filter(f => f.type !== 'deal');
+    }
 
     // Add column filters as chips
     if (state.columnFilters.name) {

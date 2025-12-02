@@ -628,10 +628,18 @@
   border-color: var(--color-gray-300);
 }
 
-.mode-btn--outline.active {
+/* GRID active state - black fill */
+.mode-btn--outline[data-mode="grid"].active {
   background-color: var(--color-gray-900);
   color: white;
   border-color: var(--color-gray-900);
+}
+
+/* COMPARE active state - blue fill */
+.mode-btn--outline[data-mode="compare"].active {
+  background-color: #2563EB;
+  color: white;
+  border-color: #2563EB;
 }
 
 .mode-btn:focus-visible {

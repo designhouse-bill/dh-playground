@@ -2988,6 +2988,14 @@ class DataGridComponent {
 
         // Trigger change handler to update tier2Filters and filter counts
         this.handleTier2FilterChange(checkbox);
+      } else {
+        // Checkbox not found in DOM - manually update filter state and refresh
+        const filterKey = this.mapFilterTypeToKey(type);
+        if (filterKey && this.tier2Filters[filterKey]) {
+          this.tier2Filters[filterKey].delete(value);
+          this.updateFilterCount(type, this.tier2Filters[filterKey].size);
+          this.updateFilters();
+        }
       }
     }
 

@@ -1,0 +1,827 @@
+/**
+ * BASE PROMOTIONS - Promotions View for Analytics Dashboard
+ * Page-specific logic for base_promotions.html
+ */
+
+(function() {
+  'use strict';
+
+  // References to shared modules
+  let core = null;
+  let state = null;
+  let elements = null;
+
+  /**
+   * Initialize the promotions page
+   */
+  async function init() {
+    // Initialize core module
+    core = window.DashboardCore;
+    elements = core.initElements();
+    state = core.getState();
+
+    // Restore state from localStorage/URL
+    core.restoreState();
+
+    // Initialize modals
+    if (window.DashboardModals) {
+      window.DashboardModals.init(core);
+    }
+
+    // Initialize filters with render callbacks
+    if (window.DashboardFilters) {
+      window.DashboardFilters.init(core);
+      window.DashboardFilters.setRenderCallbacks({
+        renderCategories: renderCategories,
+        renderPromotions: renderPromotions,
+        renderCategoryGrid: () => {},
+        updateCounts: updateCounts
+      });
+    }
+
+    // Set active navigation state
+    core.setActiveNavigation();
+
+    // Initialize context
+    core.initializeContext();
+
+    // Load data
+    await core.loadData();
+
+    // Check for category filter from URL
+    handleUrlCategoryFilter();
+
+    // Render initial views
+    renderCategories();
+    renderPromotions();
+    updateCounts();
+
+    // Render filter chips
+    if (window.DashboardFilters) {
+      window.DashboardFilters.renderFilterChips();
+    }
+
+    // Bind events
+    bindEvents();
+
+    // Listen for data refresh events
+    document.addEventListener('dashboard:dataRefresh', handleDataRefresh);
+    document.addEventListener('dashboard:filterApply', handleFilterApply);
+
+    console.log('[Promotions] Page initialized');
+  }
+
+  /**
+   * Handle category filter from URL parameter
+   */
+  function handleUrlCategoryFilter() {
+    const urlParams = StateManager.parseUrlParams();
+    if (urlParams.categoryId) {
+      state.activeCategory = urlParams.categoryId;
+      state.selectedCategoryId = urlParams.categoryId;
+
+      // Add category filter if not already present
+      const hasFilter = state.activeFilters.some(f => f.type === 'category');
+      if (!hasFilter) {
+        const category = state.categories.find(c => c.id === urlParams.categoryId);
+        if (category) {
+          state.activeFilters.push({
+            type: 'category',
+            value: urlParams.categoryId,
+            label: 'Category',
+            fromUrl: true
+          });
+          state.columnFilters.category = category.name;
+        }
+      }
+
+      // Apply filters
+      if (window.DashboardFilters) {
+        window.DashboardFilters.applyFilters();
+      }
+    }
+  }
+
+  /**
+   * Bind page-specific events
+   */
+  function bindEvents() {
+    // Card view toggle
+    const cardViewToggle = document.getElementById('card-view-toggle');
+    if (cardViewToggle) {
+      cardViewToggle.checked = state.promoViewMode === 'cards';
+      cardViewToggle.addEventListener('change', (e) => {
+        state.promoViewMode = e.target.checked ? 'cards' : 'table';
+        togglePromoView();
+        core.saveState();
+      });
+    }
+
+    // Category list click handler
+    const categoryList = document.getElementById('category-list');
+    if (categoryList) {
+      categoryList.addEventListener('click', handleCategoryClick);
+    }
+
+    // Promotion table click handler
+    const promotionTable = document.getElementById('promotion-table');
+    if (promotionTable) {
+      promotionTable.addEventListener('click', handlePromotionClick);
+    }
+
+    // Promotion grid click handler
+    const promotionGrid = document.getElementById('promotion-grid');
+    if (promotionGrid) {
+      promotionGrid.addEventListener('click', handlePromotionClick);
+    }
+
+    // Save state on navigation clicks
+    document.querySelectorAll('.mode-btn, .subtab').forEach(link => {
+      link.addEventListener('click', () => {
+        core.saveState();
+      });
+    });
+  }
+
+  /**
+   * Handle data refresh events from modals
+   */
+  function handleDataRefresh(event) {
+    renderCategories();
+    renderPromotions();
+    updateCounts();
+    if (window.DashboardFilters) {
+      window.DashboardFilters.applyFilters();
+    }
+  }
+
+  /**
+   * Handle filter apply events
+   */
+  function handleFilterApply(event) {
+    if (window.DashboardFilters) {
+      window.DashboardFilters.renderFilterChips();
+      window.DashboardFilters.applyFilters();
+    }
+  }
+
+  /**
+   * Toggle between card and table view
+   */
+  function togglePromoView() {
+    const grid = document.getElementById('promotion-grid');
+    const table = document.getElementById('promotion-table');
+
+    if (state.promoViewMode === 'cards') {
+      if (grid) grid.style.display = 'grid';
+      if (table) table.style.display = 'none';
+    } else {
+      if (grid) grid.style.display = 'none';
+      if (table) table.style.display = 'block';
+    }
+  }
+
+  /**
+   * Render category list in left panel
+   */
+  function renderCategories() {
+    const categoryList = document.getElementById('category-list');
+    if (!categoryList) return;
+
+    // "All Categories" item
+    const allItem = createCategoryItem({
+      id: 'all',
+      name: 'All Categories',
+      promotionCount: state.allPromotions.length,
+      isAll: true
+    });
+
+    // Individual category items
+    const categoryItems = state.categories.map(cat => createCategoryItem(cat));
+
+    categoryList.innerHTML = allItem + categoryItems.join('');
+  }
+
+  /**
+   * Create HTML for a single category item
+   */
+  function createCategoryItem(cat) {
+    const isActive = state.activeCategory === cat.id || (cat.isAll && state.activeCategory === null);
+    const percentileClass = cat.percentile ? core.getPercentileClass(cat.percentile) : '';
+    const allClass = cat.isAll ? 'category-item--all' : '';
+
+    return `
+      <div class="category-item ${allClass} ${isActive ? 'active' : ''}"
+           data-id="${cat.id}"
+           role="listitem"
+           tabindex="0"
+           aria-label="${cat.name}, ${cat.promotionCount} promotions">
+        <div class="category-item__info">
+          <div class="category-item__name">${core.escapeHtml(cat.name)}</div>
+          <div class="category-item__meta">
+            ${cat.promotionCount} promotion${cat.promotionCount !== 1 ? 's' : ''}
+          </div>
+        </div>
+        ${cat.percentile ? core.getPercentileBadgeHTML(cat.percentile) : ''}
+      </div>
+    `;
+  }
+
+  /**
+   * Handle category click
+   */
+  function handleCategoryClick(e) {
+    const categoryItem = e.target.closest('.category-item');
+    if (!categoryItem) return;
+
+    const categoryId = categoryItem.dataset.id;
+    selectCategory(categoryId);
+  }
+
+  /**
+   * Select a category
+   */
+  function selectCategory(categoryId) {
+    if (categoryId === 'all') {
+      state.activeCategory = null;
+      state.columnFilters.category = null;
+      // Remove category filters
+      state.activeFilters = state.activeFilters.filter(f => f.type !== 'category');
+    } else {
+      state.activeCategory = categoryId;
+      const category = state.categories.find(c => c.id === categoryId);
+      if (category) {
+        state.columnFilters.category = category.name;
+        // Add category filter
+        state.activeFilters = state.activeFilters.filter(f => f.type !== 'category');
+        state.activeFilters.push({
+          type: 'category',
+          value: categoryId,
+          label: 'Category',
+          fromColumn: false
+        });
+      }
+    }
+
+    renderCategories();
+    if (window.DashboardFilters) {
+      window.DashboardFilters.renderFilterChips();
+      window.DashboardFilters.applyFilters();
+    }
+    core.saveState();
+  }
+
+  /**
+   * Render promotions (cards or table based on view mode)
+   */
+  function renderPromotions() {
+    const grid = document.getElementById('promotion-grid');
+    const table = document.getElementById('promotion-table');
+
+    if (state.filteredPromotions.length === 0) {
+      const emptyHTML = `
+        <div style="text-align: center; padding: var(--space-8); color: var(--color-text-tertiary);">
+          <div style="font-size: 48px; margin-bottom: var(--space-4);">&#128237;</div>
+          <p>No promotions found</p>
+        </div>
+      `;
+      if (grid) grid.innerHTML = emptyHTML;
+      if (table) table.innerHTML = emptyHTML;
+      return;
+    }
+
+    // Calculate max values for bar charts
+    const maxCiv = Math.max(...state.filteredPromotions.map(p => p.civ));
+    const maxCc = Math.max(...state.filteredPromotions.map(p => p.cc));
+    const maxAtl = Math.max(...state.filteredPromotions.map(p => p.atl));
+    const maxValues = { maxCiv, maxCc, maxAtl };
+
+    // Render cards
+    if (grid) {
+      const promoCards = state.filteredPromotions.map((promo, index) =>
+        createPromoCard(promo, index + 1, maxValues)
+      );
+      grid.innerHTML = promoCards.join('');
+    }
+
+    // Render table
+    renderPromotionTable(maxValues);
+
+    // Set correct view visibility
+    togglePromoView();
+  }
+
+  /**
+   * Create HTML for a promotion card
+   */
+  function createPromoCard(promo, position, maxValues) {
+    const isActive = state.activePromotion === promo.id;
+    const performanceWidth = promo.percentile;
+    const perfClass = promo.percentile >= 75 ? 'high' : promo.percentile >= 50 ? 'medium' : 'low';
+
+    return `
+      <div class="promo-card ${isActive ? 'active' : ''}"
+           data-id="${promo.id}"
+           role="listitem"
+           tabindex="0"
+           aria-label="${promo.name}">
+        <div class="promo-card__image-wrapper">
+          <div class="promo-card__position">${position}</div>
+          <img class="promo-card__image"
+               src="${promo.thumbImage}"
+               alt="${core.escapeHtml(promo.name)}"
+               loading="lazy">
+        </div>
+        <div class="promo-card__content">
+          <div class="promo-card__badges">
+            <span class="promo-card__deal-badge">${core.escapeHtml(promo.dealType)}</span>
+            ${core.getPercentileBadgeHTML(promo.percentile)}
+          </div>
+          <h3 class="promo-card__title">${core.escapeHtml(promo.name)}</h3>
+          <p class="promo-card__meta">${core.escapeHtml(promo.categoryName)}</p>
+          <div class="promo-card__stats">
+            <div class="promo-stat">
+              <span class="promo-stat__value">${core.formatNumber(promo.civ)}</span>
+              <span class="promo-stat__label">Views</span>
+            </div>
+            <div class="promo-stat">
+              <span class="promo-stat__value">${core.formatNumber(promo.cc)}</span>
+              <span class="promo-stat__label">Clicks</span>
+            </div>
+            <div class="promo-stat">
+              <span class="promo-stat__value">${core.formatNumber(promo.atl)}</span>
+              <span class="promo-stat__label">Added</span>
+            </div>
+          </div>
+          <div class="promo-card__chart">
+            <div class="perf-bar">
+              <div class="perf-bar__track perf-bar__track--${perfClass}">
+                <div class="perf-bar__fill perf-bar__fill--${perfClass}" style="width: ${performanceWidth}%"></div>
+              </div>
+              <span class="perf-bar__value">${promo.compositeScore || Math.round(performanceWidth)}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * Render promotion table view
+   */
+  function renderPromotionTable(maxValues) {
+    const table = document.getElementById('promotion-table');
+    if (!table) return;
+
+    // Apply column filters first, then sort
+    let displayPromotions = applyColumnFilters(state.filteredPromotions);
+    displayPromotions = core.sortPromotions(displayPromotions, state.sortColumn, state.sortDirection);
+
+    // Update showing count
+    const showingCount = document.getElementById('promo-showing-count');
+    if (showingCount) {
+      showingCount.textContent = displayPromotions.length;
+    }
+
+    if (displayPromotions.length === 0) {
+      table.innerHTML = `
+        <div class="table-empty">
+          <span class="material-symbols-outlined">filter_list_off</span>
+          <p>No promotions match the current filters</p>
+        </div>
+      `;
+      return;
+    }
+
+    const maxScore = Math.max(...displayPromotions.map(p => p.compositeScore || 0));
+
+    const rows = displayPromotions.map((promo, index) => {
+      const isActive = state.activePromotion === promo.id;
+      const perfPercent = maxScore > 0 ? ((promo.compositeScore || 0) / maxScore * 100) : 0;
+      const perfClass = promo.percentile >= 75 ? 'high' : promo.percentile >= 50 ? 'medium' : 'low';
+
+      return `
+        <tr class="${isActive ? 'active' : ''}" data-id="${promo.id}">
+          <td>
+            <div class="table-position">${index + 1}</div>
+          </td>
+          <td>
+            <div class="table-promo">
+              <img class="table-thumb" src="${promo.thumbImage}" alt="${core.escapeHtml(promo.name)}">
+              <div class="table-info">
+                <div class="table-title">${core.escapeHtml(promo.name)}</div>
+              </div>
+            </div>
+          </td>
+          <td><span class="table-category">${core.escapeHtml(promo.categoryName)}</span></td>
+          <td><span class="table-deal">${core.escapeHtml(promo.dealType)}</span></td>
+          <td class="table-metric">${core.formatNumber(promo.civ)}</td>
+          <td class="table-metric">${core.formatNumber(promo.cc)}</td>
+          <td class="table-metric">${core.formatNumber(promo.atl)}</td>
+          <td>${core.getPercentileBadgeHTML(promo.percentile)}</td>
+          <td class="col-perf table-performance">
+            <div class="perf-bar table-bar--wide">
+              <div class="perf-bar__track perf-bar__track--${perfClass}">
+                <div class="perf-bar__fill perf-bar__fill--${perfClass}" style="width: ${perfPercent}%"></div>
+              </div>
+              <span class="perf-bar__value">${core.formatNumber(promo.compositeScore)}</span>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    table.innerHTML = `
+      <table class="data-table data-table--sortable">
+        <thead>
+          <tr>
+            <th>#</th>
+            ${getSortableHeaderHTML('Promotion', 'name', true, 'text')}
+            ${getSortableHeaderHTML('Category', 'categoryName', true, 'category')}
+            ${getSortableHeaderHTML('Deal', 'dealType', true, 'dealType')}
+            ${getSortableHeaderHTML('Views', 'civ')}
+            ${getSortableHeaderHTML('Clicks', 'cc')}
+            ${getSortableHeaderHTML('Added', 'atl')}
+            ${getSortableHeaderHTML('%ile', 'percentile')}
+            ${getSortableHeaderHTML('Performance', 'compositeScore', false, null)}
+          </tr>
+        </thead>
+        <tbody>
+          ${rows}
+        </tbody>
+      </table>
+    `;
+  }
+
+  /**
+   * Apply column filters to promotions
+   */
+  function applyColumnFilters(promotions) {
+    let filtered = [...promotions];
+
+    if (state.columnFilters.name) {
+      const search = state.columnFilters.name.toLowerCase();
+      filtered = filtered.filter(p => p.name.toLowerCase().includes(search));
+    }
+
+    if (state.columnFilters.category) {
+      filtered = filtered.filter(p => p.categoryName === state.columnFilters.category);
+    }
+
+    if (state.columnFilters.dealType) {
+      filtered = filtered.filter(p => p.dealType === state.columnFilters.dealType);
+    }
+
+    return filtered;
+  }
+
+  /**
+   * Generate sortable header HTML
+   */
+  function getSortableHeaderHTML(label, column, filterable = false, filterType = null) {
+    const isActive = state.sortColumn === column;
+    const direction = isActive ? state.sortDirection : null;
+    const sortIcon = direction === 'asc' ? 'arrow_upward' : direction === 'desc' ? 'arrow_downward' : 'unfold_more';
+    const activeClass = isActive ? 'th-sort--active' : '';
+
+    let filterHTML = '';
+    if (filterable && filterType) {
+      if (filterType === 'text') {
+        const currentValue = state.columnFilters.name || '';
+        filterHTML = `
+          <input type="text" class="th-filter-input" placeholder="Filter..."
+                 value="${core.escapeHtml(currentValue)}"
+                 onchange="handleColumnFilter('name', this.value)"
+                 onclick="event.stopPropagation()">
+        `;
+      } else if (filterType === 'category') {
+        const categories = core.getUniqueCategories();
+        const currentValue = state.columnFilters.category || '';
+        const options = ['<option value="">All</option>'].concat(
+          categories.map(cat => `<option value="${core.escapeHtml(cat)}" ${cat === currentValue ? 'selected' : ''}>${core.escapeHtml(cat)}</option>`)
+        ).join('');
+        filterHTML = `
+          <select class="th-filter-select" onchange="handleColumnFilter('category', this.value)" onclick="event.stopPropagation()">
+            ${options}
+          </select>
+        `;
+      } else if (filterType === 'dealType') {
+        const dealTypes = core.getUniqueDealTypes();
+        const currentValue = state.columnFilters.dealType || '';
+        const options = ['<option value="">All</option>'].concat(
+          dealTypes.map(dt => `<option value="${core.escapeHtml(dt)}" ${dt === currentValue ? 'selected' : ''}>${core.escapeHtml(dt)}</option>`)
+        ).join('');
+        filterHTML = `
+          <select class="th-filter-select" onchange="handleColumnFilter('dealType', this.value)" onclick="event.stopPropagation()">
+            ${options}
+          </select>
+        `;
+      }
+    }
+
+    return `
+      <th class="th-sortable ${activeClass}" data-column="${column}">
+        <div class="th-content">
+          <div class="th-header header-sort" onclick="handleColumnSort('${column}')">
+            <span class="th-label">${label}</span>
+            <span class="th-sort-icon material-symbols-outlined">${sortIcon}</span>
+          </div>
+          ${filterHTML}
+        </div>
+      </th>
+    `;
+  }
+
+  /**
+   * Handle column sort click
+   */
+  function handleColumnSort(column) {
+    if (state.sortColumn === column) {
+      state.sortDirection = state.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      state.sortColumn = column;
+      state.sortDirection = 'desc';
+    }
+    renderPromotions();
+    core.saveState();
+  }
+
+  /**
+   * Handle column filter change
+   */
+  function handleColumnFilter(filterType, value) {
+    state.columnFilters[filterType] = value || null;
+    if (window.DashboardFilters) {
+      window.DashboardFilters.syncColumnFiltersToChips();
+    }
+    renderPromotions();
+    core.saveState();
+  }
+
+  /**
+   * Handle promotion click
+   */
+  function handlePromotionClick(e) {
+    const promoElement = e.target.closest('.promo-card, tr[data-id]');
+    if (!promoElement) return;
+
+    const promoId = promoElement.dataset.id;
+    selectPromotion(promoId);
+  }
+
+  /**
+   * Select a promotion
+   */
+  function selectPromotion(promoId) {
+    state.activePromotion = promoId;
+
+    // Update active states in UI
+    document.querySelectorAll('.promo-card, tr[data-id]').forEach(el => {
+      el.classList.toggle('active', el.dataset.id === promoId);
+    });
+
+    // Render detail panel
+    const promo = state.filteredPromotions.find(p => p.id === promoId);
+    if (promo) {
+      renderDetail(promo);
+
+      // Expand detail panel
+      const detailPanel = document.getElementById('detail-panel');
+      if (detailPanel) {
+        detailPanel.classList.remove('panel--collapsed');
+        detailPanel.classList.add('panel--expanded');
+      }
+    }
+
+    core.saveState();
+  }
+
+  /**
+   * Render promotion detail panel
+   */
+  function renderDetail(promo) {
+    const detailContent = document.getElementById('detail-content');
+    if (!detailContent) return;
+
+    const ctr = ((promo.cc / promo.civ) * 100).toFixed(1);
+
+    // Helper functions for percentile colors (matching app.js)
+    const getPercentileBarColor = (percentile) => {
+      if (percentile >= 75) return '#22c55e';
+      if (percentile >= 50) return '#eab308';
+      if (percentile >= 25) return '#f97316';
+      return '#dc2626';
+    };
+
+    const getPercentileTextColor = (percentile) => {
+      if (percentile >= 75) return '#16a34a';
+      if (percentile >= 50) return '#ca8a04';
+      if (percentile >= 25) return '#ea580c';
+      return '#dc2626';
+    };
+
+    detailContent.innerHTML = `
+      <div class="detail-hero">
+        <img src="${promo.heroImage || promo.thumbImage}" alt="${core.escapeHtml(promo.name)}">
+      </div>
+      <div class="detail-body">
+        <h2 class="detail-title">${core.escapeHtml(promo.name)}</h2>
+
+        <div class="detail-tags">
+          <span class="detail-tag detail-tag--category">${core.escapeHtml(promo.categoryName)}</span>
+          <span class="detail-tag detail-tag--deal">${core.escapeHtml(promo.dealType)}</span>
+        </div>
+
+        <div class="detail-percentile-row">
+          <img src="./assets/chart-bar.svg" alt="Percentile" class="percentile-icon">
+          <span class="percentile-value" style="color: ${getPercentileTextColor(promo.percentile)}">${promo.percentile}%</span>
+          <div class="percentile-bar">
+            <div class="percentile-bar-fill" style="width: ${promo.percentile}%; background: ${getPercentileBarColor(promo.percentile)};"></div>
+          </div>
+          <span class="percentile-score">${promo.compositeScore}</span>
+        </div>
+
+        <div class="detail-kpis">
+          <div class="detail-kpi">
+            <span class="detail-kpi__value">${core.formatNumber(promo.civ)}</span>
+            <span class="detail-kpi__label">Card in View</span>
+          </div>
+          <div class="detail-kpi">
+            <span class="detail-kpi__value">${core.formatNumber(promo.cc)}</span>
+            <span class="detail-kpi__label">Card Clicked</span>
+          </div>
+          <div class="detail-kpi">
+            <span class="detail-kpi__value">${core.formatNumber(promo.atl)}</span>
+            <span class="detail-kpi__label">Add to List</span>
+          </div>
+          <div class="detail-kpi">
+            <span class="detail-kpi__value">${ctr}%</span>
+            <span class="detail-kpi__label">Click-Through Rate</span>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <div class="detail-section__title">Interaction Rate</div>
+          <div class="detail-chart-container" id="interaction-rate-chart" style="width: 100%; height: 200px;"></div>
+        </div>
+      </div>
+    `;
+
+    // Render interaction rate chart if ECharts is available
+    setTimeout(() => {
+      if (typeof echarts !== 'undefined') {
+        renderInteractionRateChart(promo);
+      }
+    }, 0);
+  }
+
+  /**
+   * Render interaction rate donut chart (matching app.js)
+   */
+  function renderInteractionRateChart(promo) {
+    const container = document.getElementById('interaction-rate-chart');
+    if (!container || typeof echarts === 'undefined') {
+      console.warn('ECharts not available for interaction rate chart');
+      return;
+    }
+
+    // Dispose existing chart if any
+    const existingChart = echarts.getInstanceByDom(container);
+    if (existingChart) {
+      existingChart.dispose();
+    }
+
+    // Initialize ECharts instance
+    const chart = echarts.init(container);
+
+    // Get metrics from promotion
+    const views = promo.civ || 0;
+    const clicks = promo.cc || 0;
+    const added = promo.atl || 0;
+
+    // Donut chart data - Views, Clicks, Added
+    const donutData = [
+      { name: 'Views', value: views, itemStyle: { color: '#E74C3C' } },
+      { name: 'Clicks', value: clicks, itemStyle: { color: '#F39C12' } },
+      { name: 'Added', value: added, itemStyle: { color: '#B8D64D' } }
+    ];
+
+    // Chart configuration
+    const option = {
+      tooltip: {
+        trigger: 'item',
+        backgroundColor: '#ffffff',
+        borderColor: '#e5e7eb',
+        borderWidth: 1,
+        textStyle: { color: '#0f172a', fontFamily: 'inherit', fontSize: 12 },
+        formatter: (params) => `${params.name}: ${core.formatNumber(params.value)}`
+      },
+      legend: {
+        orient: 'horizontal',
+        bottom: 0,
+        left: 'center',
+        textStyle: { color: '#6b7280', fontSize: 11, fontFamily: 'inherit', fontWeight: 400 },
+        itemGap: 16,
+        itemWidth: 10,
+        itemHeight: 10
+      },
+      series: [{
+        name: 'Interaction Rate',
+        type: 'pie',
+        radius: ['40%', '70%'],
+        center: ['50%', '42%'],
+        avoidLabelOverlap: false,
+        label: { show: false },
+        labelLine: { show: false },
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 8,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.1)'
+          }
+        },
+        data: donutData
+      }]
+    };
+
+    chart.setOption(option);
+
+    // Handle responsive resize
+    const resizeObserver = new ResizeObserver(() => {
+      chart.resize();
+    });
+    resizeObserver.observe(container);
+  }
+
+  /**
+   * Close detail panel
+   */
+  function closeDetailPanel() {
+    state.activePromotion = null;
+
+    document.querySelectorAll('.promo-card, tr[data-id]').forEach(el => {
+      el.classList.remove('active');
+    });
+
+    const detailPanel = document.getElementById('detail-panel');
+    if (detailPanel) {
+      detailPanel.classList.add('panel--collapsed');
+      detailPanel.classList.remove('panel--expanded');
+    }
+
+    core.saveState();
+  }
+
+  /**
+   * Print current promotion
+   */
+  function printPromotion() {
+    window.print();
+  }
+
+  /**
+   * Navigate to grid inquiry for current promotion
+   */
+  function openPromotionInquiry() {
+    if (state.activePromotion) {
+      core.saveState();
+      StateManager.navigateTo('grid-inquiry.html', state, { promotionId: state.activePromotion });
+    }
+  }
+
+  /**
+   * Navigate to compare for current promotion
+   */
+  function compareCurrentPromotion() {
+    if (state.activePromotion) {
+      core.saveState();
+      StateManager.navigateTo('compare.html', state, { promotionId: state.activePromotion });
+    }
+  }
+
+  /**
+   * Update counts display
+   */
+  function updateCounts() {
+    const categoryCount = document.getElementById('category-count');
+    if (categoryCount) {
+      categoryCount.textContent = state.categories.length;
+    }
+  }
+
+  // Expose functions globally for onclick handlers
+  window.closeDetailPanel = closeDetailPanel;
+  window.printPromotion = printPromotion;
+  window.openPromotionInquiry = openPromotionInquiry;
+  window.compareCurrentPromotion = compareCurrentPromotion;
+  window.handleColumnSort = handleColumnSort;
+  window.handleColumnFilter = handleColumnFilter;
+
+  // Initialize on DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+})();

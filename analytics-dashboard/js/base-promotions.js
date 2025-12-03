@@ -48,6 +48,9 @@
     // Load data
     await core.loadData();
 
+    // Check for store filter from URL
+    handleUrlStoreFilter();
+
     // Check for category filter from URL
     handleUrlCategoryFilter();
 
@@ -69,6 +72,63 @@
     document.addEventListener('dashboard:filterApply', handleFilterApply);
 
     console.log('[Promotions] Page initialized');
+  }
+
+  /**
+   * Handle store filter from URL parameter
+   * Sets Entity context for progressive disclosure from Circulars
+   */
+  function handleUrlStoreFilter() {
+    const urlParams = StateManager.parseUrlParams();
+    if (urlParams.storeId) {
+      state.activeStore = urlParams.storeId;
+      state.selectedStoreId = urlParams.storeId;
+
+      // Get store info from MockData
+      let storeName = urlParams.storeId;
+      let store = null;
+      if (typeof MockData !== 'undefined' && MockData.getStoreById) {
+        store = MockData.getStoreById(urlParams.storeId);
+        if (store) {
+          storeName = store.name;
+        }
+      }
+
+      // Set Entity context for progressive disclosure
+      if (typeof MockData !== 'undefined') {
+        MockData.setEntity(urlParams.storeId, 'store', storeName);
+      }
+
+      // Update state entity info
+      state.entityId = urlParams.storeId;
+      state.entityLevel = 'store';
+      state.entityName = storeName;
+      state.currentEntity = {
+        id: urlParams.storeId,
+        level: 'store',
+        name: storeName,
+        count: 1
+      };
+
+      // Update entity display in header
+      core.updateEntityDisplay();
+
+      // Add store filter if not already present
+      const hasFilter = state.activeFilters.some(f => f.type === 'store');
+      if (!hasFilter) {
+        state.activeFilters.push({
+          type: 'store',
+          value: urlParams.storeId,
+          label: storeName,
+          fromUrl: true
+        });
+      }
+
+      // Apply filters
+      if (window.DashboardFilters) {
+        window.DashboardFilters.applyFilters();
+      }
+    }
   }
 
   /**
@@ -106,6 +166,17 @@
    * Bind page-specific events
    */
   function bindEvents() {
+    // More Data toggle
+    const moreDataToggle = document.getElementById('more-data-toggle');
+    if (moreDataToggle) {
+      moreDataToggle.checked = state.promoMoreDataEnabled || false;
+      moreDataToggle.addEventListener('change', (e) => {
+        state.promoMoreDataEnabled = e.target.checked;
+        renderPromotions();
+        core.saveState();
+      });
+    }
+
     // Card view toggle
     const cardViewToggle = document.getElementById('card-view-toggle');
     if (cardViewToggle) {
@@ -116,6 +187,9 @@
         core.saveState();
       });
     }
+
+    // Set initial More Data toggle visibility
+    updateMoreDataToggleVisibility();
 
     // Category list click handler
     const categoryList = document.getElementById('category-list');
@@ -178,6 +252,20 @@
     } else {
       if (grid) grid.style.display = 'none';
       if (table) table.style.display = 'block';
+    }
+
+    // Update More Data toggle visibility
+    updateMoreDataToggleVisibility();
+  }
+
+  /**
+   * Show/hide More Data toggle based on Card View state
+   * More Data is only available when Card View is OFF (table mode)
+   */
+  function updateMoreDataToggleVisibility() {
+    const moreDataWrapper = document.getElementById('more-data-toggle-wrapper');
+    if (moreDataWrapper) {
+      moreDataWrapper.style.display = state.promoViewMode === 'cards' ? 'none' : 'flex';
     }
   }
 
@@ -394,62 +482,97 @@
     }
 
     const maxScore = Math.max(...displayPromotions.map(p => p.compositeScore || 0));
+    const showMoreData = state.promoMoreDataEnabled || false;
 
     const rows = displayPromotions.map((promo, index) => {
       const isActive = state.activePromotion === promo.id;
       const perfPercent = maxScore > 0 ? ((promo.compositeScore || 0) / maxScore * 100) : 0;
       const perfClass = promo.percentile >= 75 ? 'high' : promo.percentile >= 50 ? 'medium' : 'low';
 
+      // More Data columns (Deal, Views, Clicks, Added)
+      const moreDataCells = showMoreData ? `
+          <td class="col-deal"><span class="promo-deal">${core.escapeHtml(promo.dealType)}</span></td>
+          <td class="col-views">${core.formatNumber(promo.civ)}</td>
+          <td class="col-clicks">${core.formatNumber(promo.cc)}</td>
+          <td class="col-added">${core.formatNumber(promo.atl)}</td>
+      ` : '';
+
       return `
-        <tr class="${isActive ? 'active' : ''}" data-id="${promo.id}">
-          <td>
-            <div class="table-position">${index + 1}</div>
+        <tr class="promo-row ${isActive ? 'selected' : ''}" data-id="${promo.id}">
+          <td class="col-num">
+            <span class="row-number">${index + 1}</span>
           </td>
-          <td>
-            <div class="table-promo">
-              <img class="table-thumb" src="${promo.thumbImage}" alt="${core.escapeHtml(promo.name)}">
-              <div class="table-info">
-                <div class="table-title">${core.escapeHtml(promo.name)}</div>
+          <td class="col-promo">
+            <div class="promo-name">
+              <div class="promo-thumb">
+                <img src="${promo.thumbImage}" alt="${core.escapeHtml(promo.name)}">
               </div>
+              <span class="promo-label">${core.escapeHtml(promo.name)}</span>
             </div>
           </td>
-          <td><span class="table-category">${core.escapeHtml(promo.categoryName)}</span></td>
-          <td><span class="table-deal">${core.escapeHtml(promo.dealType)}</span></td>
-          <td class="table-metric">${core.formatNumber(promo.civ)}</td>
-          <td class="table-metric">${core.formatNumber(promo.cc)}</td>
-          <td class="table-metric">${core.formatNumber(promo.atl)}</td>
-          <td>${core.getPercentileBadgeHTML(promo.percentile)}</td>
-          <td class="col-perf table-performance">
-            <div class="perf-bar table-bar--wide">
+          <td class="col-category"><span class="promo-category">${core.escapeHtml(promo.categoryName)}</span></td>
+          ${moreDataCells}
+          <td class="col-perf">
+            <div class="perf-bar">
               <div class="perf-bar__track perf-bar__track--${perfClass}">
                 <div class="perf-bar__fill perf-bar__fill--${perfClass}" style="width: ${perfPercent}%"></div>
               </div>
               <span class="perf-bar__value">${core.formatNumber(promo.compositeScore)}</span>
             </div>
           </td>
+          <td class="col-percentile">${core.getPercentileBadgeHTML(promo.percentile)}</td>
         </tr>
       `;
     }).join('');
 
+    // More Data headers (Deal, Views, Clicks, Added)
+    const moreDataHeaders = showMoreData ? `
+            ${getPromoSortableHeaderHTML('Deal', 'dealType', 'col-deal')}
+            ${getPromoSortableHeaderHTML('Views', 'civ', 'col-views')}
+            ${getPromoSortableHeaderHTML('Clicks', 'cc', 'col-clicks')}
+            ${getPromoSortableHeaderHTML('Added', 'atl', 'col-added')}
+    ` : '';
+
+    // Toggle more-data-enabled class on container
+    table.classList.toggle('more-data-enabled', showMoreData);
+
     table.innerHTML = `
-      <table class="data-table data-table--sortable">
+      <table class="promo-grid-table data-table--sortable">
         <thead>
           <tr>
-            <th>#</th>
-            ${getSortableHeaderHTML('Promotion', 'name', true, 'text')}
-            ${getSortableHeaderHTML('Category', 'categoryName', true, 'category')}
-            ${getSortableHeaderHTML('Deal', 'dealType', true, 'dealType')}
-            ${getSortableHeaderHTML('Views', 'civ')}
-            ${getSortableHeaderHTML('Clicks', 'cc')}
-            ${getSortableHeaderHTML('Added', 'atl')}
-            ${getSortableHeaderHTML('%ile', 'percentile')}
-            ${getSortableHeaderHTML('Performance', 'compositeScore', false, null)}
+            <th class="col-num">#</th>
+            ${getPromoSortableHeaderHTML('Promotion', 'name', 'col-promo')}
+            ${getPromoSortableHeaderHTML('Category', 'categoryName', 'col-category')}
+            ${moreDataHeaders}
+            ${getPromoSortableHeaderHTML('Performance', 'compositeScore', 'col-perf')}
+            ${getPromoSortableHeaderHTML('%tile', 'percentile', 'col-percentile')}
           </tr>
         </thead>
-        <tbody>
+        <tbody id="promo-grid-body">
           ${rows}
         </tbody>
       </table>
+    `;
+  }
+
+  /**
+   * Generate sortable header HTML for promotions (matching category/store pattern)
+   */
+  function getPromoSortableHeaderHTML(label, column, cssClass = '') {
+    const isActive = state.sortColumn === column;
+    const direction = isActive ? state.sortDirection : null;
+    const sortIcon = direction === 'asc' ? 'arrow_upward' : direction === 'desc' ? 'arrow_downward' : 'unfold_more';
+    const activeClass = isActive ? 'th-sort--active' : '';
+
+    return `
+      <th class="th-sortable ${activeClass} ${cssClass}" data-column="${column}">
+        <div class="th-content">
+          <div class="th-header header-sort" onclick="handleColumnSort('${column}')">
+            <span class="th-label">${label}</span>
+            <span class="th-sort-icon material-symbols-outlined">${sortIcon}</span>
+          </div>
+        </div>
+      </th>
     `;
   }
 
@@ -562,7 +685,7 @@
    * Handle promotion click
    */
   function handlePromotionClick(e) {
-    const promoElement = e.target.closest('.promo-card, tr[data-id]');
+    const promoElement = e.target.closest('.promo-card, .promo-row');
     if (!promoElement) return;
 
     const promoId = promoElement.dataset.id;
@@ -575,9 +698,12 @@
   function selectPromotion(promoId) {
     state.activePromotion = promoId;
 
-    // Update active states in UI
-    document.querySelectorAll('.promo-card, tr[data-id]').forEach(el => {
+    // Update active states in UI - cards use 'active', rows use 'selected'
+    document.querySelectorAll('.promo-card').forEach(el => {
       el.classList.toggle('active', el.dataset.id === promoId);
+    });
+    document.querySelectorAll('.promo-row').forEach(el => {
+      el.classList.toggle('selected', el.dataset.id === promoId);
     });
 
     // Render detail panel

@@ -40,17 +40,11 @@
         </div>
 
         <div class="view-modes">
-          <!-- BASE group with sub-tabs -->
-          <div class="mode-group mode-group--base active" data-mode="base">
-            <a href="base_categories.html" class="mode-btn mode-btn--primary active" data-mode="base" aria-label="Base view">
-              <span class="material-symbols-outlined">view_list</span>
-              BASE
-            </a>
-            <div class="mode-subtabs" role="tablist">
-              <a href="base_categories.html" class="subtab active" data-view="categories" role="tab" aria-selected="true">Categories</a>
-              <a href="base_promotions.html" class="subtab" data-view="promotions" role="tab" aria-selected="false">Promotions</a>
-            </div>
-          </div>
+          <!-- BASE mode button -->
+          <a href="base_circulars.html" class="mode-btn mode-btn--primary active" data-mode="base" aria-label="Base view">
+            <span class="material-symbols-outlined">view_list</span>
+            BASE
+          </a>
 
           <!-- GRID standalone -->
           <a href="grid-inquiry.html" class="mode-btn mode-btn--outline" data-mode="grid" aria-label="Data grid view">
@@ -129,10 +123,26 @@
       <section class="panel panel--category-grid" role="main" aria-label="Categories">
         <div class="panel-header panel-header--categories">
           <div class="panel-header__left">
-            <button class="panel-breadcrumb" id="panel-breadcrumb">
-              <span class="breadcrumb-text">BASE > Categories</span>
-              <span class="material-symbols-outlined">expand_more</span>
-            </button>
+            <div class="panel-breadcrumb-wrapper">
+              <button class="panel-breadcrumb" id="panel-breadcrumb" onclick="toggleBreadcrumbDropdown(event)" aria-haspopup="true" aria-expanded="false">
+                <span class="breadcrumb-text">BASE &gt; Categories</span>
+                <span class="material-symbols-outlined">expand_more</span>
+              </button>
+              <div class="panel-breadcrumb-dropdown" id="panel-breadcrumb-dropdown" role="menu">
+                <a href="base_circulars.html" class="breadcrumb-option" data-view="circulars" role="menuitem" onclick="navigateWithFilters(event, 'base_circulars.html', 'circulars')">
+                  <span class="breadcrumb-option-prefix">BASE &gt;</span>
+                  <span class="breadcrumb-option-label">Circulars</span>
+                </a>
+                <a href="base_categories.html" class="breadcrumb-option active" data-view="categories" role="menuitem" onclick="navigateWithFilters(event, 'base_categories.html', 'categories')">
+                  <span class="breadcrumb-option-prefix">BASE &gt;</span>
+                  <span class="breadcrumb-option-label">Categories</span>
+                </a>
+                <a href="base_promotions.html" class="breadcrumb-option" data-view="promotions" role="menuitem" onclick="navigateWithFilters(event, 'base_promotions.html', 'promotions')">
+                  <span class="breadcrumb-option-prefix">BASE &gt;</span>
+                  <span class="breadcrumb-option-label">Promotions</span>
+                </a>
+              </div>
+            </div>
             <label class="toggle-switch">
               <input type="checkbox" id="more-data-toggle">
               <span class="toggle-slider"></span>
@@ -140,7 +150,16 @@
             <span class="toggle-label">More Data</span>
           </div>
           <div class="panel-header__center">
-            <span class="showing-count">Showing <span id="category-showing-count">0</span></span>
+            <span class="showing-count">Displaying <span id="category-showing-count">0</span></span>
+            <div class="topn-selector">
+              <select id="topn-select" class="topn-select" onchange="changeTopN(this.value)">
+                <option value="25">Top 25</option>
+                <option value="50">Top 50</option>
+                <option value="100" selected>Top 100</option>
+                <option value="250">Top 250</option>
+                <option value="all">All</option>
+              </select>
+            </div>
           </div>
           <div class="panel-header__right">
             <button class="panel-action-btn" id="panel-export-btn">
@@ -172,6 +191,24 @@
         </div>
         <div class="category-detail-content" id="category-detail-content">
           <!-- Populated by JavaScript -->
+        </div>
+        <div class="detail-footer" id="category-detail-footer">
+          <button class="detail-action-btn" onclick="viewCirculars()">
+            <span class="material-symbols-outlined">storefront</span>
+            View Circulars
+          </button>
+          <button class="detail-action-btn" onclick="viewCategoryPromotions()">
+            <span class="material-symbols-outlined">local_offer</span>
+            View Promotions
+          </button>
+          <button class="detail-action-btn" onclick="openCategoryInquiry()">
+            <span class="material-symbols-outlined">table_chart</span>
+            Grid Inquiry
+          </button>
+          <button class="detail-action-btn" onclick="compareCategoryAction()">
+            <span class="material-symbols-outlined">compare</span>
+            Compare
+          </button>
         </div>
       </aside>
 

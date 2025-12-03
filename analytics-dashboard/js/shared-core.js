@@ -372,17 +372,29 @@ const DashboardCore = (() => {
    * Update entity display in header
    */
   function updateEntityDisplay() {
+    console.log('[DashboardCore] updateEntityDisplay called');
+    console.log('[DashboardCore] state.currentEntity:', state.currentEntity);
+
     const entityCard = elements.entitySelector;
-    if (!entityCard) return;
+    if (!entityCard) {
+      console.log('[DashboardCore] entityCard not found, returning early');
+      return;
+    }
 
     const entity = state.currentEntity || (typeof MockData !== 'undefined' ? MockData.context.entity : null);
-    if (!entity) return;
+    console.log('[DashboardCore] Using entity:', entity);
+    if (!entity) {
+      console.log('[DashboardCore] No entity found, returning early');
+      return;
+    }
 
     const valueEl = entityCard.querySelector('.card-value');
     const subEl = entityCard.querySelector('.card-sub');
     const breadcrumbEl = entityCard.querySelector('.card-breadcrumb');
     const iconEl = entityCard.querySelector('.card-icon .material-symbols-outlined');
 
+    console.log('[DashboardCore] Setting entity name to:', entity.name);
+    console.log('[DashboardCore] Entity level:', entity.level);
     if (valueEl) valueEl.textContent = entity.name;
 
     const locationCount = entity.count || (typeof MockData !== 'undefined' ? MockData.entities.stores.length : 0);
@@ -586,14 +598,17 @@ const DashboardCore = (() => {
 
     // Determine which mode we're in
     let activeMode = 'base';
-    let activeSubtab = 'categories';
+    let activeView = 'categories';
 
-    if (currentPage === 'base_categories' || currentPage === 'index') {
+    if (currentPage === 'base_circulars' || currentPage === 'index') {
       activeMode = 'base';
-      activeSubtab = 'categories';
+      activeView = 'circulars';
+    } else if (currentPage === 'base_categories') {
+      activeMode = 'base';
+      activeView = 'categories';
     } else if (currentPage === 'base_promotions') {
       activeMode = 'base';
-      activeSubtab = 'promotions';
+      activeView = 'promotions';
     } else if (currentPage === 'grid-inquiry') {
       activeMode = 'grid';
     } else if (currentPage === 'compare') {
@@ -612,30 +627,13 @@ const DashboardCore = (() => {
       }
     });
 
-    // Update mode group
-    document.querySelectorAll('.mode-group').forEach(group => {
-      const mode = group.dataset.mode;
-      if (mode === activeMode) {
-        group.classList.add('active');
+    // Update breadcrumb dropdown options (active state)
+    document.querySelectorAll('.breadcrumb-option').forEach(option => {
+      const view = option.dataset.view;
+      if (view === activeView) {
+        option.classList.add('active');
       } else {
-        group.classList.remove('active');
-      }
-    });
-
-    // Update subtabs visibility and active state
-    const subtabsContainer = document.querySelector('.mode-subtabs');
-    if (subtabsContainer) {
-      subtabsContainer.style.display = activeMode === 'base' ? '' : 'none';
-    }
-
-    document.querySelectorAll('.mode-subtabs .subtab').forEach(tab => {
-      const view = tab.dataset.view;
-      if (view === activeSubtab) {
-        tab.classList.add('active');
-        tab.setAttribute('aria-selected', 'true');
-      } else {
-        tab.classList.remove('active');
-        tab.setAttribute('aria-selected', 'false');
+        option.classList.remove('active');
       }
     });
   }
@@ -717,3 +715,139 @@ const DashboardCore = (() => {
 
 // Make available globally
 window.DashboardCore = DashboardCore;
+
+/* ============================================
+   BREADCRUMB DROPDOWN FUNCTIONS
+   Global functions for panel breadcrumb navigation
+   ============================================ */
+
+/**
+ * Toggle the breadcrumb dropdown visibility
+ */
+function toggleBreadcrumbDropdown(event) {
+  event.stopPropagation();
+  const dropdown = document.getElementById('panel-breadcrumb-dropdown');
+  const button = document.getElementById('panel-breadcrumb');
+
+  if (!dropdown || !button) return;
+
+  const isOpen = dropdown.classList.contains('open');
+
+  if (isOpen) {
+    closeBreadcrumbDropdown();
+  } else {
+    dropdown.classList.add('open');
+    button.setAttribute('aria-expanded', 'true');
+
+    // Add click outside listener
+    setTimeout(() => {
+      document.addEventListener('click', closeBreadcrumbDropdownOnOutsideClick);
+    }, 0);
+  }
+}
+
+/**
+ * Close the breadcrumb dropdown
+ */
+function closeBreadcrumbDropdown() {
+  const dropdown = document.getElementById('panel-breadcrumb-dropdown');
+  const button = document.getElementById('panel-breadcrumb');
+
+  if (dropdown) dropdown.classList.remove('open');
+  if (button) button.setAttribute('aria-expanded', 'false');
+
+  document.removeEventListener('click', closeBreadcrumbDropdownOnOutsideClick);
+}
+
+/**
+ * Close dropdown when clicking outside
+ */
+function closeBreadcrumbDropdownOnOutsideClick(event) {
+  const wrapper = document.querySelector('.panel-breadcrumb-wrapper');
+  if (wrapper && !wrapper.contains(event.target)) {
+    closeBreadcrumbDropdown();
+  }
+}
+
+/**
+ * Navigate to a view while maintaining relevant filters
+ * @param {Event} event - Click event
+ * @param {string} page - Target page URL
+ * @param {string} targetView - Target view type (circulars, categories, promotions)
+ */
+function navigateWithFilters(event, page, targetView) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  closeBreadcrumbDropdown();
+
+  // Get current state
+  const state = DashboardCore.getState();
+
+  // Determine which filters are relevant for the target view
+  const relevantFilters = filterFiltersForView(state.activeFilters || [], targetView);
+
+  // Update state with filtered filters
+  state.activeFilters = relevantFilters;
+
+  // Clear view-specific selections when changing views
+  if (targetView === 'circulars') {
+    state.selectedCategoryId = null;
+    state.activeCategory = null;
+    state.selectedPromoId = null;
+  } else if (targetView === 'categories') {
+    state.selectedStoreId = null;
+    state.activeStore = null;
+    state.selectedPromoId = null;
+  } else if (targetView === 'promotions') {
+    state.selectedStoreId = null;
+    state.activeStore = null;
+  }
+
+  // Save state and navigate
+  DashboardCore.saveState();
+  StateManager.navigateTo(page, state);
+}
+
+/**
+ * Filter filters based on target view relevance
+ * @param {Array} filters - Current active filters
+ * @param {string} targetView - Target view (circulars, categories, promotions)
+ * @returns {Array} - Filtered array of relevant filters
+ */
+function filterFiltersForView(filters, targetView) {
+  if (!filters || !Array.isArray(filters)) return [];
+
+  return filters.filter(filter => {
+    // Date filters are always relevant
+    if (filter.type === 'date' || filter.type === 'dateRange') return true;
+
+    // Deal type filters are relevant for categories and promotions
+    if (filter.type === 'deal' || filter.type === 'dealType') {
+      return targetView === 'categories' || targetView === 'promotions';
+    }
+
+    // Store filters are relevant for categories and promotions (drilling down from store)
+    if (filter.type === 'store') {
+      return targetView === 'categories' || targetView === 'promotions';
+    }
+
+    // Category filters are only relevant for promotions
+    if (filter.type === 'category') {
+      return targetView === 'promotions';
+    }
+
+    // Promotion filters are only relevant for promotions view
+    if (filter.type === 'promotion') {
+      return targetView === 'promotions';
+    }
+
+    // Keep other filters by default
+    return true;
+  });
+}
+
+// Expose functions globally
+window.toggleBreadcrumbDropdown = toggleBreadcrumbDropdown;
+window.closeBreadcrumbDropdown = closeBreadcrumbDropdown;
+window.navigateWithFilters = navigateWithFilters;

@@ -48,6 +48,9 @@
     // Load data
     await core.loadData();
 
+    // Check for store filter from URL
+    handleUrlStoreFilter();
+
     // Render initial view
     renderCategoryGrid();
     updateCounts();
@@ -65,6 +68,71 @@
     document.addEventListener('dashboard:filterApply', handleFilterApply);
 
     console.log('[Categories] Page initialized');
+  }
+
+  /**
+   * Handle store filter from URL parameter
+   * Sets Entity context for progressive disclosure from Circulars
+   */
+  function handleUrlStoreFilter() {
+    console.log('[Categories] handleUrlStoreFilter called');
+    const urlParams = StateManager.parseUrlParams();
+    console.log('[Categories] URL params:', urlParams);
+
+    if (urlParams.storeId) {
+      console.log('[Categories] Found storeId in URL:', urlParams.storeId);
+      state.activeStore = urlParams.storeId;
+      state.selectedStoreId = urlParams.storeId;
+
+      // Get store info from MockData
+      let storeName = urlParams.storeId;
+      let store = null;
+      if (typeof MockData !== 'undefined' && MockData.getStoreById) {
+        store = MockData.getStoreById(urlParams.storeId);
+        console.log('[Categories] Store lookup result:', store);
+        if (store) {
+          storeName = store.name;
+        }
+      }
+
+      // Set Entity context for progressive disclosure
+      if (typeof MockData !== 'undefined') {
+        MockData.setEntity(urlParams.storeId, 'store', storeName);
+        console.log('[Categories] Called MockData.setEntity with:', urlParams.storeId, 'store', storeName);
+      }
+
+      // Update state entity info
+      state.entityId = urlParams.storeId;
+      state.entityLevel = 'store';
+      state.entityName = storeName;
+      state.currentEntity = {
+        id: urlParams.storeId,
+        level: 'store',
+        name: storeName,
+        count: 1
+      };
+      console.log('[Categories] Set state.currentEntity:', state.currentEntity);
+
+      // Update entity display in header
+      console.log('[Categories] Calling core.updateEntityDisplay()');
+      core.updateEntityDisplay();
+
+      // Add store filter if not already present
+      const hasFilter = state.activeFilters.some(f => f.type === 'store');
+      if (!hasFilter) {
+        state.activeFilters.push({
+          type: 'store',
+          value: urlParams.storeId,
+          label: storeName,
+          fromUrl: true
+        });
+      }
+
+      // Apply filters
+      if (window.DashboardFilters) {
+        window.DashboardFilters.applyFilters();
+      }
+    }
   }
 
   /**
@@ -306,21 +374,6 @@
           <div class="category-metric__value">${category.percentile}%</div>
         </div>
       </div>
-
-      <div class="category-actions">
-        <button class="category-action-btn category-action-btn--primary" onclick="viewCategoryPromotions('${categoryId}')">
-          <span class="material-symbols-outlined">visibility</span>
-          View Promotions (${category.promotionCount})
-        </button>
-        <button class="category-action-btn category-action-btn--secondary" onclick="openCategoryInquiry('${categoryId}')">
-          <span class="material-symbols-outlined">table_chart</span>
-          Inquiry Data Grid
-        </button>
-        <button class="category-action-btn category-action-btn--secondary" onclick="compareCategoryAction('${categoryId}')">
-          <span class="material-symbols-outlined">compare</span>
-          Compare
-        </button>
-      </div>
     `;
   }
 
@@ -344,27 +397,41 @@
   }
 
   /**
+   * Navigate to circulars (stores) view
+   */
+  function viewCirculars() {
+    core.saveState();
+    StateManager.navigateTo('base_circulars.html', state);
+  }
+
+  /**
    * Navigate to promotions view filtered by category
    */
   function viewCategoryPromotions(categoryId) {
+    const catId = categoryId || state.selectedCategoryId;
+    if (!catId) return;
     core.saveState();
-    StateManager.navigateTo('base_promotions.html', state, { categoryId: categoryId });
+    StateManager.navigateTo('base_promotions.html', state, { categoryId: catId });
   }
 
   /**
    * Navigate to grid inquiry filtered by category
    */
   function openCategoryInquiry(categoryId) {
+    const catId = categoryId || state.selectedCategoryId;
+    if (!catId) return;
     core.saveState();
-    StateManager.navigateTo('grid-inquiry.html', state, { categoryId: categoryId });
+    StateManager.navigateTo('grid-inquiry.html', state, { categoryId: catId });
   }
 
   /**
    * Navigate to compare view for category
    */
   function compareCategoryAction(categoryId) {
+    const catId = categoryId || state.selectedCategoryId;
+    if (!catId) return;
     core.saveState();
-    StateManager.navigateTo('compare.html', state, { categoryId: categoryId });
+    StateManager.navigateTo('compare.html', state, { categoryId: catId });
   }
 
   /**
@@ -380,6 +447,7 @@
   // Expose functions globally for onclick handlers
   window.selectCategoryGridRow = selectCategoryGridRow;
   window.closeCategoryDetail = closeCategoryDetail;
+  window.viewCirculars = viewCirculars;
   window.viewCategoryPromotions = viewCategoryPromotions;
   window.openCategoryInquiry = openCategoryInquiry;
   window.compareCategoryAction = compareCategoryAction;

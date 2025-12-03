@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Analytics Dashboard - Promotions</title>
+  <title>Analytics Dashboard - Circulars</title>
 
   <!-- Design Tokens & Base Styles -->
   <link rel="stylesheet" href="./shared/design-tokens.css">
@@ -88,9 +88,9 @@
               <span class="material-symbols-outlined">corporate_fare</span>
             </div>
             <div class="card-content">
-              <div class="card-breadcrumb">BRAND</div>
-              <div class="card-value">Grocery Holdings Corp</div>
-              <div class="card-sub">27 locations</div>
+              <div class="card-breadcrumb">ALL STORES</div>
+              <div class="card-value">All Brands</div>
+              <div class="card-sub">31 locations</div>
             </div>
             <span class="card-arrow">
               <span class="material-symbols-outlined">expand_more</span>
@@ -114,33 +114,22 @@
     </header>
 
     <!-- ========================================
-         VIEW BY: PROMOTIONS - Three-Column Layout
-         Left: Categories | Center: Promotions | Right: Detail
+         VIEW BY: CIRCULARS (STORES) - Two-Column Layout
+         Left: Store Data Grid | Right: Store Details
          ======================================== -->
-    <main class="layout layout--promotions" id="promotions-layout">
+    <main class="layout layout--categories" id="circulars-layout">
 
-      <!-- Left Panel: Categories List -->
-      <aside class="panel panel--left" role="navigation" aria-label="Categories">
-        <div class="panel-header">
-          <h2 class="panel-title">Categories</h2>
-          <span class="panel-count" id="category-count" aria-live="polite">8</span>
-        </div>
-        <div class="category-list" id="category-list" role="list">
-          <!-- Populated by JavaScript -->
-        </div>
-      </aside>
-
-      <!-- Center Panel: Promotions Grid -->
-      <section class="panel panel--center" role="main" aria-label="Promotions">
-        <div class="panel-header panel-header--promotions">
+      <!-- Store Data Grid Panel -->
+      <section class="panel panel--category-grid" role="main" aria-label="Stores">
+        <div class="panel-header panel-header--categories">
           <div class="panel-header__left">
             <div class="panel-breadcrumb-wrapper">
               <button class="panel-breadcrumb" id="panel-breadcrumb" onclick="toggleBreadcrumbDropdown(event)" aria-haspopup="true" aria-expanded="false">
-                <span class="breadcrumb-text">BASE &gt; Promotions</span>
+                <span class="breadcrumb-text">BASE &gt; Circulars</span>
                 <span class="material-symbols-outlined">expand_more</span>
               </button>
               <div class="panel-breadcrumb-dropdown" id="panel-breadcrumb-dropdown" role="menu">
-                <a href="base_circulars.html" class="breadcrumb-option" data-view="circulars" role="menuitem" onclick="navigateWithFilters(event, 'base_circulars.html', 'circulars')">
+                <a href="base_circulars.html" class="breadcrumb-option active" data-view="circulars" role="menuitem" onclick="navigateWithFilters(event, 'base_circulars.html', 'circulars')">
                   <span class="breadcrumb-option-prefix">BASE &gt;</span>
                   <span class="breadcrumb-option-label">Circulars</span>
                 </a>
@@ -148,27 +137,20 @@
                   <span class="breadcrumb-option-prefix">BASE &gt;</span>
                   <span class="breadcrumb-option-label">Categories</span>
                 </a>
-                <a href="base_promotions.html" class="breadcrumb-option active" data-view="promotions" role="menuitem" onclick="navigateWithFilters(event, 'base_promotions.html', 'promotions')">
+                <a href="base_promotions.html" class="breadcrumb-option" data-view="promotions" role="menuitem" onclick="navigateWithFilters(event, 'base_promotions.html', 'promotions')">
                   <span class="breadcrumb-option-prefix">BASE &gt;</span>
                   <span class="breadcrumb-option-label">Promotions</span>
                 </a>
               </div>
             </div>
-            <div class="more-data-toggle-wrapper" id="more-data-toggle-wrapper">
-              <label class="toggle-switch">
-                <input type="checkbox" id="more-data-toggle">
-                <span class="toggle-slider"></span>
-              </label>
-              <span class="toggle-label">More Data</span>
-            </div>
             <label class="toggle-switch">
-              <input type="checkbox" id="card-view-toggle">
+              <input type="checkbox" id="more-data-toggle">
               <span class="toggle-slider"></span>
             </label>
-            <span class="toggle-label">Card View</span>
+            <span class="toggle-label">More Data</span>
           </div>
           <div class="panel-header__center">
-            <span class="showing-count">Displaying <span id="promo-showing-count">0</span></span>
+            <span class="showing-count">Displaying <span id="store-showing-count">0</span></span>
             <div class="topn-selector">
               <select id="topn-select" class="topn-select" onchange="changeTopN(this.value)">
                 <option value="25">Top 25</option>
@@ -180,49 +162,76 @@
             </div>
           </div>
           <div class="panel-header__right">
-            <button class="panel-action-btn" id="promo-export-btn">
+            <button class="panel-action-btn" id="panel-export-btn">
               <span class="material-symbols-outlined">download</span>
               Export
             </button>
-            <button class="panel-action-btn" id="promo-print-btn">
+            <button class="panel-action-btn" id="panel-print-btn">
               <span class="material-symbols-outlined">print</span>
               Print
             </button>
-            <button class="panel-action-btn" id="promo-share-btn">
+            <button class="panel-action-btn" id="panel-share-btn">
               <span class="material-symbols-outlined">share</span>
               Share
             </button>
           </div>
         </div>
-        <div class="promotion-grid" id="promotion-grid" role="list" style="display: none;">
-          <!-- Populated by JavaScript -->
+        <div class="store-data-grid" id="store-data-grid">
+          <!-- Table with sortable headers populated by JavaScript -->
         </div>
-        <div class="promo-data-grid" id="promotion-table">
-          <!-- Populated by JavaScript -->
+        <!-- Pagination -->
+        <div class="grid-footer">
+          <div class="grid-footer__left">
+            <span class="grid-footer__label">View</span>
+            <select class="grid-rows-select" id="grid-rows-select" onchange="changeRowsPerPage(this.value)">
+              <option value="10">10</option>
+              <option value="25" selected>25</option>
+              <option value="50">50</option>
+            </select>
+            <span class="grid-footer__label">rows per page</span>
+          </div>
+          <div class="grid-footer__center">
+            <div class="grid-pagination" id="grid-pagination">
+              <button class="grid-pagination__btn" id="grid-prev-btn" onclick="prevPage()" disabled>
+                <span class="material-symbols-outlined">chevron_left</span>
+              </button>
+              <span class="grid-pagination__info" id="grid-page-info">Page 1 of 1</span>
+              <button class="grid-pagination__btn" id="grid-next-btn" onclick="nextPage()" disabled>
+                <span class="material-symbols-outlined">chevron_right</span>
+              </button>
+            </div>
+          </div>
+          <div class="grid-footer__right">
+            <span class="grid-footer__range" id="grid-range-info">1-25 of 0</span>
+          </div>
         </div>
       </section>
 
-      <!-- Right Panel: Detail View (Hidden until selection) -->
-      <aside class="panel panel--right panel--collapsed" id="detail-panel" role="complementary" aria-label="Promotion details">
-        <div class="panel-header panel-header--detail">
-          <h2 class="panel-title">Details</h2>
-          <button class="panel-close" onclick="closeDetailPanel()" aria-label="Close details">
+      <!-- Store Detail Panel -->
+      <aside class="panel panel--right panel--collapsed" id="store-detail-panel" role="complementary" aria-label="Store details">
+        <div class="panel-header">
+          <h2 class="panel-title">Store Details</h2>
+          <button class="panel-close" onclick="closeStoreDetail()" aria-label="Close details">
             <span class="material-symbols-outlined">close</span>
           </button>
         </div>
-        <div class="detail-content" id="detail-content">
+        <div class="store-detail-content" id="store-detail-content">
           <!-- Populated by JavaScript -->
         </div>
-        <div class="detail-footer">
-          <button class="detail-footer__btn" onclick="printPromotion()">
-            <span class="material-symbols-outlined">print</span>
-            Print
+        <div class="detail-footer" id="store-detail-footer">
+          <button class="detail-action-btn" onclick="viewStoreCategories()">
+            <span class="material-symbols-outlined">category</span>
+            View Categories
           </button>
-          <button class="detail-footer__btn" onclick="openPromotionInquiry()">
+          <button class="detail-action-btn" onclick="viewStorePromotions()">
+            <span class="material-symbols-outlined">local_offer</span>
+            View Promotions
+          </button>
+          <button class="detail-action-btn" onclick="openStoreInquiry()">
             <span class="material-symbols-outlined">table_chart</span>
             Grid Inquiry
           </button>
-          <button class="detail-footer__btn" onclick="compareCurrentPromotion()">
+          <button class="detail-action-btn" onclick="compareStore()">
             <span class="material-symbols-outlined">compare</span>
             Compare
           </button>
@@ -428,6 +437,6 @@
   <script src="js/shared-filters.js"></script>
 
   <!-- Page-Specific -->
-  <script src="js/base-promotions.js"></script>
+  <script src="js/base-circulars.js"></script>
 </body>
 </html>

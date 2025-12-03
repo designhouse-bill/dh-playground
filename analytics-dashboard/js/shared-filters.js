@@ -49,7 +49,8 @@ const DashboardFilters = (() => {
     if (!filterChips) return;
 
     const chipsHTML = state.activeFilters.map((filter, index) => {
-      const colorClass = filter.type === 'category' ? 'filter-chip--category'
+      const colorClass = filter.type === 'store' ? 'filter-chip--store'
+                       : filter.type === 'category' ? 'filter-chip--category'
                        : filter.type === 'deal' ? 'filter-chip--deal'
                        : filter.type === 'promotion' ? 'filter-chip--promotion'
                        : 'filter-chip--size';
@@ -106,6 +107,12 @@ const DashboardFilters = (() => {
         }
       } else if (filter.type === 'deal') {
         state.columnFilters.dealType = null;
+      } else if (filter.type === 'store') {
+        state.activeStore = null;
+        state.selectedStoreId = null;
+        if (renderCallbacks.renderStoreGrid) {
+          renderCallbacks.renderStoreGrid();
+        }
       }
     }
 

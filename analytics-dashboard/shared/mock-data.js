@@ -503,6 +503,73 @@ const MockData = (() => {
       return this.entities.stores.find(s => s.id === id);
     },
 
+    // Get stores with aggregated metrics for Circulars view
+    getStoresWithMetrics() {
+      const records = getFilteredRecords();
+      const allStores = getAllStores();
+      const storeMetrics = {};
+
+      // Initialize all stores
+      allStores.forEach(store => {
+        storeMetrics[store.id] = {
+          id: store.id,
+          name: store.name,
+          title: store.title || store.name,
+          address: store.address || '',
+          storeNumber: store.storeNumber,
+          subBrandId: store.subBrandId,
+          subBrandName: store.subBrandName,
+          brandId: store.brandId,
+          brandName: store.brandName,
+          size: store.size || 'medium',
+          logo: `https://ui-avatars.com/api/?name=${encodeURIComponent(store.name)}&background=4F46E5&color=fff&size=80`,
+          civ: 0,
+          cc: 0,
+          atl: 0,
+          promotionCount: 0,
+          categoryCount: 0,
+          promotionIds: new Set(),
+          categoryIds: new Set()
+        };
+      });
+
+      // Aggregate metrics from records
+      records.forEach(record => {
+        if (storeMetrics[record.storeId]) {
+          const store = storeMetrics[record.storeId];
+          store.civ += record.civ;
+          store.cc += record.cc;
+          store.atl += record.atl;
+          store.promotionIds.add(record.promotionId);
+          store.categoryIds.add(record.category);
+        }
+      });
+
+      // Convert to array and calculate scores
+      const stores = Object.values(storeMetrics).map(store => {
+        store.promotionCount = store.promotionIds.size;
+        store.categoryCount = store.categoryIds.size;
+        delete store.promotionIds;
+        delete store.categoryIds;
+        store.compositeScore = Math.round((store.civ * 0.4 + store.cc * 10 + store.atl * 15) / 100);
+        return store;
+      });
+
+      // Sort by composite score and calculate percentiles
+      stores.sort((a, b) => b.compositeScore - a.compositeScore);
+      stores.forEach((store, idx) => {
+        store.percentile = Math.round(100 - (idx / stores.length) * 100);
+      });
+
+      return stores;
+    },
+
+    // Get store by ID with metrics
+    getStoreById(id) {
+      const stores = this.getStoresWithMetrics();
+      return stores.find(s => s.id === id);
+    },
+
     comparisonData: {
       currentWeek: { id: 'week-48', label: 'Week 48', dateRange: 'Nov 25 - Dec 1, 2025' },
       previousWeek: { id: 'week-47', label: 'Week 47', dateRange: 'Nov 18 - Nov 24, 2025' },

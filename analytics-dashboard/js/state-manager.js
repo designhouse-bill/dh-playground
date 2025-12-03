@@ -39,6 +39,9 @@ const StateManager = (() => {
     const params = new URLSearchParams(window.location.search);
     const result = {};
 
+    if (params.has('store')) {
+      result.storeId = params.get('store');
+    }
     if (params.has('category')) {
       result.categoryId = params.get('category');
     }
@@ -61,6 +64,8 @@ const StateManager = (() => {
     try {
       const stateToSave = {
         // Core selections
+        activeStore: state.activeStore,
+        selectedStoreId: state.selectedStoreId,
         activeCategory: state.activeCategory,
         selectedCategoryId: state.selectedCategoryId,
         activePromotion: state.activePromotion,
@@ -80,12 +85,18 @@ const StateManager = (() => {
         sortDirection: state.sortDirection,
         categorySortColumn: state.categorySortColumn,
         categorySortDirection: state.categorySortDirection,
+        storeSortColumn: state.storeSortColumn,
+        storeSortDirection: state.storeSortDirection,
+
+        // Pagination
+        topN: state.topN,
 
         // Grid mode state
         gridMode: state.gridMode || {},
 
         // View preferences
         promoViewMode: state.promoViewMode,
+        moreDataEnabled: state.moreDataEnabled,
 
         // Timestamp for debugging
         savedAt: new Date().toISOString(),
@@ -129,6 +140,12 @@ const StateManager = (() => {
    */
   function mergeWithUrlParams(savedState, urlParams) {
     const merged = { ...savedState };
+
+    // URL store param overrides saved store
+    if (urlParams.storeId) {
+      merged.activeStore = urlParams.storeId;
+      merged.selectedStoreId = urlParams.storeId;
+    }
 
     // URL category param overrides saved category
     if (urlParams.categoryId) {
@@ -193,6 +210,9 @@ const StateManager = (() => {
   function buildNavigationUrl(targetPage, params = {}) {
     const url = new URL(targetPage, window.location.origin + window.location.pathname);
 
+    if (params.storeId) {
+      url.searchParams.set('store', params.storeId);
+    }
     if (params.categoryId) {
       url.searchParams.set('category', params.categoryId);
     }

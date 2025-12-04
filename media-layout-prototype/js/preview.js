@@ -14,8 +14,8 @@ const CARD_ASPECT_RATIOS = {
   '3x3': '1 / 1'
 };
 
-// Shadow presets
-const SHADOW_PRESETS = {
+// Shadow presets for preview (string values for CSS)
+const PREVIEW_SHADOW_PRESETS = {
   none: 'none',
   subtle: '0 1px 2px rgba(0, 0, 0, 0.05)',
   medium: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
@@ -23,13 +23,13 @@ const SHADOW_PRESETS = {
   dramatic: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
 };
 
-// Default sample images
+// Default sample images - using local assets instead of external placeholders
 const DEFAULT_IMAGES = [
-  'https://via.placeholder.com/400x600/e8f5e9/2e7d32?text=Product+1',
-  'https://via.placeholder.com/400x600/e3f2fd/1565c0?text=Product+2',
-  'https://via.placeholder.com/400x600/fff3e0/ef6c00?text=Product+3',
-  'https://via.placeholder.com/400x600/fce4ec/c2185b?text=Product+4',
-  'https://via.placeholder.com/400x600/f3e5f5/7b1fa2?text=Product+5'
+  'assets/sample-images/CocaCola_Original2Liter_large_66a21ff4-7055-4178-a532-19ab3b6374cf.png',
+  'assets/sample-images/CocaCola_Cherry2Liter_large_43dd9fba-2992-4e49-aa4b-6c3b5e32a673.png',
+  'assets/sample-images/CocaCola_ZeroSugar2Liter_large_2b855144-e47e-468b-8c83-e318376f5f2c.png',
+  'assets/sample-images/DietCoke_2Liter_large_160df7cd-11c7-4297-8882-1dcf54dc64be.png',
+  'assets/sample-images/Nescafe_Clasico150Cups_large_635ca600-168b-42f1-906e-3149509a8ba0.png'
 ];
 
 /**
@@ -105,7 +105,7 @@ class PreviewRenderer {
   getShadowValue(shadow) {
     if (!shadow) return 'none';
     if (typeof shadow === 'string') {
-      return SHADOW_PRESETS[shadow] || shadow;
+      return PREVIEW_SHADOW_PRESETS[shadow] || shadow;
     }
     return shadow;
   }
@@ -461,7 +461,7 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     PreviewRenderer,
     CARD_ASPECT_RATIOS,
-    SHADOW_PRESETS,
+    PREVIEW_SHADOW_PRESETS,
     DEFAULT_IMAGES
   };
 }

@@ -1848,6 +1848,15 @@
       // Create PreviewRenderer for live preview
       const previewRenderer = new PreviewRenderer();
 
+      // Create AdjustmentPanel BEFORE MediaList (since MediaList callbacks reference it)
+      const adjustmentPanel = new AdjustmentPanel({
+        onChange: handleAdjustmentChange,
+        onStackingChange: handleStackingChange
+      });
+
+      // Initialize adjustment panel
+      adjustmentPanel.init(document.getElementById('adjust-panel-container'));
+
       // Create MediaList
       const mediaList = new MediaList({
         cardSize: '2x2',
@@ -1860,15 +1869,6 @@
 
       // Initialize media list
       mediaList.init(document.getElementById('adjust-medialist-container'), SAMPLE_PRODUCTS.slice(0, 4));
-
-      // Create AdjustmentPanel
-      const adjustmentPanel = new AdjustmentPanel({
-        onChange: handleAdjustmentChange,
-        onStackingChange: handleStackingChange
-      });
-
-      // Initialize adjustment panel
-      adjustmentPanel.init(document.getElementById('adjust-panel-container'));
 
       function handleItemSelect(item, index, previousId) {
         const total = mediaList.getItems().length;
@@ -2208,10 +2208,12 @@
 
       addItemBtn.addEventListener('click', () => {
         if (items.length < 5) {
+          // Use local sample images from ADDITIONAL_PRODUCTS
+          const additionalImages = ADDITIONAL_PRODUCTS.map(p => p.image);
           const newItem = {
             id: `item-${Date.now()}`,
             name: `Item ${items.length + 1}`,
-            image: `https://via.placeholder.com/400x600/e0f7fa/00838f?text=Item+${items.length + 1}`
+            image: additionalImages[items.length % additionalImages.length]
           };
           items.push(newItem);
           sizeHandler.setItems(items);

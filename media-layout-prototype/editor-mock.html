@@ -1088,13 +1088,13 @@
 
         // Add a sample image
         const index = currentConfig.items.length;
-        const colors = ['e8f5e9', 'e3f2fd', 'fff3e0', 'fce4ec', 'f3e5f5'];
-        const textColors = ['2e7d32', '1565c0', 'ef6c00', 'c2185b', '7b1fa2'];
+        // Use local sample images from ADDITIONAL_PRODUCTS
+        const availableImages = ADDITIONAL_PRODUCTS.map(p => p.image);
 
         const newItem = {
           id: `new-${Date.now()}`,
           name: `New Image ${index + 1}`,
-          image: `https://via.placeholder.com/400x600/${colors[index % 5]}/${textColors[index % 5]}?text=New+${index + 1}`
+          image: availableImages[index % availableImages.length]
         };
 
         currentConfig.items.push(newItem);

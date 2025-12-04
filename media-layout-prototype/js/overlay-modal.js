@@ -292,14 +292,14 @@ class OverlayModal {
   handleAddItem() {
     // Generate new item (in real use, this would open a media picker)
     const newId = `item-${Date.now()}`;
-    const colors = ['e8f5e9', 'e3f2fd', 'fff3e0', 'fce4ec', 'f3e5f5', 'e0f7fa', 'fff8e1'];
-    const textColors = ['2e7d32', '1565c0', 'ef6c00', 'c2185b', '7b1fa2', '00838f', 'ff8f00'];
-    const colorIndex = this.state.mediaItems.length % colors.length;
+    // Use local sample images from ADDITIONAL_PRODUCTS
+    const availableImages = ADDITIONAL_PRODUCTS.map(p => p.image);
+    const imageIndex = this.state.mediaItems.length % availableImages.length;
 
     const newItem = {
       id: newId,
       name: `New Item ${this.state.mediaItems.length + 1}`,
-      image: `https://via.placeholder.com/400x600/${colors[colorIndex]}/${textColors[colorIndex]}?text=New+Item`
+      image: availableImages[imageIndex]
     };
 
     this.state.mediaItems.push(newItem);

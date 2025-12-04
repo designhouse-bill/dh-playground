@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Single Promotion - Editor Mock</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+
+  <style>
+    /* Editor Mock Styles */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f1f5f9;
+      min-height: 100vh;
+    }
+
+    /* Editor Header */
+    .editor-header {
+      background: var(--color-white);
+      border-bottom: 1px solid var(--color-gray-200);
+      padding: var(--space-4) var(--space-6);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .editor-header__left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .editor-header__back {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      color: var(--color-gray-600);
+      text-decoration: none;
+      font-size: var(--font-size-sm);
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-md);
+      transition: all var(--transition-fast);
+    }
+
+    .editor-header__back:hover {
+      background: var(--color-gray-100);
+      color: var(--color-gray-900);
+    }
+
+    .editor-header__title {
+      font-size: var(--font-size-xl);
+      font-weight: 600;
+      color: var(--color-gray-900);
+      margin: 0;
+    }
+
+    .editor-header__status {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-sm);
+      color: var(--color-gray-500);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+    }
+
+    .status-dot--draft {
+      background: #f59e0b;
+    }
+
+    .editor-header__actions {
+      display: flex;
+      gap: var(--space-3);
+    }
+
+    .btn {
+      padding: var(--space-2) var(--space-4);
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      border: 1px solid transparent;
+    }
+
+    .btn-secondary {
+      background: var(--color-white);
+      border-color: var(--color-gray-300);
+      color: var(--color-gray-700);
+    }
+
+    .btn-secondary:hover {
+      background: var(--color-gray-50);
+      border-color: var(--color-gray-400);
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: var(--color-white);
+    }
+
+    .btn-primary:hover {
+      background: var(--color-primary-dark);
+    }
+
+    /* Editor Body - 3 Column Layout */
+    .editor-body {
+      display: grid;
+      grid-template-columns: 1fr 320px 400px;
+      gap: 0;
+      min-height: calc(100vh - 65px);
+    }
+
+    .editor-column {
+      background: var(--color-white);
+      border-right: 1px solid var(--color-gray-200);
+      overflow-y: auto;
+    }
+
+    .editor-column:last-child {
+      border-right: none;
+      background: var(--color-gray-50);
+    }
+
+    .column-header {
+      padding: var(--space-4) var(--space-5);
+      border-bottom: 1px solid var(--color-gray-200);
+      background: var(--color-gray-50);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .column-header__title {
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      color: var(--color-gray-700);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 0;
+    }
+
+    .column-content {
+      padding: var(--space-5);
+    }
+
+    /* Form Sections */
+    .form-section {
+      margin-bottom: var(--space-6);
+    }
+
+    .form-section__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-3);
+    }
+
+    .form-section__title {
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      color: var(--color-gray-900);
+      margin: 0;
+    }
+
+    .form-section__badge {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .form-section__badge--new {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .form-group {
+      margin-bottom: var(--space-4);
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .form-label {
+      display: block;
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      color: var(--color-gray-700);
+      margin-bottom: var(--space-1);
+    }
+
+    .form-input,
+    .form-textarea,
+    .form-select {
+      width: 100%;
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-size-base);
+      border: 1px solid var(--color-gray-300);
+      border-radius: var(--radius-md);
+      background: var(--color-white);
+      transition: border-color var(--transition-fast);
+    }
+
+    .form-input:focus,
+    .form-textarea:focus,
+    .form-select:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-hint {
+      font-size: var(--font-size-xs);
+      color: var(--color-gray-500);
+      margin-top: var(--space-1);
+    }
+
+    /* Hero Media Section */
+    .hero-media-section {
+      background: var(--color-gray-50);
+      border: 1px solid var(--color-gray-200);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+    }
+
+    .hero-media-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-4);
+    }
+
+    .hero-media-title {
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      color: var(--color-gray-900);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .current-layout-preview {
+      background: var(--color-white);
+      border: 1px solid var(--color-gray-200);
+      border-radius: var(--radius-md);
+      padding: var(--space-3);
+      margin-bottom: var(--space-4);
+    }
+
+    .layout-preview-label {
+      font-size: var(--font-size-xs);
+      color: var(--color-gray-500);
+      margin-bottom: var(--space-2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .layout-preview-thumbnail {
+      background: var(--color-gray-100);
+      border-radius: var(--radius-sm);
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .layout-preview-thumbnail .preview-renderer {
+      transform: scale(0.4);
+      transform-origin: center;
+    }
+
+    /* Simple Media List */
+    .media-list-simple {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+    }
+
+    .media-item-simple {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-2) var(--space-3);
+      background: var(--color-white);
+      border: 1px solid var(--color-gray-200);
+      border-radius: var(--radius-md);
+      cursor: grab;
+      transition: all var(--transition-fast);
+    }
+
+    .media-item-simple:hover {
+      border-color: var(--color-gray-300);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .media-item-simple.dragging {
+      opacity: 0.5;
+      cursor: grabbing;
+    }
+
+    .media-item-simple.drag-over {
+      border-color: var(--color-primary);
+      background: #eff6ff;
+    }
+
+    .media-item__drag {
+      color: var(--color-gray-400);
+      cursor: grab;
+      font-size: 16px;
+    }
+
+    .media-item__thumb {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      background: var(--color-gray-200);
+      flex-shrink: 0;
+    }
+
+    .media-item__thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .media-item__name {
+      flex: 1;
+      font-size: var(--font-size-sm);
+      color: var(--color-gray-700);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .media-item__remove {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      color: var(--color-gray-400);
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: all var(--transition-fast);
+    }
+
+    .media-item__remove:hover {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .hero-media-actions {
+      display: flex;
+      gap: var(--space-2);
+    }
+
+    .btn-add-image {
+      flex: 1;
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      color: var(--color-gray-600);
+      background: var(--color-white);
+      border: 1px dashed var(--color-gray-300);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .btn-add-image:hover {
+      border-color: var(--color-gray-400);
+      background: var(--color-gray-50);
+    }
+
+    .btn-configure {
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      color: var(--color-primary);
+      background: var(--color-white);
+      border: 1px solid var(--color-primary);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .btn-configure:hover {
+      background: var(--color-primary);
+      color: var(--color-white);
+    }
+
+    /* Deal/Offer Column */
+    .deal-card {
+      background: var(--color-gray-50);
+      border: 1px solid var(--color-gray-200);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      margin-bottom: var(--space-4);
+    }
+
+    .deal-card__title {
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      color: var(--color-gray-700);
+      margin: 0 0 var(--space-3) 0;
+    }
+
+    .deal-type-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-2);
+    }
+
+    .deal-type-option {
+      padding: var(--space-3);
+      background: var(--color-white);
+      border: 2px solid var(--color-gray-200);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      text-align: center;
+      transition: all var(--transition-fast);
+    }
+
+    .deal-type-option:hover {
+      border-color: var(--color-gray-300);
+    }
+
+    .deal-type-option.selected {
+      border-color: var(--color-primary);
+      background: #eff6ff;
+    }
+
+    .deal-type-option__icon {
+      font-size: 24px;
+      margin-bottom: var(--space-1);
+    }
+
+    .deal-type-option__label {
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      color: var(--color-gray-700);
+    }
+
+    /* Preview Column */
+    .preview-column {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .preview-controls {
+      padding: var(--space-3) var(--space-4);
+      background: var(--color-white);
+      border-bottom: 1px solid var(--color-gray-200);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .preview-controls__label {
+      font-size: var(--font-size-sm);
+      color: var(--color-gray-600);
+    }
+
+    .card-size-pills {
+      display: flex;
+      gap: var(--space-1);
+    }
+
+    .card-size-pill {
+      padding: var(--space-1) var(--space-2);
+      font-size: var(--font-size-xs);
+      font-weight: 500;
+      color: var(--color-gray-600);
+      background: var(--color-gray-100);
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .card-size-pill:hover {
+      background: var(--color-gray-200);
+    }
+
+    .card-size-pill.active {
+      background: var(--color-primary);
+      color: var(--color-white);
+    }
+
+    .preview-area {
+      flex: 1;
+      padding: var(--space-6);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      overflow: auto;
+    }
+
+    .preview-card {
+      background: var(--color-white);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .preview-card--2x2 {
+      width: 300px;
+    }
+
+    .preview-card--3x2 {
+      width: 360px;
+    }
+
+    .preview-card--3x3 {
+      width: 360px;
+    }
+
+    .preview-card__hero {
+      position: relative;
+      background: var(--color-gray-100);
+      overflow: hidden;
+    }
+
+    .preview-card--2x2 .preview-card__hero {
+      height: 200px;
+    }
+
+    .preview-card--3x2 .preview-card__hero {
+      height: 200px;
+    }
+
+    .preview-card--3x3 .preview-card__hero {
+      height: 280px;
+    }
+
+    .preview-card__content {
+      padding: var(--space-4);
+    }
+
+    .preview-card__brand {
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      color: var(--color-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--space-1);
+    }
+
+    .preview-card__title {
+      font-size: var(--font-size-lg);
+      font-weight: 600;
+      color: var(--color-gray-900);
+      margin: 0 0 var(--space-2) 0;
+    }
+
+    .preview-card__description {
+      font-size: var(--font-size-sm);
+      color: var(--color-gray-600);
+      margin: 0 0 var(--space-3) 0;
+      line-height: 1.5;
+    }
+
+    .preview-card__deal {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      background: #fef3c7;
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      color: #92400e;
+    }
+
+    /* Unsaved Changes Indicator */
+    .unsaved-indicator {
+      display: none;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      background: #fef3c7;
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-sm);
+      color: #92400e;
+    }
+
+    .unsaved-indicator.visible {
+      display: flex;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .editor-body {
+        grid-template-columns: 1fr 280px 350px;
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .editor-body {
+        grid-template-columns: 1fr 350px;
+      }
+
+      .editor-column:nth-child(2) {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Editor Header -->
+  <header class="editor-header">
+    <div class="editor-header__left">
+      <a href="#" class="editor-header__back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Back to Promotions
+      </a>
+      <h1 class="editor-header__title">Edit Single Promotion</h1>
+      <div class="editor-header__status">
+        <span class="status-dot status-dot--draft"></span>
+        Draft
+      </div>
+    </div>
+    <div class="editor-header__actions">
+      <div class="unsaved-indicator" id="unsaved-indicator">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 6v6l4 2"/>
+        </svg>
+        Unsaved changes
+      </div>
+      <button class="btn btn-secondary">Preview</button>
+      <button class="btn btn-secondary">Save Draft</button>
+      <button class="btn btn-primary">Publish</button>
+    </div>
+  </header>
+
+  <!-- Editor Body -->
+  <div class="editor-body">
+    <!-- Content Column -->
+    <div class="editor-column">
+      <div class="column-header">
+        <h2 class="column-header__title">Content</h2>
+      </div>
+      <div class="column-content">
+        <!-- Basic Info Section -->
+        <div class="form-section">
+          <div class="form-section__header">
+            <h3 class="form-section__title">Basic Information</h3>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Promotion Title</label>
+            <input type="text" class="form-input" value="Italian Pasta Night Bundle" id="promo-title">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea class="form-textarea" id="promo-description">Get everything you need for a perfect Italian dinner at home. Includes premium pasta, authentic sauce, and fresh ingredients.</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Brand</label>
+            <select class="form-select">
+              <option>Barilla</option>
+              <option>De Cecco</option>
+              <option>Ronzoni</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Hero Media Section -->
+        <div class="form-section">
+          <div class="form-section__header">
+            <h3 class="form-section__title">Hero Media</h3>
+            <span class="form-section__badge form-section__badge--new">New</span>
+          </div>
+
+          <div class="hero-media-section">
+            <div class="hero-media-header">
+              <h4 class="hero-media-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/>
+                  <circle cx="8.5" cy="8.5" r="1.5"/>
+                  <path d="M21 15l-5-5L5 21"/>
+                </svg>
+                Layout Configuration
+              </h4>
+              <span style="font-size: var(--font-size-xs); color: var(--color-gray-500);" id="layout-info">
+                2x2 Grid, 3 images
+              </span>
+            </div>
+
+            <!-- Layout Preview Thumbnail -->
+            <div class="current-layout-preview">
+              <div class="layout-preview-label">
+                <span>Current Layout</span>
+                <span id="layout-type-label">Horizontal</span>
+              </div>
+              <div class="layout-preview-thumbnail" id="inline-preview"></div>
+            </div>
+
+            <!-- Simple Media List -->
+            <div class="media-list-simple" id="inline-media-list">
+              <!-- Populated by JavaScript -->
+            </div>
+
+            <!-- Actions -->
+            <div class="hero-media-actions">
+              <button class="btn-add-image" id="btn-add-image">+ Add Image</button>
+              <button class="btn-configure" id="btn-configure">Configure Layout...</button>
+            </div>
+          </div>
+
+          <p class="form-hint" style="margin-top: var(--space-2);">
+            Click "Configure Layout" for detailed adjustments like positioning, shadows, and stacking order.
+          </p>
+        </div>
+
+        <!-- Scheduling Section -->
+        <div class="form-section">
+          <div class="form-section__header">
+            <h3 class="form-section__title">Scheduling</h3>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Start Date</label>
+            <input type="date" class="form-input" value="2024-01-15">
+          </div>
+          <div class="form-group">
+            <label class="form-label">End Date</label>
+            <input type="date" class="form-input" value="2024-01-31">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Deal/Offer Column -->
+    <div class="editor-column">
+      <div class="column-header">
+        <h2 class="column-header__title">Deal / Offer</h2>
+      </div>
+      <div class="column-content">
+        <div class="deal-card">
+          <h4 class="deal-card__title">Deal Type</h4>
+          <div class="deal-type-selector">
+            <div class="deal-type-option selected">
+              <div class="deal-type-option__icon">%</div>
+              <div class="deal-type-option__label">Percentage</div>
+            </div>
+            <div class="deal-type-option">
+              <div class="deal-type-option__icon">$</div>
+              <div class="deal-type-option__label">Fixed Amount</div>
+            </div>
+            <div class="deal-type-option">
+              <div class="deal-type-option__icon">2+1</div>
+              <div class="deal-type-option__label">BOGO</div>
+            </div>
+            <div class="deal-type-option">
+              <div class="deal-type-option__icon">🎁</div>
+              <div class="deal-type-option__label">Free Gift</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Discount Value</label>
+          <input type="number" class="form-input" value="25" id="discount-value">
+          <p class="form-hint">Percentage off regular price</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Promo Code (Optional)</label>
+          <input type="text" class="form-input" placeholder="e.g., PASTA25">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Terms & Conditions</label>
+          <textarea class="form-textarea" style="min-height: 60px;">Valid on select pasta products. Cannot be combined with other offers.</textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview Column -->
+    <div class="editor-column preview-column">
+      <div class="column-header">
+        <h2 class="column-header__title">Preview</h2>
+      </div>
+      <div class="preview-controls">
+        <span class="preview-controls__label">Card Size:</span>
+        <div class="card-size-pills">
+          <button class="card-size-pill active" data-size="2x2">2x2</button>
+          <button class="card-size-pill" data-size="3x2">3x2</button>
+          <button class="card-size-pill" data-size="3x3">3x3</button>
+        </div>
+      </div>
+      <div class="preview-area">
+        <div class="preview-card preview-card--2x2" id="preview-card">
+          <div class="preview-card__hero" id="preview-hero">
+            <!-- Hero content rendered by JavaScript -->
+          </div>
+          <div class="preview-card__content">
+            <div class="preview-card__brand">Barilla</div>
+            <h3 class="preview-card__title" id="preview-title">Italian Pasta Night Bundle</h3>
+            <p class="preview-card__description" id="preview-description">Get everything you need for a perfect Italian dinner at home.</p>
+            <div class="preview-card__deal">
+              <span>🏷️</span>
+              <span id="preview-discount">25% OFF</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="js/constraints.js"></script>
+  <script src="js/templates.js"></script>
+  <script src="js/preview.js"></script>
+  <script src="js/layout-selector.js"></script>
+  <script src="js/media-list.js"></script>
+  <script src="js/adjustment-panel.js"></script>
+  <script src="js/overlay-modal.js"></script>
+  <script src="js/size-change-handler.js"></script>
+
+  <script>
+    // Editor Integration Script
+    (function() {
+      // State
+      let currentConfig = {
+        cardSize: '2x2',
+        layoutType: 'horizontal',
+        emphasis: 'equal',
+        items: SAMPLE_PRODUCTS.slice(0, 3).map(p => ({ ...p })),
+        adjustments: {}
+      };
+
+      // DOM Elements
+      const inlinePreview = document.getElementById('inline-preview');
+      const inlineMediaList = document.getElementById('inline-media-list');
+      const layoutInfo = document.getElementById('layout-info');
+      const layoutTypeLabel = document.getElementById('layout-type-label');
+      const btnAddImage = document.getElementById('btn-add-image');
+      const btnConfigure = document.getElementById('btn-configure');
+      const previewHero = document.getElementById('preview-hero');
+      const previewCard = document.getElementById('preview-card');
+      const unsavedIndicator = document.getElementById('unsaved-indicator');
+
+      // Preview renderer instances
+      const inlineRenderer = new PreviewRenderer();
+      const heroRenderer = new PreviewRenderer();
+
+      // Create overlay modal
+      const overlayModal = new OverlayModal({
+        initialLayout: currentConfig.layoutType,
+        initialItems: currentConfig.items,
+        onSave: handleModalSave,
+        onCancel: handleModalCancel
+      });
+
+      // Toast manager for notifications
+      const toast = new ToastManager();
+
+      // Initialize
+      function init() {
+        renderInlineMediaList();
+        renderInlinePreview();
+        renderHeroPreview();
+        setupEventListeners();
+        setupFormSync();
+      }
+
+      // Render inline media list (simple version)
+      function renderInlineMediaList() {
+        inlineMediaList.innerHTML = currentConfig.items.map((item, index) => `
+          <div class="media-item-simple" data-id="${item.id}" data-index="${index}" draggable="true">
+            <span class="media-item__drag">≡</span>
+            <div class="media-item__thumb">
+              <img src="${item.image}" alt="${item.name}">
+            </div>
+            <span class="media-item__name">${item.name}</span>
+            <button class="media-item__remove" data-id="${item.id}" title="Remove">✕</button>
+          </div>
+        `).join('');
+
+        // Add drag and drop
+        setupInlineDragDrop();
+
+        // Add remove handlers
+        inlineMediaList.querySelectorAll('.media-item__remove').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const id = btn.dataset.id;
+            removeItem(id);
+          });
+        });
+      }
+
+      // Simple drag and drop for inline list
+      function setupInlineDragDrop() {
+        const items = inlineMediaList.querySelectorAll('.media-item-simple');
+        let draggedItem = null;
+
+        items.forEach(item => {
+          item.addEventListener('dragstart', (e) => {
+            draggedItem = item;
+            item.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+          });
+
+          item.addEventListener('dragend', () => {
+            item.classList.remove('dragging');
+            items.forEach(i => i.classList.remove('drag-over'));
+            draggedItem = null;
+          });
+
+          item.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            if (draggedItem && draggedItem !== item) {
+              item.classList.add('drag-over');
+            }
+          });
+
+          item.addEventListener('dragleave', () => {
+            item.classList.remove('drag-over');
+          });
+
+          item.addEventListener('drop', (e) => {
+            e.preventDefault();
+            item.classList.remove('drag-over');
+
+            if (draggedItem && draggedItem !== item) {
+              const fromIndex = parseInt(draggedItem.dataset.index);
+              const toIndex = parseInt(item.dataset.index);
+              reorderItems(fromIndex, toIndex);
+            }
+          });
+        });
+      }
+
+      // Render inline preview thumbnail
+      function renderInlinePreview() {
+        const images = currentConfig.items.map(i => i.image);
+        inlineRenderer.render(inlinePreview, {
+          cardSize: currentConfig.cardSize,
+          imageCount: images.length,
+          layoutType: currentConfig.layoutType,
+          emphasis: currentConfig.emphasis,
+          direction: 'normal',
+          images: images
+        });
+
+        // Update labels
+        layoutInfo.textContent = `${currentConfig.cardSize} ${currentConfig.layoutType}, ${images.length} images`;
+        layoutTypeLabel.textContent = currentConfig.layoutType.charAt(0).toUpperCase() + currentConfig.layoutType.slice(1);
+      }
+
+      // Render hero preview in card
+      function renderHeroPreview() {
+        const images = currentConfig.items.map(i => i.image);
+        heroRenderer.render(previewHero, {
+          cardSize: currentConfig.cardSize,
+          imageCount: images.length,
+          layoutType: currentConfig.layoutType,
+          emphasis: currentConfig.emphasis,
+          direction: 'normal',
+          images: images
+        });
+
+        // Apply adjustments if any
+        if (currentConfig.adjustments) {
+          currentConfig.items.forEach((item, index) => {
+            const adj = currentConfig.adjustments[item.id];
+            if (adj) {
+              const previewItem = previewHero.querySelector(`.preview-item[data-index="${index}"]`);
+              if (previewItem) {
+                applyAdjustmentsToElement(previewItem, adj);
+              }
+            }
+          });
+        }
+      }
+
+      // Apply adjustments to a preview element
+      function applyAdjustmentsToElement(element, adj) {
+        const transforms = [];
+
+        if (adj.positionX || adj.positionY) {
+          transforms.push(`translate(${adj.positionX || 0}px, ${adj.positionY || 0}px)`);
+        }
+        if (adj.scale && adj.scale !== 1) {
+          transforms.push(`scale(${adj.scale})`);
+        }
+        if (adj.rotation) {
+          transforms.push(`rotate(${adj.rotation}deg)`);
+        }
+
+        if (transforms.length > 0) {
+          element.style.transform = transforms.join(' ');
+        }
+        if (adj.opacity !== undefined && adj.opacity !== 100) {
+          element.style.opacity = adj.opacity / 100;
+        }
+        if (adj.shadowPreset && adj.shadowPreset !== 'none') {
+          const shadow = buildShadow(adj);
+          if (shadow) {
+            element.style.boxShadow = shadow;
+          }
+        }
+      }
+
+      // Build shadow CSS from adjustments
+      function buildShadow(adj) {
+        if (!adj.shadowOpacity || adj.shadowOpacity === 0) return null;
+
+        const r = parseInt(adj.shadowColor?.slice(1, 3) || '00', 16);
+        const g = parseInt(adj.shadowColor?.slice(3, 5) || '00', 16);
+        const b = parseInt(adj.shadowColor?.slice(5, 7) || '00', 16);
+        const a = (adj.shadowOpacity || 20) / 100;
+
+        return `${adj.shadowOffsetX || 0}px ${adj.shadowOffsetY || 0}px ${adj.shadowBlur || 0}px ${adj.shadowSpread || 0}px rgba(${r}, ${g}, ${b}, ${a})`;
+      }
+
+      // Remove item
+      function removeItem(id) {
+        const index = currentConfig.items.findIndex(i => i.id === id);
+        if (index > -1 && currentConfig.items.length > 1) {
+          currentConfig.items.splice(index, 1);
+          delete currentConfig.adjustments[id];
+          markUnsaved();
+          renderInlineMediaList();
+          renderInlinePreview();
+          renderHeroPreview();
+          toast.info('Image removed');
+        }
+      }
+
+      // Reorder items
+      function reorderItems(fromIndex, toIndex) {
+        const [item] = currentConfig.items.splice(fromIndex, 1);
+        currentConfig.items.splice(toIndex, 0, item);
+        markUnsaved();
+        renderInlineMediaList();
+        renderInlinePreview();
+        renderHeroPreview();
+      }
+
+      // Add new image (mock)
+      function addImage() {
+        const maxImages = getMaxImages(currentConfig.cardSize);
+        if (currentConfig.items.length >= maxImages) {
+          toast.warning(`Maximum ${maxImages} images for ${currentConfig.cardSize} cards`);
+          return;
+        }
+
+        // Add a sample image
+        const index = currentConfig.items.length;
+        const colors = ['e8f5e9', 'e3f2fd', 'fff3e0', 'fce4ec', 'f3e5f5'];
+        const textColors = ['2e7d32', '1565c0', 'ef6c00', 'c2185b', '7b1fa2'];
+
+        const newItem = {
+          id: `new-${Date.now()}`,
+          name: `New Image ${index + 1}`,
+          image: `https://via.placeholder.com/400x600/${colors[index % 5]}/${textColors[index % 5]}?text=New+${index + 1}`
+        };
+
+        currentConfig.items.push(newItem);
+        markUnsaved();
+        renderInlineMediaList();
+        renderInlinePreview();
+        renderHeroPreview();
+        toast.success('Image added');
+      }
+
+      // Open configure modal
+      function openConfigureModal() {
+        overlayModal.open({
+          layout: currentConfig.layoutType,
+          items: currentConfig.items.map(i => ({ ...i }))
+        });
+      }
+
+      // Handle modal save
+      function handleModalSave(configuration) {
+        console.log('Modal saved:', configuration);
+
+        // Update config with saved data
+        currentConfig.items = configuration.items.map(item => ({
+          id: item.id,
+          name: item.name,
+          image: item.image
+        }));
+
+        // Store adjustments
+        currentConfig.adjustments = {};
+        configuration.items.forEach(item => {
+          if (item.adjustments) {
+            currentConfig.adjustments[item.id] = item.adjustments;
+          }
+        });
+
+        // Update layout if changed
+        if (configuration.layout) {
+          // Map layout ID to layout type
+          const layoutMap = {
+            '2-equal': 'grid',
+            '3-equal': 'grid',
+            '4-equal': 'grid',
+            '5-equal': 'grid',
+            '1-hero-left': 'horizontal',
+            '1-hero-right': 'horizontal',
+            '1-hero-top': 'vertical',
+            '1-hero-bottom': 'vertical'
+          };
+          currentConfig.layoutType = layoutMap[configuration.layout] || 'horizontal';
+        }
+
+        markUnsaved();
+        renderInlineMediaList();
+        renderInlinePreview();
+        renderHeroPreview();
+        toast.success('Layout configuration saved!');
+      }
+
+      // Handle modal cancel
+      function handleModalCancel() {
+        console.log('Modal cancelled');
+      }
+
+      // Mark as unsaved
+      function markUnsaved() {
+        unsavedIndicator.classList.add('visible');
+      }
+
+      // Setup event listeners
+      function setupEventListeners() {
+        btnAddImage.addEventListener('click', addImage);
+        btnConfigure.addEventListener('click', openConfigureModal);
+
+        // Card size pills
+        document.querySelectorAll('.card-size-pill').forEach(pill => {
+          pill.addEventListener('click', () => {
+            document.querySelectorAll('.card-size-pill').forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+
+            const size = pill.dataset.size;
+            currentConfig.cardSize = size;
+
+            previewCard.className = `preview-card preview-card--${size}`;
+            renderInlinePreview();
+            renderHeroPreview();
+          });
+        });
+
+        // Deal type selector
+        document.querySelectorAll('.deal-type-option').forEach(option => {
+          option.addEventListener('click', () => {
+            document.querySelectorAll('.deal-type-option').forEach(o => o.classList.remove('selected'));
+            option.classList.add('selected');
+          });
+        });
+      }
+
+      // Sync form fields with preview
+      function setupFormSync() {
+        const titleInput = document.getElementById('promo-title');
+        const descInput = document.getElementById('promo-description');
+        const discountInput = document.getElementById('discount-value');
+        const previewTitle = document.getElementById('preview-title');
+        const previewDesc = document.getElementById('preview-description');
+        const previewDiscount = document.getElementById('preview-discount');
+
+        titleInput.addEventListener('input', () => {
+          previewTitle.textContent = titleInput.value;
+          markUnsaved();
+        });
+
+        descInput.addEventListener('input', () => {
+          previewDesc.textContent = descInput.value.substring(0, 100) + (descInput.value.length > 100 ? '...' : '');
+          markUnsaved();
+        });
+
+        discountInput.addEventListener('input', () => {
+          previewDiscount.textContent = `${discountInput.value}% OFF`;
+          markUnsaved();
+        });
+      }
+
+      // Initialize
+      init();
+    })();
+  </script>
+</body>
+</html>

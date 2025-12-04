@@ -1,0 +1,2305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Media Layout Prototype</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+
+  <style>
+    /* Test UI Specific Styles */
+    .tester-section {
+      background: var(--color-white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-medium);
+      padding: var(--space-6);
+      margin-bottom: var(--space-6);
+    }
+
+    .tester-section__header {
+      margin-bottom: var(--space-4);
+    }
+
+    .tester-section__title {
+      font-size: var(--font-size-xl);
+      font-weight: 600;
+      color: var(--color-gray-900);
+      margin: 0 0 var(--space-2) 0;
+    }
+
+    .tester-section__description {
+      font-size: var(--font-size-sm);
+      color: var(--color-gray-500);
+      margin: 0;
+    }
+
+    /* Controls Grid */
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+      padding-bottom: var(--space-4);
+      border-bottom: 1px solid var(--color-gray-200);
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+
+    .control-group label {
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      color: var(--color-gray-700);
+    }
+
+    .control-group select,
+    .control-group input {
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-size-base);
+      border: 1px solid var(--color-gray-300);
+      border-radius: var(--radius-md);
+      background: var(--color-white);
+    }
+
+    .control-group select:disabled,
+    .control-group input:disabled {
+      background: var(--color-gray-100);
+      color: var(--color-gray-500);
+      cursor: not-allowed;
+    }
+
+    /* Constraint Display */
+    .constraint-display {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--space-4);
+    }
+
+    .constraint-card {
+      background: var(--color-gray-50);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      border: 1px solid var(--color-gray-200);
+    }
+
+    .constraint-card__title {
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      color: var(--color-gray-700);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 0 0 var(--space-3) 0;
+    }
+
+    .constraint-card__value {
+      font-size: var(--font-size-2xl);
+      font-weight: 700;
+      color: var(--color-primary);
+      margin: 0;
+    }
+
+    /* Layout List */
+    .layout-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .layout-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-2);
+      padding: var(--space-2) 0;
+      border-bottom: 1px solid var(--color-gray-200);
+    }
+
+    .layout-item:last-child {
+      border-bottom: none;
+    }
+
+    .layout-status {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .layout-status--allowed {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .layout-status--disabled {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .layout-info {
+      flex: 1;
+    }
+
+    .layout-name {
+      font-weight: 500;
+      color: var(--color-gray-900);
+      display: block;
+    }
+
+    .layout-reason {
+      font-size: var(--font-size-sm);
+      color: var(--color-gray-500);
+      margin-top: 2px;
+    }
+
+    .badge {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      margin-left: var(--space-2);
+    }
+
+    .badge--primary {
+      background: var(--color-primary);
+      color: var(--color-white);
+    }
+
+    .badge--secondary {
+      background: var(--color-gray-600);
+      color: var(--color-white);
+    }
+
+    /* Size Visual */
+    .size-visual {
+      display: flex;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+
+    .size-box {
+      background: var(--color-gray-200);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      color: var(--color-gray-600);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      border: 2px solid transparent;
+    }
+
+    .size-box:hover {
+      background: var(--color-gray-300);
+    }
+
+    .size-box--selected {
+      background: var(--color-primary);
+      color: var(--color-white);
+      border-color: var(--color-primary-hover);
+    }
+
+    .size-box[data-size="1x1"] { width: 40px; height: 40px; }
+    .size-box[data-size="2x1"] { width: 80px; height: 40px; }
+    .size-box[data-size="1x2"] { width: 40px; height: 80px; }
+    .size-box[data-size="2x2"] { width: 80px; height: 80px; }
+    .size-box[data-size="3x1"] { width: 120px; height: 40px; }
+    .size-box[data-size="3x2"] { width: 120px; height: 80px; }
+    .size-box[data-size="3x3"] { width: 120px; height: 120px; }
+
+    /* Template Generator Styles */
+    .template-output {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-6);
+      margin-top: var(--space-4);
+    }
+
+    @media (max-width: 768px) {
+      .template-output {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .output-panel {
+      background: var(--color-gray-50);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      border: 1px solid var(--color-gray-200);
+    }
+
+    .output-panel__title {
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      color: var(--color-gray-700);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 0 0 var(--space-3) 0;
+    }
+
+    .css-output {
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 13px;
+      background: var(--color-gray-900);
+      color: #e2e8f0;
+      padding: var(--space-4);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.6;
+    }
+
+    .css-output .property {
+      color: #93c5fd;
+    }
+
+    .css-output .value {
+      color: #86efac;
+    }
+
+    .error-output {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+      padding: var(--space-4);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-sm);
+    }
+
+    /* Grid Preview */
+    .grid-preview-container {
+      background: var(--color-gray-100);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+    }
+
+    .grid-preview {
+      gap: 4px;
+      width: 100%;
+      height: 100%;
+      min-height: 250px;
+    }
+
+    .grid-preview--landscape {
+      max-width: 400px;
+      height: 200px;
+    }
+
+    .grid-preview--portrait {
+      max-width: 200px;
+      height: 300px;
+    }
+
+    .grid-preview--square {
+      max-width: 280px;
+      height: 280px;
+    }
+
+    .grid-item {
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: var(--font-size-lg);
+      color: white;
+      min-height: 40px;
+    }
+
+    .grid-item--1 { background: #3b82f6; }
+    .grid-item--2 { background: #10b981; }
+    .grid-item--3 { background: #f59e0b; }
+    .grid-item--4 { background: #ef4444; }
+    .grid-item--5 { background: #8b5cf6; }
+
+    /* Placements Table */
+    .placements-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--font-size-sm);
+    }
+
+    .placements-table th,
+    .placements-table td {
+      padding: var(--space-2);
+      text-align: left;
+      border-bottom: 1px solid var(--color-gray-200);
+    }
+
+    .placements-table th {
+      font-weight: 600;
+      color: var(--color-gray-700);
+      background: var(--color-gray-100);
+    }
+
+    .placements-table td {
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 12px;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: var(--space-1);
+      margin-bottom: var(--space-4);
+      border-bottom: 1px solid var(--color-gray-200);
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: var(--space-2) var(--space-4);
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      color: var(--color-gray-500);
+      background: none;
+      border: none;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all var(--transition-fast);
+    }
+
+    .tab:hover {
+      color: var(--color-gray-700);
+    }
+
+    .tab--active {
+      color: var(--color-primary);
+      border-bottom-color: var(--color-primary);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content--active {
+      display: block;
+    }
+
+    /* Preview Renderer Styles */
+    .preview-output {
+      display: grid;
+      grid-template-columns: 1fr 350px;
+      gap: var(--space-6);
+      margin-top: var(--space-4);
+    }
+
+    @media (max-width: 900px) {
+      .preview-output {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .preview-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-gray-100);
+      border-radius: var(--radius-md);
+      padding: var(--space-6);
+      min-height: 400px;
+    }
+
+    .preview-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .sidebar-section {
+      background: var(--color-gray-50);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      border: 1px solid var(--color-gray-200);
+    }
+
+    .sidebar-section__title {
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      color: var(--color-gray-700);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 0 0 var(--space-3) 0;
+    }
+
+    .adjustment-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3);
+    }
+
+    .adjustment-controls .control-group {
+      margin-bottom: 0;
+    }
+
+    .adjustment-controls input[type="range"] {
+      width: 100%;
+    }
+
+    .click-log {
+      background: var(--color-gray-900);
+      color: #e2e8f0;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 12px;
+      padding: var(--space-3);
+      border-radius: var(--radius-md);
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    .click-log__entry {
+      padding: var(--space-1) 0;
+      border-bottom: 1px solid var(--color-gray-700);
+    }
+
+    .click-log__entry:last-child {
+      border-bottom: none;
+    }
+
+    .click-log__empty {
+      color: var(--color-gray-500);
+      font-style: italic;
+    }
+
+    .selected-item-info {
+      background: var(--color-primary);
+      color: white;
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      margin-bottom: var(--space-3);
+    }
+
+    .no-selection {
+      color: var(--color-gray-500);
+      font-size: var(--font-size-sm);
+      font-style: italic;
+    }
+
+    /* Layout Selector Tab Styles */
+    .selector-output {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: var(--space-6);
+      margin-top: var(--space-4);
+    }
+
+    @media (max-width: 900px) {
+      .selector-output {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .selector-controls-panel {
+      background: var(--color-gray-50);
+      border-radius: var(--radius-md);
+      padding: var(--space-5);
+      border: 1px solid var(--color-gray-200);
+    }
+
+    .selector-preview-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .selector-preview-panel .preview-container {
+      flex: 1;
+      min-height: 350px;
+    }
+
+    .selector-config-panel {
+      grid-column: 1 / -1;
+    }
+
+    .selector-config-panel .config-display {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    /* Media List Tab Styles */
+    .medialist-output {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      grid-template-rows: auto auto;
+      gap: var(--space-6);
+      margin-top: var(--space-4);
+    }
+
+    @media (max-width: 900px) {
+      .medialist-output {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .medialist-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .medialist-preview-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .medialist-preview-panel .preview-container {
+      flex: 1;
+      min-height: 350px;
+    }
+
+    .medialist-log-panel {
+      grid-column: 1 / -1;
+    }
+
+    .event-log {
+      background: var(--color-gray-900);
+      color: #e2e8f0;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 12px;
+      padding: var(--space-3);
+      border-radius: var(--radius-md);
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .event-log__empty {
+      color: var(--color-gray-500);
+      font-style: italic;
+    }
+
+    .event-log__entry {
+      padding: var(--space-1) 0;
+      border-bottom: 1px solid var(--color-gray-700);
+    }
+
+    .event-log__entry:last-child {
+      border-bottom: none;
+    }
+
+    .event-log__timestamp {
+      color: #86efac;
+    }
+
+    .event-log__type {
+      color: #fde047;
+      font-weight: 600;
+    }
+
+    .event-log__details {
+      color: #93c5fd;
+    }
+
+    /* Adjustment Panel Tab Styles */
+    .adjust-output {
+      display: grid;
+      grid-template-columns: 260px 1fr 300px;
+      gap: var(--space-5);
+      margin-top: var(--space-4);
+    }
+
+    @media (max-width: 1100px) {
+      .adjust-output {
+        grid-template-columns: 1fr 1fr;
+      }
+      .adjust-controls-panel {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .adjust-output {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .adjust-list-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .adjust-preview-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .adjust-preview-panel .preview-container {
+      flex: 1;
+      min-height: 350px;
+    }
+
+    .adjust-controls-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .adjust-controls-panel .adjustment-panel {
+      flex: 1;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <h1 class="header-title">Media Layout Prototype</h1>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="container">
+      <!-- Tabs Navigation -->
+      <div class="tabs">
+        <button class="tab tab--active" data-tab="constraints">Constraint Tester</button>
+        <button class="tab" data-tab="templates">Template Generator</button>
+        <button class="tab" data-tab="preview">Preview Renderer</button>
+        <button class="tab" data-tab="selector">Layout Selector</button>
+        <button class="tab" data-tab="medialist">Media List</button>
+        <button class="tab" data-tab="adjustments">Adjustment Panel</button>
+        <button class="tab" data-tab="modal">Complete Modal</button>
+        <button class="tab" data-tab="sizehandler">Size Handler</button>
+      </div>
+
+      <!-- Constraint Tester Tab -->
+      <div class="tab-content tab-content--active" id="tab-constraints">
+        <div class="tester-section">
+          <div class="tester-section__header">
+            <h2 class="tester-section__title">Card Size Constraint Tester</h2>
+            <p class="tester-section__description">
+              Select a card size to view its constraints, allowed layouts, and image limits.
+            </p>
+          </div>
+
+          <div class="controls-grid">
+            <div class="control-group">
+              <label for="constraint-size-select">Card Size</label>
+              <select id="constraint-size-select">
+                <option value="1x1">1x1</option>
+                <option value="2x1">2x1</option>
+                <option value="1x2">1x2</option>
+                <option value="2x2" selected>2x2</option>
+                <option value="3x1">3x1</option>
+                <option value="3x2">3x2</option>
+                <option value="3x3">3x3</option>
+              </select>
+            </div>
+
+            <div class="control-group" style="grid-column: span 2;">
+              <label>Visual Selector</label>
+              <div class="size-visual" id="constraint-size-visual"></div>
+            </div>
+          </div>
+
+          <div class="constraint-display" id="constraint-display"></div>
+        </div>
+      </div>
+
+      <!-- Template Generator Tab -->
+      <div class="tab-content" id="tab-templates">
+        <div class="tester-section">
+          <div class="tester-section__header">
+            <h2 class="tester-section__title">CSS Grid Template Generator</h2>
+            <p class="tester-section__description">
+              Configure layout options to generate CSS Grid templates for media cards.
+            </p>
+          </div>
+
+          <div class="controls-grid">
+            <div class="control-group">
+              <label for="template-size-select">Card Size</label>
+              <select id="template-size-select">
+                <option value="1x1">1x1</option>
+                <option value="2x1">2x1</option>
+                <option value="1x2">1x2</option>
+                <option value="2x2" selected>2x2</option>
+                <option value="3x1">3x1</option>
+                <option value="3x2">3x2</option>
+                <option value="3x3">3x3</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="image-count">Image Count</label>
+              <input type="number" id="image-count" min="1" max="5" value="3">
+            </div>
+
+            <div class="control-group">
+              <label for="layout-type">Layout Type</label>
+              <select id="layout-type">
+                <option value="grid">Grid</option>
+                <option value="horizontal">Horizontal</option>
+                <option value="vertical">Vertical</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="emphasis">Emphasis</label>
+              <select id="emphasis">
+                <option value="equal">Equal</option>
+                <option value="first">First</option>
+                <option value="last">Last</option>
+                <option value="center">Center</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="direction">Direction</label>
+              <select id="direction">
+                <option value="normal">Normal</option>
+                <option value="flip">Flip</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="template-output">
+            <!-- Visual Preview -->
+            <div class="output-panel">
+              <h3 class="output-panel__title">Visual Preview</h3>
+              <div class="grid-preview-container">
+                <div class="grid-preview" id="grid-preview"></div>
+              </div>
+            </div>
+
+            <!-- CSS Output -->
+            <div class="output-panel">
+              <h3 class="output-panel__title">Generated CSS</h3>
+              <div id="css-output"></div>
+
+              <h3 class="output-panel__title" style="margin-top: var(--space-4);">Item Placements</h3>
+              <div id="placements-output"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview Renderer Tab -->
+      <div class="tab-content" id="tab-preview">
+        <div class="tester-section">
+          <div class="tester-section__header">
+            <h2 class="tester-section__title">Preview Renderer</h2>
+            <p class="tester-section__description">
+              Render actual images in the layout. Click items to select them and adjust properties.
+            </p>
+          </div>
+
+          <div class="controls-grid">
+            <div class="control-group">
+              <label for="preview-size-select">Card Size</label>
+              <select id="preview-size-select">
+                <option value="1x1">1x1</option>
+                <option value="2x1">2x1</option>
+                <option value="1x2">1x2</option>
+                <option value="2x2" selected>2x2</option>
+                <option value="3x1">3x1</option>
+                <option value="3x2">3x2</option>
+                <option value="3x3">3x3</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="preview-image-count">Image Count</label>
+              <input type="number" id="preview-image-count" min="1" max="5" value="4">
+            </div>
+
+            <div class="control-group">
+              <label for="preview-layout-type">Layout Type</label>
+              <select id="preview-layout-type">
+                <option value="grid">Grid</option>
+                <option value="horizontal">Horizontal</option>
+                <option value="vertical">Vertical</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="preview-emphasis">Emphasis</label>
+              <select id="preview-emphasis">
+                <option value="equal">Equal</option>
+                <option value="first">First</option>
+                <option value="last">Last</option>
+                <option value="center">Center</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="preview-direction">Direction</label>
+              <select id="preview-direction">
+                <option value="normal">Normal</option>
+                <option value="flip">Flip</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="preview-object-fit">Object Fit</label>
+              <select id="preview-object-fit">
+                <option value="cover">Cover</option>
+                <option value="contain">Contain</option>
+                <option value="fill">Fill</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="preview-output">
+            <!-- Preview Container -->
+            <div class="preview-container" id="preview-render-container">
+              <!-- PreviewRenderer will render here -->
+            </div>
+
+            <!-- Sidebar -->
+            <div class="preview-sidebar">
+              <!-- Item Adjustments -->
+              <div class="sidebar-section">
+                <h3 class="sidebar-section__title">Item Adjustments</h3>
+                <div id="adjustment-selection-info" class="no-selection">
+                  Click an item to select it
+                </div>
+                <div id="adjustment-controls" style="display: none;">
+                  <div class="adjustment-controls">
+                    <div class="control-group">
+                      <label for="adjust-offset-x">Offset X</label>
+                      <input type="range" id="adjust-offset-x" min="-50" max="50" value="0">
+                      <span id="adjust-offset-x-value">0px</span>
+                    </div>
+                    <div class="control-group">
+                      <label for="adjust-offset-y">Offset Y</label>
+                      <input type="range" id="adjust-offset-y" min="-50" max="50" value="0">
+                      <span id="adjust-offset-y-value">0px</span>
+                    </div>
+                    <div class="control-group">
+                      <label for="adjust-scale">Scale</label>
+                      <input type="range" id="adjust-scale" min="50" max="150" value="100">
+                      <span id="adjust-scale-value">1.0</span>
+                    </div>
+                    <div class="control-group">
+                      <label for="adjust-rotation">Rotation</label>
+                      <input type="range" id="adjust-rotation" min="-180" max="180" value="0">
+                      <span id="adjust-rotation-value">0deg</span>
+                    </div>
+                    <div class="control-group">
+                      <label for="adjust-opacity">Opacity</label>
+                      <input type="range" id="adjust-opacity" min="0" max="100" value="100">
+                      <span id="adjust-opacity-value">100%</span>
+                    </div>
+                    <div class="control-group">
+                      <label for="adjust-shadow">Shadow</label>
+                      <select id="adjust-shadow">
+                        <option value="none">None</option>
+                        <option value="subtle">Subtle</option>
+                        <option value="medium">Medium</option>
+                        <option value="strong">Strong</option>
+                        <option value="dramatic">Dramatic</option>
+                      </select>
+                    </div>
+                  </div>
+                  <button class="btn btn-secondary" id="reset-adjustments" style="margin-top: var(--space-3); width: 100%;">
+                    Reset Adjustments
+                  </button>
+                </div>
+              </div>
+
+              <!-- Click Log -->
+              <div class="sidebar-section">
+                <h3 class="sidebar-section__title">Click Log</h3>
+                <div class="click-log" id="click-log">
+                  <div class="click-log__empty">No clicks yet</div>
+                </div>
+                <button class="btn btn-secondary" id="clear-log" style="margin-top: var(--space-3); width: 100%;">
+                  Clear Log
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layout Selector Tab -->
+      <div class="tab-content" id="tab-selector">
+        <div class="tester-section">
+          <div class="tester-section__header">
+            <h2 class="tester-section__title">Layout Selector UI</h2>
+            <p class="tester-section__description">
+              Interactive layout selection components with constraint awareness and live preview.
+            </p>
+          </div>
+
+          <!-- Card Size Selection -->
+          <div class="controls-grid">
+            <div class="control-group">
+              <label for="selector-card-size">Card Size</label>
+              <select id="selector-card-size">
+                <option value="1x1">1x1</option>
+                <option value="2x1">2x1</option>
+                <option value="1x2">1x2</option>
+                <option value="2x2" selected>2x2</option>
+                <option value="3x1">3x1</option>
+                <option value="3x2">3x2</option>
+                <option value="3x3">3x3</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="selector-output">
+            <!-- Selector Controls -->
+            <div class="selector-controls-panel">
+              <!-- Image Count -->
+              <div class="selector-group">
+                <label class="selector-group__label">Image Count</label>
+                <div id="selector-image-count"></div>
+              </div>
+
+              <!-- Layout Type -->
+              <div class="selector-group">
+                <label class="selector-group__label">Layout Type</label>
+                <div id="selector-layout-type"></div>
+              </div>
+
+              <!-- Emphasis -->
+              <div class="selector-group">
+                <label class="selector-group__label">Emphasis</label>
+                <div id="selector-emphasis"></div>
+              </div>
+
+              <!-- Direction -->
+              <div class="selector-group">
+                <label class="selector-group__label">Direction</label>
+                <div id="selector-direction"></div>
+              </div>
+            </div>
+
+            <!-- Live Preview -->
+            <div class="selector-preview-panel">
+              <h3 class="output-panel__title">Live Preview</h3>
+              <div class="preview-container" id="selector-preview-container">
+                <!-- PreviewRenderer will render here -->
+              </div>
+            </div>
+
+            <!-- Config JSON -->
+            <div class="selector-config-panel">
+              <h3 class="output-panel__title">Current Configuration</h3>
+              <div class="config-display" id="selector-config-json"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Media List Tab -->
+      <div class="tab-content" id="tab-medialist">
+        <div class="tester-section">
+          <div class="tester-section__header">
+            <h2 class="tester-section__title">Media Item List</h2>
+            <p class="tester-section__description">
+              Draggable list for managing media items. Reorder by dragging or use Ctrl+Arrow keys.
+            </p>
+          </div>
+
+          <!-- Card Size Selection -->
+          <div class="controls-grid">
+            <div class="control-group">
+              <label for="medialist-card-size">Card Size</label>
+              <select id="medialist-card-size">
+                <option value="1x1">1x1</option>
+                <option value="2x1">2x1</option>
+                <option value="1x2">1x2</option>
+                <option value="2x2" selected>2x2</option>
+                <option value="3x1">3x1</option>
+                <option value="3x2">3x2</option>
+                <option value="3x3">3x3</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="medialist-output">
+            <!-- Media List -->
+            <div class="medialist-panel">
+              <h3 class="output-panel__title">Media Items</h3>
+              <div id="medialist-container"></div>
+            </div>
+
+            <!-- Live Preview -->
+            <div class="medialist-preview-panel">
+              <h3 class="output-panel__title">Live Preview</h3>
+              <div class="preview-container" id="medialist-preview-container">
+                <!-- PreviewRenderer will render here -->
+              </div>
+            </div>
+
+            <!-- Event Log -->
+            <div class="medialist-log-panel">
+              <h3 class="output-panel__title">Event Log</h3>
+              <div class="event-log" id="medialist-event-log">
+                <div class="event-log__empty">No events yet. Try selecting, reordering, adding or removing items.</div>
+              </div>
+              <button class="btn btn-secondary" id="medialist-clear-log" style="margin-top: var(--space-3); width: 100%;">
+                Clear Log
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Adjustment Panel Tab -->
+      <div class="tab-content" id="tab-adjustments">
+        <div class="tester-section">
+          <div class="tester-section__header">
+            <h2 class="tester-section__title">Adjustment Panel</h2>
+            <p class="tester-section__description">
+              Select an image from the list to edit its properties. Changes update the preview in real-time.
+            </p>
+          </div>
+
+          <!-- Card Size Selection -->
+          <div class="controls-grid">
+            <div class="control-group">
+              <label for="adjust-card-size">Card Size</label>
+              <select id="adjust-card-size">
+                <option value="1x1">1x1</option>
+                <option value="2x1">2x1</option>
+                <option value="1x2">1x2</option>
+                <option value="2x2" selected>2x2</option>
+                <option value="3x1">3x1</option>
+                <option value="3x2">3x2</option>
+                <option value="3x3">3x3</option>
+              </select>
+            </div>
+            <div class="control-group">
+              <label for="adjust-layout-type">Layout Type</label>
+              <select id="adjust-layout-type">
+                <option value="grid" selected>Grid</option>
+                <option value="horizontal">Horizontal</option>
+                <option value="vertical">Vertical</option>
+              </select>
+            </div>
+            <div class="control-group">
+              <label for="adjust-emphasis">Emphasis</label>
+              <select id="adjust-emphasis">
+                <option value="equal" selected>Equal</option>
+                <option value="first">First</option>
+                <option value="last">Last</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="adjust-output">
+            <!-- Media List -->
+            <div class="adjust-list-panel">
+              <h3 class="output-panel__title">Media Items</h3>
+              <div id="adjust-medialist-container"></div>
+            </div>
+
+            <!-- Live Preview -->
+            <div class="adjust-preview-panel">
+              <h3 class="output-panel__title">Live Preview</h3>
+              <div class="preview-container" id="adjust-preview-container">
+                <!-- PreviewRenderer will render here -->
+              </div>
+            </div>
+
+            <!-- Adjustment Panel -->
+            <div class="adjust-controls-panel">
+              <h3 class="output-panel__title">Adjustments</h3>
+              <div id="adjust-panel-container"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Complete Modal Tab -->
+      <div class="tab-content" id="tab-modal">
+        <div class="tester-section">
+          <div class="tester-section__header">
+            <h2 class="tester-section__title">Complete Modal</h2>
+            <p class="tester-section__description">
+              The complete overlay modal combining all components. Click the button below to open the modal.
+            </p>
+          </div>
+
+          <div class="modal-demo-controls">
+            <button type="button" class="modal-btn modal-btn-primary" id="open-modal-btn">
+              Open Media Layout Modal
+            </button>
+          </div>
+
+          <div class="modal-demo-output" style="margin-top: var(--space-6);">
+            <h3 class="output-panel__title">Save Output</h3>
+            <div class="output-panel">
+              <p class="no-selection" id="modal-output-placeholder">
+                No configuration saved yet. Open the modal and click "Save Layout" to see the output.
+              </p>
+              <pre class="css-output" id="modal-output-json" style="display: none;"></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Size Handler Tab -->
+      <div class="tab-content" id="tab-sizehandler">
+        <div class="tester-section">
+          <div class="tester-section__header">
+            <h2 class="tester-section__title">Size Change Handler</h2>
+            <p class="tester-section__description">
+              Test size change workflows: image selection modal, layout auto-switching, and per-size configuration storage.
+            </p>
+          </div>
+
+          <!-- Test Scenarios -->
+          <div class="size-handler-demo" style="margin-bottom: var(--space-6);">
+            <h3 class="output-panel__title">Test Scenarios</h3>
+            <div class="test-scenarios" style="display: flex; gap: var(--space-3); flex-wrap: wrap; margin-bottom: var(--space-4);">
+              <button type="button" class="modal-btn modal-btn-secondary" id="test-image-overflow">
+                Test: 3x2 (5 images) → 2x2 (max 4)
+              </button>
+              <button type="button" class="modal-btn modal-btn-secondary" id="test-layout-switch">
+                Test: 2x2 (grid) → 2x1 (horizontal only)
+              </button>
+              <button type="button" class="modal-btn modal-btn-secondary" id="test-orientation-flip">
+                Test: 3x1 (horizontal) → 1x2 (vertical)
+              </button>
+            </div>
+          </div>
+
+          <!-- Current State Display -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6);">
+            <div>
+              <!-- Size Selection -->
+              <div class="output-panel" style="margin-bottom: var(--space-4);">
+                <h3 class="output-panel__title">Current Size</h3>
+                <div class="controls-grid" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">
+                  <div class="control-group">
+                    <label for="handler-current-size">Card Size</label>
+                    <select id="handler-current-size">
+                      <option value="1x1">1x1 (max 2)</option>
+                      <option value="2x1">2x1 (max 3)</option>
+                      <option value="1x2">1x2 (max 3)</option>
+                      <option value="2x2" selected>2x2 (max 4)</option>
+                      <option value="3x1">3x1 (max 5)</option>
+                      <option value="3x2">3x2 (max 5)</option>
+                      <option value="3x3">3x3 (max 5)</option>
+                    </select>
+                  </div>
+                  <div class="control-group">
+                    <label for="handler-current-layout">Layout</label>
+                    <select id="handler-current-layout">
+                      <option value="horizontal">Horizontal</option>
+                      <option value="vertical">Vertical</option>
+                      <option value="grid" selected>Grid</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Media Items -->
+              <div class="output-panel" style="margin-bottom: var(--space-4);">
+                <h3 class="output-panel__title">Media Items (<span id="handler-item-count">4</span>)</h3>
+                <div id="handler-items-display" style="display: flex; gap: var(--space-2); flex-wrap: wrap;"></div>
+                <div style="margin-top: var(--space-3); display: flex; gap: var(--space-2);">
+                  <button type="button" class="modal-btn modal-btn-secondary" id="handler-add-item" style="font-size: var(--font-size-sm); padding: var(--space-1) var(--space-3);">
+                    + Add Item
+                  </button>
+                  <button type="button" class="modal-btn modal-btn-secondary" id="handler-remove-item" style="font-size: var(--font-size-sm); padding: var(--space-1) var(--space-3);">
+                    - Remove Item
+                  </button>
+                </div>
+              </div>
+
+              <!-- Size Config Manager -->
+              <div class="output-panel">
+                <h3 class="output-panel__title">Size Configuration Manager</h3>
+                <div id="handler-config-manager"></div>
+              </div>
+            </div>
+
+            <div>
+              <!-- Preview -->
+              <div class="output-panel" style="margin-bottom: var(--space-4);">
+                <h3 class="output-panel__title">Preview</h3>
+                <div id="handler-preview-container" style="background: var(--color-gray-100); border-radius: var(--radius-md); padding: var(--space-4); min-height: 200px; display: flex; align-items: center; justify-content: center;"></div>
+              </div>
+
+              <!-- Event Log -->
+              <div class="output-panel">
+                <h3 class="output-panel__title">Event Log</h3>
+                <div id="handler-event-log" class="click-log" style="max-height: 200px;"></div>
+                <button type="button" class="modal-btn modal-btn-secondary" id="handler-clear-log" style="margin-top: var(--space-2); font-size: var(--font-size-sm); padding: var(--space-1) var(--space-3);">
+                  Clear Log
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- JavaScript -->
+  <script src="js/constraints.js"></script>
+  <script src="js/templates.js"></script>
+  <script src="js/preview.js"></script>
+  <script src="js/layout-selector.js"></script>
+  <script src="js/media-list.js"></script>
+  <script src="js/adjustment-panel.js"></script>
+  <script src="js/overlay-modal.js"></script>
+  <script src="js/size-change-handler.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    // Tab Navigation
+    (function() {
+      const tabs = document.querySelectorAll('.tab');
+      const tabContents = document.querySelectorAll('.tab-content');
+
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const targetId = `tab-${tab.dataset.tab}`;
+
+          tabs.forEach(t => t.classList.remove('tab--active'));
+          tabContents.forEach(c => c.classList.remove('tab-content--active'));
+
+          tab.classList.add('tab--active');
+          document.getElementById(targetId).classList.add('tab-content--active');
+        });
+      });
+    })();
+
+    // Constraint Tester UI
+    (function() {
+      const sizeSelect = document.getElementById('constraint-size-select');
+      const sizeVisual = document.getElementById('constraint-size-visual');
+      const constraintDisplay = document.getElementById('constraint-display');
+
+      function renderSizeVisual(selectedSize) {
+        sizeVisual.innerHTML = CARD_SIZES.map(size => `
+          <div class="size-box ${size === selectedSize ? 'size-box--selected' : ''}"
+               data-size="${size}" title="${size}">${size}</div>
+        `).join('');
+
+        sizeVisual.querySelectorAll('.size-box').forEach(box => {
+          box.addEventListener('click', () => {
+            sizeSelect.value = box.dataset.size;
+            updateConstraintDisplay(box.dataset.size);
+          });
+        });
+      }
+
+      function renderConstraintDisplay(cardSize) {
+        const constraints = getConstraints(cardSize);
+        if (!constraints) {
+          constraintDisplay.innerHTML = '<p>No constraints found.</p>';
+          return;
+        }
+
+        const maxImages = getMaxImages(cardSize);
+        const defaultLayout = getDefaultLayout(cardSize);
+        const forcedLayout = getForcedLayout(cardSize);
+        const allLayouts = [LAYOUT_TYPES.HORIZONTAL, LAYOUT_TYPES.VERTICAL, LAYOUT_TYPES.GRID];
+
+        const layoutListHtml = allLayouts.map(layout => {
+          const isAllowed = isLayoutAllowed(cardSize, layout);
+          const reason = getDisabledReason(cardSize, layout);
+          const isDefault = layout === defaultLayout;
+          const isForced = layout === forcedLayout;
+
+          return `
+            <li class="layout-item">
+              <span class="layout-status ${isAllowed ? 'layout-status--allowed' : 'layout-status--disabled'}">
+                ${isAllowed ? '✓' : '✕'}
+              </span>
+              <div class="layout-info">
+                <span class="layout-name">
+                  ${layout.charAt(0).toUpperCase() + layout.slice(1)}
+                  ${isDefault ? '<span class="badge badge--primary">Default</span>' : ''}
+                  ${isForced ? '<span class="badge badge--secondary">Forced</span>' : ''}
+                </span>
+                ${reason ? `<div class="layout-reason">${reason}</div>` : ''}
+              </div>
+            </li>
+          `;
+        }).join('');
+
+        constraintDisplay.innerHTML = `
+          <div class="constraint-card">
+            <h3 class="constraint-card__title">Max Images</h3>
+            <p class="constraint-card__value">${maxImages}</p>
+          </div>
+          <div class="constraint-card">
+            <h3 class="constraint-card__title">Allowed Layouts</h3>
+            <p class="constraint-card__value">${getAllowedLayouts(cardSize).length} of 3</p>
+          </div>
+          <div class="constraint-card" style="grid-column: span 2;">
+            <h3 class="constraint-card__title">Layout Options</h3>
+            <ul class="layout-list">${layoutListHtml}</ul>
+          </div>
+        `;
+      }
+
+      function updateConstraintDisplay(cardSize) {
+        renderSizeVisual(cardSize);
+        renderConstraintDisplay(cardSize);
+      }
+
+      sizeSelect.addEventListener('change', (e) => updateConstraintDisplay(e.target.value));
+      updateConstraintDisplay(sizeSelect.value);
+    })();
+
+    // Template Generator UI
+    (function() {
+      const sizeSelect = document.getElementById('template-size-select');
+      const imageCountInput = document.getElementById('image-count');
+      const layoutTypeSelect = document.getElementById('layout-type');
+      const emphasisSelect = document.getElementById('emphasis');
+      const directionSelect = document.getElementById('direction');
+      const gridPreview = document.getElementById('grid-preview');
+      const cssOutput = document.getElementById('css-output');
+      const placementsOutput = document.getElementById('placements-output');
+
+      function updateLayoutTypeOptions(cardSize) {
+        const allowedLayouts = getAllowedLayouts(cardSize);
+        const defaultLayout = getDefaultLayout(cardSize);
+
+        Array.from(layoutTypeSelect.options).forEach(option => {
+          const isAllowed = allowedLayouts.includes(option.value);
+          option.disabled = !isAllowed;
+          if (!isAllowed && layoutTypeSelect.value === option.value) {
+            layoutTypeSelect.value = defaultLayout;
+          }
+        });
+      }
+
+      function updateImageCountMax(cardSize) {
+        const maxImages = getMaxImages(cardSize);
+        imageCountInput.max = maxImages;
+        if (parseInt(imageCountInput.value) > maxImages) {
+          imageCountInput.value = maxImages;
+        }
+      }
+
+      function generateAndDisplay() {
+        const options = {
+          cardSize: sizeSelect.value,
+          imageCount: parseInt(imageCountInput.value),
+          layoutType: layoutTypeSelect.value,
+          emphasis: emphasisSelect.value,
+          direction: directionSelect.value
+        };
+
+        const template = generateGridTemplate(options);
+
+        if (template.isValid) {
+          const css = templateToCSS(template);
+          cssOutput.innerHTML = `<div class="css-output">${formatCSS(css)}</div>`;
+        } else {
+          cssOutput.innerHTML = `<div class="error-output">${template.error}</div>`;
+        }
+
+        if (template.isValid && template.itemPlacements.length > 0) {
+          const rows = template.itemPlacements.map((p, i) => `
+            <tr>
+              <td style="color: ${getItemColor(i + 1)}">${i + 1}</td>
+              <td>${p.gridColumn || '-'}</td>
+              <td>${p.gridRow || '-'}</td>
+              <td>${p.gridArea || '-'}</td>
+            </tr>
+          `).join('');
+
+          placementsOutput.innerHTML = `
+            <table class="placements-table">
+              <thead><tr><th>Item</th><th>Column</th><th>Row</th><th>Area</th></tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+          `;
+        } else {
+          placementsOutput.innerHTML = '';
+        }
+
+        updateGridPreview(template, options);
+      }
+
+      function formatCSS(css) {
+        return css.split('\n').map(line => {
+          const [prop, ...valueParts] = line.split(':');
+          if (valueParts.length > 0) {
+            const value = valueParts.join(':');
+            return `<span class="property">${prop}</span>:<span class="value">${value}</span>`;
+          }
+          return line;
+        }).join('\n');
+      }
+
+      function getItemColor(index) {
+        const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+        return colors[(index - 1) % colors.length];
+      }
+
+      function updateGridPreview(template, options) {
+        const aspect = getCardAspect(options.cardSize);
+        gridPreview.className = 'grid-preview';
+        gridPreview.classList.add(`grid-preview--${aspect}`);
+
+        if (!template.isValid) {
+          gridPreview.innerHTML = `<div style="color: var(--color-gray-500); text-align: center;">${template.error}</div>`;
+          gridPreview.style.cssText = '';
+          return;
+        }
+
+        gridPreview.style.display = 'grid';
+        gridPreview.style.gridTemplateColumns = template.gridTemplateColumns;
+        gridPreview.style.gridTemplateRows = template.gridTemplateRows;
+        gridPreview.style.gridTemplateAreas = template.gridTemplateAreas || '';
+
+        const items = template.itemPlacements.map((placement, i) => {
+          const itemNum = placement.index + 1;
+          let style = placement.gridArea
+            ? `grid-area: ${placement.gridArea};`
+            : `grid-column: ${placement.gridColumn}; grid-row: ${placement.gridRow};`;
+          return `<div class="grid-item grid-item--${itemNum}" style="${style}">${itemNum}</div>`;
+        });
+
+        gridPreview.innerHTML = items.join('');
+      }
+
+      sizeSelect.addEventListener('change', () => {
+        updateLayoutTypeOptions(sizeSelect.value);
+        updateImageCountMax(sizeSelect.value);
+        generateAndDisplay();
+      });
+
+      imageCountInput.addEventListener('input', generateAndDisplay);
+      layoutTypeSelect.addEventListener('change', generateAndDisplay);
+      emphasisSelect.addEventListener('change', generateAndDisplay);
+      directionSelect.addEventListener('change', generateAndDisplay);
+
+      updateLayoutTypeOptions(sizeSelect.value);
+      updateImageCountMax(sizeSelect.value);
+      generateAndDisplay();
+    })();
+
+    // Preview Renderer UI
+    (function() {
+      const sizeSelect = document.getElementById('preview-size-select');
+      const imageCountInput = document.getElementById('preview-image-count');
+      const layoutTypeSelect = document.getElementById('preview-layout-type');
+      const emphasisSelect = document.getElementById('preview-emphasis');
+      const directionSelect = document.getElementById('preview-direction');
+      const objectFitSelect = document.getElementById('preview-object-fit');
+      const previewContainer = document.getElementById('preview-render-container');
+      const clickLog = document.getElementById('click-log');
+      const clearLogBtn = document.getElementById('clear-log');
+      const adjustmentSelectionInfo = document.getElementById('adjustment-selection-info');
+      const adjustmentControls = document.getElementById('adjustment-controls');
+      const resetAdjustmentsBtn = document.getElementById('reset-adjustments');
+
+      // Adjustment inputs
+      const adjustOffsetX = document.getElementById('adjust-offset-x');
+      const adjustOffsetY = document.getElementById('adjust-offset-y');
+      const adjustScale = document.getElementById('adjust-scale');
+      const adjustRotation = document.getElementById('adjust-rotation');
+      const adjustOpacity = document.getElementById('adjust-opacity');
+      const adjustShadow = document.getElementById('adjust-shadow');
+
+      // Click log entries
+      let clickLogEntries = [];
+
+      // Create PreviewRenderer instance
+      const renderer = new PreviewRenderer({
+        onItemClick: (index, event) => {
+          addClickLogEntry(index);
+          showAdjustmentControls(index);
+        },
+        onItemSelect: (newIndex, oldIndex) => {
+          loadAdjustmentsForItem(newIndex);
+        }
+      });
+
+      function addClickLogEntry(index) {
+        const timestamp = new Date().toLocaleTimeString();
+        clickLogEntries.unshift({ index, timestamp });
+        if (clickLogEntries.length > 10) {
+          clickLogEntries.pop();
+        }
+        renderClickLog();
+      }
+
+      function renderClickLog() {
+        if (clickLogEntries.length === 0) {
+          clickLog.innerHTML = '<div class="click-log__empty">No clicks yet</div>';
+          return;
+        }
+
+        clickLog.innerHTML = clickLogEntries.map(entry => `
+          <div class="click-log__entry">
+            <span style="color: #86efac;">[${entry.timestamp}]</span>
+            Item ${entry.index + 1} clicked
+          </div>
+        `).join('');
+      }
+
+      function showAdjustmentControls(index) {
+        adjustmentSelectionInfo.innerHTML = `
+          <div class="selected-item-info">Selected: Item ${index + 1}</div>
+        `;
+        adjustmentControls.style.display = 'block';
+      }
+
+      function hideAdjustmentControls() {
+        adjustmentSelectionInfo.innerHTML = '<span class="no-selection">Click an item to select it</span>';
+        adjustmentControls.style.display = 'none';
+      }
+
+      function loadAdjustmentsForItem(index) {
+        const adjustments = renderer.getItemAdjustments(index);
+        adjustOffsetX.value = adjustments.offsetX || 0;
+        adjustOffsetY.value = adjustments.offsetY || 0;
+        adjustScale.value = (adjustments.scale || 1) * 100;
+        adjustRotation.value = adjustments.rotation || 0;
+        adjustOpacity.value = (adjustments.opacity !== undefined ? adjustments.opacity : 1) * 100;
+        adjustShadow.value = adjustments.shadow || 'none';
+        updateAdjustmentValueDisplays();
+      }
+
+      function updateAdjustmentValueDisplays() {
+        document.getElementById('adjust-offset-x-value').textContent = `${adjustOffsetX.value}px`;
+        document.getElementById('adjust-offset-y-value').textContent = `${adjustOffsetY.value}px`;
+        document.getElementById('adjust-scale-value').textContent = (adjustScale.value / 100).toFixed(2);
+        document.getElementById('adjust-rotation-value').textContent = `${adjustRotation.value}deg`;
+        document.getElementById('adjust-opacity-value').textContent = `${adjustOpacity.value}%`;
+      }
+
+      function applyAdjustments() {
+        const selectedIndex = renderer.getSelectedIndex();
+        if (selectedIndex === null) return;
+
+        renderer.setItemAdjustment(selectedIndex, {
+          offsetX: parseInt(adjustOffsetX.value),
+          offsetY: parseInt(adjustOffsetY.value),
+          scale: adjustScale.value / 100,
+          rotation: parseInt(adjustRotation.value),
+          opacity: adjustOpacity.value / 100,
+          shadow: adjustShadow.value
+        });
+      }
+
+      function updateLayoutTypeOptions(cardSize) {
+        const allowedLayouts = getAllowedLayouts(cardSize);
+        const defaultLayout = getDefaultLayout(cardSize);
+
+        Array.from(layoutTypeSelect.options).forEach(option => {
+          const isAllowed = allowedLayouts.includes(option.value);
+          option.disabled = !isAllowed;
+          if (!isAllowed && layoutTypeSelect.value === option.value) {
+            layoutTypeSelect.value = defaultLayout;
+          }
+        });
+      }
+
+      function updateImageCountMax(cardSize) {
+        const maxImages = getMaxImages(cardSize);
+        imageCountInput.max = maxImages;
+        if (parseInt(imageCountInput.value) > maxImages) {
+          imageCountInput.value = maxImages;
+        }
+      }
+
+      function renderPreview() {
+        renderer.render(previewContainer, {
+          cardSize: sizeSelect.value,
+          imageCount: parseInt(imageCountInput.value),
+          layoutType: layoutTypeSelect.value,
+          emphasis: emphasisSelect.value,
+          direction: directionSelect.value,
+          objectFit: objectFitSelect.value
+        });
+      }
+
+      // Event listeners for controls
+      sizeSelect.addEventListener('change', () => {
+        updateLayoutTypeOptions(sizeSelect.value);
+        updateImageCountMax(sizeSelect.value);
+        renderer.clearSelection();
+        hideAdjustmentControls();
+        renderPreview();
+      });
+
+      imageCountInput.addEventListener('input', () => {
+        renderer.clearSelection();
+        hideAdjustmentControls();
+        renderPreview();
+      });
+
+      layoutTypeSelect.addEventListener('change', () => {
+        renderer.clearSelection();
+        hideAdjustmentControls();
+        renderPreview();
+      });
+
+      emphasisSelect.addEventListener('change', renderPreview);
+      directionSelect.addEventListener('change', renderPreview);
+      objectFitSelect.addEventListener('change', renderPreview);
+
+      // Adjustment control listeners
+      [adjustOffsetX, adjustOffsetY, adjustScale, adjustRotation, adjustOpacity].forEach(input => {
+        input.addEventListener('input', () => {
+          updateAdjustmentValueDisplays();
+          applyAdjustments();
+        });
+      });
+
+      adjustShadow.addEventListener('change', applyAdjustments);
+
+      resetAdjustmentsBtn.addEventListener('click', () => {
+        const selectedIndex = renderer.getSelectedIndex();
+        if (selectedIndex !== null) {
+          renderer.clearItemAdjustment(selectedIndex);
+          loadAdjustmentsForItem(selectedIndex);
+        }
+      });
+
+      clearLogBtn.addEventListener('click', () => {
+        clickLogEntries = [];
+        renderClickLog();
+      });
+
+      // Initial setup
+      updateLayoutTypeOptions(sizeSelect.value);
+      updateImageCountMax(sizeSelect.value);
+      renderPreview();
+    })();
+
+    // Layout Selector UI
+    (function() {
+      const cardSizeSelect = document.getElementById('selector-card-size');
+      const previewContainer = document.getElementById('selector-preview-container');
+      const configJson = document.getElementById('selector-config-json');
+
+      // Create PreviewRenderer for live preview
+      const previewRenderer = new PreviewRenderer();
+
+      // Create LayoutSelector
+      const layoutSelector = new LayoutSelector({
+        cardSize: '2x2',
+        imageCount: 3,
+        layoutType: 'horizontal',
+        emphasis: 'equal',
+        direction: 'normal',
+        onChange: handleConfigChange
+      });
+
+      // Initialize selector with container references
+      layoutSelector.init({
+        imageCount: document.getElementById('selector-image-count'),
+        layoutType: document.getElementById('selector-layout-type'),
+        emphasis: document.getElementById('selector-emphasis'),
+        direction: document.getElementById('selector-direction')
+      });
+
+      function handleConfigChange(config) {
+        // Update preview
+        previewRenderer.render(previewContainer, {
+          cardSize: config.cardSize,
+          imageCount: config.imageCount,
+          layoutType: config.layoutType,
+          emphasis: config.emphasis,
+          direction: config.direction
+        });
+
+        // Update JSON display
+        updateConfigDisplay(config);
+      }
+
+      function updateConfigDisplay(config) {
+        const json = JSON.stringify(config, null, 2);
+        const formatted = json
+          .replace(/"([^"]+)":/g, '<span class="key">"$1"</span>:')
+          .replace(/: "([^"]+)"/g, ': <span class="string">"$1"</span>')
+          .replace(/: (\d+)/g, ': <span class="number">$1</span>');
+        configJson.innerHTML = formatted;
+      }
+
+      // Handle card size change
+      cardSizeSelect.addEventListener('change', () => {
+        layoutSelector.setCardSize(cardSizeSelect.value);
+      });
+
+      // Initial render
+      const initialConfig = layoutSelector.getConfig();
+      previewRenderer.render(previewContainer, {
+        cardSize: initialConfig.cardSize,
+        imageCount: initialConfig.imageCount,
+        layoutType: initialConfig.layoutType,
+        emphasis: initialConfig.emphasis,
+        direction: initialConfig.direction
+      });
+      updateConfigDisplay(initialConfig);
+    })();
+
+    // Media List UI
+    (function() {
+      const cardSizeSelect = document.getElementById('medialist-card-size');
+      const previewContainer = document.getElementById('medialist-preview-container');
+      const eventLog = document.getElementById('medialist-event-log');
+      const clearLogBtn = document.getElementById('medialist-clear-log');
+
+      let logEntries = [];
+
+      // Create PreviewRenderer for live preview
+      const previewRenderer = new PreviewRenderer();
+
+      // Log helper
+      function addLogEntry(type, details) {
+        const timestamp = new Date().toLocaleTimeString();
+        logEntries.unshift({ type, details, timestamp });
+        if (logEntries.length > 20) logEntries.pop();
+        renderLog();
+      }
+
+      function renderLog() {
+        if (logEntries.length === 0) {
+          eventLog.innerHTML = '<div class="event-log__empty">No events yet. Try selecting, reordering, adding or removing items.</div>';
+          return;
+        }
+        eventLog.innerHTML = logEntries.map(entry => `
+          <div class="event-log__entry">
+            <span class="event-log__timestamp">[${entry.timestamp}]</span>
+            <span class="event-log__type">${entry.type}</span>
+            <span class="event-log__details">${entry.details}</span>
+          </div>
+        `).join('');
+      }
+
+      // Create MediaList
+      const mediaList = new MediaList({
+        cardSize: '2x2',
+        maxImages: getMaxImages('2x2'),
+        onSelect: (item, index, previousId) => {
+          addLogEntry('SELECT', `Item ${index + 1} "${item.name}" selected`);
+        },
+        onReorder: (items, fromIndex, toIndex) => {
+          addLogEntry('REORDER', `Moved item from position ${fromIndex + 1} to ${toIndex + 1}`);
+        },
+        onAdd: (item, index) => {
+          addLogEntry('ADD', `Added "${item.name}" at position ${index + 1}`);
+        },
+        onRemove: (item, index) => {
+          addLogEntry('REMOVE', `Removed "${item.name}" from position ${index + 1}`);
+        },
+        onChange: (state) => {
+          // Update preview with current images
+          updatePreview();
+        }
+      });
+
+      // Initialize with container and 5 sample items
+      mediaList.init(document.getElementById('medialist-container'), SAMPLE_PRODUCTS.slice(0, 4));
+
+      function updatePreview() {
+        const images = mediaList.getImages();
+        previewRenderer.render(previewContainer, {
+          cardSize: cardSizeSelect.value,
+          imageCount: images.length,
+          layoutType: getDefaultLayout(cardSizeSelect.value),
+          emphasis: 'equal',
+          direction: 'normal',
+          images: images
+        });
+      }
+
+      // Handle card size change
+      cardSizeSelect.addEventListener('change', () => {
+        mediaList.setCardSize(cardSizeSelect.value);
+        addLogEntry('SIZE', `Card size changed to ${cardSizeSelect.value}`);
+      });
+
+      // Clear log
+      clearLogBtn.addEventListener('click', () => {
+        logEntries = [];
+        renderLog();
+      });
+
+      // Initial render
+      updatePreview();
+    })();
+
+    // Adjustment Panel UI
+    (function() {
+      const cardSizeSelect = document.getElementById('adjust-card-size');
+      const layoutTypeSelect = document.getElementById('adjust-layout-type');
+      const emphasisSelect = document.getElementById('adjust-emphasis');
+      const previewContainer = document.getElementById('adjust-preview-container');
+
+      // Store item adjustments (keyed by item id)
+      const itemAdjustmentsMap = {};
+
+      // Create PreviewRenderer for live preview
+      const previewRenderer = new PreviewRenderer();
+
+      // Create MediaList
+      const mediaList = new MediaList({
+        cardSize: '2x2',
+        maxImages: getMaxImages('2x2'),
+        onSelect: handleItemSelect,
+        onReorder: handleReorder,
+        onRemove: handleRemove,
+        onChange: updatePreview
+      });
+
+      // Initialize media list
+      mediaList.init(document.getElementById('adjust-medialist-container'), SAMPLE_PRODUCTS.slice(0, 4));
+
+      // Create AdjustmentPanel
+      const adjustmentPanel = new AdjustmentPanel({
+        onChange: handleAdjustmentChange,
+        onStackingChange: handleStackingChange
+      });
+
+      // Initialize adjustment panel
+      adjustmentPanel.init(document.getElementById('adjust-panel-container'));
+
+      function handleItemSelect(item, index, previousId) {
+        const total = mediaList.getItems().length;
+        const adjustments = itemAdjustmentsMap[item.id] || null;
+        adjustmentPanel.setSelectedItem(item, index, total, adjustments);
+      }
+
+      function handleReorder(items, fromIndex, toIndex) {
+        const selectedItem = mediaList.getSelectedItem();
+        if (selectedItem) {
+          const newIndex = items.findIndex(i => i.id === selectedItem.id);
+          adjustmentPanel.updateStackingDisplay(newIndex, items.length);
+        }
+        updatePreview();
+      }
+
+      function handleRemove(item, index) {
+        delete itemAdjustmentsMap[item.id];
+        adjustmentPanel.clearSelection();
+        updatePreview();
+      }
+
+      function handleAdjustmentChange(data) {
+        const selectedItem = mediaList.getSelectedItem();
+        if (!selectedItem) return;
+
+        // Store adjustments
+        itemAdjustmentsMap[selectedItem.id] = data.adjustments;
+
+        // Update preview
+        updatePreview();
+      }
+
+      function handleStackingChange(action, currentIndex) {
+        const items = mediaList.getItems();
+        let newIndex = currentIndex;
+
+        switch (action) {
+          case 'back':
+            newIndex = 0;
+            break;
+          case 'backward':
+            newIndex = Math.max(0, currentIndex - 1);
+            break;
+          case 'forward':
+            newIndex = Math.min(items.length - 1, currentIndex + 1);
+            break;
+          case 'front':
+            newIndex = items.length - 1;
+            break;
+        }
+
+        if (newIndex !== currentIndex) {
+          // Reorder in media list
+          const item = items[currentIndex];
+          items.splice(currentIndex, 1);
+          items.splice(newIndex, 0, item);
+          mediaList.items = items;
+          mediaList.render();
+          mediaList.selectByIndex(newIndex);
+
+          // Update panel display
+          adjustmentPanel.updateStackingDisplay(newIndex, items.length);
+          updatePreview();
+        }
+      }
+
+      function updatePreview() {
+        const items = mediaList.getItems();
+        const images = items.map(i => i.image);
+
+        // Build item adjustments array for renderer
+        const itemAdjustments = items.map((item, index) => {
+          const adj = itemAdjustmentsMap[item.id];
+          if (!adj) return null;
+
+          return {
+            index: index,
+            offsetX: adj.positionX,
+            offsetY: adj.positionY,
+            scale: adj.scale,
+            rotation: adj.rotation,
+            opacity: adj.opacity / 100,
+            zIndex: adj.zIndex,
+            shadow: getShadowValue(adj)
+          };
+        }).filter(Boolean);
+
+        previewRenderer.render(previewContainer, {
+          cardSize: cardSizeSelect.value,
+          imageCount: images.length,
+          layoutType: layoutTypeSelect.value,
+          emphasis: emphasisSelect.value,
+          direction: 'normal',
+          images: images
+        }, {
+          onClick: (index) => {
+            mediaList.selectByIndex(index);
+          }
+        });
+
+        // Apply custom adjustments to preview items
+        itemAdjustments.forEach(adj => {
+          const previewItem = previewContainer.querySelector(`.preview-item[data-index="${adj.index}"]`);
+          if (previewItem) {
+            const css = AdjustmentPanel.adjustmentsToCSS({
+              positionX: adj.offsetX,
+              positionY: adj.offsetY,
+              scale: adj.scale,
+              rotation: adj.rotation,
+              opacity: adj.opacity * 100,
+              zIndex: adj.zIndex,
+              shadowPreset: 'custom',
+              shadowOffsetX: 0,
+              shadowOffsetY: 0,
+              shadowBlur: 0,
+              shadowSpread: 0,
+              shadowColor: '#000000',
+              shadowOpacity: 0
+            });
+
+            previewItem.style.transform = css.transform;
+            previewItem.style.opacity = css.opacity;
+            if (adj.zIndex) previewItem.style.zIndex = adj.zIndex;
+            if (adj.shadow && adj.shadow !== 'none') {
+              previewItem.style.boxShadow = adj.shadow;
+            }
+          }
+        });
+      }
+
+      function getShadowValue(adjustments) {
+        if (!adjustments || adjustments.shadowPreset === 'none') return 'none';
+
+        const r = parseInt(adjustments.shadowColor.slice(1, 3), 16);
+        const g = parseInt(adjustments.shadowColor.slice(3, 5), 16);
+        const b = parseInt(adjustments.shadowColor.slice(5, 7), 16);
+        const a = adjustments.shadowOpacity / 100;
+
+        return `${adjustments.shadowOffsetX}px ${adjustments.shadowOffsetY}px ${adjustments.shadowBlur}px ${adjustments.shadowSpread}px rgba(${r}, ${g}, ${b}, ${a})`;
+      }
+
+      // Handle control changes
+      cardSizeSelect.addEventListener('change', () => {
+        mediaList.setCardSize(cardSizeSelect.value);
+        updateLayoutTypeOptions();
+        updatePreview();
+      });
+
+      layoutTypeSelect.addEventListener('change', updatePreview);
+      emphasisSelect.addEventListener('change', updatePreview);
+
+      function updateLayoutTypeOptions() {
+        const allowedLayouts = getAllowedLayouts(cardSizeSelect.value);
+        const defaultLayout = getDefaultLayout(cardSizeSelect.value);
+
+        Array.from(layoutTypeSelect.options).forEach(option => {
+          const isAllowed = allowedLayouts.includes(option.value);
+          option.disabled = !isAllowed;
+          if (!isAllowed && layoutTypeSelect.value === option.value) {
+            layoutTypeSelect.value = defaultLayout;
+          }
+        });
+      }
+
+      // Initial render
+      updateLayoutTypeOptions();
+      updatePreview();
+    })();
+
+    // Complete Modal Demo
+    (function() {
+      const openBtn = document.getElementById('open-modal-btn');
+      const outputPlaceholder = document.getElementById('modal-output-placeholder');
+      const outputJson = document.getElementById('modal-output-json');
+
+      // Create the overlay modal with sample data
+      const modal = new OverlayModal({
+        initialLayout: '2-equal',
+        initialItems: SAMPLE_PRODUCTS.slice(0, 4),
+        onSave: handleSave,
+        onCancel: handleCancel
+      });
+
+      function handleSave(configuration) {
+        console.log('Modal saved configuration:', configuration);
+
+        // Format and display the saved configuration
+        const formatted = JSON.stringify(configuration, null, 2);
+        outputJson.textContent = formatted;
+        outputJson.style.display = 'block';
+        outputPlaceholder.style.display = 'none';
+      }
+
+      function handleCancel() {
+        console.log('Modal cancelled');
+      }
+
+      openBtn.addEventListener('click', () => {
+        modal.open({
+          layout: '2-equal',
+          items: SAMPLE_PRODUCTS.slice(0, 4)
+        });
+      });
+    })();
+
+    // Size Change Handler Demo
+    (function() {
+      const sizeSelect = document.getElementById('handler-current-size');
+      const layoutSelect = document.getElementById('handler-current-layout');
+      const itemsDisplay = document.getElementById('handler-items-display');
+      const itemCount = document.getElementById('handler-item-count');
+      const previewContainer = document.getElementById('handler-preview-container');
+      const eventLog = document.getElementById('handler-event-log');
+      const configManagerContainer = document.getElementById('handler-config-manager');
+
+      // Test scenario buttons
+      const testImageOverflow = document.getElementById('test-image-overflow');
+      const testLayoutSwitch = document.getElementById('test-layout-switch');
+      const testOrientationFlip = document.getElementById('test-orientation-flip');
+      const addItemBtn = document.getElementById('handler-add-item');
+      const removeItemBtn = document.getElementById('handler-remove-item');
+      const clearLogBtn = document.getElementById('handler-clear-log');
+
+      // Current items
+      let items = SAMPLE_PRODUCTS.slice(0, 4).map(p => ({ ...p }));
+      let logEntries = [];
+
+      // Create preview renderer
+      const previewRenderer = new PreviewRenderer();
+
+      // Create size change handler
+      const sizeHandler = new SizeChangeHandler({
+        initialSize: '2x2',
+        initialLayout: 'horizontal',
+        initialItems: items,
+        onSizeChange: (data) => {
+          addLogEntry('size_change', data);
+          sizeSelect.value = data.toSize;
+          updateLayoutOptions(data.toSize);
+          if (data.newLayout) {
+            layoutSelect.value = data.newLayout;
+          }
+          updatePreview();
+        },
+        onLayoutChange: (data) => {
+          addLogEntry('layout_change', data);
+          layoutSelect.value = data.toLayout;
+          updatePreview();
+        },
+        onItemsChange: (data) => {
+          addLogEntry('items_change', data);
+          items = data.items;
+          sizeHandler.setItems(items);
+          updateItemsDisplay();
+          updatePreview();
+        },
+        onConfigChange: (data) => {
+          addLogEntry('config_change', data);
+        }
+      });
+
+      // Initialize config manager
+      sizeHandler.initConfigManager(configManagerContainer);
+
+      function addLogEntry(type, data) {
+        const timestamp = new Date().toLocaleTimeString();
+        const entry = { timestamp, type, data };
+        logEntries.unshift(entry);
+        if (logEntries.length > 20) logEntries.pop();
+        renderLog();
+      }
+
+      function renderLog() {
+        if (logEntries.length === 0) {
+          eventLog.innerHTML = '<div class="click-log__empty">No events yet. Try changing the size or adding items.</div>';
+          return;
+        }
+
+        eventLog.innerHTML = logEntries.map(entry => {
+          const dataStr = JSON.stringify(entry.data, null, 0).substring(0, 80);
+          return `<div class="click-log__entry">
+            <span style="color: #94a3b8;">${entry.timestamp}</span>
+            <span style="color: #f59e0b;">[${entry.type}]</span>
+            <span style="color: #e2e8f0;">${dataStr}${dataStr.length >= 80 ? '...' : ''}</span>
+          </div>`;
+        }).join('');
+      }
+
+      function updateItemsDisplay() {
+        itemCount.textContent = items.length;
+        itemsDisplay.innerHTML = items.map((item, index) => `
+          <div style="width: 50px; height: 50px; border-radius: var(--radius-sm); overflow: hidden; border: 2px solid var(--color-gray-200);" title="${item.name}">
+            <img src="${item.image}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+        `).join('');
+      }
+
+      function updateLayoutOptions(size) {
+        const allowedLayouts = getAllowedLayouts(size);
+        const defaultLayout = getDefaultLayout(size);
+
+        Array.from(layoutSelect.options).forEach(option => {
+          const isAllowed = allowedLayouts.includes(option.value);
+          option.disabled = !isAllowed;
+        });
+
+        if (!allowedLayouts.includes(layoutSelect.value)) {
+          layoutSelect.value = defaultLayout;
+          sizeHandler.setLayout(defaultLayout);
+        }
+      }
+
+      function updatePreview() {
+        const images = items.map(i => i.image);
+        previewRenderer.render(previewContainer, {
+          cardSize: sizeSelect.value,
+          imageCount: images.length,
+          layoutType: layoutSelect.value,
+          emphasis: 'equal',
+          direction: 'normal',
+          images: images
+        });
+      }
+
+      // Event listeners
+      sizeSelect.addEventListener('change', () => {
+        const newSize = sizeSelect.value;
+        sizeHandler.requestSizeChange(newSize);
+      });
+
+      layoutSelect.addEventListener('change', () => {
+        sizeHandler.setLayout(layoutSelect.value);
+        addLogEntry('layout_manual_change', { layout: layoutSelect.value });
+        updatePreview();
+      });
+
+      addItemBtn.addEventListener('click', () => {
+        if (items.length < 5) {
+          const newItem = {
+            id: `item-${Date.now()}`,
+            name: `Item ${items.length + 1}`,
+            image: `https://via.placeholder.com/400x600/e0f7fa/00838f?text=Item+${items.length + 1}`
+          };
+          items.push(newItem);
+          sizeHandler.setItems(items);
+          updateItemsDisplay();
+          updatePreview();
+          addLogEntry('item_added', { count: items.length });
+        }
+      });
+
+      removeItemBtn.addEventListener('click', () => {
+        if (items.length > 1) {
+          items.pop();
+          sizeHandler.setItems(items);
+          updateItemsDisplay();
+          updatePreview();
+          addLogEntry('item_removed', { count: items.length });
+        }
+      });
+
+      clearLogBtn.addEventListener('click', () => {
+        logEntries = [];
+        renderLog();
+      });
+
+      // Test scenario handlers
+      testImageOverflow.addEventListener('click', () => {
+        // Set up: 3x2 with 5 images
+        items = SAMPLE_PRODUCTS.slice(0, 5).map(p => ({ ...p }));
+        sizeHandler.setItems(items);
+        sizeHandler.currentSize = '3x2';
+        sizeHandler.currentLayout = 'horizontal';
+        sizeSelect.value = '3x2';
+        layoutSelect.value = 'horizontal';
+        updateLayoutOptions('3x2');
+        updateItemsDisplay();
+        updatePreview();
+        addLogEntry('test_setup', { scenario: '3x2 with 5 images' });
+
+        // Now trigger the size change to 2x2
+        setTimeout(() => {
+          sizeHandler.requestSizeChange('2x2');
+        }, 500);
+      });
+
+      testLayoutSwitch.addEventListener('click', () => {
+        // Set up: 2x2 with horizontal layout
+        items = SAMPLE_PRODUCTS.slice(0, 3).map(p => ({ ...p }));
+        sizeHandler.setItems(items);
+        sizeHandler.currentSize = '2x2';
+        sizeHandler.currentLayout = 'horizontal';
+        sizeSelect.value = '2x2';
+        layoutSelect.value = 'horizontal';
+        updateLayoutOptions('2x2');
+        updateItemsDisplay();
+        updatePreview();
+        addLogEntry('test_setup', { scenario: '2x2 with horizontal layout' });
+
+        // Now trigger the size change to 2x1
+        setTimeout(() => {
+          sizeHandler.requestSizeChange('2x1');
+        }, 500);
+      });
+
+      testOrientationFlip.addEventListener('click', () => {
+        // Set up: 3x1 with horizontal layout
+        items = SAMPLE_PRODUCTS.slice(0, 3).map(p => ({ ...p }));
+        sizeHandler.setItems(items);
+        sizeHandler.currentSize = '3x1';
+        sizeHandler.currentLayout = 'horizontal';
+        sizeSelect.value = '3x1';
+        layoutSelect.value = 'horizontal';
+        updateLayoutOptions('3x1');
+        updateItemsDisplay();
+        updatePreview();
+        addLogEntry('test_setup', { scenario: '3x1 with horizontal layout' });
+
+        // Now trigger the size change to 1x2
+        setTimeout(() => {
+          sizeHandler.requestSizeChange('1x2');
+        }, 500);
+      });
+
+      // Initial setup
+      updateLayoutOptions('2x2');
+      updateItemsDisplay();
+      updatePreview();
+      renderLog();
+    })();
+  </script>
+</body>
+</html>

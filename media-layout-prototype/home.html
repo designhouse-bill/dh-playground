@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Media Layout Component - Prototype</title>
+  <link rel="stylesheet" href="css/tokens.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: var(--color-gray-900);
+    }
+
+    .hero {
+      text-align: center;
+      padding: 80px 20px 60px;
+      color: white;
+    }
+
+    .hero__badge {
+      display: inline-block;
+      padding: 6px 16px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 24px;
+      backdrop-filter: blur(10px);
+    }
+
+    .hero__title {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .hero__subtitle {
+      font-size: 20px;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto 40px;
+      line-height: 1.5;
+    }
+
+    .hero__cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 32px;
+      background: white;
+      color: #667eea;
+      font-size: 18px;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      transition: all 0.2s ease;
+    }
+
+    .hero__cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero__cta svg {
+      transition: transform 0.2s;
+    }
+
+    .hero__cta:hover svg {
+      transform: translateX(4px);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+
+    .section {
+      margin-bottom: 60px;
+    }
+
+    .section__title {
+      font-size: 24px;
+      font-weight: 600;
+      color: white;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section__title-icon {
+      width: 32px;
+      height: 32px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Phase Cards */
+    .phases-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .phase-card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      transition: all 0.2s ease;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    .phase-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .phase-card__header {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .phase-card__number {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .phase-card__title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--color-gray-900);
+      margin-bottom: 4px;
+    }
+
+    .phase-card__file {
+      font-size: 13px;
+      color: var(--color-gray-500);
+      font-family: 'Monaco', 'Menlo', monospace;
+    }
+
+    .phase-card__description {
+      font-size: 14px;
+      color: var(--color-gray-600);
+      line-height: 1.6;
+    }
+
+    .phase-card__tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .phase-card__tag {
+      padding: 4px 10px;
+      background: var(--color-gray-100);
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--color-gray-600);
+    }
+
+    /* Demo Links */
+    .demos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .demo-card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      transition: all 0.2s ease;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    .demo-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .demo-card__preview {
+      height: 160px;
+      background: var(--color-gray-100);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .demo-card__preview-icon {
+      font-size: 48px;
+      opacity: 0.3;
+    }
+
+    .demo-card__badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      padding: 4px 10px;
+      background: #10b981;
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+
+    .demo-card__content {
+      padding: 20px;
+    }
+
+    .demo-card__title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--color-gray-900);
+      margin-bottom: 8px;
+    }
+
+    .demo-card__description {
+      font-size: 14px;
+      color: var(--color-gray-600);
+      line-height: 1.5;
+    }
+
+    /* Features Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .feature {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 20px;
+      color: white;
+    }
+
+    .feature__icon {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+
+    .feature__title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .feature__text {
+      font-size: 14px;
+      opacity: 0.8;
+      line-height: 1.4;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 14px;
+    }
+
+    .footer a {
+      color: white;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .hero__title {
+        font-size: 32px;
+      }
+
+      .hero__subtitle {
+        font-size: 16px;
+      }
+
+      .phases-grid,
+      .demos-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Hero Section -->
+  <section class="hero">
+    <span class="hero__badge">UI Prototype v1.0</span>
+    <h1 class="hero__title">Media Layout Component</h1>
+    <p class="hero__subtitle">
+      A flexible media layout system for arranging product images in promotional cards
+      with drag-and-drop, layout options, and detailed adjustments.
+    </p>
+    <a href="editor-mock.html" class="hero__cta">
+      Start Demo
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"/>
+      </svg>
+    </a>
+  </section>
+
+  <div class="container">
+    <!-- Demo Links -->
+    <section class="section">
+      <h2 class="section__title">
+        <span class="section__title-icon">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="white">
+            <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/>
+            <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/>
+          </svg>
+        </span>
+        Demo Pages
+      </h2>
+      <div class="demos-grid">
+        <a href="editor-mock.html" class="demo-card">
+          <div class="demo-card__preview">
+            <span class="demo-card__preview-icon">📝</span>
+            <span class="demo-card__badge">Recommended</span>
+          </div>
+          <div class="demo-card__content">
+            <h3 class="demo-card__title">Editor Integration</h3>
+            <p class="demo-card__description">
+              Full promotion editor mockup showing how the media layout component integrates into the existing workflow.
+            </p>
+          </div>
+        </a>
+
+        <a href="index.html" class="demo-card">
+          <div class="demo-card__preview">
+            <span class="demo-card__preview-icon">🧪</span>
+          </div>
+          <div class="demo-card__content">
+            <h3 class="demo-card__title">Component Tests</h3>
+            <p class="demo-card__description">
+              Test individual components: constraints, templates, preview, layout selector, media list, adjustments.
+            </p>
+          </div>
+        </a>
+
+        <a href="index.html#tab-modal" class="demo-card">
+          <div class="demo-card__preview">
+            <span class="demo-card__preview-icon">🎛️</span>
+          </div>
+          <div class="demo-card__content">
+            <h3 class="demo-card__title">Complete Modal</h3>
+            <p class="demo-card__description">
+              The full overlay modal with all components working together: layout, media list, preview, adjustments.
+            </p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="section">
+      <h2 class="section__title">
+        <span class="section__title-icon">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="white">
+            <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"/>
+          </svg>
+        </span>
+        Key Features
+      </h2>
+      <div class="features-grid">
+        <div class="feature">
+          <div class="feature__icon">🖱️</div>
+          <h3 class="feature__title">Drag & Drop</h3>
+          <p class="feature__text">Reorder images with intuitive drag and drop</p>
+        </div>
+        <div class="feature">
+          <div class="feature__icon">📐</div>
+          <h3 class="feature__title">7 Card Sizes</h3>
+          <p class="feature__text">From 1×1 to 3×3 with smart constraints</p>
+        </div>
+        <div class="feature">
+          <div class="feature__icon">🎨</div>
+          <h3 class="feature__title">Layout Options</h3>
+          <p class="feature__text">Grid, horizontal, vertical with emphasis</p>
+        </div>
+        <div class="feature">
+          <div class="feature__icon">⚡</div>
+          <h3 class="feature__title">Live Preview</h3>
+          <p class="feature__text">See changes instantly as you adjust</p>
+        </div>
+        <div class="feature">
+          <div class="feature__icon">🎚️</div>
+          <h3 class="feature__title">Fine Controls</h3>
+          <p class="feature__text">Position, scale, rotation, shadows</p>
+        </div>
+        <div class="feature">
+          <div class="feature__icon">♿</div>
+          <h3 class="feature__title">Accessible</h3>
+          <p class="feature__text">Keyboard nav, ARIA, screen readers</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Development Phases -->
+    <section class="section">
+      <h2 class="section__title">
+        <span class="section__title-icon">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="white">
+            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"/>
+          </svg>
+        </span>
+        Development Phases
+      </h2>
+      <div class="phases-grid">
+        <div class="phase-card">
+          <div class="phase-card__header">
+            <span class="phase-card__number">1</span>
+            <div>
+              <h3 class="phase-card__title">Constraint System</h3>
+              <span class="phase-card__file">constraints.js</span>
+            </div>
+          </div>
+          <p class="phase-card__description">
+            Card size constraints defining max images, allowed layouts, and default configurations for each size.
+          </p>
+          <div class="phase-card__tags">
+            <span class="phase-card__tag">7 Sizes</span>
+            <span class="phase-card__tag">3 Layouts</span>
+            <span class="phase-card__tag">Validation</span>
+          </div>
+        </div>
+
+        <div class="phase-card">
+          <div class="phase-card__header">
+            <span class="phase-card__number">2</span>
+            <div>
+              <h3 class="phase-card__title">Template Generator</h3>
+              <span class="phase-card__file">templates.js</span>
+            </div>
+          </div>
+          <p class="phase-card__description">
+            CSS Grid template generation for different layout types, emphasis options, and item placements.
+          </p>
+          <div class="phase-card__tags">
+            <span class="phase-card__tag">CSS Grid</span>
+            <span class="phase-card__tag">Dynamic</span>
+          </div>
+        </div>
+
+        <div class="phase-card">
+          <div class="phase-card__header">
+            <span class="phase-card__number">3</span>
+            <div>
+              <h3 class="phase-card__title">Preview Renderer</h3>
+              <span class="phase-card__file">preview.js</span>
+            </div>
+          </div>
+          <p class="phase-card__description">
+            Visual preview component with image rendering, selection, click handling, and style application.
+          </p>
+          <div class="phase-card__tags">
+            <span class="phase-card__tag">Real-time</span>
+            <span class="phase-card__tag">Interactive</span>
+          </div>
+        </div>
+
+        <div class="phase-card">
+          <div class="phase-card__header">
+            <span class="phase-card__number">4</span>
+            <div>
+              <h3 class="phase-card__title">Layout Selector</h3>
+              <span class="phase-card__file">layout-selector.js</span>
+            </div>
+          </div>
+          <p class="phase-card__description">
+            UI for selecting layout type, emphasis, direction with visual previews and constraint enforcement.
+          </p>
+          <div class="phase-card__tags">
+            <span class="phase-card__tag">Visual</span>
+            <span class="phase-card__tag">Constrained</span>
+          </div>
+        </div>
+
+        <div class="phase-card">
+          <div class="phase-card__header">
+            <span class="phase-card__number">5</span>
+            <div>
+              <h3 class="phase-card__title">Media List</h3>
+              <span class="phase-card__file">media-list.js</span>
+            </div>
+          </div>
+          <p class="phase-card__description">
+            Draggable list with selection, reordering, add/remove, keyboard navigation, and ARIA support.
+          </p>
+          <div class="phase-card__tags">
+            <span class="phase-card__tag">Drag & Drop</span>
+            <span class="phase-card__tag">Keyboard</span>
+          </div>
+        </div>
+
+        <div class="phase-card">
+          <div class="phase-card__header">
+            <span class="phase-card__number">6</span>
+            <div>
+              <h3 class="phase-card__title">Adjustment Panel</h3>
+              <span class="phase-card__file">adjustment-panel.js</span>
+            </div>
+          </div>
+          <p class="phase-card__description">
+            Fine-grained controls for position, transform, stacking, shadows, and opacity with real-time preview.
+          </p>
+          <div class="phase-card__tags">
+            <span class="phase-card__tag">Sliders</span>
+            <span class="phase-card__tag">Presets</span>
+          </div>
+        </div>
+
+        <div class="phase-card">
+          <div class="phase-card__header">
+            <span class="phase-card__number">7</span>
+            <div>
+              <h3 class="phase-card__title">Overlay Modal</h3>
+              <span class="phase-card__file">overlay-modal.js</span>
+            </div>
+          </div>
+          <p class="phase-card__description">
+            Complete modal combining all components with central state management and save/cancel workflow.
+          </p>
+          <div class="phase-card__tags">
+            <span class="phase-card__tag">Integration</span>
+            <span class="phase-card__tag">State</span>
+          </div>
+        </div>
+
+        <div class="phase-card">
+          <div class="phase-card__header">
+            <span class="phase-card__number">8</span>
+            <div>
+              <h3 class="phase-card__title">Size Change Handler</h3>
+              <span class="phase-card__file">size-change-handler.js</span>
+            </div>
+          </div>
+          <p class="phase-card__description">
+            Workflows for card size transitions: image selection modal, layout auto-switching, config storage.
+          </p>
+          <div class="phase-card__tags">
+            <span class="phase-card__tag">Transitions</span>
+            <span class="phase-card__tag">Toast</span>
+          </div>
+        </div>
+
+        <div class="phase-card">
+          <div class="phase-card__header">
+            <span class="phase-card__number">9</span>
+            <div>
+              <h3 class="phase-card__title">Editor Integration</h3>
+              <span class="phase-card__file">editor-mock.html</span>
+            </div>
+          </div>
+          <p class="phase-card__description">
+            Mockup of promotion editor with Hero Media section, inline controls, and modal integration.
+          </p>
+          <div class="phase-card__tags">
+            <span class="phase-card__tag">Mockup</span>
+            <span class="phase-card__tag">UX Flow</span>
+          </div>
+        </div>
+
+        <div class="phase-card">
+          <div class="phase-card__header">
+            <span class="phase-card__number">10</span>
+            <div>
+              <h3 class="phase-card__title">Polish & Docs</h3>
+              <span class="phase-card__file">README.md</span>
+            </div>
+          </div>
+          <p class="phase-card__description">
+            Edge cases, animations, loading states, error handling, accessibility audit, and documentation.
+          </p>
+          <div class="phase-card__tags">
+            <span class="phase-card__tag">A11y</span>
+            <span class="phase-card__tag">Animation</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>Media Layout Component Prototype</p>
+    <p style="margin-top: 8px; opacity: 0.7;">
+      <a href="README.md">View Documentation</a>
+    </p>
+  </footer>
+</body>
+</html>

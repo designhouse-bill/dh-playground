@@ -1,0 +1,467 @@
+/**
+ * Preview Renderer
+ * Renders images in a CSS Grid layout based on template configuration
+ */
+
+// Aspect ratios for card sizes
+const CARD_ASPECT_RATIOS = {
+  '1x1': '1 / 1',
+  '2x1': '2 / 1',
+  '1x2': '1 / 2',
+  '2x2': '1 / 1',
+  '3x1': '3 / 1',
+  '3x2': '3 / 2',
+  '3x3': '1 / 1'
+};
+
+// Shadow presets
+const SHADOW_PRESETS = {
+  none: 'none',
+  subtle: '0 1px 2px rgba(0, 0, 0, 0.05)',
+  medium: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
+  strong: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)',
+  dramatic: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+};
+
+// Default sample images
+const DEFAULT_IMAGES = [
+  'https://via.placeholder.com/400x600/e8f5e9/2e7d32?text=Product+1',
+  'https://via.placeholder.com/400x600/e3f2fd/1565c0?text=Product+2',
+  'https://via.placeholder.com/400x600/fff3e0/ef6c00?text=Product+3',
+  'https://via.placeholder.com/400x600/fce4ec/c2185b?text=Product+4',
+  'https://via.placeholder.com/400x600/f3e5f5/7b1fa2?text=Product+5'
+];
+
+/**
+ * PreviewRenderer class
+ * Renders and manages the layout preview
+ */
+class PreviewRenderer {
+  constructor(options = {}) {
+    this.containerEl = null;
+    this.previewEl = null;
+    this.config = {
+      cardSize: '2x2',
+      imageCount: 3,
+      layoutType: 'grid',
+      emphasis: 'equal',
+      direction: 'normal',
+      images: DEFAULT_IMAGES,
+      objectFit: 'cover',
+      gap: 4,
+      ...options
+    };
+
+    // Item adjustments (per-item customizations)
+    this.itemAdjustments = {};
+
+    // Callbacks
+    this.onItemClick = options.onItemClick || null;
+    this.onItemSelect = options.onItemSelect || null;
+
+    // State
+    this.selectedItemIndex = null;
+  }
+
+  /**
+   * Get aspect ratio CSS value for a card size
+   * @param {string} cardSize
+   * @returns {string}
+   */
+  getAspectRatio(cardSize) {
+    return CARD_ASPECT_RATIOS[cardSize] || '1 / 1';
+  }
+
+  /**
+   * Build transform string from adjustments
+   * @param {Object} adjustments
+   * @returns {string}
+   */
+  buildTransform(adjustments) {
+    const transforms = [];
+
+    if (adjustments.offsetX || adjustments.offsetY) {
+      const x = adjustments.offsetX || 0;
+      const y = adjustments.offsetY || 0;
+      transforms.push(`translate(${x}px, ${y}px)`);
+    }
+
+    if (adjustments.scale && adjustments.scale !== 1) {
+      transforms.push(`scale(${adjustments.scale})`);
+    }
+
+    if (adjustments.rotation) {
+      transforms.push(`rotate(${adjustments.rotation}deg)`);
+    }
+
+    return transforms.length > 0 ? transforms.join(' ') : 'none';
+  }
+
+  /**
+   * Get shadow value from preset or custom
+   * @param {string|Object} shadow
+   * @returns {string}
+   */
+  getShadowValue(shadow) {
+    if (!shadow) return 'none';
+    if (typeof shadow === 'string') {
+      return SHADOW_PRESETS[shadow] || shadow;
+    }
+    return shadow;
+  }
+
+  /**
+   * Create the preview container element
+   * @returns {HTMLElement}
+   */
+  createPreviewElement() {
+    const preview = document.createElement('div');
+    preview.className = 'layout-preview';
+    preview.setAttribute('data-card-size', this.config.cardSize);
+    return preview;
+  }
+
+  /**
+   * Create a preview item element
+   * @param {number} index
+   * @param {string} imageSrc
+   * @param {Object} placement
+   * @returns {HTMLElement}
+   */
+  createItemElement(index, imageSrc, placement) {
+    const item = document.createElement('div');
+    item.className = 'preview-item';
+    item.setAttribute('data-index', index);
+
+    // Apply grid placement
+    if (placement.gridArea) {
+      item.style.gridArea = placement.gridArea;
+    } else {
+      if (placement.gridColumn) item.style.gridColumn = placement.gridColumn;
+      if (placement.gridRow) item.style.gridRow = placement.gridRow;
+    }
+
+    // Create image element
+    const img = document.createElement('img');
+    img.src = imageSrc;
+    img.alt = `Image ${index + 1}`;
+    img.className = 'preview-item__image';
+    img.draggable = false;
+
+    // Apply object-fit
+    img.style.objectFit = this.config.objectFit;
+
+    item.appendChild(img);
+
+    // Apply item adjustments if any
+    const adjustments = this.itemAdjustments[index];
+    if (adjustments) {
+      this.applyItemAdjustments(item, img, adjustments);
+    }
+
+    // Add click handler
+    item.addEventListener('click', (e) => {
+      this.handleItemClick(index, e);
+    });
+
+    return item;
+  }
+
+  /**
+   * Apply adjustments to an item
+   * @param {HTMLElement} itemEl
+   * @param {HTMLElement} imgEl
+   * @param {Object} adjustments
+   */
+  applyItemAdjustments(itemEl, imgEl, adjustments) {
+    // Transform (on image for position/scale/rotation)
+    const transform = this.buildTransform(adjustments);
+    if (transform !== 'none') {
+      imgEl.style.transform = transform;
+    }
+
+    // Opacity
+    if (adjustments.opacity !== undefined && adjustments.opacity !== 1) {
+      itemEl.style.opacity = adjustments.opacity;
+    }
+
+    // Box shadow
+    if (adjustments.shadow) {
+      itemEl.style.boxShadow = this.getShadowValue(adjustments.shadow);
+    }
+
+    // Z-index
+    if (adjustments.zIndex !== undefined) {
+      itemEl.style.zIndex = adjustments.zIndex;
+    }
+
+    // Object fit override
+    if (adjustments.objectFit) {
+      imgEl.style.objectFit = adjustments.objectFit;
+    }
+  }
+
+  /**
+   * Handle item click
+   * @param {number} index
+   * @param {Event} event
+   */
+  handleItemClick(index, event) {
+    // Update selection state
+    const previousSelection = this.selectedItemIndex;
+    this.selectedItemIndex = index;
+
+    // Update visual selection
+    if (this.previewEl) {
+      const items = this.previewEl.querySelectorAll('.preview-item');
+      items.forEach((item, i) => {
+        item.classList.toggle('preview-item--selected', i === index);
+      });
+    }
+
+    // Log to console
+    console.log(`Preview item ${index + 1} clicked`, {
+      index,
+      imageSrc: this.config.images[index],
+      adjustments: this.itemAdjustments[index] || {}
+    });
+
+    // Call callbacks
+    if (this.onItemClick) {
+      this.onItemClick(index, event);
+    }
+
+    if (this.onItemSelect && previousSelection !== index) {
+      this.onItemSelect(index, previousSelection);
+    }
+  }
+
+  /**
+   * Generate the grid template
+   * @returns {Object}
+   */
+  generateTemplate() {
+    return generateGridTemplate({
+      cardSize: this.config.cardSize,
+      imageCount: this.config.imageCount,
+      layoutType: this.config.layoutType,
+      emphasis: this.config.emphasis,
+      direction: this.config.direction
+    });
+  }
+
+  /**
+   * Apply grid styles to preview element
+   * @param {Object} template
+   */
+  applyGridStyles(template) {
+    if (!this.previewEl || !template.isValid) return;
+
+    this.previewEl.style.display = 'grid';
+    this.previewEl.style.gridTemplateColumns = template.gridTemplateColumns;
+    this.previewEl.style.gridTemplateRows = template.gridTemplateRows;
+    this.previewEl.style.gap = `${this.config.gap}px`;
+    this.previewEl.style.aspectRatio = this.getAspectRatio(this.config.cardSize);
+
+    if (template.gridTemplateAreas) {
+      this.previewEl.style.gridTemplateAreas = template.gridTemplateAreas;
+    } else {
+      this.previewEl.style.gridTemplateAreas = '';
+    }
+  }
+
+  /**
+   * Render the preview
+   * @param {HTMLElement} containerEl - Container to render into
+   * @param {Object} config - Optional config override
+   * @returns {Object} Result with success status and any error
+   */
+  render(containerEl, config = {}) {
+    // Update container reference
+    this.containerEl = containerEl;
+
+    // Merge config
+    this.config = { ...this.config, ...config };
+
+    // Generate template
+    const template = this.generateTemplate();
+
+    if (!template.isValid) {
+      this.renderError(template.error);
+      return { success: false, error: template.error };
+    }
+
+    // Create or update preview element
+    if (!this.previewEl) {
+      this.previewEl = this.createPreviewElement();
+    }
+
+    // Clear existing content
+    this.previewEl.innerHTML = '';
+
+    // Update card size attribute
+    this.previewEl.setAttribute('data-card-size', this.config.cardSize);
+
+    // Apply grid styles
+    this.applyGridStyles(template);
+
+    // Create items
+    const imageCount = Math.min(this.config.imageCount, this.config.images.length);
+    template.itemPlacements.forEach((placement, i) => {
+      if (i < imageCount) {
+        const imageSrc = this.config.images[i];
+        const itemEl = this.createItemElement(i, imageSrc, placement);
+        this.previewEl.appendChild(itemEl);
+      }
+    });
+
+    // Add to container if not already there
+    if (!this.containerEl.contains(this.previewEl)) {
+      this.containerEl.innerHTML = '';
+      this.containerEl.appendChild(this.previewEl);
+    }
+
+    return { success: true, template };
+  }
+
+  /**
+   * Render error state
+   * @param {string} errorMessage
+   */
+  renderError(errorMessage) {
+    if (!this.containerEl) return;
+
+    this.containerEl.innerHTML = `
+      <div class="layout-preview layout-preview--error">
+        <div class="layout-preview__error">
+          <span class="layout-preview__error-icon">!</span>
+          <span class="layout-preview__error-message">${errorMessage}</span>
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * Update configuration and re-render
+   * @param {Object} newConfig
+   */
+  update(newConfig) {
+    if (this.containerEl) {
+      this.render(this.containerEl, newConfig);
+    }
+  }
+
+  /**
+   * Set adjustment for a specific item
+   * @param {number} index
+   * @param {Object} adjustments
+   */
+  setItemAdjustment(index, adjustments) {
+    this.itemAdjustments[index] = {
+      ...(this.itemAdjustments[index] || {}),
+      ...adjustments
+    };
+
+    // Re-render if already rendered
+    if (this.containerEl && this.previewEl) {
+      this.render(this.containerEl);
+    }
+  }
+
+  /**
+   * Clear adjustment for a specific item
+   * @param {number} index
+   */
+  clearItemAdjustment(index) {
+    delete this.itemAdjustments[index];
+
+    if (this.containerEl && this.previewEl) {
+      this.render(this.containerEl);
+    }
+  }
+
+  /**
+   * Clear all item adjustments
+   */
+  clearAllAdjustments() {
+    this.itemAdjustments = {};
+
+    if (this.containerEl && this.previewEl) {
+      this.render(this.containerEl);
+    }
+  }
+
+  /**
+   * Get current configuration
+   * @returns {Object}
+   */
+  getConfig() {
+    return { ...this.config };
+  }
+
+  /**
+   * Get item adjustments
+   * @param {number} index - Optional, returns specific item or all
+   * @returns {Object}
+   */
+  getItemAdjustments(index) {
+    if (index !== undefined) {
+      return this.itemAdjustments[index] || {};
+    }
+    return { ...this.itemAdjustments };
+  }
+
+  /**
+   * Set images array
+   * @param {string[]} images
+   */
+  setImages(images) {
+    this.config.images = images;
+    if (this.containerEl) {
+      this.render(this.containerEl);
+    }
+  }
+
+  /**
+   * Get selected item index
+   * @returns {number|null}
+   */
+  getSelectedIndex() {
+    return this.selectedItemIndex;
+  }
+
+  /**
+   * Clear selection
+   */
+  clearSelection() {
+    this.selectedItemIndex = null;
+    if (this.previewEl) {
+      this.previewEl.querySelectorAll('.preview-item').forEach(item => {
+        item.classList.remove('preview-item--selected');
+      });
+    }
+  }
+
+  /**
+   * Destroy the renderer and clean up
+   */
+  destroy() {
+    if (this.previewEl && this.previewEl.parentNode) {
+      this.previewEl.parentNode.removeChild(this.previewEl);
+    }
+    this.previewEl = null;
+    this.containerEl = null;
+    this.itemAdjustments = {};
+    this.selectedItemIndex = null;
+  }
+}
+
+// Export for use in other modules (Node.js)
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    PreviewRenderer,
+    CARD_ASPECT_RATIOS,
+    SHADOW_PRESETS,
+    DEFAULT_IMAGES
+  };
+}

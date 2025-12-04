@@ -869,19 +869,11 @@
       }
     }
 
-    // Get percentile bar color
-    const getPercentileBarColor = (percentile) => {
-      if (percentile >= 90) return 'linear-gradient(90deg, #22c55e 0%, #4ade80 100%)';
-      if (percentile >= 70) return 'linear-gradient(90deg, #84cc16 0%, #a3e635 100%)';
-      if (percentile >= 50) return 'linear-gradient(90deg, #eab308 0%, #facc15 100%)';
-      return 'linear-gradient(90deg, #ef4444 0%, #f87171 100%)';
-    };
-
-    // Get percentile text color
-    const getPercentileTextColor = (percentile) => {
-      if (percentile >= 70) return '#16a34a';
-      if (percentile >= 50) return '#ca8a04';
-      return '#dc2626';
+    // Get percentile variant class (high/medium/low)
+    const getPercentileVariant = (percentile) => {
+      if (percentile >= 75) return 'high';
+      if (percentile >= 50) return 'medium';
+      return 'low';
     };
 
     elements.detailContent.innerHTML = `
@@ -897,12 +889,12 @@
         </div>
 
         <div class="detail-percentile-row">
-          <img src="./assets/chart-bar.svg" alt="Percentile" class="percentile-icon">
-          <span class="percentile-value" style="color: ${getPercentileTextColor(promo.percentile)}">${promo.percentile}%</span>
-          <div class="percentile-bar">
-            <div class="percentile-bar-fill" style="width: ${promo.percentile}%; background: ${getPercentileBarColor(promo.percentile)};"></div>
+          <div class="percentile-bar percentile-bar--${getPercentileVariant(promo.percentile)}">
+            <div class="percentile-bar-fill percentile-bar-fill--${getPercentileVariant(promo.percentile)}" style="width: ${promo.percentile}%;"></div>
           </div>
           <span class="percentile-score">${promo.compositeScore}</span>
+          <img src="./assets/chart-bar.svg" alt="Percentile" class="percentile-icon">
+          <span class="percentile-value percentile-value--${getPercentileVariant(promo.percentile)}">${promo.percentile}%</span>
         </div>
 
         <div class="detail-kpis">

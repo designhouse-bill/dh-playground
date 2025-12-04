@@ -34,15 +34,75 @@ const DashboardModals = (() => {
      DATE PICKER MODAL
      ============================================ */
 
-  function openDatePicker() {
+  // Track which context (A or B) the modal is targeting for compare mode
+  let _modalTarget = null; // 'A', 'B', or null for base mode
+
+  // Track selected year for week filtering
+  let _selectedYear = new Date().getFullYear();
+
+  /**
+   * Get available years from the weeks data
+   */
+  function getAvailableYears() {
+    const weeks = core.getExtendedWeeks();
+    const years = new Set();
+
+    weeks.forEach(week => {
+      // Extract year from dateRange (e.g., "Nov 25 - Dec 1, 2025")
+      const match = week.dateRange.match(/\d{4}/);
+      if (match) {
+        years.add(parseInt(match[0], 10));
+      }
+    });
+
+    // Return sorted years in descending order (most recent first)
+    return Array.from(years).sort((a, b) => b - a);
+  }
+
+  /**
+   * Change selected year and re-render week list
+   */
+  function selectYear(year) {
+    _selectedYear = parseInt(year, 10);
+    const yearSelect = document.getElementById('week-year-select');
+    if (yearSelect) yearSelect.value = _selectedYear;
+    renderWeekList();
+  }
+
+  function openDatePicker(target = null) {
+    _modalTarget = target;
     const modal = elements.datePickerModal || document.getElementById('date-picker-modal');
     if (modal) {
       modal.classList.add('active');
       switchDateTab('week');
       const searchInput = document.getElementById('week-search-input');
       if (searchInput) searchInput.value = '';
+
+      // Reset to current year and render
+      _selectedYear = new Date().getFullYear();
+      renderYearSelector();
       renderWeekList();
     }
+  }
+
+  /**
+   * Render year selector dropdown
+   */
+  function renderYearSelector() {
+    const container = document.getElementById('week-year-selector');
+    if (!container) return;
+
+    const years = getAvailableYears();
+
+    const html = `
+      <select id="week-year-select" class="year-select" onchange="DashboardModals.selectYear(this.value)">
+        ${years.map(year => `
+          <option value="${year}" ${year === _selectedYear ? 'selected' : ''}>${year}</option>
+        `).join('')}
+      </select>
+    `;
+
+    container.innerHTML = html;
   }
 
   function closeDatePicker() {
@@ -81,12 +141,22 @@ const DashboardModals = (() => {
     const weeks = core.getExtendedWeeks();
     const query = searchQuery.toLowerCase().trim();
 
-    const filteredWeeks = query
-      ? weeks.filter(week =>
-          week.label.toLowerCase().includes(query) ||
-          week.dateRange.toLowerCase().includes(query)
-        )
-      : weeks;
+    // Filter by selected year first
+    let filteredWeeks = weeks.filter(week => {
+      const match = week.dateRange.match(/\d{4}/);
+      return match && parseInt(match[0], 10) === _selectedYear;
+    });
+
+    // Then filter by search query if provided
+    if (query) {
+      filteredWeeks = filteredWeeks.filter(week =>
+        week.label.toLowerCase().includes(query) ||
+        week.dateRange.toLowerCase().includes(query)
+      );
+    }
+
+    // Sort by week number descending (most recent first)
+    filteredWeeks.sort((a, b) => b.num - a.num);
 
     const weeksHTML = filteredWeeks.map(week => {
       const isSelected = week.id === state.selectedWeekId;
@@ -105,12 +175,17 @@ const DashboardModals = (() => {
       `;
     }).join('');
 
-    weekList.innerHTML = weeksHTML || '<div class="week-option" style="text-align:center;color:var(--color-text-tertiary);">No weeks found</div>';
+    weekList.innerHTML = weeksHTML || '<div class="week-option" style="text-align:center;color:var(--color-text-tertiary);">No weeks found for ' + _selectedYear + '</div>';
   }
 
   function applyDateSelection() {
     const customTab = document.querySelector('.date-picker-tab[data-tab="custom"]');
     const isCustomRange = customTab && customTab.classList.contains('active');
+
+    // Get the week info
+    let weekId = state.selectedWeekId;
+    let weekLabel = '';
+    let weekRange = '';
 
     if (isCustomRange) {
       const startDate = document.getElementById('custom-start-date')?.value;
@@ -120,18 +195,44 @@ const DashboardModals = (() => {
         const start = new Date(startDate);
         const end = new Date(endDate);
         const options = { month: 'short', day: 'numeric' };
-        const formattedRange = `${start.toLocaleDateString('en-US', options)} - ${end.toLocaleDateString('en-US', options)}, ${end.getFullYear()}`;
-
-        const dateCard = elements.dateSelector || document.getElementById('date-selector');
-        if (dateCard) {
-          const valueEl = dateCard.querySelector('.card-value');
-          const subEl = dateCard.querySelector('.card-sub');
-          if (valueEl) valueEl.textContent = 'Custom Range';
-          if (subEl) subEl.textContent = formattedRange;
-        }
-
-        state.selectedWeekId = 'custom';
+        weekRange = `${start.toLocaleDateString('en-US', options)} - ${end.toLocaleDateString('en-US', options)}, ${end.getFullYear()}`;
+        weekLabel = 'Custom Range';
+        weekId = 'custom';
       }
+    } else {
+      const week = typeof MockData !== 'undefined' ? MockData.weeks.find(w => w.id === state.selectedWeekId) : null;
+      if (week) {
+        weekLabel = week.label;
+        weekRange = week.dateRange;
+      }
+    }
+
+    // Check if we're in compare mode (A or B target)
+    if (_modalTarget === 'A' || _modalTarget === 'B') {
+      // Dispatch compare-specific event
+      document.dispatchEvent(new CustomEvent('compare:dateSelected', {
+        detail: {
+          target: _modalTarget,
+          weekId: weekId,
+          weekLabel: weekLabel,
+          weekRange: weekRange
+        }
+      }));
+      closeDatePicker();
+      _modalTarget = null;
+      return;
+    }
+
+    // Base mode behavior
+    if (isCustomRange) {
+      const dateCard = elements.dateSelector || document.getElementById('date-selector');
+      if (dateCard) {
+        const valueEl = dateCard.querySelector('.card-value');
+        const subEl = dateCard.querySelector('.card-sub');
+        if (valueEl) valueEl.textContent = weekLabel;
+        if (subEl) subEl.textContent = weekRange;
+      }
+      state.selectedWeekId = 'custom';
     } else {
       core.updateDateDisplay();
     }
@@ -166,7 +267,8 @@ const DashboardModals = (() => {
      ENTITY SELECTOR MODAL
      ============================================ */
 
-  function openEntitySelector() {
+  function openEntitySelector(target = null) {
+    _modalTarget = target;
     const modal = elements.entitySelectorModal || document.getElementById('entity-selector-modal');
     if (modal) {
       modal.classList.add('active');
@@ -447,6 +549,24 @@ const DashboardModals = (() => {
   }
 
   function applyEntitySelection() {
+    // Check if we're in compare mode (A or B target)
+    if (_modalTarget === 'A' || _modalTarget === 'B') {
+      // Dispatch compare-specific event
+      document.dispatchEvent(new CustomEvent('compare:entitySelected', {
+        detail: {
+          target: _modalTarget,
+          entityId: state.selectedEntityId,
+          entityName: state.currentEntity?.name || '',
+          entityLevel: state.currentEntity?.level || '',
+          entityCount: state.currentEntity?.count || 0
+        }
+      }));
+      closeEntitySelector();
+      _modalTarget = null;
+      return;
+    }
+
+    // Base mode behavior
     core.updateEntityDisplay();
     closeEntitySelector();
     refreshDataForEntityChange();
@@ -601,6 +721,7 @@ const DashboardModals = (() => {
     switchDateTab,
     filterWeeks,
     selectWeek,
+    selectYear,
     applyDateSelection,
 
     // Entity Selector
@@ -630,14 +751,14 @@ const DashboardModals = (() => {
 window.DashboardModals = DashboardModals;
 
 // Legacy function exports for onclick handlers in HTML
-window.openDatePicker = () => DashboardModals.openDatePicker();
+window.openDatePicker = (target) => DashboardModals.openDatePicker(target);
 window.closeDatePicker = () => DashboardModals.closeDatePicker();
 window.switchDateTab = (tab) => DashboardModals.switchDateTab(tab);
 window.filterWeeks = (val) => DashboardModals.filterWeeks(val);
 window.selectWeek = (id) => DashboardModals.selectWeek(id);
 window.applyDateSelection = () => DashboardModals.applyDateSelection();
 
-window.openEntitySelector = () => DashboardModals.openEntitySelector();
+window.openEntitySelector = (target) => DashboardModals.openEntitySelector(target);
 window.closeEntitySelector = () => DashboardModals.closeEntitySelector();
 window.switchEntityTab = (tab) => DashboardModals.switchEntityTab(tab);
 window.filterEntities = (val) => DashboardModals.filterEntities(val);

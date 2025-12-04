@@ -52,6 +52,35 @@ const StateManager = (() => {
       result.filterType = params.get('filter');
     }
 
+    // Compare mode URL params
+    if (params.has('layer')) {
+      result.compareLayer = params.get('layer');
+    }
+    if (params.has('a_week')) {
+      result.aWeekId = params.get('a_week');
+    }
+    if (params.has('a_entity')) {
+      result.aEntityId = params.get('a_entity');
+    }
+    if (params.has('a_category')) {
+      result.aCategoryId = params.get('a_category');
+    }
+    if (params.has('a_promotion')) {
+      result.aPromotionId = params.get('a_promotion');
+    }
+    if (params.has('b_week')) {
+      result.bWeekId = params.get('b_week');
+    }
+    if (params.has('b_entity')) {
+      result.bEntityId = params.get('b_entity');
+    }
+    if (params.has('b_category')) {
+      result.bCategoryId = params.get('b_category');
+    }
+    if (params.has('b_promotion')) {
+      result.bPromotionId = params.get('b_promotion');
+    }
+
     log('Parsed URL params:', result);
     return result;
   }
@@ -97,6 +126,9 @@ const StateManager = (() => {
         // View preferences
         promoViewMode: state.promoViewMode,
         moreDataEnabled: state.moreDataEnabled,
+
+        // Compare mode state
+        compareMode: state.compareMode || {},
 
         // Timestamp for debugging
         savedAt: new Date().toISOString(),
@@ -221,6 +253,35 @@ const StateManager = (() => {
     }
     if (params.filter) {
       url.searchParams.set('filter', params.filter);
+    }
+
+    // Compare mode params
+    if (params.layer) {
+      url.searchParams.set('layer', params.layer);
+    }
+    if (params.aWeekId) {
+      url.searchParams.set('a_week', params.aWeekId);
+    }
+    if (params.aEntityId) {
+      url.searchParams.set('a_entity', params.aEntityId);
+    }
+    if (params.aCategoryId) {
+      url.searchParams.set('a_category', params.aCategoryId);
+    }
+    if (params.aPromotionId) {
+      url.searchParams.set('a_promotion', params.aPromotionId);
+    }
+    if (params.bWeekId) {
+      url.searchParams.set('b_week', params.bWeekId);
+    }
+    if (params.bEntityId) {
+      url.searchParams.set('b_entity', params.bEntityId);
+    }
+    if (params.bCategoryId) {
+      url.searchParams.set('b_category', params.bCategoryId);
+    }
+    if (params.bPromotionId) {
+      url.searchParams.set('b_promotion', params.bPromotionId);
     }
 
     return url.toString();

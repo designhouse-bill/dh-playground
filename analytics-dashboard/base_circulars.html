@@ -150,12 +150,12 @@
             <span class="toggle-label">More Data</span>
           </div>
           <div class="panel-header__center">
-            <span class="showing-count">Displaying <span id="store-showing-count">0</span></span>
+            <span class="showing-count">Total: <span id="store-showing-count">0</span></span>
             <div class="topn-selector">
               <select id="topn-select" class="topn-select" onchange="changeTopN(this.value)">
-                <option value="25">Top 25</option>
+                <option value="25" selected>Top 25</option>
                 <option value="50">Top 50</option>
-                <option value="100" selected>Top 100</option>
+                <option value="100">Top 100</option>
                 <option value="250">Top 250</option>
                 <option value="all">All</option>
               </select>
@@ -265,9 +265,12 @@
         </div>
 
         <div class="date-tab-content active" id="week-tab-content">
-          <div class="week-search">
-            <span class="material-symbols-outlined">search</span>
-            <input type="text" id="week-search-input" placeholder="Search weeks..." oninput="filterWeeks(this.value)">
+          <div class="week-search-row">
+            <div class="week-search">
+              <span class="material-symbols-outlined">search</span>
+              <input type="text" id="week-search-input" placeholder="Search weeks..." oninput="filterWeeks(this.value)">
+            </div>
+            <div id="week-year-selector"></div>
           </div>
           <div class="week-list" id="week-list">
             <!-- Populated by JavaScript -->

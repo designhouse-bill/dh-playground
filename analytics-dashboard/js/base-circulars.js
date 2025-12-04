@@ -18,7 +18,7 @@
   let paginationState = {
     currentPage: 1,
     rowsPerPage: 25,
-    topN: 100
+    topN: 25
   };
 
   // Stores data
@@ -39,7 +39,7 @@
     state.activeStore = state.activeStore || null;
     state.storeSortColumn = state.storeSortColumn || 'compositeScore';
     state.storeSortDirection = state.storeSortDirection || 'desc';
-    state.topN = state.topN || 100;
+    state.topN = state.topN || 25;
 
     // Sync pagination state
     paginationState.topN = state.topN;

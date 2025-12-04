@@ -11,6 +11,16 @@
   let state = null;
   let elements = null;
 
+  // Pagination state
+  let paginationState = {
+    currentPage: 1,
+    rowsPerPage: 25,
+    topN: 25
+  };
+
+  // All promotions data (before pagination)
+  let allDisplayPromotions = [];
+
   /**
    * Initialize the promotions page
    */
@@ -54,10 +64,15 @@
     // Check for category filter from URL
     handleUrlCategoryFilter();
 
+    // Initialize topN state
+    state.topN = state.topN || 25;
+    paginationState.topN = state.topN;
+
     // Render initial views
     renderCategories();
     renderPromotions();
     updateCounts();
+    updatePaginationUI();
 
     // Render filter chips
     if (window.DashboardFilters) {
@@ -70,6 +85,12 @@
     // Listen for data refresh events
     document.addEventListener('dashboard:dataRefresh', handleDataRefresh);
     document.addEventListener('dashboard:filterApply', handleFilterApply);
+
+    // Restore TopN select value
+    const topNSelect = document.getElementById('topn-select');
+    if (topNSelect) {
+      topNSelect.value = state.topN === 'all' ? 'all' : state.topN.toString();
+    }
 
     console.log('[Promotions] Page initialized');
   }
@@ -455,6 +476,40 @@
   }
 
   /**
+   * Get current page of data with TopN and pagination applied
+   */
+  function getPageData() {
+    let promos = [...allDisplayPromotions];
+
+    // Apply TopN limit
+    const topN = paginationState.topN;
+    if (topN !== 'all' && typeof topN === 'number') {
+      promos = promos.slice(0, topN);
+    }
+
+    const totalRecords = promos.length;
+    const totalPages = Math.ceil(totalRecords / paginationState.rowsPerPage);
+
+    // Ensure current page is valid
+    if (paginationState.currentPage > totalPages) {
+      paginationState.currentPage = Math.max(1, totalPages);
+    }
+
+    const start = (paginationState.currentPage - 1) * paginationState.rowsPerPage;
+    const end = start + paginationState.rowsPerPage;
+    const pageData = promos.slice(start, end);
+
+    return {
+      data: pageData,
+      total: totalRecords,
+      start: start + 1,
+      end: Math.min(end, totalRecords),
+      currentPage: paginationState.currentPage,
+      totalPages: totalPages
+    };
+  }
+
+  /**
    * Render promotion table view
    */
   function renderPromotionTable(maxValues) {
@@ -465,29 +520,38 @@
     let displayPromotions = applyColumnFilters(state.filteredPromotions);
     displayPromotions = core.sortPromotions(displayPromotions, state.sortColumn, state.sortDirection);
 
-    // Update showing count
+    // Store all promotions for pagination
+    allDisplayPromotions = displayPromotions;
+
+    // Get page data with TopN and pagination applied
+    const pageInfo = getPageData();
+    const pagePromotions = pageInfo.data;
+
+    // Update showing count (shows TopN-limited total, not full total)
     const showingCount = document.getElementById('promo-showing-count');
     if (showingCount) {
-      showingCount.textContent = displayPromotions.length;
+      showingCount.textContent = pageInfo.total;
     }
 
-    if (displayPromotions.length === 0) {
+    if (pagePromotions.length === 0) {
       table.innerHTML = `
         <div class="table-empty">
           <span class="material-symbols-outlined">filter_list_off</span>
           <p>No promotions match the current filters</p>
         </div>
       `;
+      updatePaginationUI();
       return;
     }
 
-    const maxScore = Math.max(...displayPromotions.map(p => p.compositeScore || 0));
+    const maxScore = Math.max(...allDisplayPromotions.map(p => p.compositeScore || 0));
     const showMoreData = state.promoMoreDataEnabled || false;
 
-    const rows = displayPromotions.map((promo, index) => {
+    const rows = pagePromotions.map((promo, index) => {
       const isActive = state.activePromotion === promo.id;
       const perfPercent = maxScore > 0 ? ((promo.compositeScore || 0) / maxScore * 100) : 0;
       const perfClass = promo.percentile >= 75 ? 'high' : promo.percentile >= 50 ? 'medium' : 'low';
+      const globalIndex = pageInfo.start + index;
 
       // More Data columns (Deal, Views, Clicks, Added)
       const moreDataCells = showMoreData ? `
@@ -500,7 +564,7 @@
       return `
         <tr class="promo-row ${isActive ? 'selected' : ''}" data-id="${promo.id}">
           <td class="col-num">
-            <span class="row-number">${index + 1}</span>
+            <span class="row-number">${globalIndex}</span>
           </td>
           <td class="col-promo">
             <div class="promo-name">
@@ -524,6 +588,9 @@
         </tr>
       `;
     }).join('');
+
+    // Update pagination UI after rendering
+    updatePaginationUI();
 
     // More Data headers (Deal, Views, Clicks, Added)
     const moreDataHeaders = showMoreData ? `
@@ -732,18 +799,10 @@
     const ctr = ((promo.cc / promo.civ) * 100).toFixed(1);
 
     // Helper functions for percentile colors (matching app.js)
-    const getPercentileBarColor = (percentile) => {
-      if (percentile >= 75) return '#22c55e';
-      if (percentile >= 50) return '#eab308';
-      if (percentile >= 25) return '#f97316';
-      return '#dc2626';
-    };
-
-    const getPercentileTextColor = (percentile) => {
-      if (percentile >= 75) return '#16a34a';
-      if (percentile >= 50) return '#ca8a04';
-      if (percentile >= 25) return '#ea580c';
-      return '#dc2626';
+    const getPercentileVariant = (percentile) => {
+      if (percentile >= 75) return 'high';
+      if (percentile >= 50) return 'medium';
+      return 'low';
     };
 
     detailContent.innerHTML = `
@@ -759,12 +818,12 @@
         </div>
 
         <div class="detail-percentile-row">
-          <img src="./assets/chart-bar.svg" alt="Percentile" class="percentile-icon">
-          <span class="percentile-value" style="color: ${getPercentileTextColor(promo.percentile)}">${promo.percentile}%</span>
-          <div class="percentile-bar">
-            <div class="percentile-bar-fill" style="width: ${promo.percentile}%; background: ${getPercentileBarColor(promo.percentile)};"></div>
+          <div class="percentile-bar percentile-bar--${getPercentileVariant(promo.percentile)}">
+            <div class="percentile-bar-fill percentile-bar-fill--${getPercentileVariant(promo.percentile)}" style="width: ${promo.percentile}%;"></div>
           </div>
           <span class="percentile-score">${promo.compositeScore}</span>
+          <img src="./assets/chart-bar.svg" alt="Percentile" class="percentile-icon">
+          <span class="percentile-value percentile-value--${getPercentileVariant(promo.percentile)}">${promo.percentile}%</span>
         </div>
 
         <div class="detail-kpis">
@@ -935,6 +994,83 @@
     }
   }
 
+  /**
+   * Change TopN limit
+   */
+  function changeTopN(value) {
+    paginationState.topN = value === 'all' ? 'all' : parseInt(value, 10);
+    state.topN = paginationState.topN;
+    paginationState.currentPage = 1;
+    renderPromotions();
+    updatePaginationUI();
+    core.saveState();
+  }
+
+  /**
+   * Change rows per page
+   */
+  function changeRowsPerPage(value) {
+    paginationState.rowsPerPage = parseInt(value, 10);
+    paginationState.currentPage = 1;
+    renderPromotions();
+    updatePaginationUI();
+    core.saveState();
+  }
+
+  /**
+   * Go to previous page
+   */
+  function prevPage() {
+    if (paginationState.currentPage > 1) {
+      paginationState.currentPage--;
+      renderPromotions();
+      updatePaginationUI();
+    }
+  }
+
+  /**
+   * Go to next page
+   */
+  function nextPage() {
+    const pageInfo = getPageData();
+    if (paginationState.currentPage < pageInfo.totalPages) {
+      paginationState.currentPage++;
+      renderPromotions();
+      updatePaginationUI();
+    }
+  }
+
+  /**
+   * Update pagination UI controls
+   */
+  function updatePaginationUI() {
+    const pageInfo = getPageData();
+
+    const pageInfoEl = document.getElementById('grid-page-info');
+    if (pageInfoEl) {
+      pageInfoEl.textContent = `Page ${pageInfo.currentPage} of ${pageInfo.totalPages || 1}`;
+    }
+
+    const rangeInfoEl = document.getElementById('grid-range-info');
+    if (rangeInfoEl) {
+      if (pageInfo.total === 0) {
+        rangeInfoEl.textContent = '0 of 0';
+      } else {
+        rangeInfoEl.textContent = `${pageInfo.start}-${pageInfo.end} of ${pageInfo.total}`;
+      }
+    }
+
+    const prevBtn = document.getElementById('grid-prev-btn');
+    if (prevBtn) {
+      prevBtn.disabled = pageInfo.currentPage <= 1;
+    }
+
+    const nextBtn = document.getElementById('grid-next-btn');
+    if (nextBtn) {
+      nextBtn.disabled = pageInfo.currentPage >= pageInfo.totalPages;
+    }
+  }
+
   // Expose functions globally for onclick handlers
   window.closeDetailPanel = closeDetailPanel;
   window.printPromotion = printPromotion;
@@ -942,6 +1078,10 @@
   window.compareCurrentPromotion = compareCurrentPromotion;
   window.handleColumnSort = handleColumnSort;
   window.handleColumnFilter = handleColumnFilter;
+  window.changeTopN = changeTopN;
+  window.changeRowsPerPage = changeRowsPerPage;
+  window.prevPage = prevPage;
+  window.nextPage = nextPage;
 
   // Initialize on DOM ready
   if (document.readyState === 'loading') {

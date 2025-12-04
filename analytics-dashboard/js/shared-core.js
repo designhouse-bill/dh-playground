@@ -122,7 +122,34 @@ const DashboardCore = (() => {
     },
 
     // More Data toggle for category grid
-    moreDataEnabled: false
+    moreDataEnabled: false,
+
+    // Compare Mode state
+    compareMode: {
+      layer: 'circulars', // 'circulars' | 'categories' | 'promotions'
+      contextA: {
+        weekId: null,
+        entityId: 'all',
+        entityName: 'All Stores',
+        entityLevel: 'all',
+        entityCount: 0,
+        categoryId: null,
+        categoryName: null,
+        promotionId: null,
+        promotionName: null
+      },
+      contextB: {
+        weekId: null,
+        entityId: null,
+        entityName: null,
+        entityLevel: null,
+        entityCount: 0,
+        categoryId: null,
+        categoryName: null,
+        promotionId: null,
+        promotionName: null
+      }
+    }
   };
 
   /* ============================================
@@ -434,9 +461,10 @@ const DashboardCore = (() => {
     if (typeof MockData === 'undefined') return [];
     return MockData.weeks.map(week => ({
       id: week.id,
+      num: week.num,
       label: week.label,
       dateRange: week.dateRange
-    })).sort((a, b) => b.id - a.id);
+    }));
   }
 
   /* ============================================

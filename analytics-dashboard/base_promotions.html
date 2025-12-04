@@ -168,12 +168,12 @@
             <span class="toggle-label">Card View</span>
           </div>
           <div class="panel-header__center">
-            <span class="showing-count">Displaying <span id="promo-showing-count">0</span></span>
+            <span class="showing-count">Total: <span id="promo-showing-count">0</span></span>
             <div class="topn-selector">
               <select id="topn-select" class="topn-select" onchange="changeTopN(this.value)">
-                <option value="25">Top 25</option>
+                <option value="25" selected>Top 25</option>
                 <option value="50">Top 50</option>
-                <option value="100" selected>Top 100</option>
+                <option value="100">Top 100</option>
                 <option value="250">Top 250</option>
                 <option value="all">All</option>
               </select>
@@ -199,6 +199,32 @@
         </div>
         <div class="promo-data-grid" id="promotion-table">
           <!-- Populated by JavaScript -->
+        </div>
+        <!-- Pagination -->
+        <div class="grid-footer">
+          <div class="grid-footer__left">
+            <span class="grid-footer__label">View</span>
+            <select class="grid-rows-select" id="grid-rows-select" onchange="changeRowsPerPage(this.value)">
+              <option value="10">10</option>
+              <option value="25" selected>25</option>
+              <option value="50">50</option>
+            </select>
+            <span class="grid-footer__label">rows per page</span>
+          </div>
+          <div class="grid-footer__center">
+            <div class="grid-pagination" id="grid-pagination">
+              <button class="grid-pagination__btn" id="grid-prev-btn" onclick="prevPage()" disabled>
+                <span class="material-symbols-outlined">chevron_left</span>
+              </button>
+              <span class="grid-pagination__info" id="grid-page-info">Page 1 of 1</span>
+              <button class="grid-pagination__btn" id="grid-next-btn" onclick="nextPage()" disabled>
+                <span class="material-symbols-outlined">chevron_right</span>
+              </button>
+            </div>
+          </div>
+          <div class="grid-footer__right">
+            <span class="grid-range-info" id="grid-range-info">0 of 0</span>
+          </div>
         </div>
       </section>
 
@@ -256,9 +282,12 @@
         </div>
 
         <div class="date-tab-content active" id="week-tab-content">
-          <div class="week-search">
-            <span class="material-symbols-outlined">search</span>
-            <input type="text" id="week-search-input" placeholder="Search weeks..." oninput="filterWeeks(this.value)">
+          <div class="week-search-row">
+            <div class="week-search">
+              <span class="material-symbols-outlined">search</span>
+              <input type="text" id="week-search-input" placeholder="Search weeks..." oninput="filterWeeks(this.value)">
+            </div>
+            <div id="week-year-selector"></div>
           </div>
           <div class="week-list" id="week-list">
             <!-- Populated by JavaScript -->

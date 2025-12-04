@@ -132,7 +132,7 @@
         <!-- Grid Controls Bar -->
         <div class="grid-controls">
           <div class="grid-controls__left">
-            <span class="grid-controls__label">Displaying</span>
+            <span class="grid-controls__label">Total:</span>
             <span class="grid-controls__count" id="grid-record-count">0</span>
             <span class="grid-controls__label">records</span>
           </div>
@@ -225,9 +225,12 @@
         </div>
 
         <div class="date-tab-content active" id="week-tab-content">
-          <div class="week-search">
-            <span class="material-symbols-outlined">search</span>
-            <input type="text" id="week-search-input" placeholder="Search weeks..." oninput="filterWeeks(this.value)">
+          <div class="week-search-row">
+            <div class="week-search">
+              <span class="material-symbols-outlined">search</span>
+              <input type="text" id="week-search-input" placeholder="Search weeks..." oninput="filterWeeks(this.value)">
+            </div>
+            <div id="week-year-selector"></div>
           </div>
           <div class="week-list" id="week-list">
             <!-- Populated by JavaScript -->

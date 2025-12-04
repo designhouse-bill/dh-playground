@@ -40,7 +40,7 @@
         </div>
 
         <div class="view-modes">
-          <!-- BASE group with sub-tabs (hidden in compare mode) -->
+          <!-- BASE group with sub-tabs -->
           <div class="mode-group mode-group--base" data-mode="base">
             <a href="base_categories.html" class="mode-btn mode-btn--primary" data-mode="base" aria-label="Base view">
               <span class="material-symbols-outlined">view_list</span>
@@ -67,57 +67,6 @@
         </div>
       </div>
 
-      <!-- Context Row: Foundation Context + Filter Chips -->
-      <div class="context-row">
-
-        <!-- Date Range Context Card -->
-        <button class="context-card context-card--date" id="date-selector" aria-label="Select date range" onclick="openDatePicker()">
-          <div class="card-label">Date Range</div>
-          <div class="card-row">
-            <div class="card-icon">
-              <span class="material-symbols-outlined">calendar_month</span>
-            </div>
-            <div class="card-content">
-              <div class="card-value">Week 47</div>
-              <div class="card-sub">Nov 18-24, 2025</div>
-            </div>
-            <span class="card-arrow">
-              <span class="material-symbols-outlined">expand_more</span>
-            </span>
-          </div>
-        </button>
-
-        <!-- Entity Context Card -->
-        <button class="context-card" id="entity-selector" aria-label="Select entity" onclick="openEntitySelector()">
-          <div class="card-label">Entity</div>
-          <div class="card-row">
-            <div class="card-icon card-icon--entity">
-              <span class="material-symbols-outlined">corporate_fare</span>
-            </div>
-            <div class="card-content">
-              <div class="card-breadcrumb">BRAND</div>
-              <div class="card-value">Grocery Holdings Corp</div>
-              <div class="card-sub">27 locations</div>
-            </div>
-            <span class="card-arrow">
-              <span class="material-symbols-outlined">expand_more</span>
-            </span>
-          </div>
-        </button>
-
-        <!-- Filter Group: Inline Filter Chips -->
-        <div class="filter-group">
-          <div class="filter-label">Filters</div>
-          <div class="filter-chips" id="filter-chips">
-            <button class="add-filter" id="add-filter-btn" aria-label="Add filter">
-              <span class="material-symbols-outlined">add</span>
-              Add Filter
-            </button>
-          </div>
-        </div>
-
-      </div>
-
     </header>
 
     <!-- ========================================
@@ -127,29 +76,100 @@
 
       <section class="panel panel--compare-full" role="main" aria-label="Comparison View">
 
-        <!-- Compare Placeholder -->
-        <div class="compare-placeholder">
-          <div class="compare-placeholder__icon">
-            <span class="material-symbols-outlined" style="font-size: 64px; color: var(--color-primary-500);">compare</span>
-          </div>
-          <h2 class="compare-placeholder__title">Compare Mode</h2>
-          <p class="compare-placeholder__description">
-            Select items to compare side-by-side. Compare performance metrics across different promotions, categories, or time periods.
-          </p>
+        <!-- Layer Tabs: Circulars | Categories | Promotions -->
+        <div class="compare-layer-tabs" role="tablist">
+          <button class="active" data-layer="circulars" role="tab" aria-selected="true" onclick="ComparePage.selectLayer('circulars')">
+            <span class="material-symbols-outlined" style="margin-right: 8px; font-size: 18px;">store</span>
+            Circulars
+          </button>
+          <button data-layer="categories" role="tab" aria-selected="false" onclick="ComparePage.selectLayer('categories')">
+            <span class="material-symbols-outlined" style="margin-right: 8px; font-size: 18px;">category</span>
+            Categories
+          </button>
+          <button data-layer="promotions" role="tab" aria-selected="false" onclick="ComparePage.selectLayer('promotions')">
+            <span class="material-symbols-outlined" style="margin-right: 8px; font-size: 18px;">local_offer</span>
+            Promotions
+          </button>
+        </div>
 
-          <div class="compare-placeholder__actions">
-            <a href="base_categories.html" class="compare-placeholder__btn">
-              <span class="material-symbols-outlined">category</span>
-              Select Categories
-            </a>
-            <a href="base_promotions.html" class="compare-placeholder__btn">
-              <span class="material-symbols-outlined">local_offer</span>
-              Select Promotions
-            </a>
+        <!-- Dual Context Bar: A (left) | B (right) -->
+        <div class="compare-context-bar">
+
+          <!-- Context A -->
+          <div class="context-column context-column--a">
+            <span class="context-label">A</span>
+            <div class="context-selectors">
+              <button class="context-btn" data-target="A" data-type="date" onclick="ComparePage.openDatePicker('A')" id="context-a-date">
+                <span class="material-symbols-outlined">calendar_month</span>
+                <span class="btn-text">Select Week</span>
+              </button>
+              <button class="context-btn" data-target="A" data-type="entity" onclick="ComparePage.openEntityPicker('A')" id="context-a-entity">
+                <span class="material-symbols-outlined">corporate_fare</span>
+                <span class="btn-text">Select Entity</span>
+              </button>
+              <!-- Category selector (hidden for circulars layer) -->
+              <button class="context-btn context-btn--empty" data-target="A" data-type="category" onclick="ComparePage.openCategoryPicker('A')" id="context-a-category" style="display: none;">
+                <span class="material-symbols-outlined">category</span>
+                <span class="btn-text">Select Category</span>
+              </button>
+              <!-- Promotion selector (hidden unless promotions layer) -->
+              <button class="context-btn context-btn--empty" data-target="A" data-type="promotion" onclick="ComparePage.openPromotionPicker('A')" id="context-a-promotion" style="display: none;">
+                <span class="material-symbols-outlined">local_offer</span>
+                <span class="btn-text">Select Promotion</span>
+              </button>
+            </div>
+            <button class="copy-context-btn" onclick="ComparePage.copyAtoB()" title="Copy Context A to B">
+              <span class="material-symbols-outlined">content_copy</span>
+              Copy A to B
+            </button>
           </div>
 
-          <div class="compare-placeholder__info" id="compare-info">
-            <!-- Will show selected item info if navigated with params -->
+          <!-- Context B -->
+          <div class="context-column context-column--b">
+            <span class="context-label">B</span>
+            <div class="context-selectors">
+              <button class="context-btn context-btn--empty" data-target="B" data-type="date" onclick="ComparePage.openDatePicker('B')" id="context-b-date">
+                <span class="material-symbols-outlined">calendar_month</span>
+                <span class="btn-text">Select Week</span>
+              </button>
+              <button class="context-btn context-btn--empty" data-target="B" data-type="entity" onclick="ComparePage.openEntityPicker('B')" id="context-b-entity">
+                <span class="material-symbols-outlined">corporate_fare</span>
+                <span class="btn-text">Select Entity</span>
+              </button>
+              <!-- Category selector (hidden for circulars layer) -->
+              <button class="context-btn context-btn--empty" data-target="B" data-type="category" onclick="ComparePage.openCategoryPicker('B')" id="context-b-category" style="display: none;">
+                <span class="material-symbols-outlined">category</span>
+                <span class="btn-text">Select Category</span>
+              </button>
+              <!-- Promotion selector (hidden unless promotions layer) -->
+              <button class="context-btn context-btn--empty" data-target="B" data-type="promotion" onclick="ComparePage.openPromotionPicker('B')" id="context-b-promotion" style="display: none;">
+                <span class="material-symbols-outlined">local_offer</span>
+                <span class="btn-text">Select Promotion</span>
+              </button>
+            </div>
+            <button class="copy-context-btn" onclick="ComparePage.copyBtoA()" title="Copy Context B to A">
+              <span class="material-symbols-outlined">content_copy</span>
+              Copy B to A
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Comparison Results Container -->
+        <div class="compare-results-container" id="compare-results">
+          <div class="compare-grid" id="compare-grid">
+
+            <!-- Empty state shown when contexts not selected -->
+            <div class="compare-empty-state" id="compare-empty-state">
+              <span class="compare-empty-state__icon material-symbols-outlined">compare</span>
+              <h2 class="compare-empty-state__title">Select Contexts to Compare</h2>
+              <p class="compare-empty-state__message">
+                Choose a date and entity for both Context A and Context B to see a side-by-side comparison.
+              </p>
+            </div>
+
+            <!-- Results populated by JavaScript -->
+
           </div>
         </div>
 
@@ -182,9 +202,12 @@
         </div>
 
         <div class="date-tab-content active" id="week-tab-content">
-          <div class="week-search">
-            <span class="material-symbols-outlined">search</span>
-            <input type="text" id="week-search-input" placeholder="Search weeks..." oninput="filterWeeks(this.value)">
+          <div class="week-search-row">
+            <div class="week-search">
+              <span class="material-symbols-outlined">search</span>
+              <input type="text" id="week-search-input" placeholder="Search weeks..." oninput="filterWeeks(this.value)">
+            </div>
+            <div id="week-year-selector"></div>
           </div>
           <div class="week-list" id="week-list">
             <!-- Populated by JavaScript -->
@@ -284,58 +307,62 @@
     </div>
   </div>
 
-  <!-- Add Filter Modal -->
-  <div class="modal-overlay" id="add-filter-modal">
+  <!-- Category Picker Modal -->
+  <div class="modal-overlay" id="category-picker-modal">
     <div class="modal">
       <div class="modal-header">
-        <h3 class="modal-title">Add Filter</h3>
-        <button class="modal-close" onclick="closeFilterModal()">
+        <div class="modal-header-title">
+          <span class="material-symbols-outlined">category</span>
+          <h3 class="modal-title">Select Category</h3>
+        </div>
+        <button class="modal-close" onclick="ComparePage.closeCategoryPicker()">
           <span class="material-symbols-outlined">close</span>
         </button>
       </div>
       <div class="modal-body">
-        <div class="filter-type-select">
-          <label>Filter Type</label>
-          <div class="filter-type-buttons">
-            <button class="filter-type-btn active" data-type="category" onclick="selectFilterType(this)">
-              <span class="material-symbols-outlined">category</span>
-              Category
-            </button>
-            <button class="filter-type-btn" data-type="deal" onclick="selectFilterType(this)">
-              <span class="material-symbols-outlined">local_offer</span>
-              Deal Type
-            </button>
-            <button class="filter-type-btn" data-type="size" onclick="selectFilterType(this)">
-              <span class="material-symbols-outlined">aspect_ratio</span>
-              Card Size
-            </button>
+        <div class="category-search" style="margin-bottom: var(--space-4);">
+          <div class="entity-search">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" id="category-search-input" placeholder="Search categories..." oninput="ComparePage.filterCategories(this.value)">
           </div>
         </div>
-
-        <div class="filter-value-select active" id="category-options">
-          <label>Select Category</label>
-          <div class="filter-options" id="category-filter-options">
-            <!-- Populated by JavaScript -->
-          </div>
-        </div>
-
-        <div class="filter-value-select" id="deal-options">
-          <label>Select Deal Type</label>
-          <div class="filter-options" id="deal-filter-options">
-            <!-- Populated by JavaScript -->
-          </div>
-        </div>
-
-        <div class="filter-value-select" id="size-options">
-          <label>Select Card Size</label>
-          <div class="filter-options" id="size-filter-options">
-            <!-- Populated by JavaScript -->
-          </div>
+        <div class="category-list" id="category-list" style="max-height: 400px; overflow-y: auto;">
+          <!-- Populated by JavaScript -->
         </div>
       </div>
-      <div class="modal-footer">
-        <button class="modal-btn modal-btn--secondary" onclick="closeFilterModal()">Cancel</button>
-        <button class="modal-btn modal-btn--primary" onclick="applyFilter()">Add Filter</button>
+      <div class="modal-footer modal-footer--right">
+        <button class="modal-btn modal-btn--secondary" onclick="ComparePage.closeCategoryPicker()">Cancel</button>
+        <button class="modal-btn modal-btn--primary" onclick="ComparePage.applyCategorySelection()">Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Promotion Picker Modal -->
+  <div class="modal-overlay" id="promotion-picker-modal">
+    <div class="modal modal--wide">
+      <div class="modal-header">
+        <div class="modal-header-title">
+          <span class="material-symbols-outlined">local_offer</span>
+          <h3 class="modal-title">Select Promotion</h3>
+        </div>
+        <button class="modal-close" onclick="ComparePage.closePromotionPicker()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="promotion-search" style="margin-bottom: var(--space-4);">
+          <div class="entity-search">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" id="promotion-search-input" placeholder="Search promotions..." oninput="ComparePage.filterPromotions(this.value)">
+          </div>
+        </div>
+        <div class="promotion-list" id="promotion-list" style="max-height: 400px; overflow-y: auto;">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+      <div class="modal-footer modal-footer--right">
+        <button class="modal-btn modal-btn--secondary" onclick="ComparePage.closePromotionPicker()">Cancel</button>
+        <button class="modal-btn modal-btn--primary" onclick="ComparePage.applyPromotionSelection()">Apply</button>
       </div>
     </div>
   </div>

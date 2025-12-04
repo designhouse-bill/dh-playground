@@ -11,6 +11,16 @@
   let state = null;
   let elements = null;
 
+  // Pagination state
+  let paginationState = {
+    currentPage: 1,
+    rowsPerPage: 25,
+    topN: 25
+  };
+
+  // All categories data (before pagination)
+  let allDisplayCategories = [];
+
   /**
    * Initialize the categories page
    */
@@ -51,9 +61,14 @@
     // Check for store filter from URL
     handleUrlStoreFilter();
 
+    // Initialize topN state
+    state.topN = state.topN || 25;
+    paginationState.topN = state.topN;
+
     // Render initial view
     renderCategoryGrid();
     updateCounts();
+    updatePaginationUI();
 
     // Render filter chips
     if (window.DashboardFilters) {
@@ -66,6 +81,12 @@
     // Listen for data refresh events
     document.addEventListener('dashboard:dataRefresh', handleDataRefresh);
     document.addEventListener('dashboard:filterApply', handleFilterApply);
+
+    // Restore TopN select value
+    const topNSelect = document.getElementById('topn-select');
+    if (topNSelect) {
+      topNSelect.value = state.topN === 'all' ? 'all' : state.topN.toString();
+    }
 
     console.log('[Categories] Page initialized');
   }
@@ -179,6 +200,40 @@
   }
 
   /**
+   * Get current page of data with TopN and pagination applied
+   */
+  function getPageData() {
+    let categories = [...allDisplayCategories];
+
+    // Apply TopN limit
+    const topN = paginationState.topN;
+    if (topN !== 'all' && typeof topN === 'number') {
+      categories = categories.slice(0, topN);
+    }
+
+    const totalRecords = categories.length;
+    const totalPages = Math.ceil(totalRecords / paginationState.rowsPerPage);
+
+    // Ensure current page is valid
+    if (paginationState.currentPage > totalPages) {
+      paginationState.currentPage = Math.max(1, totalPages);
+    }
+
+    const start = (paginationState.currentPage - 1) * paginationState.rowsPerPage;
+    const end = start + paginationState.rowsPerPage;
+    const pageData = categories.slice(start, end);
+
+    return {
+      data: pageData,
+      total: totalRecords,
+      start: start + 1,
+      end: Math.min(end, totalRecords),
+      currentPage: paginationState.currentPage,
+      totalPages: totalPages
+    };
+  }
+
+  /**
    * Render the category data grid
    */
   function renderCategoryGrid() {
@@ -189,12 +244,6 @@
       ? state.filteredCategories
       : state.categories;
 
-    // Update showing count
-    const showingCount = document.getElementById('category-showing-count');
-    if (showingCount) {
-      showingCount.textContent = categories ? categories.length : 0;
-    }
-
     if (!categories || categories.length === 0) {
       gridContainer.innerHTML = `
         <div class="table-empty">
@@ -202,26 +251,41 @@
           <p>No categories available</p>
         </div>
       `;
+      updatePaginationUI();
       return;
     }
 
     // Apply sorting
     categories = core.sortCategories(categories, state.categorySortColumn, state.categorySortDirection);
 
-    // Calculate max composite score for performance bars
-    const maxScore = Math.max(...categories.map(c => c.compositeScore || 0));
+    // Store all categories for pagination
+    allDisplayCategories = categories;
 
-    const rows = categories.map((cat, index) => {
+    // Get page data with TopN and pagination applied
+    const pageInfo = getPageData();
+    const pageCategories = pageInfo.data;
+
+    // Update showing count (shows TopN-limited total)
+    const showingCount = document.getElementById('category-showing-count');
+    if (showingCount) {
+      showingCount.textContent = pageInfo.total;
+    }
+
+    // Calculate max composite score for performance bars
+    const maxScore = Math.max(...allDisplayCategories.map(c => c.compositeScore || 0));
+
+    const rows = pageCategories.map((cat, index) => {
       const isSelected = state.selectedCategoryId === cat.id;
       const perfPercent = maxScore > 0 ? ((cat.compositeScore || 0) / maxScore * 100) : 0;
       const perfClass = cat.percentile >= 75 ? 'high' : cat.percentile >= 50 ? 'medium' : 'low';
+      const globalIndex = pageInfo.start + index;
 
       return `
         <tr class="category-row ${isSelected ? 'selected' : ''}"
             data-category-id="${cat.id}"
             onclick="selectCategoryGridRow('${cat.id}')">
           <td class="col-num">
-            <span class="row-number">${index + 1}</span>
+            <span class="row-number">${globalIndex}</span>
           </td>
           <td class="col-category">
             <div class="category-name">
@@ -251,6 +315,9 @@
         </tr>
       `;
     });
+
+    // Update pagination UI
+    updatePaginationUI();
 
     const moreDataClass = state.moreDataEnabled ? 'more-data-enabled' : '';
 
@@ -444,6 +511,83 @@
     }
   }
 
+  /**
+   * Change TopN limit
+   */
+  function changeTopN(value) {
+    paginationState.topN = value === 'all' ? 'all' : parseInt(value, 10);
+    state.topN = paginationState.topN;
+    paginationState.currentPage = 1;
+    renderCategoryGrid();
+    updatePaginationUI();
+    core.saveState();
+  }
+
+  /**
+   * Change rows per page
+   */
+  function changeRowsPerPage(value) {
+    paginationState.rowsPerPage = parseInt(value, 10);
+    paginationState.currentPage = 1;
+    renderCategoryGrid();
+    updatePaginationUI();
+    core.saveState();
+  }
+
+  /**
+   * Go to previous page
+   */
+  function prevPage() {
+    if (paginationState.currentPage > 1) {
+      paginationState.currentPage--;
+      renderCategoryGrid();
+      updatePaginationUI();
+    }
+  }
+
+  /**
+   * Go to next page
+   */
+  function nextPage() {
+    const pageInfo = getPageData();
+    if (paginationState.currentPage < pageInfo.totalPages) {
+      paginationState.currentPage++;
+      renderCategoryGrid();
+      updatePaginationUI();
+    }
+  }
+
+  /**
+   * Update pagination UI controls
+   */
+  function updatePaginationUI() {
+    const pageInfo = getPageData();
+
+    const pageInfoEl = document.getElementById('grid-page-info');
+    if (pageInfoEl) {
+      pageInfoEl.textContent = `Page ${pageInfo.currentPage} of ${pageInfo.totalPages || 1}`;
+    }
+
+    const rangeInfoEl = document.getElementById('grid-range-info');
+    if (rangeInfoEl) {
+      if (pageInfo.total === 0) {
+        rangeInfoEl.textContent = '0 of 0';
+      } else {
+        rangeInfoEl.textContent = `${pageInfo.start}-${pageInfo.end} of ${pageInfo.total}`;
+      }
+    }
+
+    const prevBtn = document.getElementById('grid-prev-btn');
+    if (prevBtn) {
+      prevBtn.disabled = pageInfo.currentPage <= 1;
+    }
+
+    const nextBtn = document.getElementById('grid-next-btn');
+    if (nextBtn) {
+      nextBtn.disabled = pageInfo.currentPage >= pageInfo.totalPages;
+    }
+  }
+
   // Expose functions globally for onclick handlers
   window.selectCategoryGridRow = selectCategoryGridRow;
   window.closeCategoryDetail = closeCategoryDetail;
@@ -452,6 +596,10 @@
   window.openCategoryInquiry = openCategoryInquiry;
   window.compareCategoryAction = compareCategoryAction;
   window.handleCategoryColumnSort = handleCategoryColumnSort;
+  window.changeTopN = changeTopN;
+  window.changeRowsPerPage = changeRowsPerPage;
+  window.prevPage = prevPage;
+  window.nextPage = nextPage;
 
   // Initialize on DOM ready
   if (document.readyState === 'loading') {

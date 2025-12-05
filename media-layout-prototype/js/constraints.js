@@ -42,11 +42,28 @@ const CARD_SIZE_CONSTRAINTS = {
       grid: 'Card width is too limited for grid layout'
     }
   },
+  '1x3': {
+    maxImages: 4,
+    allowedLayouts: [LAYOUT_TYPES.VERTICAL],
+    forcedLayout: LAYOUT_TYPES.VERTICAL,
+    defaultLayout: LAYOUT_TYPES.VERTICAL,
+    disabledLayoutReasons: {
+      horizontal: 'Extra-tall cards require vertical layout',
+      grid: 'Card width is too limited for grid layout'
+    }
+  },
   '2x2': {
     maxImages: 4,
     allowedLayouts: [LAYOUT_TYPES.HORIZONTAL, LAYOUT_TYPES.VERTICAL, LAYOUT_TYPES.GRID],
     forcedLayout: null,
     defaultLayout: LAYOUT_TYPES.HORIZONTAL,
+    disabledLayoutReasons: {}
+  },
+  '2x3': {
+    maxImages: 5,
+    allowedLayouts: [LAYOUT_TYPES.HORIZONTAL, LAYOUT_TYPES.VERTICAL, LAYOUT_TYPES.GRID],
+    forcedLayout: null,
+    defaultLayout: LAYOUT_TYPES.VERTICAL,
     disabledLayoutReasons: {}
   },
   '3x1': {

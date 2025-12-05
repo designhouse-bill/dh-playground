@@ -158,41 +158,70 @@ class OverlayModal {
   initializeComponents() {
     // Initialize Layout Selector
     const layoutContainer = this.elements.leftColumn.querySelector('.layout-selector-container');
+
+    // Create sub-containers for layout selector components
+    layoutContainer.innerHTML = `
+      <div class="selector-group">
+        <label class="selector-group__label">Image Count</label>
+        <div id="modal-image-count-container"></div>
+      </div>
+      <div class="selector-group">
+        <label class="selector-group__label">Layout Type</label>
+        <div id="modal-layout-type-container"></div>
+      </div>
+      <div class="selector-group">
+        <label class="selector-group__label">Emphasis</label>
+        <div id="modal-emphasis-container"></div>
+      </div>
+      <div class="selector-group">
+        <label class="selector-group__label">Direction</label>
+        <div id="modal-direction-container"></div>
+      </div>
+    `;
+
     this.components.layoutSelector = new LayoutSelector({
-      container: layoutContainer,
-      initialLayout: this.state.selectedLayout,
-      onSelect: (layoutId) => this.handleLayoutChange(layoutId)
+      cardSize: '2x2',
+      imageCount: this.state.mediaItems.length || 3,
+      layoutType: 'horizontal',
+      emphasis: 'equal',
+      direction: 'normal',
+      onChange: (config) => this.handleLayoutChange(config)
+    });
+
+    this.components.layoutSelector.init({
+      imageCount: layoutContainer.querySelector('#modal-image-count-container'),
+      layoutType: layoutContainer.querySelector('#modal-layout-type-container'),
+      emphasis: layoutContainer.querySelector('#modal-emphasis-container'),
+      direction: layoutContainer.querySelector('#modal-direction-container')
     });
 
     // Initialize Media List
     const mediaContainer = this.elements.leftColumn.querySelector('.media-list-container');
     this.components.mediaList = new MediaList({
-      container: mediaContainer,
-      items: this.state.mediaItems,
-      onSelect: (itemId) => this.handleItemSelect(itemId),
+      maxImages: 5,
+      cardSize: '2x2',
+      onSelect: (item, index) => this.handleItemSelect(item ? item.id : null),
       onReorder: (items) => this.handleItemsReorder(items),
-      onAdd: () => this.handleAddItem(),
-      onRemove: (itemId) => this.handleRemoveItem(itemId)
+      onAdd: (item) => this.handleAddItem(),
+      onRemove: (item) => this.handleRemoveItem(item.id),
+      onChange: () => {}
     });
+    this.components.mediaList.init(mediaContainer, this.state.mediaItems);
 
     // Initialize Preview Renderer
     const previewContainer = this.elements.rightColumn.querySelector('.preview-container');
-    this.components.previewRenderer = new PreviewRenderer({
-      container: previewContainer,
-      width: 800,
-      height: 600,
-      layout: this.state.selectedLayout,
-      items: this.state.mediaItems,
-      onItemClick: (itemId) => this.handlePreviewItemClick(itemId)
-    });
+    this.components.previewRenderer = new PreviewRenderer();
+    this.components.previewRenderer.init(previewContainer);
+    this.components.previewRenderer.setCardSize('2x2');
+    this.components.previewRenderer.setImages(this.state.mediaItems.map(item => item.image));
 
     // Initialize Adjustment Panel
     const adjustmentContainer = this.elements.rightColumn.querySelector('.adjustment-panel-container');
     this.components.adjustmentPanel = new AdjustmentPanel({
-      container: adjustmentContainer,
       onChange: (adjustments) => this.handleAdjustmentChange(adjustments),
       onStackingChange: (direction) => this.handleStackingChange(direction)
     });
+    this.components.adjustmentPanel.init(adjustmentContainer);
 
     // Initialize default adjustments for each item
     this.state.mediaItems.forEach(item => {
@@ -235,30 +264,43 @@ class OverlayModal {
 
   // --- Component Event Handlers ---
 
-  handleLayoutChange(layoutId) {
-    this.state.selectedLayout = layoutId;
-    this.components.previewRenderer.setLayout(layoutId);
-    this.updatePreview();
+  handleLayoutChange(config) {
+    this.state.selectedLayout = config;
+    // Update preview with new layout configuration
+    if (this.components.previewRenderer) {
+      this.components.previewRenderer.setLayoutType(config.layoutType);
+      this.components.previewRenderer.setEmphasis(config.emphasis);
+      this.components.previewRenderer.setDirection(config.direction);
+      this.components.previewRenderer.render();
+    }
   }
 
   handleItemSelect(itemId) {
     this.state.selectedItemId = itemId;
 
-    // Update preview selection
-    this.components.previewRenderer.setSelectedItem(itemId);
-
     // Update adjustment panel
     const item = this.state.mediaItems.find(i => i.id === itemId);
-    if (item) {
+    const index = this.state.mediaItems.findIndex(i => i.id === itemId);
+
+    if (item && this.components.adjustmentPanel) {
       const adjustments = this.state.itemAdjustments.get(itemId) || { ...DEFAULT_ADJUSTMENTS };
-      const position = this.state.mediaItems.findIndex(i => i.id === itemId) + 1;
-      this.components.adjustmentPanel.setItem({
-        ...item,
-        position,
-        total: this.state.mediaItems.length
-      }, adjustments);
-    } else {
-      this.components.adjustmentPanel.clearItem();
+      this.components.adjustmentPanel.setSelectedItem(
+        item,
+        index,
+        this.state.mediaItems.length,
+        adjustments
+      );
+    } else if (this.components.adjustmentPanel) {
+      this.components.adjustmentPanel.clearSelection();
+    }
+
+    // Update preview selection with highlight animation
+    if (this.components.previewRenderer) {
+      if (item && index >= 0) {
+        this.components.previewRenderer.selectItem(index);
+      } else {
+        this.components.previewRenderer.clearSelection();
+      }
     }
   }
 
@@ -271,65 +313,66 @@ class OverlayModal {
 
   handleItemsReorder(items) {
     this.state.mediaItems = items;
-    this.components.previewRenderer.setItems(items);
-    this.updatePreview();
+    if (this.components.previewRenderer) {
+      this.components.previewRenderer.setImages(items.map(item => item.image));
+      this.components.previewRenderer.render();
+    }
 
     // Update position in adjustment panel if item is selected
-    if (this.state.selectedItemId) {
+    if (this.state.selectedItemId && this.components.adjustmentPanel) {
       const item = items.find(i => i.id === this.state.selectedItemId);
       if (item) {
-        const position = items.findIndex(i => i.id === this.state.selectedItemId) + 1;
+        const index = items.findIndex(i => i.id === this.state.selectedItemId);
         const adjustments = this.state.itemAdjustments.get(this.state.selectedItemId) || { ...DEFAULT_ADJUSTMENTS };
-        this.components.adjustmentPanel.setItem({
-          ...item,
-          position,
-          total: items.length
-        }, adjustments);
+        this.components.adjustmentPanel.setSelectedItem(
+          item,
+          index,
+          items.length,
+          adjustments
+        );
       }
     }
   }
 
   handleAddItem() {
-    // Generate new item (in real use, this would open a media picker)
-    const newId = `item-${Date.now()}`;
-    // Use local sample images from ADDITIONAL_PRODUCTS
-    const availableImages = ADDITIONAL_PRODUCTS.map(p => p.image);
-    const imageIndex = this.state.mediaItems.length % availableImages.length;
-
-    const newItem = {
-      id: newId,
-      name: `New Item ${this.state.mediaItems.length + 1}`,
-      image: availableImages[imageIndex]
-    };
-
-    this.state.mediaItems.push(newItem);
-    this.state.itemAdjustments.set(newId, { ...DEFAULT_ADJUSTMENTS });
-
-    this.components.mediaList.addItem(newItem);
-    this.components.previewRenderer.setItems(this.state.mediaItems);
-    this.updatePreview();
-  }
-
-  handleRemoveItem(itemId) {
-    const index = this.state.mediaItems.findIndex(i => i.id === itemId);
-    if (index > -1) {
-      this.state.mediaItems.splice(index, 1);
-      this.state.itemAdjustments.delete(itemId);
-
-      this.components.previewRenderer.setItems(this.state.mediaItems);
-
-      // Clear selection if removed item was selected
-      if (this.state.selectedItemId === itemId) {
-        this.state.selectedItemId = null;
-        this.components.adjustmentPanel.clearItem();
-        this.components.previewRenderer.setSelectedItem(null);
-      }
-
-      this.updatePreview();
+    // The MediaList component handles adding via its modal
+    // Just update our state when it notifies us
+    this.state.mediaItems = this.components.mediaList.getItems();
+    if (this.components.previewRenderer) {
+      this.components.previewRenderer.setImages(this.state.mediaItems.map(item => item.image));
+      this.components.previewRenderer.render();
     }
   }
 
-  handleAdjustmentChange(adjustments) {
+  handleRemoveItem(itemId) {
+    // Update our state from the MediaList
+    this.state.mediaItems = this.components.mediaList.getItems();
+    this.state.itemAdjustments.delete(itemId);
+
+    if (this.components.previewRenderer) {
+      this.components.previewRenderer.setImages(this.state.mediaItems.map(item => item.image));
+      this.components.previewRenderer.render();
+    }
+
+    // Clear selection if removed item was selected
+    if (this.state.selectedItemId === itemId) {
+      this.state.selectedItemId = null;
+      if (this.components.adjustmentPanel) {
+        this.components.adjustmentPanel.clearSelection();
+      }
+    }
+  }
+
+  handleAdjustmentChange(data) {
+    const { adjustments } = data;
+
+    // Handle highlight toggle (global setting, not per-item)
+    if (adjustments && adjustments.highlightSelected !== undefined) {
+      if (this.components.previewRenderer) {
+        this.components.previewRenderer.setHighlightSelected(adjustments.highlightSelected);
+      }
+    }
+
     if (!this.state.selectedItemId) return;
 
     // Update stored adjustments
@@ -339,7 +382,7 @@ class OverlayModal {
     this.applyAdjustmentsToPreview(this.state.selectedItemId, adjustments);
   }
 
-  handleStackingChange(direction) {
+  handleStackingChange(direction, selectedIndex) {
     if (!this.state.selectedItemId) return;
 
     const items = [...this.state.mediaItems];
@@ -369,87 +412,62 @@ class OverlayModal {
       items.splice(newIndex, 0, item);
 
       this.state.mediaItems = items;
-      this.components.mediaList.setItems(items);
-      this.components.previewRenderer.setItems(items);
+      if (this.components.mediaList) {
+        this.components.mediaList.setItems(items);
+      }
+      if (this.components.previewRenderer) {
+        this.components.previewRenderer.setImages(items.map(i => i.image));
+        this.components.previewRenderer.render();
+      }
 
       // Update position in adjustment panel
-      const adjustments = this.state.itemAdjustments.get(this.state.selectedItemId) || { ...DEFAULT_ADJUSTMENTS };
-      this.components.adjustmentPanel.setItem({
-        ...item,
-        position: newIndex + 1,
-        total: items.length
-      }, adjustments);
-
-      this.updatePreview();
+      if (this.components.adjustmentPanel) {
+        const adjustments = this.state.itemAdjustments.get(this.state.selectedItemId) || { ...DEFAULT_ADJUSTMENTS };
+        this.components.adjustmentPanel.setSelectedItem(
+          item,
+          newIndex,
+          items.length,
+          adjustments
+        );
+      }
     }
   }
 
   applyAdjustmentsToPreview(itemId, adjustments) {
-    // Build transform and style for the preview item
-    const transforms = [];
-
-    if (adjustments.positionX !== 0 || adjustments.positionY !== 0) {
-      transforms.push(`translate(${adjustments.positionX}px, ${adjustments.positionY}px)`);
+    // For now, we'll just trigger a re-render
+    // Full adjustment support would require PreviewRenderer to accept per-item adjustments
+    if (this.components.previewRenderer) {
+      this.components.previewRenderer.render();
     }
-    if (adjustments.scale !== 1) {
-      transforms.push(`scale(${adjustments.scale})`);
-    }
-    if (adjustments.rotation !== 0) {
-      transforms.push(`rotate(${adjustments.rotation}deg)`);
-    }
-
-    // Build shadow
-    let shadow = 'none';
-    if (adjustments.shadowOpacity > 0) {
-      const shadowColor = this.hexToRgba(adjustments.shadowColor, adjustments.shadowOpacity / 100);
-      shadow = `${adjustments.shadowOffsetX}px ${adjustments.shadowOffsetY}px ${adjustments.shadowBlur}px ${adjustments.shadowSpread}px ${shadowColor}`;
-    }
-
-    const styles = {
-      transform: transforms.length > 0 ? transforms.join(' ') : 'none',
-      opacity: adjustments.opacity / 100,
-      boxShadow: shadow,
-      zIndex: adjustments.zIndex
-    };
-
-    this.components.previewRenderer.applyItemStyles(itemId, styles);
-  }
-
-  hexToRgba(hex, alpha) {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   }
 
   updatePreview() {
-    // Re-apply all adjustments to preview
-    this.state.mediaItems.forEach(item => {
-      const adjustments = this.state.itemAdjustments.get(item.id) || { ...DEFAULT_ADJUSTMENTS };
-      this.applyAdjustmentsToPreview(item.id, adjustments);
-    });
-
-    this.components.previewRenderer.render();
+    if (this.components.previewRenderer) {
+      this.components.previewRenderer.render();
+    }
   }
 
   // --- Public API ---
 
   open(config = {}) {
     // Apply config if provided
-    if (config.layout) {
-      this.state.selectedLayout = config.layout;
-      this.components.layoutSelector.setSelected(config.layout);
-      this.components.previewRenderer.setLayout(config.layout);
-    }
-
     if (config.items) {
       this.state.mediaItems = [...config.items];
       this.state.itemAdjustments.clear();
       config.items.forEach(item => {
         this.state.itemAdjustments.set(item.id, { ...DEFAULT_ADJUSTMENTS });
       });
-      this.components.mediaList.setItems(config.items);
-      this.components.previewRenderer.setItems(config.items);
+      if (this.components.mediaList) {
+        this.components.mediaList.setItems(config.items);
+      }
+      if (this.components.previewRenderer) {
+        this.components.previewRenderer.setImages(config.items.map(item => item.image));
+      }
+      if (this.components.layoutSelector) {
+        this.components.layoutSelector.setConfig({
+          imageCount: config.items.length
+        });
+      }
     }
 
     if (config.adjustments) {
@@ -460,8 +478,9 @@ class OverlayModal {
 
     // Clear selection
     this.state.selectedItemId = null;
-    this.components.adjustmentPanel.clearItem();
-    this.components.previewRenderer.setSelectedItem(null);
+    if (this.components.adjustmentPanel) {
+      this.components.adjustmentPanel.clearSelection();
+    }
 
     // Show modal
     this.state.isOpen = true;

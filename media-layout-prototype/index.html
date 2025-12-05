@@ -215,7 +215,9 @@
     .size-box[data-size="1x1"] { width: 40px; height: 40px; }
     .size-box[data-size="2x1"] { width: 80px; height: 40px; }
     .size-box[data-size="1x2"] { width: 40px; height: 80px; }
+    .size-box[data-size="1x3"] { width: 40px; height: 120px; }
     .size-box[data-size="2x2"] { width: 80px; height: 80px; }
+    .size-box[data-size="2x3"] { width: 80px; height: 120px; }
     .size-box[data-size="3x1"] { width: 120px; height: 40px; }
     .size-box[data-size="3x2"] { width: 120px; height: 80px; }
     .size-box[data-size="3x3"] { width: 120px; height: 120px; }
@@ -695,7 +697,9 @@
                 <option value="1x1">1x1</option>
                 <option value="2x1">2x1</option>
                 <option value="1x2">1x2</option>
+                <option value="1x3">1x3</option>
                 <option value="2x2" selected>2x2</option>
+                <option value="2x3">2x3</option>
                 <option value="3x1">3x1</option>
                 <option value="3x2">3x2</option>
                 <option value="3x3">3x3</option>
@@ -729,7 +733,9 @@
                 <option value="1x1">1x1</option>
                 <option value="2x1">2x1</option>
                 <option value="1x2">1x2</option>
+                <option value="1x3">1x3</option>
                 <option value="2x2" selected>2x2</option>
+                <option value="2x3">2x3</option>
                 <option value="3x1">3x1</option>
                 <option value="3x2">3x2</option>
                 <option value="3x3">3x3</option>
@@ -807,7 +813,9 @@
                 <option value="1x1">1x1</option>
                 <option value="2x1">2x1</option>
                 <option value="1x2">1x2</option>
+                <option value="1x3">1x3</option>
                 <option value="2x2" selected>2x2</option>
+                <option value="2x3">2x3</option>
                 <option value="3x1">3x1</option>
                 <option value="3x2">3x2</option>
                 <option value="3x3">3x3</option>
@@ -852,6 +860,14 @@
                 <option value="cover">Cover</option>
                 <option value="contain">Contain</option>
                 <option value="fill">Fill</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="preview-overflow">Overflow</label>
+              <select id="preview-overflow">
+                <option value="hidden">Hidden</option>
+                <option value="visible">Visible</option>
               </select>
             </div>
           </div>
@@ -947,7 +963,9 @@
                 <option value="1x1">1x1</option>
                 <option value="2x1">2x1</option>
                 <option value="1x2">1x2</option>
+                <option value="1x3">1x3</option>
                 <option value="2x2" selected>2x2</option>
+                <option value="2x3">2x3</option>
                 <option value="3x1">3x1</option>
                 <option value="3x2">3x2</option>
                 <option value="3x3">3x3</option>
@@ -1018,7 +1036,9 @@
                 <option value="1x1">1x1</option>
                 <option value="2x1">2x1</option>
                 <option value="1x2">1x2</option>
+                <option value="1x3">1x3</option>
                 <option value="2x2" selected>2x2</option>
+                <option value="2x3">2x3</option>
                 <option value="3x1">3x1</option>
                 <option value="3x2">3x2</option>
                 <option value="3x3">3x3</option>
@@ -1073,7 +1093,9 @@
                 <option value="1x1">1x1</option>
                 <option value="2x1">2x1</option>
                 <option value="1x2">1x2</option>
+                <option value="1x3">1x3</option>
                 <option value="2x2" selected>2x2</option>
+                <option value="2x3">2x3</option>
                 <option value="3x1">3x1</option>
                 <option value="3x2">3x2</option>
                 <option value="3x3">3x3</option>
@@ -1188,7 +1210,9 @@
                       <option value="1x1">1x1 (max 2)</option>
                       <option value="2x1">2x1 (max 3)</option>
                       <option value="1x2">1x2 (max 3)</option>
+                      <option value="1x3">1x3 (max 4)</option>
                       <option value="2x2" selected>2x2 (max 4)</option>
+                      <option value="2x3">2x3 (max 5)</option>
                       <option value="3x1">3x1 (max 5)</option>
                       <option value="3x2">3x2 (max 5)</option>
                       <option value="3x3">3x3 (max 5)</option>
@@ -1498,6 +1522,7 @@
       const emphasisSelect = document.getElementById('preview-emphasis');
       const directionSelect = document.getElementById('preview-direction');
       const objectFitSelect = document.getElementById('preview-object-fit');
+      const overflowSelect = document.getElementById('preview-overflow');
       const previewContainer = document.getElementById('preview-render-container');
       const clickLog = document.getElementById('click-log');
       const clearLogBtn = document.getElementById('clear-log');
@@ -1623,7 +1648,8 @@
           layoutType: layoutTypeSelect.value,
           emphasis: emphasisSelect.value,
           direction: directionSelect.value,
-          objectFit: objectFitSelect.value
+          objectFit: objectFitSelect.value,
+          overflowVisible: overflowSelect.value === 'visible'
         });
       }
 
@@ -1651,6 +1677,7 @@
       emphasisSelect.addEventListener('change', renderPreview);
       directionSelect.addEventListener('change', renderPreview);
       objectFitSelect.addEventListener('change', renderPreview);
+      overflowSelect.addEventListener('change', renderPreview);
 
       // Adjustment control listeners
       [adjustOffsetX, adjustOffsetY, adjustScale, adjustRotation, adjustOpacity].forEach(input => {

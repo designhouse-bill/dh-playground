@@ -57,10 +57,12 @@ media-layout-prototype/
 | 1×1  | 2          | Grid only       | Grid    |
 | 2×1  | 3          | Horizontal only | Horizontal |
 | 1×2  | 3          | Vertical only   | Vertical |
-| 2×2  | 4          | All             | Grid    |
+| 1×3  | 4          | Vertical only   | Vertical |
+| 2×2  | 4          | All             | Horizontal |
+| 2×3  | 5          | All             | Vertical |
 | 3×1  | 5          | Horizontal only | Horizontal |
-| 3×2  | 5          | All             | Grid    |
-| 3×3  | 5          | All             | Grid    |
+| 3×2  | 5          | All             | Horizontal |
+| 3×3  | 5          | All             | Horizontal |
 
 ## Key Components
 

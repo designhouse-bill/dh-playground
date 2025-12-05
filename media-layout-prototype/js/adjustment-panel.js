@@ -12,6 +12,9 @@ const SHADOW_PRESETS = {
   dramatic: { offsetX: 0, offsetY: 12, blur: 24, spread: 4, color: '#000000', opacity: 25 }
 };
 
+// Object-fit options
+const OBJECT_FIT_OPTIONS = ['fill', 'contain', 'cover', 'none', 'scale-down'];
+
 // Default adjustment values
 const DEFAULT_ADJUSTMENTS = {
   positionX: 0,
@@ -19,6 +22,8 @@ const DEFAULT_ADJUSTMENTS = {
   scale: 1,
   rotation: 0,
   zIndex: 0,
+  objectFit: 'contain',
+  highlightSelected: true,
   shadowPreset: 'none',
   shadowOffsetX: 0,
   shadowOffsetY: 0,
@@ -285,11 +290,11 @@ class AdjustmentPanel {
     // Transform Section
     sections.appendChild(this._createTransformSection());
 
+    // Object Fit Section
+    sections.appendChild(this._createObjectFitSection());
+
     // Stacking Section
     sections.appendChild(this._createStackingSection());
-
-    // Shadow Section
-    sections.appendChild(this._createShadowSection());
 
     // Opacity Section
     sections.appendChild(this._createOpacitySection());
@@ -400,6 +405,74 @@ class AdjustmentPanel {
     section.appendChild(rotation.render());
 
     return section;
+  }
+
+  /**
+   * Create object fit section
+   */
+  _createObjectFitSection() {
+    const section = this._createSection('Object Fit');
+
+    const objectFitContent = document.createElement('div');
+    objectFitContent.className = 'object-fit-controls';
+
+    // Create dropdown select
+    const selectWrapper = document.createElement('div');
+    selectWrapper.className = 'object-fit-select-wrapper';
+
+    const select = document.createElement('select');
+    select.className = 'object-fit-select';
+    select.id = 'object-fit-select';
+
+    OBJECT_FIT_OPTIONS.forEach(option => {
+      const optionEl = document.createElement('option');
+      optionEl.value = option;
+      optionEl.textContent = `object-fit: ${option};`;
+      if (this.adjustments.objectFit === option) {
+        optionEl.selected = true;
+      }
+      select.appendChild(optionEl);
+    });
+
+    select.addEventListener('change', (e) => this._selectObjectFit(e.target.value));
+
+    selectWrapper.appendChild(select);
+    objectFitContent.appendChild(selectWrapper);
+
+    // Add Highlight Selected toggle
+    const highlightToggle = document.createElement('div');
+    highlightToggle.className = 'highlight-toggle';
+    highlightToggle.innerHTML = `
+      <label class="highlight-toggle__label">
+        <input type="checkbox" class="highlight-toggle__checkbox" id="highlight-selected-toggle" ${this.adjustments.highlightSelected ? 'checked' : ''}>
+        <span class="highlight-toggle__switch"></span>
+        <span class="highlight-toggle__text">Highlight Selected</span>
+      </label>
+    `;
+
+    const checkbox = highlightToggle.querySelector('#highlight-selected-toggle');
+    checkbox.addEventListener('change', (e) => this._toggleHighlightSelected(e.target.checked));
+
+    objectFitContent.appendChild(highlightToggle);
+
+    section.appendChild(objectFitContent);
+    return section;
+  }
+
+  /**
+   * Select object fit option
+   */
+  _selectObjectFit(option) {
+    this.adjustments.objectFit = option;
+    this._emitChange();
+  }
+
+  /**
+   * Toggle highlight selected
+   */
+  _toggleHighlightSelected(enabled) {
+    this.adjustments.highlightSelected = enabled;
+    this._emitChange();
   }
 
   /**
@@ -829,5 +902,6 @@ if (typeof window !== 'undefined') {
   window.AdjustmentPanel = AdjustmentPanel;
   window.SliderInput = SliderInput;
   window.SHADOW_PRESETS = SHADOW_PRESETS;
+  window.OBJECT_FIT_OPTIONS = OBJECT_FIT_OPTIONS;
   window.DEFAULT_ADJUSTMENTS = DEFAULT_ADJUSTMENTS;
 }

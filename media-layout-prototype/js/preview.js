@@ -8,7 +8,9 @@ const CARD_ASPECT_RATIOS = {
   '1x1': '1 / 1',
   '2x1': '2 / 1',
   '1x2': '1 / 2',
+  '1x3': '1 / 3',
   '2x2': '1 / 1',
+  '2x3': '2 / 3',
   '3x1': '3 / 1',
   '3x2': '3 / 2',
   '3x3': '1 / 1'
@@ -47,8 +49,10 @@ class PreviewRenderer {
       emphasis: 'equal',
       direction: 'normal',
       images: DEFAULT_IMAGES,
-      objectFit: 'cover',
+      objectFit: 'contain',
+      highlightSelected: true,
       gap: 4,
+      overflowVisible: false,
       ...options
     };
 
@@ -117,8 +121,22 @@ class PreviewRenderer {
   createPreviewElement() {
     const preview = document.createElement('div');
     preview.className = 'layout-preview';
+    if (this.config.overflowVisible) {
+      preview.classList.add('layout-preview--overflow-visible');
+    }
     preview.setAttribute('data-card-size', this.config.cardSize);
     return preview;
+  }
+
+  /**
+   * Set overflow visible mode
+   * @param {boolean} visible
+   */
+  setOverflowVisible(visible) {
+    this.config.overflowVisible = visible;
+    if (this.previewEl) {
+      this.previewEl.classList.toggle('layout-preview--overflow-visible', visible);
+    }
   }
 
   /**
@@ -215,7 +233,23 @@ class PreviewRenderer {
     if (this.previewEl) {
       const items = this.previewEl.querySelectorAll('.preview-item');
       items.forEach((item, i) => {
-        item.classList.toggle('preview-item--selected', i === index);
+        const isSelected = i === index;
+        item.classList.toggle('preview-item--selected', isSelected);
+
+        // Handle highlight mode
+        if (this.config.highlightSelected) {
+          item.classList.toggle('preview-item--highlighted', isSelected);
+
+          // Add pulse animation for newly selected item
+          if (isSelected && previousSelection !== index) {
+            item.classList.remove('preview-item--highlight-pulse');
+            // Force reflow to restart animation
+            void item.offsetWidth;
+            item.classList.add('preview-item--highlight-pulse');
+          }
+        } else {
+          item.classList.remove('preview-item--highlighted', 'preview-item--highlight-pulse');
+        }
       });
     }
 
@@ -233,6 +267,27 @@ class PreviewRenderer {
 
     if (this.onItemSelect && previousSelection !== index) {
       this.onItemSelect(index, previousSelection);
+    }
+  }
+
+  /**
+   * Set highlight selected mode
+   * @param {boolean} enabled
+   */
+  setHighlightSelected(enabled) {
+    this.config.highlightSelected = enabled;
+
+    // Update existing selection if any
+    if (this.previewEl && this.selectedItemIndex !== null) {
+      const items = this.previewEl.querySelectorAll('.preview-item');
+      items.forEach((item, i) => {
+        const isSelected = i === this.selectedItemIndex;
+        if (enabled && isSelected) {
+          item.classList.add('preview-item--highlighted');
+        } else {
+          item.classList.remove('preview-item--highlighted', 'preview-item--highlight-pulse');
+        }
+      });
     }
   }
 
@@ -301,6 +356,9 @@ class PreviewRenderer {
 
     // Update card size attribute
     this.previewEl.setAttribute('data-card-size', this.config.cardSize);
+
+    // Apply overflow visible class
+    this.previewEl.classList.toggle('layout-preview--overflow-visible', this.config.overflowVisible);
 
     // Apply grid styles
     this.applyGridStyles(template);
@@ -431,13 +489,45 @@ class PreviewRenderer {
   }
 
   /**
+   * Programmatically select an item by index
+   * @param {number} index
+   */
+  selectItem(index) {
+    if (index < 0 || !this.previewEl) return;
+
+    const previousSelection = this.selectedItemIndex;
+    this.selectedItemIndex = index;
+
+    const items = this.previewEl.querySelectorAll('.preview-item');
+    items.forEach((item, i) => {
+      const isSelected = i === index;
+      item.classList.toggle('preview-item--selected', isSelected);
+
+      // Handle highlight mode
+      if (this.config.highlightSelected) {
+        item.classList.toggle('preview-item--highlighted', isSelected);
+
+        // Add pulse animation for newly selected item
+        if (isSelected && previousSelection !== index) {
+          item.classList.remove('preview-item--highlight-pulse');
+          // Force reflow to restart animation
+          void item.offsetWidth;
+          item.classList.add('preview-item--highlight-pulse');
+        }
+      } else {
+        item.classList.remove('preview-item--highlighted', 'preview-item--highlight-pulse');
+      }
+    });
+  }
+
+  /**
    * Clear selection
    */
   clearSelection() {
     this.selectedItemIndex = null;
     if (this.previewEl) {
       this.previewEl.querySelectorAll('.preview-item').forEach(item => {
-        item.classList.remove('preview-item--selected');
+        item.classList.remove('preview-item--selected', 'preview-item--highlighted', 'preview-item--highlight-pulse');
       });
     }
   }

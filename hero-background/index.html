@@ -47,24 +47,6 @@
           <div class="two-column">
             <!-- Controls -->
             <div class="controls-panel">
-              <!-- Card Size -->
-              <div class="control-group">
-                <label class="control-group__label">Card Size</label>
-                <select id="current-card-size">
-                  <option value="1x1">1x1 (125 x 125)</option>
-                  <option value="1x2">1x2 (125 x 250)</option>
-                  <option value="1x3">1x3 (125 x 375)</option>
-                  <option value="2x1">2x1 (250 x 125)</option>
-                  <option value="2x2" selected>2x2 (250 x 250)</option>
-                  <option value="2x3">2x3 (250 x 375)</option>
-                  <option value="3x1">3x1 (375 x 125)</option>
-                  <option value="3x2">3x2 (375 x 250)</option>
-                  <option value="3x3">3x3 (375 x 375)</option>
-                </select>
-              </div>
-
-              <div class="divider"></div>
-
               <!-- Background Color Section -->
               <div class="collapsible collapsible--open">
                 <div class="collapsible__header" onclick="this.parentElement.classList.toggle('collapsible--open')">
@@ -106,40 +88,6 @@
                   <div class="buttons-row" style="margin-top: var(--space-3);">
                     <button class="btn btn--secondary" id="current-btn-transparent">Transparent</button>
                     <button class="btn btn--secondary" id="current-btn-reset">Reset</button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Sample Images (Testing Only) -->
-              <div class="control-group" style="margin-top: var(--space-4);">
-                <label class="control-group__label">Sample Images <span style="font-size: 11px; color: var(--color-text-muted);">(Testing Only)</span></label>
-                <div class="bg-image-selector" id="current-bg-selector">
-                  <div class="bg-image-option bg-image-option--none bg-image-option--selected" data-src="">
-                    None
-                  </div>
-                  <div class="bg-image-option" data-src="sample-images/Wood_Grain_BG.jpg">
-                    <img src="sample-images/Wood_Grain_BG.jpg" alt="Wood Grain">
-                    <span class="bg-image-option__label">Wood Grain</span>
-                  </div>
-                  <div class="bg-image-option" data-src="sample-images/wood-BG.png">
-                    <img src="sample-images/wood-BG.png" alt="Wood">
-                    <span class="bg-image-option__label">Wood</span>
-                  </div>
-                  <div class="bg-image-option" data-src="sample-images/stone-BG.jpg">
-                    <img src="sample-images/stone-BG.jpg" alt="Stone">
-                    <span class="bg-image-option__label">Stone</span>
-                  </div>
-                  <div class="bg-image-option" data-src="sample-images/wood-table_BG.png">
-                    <img src="sample-images/wood-table_BG.png" alt="Wood Table">
-                    <span class="bg-image-option__label">Wood Table</span>
-                  </div>
-                  <div class="bg-image-option" data-src="sample-images/diagonal_BG.png">
-                    <img src="sample-images/diagonal_BG.png" alt="Diagonal">
-                    <span class="bg-image-option__label">Diagonal</span>
-                  </div>
-                  <div class="bg-image-option" data-src="sample-images/polka-dots_BG.png">
-                    <img src="sample-images/polka-dots_BG.png" alt="Polka Dots">
-                    <span class="bg-image-option__label">Polka Dots</span>
                   </div>
                 </div>
               </div>
@@ -263,6 +211,56 @@
                   <span>Hero Image</span>
                 </div>
               </div>
+
+              <!-- Card Size -->
+              <div class="control-group" style="margin-top: var(--space-4);">
+                <label class="control-group__label">Card Size</label>
+                <select id="current-card-size">
+                  <option value="1x1">1x1 (125 x 125)</option>
+                  <option value="1x2">1x2 (125 x 250)</option>
+                  <option value="1x3">1x3 (125 x 375)</option>
+                  <option value="2x1">2x1 (250 x 125)</option>
+                  <option value="2x2" selected>2x2 (250 x 250)</option>
+                  <option value="2x3">2x3 (250 x 375)</option>
+                  <option value="3x1">3x1 (375 x 125)</option>
+                  <option value="3x2">3x2 (375 x 250)</option>
+                  <option value="3x3">3x3 (375 x 375)</option>
+                </select>
+              </div>
+
+              <!-- Sample Images (Testing Only) -->
+              <div class="control-group" style="margin-top: var(--space-4);">
+                <label class="control-group__label">Sample Images <span style="font-size: 11px; color: var(--color-text-muted);">(Testing Only)</span></label>
+                <div class="bg-image-selector" id="current-bg-selector">
+                  <div class="bg-image-option bg-image-option--none bg-image-option--selected" data-src="">
+                    None
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/Wood_Grain_BG.jpg">
+                    <img src="sample-images/Wood_Grain_BG.jpg" alt="Wood Grain">
+                    <span class="bg-image-option__label">Wood Grain</span>
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/wood-BG.png">
+                    <img src="sample-images/wood-BG.png" alt="Wood">
+                    <span class="bg-image-option__label">Wood</span>
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/stone-BG.jpg">
+                    <img src="sample-images/stone-BG.jpg" alt="Stone">
+                    <span class="bg-image-option__label">Stone</span>
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/wood-table_BG.png">
+                    <img src="sample-images/wood-table_BG.png" alt="Wood Table">
+                    <span class="bg-image-option__label">Wood Table</span>
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/diagonal_BG.png">
+                    <img src="sample-images/diagonal_BG.png" alt="Diagonal">
+                    <span class="bg-image-option__label">Diagonal</span>
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/polka-dots_BG.png">
+                    <img src="sample-images/polka-dots_BG.png" alt="Polka Dots">
+                    <span class="bg-image-option__label">Polka Dots</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -304,24 +302,6 @@
           <div class="two-column">
             <!-- Controls -->
             <div class="controls-panel">
-              <!-- Card Size -->
-              <div class="control-group">
-                <label class="control-group__label">Card Size</label>
-                <select id="nextlevel-card-size">
-                  <option value="1x1">1x1 (125 x 125)</option>
-                  <option value="1x2">1x2 (125 x 250)</option>
-                  <option value="1x3">1x3 (125 x 375)</option>
-                  <option value="2x1">2x1 (250 x 125)</option>
-                  <option value="2x2" selected>2x2 (250 x 250)</option>
-                  <option value="2x3">2x3 (250 x 375)</option>
-                  <option value="3x1">3x1 (375 x 125)</option>
-                  <option value="3x2">3x2 (375 x 250)</option>
-                  <option value="3x3">3x3 (375 x 375)</option>
-                </select>
-              </div>
-
-              <div class="divider"></div>
-
               <!-- Background Color Section -->
               <div class="collapsible collapsible--open">
                 <div class="collapsible__header" onclick="this.parentElement.classList.toggle('collapsible--open')">
@@ -379,40 +359,6 @@
                   <div class="buttons-row" style="margin-top: var(--space-3);">
                     <button class="btn btn--secondary" id="nextlevel-btn-transparent">Transparent</button>
                     <button class="btn btn--secondary" id="nextlevel-btn-reset">Reset</button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Sample Images (Testing Only) -->
-              <div class="control-group" style="margin-top: var(--space-4);">
-                <label class="control-group__label">Sample Images <span style="font-size: 11px; color: var(--color-text-muted);">(Testing Only)</span></label>
-                <div class="bg-image-selector" id="nextlevel-bg-selector">
-                  <div class="bg-image-option bg-image-option--none bg-image-option--selected" data-src="">
-                    None
-                  </div>
-                  <div class="bg-image-option" data-src="sample-images/Wood_Grain_BG.jpg">
-                    <img src="sample-images/Wood_Grain_BG.jpg" alt="Wood Grain">
-                    <span class="bg-image-option__label">Wood Grain</span>
-                  </div>
-                  <div class="bg-image-option" data-src="sample-images/wood-BG.png">
-                    <img src="sample-images/wood-BG.png" alt="Wood">
-                    <span class="bg-image-option__label">Wood</span>
-                  </div>
-                  <div class="bg-image-option" data-src="sample-images/stone-BG.jpg">
-                    <img src="sample-images/stone-BG.jpg" alt="Stone">
-                    <span class="bg-image-option__label">Stone</span>
-                  </div>
-                  <div class="bg-image-option" data-src="sample-images/wood-table_BG.png">
-                    <img src="sample-images/wood-table_BG.png" alt="Wood Table">
-                    <span class="bg-image-option__label">Wood Table</span>
-                  </div>
-                  <div class="bg-image-option" data-src="sample-images/diagonal_BG.png">
-                    <img src="sample-images/diagonal_BG.png" alt="Diagonal">
-                    <span class="bg-image-option__label">Diagonal</span>
-                  </div>
-                  <div class="bg-image-option" data-src="sample-images/polka-dots_BG.png">
-                    <img src="sample-images/polka-dots_BG.png" alt="Polka Dots">
-                    <span class="bg-image-option__label">Polka Dots</span>
                   </div>
                 </div>
               </div>
@@ -627,6 +573,56 @@
                 <div class="layer-indicator__item">
                   <span class="layer-indicator__swatch" style="background: url('sample-images/CocaCola_Original2Liter_large_66a21ff4-7055-4178-a532-19ab3b6374cf.png') center/contain no-repeat #f5f5f5;"></span>
                   <span>Hero</span>
+                </div>
+              </div>
+
+              <!-- Card Size -->
+              <div class="control-group" style="margin-top: var(--space-4);">
+                <label class="control-group__label">Card Size</label>
+                <select id="nextlevel-card-size">
+                  <option value="1x1">1x1 (125 x 125)</option>
+                  <option value="1x2">1x2 (125 x 250)</option>
+                  <option value="1x3">1x3 (125 x 375)</option>
+                  <option value="2x1">2x1 (250 x 125)</option>
+                  <option value="2x2" selected>2x2 (250 x 250)</option>
+                  <option value="2x3">2x3 (250 x 375)</option>
+                  <option value="3x1">3x1 (375 x 125)</option>
+                  <option value="3x2">3x2 (375 x 250)</option>
+                  <option value="3x3">3x3 (375 x 375)</option>
+                </select>
+              </div>
+
+              <!-- Sample Images (Testing Only) -->
+              <div class="control-group" style="margin-top: var(--space-4);">
+                <label class="control-group__label">Sample Images <span style="font-size: 11px; color: var(--color-text-muted);">(Testing Only)</span></label>
+                <div class="bg-image-selector" id="nextlevel-bg-selector">
+                  <div class="bg-image-option bg-image-option--none bg-image-option--selected" data-src="">
+                    None
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/Wood_Grain_BG.jpg">
+                    <img src="sample-images/Wood_Grain_BG.jpg" alt="Wood Grain">
+                    <span class="bg-image-option__label">Wood Grain</span>
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/wood-BG.png">
+                    <img src="sample-images/wood-BG.png" alt="Wood">
+                    <span class="bg-image-option__label">Wood</span>
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/stone-BG.jpg">
+                    <img src="sample-images/stone-BG.jpg" alt="Stone">
+                    <span class="bg-image-option__label">Stone</span>
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/wood-table_BG.png">
+                    <img src="sample-images/wood-table_BG.png" alt="Wood Table">
+                    <span class="bg-image-option__label">Wood Table</span>
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/diagonal_BG.png">
+                    <img src="sample-images/diagonal_BG.png" alt="Diagonal">
+                    <span class="bg-image-option__label">Diagonal</span>
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/polka-dots_BG.png">
+                    <img src="sample-images/polka-dots_BG.png" alt="Polka Dots">
+                    <span class="bg-image-option__label">Polka Dots</span>
+                  </div>
                 </div>
               </div>
             </div>

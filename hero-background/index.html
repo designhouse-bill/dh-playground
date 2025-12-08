@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hero Background Prototype</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/hero-card.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <h1 class="header-title">Hero Background Prototype</h1>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="container">
+      <!-- Tabs Navigation -->
+      <div class="tabs">
+        <button class="tab tab--active" data-tab="current">Current State</button>
+        <button class="tab" data-tab="nextlevel">Next Level</button>
+        <button class="tab" data-tab="sizes">All Sizes</button>
+      </div>
+
+      <!-- ================================================================== -->
+      <!-- Tab 1: Current State (Original Simple Controls) -->
+      <!-- ================================================================== -->
+      <div class="tab-content tab-content--active" id="tab-current">
+        <div class="section">
+          <div class="section__header">
+            <h2 class="section__title">Current State</h2>
+            <p class="section__description">
+              Original background controls with standard form elements.
+            </p>
+          </div>
+
+          <!-- Mode Toggle -->
+          <div class="mode-toggle" id="current-mode-toggle" style="margin-bottom: var(--space-6); max-width: 300px;">
+            <button class="mode-toggle__btn mode-toggle__btn--active" data-mode="default">Default</button>
+            <button class="mode-toggle__btn" data-mode="advanced">Advanced</button>
+          </div>
+
+          <div class="two-column">
+            <!-- Controls -->
+            <div class="controls-panel">
+              <!-- Card Size -->
+              <div class="control-group">
+                <label class="control-group__label">Card Size</label>
+                <select id="current-card-size">
+                  <option value="1x1">1x1 (125 x 125)</option>
+                  <option value="1x2">1x2 (125 x 250)</option>
+                  <option value="1x3">1x3 (125 x 375)</option>
+                  <option value="2x1">2x1 (250 x 125)</option>
+                  <option value="2x2" selected>2x2 (250 x 250)</option>
+                  <option value="2x3">2x3 (250 x 375)</option>
+                  <option value="3x1">3x1 (375 x 125)</option>
+                  <option value="3x2">3x2 (375 x 250)</option>
+                  <option value="3x3">3x3 (375 x 375)</option>
+                </select>
+              </div>
+
+              <div class="divider"></div>
+
+              <!-- Background Color Section -->
+              <div class="collapsible collapsible--open">
+                <div class="collapsible__header" onclick="this.parentElement.classList.toggle('collapsible--open')">
+                  <h4 class="collapsible__title">Background Color</h4>
+                  <span class="collapsible__icon">▼</span>
+                </div>
+                <div class="collapsible__content">
+                  <!-- Color Picker + Hex -->
+                  <div class="control-group">
+                    <div class="color-input-row">
+                      <input type="color" id="current-color-picker" value="#ffffff">
+                      <input type="text" id="current-color-hex" value="#FFFFFF" placeholder="#FFFFFF">
+                    </div>
+                  </div>
+
+                  <!-- RGBA Inputs -->
+                  <div class="control-group" style="margin-top: var(--space-3);">
+                    <div class="rgba-inputs">
+                      <div class="rgba-input">
+                        <label>R</label>
+                        <input type="number" id="current-color-r" min="0" max="255" value="255">
+                      </div>
+                      <div class="rgba-input">
+                        <label>G</label>
+                        <input type="number" id="current-color-g" min="0" max="255" value="255">
+                      </div>
+                      <div class="rgba-input">
+                        <label>B</label>
+                        <input type="number" id="current-color-b" min="0" max="255" value="255">
+                      </div>
+                      <div class="rgba-input">
+                        <label>A</label>
+                        <input type="number" id="current-color-a" min="0" max="100" value="100">
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Buttons -->
+                  <div class="buttons-row" style="margin-top: var(--space-3);">
+                    <button class="btn btn--secondary" id="current-btn-transparent">Transparent</button>
+                    <button class="btn btn--secondary" id="current-btn-reset">Reset</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sample Images (Testing Only) -->
+              <div class="control-group" style="margin-top: var(--space-4);">
+                <label class="control-group__label">Sample Images <span style="font-size: 11px; color: var(--color-text-muted);">(Testing Only)</span></label>
+                <div class="bg-image-selector" id="current-bg-selector">
+                  <div class="bg-image-option bg-image-option--none bg-image-option--selected" data-src="">
+                    None
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/Wood_Grain_BG.jpg">
+                    <img src="sample-images/Wood_Grain_BG.jpg" alt="Wood Grain">
+                    <span class="bg-image-option__label">Wood Grain</span>
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/wood-BG.png">
+                    <img src="sample-images/wood-BG.png" alt="Wood">
+                    <span class="bg-image-option__label">Wood</span>
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/stone-BG.jpg">
+                    <img src="sample-images/stone-BG.jpg" alt="Stone">
+                    <span class="bg-image-option__label">Stone</span>
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/wood-table_BG.png">
+                    <img src="sample-images/wood-table_BG.png" alt="Wood Table">
+                    <span class="bg-image-option__label">Wood Table</span>
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/diagonal_BG.png">
+                    <img src="sample-images/diagonal_BG.png" alt="Diagonal">
+                    <span class="bg-image-option__label">Diagonal</span>
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/polka-dots_BG.png">
+                    <img src="sample-images/polka-dots_BG.png" alt="Polka Dots">
+                    <span class="bg-image-option__label">Polka Dots</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Background Image Section -->
+              <div class="collapsible collapsible--open" style="margin-top: var(--space-4);">
+                <div class="collapsible__header" onclick="this.parentElement.classList.toggle('collapsible--open')">
+                  <h4 class="collapsible__title">Background Image</h4>
+                  <span class="collapsible__icon">▼</span>
+                </div>
+                <div class="collapsible__content">
+                  <!-- Position (Dropdown) -->
+                  <div class="control-group" style="margin-top: var(--space-3);">
+                    <label class="control-group__label">Position</label>
+                    <select id="current-position">
+                      <option value="top left">Top Left</option>
+                      <option value="top center">Top Center</option>
+                      <option value="top right">Top Right</option>
+                      <option value="center left">Center Left</option>
+                      <option value="center center" selected>Center Center</option>
+                      <option value="center right">Center Right</option>
+                      <option value="bottom left">Bottom Left</option>
+                      <option value="bottom center">Bottom Center</option>
+                      <option value="bottom right">Bottom Right</option>
+                    </select>
+                  </div>
+
+                  <!-- Size (Dropdown) -->
+                  <div class="control-group" style="margin-top: var(--space-3);">
+                    <label class="control-group__label">Size</label>
+                    <select id="current-size">
+                      <option value="cover" selected>Cover</option>
+                      <option value="contain">Contain</option>
+                      <option value="auto">Auto</option>
+                      <option value="100% 100%">100%</option>
+                      <option value="50% 50%">50%</option>
+                    </select>
+                  </div>
+
+                  <!-- Repeat (Dropdown) -->
+                  <div class="control-group" style="margin-top: var(--space-3);">
+                    <label class="control-group__label">Repeat</label>
+                    <select id="current-repeat">
+                      <option value="no-repeat" selected>No Repeat</option>
+                      <option value="repeat">Repeat</option>
+                      <option value="repeat-x">Repeat-X</option>
+                      <option value="repeat-y">Repeat-Y</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Advanced Controls (hidden by default) -->
+              <div id="current-advanced-controls" style="display: none; margin-top: var(--space-4);">
+                <div class="collapsible collapsible--open">
+                  <div class="collapsible__header" onclick="this.parentElement.classList.toggle('collapsible--open')">
+                    <h4 class="collapsible__title">Advanced Options</h4>
+                    <span class="collapsible__icon">▼</span>
+                  </div>
+                  <div class="collapsible__content">
+                    <!-- Blend Mode -->
+                    <div class="control-group">
+                      <label class="control-group__label">Blend Mode</label>
+                      <select id="current-blend-mode">
+                        <option value="normal" selected>Normal</option>
+                        <option value="multiply">Multiply</option>
+                        <option value="screen">Screen</option>
+                        <option value="overlay">Overlay</option>
+                        <option value="darken">Darken</option>
+                        <option value="lighten">Lighten</option>
+                        <option value="color-dodge">Color Dodge</option>
+                        <option value="color-burn">Color Burn</option>
+                        <option value="hard-light">Hard Light</option>
+                        <option value="soft-light">Soft Light</option>
+                      </select>
+                    </div>
+
+                    <!-- Opacity -->
+                    <div class="slider-group" style="margin-top: var(--space-3);">
+                      <div class="slider-group__header">
+                        <label class="slider-group__label">Background Image Opacity</label>
+                        <span class="slider-group__value" id="current-opacity-value">100%</span>
+                      </div>
+                      <input type="range" id="current-opacity" min="0" max="100" value="100">
+                    </div>
+
+                    <!-- Attachment -->
+                    <div class="control-group" style="margin-top: var(--space-3);">
+                      <label class="control-group__label">Attachment</label>
+                      <select id="current-attachment">
+                        <option value="scroll" selected>Scroll</option>
+                        <option value="fixed">Fixed</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Preview -->
+            <div class="preview-panel">
+              <h3 class="preview-panel__title">Preview</h3>
+              <div class="preview-container" id="current-preview-container">
+                <!-- Hero card renders here -->
+              </div>
+
+              <!-- Layer Indicator (Static) -->
+              <div class="layer-indicator" style="margin-top: var(--space-4);">
+                <div class="layer-indicator__item">
+                  <span class="layer-indicator__swatch" style="background: #fff; border: 1px solid #ddd;"></span>
+                  <span>Background Color</span>
+                </div>
+                <span class="layer-indicator__arrow">→</span>
+                <div class="layer-indicator__item">
+                  <span class="layer-indicator__swatch" style="background: repeating-linear-gradient(45deg, #ddd, #ddd 2px, #fff 2px, #fff 4px);"></span>
+                  <span>Background Image</span>
+                </div>
+                <span class="layer-indicator__arrow">→</span>
+                <div class="layer-indicator__item">
+                  <span class="layer-indicator__swatch" style="background: #f5f5f5;"></span>
+                  <span>Hero Image</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Configuration Output -->
+          <div style="margin-top: var(--space-6);">
+            <!-- JSON Output -->
+            <div class="output-section">
+              <h3 class="output-header__title" style="margin-bottom: var(--space-2);">Configuration JSON</h3>
+              <pre class="config-output" id="current-config-output"></pre>
+            </div>
+
+            <!-- CSS Output -->
+            <div class="output-section">
+              <h3 class="output-header__title" style="margin-bottom: var(--space-2);">Generated CSS</h3>
+              <pre class="config-output" id="current-css-output"></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================== -->
+      <!-- Tab 2: Next Level (Enhanced Visual Controls) -->
+      <!-- ================================================================== -->
+      <div class="tab-content" id="tab-nextlevel">
+        <div class="section">
+          <div class="section__header">
+            <h2 class="section__title">Next Level</h2>
+            <p class="section__description">
+              Enhanced controls with visual pickers, swatches, and intuitive UI for designers.
+            </p>
+          </div>
+
+          <!-- Mode Toggle -->
+          <div class="mode-toggle" id="nextlevel-mode-toggle" style="margin-bottom: var(--space-6); max-width: 300px;">
+            <button class="mode-toggle__btn mode-toggle__btn--active" data-mode="default">Default</button>
+            <button class="mode-toggle__btn" data-mode="advanced">Advanced</button>
+          </div>
+
+          <div class="two-column">
+            <!-- Controls -->
+            <div class="controls-panel">
+              <!-- Card Size -->
+              <div class="control-group">
+                <label class="control-group__label">Card Size</label>
+                <select id="nextlevel-card-size">
+                  <option value="1x1">1x1 (125 x 125)</option>
+                  <option value="1x2">1x2 (125 x 250)</option>
+                  <option value="1x3">1x3 (125 x 375)</option>
+                  <option value="2x1">2x1 (250 x 125)</option>
+                  <option value="2x2" selected>2x2 (250 x 250)</option>
+                  <option value="2x3">2x3 (250 x 375)</option>
+                  <option value="3x1">3x1 (375 x 125)</option>
+                  <option value="3x2">3x2 (375 x 250)</option>
+                  <option value="3x3">3x3 (375 x 375)</option>
+                </select>
+              </div>
+
+              <div class="divider"></div>
+
+              <!-- Background Color Section -->
+              <div class="collapsible collapsible--open">
+                <div class="collapsible__header" onclick="this.parentElement.classList.toggle('collapsible--open')">
+                  <h4 class="collapsible__title">Background Color</h4>
+                  <span class="collapsible__icon">▼</span>
+                </div>
+                <div class="collapsible__content">
+                  <!-- Color Picker + Hex -->
+                  <div class="control-group">
+                    <div class="color-input-row">
+                      <input type="color" id="nextlevel-color-picker" value="#ffffff">
+                      <input type="text" id="nextlevel-color-hex" value="#FFFFFF" placeholder="#FFFFFF">
+                    </div>
+                  </div>
+
+                  <!-- Color Swatches -->
+                  <div class="color-swatches" style="margin-top: var(--space-3);">
+                    <span class="color-swatches__label">Swatches</span>
+                    <div class="color-swatches__row" id="nextlevel-swatches-preset">
+                      <!-- Preset swatches generated by JS -->
+                    </div>
+                    <span class="color-swatches__label" style="margin-top: var(--space-2);">Recent</span>
+                    <div class="color-swatches__row" id="nextlevel-swatches-recent">
+                      <button class="color-swatch color-swatch--empty" disabled title="No recent colors"></button>
+                      <button class="color-swatch color-swatch--empty" disabled title="No recent colors"></button>
+                      <button class="color-swatch color-swatch--empty" disabled title="No recent colors"></button>
+                      <button class="color-swatch color-swatch--empty" disabled title="No recent colors"></button>
+                      <button class="color-swatch color-swatch--empty" disabled title="No recent colors"></button>
+                    </div>
+                  </div>
+
+                  <!-- RGBA Inputs -->
+                  <div class="control-group" style="margin-top: var(--space-3);">
+                    <div class="rgba-inputs">
+                      <div class="rgba-input">
+                        <label>R</label>
+                        <input type="number" id="nextlevel-color-r" min="0" max="255" value="255">
+                      </div>
+                      <div class="rgba-input">
+                        <label>G</label>
+                        <input type="number" id="nextlevel-color-g" min="0" max="255" value="255">
+                      </div>
+                      <div class="rgba-input">
+                        <label>B</label>
+                        <input type="number" id="nextlevel-color-b" min="0" max="255" value="255">
+                      </div>
+                      <div class="rgba-input">
+                        <label>A</label>
+                        <input type="number" id="nextlevel-color-a" min="0" max="100" value="100">
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Buttons -->
+                  <div class="buttons-row" style="margin-top: var(--space-3);">
+                    <button class="btn btn--secondary" id="nextlevel-btn-transparent">Transparent</button>
+                    <button class="btn btn--secondary" id="nextlevel-btn-reset">Reset</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sample Images (Testing Only) -->
+              <div class="control-group" style="margin-top: var(--space-4);">
+                <label class="control-group__label">Sample Images <span style="font-size: 11px; color: var(--color-text-muted);">(Testing Only)</span></label>
+                <div class="bg-image-selector" id="nextlevel-bg-selector">
+                  <div class="bg-image-option bg-image-option--none bg-image-option--selected" data-src="">
+                    None
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/Wood_Grain_BG.jpg">
+                    <img src="sample-images/Wood_Grain_BG.jpg" alt="Wood Grain">
+                    <span class="bg-image-option__label">Wood Grain</span>
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/wood-BG.png">
+                    <img src="sample-images/wood-BG.png" alt="Wood">
+                    <span class="bg-image-option__label">Wood</span>
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/stone-BG.jpg">
+                    <img src="sample-images/stone-BG.jpg" alt="Stone">
+                    <span class="bg-image-option__label">Stone</span>
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/wood-table_BG.png">
+                    <img src="sample-images/wood-table_BG.png" alt="Wood Table">
+                    <span class="bg-image-option__label">Wood Table</span>
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/diagonal_BG.png">
+                    <img src="sample-images/diagonal_BG.png" alt="Diagonal">
+                    <span class="bg-image-option__label">Diagonal</span>
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/polka-dots_BG.png">
+                    <img src="sample-images/polka-dots_BG.png" alt="Polka Dots">
+                    <span class="bg-image-option__label">Polka Dots</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Background Image Section -->
+              <div class="collapsible collapsible--open" style="margin-top: var(--space-4);">
+                <div class="collapsible__header" onclick="this.parentElement.classList.toggle('collapsible--open')">
+                  <h4 class="collapsible__title">Background Image</h4>
+                  <span class="collapsible__icon">▼</span>
+                </div>
+                <div class="collapsible__content">
+                  <!-- Position (Visual Grid) -->
+                  <div class="control-group" style="margin-top: var(--space-3);">
+                    <label class="control-group__label">Position</label>
+                    <div class="position-grid" id="nextlevel-position-grid">
+                      <button class="position-grid__point" data-position="top left" title="Top Left"></button>
+                      <button class="position-grid__point" data-position="top center" title="Top Center"></button>
+                      <button class="position-grid__point" data-position="top right" title="Top Right"></button>
+                      <button class="position-grid__point" data-position="center left" title="Center Left"></button>
+                      <button class="position-grid__point position-grid__point--active" data-position="center center" title="Center Center"></button>
+                      <button class="position-grid__point" data-position="center right" title="Center Right"></button>
+                      <button class="position-grid__point" data-position="bottom left" title="Bottom Left"></button>
+                      <button class="position-grid__point" data-position="bottom center" title="Bottom Center"></button>
+                      <button class="position-grid__point" data-position="bottom right" title="Bottom Right"></button>
+                    </div>
+                    <!-- Custom position inputs -->
+                    <div class="position-custom">
+                      <div class="position-custom__input">
+                        <label>X:</label>
+                        <input type="number" id="nextlevel-position-x" value="50" min="0" max="100">
+                        <span>%</span>
+                      </div>
+                      <div class="position-custom__input">
+                        <label>Y:</label>
+                        <input type="number" id="nextlevel-position-y" value="50" min="0" max="100">
+                        <span>%</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Size (Visual Buttons) -->
+                  <div class="control-group" style="margin-top: var(--space-3);">
+                    <label class="control-group__label">Size</label>
+                    <div class="size-selector">
+                      <div class="size-selector__buttons" id="nextlevel-size-buttons">
+                        <button class="size-selector__btn size-selector__btn--active" data-size="cover" title="Image fills container, may crop">
+                          <span class="size-selector__icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <rect x="3" y="3" width="18" height="18" rx="2"/>
+                              <rect x="1" y="7" width="22" height="10" fill="currentColor" opacity="0.3"/>
+                            </svg>
+                          </span>
+                          <span class="size-selector__label">Cover</span>
+                        </button>
+                        <button class="size-selector__btn" data-size="contain" title="Image fits inside, may letterbox">
+                          <span class="size-selector__icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <rect x="3" y="3" width="18" height="18" rx="2"/>
+                              <rect x="6" y="5" width="12" height="14" fill="currentColor" opacity="0.3"/>
+                            </svg>
+                          </span>
+                          <span class="size-selector__label">Contain</span>
+                        </button>
+                        <button class="size-selector__btn" data-size="auto" title="Original dimensions">
+                          <span class="size-selector__icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <rect x="3" y="3" width="18" height="18" rx="2"/>
+                              <rect x="8" y="8" width="8" height="8" fill="currentColor" opacity="0.3"/>
+                            </svg>
+                          </span>
+                          <span class="size-selector__label">Auto</span>
+                        </button>
+                        <button class="size-selector__btn" data-size="custom" title="Custom dimensions">
+                          <span class="size-selector__icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <path d="M11 4H4v7"/>
+                              <path d="M20 13v7h-7"/>
+                              <path d="M4 20L9 15"/>
+                              <path d="M15 9l5-5"/>
+                            </svg>
+                          </span>
+                          <span class="size-selector__label">Custom</span>
+                        </button>
+                      </div>
+                      <div class="size-custom" id="nextlevel-size-custom">
+                        <div class="size-custom__field">
+                          <label>Width</label>
+                          <div class="size-custom__input-group">
+                            <input type="number" id="nextlevel-size-width" value="100" min="0">
+                            <select id="nextlevel-size-width-unit">
+                              <option value="%" selected>%</option>
+                              <option value="px">px</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="size-custom__field">
+                          <label>Height</label>
+                          <div class="size-custom__input-group">
+                            <input type="number" id="nextlevel-size-height" value="100" min="0">
+                            <select id="nextlevel-size-height-unit">
+                              <option value="%" selected>%</option>
+                              <option value="px">px</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Repeat -->
+                  <div class="control-group" style="margin-top: var(--space-3);">
+                    <label class="control-group__label">Repeat</label>
+                    <select id="nextlevel-repeat">
+                      <option value="no-repeat" selected>No Repeat</option>
+                      <option value="repeat">Repeat</option>
+                      <option value="repeat-x">Repeat-X</option>
+                      <option value="repeat-y">Repeat-Y</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Advanced Controls (hidden by default) -->
+              <div id="nextlevel-advanced-controls" style="display: none; margin-top: var(--space-4);">
+                <div class="collapsible collapsible--open">
+                  <div class="collapsible__header" onclick="this.parentElement.classList.toggle('collapsible--open')">
+                    <h4 class="collapsible__title">Advanced Options</h4>
+                    <span class="collapsible__icon">▼</span>
+                  </div>
+                  <div class="collapsible__content">
+                    <!-- Blend Mode -->
+                    <div class="control-group">
+                      <label class="control-group__label">Blend Mode</label>
+                      <select id="nextlevel-blend-mode">
+                        <option value="normal" selected>Normal</option>
+                        <option value="multiply">Multiply</option>
+                        <option value="screen">Screen</option>
+                        <option value="overlay">Overlay</option>
+                        <option value="darken">Darken</option>
+                        <option value="lighten">Lighten</option>
+                        <option value="color-dodge">Color Dodge</option>
+                        <option value="color-burn">Color Burn</option>
+                        <option value="hard-light">Hard Light</option>
+                        <option value="soft-light">Soft Light</option>
+                      </select>
+                    </div>
+
+                    <!-- Opacity -->
+                    <div class="slider-group" style="margin-top: var(--space-3);">
+                      <div class="slider-group__header">
+                        <label class="slider-group__label">Background Image Opacity</label>
+                        <span class="slider-group__value" id="nextlevel-opacity-value">100%</span>
+                      </div>
+                      <input type="range" id="nextlevel-opacity" min="0" max="100" value="100">
+                    </div>
+
+                    <!-- Attachment -->
+                    <div class="control-group" style="margin-top: var(--space-3);">
+                      <label class="control-group__label">Attachment</label>
+                      <select id="nextlevel-attachment">
+                        <option value="scroll" selected>Scroll</option>
+                        <option value="fixed">Fixed</option>
+                      </select>
+                    </div>
+
+                    <!-- Origin -->
+                    <div class="control-group" style="margin-top: var(--space-3);">
+                      <label class="control-group__label">Origin</label>
+                      <select id="nextlevel-origin">
+                        <option value="padding-box" selected>Padding Box</option>
+                        <option value="border-box">Border Box</option>
+                        <option value="content-box">Content Box</option>
+                      </select>
+                    </div>
+
+                    <!-- Clip -->
+                    <div class="control-group" style="margin-top: var(--space-3);">
+                      <label class="control-group__label">Clip</label>
+                      <select id="nextlevel-clip">
+                        <option value="border-box" selected>Border Box</option>
+                        <option value="padding-box">Padding Box</option>
+                        <option value="content-box">Content Box</option>
+                        <option value="text">Text</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Preview -->
+            <div class="preview-panel">
+              <h3 class="preview-panel__title">Preview</h3>
+              <div class="preview-container" id="nextlevel-preview-container">
+                <!-- Hero card renders here -->
+              </div>
+
+              <!-- Live Layer Indicator -->
+              <div class="layer-indicator" id="nextlevel-layer-indicator" style="margin-top: var(--space-4);">
+                <div class="layer-indicator__item">
+                  <span class="layer-indicator__swatch" id="nextlevel-layer-color-swatch" style="background: #ffffff;"></span>
+                  <span>Color</span>
+                  <span class="layer-indicator__value" id="nextlevel-layer-color-value">#FFFFFF</span>
+                </div>
+                <span class="layer-indicator__arrow">→</span>
+                <div class="layer-indicator__item">
+                  <span class="layer-indicator__swatch" id="nextlevel-layer-image-swatch" style="background: #f0f0f0;"></span>
+                  <span>Image</span>
+                  <span class="layer-indicator__value" id="nextlevel-layer-image-value">None</span>
+                </div>
+                <span class="layer-indicator__arrow">→</span>
+                <div class="layer-indicator__item">
+                  <span class="layer-indicator__swatch" style="background: url('sample-images/CocaCola_Original2Liter_large_66a21ff4-7055-4178-a532-19ab3b6374cf.png') center/contain no-repeat #f5f5f5;"></span>
+                  <span>Hero</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Configuration Output -->
+          <div style="margin-top: var(--space-6);">
+            <!-- JSON Output -->
+            <div class="output-section">
+              <div class="output-header">
+                <h3 class="output-header__title">Configuration JSON</h3>
+                <button class="copy-btn" id="copy-json-btn" data-target="nextlevel-config-output">
+                  <svg class="copy-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2"/>
+                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                  </svg>
+                  <span>Copy</span>
+                </button>
+              </div>
+              <pre class="config-output" id="nextlevel-config-output"></pre>
+            </div>
+
+            <!-- CSS Output -->
+            <div class="output-section">
+              <div class="output-header">
+                <h3 class="output-header__title">Generated CSS</h3>
+                <button class="copy-btn" id="copy-css-btn" data-target="nextlevel-css-output">
+                  <svg class="copy-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2"/>
+                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                  </svg>
+                  <span>Copy</span>
+                </button>
+              </div>
+              <pre class="config-output" id="nextlevel-css-output"></pre>
+            </div>
+
+            <!-- HTML Output -->
+            <div class="output-section">
+              <div class="output-header">
+                <h3 class="output-header__title">Inline HTML</h3>
+                <button class="copy-btn" id="copy-html-btn" data-target="nextlevel-html-output">
+                  <svg class="copy-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2"/>
+                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                  </svg>
+                  <span>Copy</span>
+                </button>
+              </div>
+              <pre class="config-output" id="nextlevel-html-output"></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================== -->
+      <!-- Tab 3: All Sizes -->
+      <!-- ================================================================== -->
+      <div class="tab-content" id="tab-sizes">
+        <div class="section">
+          <div class="section__header">
+            <h2 class="section__title">All Sizes Comparison</h2>
+            <p class="section__description">
+              View all card sizes with the same background configuration applied.
+            </p>
+          </div>
+
+          <!-- Quick Controls -->
+          <div style="display: flex; align-items: center; gap: var(--space-6); margin-bottom: var(--space-6); flex-wrap: wrap;">
+            <div class="control-group" style="flex: 0 0 auto;">
+              <label class="control-group__label">Background Color</label>
+              <input type="color" id="sizes-color-picker" value="#ffffff" style="width: 60px; height: 40px;">
+            </div>
+
+            <div class="control-group" style="flex: 1;">
+              <label class="control-group__label">Sample Images <span style="font-size: 11px; color: var(--color-text-muted);">(Testing Only)</span></label>
+              <div class="bg-image-selector" id="sizes-bg-selector">
+                <div class="bg-image-option bg-image-option--none bg-image-option--selected" data-src="">
+                  None
+                </div>
+                <div class="bg-image-option" data-src="sample-images/Wood_Grain_BG.jpg">
+                  <img src="sample-images/Wood_Grain_BG.jpg" alt="Wood Grain">
+                  <span class="bg-image-option__label">Wood Grain</span>
+                </div>
+                <div class="bg-image-option" data-src="sample-images/wood-BG.png">
+                  <img src="sample-images/wood-BG.png" alt="Wood">
+                  <span class="bg-image-option__label">Wood</span>
+                </div>
+                <div class="bg-image-option" data-src="sample-images/stone-BG.jpg">
+                  <img src="sample-images/stone-BG.jpg" alt="Stone">
+                  <span class="bg-image-option__label">Stone</span>
+                </div>
+                <div class="bg-image-option" data-src="sample-images/wood-table_BG.png">
+                  <img src="sample-images/wood-table_BG.png" alt="Wood Table">
+                  <span class="bg-image-option__label">Wood Table</span>
+                </div>
+                <div class="bg-image-option" data-src="sample-images/diagonal_BG.png">
+                  <img src="sample-images/diagonal_BG.png" alt="Diagonal">
+                  <span class="bg-image-option__label">Diagonal</span>
+                </div>
+                <div class="bg-image-option" data-src="sample-images/polka-dots_BG.png">
+                  <img src="sample-images/polka-dots_BG.png" alt="Polka Dots">
+                  <span class="bg-image-option__label">Polka Dots</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- All Sizes Grid -->
+          <div class="sizes-grid" id="all-sizes-container">
+            <!-- All size cards render here -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast"></div>
+
+  <!-- JavaScript -->
+  <script src="js/hero-preview.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

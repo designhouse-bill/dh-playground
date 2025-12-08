@@ -1,0 +1,254 @@
+/* =============================================================================
+   Hero Card Component Styles
+   ============================================================================= */
+
+/* Hero Card Base */
+.hero-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-medium);
+
+  /* Default background */
+  background-color: #ffffff;
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+/*
+ * Card size widths based on 375px base for 3-column sizes
+ * Base unit: 375px / 3 = 125px per column
+ * 3-column: 375px
+ * 2-column: 250px (2 x 125px)
+ * 1-column: 125px (1 x 125px)
+ */
+
+/* 1-column sizes (125px width) */
+.hero-card[data-card-size="1x1"] {
+  width: 125px;
+  aspect-ratio: 1 / 1;
+}
+
+.hero-card[data-card-size="1x2"] {
+  width: 125px;
+  aspect-ratio: 1 / 2;
+}
+
+.hero-card[data-card-size="1x3"] {
+  width: 125px;
+  aspect-ratio: 1 / 3;
+}
+
+/* 2-column sizes (250px width) */
+.hero-card[data-card-size="2x1"] {
+  width: 250px;
+  aspect-ratio: 2 / 1;
+}
+
+.hero-card[data-card-size="2x2"] {
+  width: 250px;
+  aspect-ratio: 1 / 1;
+}
+
+.hero-card[data-card-size="2x3"] {
+  width: 250px;
+  aspect-ratio: 2 / 3;
+}
+
+/* 3-column sizes (375px width - base) */
+.hero-card[data-card-size="3x1"] {
+  width: 375px;
+  aspect-ratio: 3 / 1;
+}
+
+.hero-card[data-card-size="3x2"] {
+  width: 375px;
+  aspect-ratio: 3 / 2;
+}
+
+.hero-card[data-card-size="3x3"] {
+  width: 375px;
+  aspect-ratio: 1 / 1;
+}
+
+/* Hero Image */
+.hero-card__image {
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: contain;
+  position: relative;
+  z-index: 1;
+}
+
+/* Background Image Overlay (for opacity control in advanced mode) */
+.hero-card__bg-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-position: inherit;
+  background-size: inherit;
+  background-repeat: inherit;
+  pointer-events: none;
+}
+
+/* =============================================================================
+   Layered Mode (for opacity support)
+   ============================================================================= */
+
+/*
+ * When opacity < 1, we use a layered approach:
+ * - .hero-card has the background color
+ * - .hero-card__bg-layer is an absolutely positioned div with the background image
+ * - This allows independent opacity control on the background image
+ */
+.hero-card--layered {
+  /* Ensure proper stacking context */
+}
+
+.hero-card__bg-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  pointer-events: none;
+
+  /* Background properties are set inline */
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+/* =============================================================================
+   Background Position Variations
+   ============================================================================= */
+
+.hero-card--bg-top-left { background-position: top left; }
+.hero-card--bg-top-center { background-position: top center; }
+.hero-card--bg-top-right { background-position: top right; }
+.hero-card--bg-center-left { background-position: center left; }
+.hero-card--bg-center-center { background-position: center center; }
+.hero-card--bg-center-right { background-position: center right; }
+.hero-card--bg-bottom-left { background-position: bottom left; }
+.hero-card--bg-bottom-center { background-position: bottom center; }
+.hero-card--bg-bottom-right { background-position: bottom right; }
+
+/* =============================================================================
+   Background Size Variations
+   ============================================================================= */
+
+.hero-card--bg-cover { background-size: cover; }
+.hero-card--bg-contain { background-size: contain; }
+.hero-card--bg-auto { background-size: auto; }
+.hero-card--bg-100 { background-size: 100% 100%; }
+.hero-card--bg-50 { background-size: 50% 50%; }
+
+/* =============================================================================
+   Background Repeat Variations
+   ============================================================================= */
+
+.hero-card--bg-no-repeat { background-repeat: no-repeat; }
+.hero-card--bg-repeat { background-repeat: repeat; }
+.hero-card--bg-repeat-x { background-repeat: repeat-x; }
+.hero-card--bg-repeat-y { background-repeat: repeat-y; }
+
+/* =============================================================================
+   Background Blend Modes (Advanced)
+   ============================================================================= */
+
+.hero-card--blend-normal { background-blend-mode: normal; }
+.hero-card--blend-multiply { background-blend-mode: multiply; }
+.hero-card--blend-screen { background-blend-mode: screen; }
+.hero-card--blend-overlay { background-blend-mode: overlay; }
+.hero-card--blend-darken { background-blend-mode: darken; }
+.hero-card--blend-lighten { background-blend-mode: lighten; }
+.hero-card--blend-color-dodge { background-blend-mode: color-dodge; }
+.hero-card--blend-color-burn { background-blend-mode: color-burn; }
+.hero-card--blend-hard-light { background-blend-mode: hard-light; }
+.hero-card--blend-soft-light { background-blend-mode: soft-light; }
+
+/* =============================================================================
+   Background Attachment (Advanced)
+   ============================================================================= */
+
+.hero-card--bg-scroll { background-attachment: scroll; }
+.hero-card--bg-fixed { background-attachment: fixed; }
+
+/* =============================================================================
+   Layer Visualization (for Combined Preview)
+   ============================================================================= */
+
+.layer-indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--color-gray-50);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+}
+
+.layer-indicator__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-gray-600);
+}
+
+.layer-indicator__swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-gray-300);
+}
+
+.layer-indicator__arrow {
+  color: var(--color-gray-400);
+}
+
+/* =============================================================================
+   Scaled Preview (for All Sizes Grid - smaller versions)
+   ============================================================================= */
+
+.hero-card--scaled {
+  transform-origin: center center;
+}
+
+/* Scale factor for fitting in grid cells */
+.hero-card--scale-75 {
+  transform: scale(0.75);
+}
+
+.hero-card--scale-50 {
+  transform: scale(0.5);
+}
+
+/* =============================================================================
+   Debug Outline (optional)
+   ============================================================================= */
+
+.hero-card--debug {
+  outline: 2px dashed var(--color-primary);
+  outline-offset: 2px;
+}
+
+.hero-card--debug::before {
+  content: attr(data-card-size);
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background: var(--color-primary);
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  z-index: 10;
+}

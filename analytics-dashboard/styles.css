@@ -4729,7 +4729,11 @@ body:not(.comparison-active) .detail-comparison {
   background-color: var(--color-surface);
 }
 
-.compare-layer-tabs button {
+.compare-layer-tabs button,
+.compare-layer-tabs a {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
   padding: var(--space-3) var(--space-6);
   border: none;
   background: transparent;
@@ -4738,15 +4742,22 @@ body:not(.comparison-active) .detail-comparison {
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-secondary);
+  text-decoration: none;
   transition: all var(--transition-fast);
 }
 
-.compare-layer-tabs button:hover {
+.compare-layer-tabs a .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.compare-layer-tabs button:hover,
+.compare-layer-tabs a:hover {
   color: var(--color-text-primary);
   background-color: var(--color-gray-50);
 }
 
-.compare-layer-tabs button.active {
+.compare-layer-tabs button.active,
+.compare-layer-tabs a.active {
   border-bottom-color: var(--color-primary-500);
   color: var(--color-primary-600);
   font-weight: var(--font-weight-semibold);

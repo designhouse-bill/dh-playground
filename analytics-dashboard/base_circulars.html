@@ -123,25 +123,19 @@
       <section class="panel panel--category-grid" role="main" aria-label="Stores">
         <div class="panel-header panel-header--categories">
           <div class="panel-header__left">
-            <div class="panel-breadcrumb-wrapper">
-              <button class="panel-breadcrumb" id="panel-breadcrumb" onclick="toggleBreadcrumbDropdown(event)" aria-haspopup="true" aria-expanded="false">
-                <span class="breadcrumb-text">BASE &gt; Circulars</span>
-                <span class="material-symbols-outlined">expand_more</span>
-              </button>
-              <div class="panel-breadcrumb-dropdown" id="panel-breadcrumb-dropdown" role="menu">
-                <a href="base_circulars.html" class="breadcrumb-option active" data-view="circulars" role="menuitem" onclick="navigateWithFilters(event, 'base_circulars.html', 'circulars')">
-                  <span class="breadcrumb-option-prefix">BASE &gt;</span>
-                  <span class="breadcrumb-option-label">Circulars</span>
-                </a>
-                <a href="base_categories.html" class="breadcrumb-option" data-view="categories" role="menuitem" onclick="navigateWithFilters(event, 'base_categories.html', 'categories')">
-                  <span class="breadcrumb-option-prefix">BASE &gt;</span>
-                  <span class="breadcrumb-option-label">Categories</span>
-                </a>
-                <a href="base_promotions.html" class="breadcrumb-option" data-view="promotions" role="menuitem" onclick="navigateWithFilters(event, 'base_promotions.html', 'promotions')">
-                  <span class="breadcrumb-option-prefix">BASE &gt;</span>
-                  <span class="breadcrumb-option-label">Promotions</span>
-                </a>
-              </div>
+            <div class="compare-layer-tabs" role="tablist">
+              <a href="base_circulars.html" class="active" role="tab" aria-selected="true">
+                <span class="material-symbols-outlined">store</span>
+                Circulars
+              </a>
+              <a href="base_categories.html" role="tab" aria-selected="false">
+                <span class="material-symbols-outlined">category</span>
+                Categories
+              </a>
+              <a href="base_promotions.html" role="tab" aria-selected="false">
+                <span class="material-symbols-outlined">local_offer</span>
+                Promotions
+              </a>
             </div>
             <label class="toggle-switch">
               <input type="checkbox" id="more-data-toggle">

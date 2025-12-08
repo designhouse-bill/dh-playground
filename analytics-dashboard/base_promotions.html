@@ -134,25 +134,19 @@
       <section class="panel panel--center" role="main" aria-label="Promotions">
         <div class="panel-header panel-header--promotions">
           <div class="panel-header__left">
-            <div class="panel-breadcrumb-wrapper">
-              <button class="panel-breadcrumb" id="panel-breadcrumb" onclick="toggleBreadcrumbDropdown(event)" aria-haspopup="true" aria-expanded="false">
-                <span class="breadcrumb-text">BASE &gt; Promotions</span>
-                <span class="material-symbols-outlined">expand_more</span>
-              </button>
-              <div class="panel-breadcrumb-dropdown" id="panel-breadcrumb-dropdown" role="menu">
-                <a href="base_circulars.html" class="breadcrumb-option" data-view="circulars" role="menuitem" onclick="navigateWithFilters(event, 'base_circulars.html', 'circulars')">
-                  <span class="breadcrumb-option-prefix">BASE &gt;</span>
-                  <span class="breadcrumb-option-label">Circulars</span>
-                </a>
-                <a href="base_categories.html" class="breadcrumb-option" data-view="categories" role="menuitem" onclick="navigateWithFilters(event, 'base_categories.html', 'categories')">
-                  <span class="breadcrumb-option-prefix">BASE &gt;</span>
-                  <span class="breadcrumb-option-label">Categories</span>
-                </a>
-                <a href="base_promotions.html" class="breadcrumb-option active" data-view="promotions" role="menuitem" onclick="navigateWithFilters(event, 'base_promotions.html', 'promotions')">
-                  <span class="breadcrumb-option-prefix">BASE &gt;</span>
-                  <span class="breadcrumb-option-label">Promotions</span>
-                </a>
-              </div>
+            <div class="compare-layer-tabs" role="tablist">
+              <a href="base_circulars.html" role="tab" aria-selected="false">
+                <span class="material-symbols-outlined">store</span>
+                Circulars
+              </a>
+              <a href="base_categories.html" role="tab" aria-selected="false">
+                <span class="material-symbols-outlined">category</span>
+                Categories
+              </a>
+              <a href="base_promotions.html" class="active" role="tab" aria-selected="true">
+                <span class="material-symbols-outlined">local_offer</span>
+                Promotions
+              </a>
             </div>
             <div class="more-data-toggle-wrapper" id="more-data-toggle-wrapper">
               <label class="toggle-switch">
@@ -239,16 +233,20 @@
         <div class="detail-content" id="detail-content">
           <!-- Populated by JavaScript -->
         </div>
-        <div class="detail-footer">
-          <button class="detail-footer__btn" onclick="printPromotion()">
-            <span class="material-symbols-outlined">print</span>
-            Print
+        <div class="detail-footer" id="promotion-detail-footer">
+          <button class="detail-action-btn" onclick="viewPromotionCirculars()">
+            <span class="material-symbols-outlined">store</span>
+            View Circulars
           </button>
-          <button class="detail-footer__btn" onclick="openPromotionInquiry()">
+          <button class="detail-action-btn" onclick="viewPromotionCategories()">
+            <span class="material-symbols-outlined">category</span>
+            View Categories
+          </button>
+          <button class="detail-action-btn" onclick="openPromotionInquiry()">
             <span class="material-symbols-outlined">table_chart</span>
             Grid Inquiry
           </button>
-          <button class="detail-footer__btn" onclick="compareCurrentPromotion()">
+          <button class="detail-action-btn" onclick="compareCurrentPromotion()">
             <span class="material-symbols-outlined">compare</span>
             Compare
           </button>

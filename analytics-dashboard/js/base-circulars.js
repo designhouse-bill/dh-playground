@@ -21,6 +21,12 @@
     topN: 25
   };
 
+  // Column filters state
+  let columnFilters = {
+    name: '',
+    brandName: ''
+  };
+
   // Stores data
   let allStores = [];
   let filteredStores = [];
@@ -62,6 +68,8 @@
         renderStoreGrid: renderStoreGrid,
         updateCounts: updateCounts
       });
+      // Initialize metrics key tooltip system
+      window.DashboardFilters.initMetricsKeyTooltip();
     }
 
     // Set active navigation state
@@ -202,8 +210,14 @@
     const gridContainer = document.getElementById('store-data-grid');
     if (!gridContainer) return;
 
-    // Sort stores
-    filteredStores = sortStores([...allStores], state.storeSortColumn, state.storeSortDirection);
+    // Dispose existing charts before re-render
+    if (typeof PerfCharts !== 'undefined') {
+      PerfCharts.disposeAllCharts();
+    }
+
+    // Apply column filters first, then sort
+    let displayStores = applyColumnFiltersToStores(allStores);
+    filteredStores = sortStores(displayStores, state.storeSortColumn, state.storeSortDirection);
 
     // Get page data
     const pageInfo = getPageData();
@@ -256,11 +270,15 @@
           <td class="col-clicks">${core.formatNumber(store.cc)}</td>
           <td class="col-added">${core.formatNumber(store.atl)}</td>
           <td class="col-perf">
-            <div class="perf-bar">
-              <div class="perf-bar__track perf-bar__track--${perfClass}">
-                <div class="perf-bar__fill perf-bar__fill--${perfClass}" style="width: ${perfPercent}%"></div>
+            <div class="perf-chart-container">
+              <div class="perf-chart" id="perf-chart-store-${store.id}"
+                   data-name="${core.escapeHtml(store.name)}"
+                   data-views="${store.civ || 0}"
+                   data-clicks="${store.cc || 0}"
+                   data-adds="${store.atl || 0}"
+                   data-composite="${store.compositeScore || 0}">
               </div>
-              <span class="perf-bar__value">${core.formatNumber(store.compositeScore)}</span>
+              <span class="perf-chart__value">${core.formatNumber(store.compositeScore)}</span>
             </div>
           </td>
           <td class="col-percentile">
@@ -277,10 +295,10 @@
 
     gridContainer.innerHTML = `
       <table class="store-grid-table data-table--sortable ${moreDataClass}">
-        <thead>
+        <thead id="store-table-head">
           <tr>
             <th class="col-num">#</th>
-            ${getStoreSortableHeaderHTML('Store', 'name', 'col-store')}
+            ${getStoreSortableHeaderHTML('Store', 'name', 'col-store', 'text')}
             ${getStoreSortableHeaderHTML('Views', 'civ', 'col-views')}
             ${getStoreSortableHeaderHTML('Clicks', 'cc', 'col-clicks')}
             ${getStoreSortableHeaderHTML('Added', 'atl', 'col-added')}
@@ -295,6 +313,13 @@
     `;
 
     gridContainer.classList.toggle('more-data-enabled', state.moreDataEnabled);
+
+    // Initialize performance charts
+    if (typeof PerfCharts !== 'undefined') {
+      const chartHeight = state.moreDataEnabled ? 12 : 16;
+      PerfCharts.calculateMaxValues(allStores);
+      PerfCharts.initAllCharts({ height: chartHeight, dataArray: allStores });
+    }
   }
 
   /**
@@ -324,24 +349,129 @@
   }
 
   /**
-   * Generate sortable header HTML for stores
+   * Generate sortable header HTML for stores (matching grid-inquiry pattern)
    */
-  function getStoreSortableHeaderHTML(label, column, cssClass = '') {
+  function getStoreSortableHeaderHTML(label, column, cssClass = '', filterType = null) {
     const isActive = state.storeSortColumn === column;
     const direction = isActive ? state.storeSortDirection : null;
     const sortIcon = direction === 'asc' ? 'arrow_upward' : direction === 'desc' ? 'arrow_downward' : 'unfold_more';
     const activeClass = isActive ? 'th-sort--active' : '';
+
+    // Build filter HTML based on type
+    let filterHTML = '';
+
+    if (filterType === 'text') {
+      // Text filter input with clear button
+      const currentValue = columnFilters[column] || '';
+      const hasValue = currentValue.length > 0;
+      filterHTML = `
+        <div class="th-filter-wrapper">
+          <input type="text" class="th-filter-input ${hasValue ? 'has-value' : ''}"
+                 placeholder="Filter..."
+                 value="${core.escapeHtml(currentValue)}"
+                 oninput="updateStoreFilterClearBtn(this)"
+                 onchange="applyStoreFilter('${column}', this.value)"
+                 onclick="event.stopPropagation()">
+          <button class="th-filter-clear ${hasValue ? 'visible' : ''}"
+                  onclick="clearStoreFilter('${column}'); event.stopPropagation();"
+                  aria-label="Clear filter">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+      `;
+    } else if (filterType === 'brand') {
+      // Brand dropdown filter
+      const brands = [...new Set(allStores.map(s => s.brandName).filter(Boolean))].sort();
+      const currentValue = columnFilters.brandName || '';
+      const options = ['<option value="">All</option>'].concat(
+        brands.map(brand => `<option value="${core.escapeHtml(brand)}" ${brand === currentValue ? 'selected' : ''}>${core.escapeHtml(brand)}</option>`)
+      ).join('');
+      filterHTML = `
+        <select class="th-filter-select"
+                onchange="applyStoreFilter('brandName', this.value)"
+                onclick="event.stopPropagation()">
+          ${options}
+        </select>
+      `;
+    } else if (column === 'compositeScore' && typeof PerfCharts !== 'undefined') {
+      // Performance metric dropdown
+      filterHTML = PerfCharts.getDropdownHTML();
+    }
+
+    // Add info button for Performance column
+    const infoButtonHTML = (column === 'compositeScore' && typeof DashboardFilters !== 'undefined')
+      ? DashboardFilters.getMetricsKeyButtonHTML()
+      : '';
 
     return `
       <th class="th-sortable ${activeClass} ${cssClass}" data-column="${column}">
         <div class="th-content">
           <div class="th-header header-sort" onclick="handleStoreColumnSort('${column}')">
             <span class="th-label">${label}</span>
+            ${infoButtonHTML}
             <span class="th-sort-icon material-symbols-outlined">${sortIcon}</span>
           </div>
+          ${filterHTML}
         </div>
       </th>
     `;
+  }
+
+  /**
+   * Apply filter to store column
+   */
+  function applyStoreFilter(column, value) {
+    columnFilters[column] = value || '';
+    paginationState.currentPage = 1;
+    renderStoreGrid();
+    core.saveState();
+  }
+
+  /**
+   * Clear filter for a store column
+   */
+  function clearStoreFilter(column) {
+    columnFilters[column] = '';
+    paginationState.currentPage = 1;
+    renderStoreGrid();
+    core.saveState();
+  }
+
+  /**
+   * Update filter clear button visibility
+   */
+  function updateStoreFilterClearBtn(input) {
+    const wrapper = input.closest('.th-filter-wrapper');
+    const clearBtn = wrapper ? wrapper.querySelector('.th-filter-clear') : null;
+    if (clearBtn) {
+      if (input.value.length > 0) {
+        clearBtn.classList.add('visible');
+        input.classList.add('has-value');
+      } else {
+        clearBtn.classList.remove('visible');
+        input.classList.remove('has-value');
+      }
+    }
+  }
+
+  /**
+   * Apply column filters to stores array
+   */
+  function applyColumnFiltersToStores(stores) {
+    let filtered = [...stores];
+
+    // Name filter (text search)
+    if (columnFilters.name) {
+      const search = columnFilters.name.toLowerCase();
+      filtered = filtered.filter(s => s.name.toLowerCase().includes(search));
+    }
+
+    // Brand filter (dropdown)
+    if (columnFilters.brandName) {
+      filtered = filtered.filter(s => s.brandName === columnFilters.brandName);
+    }
+
+    return filtered;
   }
 
   /**
@@ -673,6 +803,10 @@
   window.changeRowsPerPage = changeRowsPerPage;
   window.prevPage = prevPage;
   window.nextPage = nextPage;
+  // Filter functions
+  window.applyStoreFilter = applyStoreFilter;
+  window.clearStoreFilter = clearStoreFilter;
+  window.updateStoreFilterClearBtn = updateStoreFilterClearBtn;
 
   // Initialize on DOM ready
   if (document.readyState === 'loading') {

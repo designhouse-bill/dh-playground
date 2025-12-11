@@ -47,6 +47,8 @@
         renderCategoryGrid: () => {},
         updateCounts: updateCounts
       });
+      // Initialize metrics key tooltip system
+      window.DashboardFilters.initMetricsKeyTooltip();
     }
 
     // Set active navigation state
@@ -516,6 +518,11 @@
     const table = document.getElementById('promotion-table');
     if (!table) return;
 
+    // Dispose existing charts before re-render
+    if (typeof PerfCharts !== 'undefined') {
+      PerfCharts.disposeAllCharts();
+    }
+
     // Apply column filters first, then sort
     let displayPromotions = applyColumnFilters(state.filteredPromotions);
     displayPromotions = core.sortPromotions(displayPromotions, state.sortColumn, state.sortDirection);
@@ -577,11 +584,15 @@
           <td class="col-category"><span class="promo-category">${core.escapeHtml(promo.categoryName)}</span></td>
           ${moreDataCells}
           <td class="col-perf">
-            <div class="perf-bar">
-              <div class="perf-bar__track perf-bar__track--${perfClass}">
-                <div class="perf-bar__fill perf-bar__fill--${perfClass}" style="width: ${perfPercent}%"></div>
+            <div class="perf-chart-container">
+              <div class="perf-chart" id="perf-chart-promo-${promo.id}"
+                   data-name="${core.escapeHtml(promo.name)}"
+                   data-views="${promo.civ || 0}"
+                   data-clicks="${promo.cc || 0}"
+                   data-adds="${promo.atl || 0}"
+                   data-composite="${promo.compositeScore || 0}">
               </div>
-              <span class="perf-bar__value">${core.formatNumber(promo.compositeScore)}</span>
+              <span class="perf-chart__value">${core.formatNumber(promo.compositeScore)}</span>
             </div>
           </td>
           <td class="col-percentile">${core.getPercentileBadgeHTML(promo.percentile)}</td>
@@ -594,7 +605,7 @@
 
     // More Data headers (Deal, Views, Clicks, Added)
     const moreDataHeaders = showMoreData ? `
-            ${getPromoSortableHeaderHTML('Deal', 'dealType', 'col-deal')}
+            ${getPromoSortableHeaderHTML('Deal', 'dealType', 'col-deal', 'dealType')}
             ${getPromoSortableHeaderHTML('Views', 'civ', 'col-views')}
             ${getPromoSortableHeaderHTML('Clicks', 'cc', 'col-clicks')}
             ${getPromoSortableHeaderHTML('Added', 'atl', 'col-added')}
@@ -605,11 +616,11 @@
 
     table.innerHTML = `
       <table class="promo-grid-table data-table--sortable">
-        <thead>
+        <thead id="promo-table-head">
           <tr>
             <th class="col-num">#</th>
-            ${getPromoSortableHeaderHTML('Promotion', 'name', 'col-promo')}
-            ${getPromoSortableHeaderHTML('Category', 'categoryName', 'col-category')}
+            ${getPromoSortableHeaderHTML('Promotion', 'name', 'col-promo', 'text')}
+            ${getPromoSortableHeaderHTML('Category', 'categoryName', 'col-category', 'category')}
             ${moreDataHeaders}
             ${getPromoSortableHeaderHTML('Performance', 'compositeScore', 'col-perf')}
             ${getPromoSortableHeaderHTML('%tile', 'percentile', 'col-percentile')}
@@ -620,27 +631,123 @@
         </tbody>
       </table>
     `;
+
+    // Initialize performance charts
+    if (typeof PerfCharts !== 'undefined') {
+      const chartHeight = showMoreData ? 12 : 16;
+      PerfCharts.calculateMaxValues(allDisplayPromotions);
+      PerfCharts.initAllCharts({ height: chartHeight, dataArray: allDisplayPromotions });
+    }
   }
 
   /**
-   * Generate sortable header HTML for promotions (matching category/store pattern)
+   * Generate sortable header HTML for promotions (matching grid-inquiry pattern)
    */
-  function getPromoSortableHeaderHTML(label, column, cssClass = '') {
+  function getPromoSortableHeaderHTML(label, column, cssClass = '', filterType = null) {
     const isActive = state.sortColumn === column;
     const direction = isActive ? state.sortDirection : null;
     const sortIcon = direction === 'asc' ? 'arrow_upward' : direction === 'desc' ? 'arrow_downward' : 'unfold_more';
     const activeClass = isActive ? 'th-sort--active' : '';
+
+    // Build filter HTML based on type
+    let filterHTML = '';
+
+    if (filterType === 'text') {
+      // Text filter input with clear button for promotion name
+      const currentValue = state.columnFilters.name || '';
+      const hasValue = currentValue.length > 0;
+      filterHTML = `
+        <div class="th-filter-wrapper">
+          <input type="text" class="th-filter-input ${hasValue ? 'has-value' : ''}"
+                 placeholder="Filter..."
+                 value="${core.escapeHtml(currentValue)}"
+                 oninput="updatePromoFilterClearBtn(this)"
+                 onchange="handleColumnFilter('name', this.value)"
+                 onclick="event.stopPropagation()">
+          <button class="th-filter-clear ${hasValue ? 'visible' : ''}"
+                  onclick="clearPromoFilter('name'); event.stopPropagation();"
+                  aria-label="Clear filter">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+      `;
+    } else if (filterType === 'category') {
+      // Category dropdown filter
+      const categories = core.getUniqueCategories();
+      const currentValue = state.columnFilters.category || '';
+      const options = ['<option value="">All</option>'].concat(
+        categories.map(cat => `<option value="${core.escapeHtml(cat)}" ${cat === currentValue ? 'selected' : ''}>${core.escapeHtml(cat)}</option>`)
+      ).join('');
+      filterHTML = `
+        <select class="th-filter-select"
+                onchange="handleColumnFilter('category', this.value)"
+                onclick="event.stopPropagation()">
+          ${options}
+        </select>
+      `;
+    } else if (filterType === 'dealType') {
+      // Deal type dropdown filter
+      const dealTypes = core.getUniqueDealTypes();
+      const currentValue = state.columnFilters.dealType || '';
+      const options = ['<option value="">All</option>'].concat(
+        dealTypes.map(dt => `<option value="${core.escapeHtml(dt)}" ${dt === currentValue ? 'selected' : ''}>${core.escapeHtml(dt)}</option>`)
+      ).join('');
+      filterHTML = `
+        <select class="th-filter-select"
+                onchange="handleColumnFilter('dealType', this.value)"
+                onclick="event.stopPropagation()">
+          ${options}
+        </select>
+      `;
+    } else if (column === 'compositeScore' && typeof PerfCharts !== 'undefined') {
+      // Performance metric dropdown
+      filterHTML = PerfCharts.getDropdownHTML();
+    }
+
+    // Add info button for Performance column
+    const infoButtonHTML = (column === 'compositeScore' && typeof DashboardFilters !== 'undefined')
+      ? DashboardFilters.getMetricsKeyButtonHTML()
+      : '';
 
     return `
       <th class="th-sortable ${activeClass} ${cssClass}" data-column="${column}">
         <div class="th-content">
           <div class="th-header header-sort" onclick="handleColumnSort('${column}')">
             <span class="th-label">${label}</span>
+            ${infoButtonHTML}
             <span class="th-sort-icon material-symbols-outlined">${sortIcon}</span>
           </div>
+          ${filterHTML}
         </div>
       </th>
     `;
+  }
+
+  /**
+   * Clear filter for a promo column
+   */
+  function clearPromoFilter(column) {
+    state.columnFilters[column] = '';
+    paginationState.currentPage = 1;
+    renderPromotionTable();
+    core.saveState();
+  }
+
+  /**
+   * Update filter clear button visibility
+   */
+  function updatePromoFilterClearBtn(input) {
+    const wrapper = input.closest('.th-filter-wrapper');
+    const clearBtn = wrapper ? wrapper.querySelector('.th-filter-clear') : null;
+    if (clearBtn) {
+      if (input.value.length > 0) {
+        clearBtn.classList.add('visible');
+        input.classList.add('has-value');
+      } else {
+        clearBtn.classList.remove('visible');
+        input.classList.remove('has-value');
+      }
+    }
   }
 
   /**
@@ -1078,6 +1185,8 @@
   window.compareCurrentPromotion = compareCurrentPromotion;
   window.handleColumnSort = handleColumnSort;
   window.handleColumnFilter = handleColumnFilter;
+  window.clearPromoFilter = clearPromoFilter;
+  window.updatePromoFilterClearBtn = updatePromoFilterClearBtn;
   window.changeTopN = changeTopN;
   window.changeRowsPerPage = changeRowsPerPage;
   window.prevPage = prevPage;

@@ -687,12 +687,49 @@ const ComparePage = (function() {
     const totalCIV = promotions.reduce((sum, p) => sum + (p.civ || 0), 0);
     const totalCC = promotions.reduce((sum, p) => sum + (p.cc || 0), 0);
     const totalATL = promotions.reduce((sum, p) => sum + (p.atl || 0), 0);
-    const avgPercentile = promotions.length > 0
-      ? Math.round(promotions.reduce((sum, p) => sum + (p.percentile || 0), 0) / promotions.length)
-      : 0;
-    const avgScore = promotions.length > 0
-      ? Math.round(promotions.reduce((sum, p) => sum + (p.compositeScore || 0), 0) / promotions.length)
-      : 0;
+
+    // Calculate a meaningful engagement score based on totals
+    // Using the same formula as composite score but for totals
+    const totalEngagementScore = Math.round((totalCIV * 0.4 + totalCC * 10 + totalATL * 15) / 100);
+
+    // Calculate percentile by comparing against all stores for this week
+    // This gives a meaningful ranking that changes with different contexts
+    let entityPercentile = 50; // Default
+    if (ctx.entityLevel === 'store' && weekNum) {
+      // For store-level, compare against all stores for this week
+      const allStoresRecords = MockData.getRecords(weekNum, 'all', 'all');
+      const storeScores = [];
+
+      // Group records by store and calculate each store's score
+      const storeRecordsMap = {};
+      allStoresRecords.forEach(r => {
+        if (!storeRecordsMap[r.storeId]) {
+          storeRecordsMap[r.storeId] = [];
+        }
+        storeRecordsMap[r.storeId].push(r);
+      });
+
+      Object.keys(storeRecordsMap).forEach(storeId => {
+        const storePromos = MockData.getUniquePromotions(storeRecordsMap[storeId]);
+        const storeCIV = storePromos.reduce((sum, p) => sum + (p.civ || 0), 0);
+        const storeCC = storePromos.reduce((sum, p) => sum + (p.cc || 0), 0);
+        const storeATL = storePromos.reduce((sum, p) => sum + (p.atl || 0), 0);
+        const storeScore = Math.round((storeCIV * 0.4 + storeCC * 10 + storeATL * 15) / 100);
+        storeScores.push({ storeId, score: storeScore });
+      });
+
+      // Sort by score descending and find percentile
+      storeScores.sort((a, b) => b.score - a.score);
+      const rank = storeScores.findIndex(s => s.storeId === ctx.entityId);
+      if (rank >= 0 && storeScores.length > 0) {
+        entityPercentile = Math.round(100 - (rank / storeScores.length) * 100);
+      }
+    } else {
+      // For brand/sub-brand level, use average percentile of promotions as fallback
+      entityPercentile = promotions.length > 0
+        ? Math.round(promotions.reduce((sum, p) => sum + (p.percentile || 0), 0) / promotions.length)
+        : 50;
+    }
 
     // Get entity info for logo
     const entity = MockData.getEntityById(ctx.entityId);
@@ -703,11 +740,11 @@ const ComparePage = (function() {
       name: ctx.entityName || 'All Stores',
       logo: entityLogo,
       metrics: {
-        engagementScore: avgScore,
+        engagementScore: totalEngagementScore,
         civ: totalCIV,
         cc: totalCC,
         atl: totalATL,
-        percentile: avgPercentile,
+        percentile: entityPercentile,
         promotionCount: promotions.length,
         categoryCount: categories.length,
         storeCount: ctx.entityCount || MockData?.entities?.stores?.length || 0

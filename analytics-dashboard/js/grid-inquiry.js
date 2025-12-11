@@ -7,6 +7,7 @@
   'use strict';
 
   // Grid column configuration - matches BASE mode styling
+  // Includes all promotion fields available in the aggregated data
   const GRID_COLUMNS = [
     { key: 'index', label: '#', type: 'index', sortable: false, sticky: false, visible: true },
     { key: 'name', label: 'Promotion', type: 'promotion', sortable: true, sticky: true, visible: true, filterable: true, filterType: 'text' },
@@ -17,10 +18,14 @@
     { key: 'atl', label: 'Added', type: 'number', sortable: true, sticky: false, visible: true },
     { key: 'compositeScore', label: 'Performance', type: 'performance', sortable: true, sticky: false, visible: true },
     { key: 'percentile', label: '%ile', type: 'percentile', sortable: true, sticky: false, visible: true },
-    { key: 'cardSize', label: 'Card Size', type: 'text', sortable: true, sticky: false, visible: false },
+    // Additional promotion fields (hidden by default)
+    { key: 'unit', label: 'Unit', type: 'text', sortable: true, sticky: false, visible: false },
     { key: 'originalPrice', label: 'Original Price', type: 'currency', sortable: true, sticky: false, visible: false },
     { key: 'salePrice', label: 'Sale Price', type: 'currency', sortable: true, sticky: false, visible: false },
-    { key: 'storeCount', label: 'Store Count', type: 'number', sortable: true, sticky: false, visible: false }
+    { key: 'cardSize', label: 'Card Size', type: 'text', sortable: true, sticky: false, visible: false },
+    { key: 'storeCount', label: 'Store Count', type: 'number', sortable: true, sticky: false, visible: false },
+    // Promotion ID (for advanced users)
+    { key: 'id', label: 'Promotion ID', type: 'text', sortable: true, sticky: false, visible: false }
   ];
 
   // References to shared modules
@@ -155,7 +160,7 @@
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.grid-columns-toggle')) {
         const dropdown = document.getElementById('grid-columns-dropdown');
-        if (dropdown) dropdown.classList.remove('active');
+        if (dropdown) dropdown.classList.remove('open');
       }
     });
 
@@ -468,7 +473,7 @@
       const isVisible = state.gridMode.visibleColumns.includes(col.key);
       const isDisabled = col.sticky;
       return `
-        <label class="grid-columns-dropdown__item ${isDisabled ? 'disabled' : ''}">
+        <label class="grid-column-item ${isDisabled ? 'disabled' : ''}">
           <input type="checkbox" ${isVisible ? 'checked' : ''} ${isDisabled ? 'disabled' : ''}
                  onchange="toggleGridColumn('${col.key}', this.checked)">
           <span>${col.label}</span>
@@ -484,7 +489,7 @@
    */
   function toggleColumnsDropdown() {
     const dropdown = document.getElementById('grid-columns-dropdown');
-    if (dropdown) dropdown.classList.toggle('active');
+    if (dropdown) dropdown.classList.toggle('open');
   }
 
   /**

@@ -6,6 +6,7 @@
  * - Filter chip rendering
  * - Filter application logic
  * - Column filter synchronization
+ * - Metrics Key tooltip system
  */
 
 const DashboardFilters = (() => {
@@ -15,6 +16,39 @@ const DashboardFilters = (() => {
   let core = null;
   let state = null;
   let elements = null;
+
+  // =========================================
+  // METRICS KEY DEFINITIONS
+  // =========================================
+  const METRIC_DEFINITIONS = {
+    views: {
+      name: 'Views',
+      color: '#4272D8',
+      weight: '×1',
+      description: 'Card displayed in viewport'
+    },
+    clicks: {
+      name: 'Clicks',
+      color: '#B8D64D',
+      weight: '×5',
+      description: 'Shopper expanded the card'
+    },
+    adds: {
+      name: 'Adds',
+      color: '#4E5370',
+      weight: '×20',
+      description: 'Added to shopping list'
+    },
+    performance: {
+      name: 'Performance',
+      formula: 'Views×1 + Clicks×5 + Adds×20',
+      description: 'Composite engagement score'
+    },
+    percentile: {
+      name: 'Percentile',
+      description: 'Ranking vs all items (0-100)'
+    }
+  };
 
   // Render callbacks (set by page-specific modules)
   let renderCallbacks = {
@@ -98,15 +132,27 @@ const DashboardFilters = (() => {
     if (filter) {
       if (filter.type === 'promotion') {
         state.columnFilters.name = null;
+        // Also clear grid mode column filter
+        if (state.gridMode && state.gridMode.columnFilters) {
+          state.gridMode.columnFilters.name = null;
+        }
       } else if (filter.type === 'category') {
         state.columnFilters.category = null;
         state.activeCategory = null;
         state.selectedCategoryId = null;
+        // Also clear grid mode column filter
+        if (state.gridMode && state.gridMode.columnFilters) {
+          state.gridMode.columnFilters.categoryName = null;
+        }
         if (renderCallbacks.renderCategories) {
           renderCallbacks.renderCategories();
         }
       } else if (filter.type === 'deal') {
         state.columnFilters.dealType = null;
+        // Also clear grid mode column filter
+        if (state.gridMode && state.gridMode.columnFilters) {
+          state.gridMode.columnFilters.dealType = null;
+        }
       } else if (filter.type === 'store') {
         state.activeStore = null;
         state.selectedStoreId = null;
@@ -296,6 +342,11 @@ const DashboardFilters = (() => {
     state.activeCategory = null;
     state.selectedCategoryId = null;
 
+    // Also clear grid mode column filters
+    if (state.gridMode && state.gridMode.columnFilters) {
+      state.gridMode.columnFilters = {};
+    }
+
     renderFilterChips();
     applyFilters();
 
@@ -337,6 +388,211 @@ const DashboardFilters = (() => {
     return filter ? filter.value : null;
   }
 
+  // =========================================
+  // METRICS KEY TOOLTIP SYSTEM
+  // =========================================
+
+  /**
+   * Initialize metrics key tooltip event listeners
+   */
+  function initMetricsKeyTooltip() {
+    // Use event delegation for dynamically rendered content
+    document.addEventListener('click', handleTooltipClick);
+    document.addEventListener('keydown', handleTooltipKeydown);
+    window.addEventListener('resize', closeAllTooltips, { passive: true });
+  }
+
+  /**
+   * Handle click events for tooltip
+   */
+  function handleTooltipClick(e) {
+    if (e.target.closest('.metrics-key-btn')) {
+      e.preventDefault();
+      e.stopPropagation();
+      const btn = e.target.closest('.metrics-key-btn');
+      toggleMetricsKeyTooltip(btn);
+    } else {
+      // Close tooltips when clicking outside
+      closeAllTooltips();
+    }
+  }
+
+  /**
+   * Handle keyboard events for tooltip
+   */
+  function handleTooltipKeydown(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      if (e.target.classList.contains('metrics-key-btn')) {
+        e.preventDefault();
+        toggleMetricsKeyTooltip(e.target);
+      }
+    } else if (e.key === 'Escape') {
+      closeAllTooltips();
+    }
+  }
+
+  /**
+   * Toggle metrics key tooltip
+   */
+  function toggleMetricsKeyTooltip(btn) {
+    const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+    closeAllTooltips();
+
+    if (!isExpanded) {
+      openMetricsKeyTooltip(btn);
+    }
+  }
+
+  /**
+   * Open metrics key tooltip
+   */
+  function openMetricsKeyTooltip(btn) {
+    const overlay = createMetricsKeyOverlay();
+    document.body.appendChild(overlay);
+
+    positionTooltip(btn, overlay);
+
+    btn.setAttribute('aria-expanded', 'true');
+    btn.tooltipOverlay = overlay;
+
+    requestAnimationFrame(() => {
+      overlay.classList.add('visible');
+    });
+  }
+
+  /**
+   * Create metrics key tooltip overlay HTML
+   */
+  function createMetricsKeyOverlay() {
+    const overlay = document.createElement('div');
+    overlay.className = 'tooltip-overlay metrics-key-tooltip';
+    overlay.setAttribute('role', 'tooltip');
+    overlay.setAttribute('aria-hidden', 'false');
+
+    overlay.innerHTML = `
+      <div class="tooltip-title">Performance Metrics Key</div>
+      <div class="metrics-key-list">
+        <div class="metrics-key-item">
+          <div class="metrics-key-row">
+            <span class="metrics-key-swatch" style="background:${METRIC_DEFINITIONS.views.color}"></span>
+            <span class="metrics-key-name">${METRIC_DEFINITIONS.views.name}</span>
+            <span class="metrics-key-weight">${METRIC_DEFINITIONS.views.weight}</span>
+          </div>
+          <div class="metrics-key-desc">${METRIC_DEFINITIONS.views.description}</div>
+        </div>
+        <div class="metrics-key-item">
+          <div class="metrics-key-row">
+            <span class="metrics-key-swatch" style="background:${METRIC_DEFINITIONS.clicks.color}"></span>
+            <span class="metrics-key-name">${METRIC_DEFINITIONS.clicks.name}</span>
+            <span class="metrics-key-weight">${METRIC_DEFINITIONS.clicks.weight}</span>
+          </div>
+          <div class="metrics-key-desc">${METRIC_DEFINITIONS.clicks.description}</div>
+        </div>
+        <div class="metrics-key-item">
+          <div class="metrics-key-row">
+            <span class="metrics-key-swatch" style="background:${METRIC_DEFINITIONS.adds.color}"></span>
+            <span class="metrics-key-name">${METRIC_DEFINITIONS.adds.name}</span>
+            <span class="metrics-key-weight">${METRIC_DEFINITIONS.adds.weight}</span>
+          </div>
+          <div class="metrics-key-desc">${METRIC_DEFINITIONS.adds.description}</div>
+        </div>
+      </div>
+      <div class="metrics-key-divider"></div>
+      <div class="metrics-key-formula">
+        <span class="metrics-key-formula-label">Performance:</span>
+        <span class="metrics-key-formula-value">${METRIC_DEFINITIONS.performance.formula}</span>
+      </div>
+      <div class="metrics-key-item">
+        <div class="metrics-key-row">
+          <span class="metrics-key-name">${METRIC_DEFINITIONS.percentile.name}</span>
+        </div>
+        <div class="metrics-key-desc">${METRIC_DEFINITIONS.percentile.description}</div>
+      </div>
+      <div class="tooltip-why-important">
+        <strong>Why this matters:</strong> Higher weights reflect stronger purchase intent. An "Add" is 20× more valuable than a view.
+      </div>
+    `;
+
+    return overlay;
+  }
+
+  /**
+   * Position tooltip relative to button
+   */
+  function positionTooltip(btn, overlay) {
+    const btnRect = btn.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    // Set initial position to measure
+    overlay.style.left = '0px';
+    overlay.style.top = '0px';
+
+    // Get tooltip dimensions after adding to DOM
+    const overlayRect = overlay.getBoundingClientRect();
+    const overlayWidth = overlayRect.width;
+    const overlayHeight = overlayRect.height;
+
+    let left, top;
+
+    // Try to position below the button first
+    if (btnRect.bottom + overlayHeight + 10 <= viewportHeight) {
+      top = btnRect.bottom + 8;
+      left = btnRect.left + (btnRect.width / 2) - 32;
+    }
+    // Try above if no room below
+    else if (btnRect.top - overlayHeight - 10 >= 0) {
+      top = btnRect.top - overlayHeight - 8;
+      left = btnRect.left + (btnRect.width / 2) - 32;
+      overlay.classList.add('position-top');
+    }
+    // Fallback: position below but adjust
+    else {
+      top = btnRect.bottom + 8;
+      left = Math.max(10, Math.min(viewportWidth - overlayWidth - 10, btnRect.left));
+    }
+
+    // Ensure tooltip stays within viewport
+    left = Math.max(10, Math.min(viewportWidth - overlayWidth - 10, left));
+    top = Math.max(10, Math.min(viewportHeight - overlayHeight - 10, top));
+
+    overlay.style.left = left + 'px';
+    overlay.style.top = top + 'px';
+  }
+
+  /**
+   * Close all open tooltips
+   */
+  function closeAllTooltips() {
+    document.querySelectorAll('.tooltip-overlay').forEach(overlay => {
+      overlay.classList.remove('visible');
+      setTimeout(() => {
+        if (overlay.parentNode) {
+          overlay.parentNode.removeChild(overlay);
+        }
+      }, 200);
+    });
+
+    document.querySelectorAll('.metrics-key-btn[aria-expanded="true"]').forEach(btn => {
+      btn.setAttribute('aria-expanded', 'false');
+      btn.tooltipOverlay = null;
+    });
+  }
+
+  /**
+   * Get HTML for metrics key info button
+   */
+  function getMetricsKeyButtonHTML() {
+    return `
+      <button class="info-btn metrics-key-btn"
+              aria-label="Show metrics key"
+              aria-expanded="false"
+              tabindex="0">
+        <span aria-hidden="true">i</span>
+      </button>
+    `;
+  }
+
   /* ============================================
      PUBLIC API
      ============================================ */
@@ -356,7 +612,13 @@ const DashboardFilters = (() => {
     clearAllFilters,
     addFilter,
     hasFilter,
-    getFilterValue
+    getFilterValue,
+
+    // Metrics Key Tooltip
+    initMetricsKeyTooltip,
+    getMetricsKeyButtonHTML,
+    closeAllTooltips,
+    METRIC_DEFINITIONS
   };
 })();
 

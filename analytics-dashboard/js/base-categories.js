@@ -18,6 +18,11 @@
     topN: 25
   };
 
+  // Column filters state
+  let columnFilters = {
+    name: ''
+  };
+
   // All categories data (before pagination)
   let allDisplayCategories = [];
 
@@ -47,6 +52,8 @@
         renderCategoryGrid: renderCategoryGrid,
         updateCounts: updateCounts
       });
+      // Initialize metrics key tooltip system
+      window.DashboardFilters.initMetricsKeyTooltip();
     }
 
     // Set active navigation state
@@ -240,6 +247,11 @@
     const gridContainer = document.getElementById('category-data-grid');
     if (!gridContainer) return;
 
+    // Dispose existing charts before re-render
+    if (typeof PerfCharts !== 'undefined') {
+      PerfCharts.disposeAllCharts();
+    }
+
     let categories = state.filteredCategories.length > 0 || state.activeFilters.length > 0
       ? state.filteredCategories
       : state.categories;
@@ -255,7 +267,8 @@
       return;
     }
 
-    // Apply sorting
+    // Apply column filters first, then sort
+    categories = applyColumnFiltersToCategories(categories);
     categories = core.sortCategories(categories, state.categorySortColumn, state.categorySortDirection);
 
     // Store all categories for pagination
@@ -299,11 +312,15 @@
           <td class="col-clicks">${core.formatNumber(cat.cc)}</td>
           <td class="col-added">${core.formatNumber(cat.atl)}</td>
           <td class="col-perf">
-            <div class="perf-bar">
-              <div class="perf-bar__track perf-bar__track--${perfClass}">
-                <div class="perf-bar__fill perf-bar__fill--${perfClass}" style="width: ${perfPercent}%"></div>
+            <div class="perf-chart-container">
+              <div class="perf-chart" id="perf-chart-cat-${cat.id}"
+                   data-name="${core.escapeHtml(cat.name)}"
+                   data-views="${cat.civ || 0}"
+                   data-clicks="${cat.cc || 0}"
+                   data-adds="${cat.atl || 0}"
+                   data-composite="${cat.compositeScore || 0}">
               </div>
-              <span class="perf-bar__value">${core.formatNumber(cat.compositeScore)}</span>
+              <span class="perf-chart__value">${core.formatNumber(cat.compositeScore)}</span>
             </div>
           </td>
           <td class="col-percentile">
@@ -323,10 +340,10 @@
 
     gridContainer.innerHTML = `
       <table class="category-grid-table data-table--sortable ${moreDataClass}">
-        <thead>
+        <thead id="category-table-head">
           <tr>
             <th class="col-num">#</th>
-            ${getCategorySortableHeaderHTML('Category', 'name', 'col-category')}
+            ${getCategorySortableHeaderHTML('Category', 'name', 'col-category', 'text')}
             ${getCategorySortableHeaderHTML('Views', 'civ', 'col-views')}
             ${getCategorySortableHeaderHTML('Clicks', 'cc', 'col-clicks')}
             ${getCategorySortableHeaderHTML('Added', 'atl', 'col-added')}
@@ -341,27 +358,120 @@
     `;
 
     gridContainer.classList.toggle('more-data-enabled', state.moreDataEnabled);
+
+    // Initialize performance charts
+    if (typeof PerfCharts !== 'undefined') {
+      const chartHeight = state.moreDataEnabled ? 12 : 16;
+      PerfCharts.calculateMaxValues(allDisplayCategories);
+      PerfCharts.initAllCharts({ height: chartHeight, dataArray: allDisplayCategories });
+    }
   }
 
   /**
-   * Generate sortable header HTML for categories
+   * Generate sortable header HTML for categories (matching grid-inquiry pattern)
    */
-  function getCategorySortableHeaderHTML(label, column, cssClass = '') {
+  function getCategorySortableHeaderHTML(label, column, cssClass = '', filterType = null) {
     const isActive = state.categorySortColumn === column;
     const direction = isActive ? state.categorySortDirection : null;
     const sortIcon = direction === 'asc' ? 'arrow_upward' : direction === 'desc' ? 'arrow_downward' : 'unfold_more';
     const activeClass = isActive ? 'th-sort--active' : '';
+
+    // Build filter HTML based on type
+    let filterHTML = '';
+
+    if (filterType === 'text') {
+      // Text filter input with clear button
+      const currentValue = columnFilters[column] || '';
+      const hasValue = currentValue.length > 0;
+      filterHTML = `
+        <div class="th-filter-wrapper">
+          <input type="text" class="th-filter-input ${hasValue ? 'has-value' : ''}"
+                 placeholder="Filter..."
+                 value="${core.escapeHtml(currentValue)}"
+                 oninput="updateCategoryFilterClearBtn(this)"
+                 onchange="applyCategoryFilter('${column}', this.value)"
+                 onclick="event.stopPropagation()">
+          <button class="th-filter-clear ${hasValue ? 'visible' : ''}"
+                  onclick="clearCategoryFilter('${column}'); event.stopPropagation();"
+                  aria-label="Clear filter">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+      `;
+    } else if (column === 'compositeScore' && typeof PerfCharts !== 'undefined') {
+      // Performance metric dropdown
+      filterHTML = PerfCharts.getDropdownHTML();
+    }
+
+    // Add info button for Performance column
+    const infoButtonHTML = (column === 'compositeScore' && typeof DashboardFilters !== 'undefined')
+      ? DashboardFilters.getMetricsKeyButtonHTML()
+      : '';
 
     return `
       <th class="th-sortable ${activeClass} ${cssClass}" data-column="${column}">
         <div class="th-content">
           <div class="th-header header-sort" onclick="handleCategoryColumnSort('${column}')">
             <span class="th-label">${label}</span>
+            ${infoButtonHTML}
             <span class="th-sort-icon material-symbols-outlined">${sortIcon}</span>
           </div>
+          ${filterHTML}
         </div>
       </th>
     `;
+  }
+
+  /**
+   * Apply filter to category column
+   */
+  function applyCategoryFilter(column, value) {
+    columnFilters[column] = value || '';
+    paginationState.currentPage = 1;
+    renderCategoryGrid();
+    core.saveState();
+  }
+
+  /**
+   * Clear filter for a category column
+   */
+  function clearCategoryFilter(column) {
+    columnFilters[column] = '';
+    paginationState.currentPage = 1;
+    renderCategoryGrid();
+    core.saveState();
+  }
+
+  /**
+   * Update filter clear button visibility
+   */
+  function updateCategoryFilterClearBtn(input) {
+    const wrapper = input.closest('.th-filter-wrapper');
+    const clearBtn = wrapper ? wrapper.querySelector('.th-filter-clear') : null;
+    if (clearBtn) {
+      if (input.value.length > 0) {
+        clearBtn.classList.add('visible');
+        input.classList.add('has-value');
+      } else {
+        clearBtn.classList.remove('visible');
+        input.classList.remove('has-value');
+      }
+    }
+  }
+
+  /**
+   * Apply column filters to categories array
+   */
+  function applyColumnFiltersToCategories(categories) {
+    let filtered = [...categories];
+
+    // Name filter (text search)
+    if (columnFilters.name) {
+      const search = columnFilters.name.toLowerCase();
+      filtered = filtered.filter(c => c.name.toLowerCase().includes(search));
+    }
+
+    return filtered;
   }
 
   /**
@@ -600,6 +710,10 @@
   window.changeRowsPerPage = changeRowsPerPage;
   window.prevPage = prevPage;
   window.nextPage = nextPage;
+  // Filter functions
+  window.applyCategoryFilter = applyCategoryFilter;
+  window.clearCategoryFilter = clearCategoryFilter;
+  window.updateCategoryFilterClearBtn = updateCategoryFilterClearBtn;
 
   // Initialize on DOM ready
   if (document.readyState === 'loading') {

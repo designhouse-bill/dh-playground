@@ -2480,6 +2480,155 @@ body.app-mode-grid .view-search {
   height: 12px;
 }
 
+/* =========================================
+   PERFORMANCE CHART (eCharts stacked bar)
+   ========================================= */
+
+/* Chart container - replaces .perf-bar for eCharts version */
+.perf-chart-container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.perf-chart {
+  flex: 1;
+  height: 16px;
+  min-width: 80px;
+  border-radius: 999px;
+  overflow: hidden;
+  background-color: var(--color-gray-100);
+  border: 1px solid var(--color-gray-200);
+}
+
+.perf-chart__value {
+  min-width: 40px;
+  text-align: right;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+/* When More Data is enabled - chart height */
+.category-data-grid.more-data-enabled .perf-chart,
+.store-data-grid.more-data-enabled .perf-chart,
+.promo-data-grid.more-data-enabled .perf-chart {
+  height: 12px;
+}
+
+/* =========================================
+   PERFORMANCE METRIC DROPDOWN
+   ========================================= */
+
+.perf-metric-dropdown {
+  position: relative;
+  display: inline-flex;
+  margin-left: var(--space-1);
+}
+
+.perf-metric-dropdown__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  color: var(--color-text-tertiary);
+  transition: all var(--transition-fast);
+}
+
+.perf-metric-dropdown__trigger:hover {
+  background-color: var(--color-gray-100);
+  color: var(--color-text-primary);
+}
+
+.perf-metric-dropdown__trigger .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.perf-metric-dropdown__menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + var(--space-1));
+  right: 0;
+  width: 180px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+  overflow: hidden;
+}
+
+.perf-metric-dropdown__menu.open {
+  display: block;
+}
+
+.perf-metric-dropdown__header {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.perf-metric-dropdown__list {
+  padding: var(--space-1) 0;
+}
+
+.perf-metric-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  transition: background-color var(--transition-fast);
+}
+
+.perf-metric-item:hover {
+  background-color: var(--color-gray-50);
+}
+
+.perf-metric-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-primary-600);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.perf-metric-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.perf-metric-swatch--all {
+  background: linear-gradient(90deg, #4272D8 33%, #B8D64D 33% 66%, #4E5370 66%);
+}
+
+.perf-metric-swatch--views {
+  background-color: #4272D8;
+}
+
+.perf-metric-swatch--clicks {
+  background-color: #B8D64D;
+}
+
+.perf-metric-swatch--adds {
+  background-color: #4E5370;
+}
+
 /* Row Position Number */
 .row-number {
   display: inline-flex;
@@ -5278,5 +5427,192 @@ body:not(.comparison-active) .detail-comparison {
 .compare-loading__text {
   margin-top: var(--space-4);
   font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+}
+
+/* ============================================
+   INFO BUTTON & METRICS KEY TOOLTIP
+   ============================================ */
+
+/* Info Button Component */
+.info-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: serif;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.info-btn:hover {
+  background: #f5f5f5;
+  border-color: var(--color-primary-500);
+  color: var(--color-primary-500);
+  transform: scale(1.1);
+}
+
+.info-btn:focus {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+.info-btn[aria-expanded="true"] {
+  background: var(--color-primary-500);
+  border-color: var(--color-primary-500);
+  color: white;
+}
+
+/* Tooltip Overlay */
+.tooltip-overlay {
+  position: fixed;
+  z-index: 9999;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.12);
+  padding: 16px;
+  max-width: 340px;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+
+.tooltip-overlay.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.tooltip-overlay::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 20px;
+  width: 12px;
+  height: 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-right: none;
+  border-bottom: none;
+  transform: rotate(45deg);
+}
+
+.tooltip-overlay.position-top::before {
+  top: auto;
+  bottom: -6px;
+  transform: rotate(225deg);
+}
+
+.tooltip-overlay .tooltip-title {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.tooltip-overlay .tooltip-content {
+  margin: 0 0 12px 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--color-text-primary);
+}
+
+.tooltip-overlay .tooltip-why-important {
+  margin: 0;
+  padding: 12px 0 0 0;
+  border-top: 1px solid var(--color-border);
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+}
+
+.tooltip-overlay .tooltip-why-important strong {
+  color: var(--color-text-primary);
+}
+
+/* Metrics Key Specific Styles */
+.metrics-key-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.metrics-key-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.metrics-key-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.metrics-key-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.metrics-key-name {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--color-text-primary);
+  min-width: 60px;
+}
+
+.metrics-key-weight {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  background: var(--color-gray-100);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.metrics-key-desc {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  padding-left: 20px;
+}
+
+.metrics-key-divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: 8px 0;
+}
+
+.metrics-key-formula {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background: var(--color-gray-50);
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.metrics-key-formula-label {
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--color-text-primary);
+}
+
+.metrics-key-formula-value {
+  font-size: 12px;
+  font-family: monospace;
   color: var(--color-text-secondary);
 }

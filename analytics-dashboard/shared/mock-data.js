@@ -509,8 +509,11 @@ const MockData = (() => {
       const allStores = getAllStores();
       const storeMetrics = {};
 
-      // Initialize all stores
-      allStores.forEach(store => {
+      // Get only the store IDs for the current entity selection
+      const entityStoreIds = getStoreIdsForEntity(currentContext.entityId, currentContext.entityLevel);
+
+      // Initialize only stores that belong to the current entity
+      allStores.filter(store => entityStoreIds.includes(store.id)).forEach(store => {
         storeMetrics[store.id] = {
           id: store.id,
           name: store.name,

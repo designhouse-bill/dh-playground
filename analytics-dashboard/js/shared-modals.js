@@ -229,7 +229,19 @@ const DashboardModals = (() => {
       if (dateCard) {
         const valueEl = dateCard.querySelector('.card-value');
         const subEl = dateCard.querySelector('.card-sub');
-        if (valueEl) valueEl.textContent = weekLabel;
+        if (valueEl) {
+          // Calculate days for custom range
+          const startDate = document.getElementById('custom-start-date')?.value;
+          const endDate = document.getElementById('custom-end-date')?.value;
+          let daysRun = 7; // default
+          if (startDate && endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            daysRun = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+          }
+          const daysLabel = daysRun === 1 ? 'Day' : 'Days';
+          valueEl.textContent = `${weekLabel} (${daysRun} ${daysLabel})`;
+        }
         if (subEl) subEl.textContent = weekRange;
       }
       state.selectedWeekId = 'custom';

@@ -13,6 +13,8 @@
     { key: 'name', label: 'Promotion', type: 'promotion', sortable: true, sticky: true, visible: true, filterable: true, filterType: 'text' },
     { key: 'categoryName', label: 'Category', type: 'category', sortable: true, sticky: false, visible: true, filterable: true, filterType: 'category' },
     { key: 'dealType', label: 'Deal', type: 'deal', sortable: true, sticky: false, visible: true, filterable: true, filterType: 'deal' },
+    { key: 'daysRun', label: 'Days', type: 'days', sortable: true, sticky: false, visible: true, filterable: true, filterType: 'days' },
+    { key: 'originalPosition', label: 'Orig. Pos.', type: 'position', sortable: true, sticky: false, visible: false },
     { key: 'civ', label: 'Views', type: 'number', sortable: true, sticky: false, visible: true },
     { key: 'cc', label: 'Clicks', type: 'number', sortable: true, sticky: false, visible: true },
     { key: 'atl', label: 'Added', type: 'number', sortable: true, sticky: false, visible: true },
@@ -47,6 +49,17 @@
 
     // Initialize grid columns
     initGridColumns();
+
+    // Clear stale column filters if no URL parameters are present
+    // This prevents showing "No records found" from previous sessions
+    const urlParams = StateManager.parseUrlParams();
+    const hasUrlFilters = urlParams.categoryId || urlParams.promotionId || urlParams.days;
+    if (!hasUrlFilters) {
+      // Reset column filters to clean slate
+      state.gridMode.columnFilters = {};
+      // Also clear related activeFilters that came from grid columns
+      state.activeFilters = (state.activeFilters || []).filter(f => !f.fromColumn);
+    }
 
     // Initialize modals
     if (window.DashboardModals) {
@@ -223,6 +236,9 @@
           return String(value).toLowerCase().includes(filterValue.toLowerCase());
         } else if (col.type === 'category' || col.type === 'deal') {
           return value === filterValue;
+        } else if (col.type === 'days') {
+          // Filter by exact days value (e.g., 7, 3, 1)
+          return parseInt(value) === parseInt(filterValue);
         } else if (col.type === 'number' || col.type === 'currency') {
           const numValue = parseFloat(value) || 0;
           if (filterValue.startsWith('>=')) {
@@ -248,7 +264,7 @@
           if (aVal == null) return 1;
           if (bVal == null) return -1;
 
-          if (col.type === 'number' || col.type === 'currency' || col.type === 'performance') {
+          if (col.type === 'number' || col.type === 'currency' || col.type === 'performance' || col.type === 'days' || col.type === 'position') {
             aVal = parseFloat(aVal) || 0;
             bVal = parseFloat(bVal) || 0;
           } else {
@@ -332,7 +348,7 @@
     const sortIcon = direction === 'asc' ? 'arrow_upward' : direction === 'desc' ? 'arrow_downward' : 'unfold_more';
     const activeClass = isActive ? 'th-sort--active' : '';
     const stickyClass = col.sticky ? 'col-sticky' : '';
-    const typeClass = col.type === 'number' ? 'col-number' : col.type === 'currency' ? 'col-currency' : col.type === 'performance' ? 'col-perf' : '';
+    const typeClass = col.type === 'number' ? 'col-number' : col.type === 'currency' ? 'col-currency' : col.type === 'performance' ? 'col-perf' : col.type === 'days' ? 'col-days' : '';
 
     let filterHTML = '';
     if (col.type === 'promotion' || col.type === 'text') {
@@ -372,6 +388,22 @@
           ${options}
         </select>
       `;
+    } else if (col.type === 'days') {
+      const currentValue = state.gridMode.columnFilters[col.key] || '';
+      const daysOptions = [
+        { value: '', label: 'All Days' },
+        { value: '7', label: '7 Days' },
+        { value: '3', label: '3 Days' },
+        { value: '1', label: '1 Day' }
+      ];
+      const options = daysOptions.map(opt =>
+        `<option value="${opt.value}" ${opt.value === currentValue ? 'selected' : ''}>${opt.label}</option>`
+      ).join('');
+      filterHTML = `
+        <select class="th-filter-select days-filter" id="daysFilter" onchange="applyDaysFilter('${col.key}', this.value)" onclick="event.stopPropagation()">
+          ${options}
+        </select>
+      `;
     }
 
     return `
@@ -405,7 +437,11 @@
         const thumbHtml = promo.thumbImage
           ? `<img class="table-thumb" src="${promo.thumbImage}" alt="${core.escapeHtml(promo.name)}" loading="lazy">`
           : '';
-        displayValue = `<div class="table-promo">${thumbHtml}<div class="table-info"><div class="table-title">${core.escapeHtml(promo.name)}</div></div></div>`;
+        // Generate variants badge HTML if this is a parent with children
+        const variantsBadge = promo.isParent && promo.childCount > 0
+          ? `<span class="variants-badge">Includes ${promo.childCount} variant${promo.childCount !== 1 ? 's' : ''}</span>`
+          : '';
+        displayValue = `<div class="table-promo">${thumbHtml}<div class="table-info"><div class="table-title">${core.escapeHtml(promo.name)}</div>${variantsBadge}</div></div>`;
         break;
       case 'currency':
         displayValue = value != null ? `$${core.formatNumber(value)}` : '-';
@@ -420,6 +456,14 @@
         break;
       case 'category':
         displayValue = value ? `<span class="table-category">${core.escapeHtml(value)}</span>` : '-';
+        break;
+      case 'days':
+        displayValue = value != null ? value : '-';
+        cellClass += ' col-days';
+        break;
+      case 'position':
+        displayValue = value != null ? value : '-';
+        cellClass += ' col-position';
         break;
       case 'percentile':
         cellClass += ' col-percentile';
@@ -547,6 +591,58 @@
   }
 
   /**
+   * Apply days filter with chip integration
+   */
+  function applyDaysFilter(columnKey, value) {
+    if (!state.gridMode.columnFilters) {
+      state.gridMode.columnFilters = {};
+    }
+    state.gridMode.columnFilters[columnKey] = value || null;
+    state.gridMode.currentPage = 1;
+
+    // Update filter chips through DashboardFilters
+    if (window.DashboardFilters) {
+      // Remove existing days filter first
+      state.activeFilters = state.activeFilters.filter(f => f.type !== 'days');
+
+      // Add new days filter chip if not "All Days"
+      if (value && value !== '') {
+        const labelMap = { '7': '7', '3': '3', '1': '1' };
+        state.activeFilters.push({
+          type: 'days',
+          value: value,
+          label: 'Days',
+          fromColumn: true
+        });
+      }
+
+      window.DashboardFilters.renderFilterChips();
+    }
+
+    renderGridTable();
+    core.saveState();
+  }
+
+  /**
+   * Clear days filter (called when chip is removed)
+   */
+  function clearDaysFilter() {
+    if (state.gridMode.columnFilters) {
+      state.gridMode.columnFilters.daysRun = null;
+    }
+    state.gridMode.currentPage = 1;
+
+    // Reset the dropdown to "All Days"
+    const daysDropdown = document.getElementById('daysFilter');
+    if (daysDropdown) {
+      daysDropdown.value = '';
+    }
+
+    renderGridTable();
+    core.saveState();
+  }
+
+  /**
    * Clear grid filter for a column
    */
   function clearGridFilter(columnKey) {
@@ -608,9 +704,85 @@
     core.saveState();
   }
 
+  /**
+   * Export grid data to CSV
+   * Includes: Promotion, Category, Views, Clicks, Adds, Days, Start Date, End Date, Performance, Percentile
+   */
+  function exportGridToCSV() {
+    const data = getGridData();
+
+    if (data.length === 0) {
+      alert('No data to export');
+      return;
+    }
+
+    // CSV headers
+    const headers = [
+      'Promotion',
+      'Category',
+      'Views',
+      'Clicks',
+      'Adds',
+      'Days',
+      'Original Position',
+      'Start Date',
+      'End Date',
+      'Performance',
+      'Percentile'
+    ];
+
+    // Build CSV rows
+    const rows = data.map(promo => {
+      return [
+        `"${(promo.name || '').replace(/"/g, '""')}"`,
+        `"${(promo.categoryName || '').replace(/"/g, '""')}"`,
+        promo.civ || 0,
+        promo.cc || 0,
+        promo.atl || 0,
+        promo.daysRun || 7,
+        promo.originalPosition || '',
+        promo.startDate || '',
+        promo.endDate || '',
+        promo.compositeScore || 0,
+        promo.percentile || 0
+      ].join(',');
+    });
+
+    // Combine headers and rows
+    const csvContent = [headers.join(','), ...rows].join('\n');
+
+    // Create blob and download
+    const BOM = '\uFEFF'; // UTF-8 BOM for Excel compatibility
+    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+
+    // Generate filename with date
+    const now = new Date();
+    const dateString = now.toISOString().split('T')[0];
+    const filename = `promotions_export_${dateString}.csv`;
+
+    // Create download link
+    const link = document.createElement('a');
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', filename);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      console.log(`[Grid Inquiry] CSV exported: ${data.length} records to ${filename}`);
+    } else {
+      alert('Your browser does not support file downloads');
+    }
+  }
+
   // Expose functions globally for onclick handlers
   window.sortGridColumn = sortGridColumn;
   window.applyGridFilter = applyGridFilter;
+  window.applyDaysFilter = applyDaysFilter;
+  window.clearDaysFilter = clearDaysFilter;
   window.clearGridFilter = clearGridFilter;
   window.updateFilterClearBtn = updateFilterClearBtn;
   window.toggleGridColumn = toggleGridColumn;
@@ -618,6 +790,7 @@
   window.gridPrevPage = gridPrevPage;
   window.gridNextPage = gridNextPage;
   window.changeGridRowsPerPage = changeGridRowsPerPage;
+  window.exportGridToCSV = exportGridToCSV;
 
   // Initialize on DOM ready
   if (document.readyState === 'loading') {

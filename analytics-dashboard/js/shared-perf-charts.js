@@ -12,7 +12,7 @@ const PerfCharts = (() => {
   const METRIC_COLORS = {
     views: '#4272D8',   // Blue
     clicks: '#B8D64D',  // Green
-    adds: '#4E5370'     // Gray
+    adds: '#937DF8'     // Purple
   };
 
   const METRIC_NAMES = {
@@ -240,7 +240,7 @@ const PerfCharts = (() => {
           fontFamily: 'inherit'
         },
         formatter: (params) => {
-          // Show only the hovered metric
+          // Show all metrics with weighted scores
           let html = '';
 
           // Add title if entity name is provided
@@ -248,18 +248,34 @@ const PerfCharts = (() => {
             html += `<div style="font-weight:600;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #e5e7eb;">${entityName}</div>`;
           }
 
-          // Get the hovered metric data
-          const metricName = params.seriesName;
-          const metricValue = params.value;
-          const metricColor = params.color;
-          const percent = total > 0 ? ((metricValue / total) * 100).toFixed(1) : 0;
+          // Calculate weighted scores
+          const viewsScore = views * 1;
+          const clicksScore = clicks * 5;
+          const addsScore = adds * 20;
+          const totalScore = viewsScore + clicksScore + addsScore;
 
+          // Build metric rows
+          const metrics = [
+            { name: 'Views', value: views, score: viewsScore, color: METRIC_COLORS.views },
+            { name: 'Clicks', value: clicks, score: clicksScore, color: METRIC_COLORS.clicks },
+            { name: 'Adds', value: adds, score: addsScore, color: METRIC_COLORS.adds }
+          ];
+
+          metrics.forEach(metric => {
+            html += `
+              <div style="display:flex;align-items:center;color:#0f172a;margin-bottom:4px;">
+                <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${metric.color};margin-right:8px;flex-shrink:0;"></span>
+                <span style="min-width:50px;">${metric.name}</span>
+                <span style="min-width:60px;text-align:right;margin-left:8px;">${formatNumber(metric.value)}</span>
+                <span style="color:#64748b;margin-left:8px;">(score: ${formatNumber(metric.score)})</span>
+              </div>`;
+          });
+
+          // Add total line
           html += `
-            <div style="display:flex;align-items:center;color:#0f172a;">
-              <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${metricColor};margin-right:8px;flex-shrink:0;"></span>
-              <span style="min-width:50px;">${metricName}</span>
-              <span style="min-width:70px;text-align:right;margin-left:12px;">${formatNumber(metricValue)}</span>
-              <span style="min-width:60px;text-align:right;margin-left:8px;">(${percent}%)</span>
+            <div style="display:flex;align-items:center;color:#0f172a;margin-top:6px;padding-top:6px;border-top:1px solid #e5e7eb;font-weight:600;">
+              <span style="min-width:50px;margin-left:18px;">Total</span>
+              <span style="margin-left:auto;">${formatNumber(totalScore)}</span>
             </div>`;
 
           return html;

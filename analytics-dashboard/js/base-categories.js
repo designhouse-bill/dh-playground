@@ -177,6 +177,14 @@
       });
     }
 
+    // Share button handler
+    const shareBtn = document.getElementById('panel-share-btn');
+    if (shareBtn) {
+      shareBtn.addEventListener('click', () => {
+        core.handleShareClick();
+      });
+    }
+
     // Save state on navigation clicks
     document.querySelectorAll('.mode-btn, .subtab').forEach(link => {
       link.addEventListener('click', () => {
@@ -207,36 +215,38 @@
   }
 
   /**
-   * Get current page of data with TopN and pagination applied
+   * Get current page of data with TopN as page size (not a total limit)
+   * TopN controls how many records to show per page, with pagination to see all records
    */
   function getPageData() {
     let categories = [...allDisplayCategories];
 
-    // Apply TopN limit
-    const topN = paginationState.topN;
-    if (topN !== 'all' && typeof topN === 'number') {
-      categories = categories.slice(0, topN);
-    }
+    // TopN is now the page size (records per page), not a total limit
+    const pageSize = paginationState.topN === 'all'
+      ? categories.length
+      : paginationState.topN;
 
-    const totalRecords = categories.length;
-    const totalPages = Math.ceil(totalRecords / paginationState.rowsPerPage);
+    const totalRecords = categories.length; // All filtered categories, not limited
+    const totalPages = pageSize > 0 ? Math.ceil(totalRecords / pageSize) : 1;
 
     // Ensure current page is valid
     if (paginationState.currentPage > totalPages) {
       paginationState.currentPage = Math.max(1, totalPages);
     }
 
-    const start = (paginationState.currentPage - 1) * paginationState.rowsPerPage;
-    const end = start + paginationState.rowsPerPage;
+    const start = (paginationState.currentPage - 1) * pageSize;
+    const end = start + pageSize;
     const pageData = categories.slice(start, end);
 
     return {
       data: pageData,
       total: totalRecords,
+      totalFiltered: totalRecords,
       start: start + 1,
       end: Math.min(end, totalRecords),
       currentPage: paginationState.currentPage,
-      totalPages: totalPages
+      totalPages: totalPages,
+      pageSize: pageSize
     };
   }
 

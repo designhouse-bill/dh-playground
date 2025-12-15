@@ -35,7 +35,7 @@ const DashboardFilters = (() => {
     },
     adds: {
       name: 'Adds',
-      color: '#4E5370',
+      color: '#937DF8',
       weight: '×20',
       description: 'Added to shopping list'
     },
@@ -87,6 +87,7 @@ const DashboardFilters = (() => {
                        : filter.type === 'category' ? 'filter-chip--category'
                        : filter.type === 'deal' ? 'filter-chip--deal'
                        : filter.type === 'promotion' ? 'filter-chip--promotion'
+                       : filter.type === 'days' ? 'filter-chip--days'
                        : 'filter-chip--size';
 
       // Get display name for category
@@ -158,6 +159,16 @@ const DashboardFilters = (() => {
         state.selectedStoreId = null;
         if (renderCallbacks.renderStoreGrid) {
           renderCallbacks.renderStoreGrid();
+        }
+      } else if (filter.type === 'days') {
+        // Clear grid mode column filter for days
+        if (state.gridMode && state.gridMode.columnFilters) {
+          state.gridMode.columnFilters.daysRun = null;
+        }
+        // Reset the dropdown to "All Days"
+        const daysDropdown = document.getElementById('daysFilter');
+        if (daysDropdown) {
+          daysDropdown.value = '';
         }
       }
     }
@@ -501,6 +512,9 @@ const DashboardFilters = (() => {
       <div class="metrics-key-formula">
         <span class="metrics-key-formula-label">Performance:</span>
         <span class="metrics-key-formula-value">${METRIC_DEFINITIONS.performance.formula}</span>
+      </div>
+      <div class="metrics-key-normalization" style="margin-top:8px;padding:8px 10px;background:#f1f5f9;border-radius:4px;font-size:11px;color:#475569;line-height:1.4;">
+        Scores are normalized by days run for fair comparison across promotions with different durations.
       </div>
       <div class="metrics-key-item">
         <div class="metrics-key-row">

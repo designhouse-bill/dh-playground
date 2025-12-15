@@ -34,7 +34,7 @@
           </div>
           <span class="topbar__separator">|</span>
           <button class="performance-dropdown" id="performance-type-dropdown">
-            <span class="performance-dropdown__text">Circular Performance</span>
+            <span class="performance-dropdown__text">Engagement</span>
             <span class="material-symbols-outlined">expand_more</span>
           </button>
         </div>
@@ -42,7 +42,7 @@
         <div class="view-modes">
           <!-- BASE group with sub-tabs -->
           <div class="mode-group mode-group--base" data-mode="base">
-            <a href="base_categories.html" class="mode-btn mode-btn--primary" data-mode="base" aria-label="Base view">
+            <a href="base_promotions.html" class="mode-btn mode-btn--primary" data-mode="base" aria-label="Base view">
               <span class="material-symbols-outlined">view_list</span>
               BASE
             </a>
@@ -107,6 +107,16 @@
                 <span class="material-symbols-outlined">corporate_fare</span>
                 <span class="btn-text">Select Entity</span>
               </button>
+              <!-- Days filter dropdown -->
+              <div class="compare-filter">
+                <label for="daysFilterA">Days:</label>
+                <select id="daysFilterA" class="days-filter" onchange="ComparePage.setDaysFilter('A', this.value)">
+                  <option value="all">All Days</option>
+                  <option value="7">7 Days</option>
+                  <option value="3">3 Days</option>
+                  <option value="1">1 Day</option>
+                </select>
+              </div>
               <!-- Category selector (hidden for circulars layer) -->
               <button class="context-btn context-btn--empty" data-target="A" data-type="category" onclick="ComparePage.openCategoryPicker('A')" id="context-a-category" style="display: none;">
                 <span class="material-symbols-outlined">category</span>
@@ -127,6 +137,12 @@
           <!-- Context B -->
           <div class="context-column context-column--b">
             <span class="context-label">B</span>
+            <!-- Panel B Helper Prompt -->
+            <div class="compare-prompt" id="panelBPrompt" style="display: none;">
+              <div class="prompt-icon">&#9878;</div>
+              <p class="prompt-title">Select comparison target</p>
+              <p class="prompt-text">Choose a different store group, publication, or time period to compare performance</p>
+            </div>
             <div class="context-selectors">
               <button class="context-btn context-btn--empty" data-target="B" data-type="date" onclick="ComparePage.openDatePicker('B')" id="context-b-date">
                 <span class="material-symbols-outlined">calendar_month</span>
@@ -136,6 +152,16 @@
                 <span class="material-symbols-outlined">corporate_fare</span>
                 <span class="btn-text">Select Entity</span>
               </button>
+              <!-- Days filter dropdown -->
+              <div class="compare-filter">
+                <label for="daysFilterB">Days:</label>
+                <select id="daysFilterB" class="days-filter" onchange="ComparePage.setDaysFilter('B', this.value)">
+                  <option value="all">All Days</option>
+                  <option value="7">7 Days</option>
+                  <option value="3">3 Days</option>
+                  <option value="1">1 Day</option>
+                </select>
+              </div>
               <!-- Category selector (hidden for circulars layer) -->
               <button class="context-btn context-btn--empty" data-target="B" data-type="category" onclick="ComparePage.openCategoryPicker('B')" id="context-b-category" style="display: none;">
                 <span class="material-symbols-outlined">category</span>

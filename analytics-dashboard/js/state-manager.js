@@ -52,6 +52,43 @@ const StateManager = (() => {
       result.filterType = params.get('filter');
     }
 
+    // Publication/week parameter
+    if (params.has('pub')) {
+      result.weekId = params.get('pub');
+    }
+
+    // Entity parameter
+    if (params.has('entity')) {
+      result.entityId = params.get('entity');
+    }
+
+    // Days filter parameter
+    if (params.has('days')) {
+      result.days = params.get('days');
+    }
+
+    // Sort parameters
+    if (params.has('sort')) {
+      result.sortColumn = params.get('sort');
+    }
+    if (params.has('sortDir')) {
+      result.sortDirection = params.get('sortDir');
+    }
+
+    // View mode parameter
+    if (params.has('view')) {
+      result.viewMode = params.get('view');
+    }
+
+    // Active filters (JSON encoded)
+    if (params.has('filters')) {
+      try {
+        result.activeFilters = JSON.parse(decodeURIComponent(params.get('filters')));
+      } catch (e) {
+        log('Failed to parse filters from URL:', e);
+      }
+    }
+
     // Compare mode URL params
     if (params.has('layer')) {
       result.compareLayer = params.get('layer');
@@ -203,6 +240,56 @@ const StateManager = (() => {
       merged.activePromotion = urlParams.promotionId;
     }
 
+    // URL publication/week param overrides saved
+    if (urlParams.weekId) {
+      merged.selectedWeekId = urlParams.weekId;
+    }
+
+    // URL entity param overrides saved
+    if (urlParams.entityId) {
+      merged.selectedEntityId = urlParams.entityId;
+    }
+
+    // URL days filter
+    if (urlParams.days) {
+      if (!merged.gridMode) merged.gridMode = { columnFilters: {} };
+      if (!merged.gridMode.columnFilters) merged.gridMode.columnFilters = {};
+      merged.gridMode.columnFilters.daysRun = urlParams.days;
+      // Also add as filter chip
+      if (!merged.activeFilters) merged.activeFilters = [];
+      merged.activeFilters = merged.activeFilters.filter(f => f.type !== 'days');
+      merged.activeFilters.push({
+        type: 'days',
+        value: urlParams.days,
+        label: 'Days',
+        fromUrl: true
+      });
+    }
+
+    // URL sort params
+    if (urlParams.sortColumn) {
+      merged.sortColumn = urlParams.sortColumn;
+      if (merged.gridMode) {
+        merged.gridMode.sortColumn = urlParams.sortColumn;
+      }
+    }
+    if (urlParams.sortDirection) {
+      merged.sortDirection = urlParams.sortDirection;
+      if (merged.gridMode) {
+        merged.gridMode.sortDirection = urlParams.sortDirection;
+      }
+    }
+
+    // URL view mode
+    if (urlParams.viewMode) {
+      merged.promoViewMode = urlParams.viewMode;
+    }
+
+    // URL active filters (full array from JSON)
+    if (urlParams.activeFilters && Array.isArray(urlParams.activeFilters)) {
+      merged.activeFilters = urlParams.activeFilters;
+    }
+
     log('Merged state:', merged);
     return merged;
   }
@@ -305,6 +392,97 @@ const StateManager = (() => {
     window.location.href = url;
   }
 
+  /**
+   * Generate a shareable URL with complete current state
+   * @param {Object} state - Current application state
+   * @returns {string} Full shareable URL
+   */
+  function getShareableUrl(state) {
+    const params = new URLSearchParams();
+
+    // Publication/week
+    if (state.selectedWeekId) {
+      params.set('pub', state.selectedWeekId);
+    }
+
+    // Entity
+    if (state.selectedEntityId && state.selectedEntityId !== 'all') {
+      params.set('entity', state.selectedEntityId);
+    }
+
+    // Days filter (from gridMode or activeFilters)
+    const daysFilter = state.gridMode?.columnFilters?.daysRun ||
+                       state.activeFilters?.find(f => f.type === 'days')?.value;
+    if (daysFilter) {
+      params.set('days', daysFilter);
+    }
+
+    // Sort column and direction
+    const sortColumn = state.sortColumn || state.gridMode?.sortColumn ||
+                       state.categorySortColumn || state.storeSortColumn;
+    const sortDirection = state.sortDirection || state.gridMode?.sortDirection ||
+                          state.categorySortDirection || state.storeSortDirection;
+    if (sortColumn) {
+      params.set('sort', sortColumn);
+      params.set('sortDir', sortDirection || 'desc');
+    }
+
+    // View mode
+    if (state.promoViewMode && state.promoViewMode !== 'table') {
+      params.set('view', state.promoViewMode);
+    }
+
+    // Active filters (only category, deal, size - excluding days which is separate)
+    const filters = (state.activeFilters || []).filter(f =>
+      ['category', 'deal', 'size', 'promotion', 'store'].includes(f.type)
+    );
+    if (filters.length > 0) {
+      // Simplify filter data for URL
+      const simplifiedFilters = filters.map(f => ({
+        type: f.type,
+        value: f.value,
+        label: f.label
+      }));
+      params.set('filters', encodeURIComponent(JSON.stringify(simplifiedFilters)));
+    }
+
+    const queryString = params.toString();
+    const baseUrl = `${window.location.origin}${window.location.pathname}`;
+    return queryString ? `${baseUrl}?${queryString}` : baseUrl;
+  }
+
+  /**
+   * Copy shareable URL to clipboard
+   * @param {Object} state - Current application state
+   * @returns {Promise<boolean>} True if copy succeeded
+   */
+  async function copyShareUrl(state) {
+    const url = getShareableUrl(state);
+    try {
+      await navigator.clipboard.writeText(url);
+      log('Share URL copied:', url);
+      return true;
+    } catch (error) {
+      console.error('[StateManager] Failed to copy URL:', error);
+      // Fallback for older browsers
+      try {
+        const textArea = document.createElement('textarea');
+        textArea.value = url;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-9999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        log('Share URL copied (fallback):', url);
+        return true;
+      } catch (fallbackError) {
+        console.error('[StateManager] Fallback copy failed:', fallbackError);
+        return false;
+      }
+    }
+  }
+
   // Public API
   return {
     save,
@@ -314,7 +492,9 @@ const StateManager = (() => {
     parseUrlParams,
     buildNavigationUrl,
     navigateTo,
-    getCurrentPage
+    getCurrentPage,
+    getShareableUrl,
+    copyShareUrl
   };
 })();
 

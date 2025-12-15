@@ -343,6 +343,20 @@ const DashboardCore = (() => {
   }
 
   /**
+   * Get computed chart colors from CSS custom properties
+   * @returns {Object} Color values for chart rendering
+   */
+  function getChartColors() {
+    const styles = getComputedStyle(document.documentElement);
+    return {
+      views: styles.getPropertyValue('--color-views').trim() || '#4272D8',
+      clicks: styles.getPropertyValue('--color-clicks').trim() || '#B8D64D',
+      adds: styles.getPropertyValue('--color-adds').trim() || '#937DF8',
+      total: styles.getPropertyValue('--color-total').trim() || '#06989D'
+    };
+  }
+
+  /**
    * Get unique deal types from promotions
    */
   function getUniqueDealTypes() {
@@ -364,12 +378,50 @@ const DashboardCore = (() => {
 
   /**
    * Initialize context from MockData
+   * Defaults to most recent publication when no URL params
    */
   function initializeContext() {
     if (typeof MockData === 'undefined' || !MockData || !MockData.context) return;
 
-    state.currentWeek = MockData.context.week;
-    state.selectedWeekId = MockData.context.weekId;
+    // Check if there's a week/pub specified in URL params
+    const urlParams = typeof StateManager !== 'undefined' ? StateManager.parseUrlParams() : {};
+    const hasUrlWeek = urlParams.weekId || urlParams.pub;
+
+    // If no URL param, default to most recent publication
+    if (!hasUrlWeek && !state.selectedWeekId) {
+      const weeks = MockData.weeks || [];
+      if (weeks.length > 0) {
+        // Sort by startDate descending to get most recent first
+        const sortedWeeks = [...weeks].sort((a, b) => {
+          return new Date(b.startDate) - new Date(a.startDate);
+        });
+        const mostRecent = sortedWeeks[0];
+        state.currentWeek = mostRecent;
+        state.selectedWeekId = mostRecent.id;
+        // Also update MockData context
+        MockData.context.week = mostRecent;
+        MockData.context.weekId = mostRecent.id;
+        if (CONFIG.DEBUG) {
+          console.log('[DashboardCore] Defaulted to most recent publication:', mostRecent.label);
+        }
+      }
+    } else if (hasUrlWeek) {
+      // URL param takes precedence
+      const weekId = urlParams.weekId || urlParams.pub;
+      const week = MockData.weeks.find(w => w.id === weekId);
+      if (week) {
+        state.currentWeek = week;
+        state.selectedWeekId = weekId;
+        MockData.context.week = week;
+        MockData.context.weekId = weekId;
+      }
+    } else {
+      // Fall back to saved state or MockData default
+      state.currentWeek = MockData.context.week;
+      state.selectedWeekId = state.selectedWeekId || MockData.context.weekId;
+    }
+
+    // Initialize entity context
     state.currentEntity = MockData.context.entity;
     state.selectedEntityId = MockData.context.entity.id;
 
@@ -391,7 +443,12 @@ const DashboardCore = (() => {
     const valueEl = dateCard.querySelector('.card-value');
     const subEl = dateCard.querySelector('.card-sub');
 
-    if (valueEl) valueEl.textContent = week.label;
+    if (valueEl) {
+      // Include days run in the week label (e.g., "Week 48 (7 Days)")
+      const daysRun = week.daysRun || 7;
+      const daysLabel = daysRun === 1 ? 'Day' : 'Days';
+      valueEl.textContent = `${week.label} (${daysRun} ${daysLabel})`;
+    }
     if (subEl) subEl.textContent = week.dateRange;
   }
 
@@ -680,6 +737,72 @@ const DashboardCore = (() => {
     StateManager.save(state);
   }
 
+  /* ============================================
+     TOAST NOTIFICATION SYSTEM
+     ============================================ */
+
+  /**
+   * Show a toast notification
+   * @param {string} message - Message to display
+   * @param {Object} options - Optional settings
+   * @param {number} options.duration - Duration in ms (default 3000)
+   * @param {string} options.type - Type: 'success', 'error', 'info' (default 'success')
+   */
+  function showToast(message, options = {}) {
+    const { duration = 3000, type = 'success' } = options;
+
+    // Remove any existing toasts
+    const existingToast = document.querySelector('.toast-notification');
+    if (existingToast) {
+      existingToast.remove();
+    }
+
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = `toast-notification toast-notification--${type}`;
+
+    // Add icon based on type
+    let icon = 'check_circle';
+    if (type === 'error') icon = 'error';
+    if (type === 'info') icon = 'info';
+
+    toast.innerHTML = `
+      <span class="material-symbols-outlined toast-icon">${icon}</span>
+      <span class="toast-message">${escapeHtml(message)}</span>
+    `;
+
+    document.body.appendChild(toast);
+
+    // Trigger show animation
+    requestAnimationFrame(() => {
+      toast.classList.add('show');
+    });
+
+    // Auto-hide after duration
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => {
+        if (toast.parentNode) {
+          toast.remove();
+        }
+      }, 300);
+    }, duration);
+
+    return toast;
+  }
+
+  /**
+   * Handle share button click - copies URL to clipboard and shows toast
+   */
+  async function handleShareClick() {
+    const success = await StateManager.copyShareUrl(state);
+    if (success) {
+      showToast('Link copied to clipboard');
+    } else {
+      showToast('Failed to copy link', { type: 'error' });
+    }
+  }
+
   /**
    * Restore state from localStorage and URL params
    */
@@ -719,6 +842,7 @@ const DashboardCore = (() => {
     getDealBadgeHTML,
     getComparisonBadgeHTML,
     getComparisonArrowHTML,
+    getChartColors,
     getUniqueDealTypes,
     getUniqueCategories,
 
@@ -737,7 +861,11 @@ const DashboardCore = (() => {
     setActiveNavigation,
     navigateTo,
     saveState,
-    restoreState
+    restoreState,
+
+    // Toast & Share
+    showToast,
+    handleShareClick
   };
 })();
 

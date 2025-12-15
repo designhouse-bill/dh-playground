@@ -84,6 +84,12 @@
   --color-error-500: #ef4444;
   --color-error-600: #dc2626;
 
+  /* Metric Colors */
+  --color-views: #4272D8;      /* Blue */
+  --color-clicks: #B8D64D;     /* Green */
+  --color-adds: #937DF8;       /* Purple */
+  --color-total: #06989D;      /* Teal */
+
   /* Semantic Colors */
   --color-bg: var(--color-gray-50);
   --color-surface: var(--color-white);

@@ -34,7 +34,7 @@
           </div>
           <span class="topbar__separator">|</span>
           <button class="performance-dropdown" id="performance-type-dropdown">
-            <span class="performance-dropdown__text">Circular Performance</span>
+            <span class="performance-dropdown__text">Engagement</span>
             <span class="material-symbols-outlined">expand_more</span>
           </button>
         </div>
@@ -42,7 +42,7 @@
         <div class="view-modes">
           <!-- BASE group with sub-tabs (hidden in grid mode) -->
           <div class="mode-group mode-group--base" data-mode="base">
-            <a href="base_categories.html" class="mode-btn mode-btn--primary" data-mode="base" aria-label="Base view">
+            <a href="base_promotions.html" class="mode-btn mode-btn--primary" data-mode="base" aria-label="Base view">
               <span class="material-symbols-outlined">view_list</span>
               BASE
             </a>
@@ -137,6 +137,10 @@
             <span class="grid-controls__label">records</span>
           </div>
           <div class="grid-controls__right">
+            <button class="grid-export-btn" id="grid-export-btn" onclick="exportGridToCSV()" aria-label="Export to CSV">
+              <span class="material-symbols-outlined">download</span>
+              Export CSV
+            </button>
             <div class="grid-columns-toggle">
               <button class="grid-columns-btn" id="grid-columns-btn" aria-label="Toggle column visibility">
                 <span class="material-symbols-outlined">view_column</span>

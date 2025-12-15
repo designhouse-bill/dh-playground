@@ -32,7 +32,8 @@ const ComparePage = (function() {
     categoryId: null,
     categoryName: '',
     promotionId: null,
-    promotionName: ''
+    promotionName: '',
+    daysFilter: 'all'
   };
   let contextB = {
     weekId: null,
@@ -45,7 +46,8 @@ const ComparePage = (function() {
     categoryId: null,
     categoryName: '',
     promotionId: null,
-    promotionName: ''
+    promotionName: '',
+    daysFilter: 'all'
   };
 
   // Modal state
@@ -119,7 +121,71 @@ const ComparePage = (function() {
       }
     }
 
-    // Sync context A with base mode context if not set
+    // Read URL parameters (URL takes precedence over saved state)
+    const params = new URLSearchParams(window.location.search);
+
+    // Check for quick compare parameters (Panel A pre-population)
+    const weekA = params.get('weekA');
+    const entityA = params.get('entityA');
+    const entityLevelA = params.get('entityLevelA');
+    const daysA = params.get('daysA');
+    const promoA = params.get('promoA');
+    const layer = params.get('layer');
+
+    // Set layer if provided
+    if (layer) {
+      currentLayer = layer;
+    }
+
+    // Pre-populate Panel A from URL params (quick compare flow)
+    if (weekA) {
+      contextA.weekId = weekA;
+      const week = MockData?.weeks?.find(w => w.id === weekA);
+      if (week) {
+        contextA.weekLabel = week.label;
+        contextA.weekRange = week.dateRange;
+      }
+    }
+
+    if (entityA) {
+      contextA.entityId = entityA;
+      contextA.entityLevel = entityLevelA || 'all';
+      const entity = MockData?.getEntityById?.(entityA);
+      if (entity) {
+        contextA.entityName = entity.name;
+        contextA.entityCount = entity.storeCount || 1;
+      } else if (entityA === 'all') {
+        contextA.entityName = 'All Stores';
+        contextA.entityCount = MockData?.entities?.stores?.length || 0;
+      }
+    }
+
+    if (daysA) {
+      contextA.daysFilter = daysA;
+    }
+
+    // Pre-populate promotion for Panel A (promotions layer)
+    if (promoA && currentLayer === 'promotions') {
+      contextA.promotionId = promoA;
+      // Get promotion details to populate category and name
+      const weekNum = contextA.weekId ? parseInt(contextA.weekId.replace('week-', ''), 10) : null;
+      const records = MockData?.getRecords?.(weekNum, contextA.entityId, contextA.entityLevel) || [];
+      const promotions = MockData?.getUniquePromotions?.(records) || [];
+      const promo = promotions.find(p => p.id === promoA);
+      if (promo) {
+        contextA.promotionName = promo.name;
+        contextA.categoryId = promo.category;
+        contextA.categoryName = promo.categoryName || '';
+      }
+    }
+
+    // Days filter for Panel B
+    const daysB = params.get('daysB');
+    if (daysB) {
+      contextB.daysFilter = daysB;
+    }
+
+    // Sync context A with base mode context if not set from URL
     if (!contextA.weekId && state.selectedWeekId) {
       contextA.weekId = state.selectedWeekId;
       const week = MockData?.weeks?.find(w => w.id === state.selectedWeekId);
@@ -137,6 +203,31 @@ const ComparePage = (function() {
 
     // Update layer tabs
     updateLayerTabs();
+
+    // Update days dropdowns to match restored state
+    updateDaysDropdowns();
+
+    // Show Panel B prompt if Panel A is complete but Panel B is not
+    updatePanelBPrompt();
+  }
+
+  /**
+   * Update Panel B prompt visibility
+   * Shows helper prompt when Panel A is complete but Panel B needs selections
+   */
+  function updatePanelBPrompt() {
+    const promptEl = document.getElementById('panelBPrompt');
+    if (!promptEl) return;
+
+    const aComplete = isContextComplete('A');
+    const bComplete = isContextComplete('B');
+
+    // Show prompt when A is complete but B is not
+    if (aComplete && !bComplete) {
+      promptEl.style.display = 'flex';
+    } else {
+      promptEl.style.display = 'none';
+    }
   }
 
   /**
@@ -554,6 +645,7 @@ const ComparePage = (function() {
   function copyAtoB() {
     contextB = { ...contextA };
     updateContextButtons();
+    updateDaysDropdowns();
     saveCompareState();
 
     // Re-render if both contexts complete
@@ -568,12 +660,69 @@ const ComparePage = (function() {
   function copyBtoA() {
     contextA = { ...contextB };
     updateContextButtons();
+    updateDaysDropdowns();
     saveCompareState();
 
     // Re-render if both contexts complete
     if (isContextComplete('A') && isContextComplete('B')) {
       loadAndRenderComparison();
     }
+  }
+
+  /**
+   * Set days filter for a panel
+   */
+  function setDaysFilter(target, value) {
+    const ctx = target === 'A' ? contextA : contextB;
+    ctx.daysFilter = value;
+
+    // Update URL with days filter state
+    updateUrlParams();
+
+    saveCompareState();
+
+    // Re-render if both contexts complete
+    if (isContextComplete('A') && isContextComplete('B')) {
+      loadAndRenderComparison();
+    }
+  }
+
+  /**
+   * Update URL parameters with current days filter state
+   */
+  function updateUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+
+    // Update daysA parameter
+    if (contextA.daysFilter && contextA.daysFilter !== 'all') {
+      params.set('daysA', contextA.daysFilter);
+    } else {
+      params.delete('daysA');
+    }
+
+    // Update daysB parameter
+    if (contextB.daysFilter && contextB.daysFilter !== 'all') {
+      params.set('daysB', contextB.daysFilter);
+    } else {
+      params.delete('daysB');
+    }
+
+    // Update URL without page reload
+    const newUrl = params.toString()
+      ? `${window.location.pathname}?${params.toString()}`
+      : window.location.pathname;
+    history.replaceState({}, '', newUrl);
+  }
+
+  /**
+   * Update days dropdown UI to match state
+   */
+  function updateDaysDropdowns() {
+    const dropdownA = document.getElementById('daysFilterA');
+    const dropdownB = document.getElementById('daysFilterB');
+
+    if (dropdownA) dropdownA.value = contextA.daysFilter || 'all';
+    if (dropdownB) dropdownB.value = contextB.daysFilter || 'all';
   }
 
   /**
@@ -591,6 +740,9 @@ const ComparePage = (function() {
     updateButton('context-b-entity', contextB.entityName || 'Select Entity', !!contextB.entityId);
     updateButton('context-b-category', contextB.categoryName || 'Select Category', !!contextB.categoryId);
     updateButton('context-b-promotion', contextB.promotionName || 'Select Promotion', !!contextB.promotionId);
+
+    // Update Panel B prompt visibility
+    updatePanelBPrompt();
   }
 
   /**
@@ -630,6 +782,20 @@ const ComparePage = (function() {
   /* ============================================
      DATA LOADING
      ============================================ */
+
+  /**
+   * Filter records by days based on daysFilter value
+   * @param {Array} records - Records to filter
+   * @param {string} daysFilter - 'all', '7', '3', or '1'
+   * @returns {Array} Filtered records
+   */
+  function filterRecordsByDays(records, daysFilter) {
+    if (!daysFilter || daysFilter === 'all') {
+      return records;
+    }
+    const days = parseInt(daysFilter, 10);
+    return records.filter(r => r.daysRun === days);
+  }
 
   /**
    * Load data for both contexts and render comparison
@@ -675,7 +841,10 @@ const ComparePage = (function() {
     const weekNum = ctx.weekId ? parseInt(ctx.weekId.replace('week-', ''), 10) : null;
 
     // Get records for this specific context's week and entity
-    const records = MockData.getRecords(weekNum, ctx.entityId, ctx.entityLevel);
+    let records = MockData.getRecords(weekNum, ctx.entityId, ctx.entityLevel);
+
+    // Filter by days if set
+    records = filterRecordsByDays(records, ctx.daysFilter);
 
     // Aggregate by category to get category count
     const categories = MockData.aggregateByCategory(records);
@@ -760,7 +929,10 @@ const ComparePage = (function() {
     const weekNum = ctx.weekId ? parseInt(ctx.weekId.replace('week-', ''), 10) : null;
 
     // Get records for this specific context's week and entity
-    const records = MockData.getRecords(weekNum, ctx.entityId, ctx.entityLevel);
+    let records = MockData.getRecords(weekNum, ctx.entityId, ctx.entityLevel);
+
+    // Filter by days if set
+    records = filterRecordsByDays(records, ctx.daysFilter);
 
     // Aggregate by category for this context
     const categories = MockData.aggregateByCategory(records);
@@ -805,7 +977,10 @@ const ComparePage = (function() {
     const weekNum = ctx.weekId ? parseInt(ctx.weekId.replace('week-', ''), 10) : null;
 
     // Get records for this specific context's week and entity
-    const records = MockData.getRecords(weekNum, ctx.entityId, ctx.entityLevel);
+    let records = MockData.getRecords(weekNum, ctx.entityId, ctx.entityLevel);
+
+    // Filter by days if set
+    records = filterRecordsByDays(records, ctx.daysFilter);
 
     // Get unique promotions for this context
     const promotions = MockData.getUniquePromotions(records);
@@ -1097,11 +1272,16 @@ const ComparePage = (function() {
    * Render context summary header
    */
   function renderContextSummary(label, ctx) {
+    // Format days display
+    const daysDisplay = ctx.daysFilter === 'all' || !ctx.daysFilter
+      ? 'All Days'
+      : `Days: ${ctx.daysFilter}`;
+
     return `
       <div class="context-summary">
         <span class="context-summary__label">${label}</span>
         <span class="context-summary__details">
-          ${ctx.weekLabel || 'No date'} &bull; ${ctx.entityName || 'No entity'}
+          ${ctx.weekLabel || 'No date'} &bull; ${ctx.entityName || 'No entity'} &bull; ${daysDisplay}
         </span>
       </div>
     `;
@@ -1321,7 +1501,8 @@ const ComparePage = (function() {
     selectPromotion,
     applyPromotionSelection,
     copyAtoB,
-    copyBtoA
+    copyBtoA,
+    setDaysFilter
   };
 })();
 

@@ -409,6 +409,22 @@
   background-color: var(--color-warning-300);
 }
 
+/* Days Filter */
+.filter-chip--days {
+  background-color: var(--color-info-50);
+  border: 1px solid var(--color-info-200);
+  color: var(--color-info-700);
+}
+
+.filter-chip--days button {
+  background-color: var(--color-info-200);
+  color: var(--color-info-700);
+}
+
+.filter-chip--days button:hover {
+  background-color: var(--color-info-300);
+}
+
 /* Grid Column Filter Chip */
 .filter-chip--grid {
   background-color: var(--color-info-50);
@@ -1813,6 +1829,32 @@ body.app-mode-grid .view-search {
   text-align: center;
 }
 
+/* KPI Value container - stacked: weighted on top, raw below */
+.kpi-value {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin-bottom: 4px;
+}
+
+.kpi-weighted {
+  font-size: var(--font-size-xl, 24px);
+  font-weight: 700;
+  color: var(--color-text-primary, #1f2937);
+}
+
+.kpi-raw {
+  font-size: var(--font-size-sm, 13px);
+  color: var(--color-text-secondary, #6b7280);
+}
+
+.kpi-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+/* Legacy support */
 .detail-kpi__value {
   font-size: var(--font-size-xl);
   font-weight: 700;
@@ -1871,6 +1913,41 @@ body.app-mode-grid .view-search {
   background-color: var(--color-gray-50);
   border-radius: var(--radius-lg);
   padding: var(--space-2);
+}
+
+/* Detail Date Context Row */
+.detail-date-context {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 12px);
+  padding: var(--space-3, 12px) var(--space-4, 16px);
+  font-size: var(--font-size-sm, 13px);
+  color: var(--color-text-secondary, #6b7280);
+  background: linear-gradient(to right, var(--color-gray-50, #f9fafb), transparent);
+  border-bottom: 1px solid var(--color-border-light, #e5e7eb);
+}
+
+.days-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1, 4px);
+  padding: var(--space-1, 4px) var(--space-2, 8px);
+  font-weight: 600;
+  font-size: var(--font-size-xs, 12px);
+  color: var(--color-primary-700, #3730a3);
+  background-color: var(--color-primary-50, #eef2ff);
+  border-radius: var(--radius-full, 9999px);
+  letter-spacing: 0.01em;
+}
+
+.date-separator {
+  color: var(--color-text-muted, #d1d5db);
+  font-size: 8px;
+}
+
+.date-range {
+  color: var(--color-text-secondary, #6b7280);
+  font-weight: 500;
 }
 
 /* Mini Chart (Fallback) */
@@ -2032,6 +2109,28 @@ body.app-mode-grid .view-search {
 .detail-tag--deal {
   background: var(--color-gray-800);
   color: white;
+}
+
+/* Detail Meta Item - For Original Position and other meta info */
+.detail-meta-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-gray-50);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+}
+
+.detail-meta-item .meta-label {
+  color: var(--color-text-tertiary);
+  font-weight: 500;
+}
+
+.detail-meta-item .meta-value {
+  color: var(--color-text-primary);
+  font-weight: 600;
 }
 
 /* Detail Percentile Row - Matches grid perf-bar styling */
@@ -2287,6 +2386,22 @@ body.app-mode-grid .view-search {
 .col-percentile {
   width: 80px;
   text-align: center;
+}
+
+/* Days column - centered, compact width */
+.col-days {
+  width: 70px;
+  min-width: 70px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Position column - centered, compact width */
+.col-position {
+  width: 70px;
+  min-width: 70px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Performance column - Flexible, fills remaining space */
@@ -2614,7 +2729,7 @@ body.app-mode-grid .view-search {
 }
 
 .perf-metric-swatch--all {
-  background: linear-gradient(90deg, #4272D8 33%, #B8D64D 33% 66%, #4E5370 66%);
+  background: linear-gradient(90deg, #4272D8 33%, #B8D64D 33% 66%, #937DF8 66%);
 }
 
 .perf-metric-swatch--views {
@@ -2626,7 +2741,7 @@ body.app-mode-grid .view-search {
 }
 
 .perf-metric-swatch--adds {
-  background-color: #4E5370;
+  background-color: #937DF8;
 }
 
 /* Row Position Number */
@@ -2945,6 +3060,12 @@ body.app-mode-grid .view-search {
   outline: none;
   border-color: var(--color-primary-500);
   box-shadow: 0 0 0 2px var(--color-primary-100);
+}
+
+.topn-hint {
+  margin-left: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
 }
 
 /* Grid footer pagination */
@@ -4409,6 +4530,32 @@ body:not(.comparison-active) .detail-comparison {
   gap: var(--space-3);
 }
 
+/* Export Button */
+.grid-export-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.grid-export-btn:hover {
+  background-color: var(--color-primary-50);
+  border-color: var(--color-primary-300);
+  color: var(--color-primary-600);
+}
+
+.grid-export-btn .material-symbols-outlined {
+  font-size: 18px;
+}
+
 /* Column Visibility Toggle */
 .grid-columns-toggle {
   position: relative;
@@ -4656,6 +4803,20 @@ body:not(.comparison-active) .detail-comparison {
 .grid-table .table-metric {
   width: 80px;
   text-align: right;
+}
+
+.grid-table td.col-days,
+.grid-table th.col-days {
+  width: 70px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.grid-table td.col-position,
+.grid-table th.col-position {
+  width: 70px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
 }
 
 .grid-table .col-percentile {
@@ -4999,6 +5160,46 @@ body:not(.comparison-active) .detail-comparison {
 .context-btn--empty {
   color: var(--color-text-tertiary);
   border-style: dashed;
+}
+
+/* Compare Days Filter */
+.compare-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-sm);
+  background-color: var(--color-gray-50);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.compare-filter label {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.compare-filter .days-filter {
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  min-width: 90px;
+}
+
+.compare-filter .days-filter:hover {
+  border-color: var(--color-gray-400);
+}
+
+.compare-filter .days-filter:focus {
+  outline: none;
+  border-color: var(--color-primary-500);
+  box-shadow: 0 0 0 2px var(--color-primary-100);
 }
 
 .copy-context-btn {
@@ -5615,4 +5816,228 @@ body:not(.comparison-active) .detail-comparison {
   font-size: 12px;
   font-family: monospace;
   color: var(--color-text-secondary);
+}
+
+/* ============================================
+   COMPARE BUTTON IN PROMOTION ROWS
+   ============================================ */
+
+/* Actions column in promotion table */
+.col-actions {
+  width: 100px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Compare button styling */
+.btn-compare {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-primary-600);
+  background-color: var(--color-primary-50);
+  border: 1px solid var(--color-primary-200);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-compare:hover {
+  background-color: var(--color-primary-100);
+  border-color: var(--color-primary-400);
+  color: var(--color-primary-700);
+}
+
+.btn-compare:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+.btn-compare .material-symbols-outlined {
+  font-size: 16px;
+}
+
+/* ============================================
+   PANEL B PROMPT STYLING
+   ============================================ */
+
+.compare-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  margin-bottom: var(--space-3);
+  background-color: var(--color-info-50);
+  border: 2px dashed var(--color-info-200);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.compare-prompt .prompt-icon {
+  font-size: 32px;
+  margin-bottom: var(--space-2);
+  color: var(--color-info-500);
+}
+
+.compare-prompt .prompt-title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.compare-prompt .prompt-text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+  max-width: 280px;
+}
+
+/* ============================================
+   TOAST NOTIFICATION SYSTEM
+   ============================================ */
+
+.toast-notification {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-gray-900);
+  color: white;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  z-index: 10000;
+  opacity: 0;
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+  pointer-events: none;
+}
+
+.toast-notification.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.toast-notification .toast-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.toast-notification .toast-message {
+  white-space: nowrap;
+}
+
+/* Toast type variants */
+.toast-notification--success {
+  background-color: var(--color-success-600);
+}
+
+.toast-notification--success .toast-icon {
+  color: white;
+}
+
+.toast-notification--error {
+  background-color: var(--color-danger-600);
+}
+
+.toast-notification--error .toast-icon {
+  color: white;
+}
+
+.toast-notification--info {
+  background-color: var(--color-info-600);
+}
+
+.toast-notification--info .toast-icon {
+  color: white;
+}
+
+/* ============================================
+   VARIANTS BADGE (EPC Roll-up Indicator)
+   ============================================ */
+
+.variants-badge {
+  display: block;
+  padding: 2px 8px;
+  font-size: 11px;
+  background: var(--color-bg-secondary, #f3f4f6);
+  border-radius: 4px;
+  color: var(--color-text-secondary, #6b7280);
+  margin-top: 4px;
+  margin-left: 0;
+  font-weight: 500;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+/* Promo name content wrapper for stacking title and variants badge */
+.promo-name-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Table info wrapper in grid-inquiry for stacking title and variants badge */
+.table-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Variants badge in card view */
+.promo-card__title .variants-badge {
+  display: block;
+  margin-left: 0;
+  margin-top: 4px;
+  font-size: 10px;
+}
+
+/* Detail panel variants badge (under title, before tags) */
+.detail-variants-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 11px;
+  background: var(--color-bg-secondary, #f3f4f6);
+  border-radius: 4px;
+  color: var(--color-text-secondary, #6b7280);
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+/* Promotion column - increased width */
+.col-promo,
+.col-promotion {
+  min-width: 200px;
+  width: 220px;
+}
+
+/* Category column - decreased width */
+.col-category {
+  min-width: 80px;
+  width: 100px;
+  max-width: 120px;
+}
+
+/* Percentile column - add padding to prevent overflow */
+.col-percentile {
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+}
+
+/* Actions column - increased width to prevent overflow */
+.col-actions {
+  min-width: 110px;
+  width: 120px;
+  padding-left: 8px !important;
+  padding-right: 8px !important;
 }

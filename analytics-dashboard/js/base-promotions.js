@@ -232,6 +232,14 @@
       promotionGrid.addEventListener('click', handlePromotionClick);
     }
 
+    // Share button handler
+    const shareBtn = document.getElementById('promo-share-btn');
+    if (shareBtn) {
+      shareBtn.addEventListener('click', () => {
+        core.handleShareClick();
+      });
+    }
+
     // Save state on navigation clicks
     document.querySelectorAll('.mode-btn, .subtab').forEach(link => {
       link.addEventListener('click', () => {
@@ -430,6 +438,11 @@
     const performanceWidth = promo.percentile;
     const perfClass = promo.percentile >= 75 ? 'high' : promo.percentile >= 50 ? 'medium' : 'low';
 
+    // Generate variants badge HTML if this is a parent with children
+    const variantsBadgeHTML = promo.isParent && promo.childCount > 0
+      ? `<span class="variants-badge">Includes ${promo.childCount} variant${promo.childCount !== 1 ? 's' : ''}</span>`
+      : '';
+
     return `
       <div class="promo-card ${isActive ? 'active' : ''}"
            data-id="${promo.id}"
@@ -448,7 +461,7 @@
             <span class="promo-card__deal-badge">${core.escapeHtml(promo.dealType)}</span>
             ${core.getPercentileBadgeHTML(promo.percentile)}
           </div>
-          <h3 class="promo-card__title">${core.escapeHtml(promo.name)}</h3>
+          <h3 class="promo-card__title">${core.escapeHtml(promo.name)}${variantsBadgeHTML}</h3>
           <p class="promo-card__meta">${core.escapeHtml(promo.categoryName)}</p>
           <div class="promo-card__stats">
             <div class="promo-stat">
@@ -478,36 +491,38 @@
   }
 
   /**
-   * Get current page of data with TopN and pagination applied
+   * Get current page of data with TopN as page size (not a total limit)
+   * TopN controls how many records to show per page, with pagination to see all records
    */
   function getPageData() {
     let promos = [...allDisplayPromotions];
 
-    // Apply TopN limit
-    const topN = paginationState.topN;
-    if (topN !== 'all' && typeof topN === 'number') {
-      promos = promos.slice(0, topN);
-    }
+    // TopN is now the page size (records per page), not a total limit
+    const pageSize = paginationState.topN === 'all'
+      ? promos.length
+      : paginationState.topN;
 
-    const totalRecords = promos.length;
-    const totalPages = Math.ceil(totalRecords / paginationState.rowsPerPage);
+    const totalRecords = promos.length; // All filtered promotions, not limited
+    const totalPages = pageSize > 0 ? Math.ceil(totalRecords / pageSize) : 1;
 
     // Ensure current page is valid
     if (paginationState.currentPage > totalPages) {
       paginationState.currentPage = Math.max(1, totalPages);
     }
 
-    const start = (paginationState.currentPage - 1) * paginationState.rowsPerPage;
-    const end = start + paginationState.rowsPerPage;
+    const start = (paginationState.currentPage - 1) * pageSize;
+    const end = start + pageSize;
     const pageData = promos.slice(start, end);
 
     return {
       data: pageData,
       total: totalRecords,
+      totalFiltered: totalRecords,
       start: start + 1,
       end: Math.min(end, totalRecords),
       currentPage: paginationState.currentPage,
-      totalPages: totalPages
+      totalPages: totalPages,
+      pageSize: pageSize
     };
   }
 
@@ -568,6 +583,11 @@
           <td class="col-added">${core.formatNumber(promo.atl)}</td>
       ` : '';
 
+      // Generate variants badge HTML if this is a parent with children
+      const variantsBadgeHTML = promo.isParent && promo.childCount > 0
+        ? `<span class="variants-badge">Includes ${promo.childCount} variant${promo.childCount !== 1 ? 's' : ''}</span>`
+        : '';
+
       return `
         <tr class="promo-row ${isActive ? 'selected' : ''}" data-id="${promo.id}">
           <td class="col-num">
@@ -578,7 +598,10 @@
               <div class="promo-thumb">
                 <img src="${promo.thumbImage}" alt="${core.escapeHtml(promo.name)}">
               </div>
-              <span class="promo-label">${core.escapeHtml(promo.name)}</span>
+              <div class="promo-name-content">
+                <span class="promo-label">${core.escapeHtml(promo.name)}</span>
+                ${variantsBadgeHTML}
+              </div>
             </div>
           </td>
           <td class="col-category"><span class="promo-category">${core.escapeHtml(promo.categoryName)}</span></td>
@@ -596,6 +619,12 @@
             </div>
           </td>
           <td class="col-percentile">${core.getPercentileBadgeHTML(promo.percentile)}</td>
+          <td class="col-actions">
+            <button class="btn-compare" onclick="quickCompare('${promo.id}'); event.stopPropagation();" title="Compare this promotion">
+              <span class="material-symbols-outlined">compare</span>
+              Compare
+            </button>
+          </td>
         </tr>
       `;
     }).join('');
@@ -624,6 +653,7 @@
             ${moreDataHeaders}
             ${getPromoSortableHeaderHTML('Performance', 'compositeScore', 'col-perf')}
             ${getPromoSortableHeaderHTML('%tile', 'percentile', 'col-percentile')}
+            <th class="col-actions">Actions</th>
           </tr>
         </thead>
         <tbody id="promo-grid-body">
@@ -897,6 +927,36 @@
   }
 
   /**
+   * Format date as "Mon D" (e.g., "Oct 28")
+   */
+  function formatShortDate(dateStr) {
+    if (!dateStr) return '';
+    const date = new Date(dateStr + 'T00:00:00');
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return `${months[date.getMonth()]} ${date.getDate()}`;
+  }
+
+  /**
+   * Format date range as "Mon D - Mon D, YYYY" (e.g., "Oct 28 - Nov 3, 2025")
+   */
+  function formatDateRange(startDate, endDate) {
+    if (!startDate || !endDate) return '';
+    const start = new Date(startDate + 'T00:00:00');
+    const end = new Date(endDate + 'T00:00:00');
+    const startFormatted = formatShortDate(startDate);
+    const endFormatted = formatShortDate(endDate);
+    const year = end.getFullYear();
+    return `${startFormatted} - ${endFormatted}, ${year}`;
+  }
+
+  /**
+   * Get days label with correct singular/plural
+   */
+  function getDaysLabel(days) {
+    return days === 1 ? '1 Day' : `${days} Days`;
+  }
+
+  /**
    * Render promotion detail panel
    */
   function renderDetail(promo) {
@@ -905,6 +965,9 @@
 
     const ctr = ((promo.cc / promo.civ) * 100).toFixed(1);
 
+    // Get chart colors from DashboardCore
+    const colors = core.getChartColors();
+
     // Helper functions for percentile colors (matching app.js)
     const getPercentileVariant = (percentile) => {
       if (percentile >= 75) return 'high';
@@ -912,21 +975,57 @@
       return 'low';
     };
 
+    // Determine bar color based on metric mode
+    // Default to composite/total view which uses teal
+    const metricMode = state.detailMetricMode || 'composite';
+    let barColor;
+    if (metricMode === 'all' || metricMode === 'total' || metricMode === 'composite') {
+      barColor = colors.total;  // Teal #06989D for aggregate/composite score
+    } else {
+      // Individual metric colors
+      barColor = colors[metricMode] || colors.total;  // views, clicks, or adds
+    }
+
+    // Build date context row HTML
+    const daysLabel = getDaysLabel(promo.daysRun || 7);
+    const dateRangeFormatted = formatDateRange(promo.startDate, promo.endDate);
+    const dateContextHTML = dateRangeFormatted ? `
+      <div class="detail-date-context">
+        <span class="days-badge">${daysLabel}</span>
+        <span class="date-separator">•</span>
+        <span class="date-range">${dateRangeFormatted}</span>
+      </div>
+    ` : '';
+
+    // Generate variants badge for detail panel (under title, before tags)
+    const detailVariantsBadge = promo.isParent && promo.childCount > 0
+      ? `<span class="detail-variants-badge">Includes ${promo.childCount} variant${promo.childCount !== 1 ? 's' : ''}</span>`
+      : '';
+
     detailContent.innerHTML = `
       <div class="detail-hero">
         <img src="${promo.heroImage || promo.thumbImage}" alt="${core.escapeHtml(promo.name)}">
       </div>
+      ${dateContextHTML}
       <div class="detail-body">
         <h2 class="detail-title">${core.escapeHtml(promo.name)}</h2>
+        ${detailVariantsBadge}
 
         <div class="detail-tags">
           <span class="detail-tag detail-tag--category">${core.escapeHtml(promo.categoryName)}</span>
           <span class="detail-tag detail-tag--deal">${core.escapeHtml(promo.dealType)}</span>
         </div>
 
+        ${promo.originalPosition ? `
+        <div class="detail-meta-item">
+          <span class="meta-label">Original Position:</span>
+          <span class="meta-value">Row ${promo.originalPosition}</span>
+        </div>
+        ` : ''}
+
         <div class="detail-percentile-row">
-          <div class="percentile-bar percentile-bar--${getPercentileVariant(promo.percentile)}">
-            <div class="percentile-bar-fill percentile-bar-fill--${getPercentileVariant(promo.percentile)}" style="width: ${promo.percentile}%;"></div>
+          <div class="percentile-bar" style="background-color: ${barColor}22;">
+            <div class="percentile-bar-fill" style="width: ${promo.percentile}%; background-color: ${barColor};"></div>
           </div>
           <span class="percentile-score">${promo.compositeScore}</span>
           <img src="./assets/chart-bar.svg" alt="Percentile" class="percentile-icon">
@@ -935,20 +1034,31 @@
 
         <div class="detail-kpis">
           <div class="detail-kpi">
-            <span class="detail-kpi__value">${core.formatNumber(promo.civ)}</span>
-            <span class="detail-kpi__label">Card in View</span>
+            <div class="kpi-value">
+              <span class="kpi-weighted">${core.formatNumber(promo.civ * 1)}</span>
+              <span class="kpi-raw">(${core.formatNumber(promo.civ)} - raw)</span>
+            </div>
+            <div class="kpi-label">Card in View</div>
           </div>
           <div class="detail-kpi">
-            <span class="detail-kpi__value">${core.formatNumber(promo.cc)}</span>
-            <span class="detail-kpi__label">Card Clicked</span>
+            <div class="kpi-value">
+              <span class="kpi-weighted">${core.formatNumber(promo.cc * 5)}</span>
+              <span class="kpi-raw">(${core.formatNumber(promo.cc)} - raw)</span>
+            </div>
+            <div class="kpi-label">Card Clicked</div>
           </div>
           <div class="detail-kpi">
-            <span class="detail-kpi__value">${core.formatNumber(promo.atl)}</span>
-            <span class="detail-kpi__label">Add to List</span>
+            <div class="kpi-value">
+              <span class="kpi-weighted">${core.formatNumber(promo.atl * 20)}</span>
+              <span class="kpi-raw">(${core.formatNumber(promo.atl)} - raw)</span>
+            </div>
+            <div class="kpi-label">Add to List</div>
           </div>
           <div class="detail-kpi">
-            <span class="detail-kpi__value">${ctr}%</span>
-            <span class="detail-kpi__label">Click-Through Rate</span>
+            <div class="kpi-value">
+              <span class="kpi-weighted">${ctr}%</span>
+            </div>
+            <div class="kpi-label">Click-Through Rate</div>
           </div>
         </div>
 
@@ -991,11 +1101,14 @@
     const clicks = promo.cc || 0;
     const added = promo.atl || 0;
 
+    // Get colors from CSS variables
+    const colors = core.getChartColors();
+
     // Donut chart data - Views, Clicks, Added
     const donutData = [
-      { name: 'Views', value: views, itemStyle: { color: '#E74C3C' } },
-      { name: 'Clicks', value: clicks, itemStyle: { color: '#F39C12' } },
-      { name: 'Added', value: added, itemStyle: { color: '#B8D64D' } }
+      { name: 'Views', value: views, itemStyle: { color: colors.views } },
+      { name: 'Clicks', value: clicks, itemStyle: { color: colors.clicks } },
+      { name: 'Added', value: added, itemStyle: { color: colors.adds } }
     ];
 
     // Chart configuration
@@ -1092,6 +1205,31 @@
   }
 
   /**
+   * Quick compare - navigate to Compare with Panel A pre-populated
+   * @param {string} promotionId - The promotion ID to compare
+   */
+  function quickCompare(promotionId) {
+    // Get current context (week, entity, days)
+    const weekId = state.selectedWeekId || state.currentWeek?.id || 'week-47';
+    const entityId = state.currentEntity?.id || 'all';
+    const entityLevel = state.currentEntity?.level || 'all';
+    const daysFilter = state.columnFilters?.days || 'all';
+
+    // Build URL params for Panel A
+    const params = new URLSearchParams();
+    params.set('weekA', weekId);
+    params.set('entityA', entityId);
+    params.set('entityLevelA', entityLevel);
+    params.set('daysA', daysFilter);
+    params.set('promoA', promotionId);
+    params.set('layer', 'promotions'); // Set layer to promotions since we're comparing a promotion
+
+    // Save state and navigate
+    core.saveState();
+    window.location.href = `compare.html?${params.toString()}`;
+  }
+
+  /**
    * Update counts display
    */
   function updateCounts() {
@@ -1183,6 +1321,7 @@
   window.printPromotion = printPromotion;
   window.openPromotionInquiry = openPromotionInquiry;
   window.compareCurrentPromotion = compareCurrentPromotion;
+  window.quickCompare = quickCompare;
   window.handleColumnSort = handleColumnSort;
   window.handleColumnFilter = handleColumnFilter;
   window.clearPromoFilter = clearPromoFilter;

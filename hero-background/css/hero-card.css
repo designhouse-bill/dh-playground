@@ -19,6 +19,342 @@
   background-repeat: no-repeat;
 }
 
+/* =============================================================================
+   Circular Card Styles (Matching Angular Component)
+   ============================================================================= */
+
+/* Card Wrapper - matches .cardwrapper from Angular */
+.cardwrapper {
+  background-color: #636467;
+  border-width: 3px;
+  border-color: #636467;
+  border-style: solid;
+}
+
+/* Cardwrapper sizing for prototype preview (outside of grid context) */
+.cardwrapper.size-11 { width: 125px; height: 125px; }
+.cardwrapper.size-12 { width: 125px; height: 250px; }
+.cardwrapper.size-13 { width: 125px; height: 375px; }
+.cardwrapper.size-21 { width: 250px; height: 125px; }
+.cardwrapper.size-22 { width: 250px; height: 250px; }
+.cardwrapper.size-23 { width: 250px; height: 375px; }
+.cardwrapper.size-31 { width: 375px; height: 125px; }
+.cardwrapper.size-32 { width: 375px; height: 250px; }
+.cardwrapper.size-33 { width: 375px; height: 375px; }
+
+/* Circular Card Base - matches .circular-card from Angular */
+.circular-card {
+  background-color: #fff;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  transition: opacity 0.2s ease-in-out;
+  overflow: hidden;
+}
+
+.circular-card:not(.not-loaded) {
+  opacity: 1;
+}
+
+.circular-card.not-loaded {
+  opacity: 0;
+}
+
+/* Maintain aspect ratio */
+.circular-card:before {
+  content: '';
+  display: block;
+  padding-top: 100%;
+}
+
+/* Content wrapper */
+.circular-card .circular-card-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* -----------------------------------------------------------------------------
+   Size Classes (Grid Spanning)
+   ----------------------------------------------------------------------------- */
+
+/* 2-column sizes */
+.circular-card.size-21 {
+  grid-column-end: span 2;
+}
+
+.circular-card.size-22 {
+  grid-column-end: span 2;
+  grid-row-end: span 2;
+}
+
+.circular-card.size-23 {
+  grid-column-end: span 2;
+  grid-row-end: span 3;
+}
+
+.circular-card.size-24 {
+  grid-column-end: span 2;
+  grid-row-end: span 4;
+}
+
+.circular-card.size-25 {
+  grid-column-end: span 2;
+  grid-row-end: span 5;
+}
+
+.circular-card.size-26 {
+  grid-column-end: span 2;
+  grid-row-end: span 6;
+}
+
+/* 3-column sizes */
+.circular-card.size-31 {
+  grid-column-end: span 3;
+}
+
+.circular-card.size-32 {
+  grid-column-end: span 3;
+  grid-row-end: span 2;
+}
+
+.circular-card.size-33 {
+  grid-column-end: span 3;
+  grid-row-end: span 3;
+}
+
+.circular-card.size-34 {
+  grid-column-end: span 3;
+  grid-row-end: span 4;
+}
+
+.circular-card.size-35 {
+  grid-column-end: span 3;
+  grid-row-end: span 5;
+}
+
+.circular-card.size-36 {
+  grid-column-end: span 3;
+  grid-row-end: span 6;
+}
+
+/* 1-column sizes */
+.circular-card.size-11 {
+  grid-column-end: span 1;
+  grid-row-end: span 1;
+}
+
+.circular-card.size-12 {
+  grid-row-end: span 2;
+}
+
+.circular-card.size-13 {
+  grid-row-end: span 3;
+}
+
+.circular-card.size-14 {
+  grid-row-end: span 4;
+}
+
+.circular-card.size-15 {
+  grid-row-end: span 5;
+}
+
+.circular-card.size-16 {
+  grid-row-end: span 6;
+}
+
+/* -----------------------------------------------------------------------------
+   Image Styles
+   ----------------------------------------------------------------------------- */
+
+.circular-card:not(.full) .circular-card-image {
+  height: 70%;
+  top: 5%;
+  left: 5%;
+  position: absolute;
+}
+
+.circular-card.full .circular-card-image {
+  width: 100%;
+  height: 100%;
+}
+
+.circular-card.size-32 img {
+  object-fit: cover;
+}
+
+.circular-card.size-22:not(.full) .circular-card-image {
+  height: 80%;
+}
+
+/* -----------------------------------------------------------------------------
+   Description Bar
+   ----------------------------------------------------------------------------- */
+
+.circular-card-description {
+  padding: 0.2rem;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  z-index: 400;
+  background-color: #636467;
+  color: white;
+  font-family: 'Inter', 'Lato', 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 14px;
+  scroll-behavior: smooth;
+  font-weight: 700;
+}
+
+.circular-card-description-expanded {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 76px;
+}
+
+.circular-card-description-expanded .circular-card-title {
+  display: block;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.circular-card-title {
+  font-weight: 700;
+}
+
+/* -----------------------------------------------------------------------------
+   Actions / Buttons
+   ----------------------------------------------------------------------------- */
+
+.circular-card-actions {
+  position: absolute;
+  top: 2px;
+  z-index: 100;
+}
+
+.circular-card-actions.right {
+  right: 2px;
+}
+
+.circular-card-actions.left {
+  left: 2px;
+}
+
+.circular-card-ico-btn {
+  width: 7.5vw;
+  height: 7.5vw;
+  border: 1px solid;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  line-height: 0;
+}
+
+/* -----------------------------------------------------------------------------
+   Deal / Pricing Wrapper
+   ----------------------------------------------------------------------------- */
+
+.circular-card-deal-wrapper {
+  position: absolute;
+  right: 20px;
+  bottom: 50px;
+  width: 35%;
+  height: 35%;
+}
+
+.circular-card-deal-custom {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  z-index: 300;
+  border: 5px solid #f20000;
+  border-radius: 50%;
+  background-color: #fff;
+  color: #f20000;
+  font-weight: 700;
+  line-height: 1;
+  font-family: Oswald, sans-serif;
+  font-size: 4vw;
+}
+
+.circular-card-deal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  margin-top: 0.15rem;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.circular-card-price {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+}
+
+.circular-card-price .bignum {
+  font-size: 1.7vw;
+  font-weight: 900;
+  position: relative;
+  top: -2px;
+}
+
+/* -----------------------------------------------------------------------------
+   Selection State
+   ----------------------------------------------------------------------------- */
+
+.circular-card-selected {
+  z-index: 500;
+  animation: 0.3s linear clickPop;
+  transition: all 0.25s ease;
+}
+
+@keyframes clickPop {
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   Media Queries (Responsive sizing)
+   ----------------------------------------------------------------------------- */
+
+@media only screen and (min-width: 400px) {
+  .circular-card-description {
+    padding: 0.5rem;
+  }
+}
+
+@media only screen and (min-width: 576px) {
+  .circular-card-ico-btn {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+@media (min-width: 768px) {
+  .circular-card:not(.full) .circular-card-image {
+    height: 75%;
+  }
+}
+
+@media only screen and (min-width: 1900px) {
+  .circular-card-ico-btn {
+    width: 40px;
+    height: 40px;
+  }
+}
+
 /*
  * Card size widths based on 375px base for 3-column sizes
  * Base unit: 375px / 3 = 125px per column

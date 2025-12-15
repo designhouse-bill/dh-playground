@@ -37,7 +37,7 @@ function initTabs() {
 }
 
 // =============================================================================
-// Tab 1: Current State (Original Simple Controls)
+// Tab 1: Current State (Angular-like Controls)
 // =============================================================================
 
 function initCurrentStateTab() {
@@ -46,7 +46,11 @@ function initCurrentStateTab() {
   const configOutput = document.getElementById('current-config-output');
   const cssOutput = document.getElementById('current-css-output');
 
+  // Render mode state
+  let renderMode = 'hero-card'; // 'hero-card' or 'circular-card'
+
   // Elements
+  const colorTypeSelect = document.getElementById('current-color-type');
   const colorPicker = document.getElementById('current-color-picker');
   const hexInput = document.getElementById('current-color-hex');
   const rInput = document.getElementById('current-color-r');
@@ -60,16 +64,20 @@ function initCurrentStateTab() {
   const sizeSelect = document.getElementById('current-size');
   const repeatSelect = document.getElementById('current-repeat');
   const bgImageOptions = document.querySelectorAll('#current-bg-selector .bg-image-option');
-
-  // Advanced elements
-  const blendModeSelect = document.getElementById('current-blend-mode');
-  const opacitySlider = document.getElementById('current-opacity');
-  const opacityValue = document.getElementById('current-opacity-value');
-  const attachmentSelect = document.getElementById('current-attachment');
+  const bgImageOptionsQA = document.querySelectorAll('#current-bg-selector-qa .bg-image-option');
+  const mediaPreview = document.getElementById('current-media-preview');
+  const addMediaBtn = document.getElementById('current-btn-add-media');
+  const deleteMediaBtn = document.getElementById('current-btn-delete-media');
+  const renderModeToggle = document.getElementById('current-render-mode');
 
   function updatePreview() {
-    preview.render(container);
+    if (renderMode === 'circular-card') {
+      preview.renderCircularCard(container);
+    } else {
+      preview.render(container);
+    }
     updateOutputs();
+    updateMediaPreview();
   }
 
   function updateOutputs() {
@@ -78,14 +86,33 @@ function initCurrentStateTab() {
   }
 
   function syncColorInputs() {
-    const rgba = preview.config.backgroundColor.rgba;
-    colorPicker.value = preview.config.backgroundColor.hex;
-    hexInput.value = preview.config.backgroundColor.hex.toUpperCase();
-    rInput.value = rgba.r;
-    gInput.value = rgba.g;
-    bInput.value = rgba.b;
-    aInput.value = Math.round(rgba.a * 100);
+    const bg = preview.config.backgroundColor;
+    colorPicker.value = bg.hexCode;
+    hexInput.value = bg.hexCode.toUpperCase();
+    rInput.value = bg.red;
+    gInput.value = bg.green;
+    bInput.value = bg.blue;
+    aInput.value = bg.alpha;
+    colorTypeSelect.value = bg.type;
   }
+
+  function updateMediaPreview() {
+    const bgImg = preview.config.backgroundImage;
+    if (bgImg.imageHref) {
+      mediaPreview.style.backgroundImage = `url('${bgImg.imageHref}')`;
+      mediaPreview.classList.add('has-image');
+    } else {
+      mediaPreview.style.backgroundImage = '';
+      mediaPreview.classList.remove('has-image');
+    }
+  }
+
+  // Color type dropdown
+  colorTypeSelect.addEventListener('change', (e) => {
+    preview.setBackgroundColorType(e.target.value);
+    syncColorInputs();
+    updatePreview();
+  });
 
   // Color picker
   colorPicker.addEventListener('input', (e) => {
@@ -105,58 +132,100 @@ function initCurrentStateTab() {
     }
   });
 
-  // RGBA inputs
+  // RGB inputs
   [rInput, gInput, bInput].forEach(input => {
     input.addEventListener('input', () => {
-      const rgba = {
-        r: parseInt(rInput.value) || 0,
-        g: parseInt(gInput.value) || 0,
-        b: parseInt(bInput.value) || 0,
-        a: (parseInt(aInput.value) || 0) / 100
-      };
-      preview.setBackgroundColorRgba(rgba);
-      colorPicker.value = preview.config.backgroundColor.hex;
-      hexInput.value = preview.config.backgroundColor.hex.toUpperCase();
+      preview.setBackgroundColorRgb(
+        parseInt(rInput.value) || 0,
+        parseInt(gInput.value) || 0,
+        parseInt(bInput.value) || 0,
+        parseInt(aInput.value) || 100
+      );
+      colorPicker.value = preview.config.backgroundColor.hexCode;
+      hexInput.value = preview.config.backgroundColor.hexCode.toUpperCase();
+      colorTypeSelect.value = preview.config.backgroundColor.type;
       updatePreview();
     });
   });
 
   // Alpha input
   aInput.addEventListener('input', () => {
-    const rgba = { ...preview.config.backgroundColor.rgba };
-    rgba.a = (parseInt(aInput.value) || 0) / 100;
-    preview.setBackgroundColorRgba(rgba);
+    preview.setBackgroundColorAlpha(parseInt(aInput.value) || 0);
+    colorTypeSelect.value = preview.config.backgroundColor.type;
     updatePreview();
   });
 
   // Transparent button
   transparentBtn.addEventListener('click', () => {
-    preview.setBackgroundColorRgba({ r: 255, g: 255, b: 255, a: 0 });
+    preview.setBackgroundColorType('transparent');
     syncColorInputs();
     updatePreview();
   });
 
   // Reset button
   resetBtn.addEventListener('click', () => {
-    preview.setBackgroundColorRgba({ r: 255, g: 255, b: 255, a: 1 });
+    preview.setBackgroundColorRgb(255, 255, 255, 100);
     syncColorInputs();
     updatePreview();
   });
 
-  // Card size
-  cardSizeSelect.addEventListener('change', (e) => {
-    preview.setCardSize(e.target.value);
-    updatePreview();
-  });
-
-  // Background image selection
-  bgImageOptions.forEach(option => {
-    option.addEventListener('click', () => {
-      bgImageOptions.forEach(o => o.classList.remove('bg-image-option--selected'));
-      option.classList.add('bg-image-option--selected');
-      preview.setBackgroundImage(option.dataset.src || null);
+  // Card size (if exists)
+  if (cardSizeSelect) {
+    cardSizeSelect.addEventListener('change', (e) => {
+      preview.setCardSize(e.target.value);
       updatePreview();
     });
+  }
+
+  // Background image selection (clickable thumbnails)
+  function clearAllBgSelections() {
+    bgImageOptions.forEach(o => o.classList.remove('bg-image-option--selected'));
+    bgImageOptionsQA.forEach(o => o.classList.remove('bg-image-option--selected'));
+  }
+
+  bgImageOptions.forEach(option => {
+    option.addEventListener('click', () => {
+      clearAllBgSelections();
+      option.classList.add('bg-image-option--selected');
+
+      const src = option.dataset.src || null;
+      const name = option.dataset.id || null;
+      preview.setBackgroundImage(src, name);
+      updatePreview();
+    });
+  });
+
+  // QA Test Images selection
+  bgImageOptionsQA.forEach(option => {
+    option.addEventListener('click', () => {
+      clearAllBgSelections();
+      option.classList.add('bg-image-option--selected');
+
+      const src = option.dataset.src || null;
+      const name = option.dataset.id || null;
+      preview.setBackgroundImage(src, name);
+      updatePreview();
+    });
+  });
+
+  // Media picker buttons (placeholder functionality)
+  addMediaBtn.addEventListener('click', () => {
+    // Scroll to sample images or show a message
+    const bgSelector = document.getElementById('current-bg-selector');
+    if (bgSelector) {
+      bgSelector.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  });
+
+  deleteMediaBtn.addEventListener('click', () => {
+    // Clear background image
+    bgImageOptions.forEach(o => o.classList.remove('bg-image-option--selected'));
+    const noneOption = document.querySelector('#current-bg-selector .bg-image-option--none');
+    if (noneOption) {
+      noneOption.classList.add('bg-image-option--selected');
+    }
+    preview.setBackgroundImage(null, null);
+    updatePreview();
   });
 
   // Position dropdown
@@ -177,38 +246,19 @@ function initCurrentStateTab() {
     updatePreview();
   });
 
-  // Advanced controls
-  blendModeSelect.addEventListener('change', (e) => {
-    preview.setBackgroundBlendMode(e.target.value);
-    updatePreview();
-  });
-
-  opacitySlider.addEventListener('input', (e) => {
-    const value = parseInt(e.target.value);
-    opacityValue.textContent = `${value}%`;
-    preview.setBackgroundOpacity(value / 100);
-    updatePreview();
-  });
-
-  attachmentSelect.addEventListener('change', (e) => {
-    preview.setBackgroundAttachment(e.target.value);
-    updatePreview();
-  });
-
-  // Mode toggle
-  const modeToggle = document.getElementById('current-mode-toggle');
-  const advancedControls = document.getElementById('current-advanced-controls');
-
-  modeToggle.querySelectorAll('.mode-toggle__btn').forEach(btn => {
+  // Render mode toggle
+  renderModeToggle.querySelectorAll('.mode-toggle__btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      modeToggle.querySelectorAll('.mode-toggle__btn').forEach(b => b.classList.remove('mode-toggle__btn--active'));
+      renderModeToggle.querySelectorAll('.mode-toggle__btn').forEach(b => b.classList.remove('mode-toggle__btn--active'));
       btn.classList.add('mode-toggle__btn--active');
-      advancedControls.style.display = btn.dataset.mode === 'advanced' ? 'block' : 'none';
+      renderMode = btn.dataset.mode;
+      updatePreview();
     });
   });
 
   // Initial render
   syncColorInputs();
+  updateMediaPreview();
   if (bgImageOptions.length > 1) {
     bgImageOptions[1].click();
   }
@@ -265,7 +315,7 @@ function initNextLevelTab() {
       swatch.addEventListener('click', () => {
         const color = swatch.dataset.color;
         if (color === 'transparent') {
-          preview.setBackgroundColorRgba({ r: 255, g: 255, b: 255, a: 0 });
+          preview.setBackgroundColorType('transparent');
         } else {
           preview.setBackgroundColorHex(color);
         }
@@ -484,20 +534,20 @@ function initNextLevelTab() {
     const config = preview.config;
 
     // Update color
-    const colorStr = preview.rgbaToString(config.backgroundColor.rgba);
+    const colorStr = preview.colorToString(config.backgroundColor);
     colorSwatch.style.background = colorStr;
-    if (config.backgroundColor.rgba.a === 0) {
+    if (config.backgroundColor.alpha === 0) {
       colorSwatch.classList.add('layer-indicator__swatch--transparent');
       colorValue.textContent = 'Transparent';
     } else {
       colorSwatch.classList.remove('layer-indicator__swatch--transparent');
-      colorValue.textContent = config.backgroundColor.hex.toUpperCase();
+      colorValue.textContent = config.backgroundColor.hexCode.toUpperCase();
     }
 
     // Update image
-    if (config.backgroundImage.src) {
-      const filename = config.backgroundImage.src.split('/').pop().replace(/_BG\.(jpg|png)$/i, '');
-      imageSwatch.style.background = `url('${config.backgroundImage.src}') center/cover`;
+    if (config.backgroundImage.imageHref) {
+      const filename = config.backgroundImage.imageHref.split('/').pop().replace(/_BG\.(jpg|png)$/i, '');
+      imageSwatch.style.background = `url('${config.backgroundImage.imageHref}') center/cover`;
       imageValue.textContent = filename;
     } else {
       imageSwatch.style.background = '#f0f0f0';
@@ -522,13 +572,13 @@ function initNextLevelTab() {
   }
 
   function syncColorInputs() {
-    const rgba = preview.config.backgroundColor.rgba;
-    document.getElementById('nextlevel-color-picker').value = preview.config.backgroundColor.hex;
-    document.getElementById('nextlevel-color-hex').value = preview.config.backgroundColor.hex.toUpperCase();
-    document.getElementById('nextlevel-color-r').value = rgba.r;
-    document.getElementById('nextlevel-color-g').value = rgba.g;
-    document.getElementById('nextlevel-color-b').value = rgba.b;
-    document.getElementById('nextlevel-color-a').value = Math.round(rgba.a * 100);
+    const bg = preview.config.backgroundColor;
+    document.getElementById('nextlevel-color-picker').value = bg.hexCode;
+    document.getElementById('nextlevel-color-hex').value = bg.hexCode.toUpperCase();
+    document.getElementById('nextlevel-color-r').value = bg.red;
+    document.getElementById('nextlevel-color-g').value = bg.green;
+    document.getElementById('nextlevel-color-b').value = bg.blue;
+    document.getElementById('nextlevel-color-a').value = bg.alpha;
   }
 
   // ==========================================================================
@@ -547,6 +597,7 @@ function initNextLevelTab() {
   const cardSizeSelect = document.getElementById('nextlevel-card-size');
   const repeatSelect = document.getElementById('nextlevel-repeat');
   const bgImageOptions = document.querySelectorAll('#nextlevel-bg-selector .bg-image-option');
+  const bgImageOptionsQA = document.querySelectorAll('#nextlevel-bg-selector-qa .bg-image-option');
 
   // Advanced elements
   const blendModeSelect = document.getElementById('nextlevel-blend-mode');
@@ -574,40 +625,37 @@ function initNextLevelTab() {
     }
   });
 
-  // RGBA inputs
+  // RGB inputs
   [rInput, gInput, bInput].forEach(input => {
     input.addEventListener('input', () => {
-      const rgba = {
-        r: parseInt(rInput.value) || 0,
-        g: parseInt(gInput.value) || 0,
-        b: parseInt(bInput.value) || 0,
-        a: (parseInt(aInput.value) || 0) / 100
-      };
-      preview.setBackgroundColorRgba(rgba);
-      colorPicker.value = preview.config.backgroundColor.hex;
-      hexInput.value = preview.config.backgroundColor.hex.toUpperCase();
+      preview.setBackgroundColorRgb(
+        parseInt(rInput.value) || 0,
+        parseInt(gInput.value) || 0,
+        parseInt(bInput.value) || 0,
+        parseInt(aInput.value) || 100
+      );
+      colorPicker.value = preview.config.backgroundColor.hexCode;
+      hexInput.value = preview.config.backgroundColor.hexCode.toUpperCase();
       updatePreview();
     });
   });
 
   // Alpha input
   aInput.addEventListener('input', () => {
-    const rgba = { ...preview.config.backgroundColor.rgba };
-    rgba.a = (parseInt(aInput.value) || 0) / 100;
-    preview.setBackgroundColorRgba(rgba);
+    preview.setBackgroundColorAlpha(parseInt(aInput.value) || 0);
     updatePreview();
   });
 
   // Transparent button
   transparentBtn.addEventListener('click', () => {
-    preview.setBackgroundColorRgba({ r: 255, g: 255, b: 255, a: 0 });
+    preview.setBackgroundColorType('transparent');
     syncColorInputs();
     updatePreview();
   });
 
   // Reset button
   resetBtn.addEventListener('click', () => {
-    preview.setBackgroundColorRgba({ r: 255, g: 255, b: 255, a: 1 });
+    preview.setBackgroundColorRgb(255, 255, 255, 100);
     syncColorInputs();
     updatePreview();
   });
@@ -619,13 +667,32 @@ function initNextLevelTab() {
   });
 
   // Background image selection
+  function clearAllBgSelectionsNextLevel() {
+    bgImageOptions.forEach(o => o.classList.remove('bg-image-option--selected'));
+    bgImageOptionsQA.forEach(o => o.classList.remove('bg-image-option--selected'));
+  }
+
   bgImageOptions.forEach(option => {
     option.addEventListener('click', () => {
-      bgImageOptions.forEach(o => o.classList.remove('bg-image-option--selected'));
+      clearAllBgSelectionsNextLevel();
       option.classList.add('bg-image-option--selected');
 
       const src = option.dataset.src || null;
-      preview.setBackgroundImage(src);
+      const name = option.dataset.id || null;
+      preview.setBackgroundImage(src, name);
+      updatePreview();
+    });
+  });
+
+  // QA Test Images selection
+  bgImageOptionsQA.forEach(option => {
+    option.addEventListener('click', () => {
+      clearAllBgSelectionsNextLevel();
+      option.classList.add('bg-image-option--selected');
+
+      const src = option.dataset.src || null;
+      const name = option.dataset.id || null;
+      preview.setBackgroundImage(src, name);
       updatePreview();
     });
   });
@@ -636,33 +703,9 @@ function initNextLevelTab() {
     updatePreview();
   });
 
-  // Advanced controls
-  blendModeSelect.addEventListener('change', (e) => {
-    preview.setBackgroundBlendMode(e.target.value);
-    updatePreview();
-  });
-
-  opacitySlider.addEventListener('input', (e) => {
-    const value = parseInt(e.target.value);
-    opacityValue.textContent = `${value}%`;
-    preview.setBackgroundOpacity(value / 100);
-    updatePreview();
-  });
-
-  attachmentSelect.addEventListener('change', (e) => {
-    preview.setBackgroundAttachment(e.target.value);
-    updatePreview();
-  });
-
-  originSelect.addEventListener('change', (e) => {
-    preview.setBackgroundOrigin(e.target.value);
-    updatePreview();
-  });
-
-  clipSelect.addEventListener('change', (e) => {
-    preview.setBackgroundClip(e.target.value);
-    updatePreview();
-  });
+  // Note: Advanced controls (blend mode, opacity, attachment, origin, clip) are no longer
+  // supported in the new simplified data model. They remain here for UI compatibility
+  // but won't affect the output.
 
   // Mode toggle
   const modeToggle = document.getElementById('nextlevel-mode-toggle');

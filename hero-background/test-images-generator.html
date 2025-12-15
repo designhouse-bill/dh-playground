@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QA Test Images Generator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #f5f5f5;
+      padding: 40px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    h2 {
+      margin: 40px 0 20px;
+      color: #555;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 10px;
+    }
+
+    .instructions {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      border-left: 4px solid #2563eb;
+    }
+
+    .instructions p {
+      margin-bottom: 10px;
+      color: #666;
+    }
+
+    .instructions ol {
+      margin-left: 20px;
+      color: #666;
+    }
+
+    .instructions li {
+      margin-bottom: 5px;
+    }
+
+    /* =========================================
+       Position Test Grid (900x900)
+       ========================================= */
+    .position-grid {
+      width: 900px;
+      height: 900px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      border: 3px solid #333;
+      background: #fff;
+    }
+
+    .position-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #333;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .position-cell .label {
+      font-size: 28px;
+      margin-bottom: 8px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .position-cell .code {
+      font-size: 48px;
+      font-weight: 900;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    /* Top row - Red shades */
+    .cell-tl { background: #FF6B6B; color: #fff; }
+    .cell-tc { background: #FF8E8E; color: #fff; }
+    .cell-tr { background: #FFB4B4; color: #8B0000; }
+
+    /* Middle row - Green shades */
+    .cell-cl { background: #6BCB77; color: #fff; }
+    .cell-cc { background: #8ED99C; color: #1B4D1B; }
+    .cell-cr { background: #B4E7BE; color: #1B4D1B; }
+
+    /* Bottom row - Blue shades */
+    .cell-bl { background: #6B9FFF; color: #fff; }
+    .cell-bc { background: #8EB8FF; color: #1B1B4D; }
+    .cell-br { background: #B4D1FF; color: #1B1B4D; }
+
+    /* =========================================
+       Repeat Test Pattern (100x100)
+       ========================================= */
+    .repeat-pattern {
+      width: 100px;
+      height: 100px;
+      background: #FFE66D;
+      border: 3px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .repeat-pattern .arrow {
+      font-size: 60px;
+      color: #333;
+    }
+
+    .repeat-pattern .corner-dot {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: #FF6B6B;
+      border-radius: 50%;
+    }
+
+    .repeat-pattern .corner-dot.tl { top: 5px; left: 5px; }
+    .repeat-pattern .corner-dot.tr { top: 5px; right: 5px; background: #6BCB77; }
+    .repeat-pattern .corner-dot.bl { bottom: 5px; left: 5px; background: #6B9FFF; }
+    .repeat-pattern .corner-dot.br { bottom: 5px; right: 5px; background: #9B59B6; }
+
+    /* =========================================
+       Asymmetric Test (600x300)
+       ========================================= */
+    .asymmetric-test {
+      width: 600px;
+      height: 300px;
+      background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+      border: 3px solid #333;
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+    }
+
+    .asymmetric-test .corner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 24px;
+    }
+
+    .asymmetric-test .corner-tl {
+      background: rgba(255, 107, 107, 0.3);
+      color: #8B0000;
+    }
+
+    .asymmetric-test .corner-tr {
+      background: rgba(107, 203, 119, 0.3);
+      color: #1B4D1B;
+    }
+
+    .asymmetric-test .corner-bl {
+      background: rgba(107, 159, 255, 0.3);
+      color: #1B1B4D;
+    }
+
+    .asymmetric-test .corner-br {
+      background: rgba(155, 89, 182, 0.3);
+      color: #4A235A;
+    }
+
+    .asymmetric-test .circle {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #fff;
+      font-size: 18px;
+    }
+
+    .asymmetric-test .corner-tl .circle { background: #FF6B6B; }
+    .asymmetric-test .corner-tr .circle { background: #6BCB77; }
+    .asymmetric-test .corner-bl .circle { background: #6B9FFF; }
+    .asymmetric-test .corner-br .circle { background: #9B59B6; }
+
+    /* =========================================
+       Transparency Test (300x300)
+       ========================================= */
+    .transparency-test {
+      width: 300px;
+      height: 300px;
+      border: 3px solid #333;
+      position: relative;
+      background:
+        linear-gradient(45deg, #ccc 25%, transparent 25%),
+        linear-gradient(-45deg, #ccc 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #ccc 75%),
+        linear-gradient(-45deg, transparent 75%, #ccc 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    }
+
+    .transparency-test .overlay {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+    }
+
+    .transparency-test .quad {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .transparency-test .quad-tl {
+      background: rgba(255, 107, 107, 0.8);
+      color: #fff;
+    }
+
+    .transparency-test .quad-tr {
+      background: rgba(107, 203, 119, 0.5);
+      color: #1B4D1B;
+    }
+
+    .transparency-test .quad-bl {
+      background: rgba(107, 159, 255, 0.3);
+      color: #1B1B4D;
+    }
+
+    .transparency-test .quad-br {
+      background: rgba(155, 89, 182, 0.0);
+      color: #333;
+    }
+
+    /* Download buttons */
+    .download-section {
+      margin-top: 20px;
+      padding: 15px;
+      background: #e8f4e8;
+      border-radius: 8px;
+    }
+
+    .download-section p {
+      color: #2d5a2d;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <h1>QA Test Images Generator</h1>
+
+  <div class="instructions">
+    <p><strong>How to save these images:</strong></p>
+    <ol>
+      <li>Right-click on each image below</li>
+      <li>Select "Save Image As..." or take a screenshot</li>
+      <li>Save to <code>hero-background/sample-images/</code> folder</li>
+      <li>Use the filenames specified below each image</li>
+    </ol>
+    <p><em>Tip: For best quality, use browser screenshot tools or developer tools to capture at exact dimensions.</em></p>
+  </div>
+
+  <!-- ============================================
+       1. Position Test Grid (900x900)
+       ============================================ -->
+  <h2>1. Position Test Grid</h2>
+  <p style="margin-bottom: 15px; color: #666;">
+    <strong>Filename:</strong> <code>position-test-grid.png</code> |
+    <strong>Size:</strong> 900x900px |
+    <strong>Purpose:</strong> Test all 9 background-position values
+  </p>
+
+  <div class="position-grid" id="position-grid">
+    <div class="position-cell cell-tl">
+      <span class="label">TOP LEFT</span>
+      <span class="code">TL</span>
+    </div>
+    <div class="position-cell cell-tc">
+      <span class="label">TOP CENTER</span>
+      <span class="code">TC</span>
+    </div>
+    <div class="position-cell cell-tr">
+      <span class="label">TOP RIGHT</span>
+      <span class="code">TR</span>
+    </div>
+    <div class="position-cell cell-cl">
+      <span class="label">CENTER LEFT</span>
+      <span class="code">CL</span>
+    </div>
+    <div class="position-cell cell-cc">
+      <span class="label">CENTER CENTER</span>
+      <span class="code">CC</span>
+    </div>
+    <div class="position-cell cell-cr">
+      <span class="label">CENTER RIGHT</span>
+      <span class="code">CR</span>
+    </div>
+    <div class="position-cell cell-bl">
+      <span class="label">BOTTOM LEFT</span>
+      <span class="code">BL</span>
+    </div>
+    <div class="position-cell cell-bc">
+      <span class="label">BOTTOM CENTER</span>
+      <span class="code">BC</span>
+    </div>
+    <div class="position-cell cell-br">
+      <span class="label">BOTTOM RIGHT</span>
+      <span class="code">BR</span>
+    </div>
+  </div>
+
+  <div class="download-section">
+    <p>Right-click the grid above and save as <strong>position-test-grid.png</strong></p>
+  </div>
+
+  <!-- ============================================
+       2. Repeat Test Pattern (100x100)
+       ============================================ -->
+  <h2>2. Repeat Test Pattern</h2>
+  <p style="margin-bottom: 15px; color: #666;">
+    <strong>Filename:</strong> <code>repeat-test-pattern.png</code> |
+    <strong>Size:</strong> 100x100px |
+    <strong>Purpose:</strong> Test background-repeat values (easy to count tiles)
+  </p>
+
+  <div class="repeat-pattern" id="repeat-pattern">
+    <span class="corner-dot tl"></span>
+    <span class="corner-dot tr"></span>
+    <span class="corner-dot bl"></span>
+    <span class="corner-dot br"></span>
+    <span class="arrow">&#10148;</span>
+  </div>
+
+  <div class="download-section">
+    <p>Right-click the pattern above and save as <strong>repeat-test-pattern.png</strong></p>
+  </div>
+
+  <!-- ============================================
+       3. Asymmetric Test (600x300)
+       ============================================ -->
+  <h2>3. Asymmetric Test Image</h2>
+  <p style="margin-bottom: 15px; color: #666;">
+    <strong>Filename:</strong> <code>asymmetric-test.png</code> |
+    <strong>Size:</strong> 600x300px |
+    <strong>Purpose:</strong> Test background-size and verify cropping/orientation
+  </p>
+
+  <div class="asymmetric-test" id="asymmetric-test">
+    <div class="corner corner-tl">
+      <div class="circle">TL<br>RED</div>
+    </div>
+    <div class="corner corner-tr">
+      <div class="circle">TR<br>GREEN</div>
+    </div>
+    <div class="corner corner-bl">
+      <div class="circle">BL<br>BLUE</div>
+    </div>
+    <div class="corner corner-br">
+      <div class="circle">BR<br>PURPLE</div>
+    </div>
+  </div>
+
+  <div class="download-section">
+    <p>Right-click the image above and save as <strong>asymmetric-test.png</strong></p>
+  </div>
+
+  <!-- ============================================
+       4. Transparency Test (300x300)
+       ============================================ -->
+  <h2>4. Transparency Test Image</h2>
+  <p style="margin-bottom: 15px; color: #666;">
+    <strong>Filename:</strong> <code>transparency-test.png</code> |
+    <strong>Size:</strong> 300x300px |
+    <strong>Purpose:</strong> Test alpha/transparency layering with background color
+  </p>
+
+  <div class="transparency-test" id="transparency-test">
+    <div class="overlay">
+      <div class="quad quad-tl">80% Opaque<br>(Red)</div>
+      <div class="quad quad-tr">50% Opaque<br>(Green)</div>
+      <div class="quad quad-bl">30% Opaque<br>(Blue)</div>
+      <div class="quad quad-br">Transparent<br>(See BG)</div>
+    </div>
+  </div>
+
+  <div class="download-section">
+    <p>Right-click the image above and save as <strong>transparency-test.png</strong> (use screenshot tool to preserve transparency)</p>
+  </div>
+
+  <!-- ============================================
+       Usage Guide
+       ============================================ -->
+  <h2>Test Image Usage Guide</h2>
+
+  <table style="width: 100%; border-collapse: collapse; margin-top: 20px; background: #fff;">
+    <thead>
+      <tr style="background: #333; color: #fff;">
+        <th style="padding: 12px; text-align: left;">Image</th>
+        <th style="padding: 12px; text-align: left;">Tests</th>
+        <th style="padding: 12px; text-align: left;">How to Verify</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-bottom: 1px solid #ddd;">
+        <td style="padding: 12px;"><strong>Position Grid</strong></td>
+        <td style="padding: 12px;">All 9 position options</td>
+        <td style="padding: 12px;">Set Size to "Auto". Change position - verify correct cell is visible/centered</td>
+      </tr>
+      <tr style="border-bottom: 1px solid #ddd;">
+        <td style="padding: 12px;"><strong>Repeat Pattern</strong></td>
+        <td style="padding: 12px;">4 repeat options</td>
+        <td style="padding: 12px;">Set Size to "Auto". Arrow should point right. Count tiles for repeat verification</td>
+      </tr>
+      <tr style="border-bottom: 1px solid #ddd;">
+        <td style="padding: 12px;"><strong>Asymmetric Test</strong></td>
+        <td style="padding: 12px;">5 size options</td>
+        <td style="padding: 12px;">Wide image reveals cropping. Colored corners show which parts are visible</td>
+      </tr>
+      <tr>
+        <td style="padding: 12px;"><strong>Transparency Test</strong></td>
+        <td style="padding: 12px;">Color + Image layering</td>
+        <td style="padding: 12px;">Set background color. BR quadrant should show background color through</td>
+      </tr>
+    </tbody>
+  </table>
+
+</body>
+</html>

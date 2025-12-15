@@ -11,37 +11,30 @@
 // =============================================================================
 
 /**
- * @typedef {Object} RgbaColor
- * @property {number} r - Red channel (0-255)
- * @property {number} g - Green channel (0-255)
- * @property {number} b - Blue channel (0-255)
- * @property {number} a - Alpha channel (0-1)
+ * @typedef {Object} BackgroundColorDto
+ * @property {string} type - Color type ('solid' | 'transparent')
+ * @property {string} hexCode - Hex color string (e.g., "#FF5722")
+ * @property {number} red - Red channel (0-255)
+ * @property {number} green - Green channel (0-255)
+ * @property {number} blue - Blue channel (0-255)
+ * @property {number} alpha - Alpha channel (0-100, percentage)
  */
 
 /**
- * @typedef {Object} BackgroundColorConfig
- * @property {string} hex - Hex color string (e.g., "#FF5722")
- * @property {RgbaColor} rgba - RGBA color object
- */
-
-/**
- * @typedef {Object} BackgroundImageConfig
- * @property {string|null} src - Image source URL or null
+ * @typedef {Object} BackgroundImageDto
+ * @property {string|null} imageName - Image name identifier
+ * @property {string|null} imageHref - Image source URL or null
+ * @property {string|null} imageHash - Optional image hash
  * @property {string} position - CSS background-position value
  * @property {string} size - CSS background-size value
  * @property {string} repeat - CSS background-repeat value
- * @property {number} opacity - Opacity value (0-1)
- * @property {string} blendMode - CSS background-blend-mode value
- * @property {string} attachment - CSS background-attachment value
- * @property {string} origin - CSS background-origin value
- * @property {string} clip - CSS background-clip value
  */
 
 /**
  * @typedef {Object} HeroConfig
  * @property {string} cardSize - Card size key (e.g., "2x2")
- * @property {BackgroundColorConfig} backgroundColor - Background color configuration
- * @property {BackgroundImageConfig} backgroundImage - Background image configuration
+ * @property {BackgroundColorDto} backgroundColor - Background color configuration
+ * @property {BackgroundImageDto} backgroundImage - Background image configuration
  */
 
 /**
@@ -192,19 +185,20 @@ class HeroPreview {
     this.config = {
       cardSize: '2x2',
       backgroundColor: {
-        hex: '#ffffff',
-        rgba: { r: 255, g: 255, b: 255, a: 1 }
+        type: 'solid',
+        hexCode: '#ffffff',
+        red: 255,
+        green: 255,
+        blue: 255,
+        alpha: 100
       },
       backgroundImage: {
-        src: null,
+        imageName: null,
+        imageHref: null,
+        imageHash: null,
         position: 'center center',
         size: 'cover',
-        repeat: 'no-repeat',
-        opacity: 1,
-        blendMode: 'normal',
-        attachment: 'scroll',
-        origin: 'padding-box',
-        clip: 'border-box'
+        repeat: 'no-repeat'
       },
       ...options
     };
@@ -246,44 +240,45 @@ class HeroPreview {
   // ===========================================================================
 
   /**
-   * Convert RGBA object to CSS string
-   * @param {RgbaColor} rgba - RGBA color object
+   * Convert background color config to CSS rgba string
+   * @param {BackgroundColorDto} color - Background color object
    * @returns {string} CSS rgba() string
    */
-  rgbaToString(rgba) {
-    return `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`;
+  colorToString(color) {
+    const alpha = color.alpha / 100; // Convert 0-100 to 0-1
+    return `rgba(${color.red}, ${color.green}, ${color.blue}, ${alpha})`;
   }
 
   /**
-   * Convert hex color to RGBA object
+   * Convert hex color to RGB values
    * @param {string} hex - Hex color string (e.g., "#FF5722")
-   * @param {number} [alpha=1] - Alpha value (0-1)
-   * @returns {RgbaColor} RGBA color object
+   * @returns {{red: number, green: number, blue: number}} RGB values
    */
-  hexToRgba(hex, alpha = 1) {
+  hexToRgb(hex) {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     if (result) {
       return {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16),
-        a: alpha
+        red: parseInt(result[1], 16),
+        green: parseInt(result[2], 16),
+        blue: parseInt(result[3], 16)
       };
     }
-    return { r: 255, g: 255, b: 255, a: 1 };
+    return { red: 255, green: 255, blue: 255 };
   }
 
   /**
-   * Convert RGBA object to hex string
-   * @param {RgbaColor} rgba - RGBA color object
+   * Convert RGB values to hex string
+   * @param {number} red - Red channel (0-255)
+   * @param {number} green - Green channel (0-255)
+   * @param {number} blue - Blue channel (0-255)
    * @returns {string} Hex color string
    */
-  rgbaToHex(rgba) {
+  rgbToHex(red, green, blue) {
     const toHex = (n) => {
       const hex = Math.max(0, Math.min(255, Math.round(n))).toString(16);
       return hex.length === 1 ? '0' + hex : hex;
     };
-    return `#${toHex(rgba.r)}${toHex(rgba.g)}${toHex(rgba.b)}`;
+    return `#${toHex(red)}${toHex(green)}${toHex(blue)}`;
   }
 
   // ===========================================================================
@@ -301,45 +296,89 @@ class HeroPreview {
   }
 
   /**
+   * Set background color type
+   * @param {string} type - Color type ('solid' | 'transparent')
+   * @returns {void}
+   */
+  setBackgroundColorType(type) {
+    this.config.backgroundColor = {
+      ...this.config.backgroundColor,
+      type: type
+    };
+    if (type === 'transparent') {
+      this.config.backgroundColor.alpha = 0;
+    }
+    this._emitChange();
+  }
+
+  /**
    * Set background color from hex string
    * @param {string} hex - Hex color (e.g., "#FF5722")
-   * @param {number|null} [alpha=null] - Optional alpha override (0-1)
+   * @param {number|null} [alpha=null] - Optional alpha override (0-100)
    * @returns {void}
    */
   setBackgroundColorHex(hex, alpha = null) {
-    const currentAlpha = alpha !== null ? alpha : this.config.backgroundColor.rgba.a;
+    const rgb = this.hexToRgb(hex);
+    const currentAlpha = alpha !== null ? alpha : this.config.backgroundColor.alpha;
     this.config.backgroundColor = {
-      hex: hex,
-      rgba: this.hexToRgba(hex, currentAlpha)
+      type: currentAlpha === 0 ? 'transparent' : 'solid',
+      hexCode: hex,
+      red: rgb.red,
+      green: rgb.green,
+      blue: rgb.blue,
+      alpha: currentAlpha
     };
     this._addRecentColor(hex);
     this._emitChange();
   }
 
   /**
-   * Set background color from RGBA object
-   * @param {RgbaColor} rgba - RGBA color object
+   * Set background color from RGB values
+   * @param {number} red - Red channel (0-255)
+   * @param {number} green - Green channel (0-255)
+   * @param {number} blue - Blue channel (0-255)
+   * @param {number} [alpha=100] - Alpha channel (0-100)
    * @returns {void}
    */
-  setBackgroundColorRgba(rgba) {
-    const hex = this.rgbaToHex(rgba);
+  setBackgroundColorRgb(red, green, blue, alpha = 100) {
+    const hex = this.rgbToHex(red, green, blue);
     this.config.backgroundColor = {
-      rgba: { ...rgba },
-      hex: hex
+      type: alpha === 0 ? 'transparent' : 'solid',
+      hexCode: hex,
+      red: Math.max(0, Math.min(255, red)),
+      green: Math.max(0, Math.min(255, green)),
+      blue: Math.max(0, Math.min(255, blue)),
+      alpha: Math.max(0, Math.min(100, alpha))
     };
     this._addRecentColor(hex);
     this._emitChange();
   }
 
   /**
-   * Set background image source
-   * @param {string|null} src - Image URL or null to clear
+   * Set background color alpha only
+   * @param {number} alpha - Alpha value (0-100)
    * @returns {void}
    */
-  setBackgroundImage(src) {
+  setBackgroundColorAlpha(alpha) {
+    this.config.backgroundColor = {
+      ...this.config.backgroundColor,
+      type: alpha === 0 ? 'transparent' : 'solid',
+      alpha: Math.max(0, Math.min(100, alpha))
+    };
+    this._emitChange();
+  }
+
+  /**
+   * Set background image
+   * @param {string|null} imageHref - Image URL or null to clear
+   * @param {string|null} [imageName=null] - Image name identifier
+   * @returns {void}
+   */
+  setBackgroundImage(imageHref, imageName = null) {
     this.config.backgroundImage = {
       ...this.config.backgroundImage,
-      src: src
+      imageHref: imageHref,
+      imageName: imageName
     };
     this._emitChange();
   }
@@ -379,71 +418,6 @@ class HeroPreview {
     this.config.backgroundImage = {
       ...this.config.backgroundImage,
       repeat: repeat
-    };
-    this._emitChange();
-  }
-
-  /**
-   * Set background image opacity
-   * @param {number} opacity - Opacity value (0-1)
-   * @returns {void}
-   */
-  setBackgroundOpacity(opacity) {
-    this.config.backgroundImage = {
-      ...this.config.backgroundImage,
-      opacity: Math.max(0, Math.min(1, opacity))
-    };
-    this._emitChange();
-  }
-
-  /**
-   * Set background blend mode
-   * @param {string} blendMode - CSS background-blend-mode value
-   * @returns {void}
-   */
-  setBackgroundBlendMode(blendMode) {
-    this.config.backgroundImage = {
-      ...this.config.backgroundImage,
-      blendMode: blendMode
-    };
-    this._emitChange();
-  }
-
-  /**
-   * Set background attachment
-   * @param {string} attachment - CSS background-attachment value
-   * @returns {void}
-   */
-  setBackgroundAttachment(attachment) {
-    this.config.backgroundImage = {
-      ...this.config.backgroundImage,
-      attachment: attachment
-    };
-    this._emitChange();
-  }
-
-  /**
-   * Set background origin
-   * @param {string} origin - CSS background-origin value
-   * @returns {void}
-   */
-  setBackgroundOrigin(origin) {
-    this.config.backgroundImage = {
-      ...this.config.backgroundImage,
-      origin: origin
-    };
-    this._emitChange();
-  }
-
-  /**
-   * Set background clip
-   * @param {string} clip - CSS background-clip value
-   * @returns {void}
-   */
-  setBackgroundClip(clip) {
-    this.config.backgroundImage = {
-      ...this.config.backgroundImage,
-      clip: clip
     };
     this._emitChange();
   }
@@ -501,18 +475,14 @@ class HeroPreview {
     const bgImg = this.config.backgroundImage;
 
     // Background color
-    styles.backgroundColor = this.rgbaToString(bg.rgba);
+    styles.backgroundColor = this.colorToString(bg);
 
     // Background image (if set)
-    if (bgImg.src) {
-      styles.backgroundImage = `url('${bgImg.src}')`;
+    if (bgImg.imageHref) {
+      styles.backgroundImage = `url('${bgImg.imageHref}')`;
       styles.backgroundPosition = bgImg.position;
       styles.backgroundSize = bgImg.size;
       styles.backgroundRepeat = bgImg.repeat;
-      styles.backgroundBlendMode = bgImg.blendMode;
-      styles.backgroundAttachment = bgImg.attachment;
-      styles.backgroundOrigin = bgImg.origin;
-      styles.backgroundClip = bgImg.clip;
     }
 
     return styles;
@@ -532,25 +502,6 @@ class HeroPreview {
       .join('; ');
   }
 
-  /**
-   * Build CSS custom properties for opacity support
-   * @returns {string} CSS custom properties string
-   */
-  buildCssVariables() {
-    const bgImg = this.config.backgroundImage;
-    const vars = [];
-
-    if (bgImg.src) {
-      vars.push(`--bg-image: url('${bgImg.src}')`);
-      vars.push(`--bg-position: ${bgImg.position}`);
-      vars.push(`--bg-size: ${bgImg.size}`);
-      vars.push(`--bg-repeat: ${bgImg.repeat}`);
-      vars.push(`--bg-opacity: ${bgImg.opacity}`);
-    }
-
-    return vars.join('; ');
-  }
-
   // ===========================================================================
   // Rendering
   // ===========================================================================
@@ -563,48 +514,17 @@ class HeroPreview {
   render(container) {
     if (!container) return;
 
-    const bg = this.config.backgroundColor;
-    const bgImg = this.config.backgroundImage;
-    const hasImage = bgImg.src !== null;
-    const needsOpacityLayer = hasImage && bgImg.opacity < 1;
-
-    let cardHtml;
-
-    if (needsOpacityLayer) {
-      // Use layered approach for opacity support
-      cardHtml = `
-        <div class="hero-card hero-card--layered"
-             data-card-size="${this.config.cardSize}"
-             style="background-color: ${this.rgbaToString(bg.rgba)};">
-          <div class="hero-card__bg-layer"
-               style="background-image: url('${bgImg.src}');
-                      background-position: ${bgImg.position};
-                      background-size: ${bgImg.size};
-                      background-repeat: ${bgImg.repeat};
-                      background-origin: ${bgImg.origin};
-                      background-clip: ${bgImg.clip};
-                      opacity: ${bgImg.opacity};
-                      mix-blend-mode: ${bgImg.blendMode};"></div>
-          <img class="hero-card__image"
-               src="${HERO_IMAGE}"
-               alt="Hero Product"
-               draggable="false">
-        </div>
-      `;
-    } else {
-      // Standard single-element approach
-      const styleString = this.buildStyleString();
-      cardHtml = `
-        <div class="hero-card"
-             data-card-size="${this.config.cardSize}"
-             style="${styleString}">
-          <img class="hero-card__image"
-               src="${HERO_IMAGE}"
-               alt="Hero Product"
-               draggable="false">
-        </div>
-      `;
-    }
+    const styleString = this.buildStyleString();
+    const cardHtml = `
+      <div class="hero-card"
+           data-card-size="${this.config.cardSize}"
+           style="${styleString}">
+        <img class="hero-card__image"
+             src="${HERO_IMAGE}"
+             alt="Hero Product"
+             draggable="false">
+      </div>
+    `;
 
     container.innerHTML = cardHtml;
     return container.querySelector('.hero-card');
@@ -618,47 +538,22 @@ class HeroPreview {
   renderAllSizes(container) {
     if (!container) return;
 
-    const bg = this.config.backgroundColor;
-    const bgImg = this.config.backgroundImage;
-    const hasImage = bgImg.src !== null;
-    const needsOpacityLayer = hasImage && bgImg.opacity < 1;
     const sizes = Object.keys(CARD_SIZES);
+    const styleString = this.buildStyleString();
 
     container.innerHTML = sizes.map(size => {
       const info = CARD_SIZES[size];
 
-      let cardHtml;
-      if (needsOpacityLayer) {
-        cardHtml = `
-          <div class="hero-card hero-card--layered"
-               data-card-size="${size}"
-               style="background-color: ${this.rgbaToString(bg.rgba)};">
-            <div class="hero-card__bg-layer"
-                 style="background-image: url('${bgImg.src}');
-                        background-position: ${bgImg.position};
-                        background-size: ${bgImg.size};
-                        background-repeat: ${bgImg.repeat};
-                        opacity: ${bgImg.opacity};
-                        mix-blend-mode: ${bgImg.blendMode};"></div>
-            <img class="hero-card__image"
-                 src="${HERO_IMAGE}"
-                 alt="Hero Product"
-                 draggable="false">
-          </div>
-        `;
-      } else {
-        const styleString = this.buildStyleString();
-        cardHtml = `
-          <div class="hero-card"
-               data-card-size="${size}"
-               style="${styleString}">
-            <img class="hero-card__image"
-                 src="${HERO_IMAGE}"
-                 alt="Hero Product"
-                 draggable="false">
-          </div>
-        `;
-      }
+      const cardHtml = `
+        <div class="hero-card"
+             data-card-size="${size}"
+             style="${styleString}">
+          <img class="hero-card__image"
+               src="${HERO_IMAGE}"
+               alt="Hero Product"
+               draggable="false">
+        </div>
+      `;
 
       return `
         <div class="size-item">
@@ -667,6 +562,75 @@ class HeroPreview {
         </div>
       `;
     }).join('');
+  }
+
+  /**
+   * Render hero card using Angular circular-card structure
+   * @param {HTMLElement} container - Container element
+   * @returns {HTMLElement|undefined} The rendered circular card element
+   */
+  renderCircularCard(container) {
+    if (!container) return;
+
+    const styleString = this.buildStyleString();
+    // Convert cardSize format from "2x2" to "22" for Angular class
+    const sizeClass = `size-${this.config.cardSize.replace('x', '')}`;
+
+    const cardHtml = `
+      <div class="cardwrapper ${sizeClass}">
+        <div class="circular-card ${sizeClass}"
+             style="${styleString}">
+          <div class="circular-card-content">
+            <img class="circular-card-image"
+                 src="${HERO_IMAGE}"
+                 alt="Hero Product"
+                 draggable="false"
+                 style="width: 90%; height: auto; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); object-fit: contain;">
+          </div>
+        </div>
+      </div>
+    `;
+
+    container.innerHTML = cardHtml;
+    return container.querySelector('.circular-card');
+  }
+
+  /**
+   * Get Angular circular-card HTML output
+   * @returns {string} HTML markup using circular-card structure
+   */
+  getCircularCardHtmlOutput() {
+    const bg = this.config.backgroundColor;
+    const bgImg = this.config.backgroundImage;
+    const hasImage = bgImg.imageHref !== null;
+    const sizeClass = `size-${this.config.cardSize.replace('x', '')}`;
+
+    const indent = '  ';
+    const lines = [];
+
+    lines.push(`<div class="cardwrapper">`);
+    lines.push(`${indent}<div class="circular-card ${sizeClass}"`);
+
+    const styleLines = [];
+    styleLines.push(`background-color: ${this.colorToString(bg)}`);
+
+    if (hasImage) {
+      styleLines.push(`background-image: url('${bgImg.imageHref}')`);
+      styleLines.push(`background-position: ${bgImg.position}`);
+      styleLines.push(`background-size: ${bgImg.size}`);
+      styleLines.push(`background-repeat: ${bgImg.repeat}`);
+    }
+
+    lines.push(`${indent}${indent}style="${styleLines.join('; ')};">`);
+    lines.push(`${indent}${indent}<div class="circular-card-content">`);
+    lines.push(`${indent}${indent}${indent}<img class="circular-card-image"`);
+    lines.push(`${indent}${indent}${indent}${indent}src="${HERO_IMAGE}"`);
+    lines.push(`${indent}${indent}${indent}${indent}alt="Hero Product">`);
+    lines.push(`${indent}${indent}</div>`);
+    lines.push(`${indent}</div>`);
+    lines.push(`</div>`);
+
+    return lines.join('\n');
   }
 
   // ===========================================================================
@@ -687,36 +651,12 @@ class HeroPreview {
    */
   getCssOutput() {
     const styles = this.buildStyles();
-    const bgImg = this.config.backgroundImage;
-    const needsOpacityLayer = bgImg.src && bgImg.opacity < 1;
 
     const lines = ['.hero-card {'];
 
-    if (needsOpacityLayer) {
-      // Layered approach CSS
-      lines.push(`  position: relative;`);
-      lines.push(`  background-color: ${styles.backgroundColor};`);
-      lines.push(`  overflow: hidden;`);
-      lines.push('}');
-      lines.push('');
-      lines.push('.hero-card__bg-layer {');
-      lines.push(`  position: absolute;`);
-      lines.push(`  inset: 0;`);
-      lines.push(`  background-image: url('${bgImg.src}');`);
-      lines.push(`  background-position: ${bgImg.position};`);
-      lines.push(`  background-size: ${bgImg.size};`);
-      lines.push(`  background-repeat: ${bgImg.repeat};`);
-      lines.push(`  background-origin: ${bgImg.origin};`);
-      lines.push(`  background-clip: ${bgImg.clip};`);
-      lines.push(`  opacity: ${bgImg.opacity};`);
-      lines.push(`  mix-blend-mode: ${bgImg.blendMode};`);
-      lines.push(`  pointer-events: none;`);
-    } else {
-      // Standard approach CSS
-      for (const [key, value] of Object.entries(styles)) {
-        const cssKey = key.replace(/([A-Z])/g, '-$1').toLowerCase();
-        lines.push(`  ${cssKey}: ${value};`);
-      }
+    for (const [key, value] of Object.entries(styles)) {
+      const cssKey = key.replace(/([A-Z])/g, '-$1').toLowerCase();
+      lines.push(`  ${cssKey}: ${value};`);
     }
 
     lines.push('}');
@@ -737,81 +677,30 @@ class HeroPreview {
   getHtmlOutput() {
     const bg = this.config.backgroundColor;
     const bgImg = this.config.backgroundImage;
-    const hasImage = bgImg.src !== null;
-    const needsOpacityLayer = hasImage && bgImg.opacity < 1;
+    const hasImage = bgImg.imageHref !== null;
 
     const indent = '  ';
     const lines = [];
 
-    if (needsOpacityLayer) {
-      // Layered HTML structure
-      lines.push(`<div class="hero-card"`);
-      lines.push(`${indent}data-card-size="${this.config.cardSize}"`);
-      lines.push(`${indent}style="background-color: ${this.rgbaToString(bg.rgba)};">`);
-      lines.push(`${indent}<div class="hero-card__bg-layer"`);
-      lines.push(`${indent}${indent}style="background-image: url('${bgImg.src}');`);
-      lines.push(`${indent}${indent}${indent}background-position: ${bgImg.position};`);
-      lines.push(`${indent}${indent}${indent}background-size: ${bgImg.size};`);
-      lines.push(`${indent}${indent}${indent}background-repeat: ${bgImg.repeat};`);
-      lines.push(`${indent}${indent}${indent}opacity: ${bgImg.opacity};`);
-      lines.push(`${indent}${indent}${indent}mix-blend-mode: ${bgImg.blendMode};"></div>`);
-      lines.push(`${indent}<img class="hero-card__image"`);
-      lines.push(`${indent}${indent}src="${HERO_IMAGE}"`);
-      lines.push(`${indent}${indent}alt="Hero Product">`);
-      lines.push(`</div>`);
-    } else {
-      // Standard HTML structure
-      lines.push(`<div class="hero-card"`);
-      lines.push(`${indent}data-card-size="${this.config.cardSize}"`);
+    lines.push(`<div class="hero-card"`);
+    lines.push(`${indent}data-card-size="${this.config.cardSize}"`);
 
-      const styleLines = [];
-      styleLines.push(`background-color: ${this.rgbaToString(bg.rgba)}`);
+    const styleLines = [];
+    styleLines.push(`background-color: ${this.colorToString(bg)}`);
 
-      if (hasImage) {
-        styleLines.push(`background-image: url('${bgImg.src}')`);
-        styleLines.push(`background-position: ${bgImg.position}`);
-        styleLines.push(`background-size: ${bgImg.size}`);
-        styleLines.push(`background-repeat: ${bgImg.repeat}`);
-        if (bgImg.blendMode !== 'normal') {
-          styleLines.push(`background-blend-mode: ${bgImg.blendMode}`);
-        }
-        if (bgImg.attachment !== 'scroll') {
-          styleLines.push(`background-attachment: ${bgImg.attachment}`);
-        }
-        if (bgImg.origin !== 'padding-box') {
-          styleLines.push(`background-origin: ${bgImg.origin}`);
-        }
-        if (bgImg.clip !== 'border-box') {
-          styleLines.push(`background-clip: ${bgImg.clip}`);
-        }
-      }
-
-      lines.push(`${indent}style="${styleLines.join('; ')};">`);
-      lines.push(`${indent}<img class="hero-card__image"`);
-      lines.push(`${indent}${indent}src="${HERO_IMAGE}"`);
-      lines.push(`${indent}${indent}alt="Hero Product">`);
-      lines.push(`</div>`);
+    if (hasImage) {
+      styleLines.push(`background-image: url('${bgImg.imageHref}')`);
+      styleLines.push(`background-position: ${bgImg.position}`);
+      styleLines.push(`background-size: ${bgImg.size}`);
+      styleLines.push(`background-repeat: ${bgImg.repeat}`);
     }
 
-    return lines.join('\n');
-  }
-
-  /**
-   * Get Angular template output
-   * @returns {string} Angular template HTML
-   */
-  getAngularTemplate() {
-    const lines = [];
-    lines.push(`<div class="hero-card"`);
-    lines.push(`  [attr.data-card-size]="config.cardSize"`);
-    lines.push(`  [ngStyle]="getCardStyles()">`);
-    lines.push(`  <div *ngIf="needsOpacityLayer"`);
-    lines.push(`    class="hero-card__bg-layer"`);
-    lines.push(`    [ngStyle]="getBgLayerStyles()"></div>`);
-    lines.push(`  <img class="hero-card__image"`);
-    lines.push(`    [src]="heroImageSrc"`);
-    lines.push(`    alt="Hero Product">`);
+    lines.push(`${indent}style="${styleLines.join('; ')};">`);
+    lines.push(`${indent}<img class="hero-card__image"`);
+    lines.push(`${indent}${indent}src="${HERO_IMAGE}"`);
+    lines.push(`${indent}${indent}alt="Hero Product">`);
     lines.push(`</div>`);
+
     return lines.join('\n');
   }
 }

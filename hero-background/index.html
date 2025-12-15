@@ -38,158 +38,124 @@
             </p>
           </div>
 
-          <!-- Mode Toggle -->
-          <div class="mode-toggle" id="current-mode-toggle" style="margin-bottom: var(--space-6); max-width: 300px;">
-            <button class="mode-toggle__btn mode-toggle__btn--active" data-mode="default">Default</button>
-            <button class="mode-toggle__btn" data-mode="advanced">Advanced</button>
-          </div>
-
           <div class="two-column">
             <!-- Controls -->
             <div class="controls-panel">
               <!-- Background Color Section -->
-              <div class="collapsible collapsible--open">
-                <div class="collapsible__header" onclick="this.parentElement.classList.toggle('collapsible--open')">
-                  <h4 class="collapsible__title">Background Color</h4>
-                  <span class="collapsible__icon">▼</span>
+              <div class="control-section">
+                <label class="bold-text">Background Color</label>
+                <select id="current-color-type" class="w-100">
+                  <option value="solid" selected>Solid</option>
+                  <option value="transparent">Transparent</option>
+                </select>
+
+                <!-- Color Picker + Hex -->
+                <div class="color-input-row" style="margin-top: var(--space-3);">
+                  <input type="color" id="current-color-picker" class="color-picker-input" value="#ffffff">
+                  <input type="text" id="current-color-hex" class="w-100" value="#FFFFFF" placeholder="#FFFFFF">
                 </div>
-                <div class="collapsible__content">
-                  <!-- Color Picker + Hex -->
-                  <div class="control-group">
-                    <div class="color-input-row">
-                      <input type="color" id="current-color-picker" value="#ffffff">
-                      <input type="text" id="current-color-hex" value="#FFFFFF" placeholder="#FFFFFF">
+
+                <!-- RGBA Inputs in grid -->
+                <div class="rgba-grid" style="margin-top: var(--space-3);">
+                  <div class="rgba-grid__col">
+                    <label class="bold-text">R</label>
+                    <input type="number" id="current-color-r" class="w-100 without-arrows" min="0" max="255" value="255">
+                  </div>
+                  <div class="rgba-grid__col">
+                    <label class="bold-text">G</label>
+                    <input type="number" id="current-color-g" class="w-100 without-arrows" min="0" max="255" value="255">
+                  </div>
+                  <div class="rgba-grid__col">
+                    <label class="bold-text">B</label>
+                    <input type="number" id="current-color-b" class="w-100 without-arrows" min="0" max="255" value="255">
+                  </div>
+                  <div class="rgba-grid__col">
+                    <label class="bold-text">A</label>
+                    <div class="alpha-input-wrapper">
+                      <input type="number" id="current-color-a" class="w-100 without-arrows alpha-input" min="0" max="100" value="100">
                     </div>
                   </div>
+                </div>
 
-                  <!-- RGBA Inputs -->
-                  <div class="control-group" style="margin-top: var(--space-3);">
-                    <div class="rgba-inputs">
-                      <div class="rgba-input">
-                        <label>R</label>
-                        <input type="number" id="current-color-r" min="0" max="255" value="255">
-                      </div>
-                      <div class="rgba-input">
-                        <label>G</label>
-                        <input type="number" id="current-color-g" min="0" max="255" value="255">
-                      </div>
-                      <div class="rgba-input">
-                        <label>B</label>
-                        <input type="number" id="current-color-b" min="0" max="255" value="255">
-                      </div>
-                      <div class="rgba-input">
-                        <label>A</label>
-                        <input type="number" id="current-color-a" min="0" max="100" value="100">
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Buttons -->
-                  <div class="buttons-row" style="margin-top: var(--space-3);">
-                    <button class="btn btn--secondary" id="current-btn-transparent">Transparent</button>
-                    <button class="btn btn--secondary" id="current-btn-reset">Reset</button>
-                  </div>
+                <!-- Buttons -->
+                <div class="buttons-row buttons-row--centered" style="margin-top: var(--space-3);">
+                  <button class="btn btn--light-gray" id="current-btn-transparent">
+                    <span class="btn__icon">&#9632;</span> Transparent
+                  </button>
+                  <button class="btn btn--light-gray" id="current-btn-reset">
+                    <span class="btn__icon">&#8635;</span> Reset
+                  </button>
                 </div>
               </div>
 
               <!-- Background Image Section -->
-              <div class="collapsible collapsible--open" style="margin-top: var(--space-4);">
-                <div class="collapsible__header" onclick="this.parentElement.classList.toggle('collapsible--open')">
-                  <h4 class="collapsible__title">Background Image</h4>
-                  <span class="collapsible__icon">▼</span>
-                </div>
-                <div class="collapsible__content">
-                  <!-- Position (Dropdown) -->
-                  <div class="control-group" style="margin-top: var(--space-3);">
-                    <label class="control-group__label">Position</label>
-                    <select id="current-position">
-                      <option value="top left">Top Left</option>
-                      <option value="top center">Top Center</option>
-                      <option value="top right">Top Right</option>
-                      <option value="center left">Center Left</option>
-                      <option value="center center" selected>Center Center</option>
-                      <option value="center right">Center Right</option>
-                      <option value="bottom left">Bottom Left</option>
-                      <option value="bottom center">Bottom Center</option>
-                      <option value="bottom right">Bottom Right</option>
-                    </select>
-                  </div>
+              <div class="control-section" style="margin-top: var(--space-4);">
+                <label class="bold-text">Background Image</label>
 
-                  <!-- Size (Dropdown) -->
-                  <div class="control-group" style="margin-top: var(--space-3);">
-                    <label class="control-group__label">Size</label>
-                    <select id="current-size">
-                      <option value="cover" selected>Cover</option>
-                      <option value="contain">Contain</option>
-                      <option value="auto">Auto</option>
-                      <option value="100% 100%">100%</option>
-                      <option value="50% 50%">50%</option>
-                    </select>
-                  </div>
-
-                  <!-- Repeat (Dropdown) -->
-                  <div class="control-group" style="margin-top: var(--space-3);">
-                    <label class="control-group__label">Repeat</label>
-                    <select id="current-repeat">
-                      <option value="no-repeat" selected>No Repeat</option>
-                      <option value="repeat">Repeat</option>
-                      <option value="repeat-x">Repeat-X</option>
-                      <option value="repeat-y">Repeat-Y</option>
-                    </select>
+                <!-- Media Picker Placeholder -->
+                <div class="media-picker-placeholder" style="margin-top: var(--space-2);">
+                  <div class="media-preview thumb-background" id="current-media-preview"></div>
+                  <div class="media-buttons">
+                    <button class="btn btn--light-gray btn--media" id="current-btn-add-media">
+                      <span class="btn__icon">&#128444;</span> Add Media
+                    </button>
+                    <button class="btn btn--light-gray btn--icon-only" id="current-btn-delete-media" title="Delete">
+                      <span class="btn__icon">&#128465;</span>
+                    </button>
                   </div>
                 </div>
-              </div>
 
-              <!-- Advanced Controls (hidden by default) -->
-              <div id="current-advanced-controls" style="display: none; margin-top: var(--space-4);">
-                <div class="collapsible collapsible--open">
-                  <div class="collapsible__header" onclick="this.parentElement.classList.toggle('collapsible--open')">
-                    <h4 class="collapsible__title">Advanced Options</h4>
-                    <span class="collapsible__icon">▼</span>
-                  </div>
-                  <div class="collapsible__content">
-                    <!-- Blend Mode -->
-                    <div class="control-group">
-                      <label class="control-group__label">Blend Mode</label>
-                      <select id="current-blend-mode">
-                        <option value="normal" selected>Normal</option>
-                        <option value="multiply">Multiply</option>
-                        <option value="screen">Screen</option>
-                        <option value="overlay">Overlay</option>
-                        <option value="darken">Darken</option>
-                        <option value="lighten">Lighten</option>
-                        <option value="color-dodge">Color Dodge</option>
-                        <option value="color-burn">Color Burn</option>
-                        <option value="hard-light">Hard Light</option>
-                        <option value="soft-light">Soft Light</option>
-                      </select>
-                    </div>
+                <!-- Position (Dropdown) -->
+                <div class="control-group" style="margin-top: var(--space-3);">
+                  <label class="bold-text">Position</label>
+                  <select id="current-position" class="w-100">
+                    <option value="top left">Top Left</option>
+                    <option value="top center">Top Center</option>
+                    <option value="top right">Top Right</option>
+                    <option value="center left">Center Left</option>
+                    <option value="center center" selected>Center Center</option>
+                    <option value="center right">Center Right</option>
+                    <option value="bottom left">Bottom Left</option>
+                    <option value="bottom center">Bottom Center</option>
+                    <option value="bottom right">Bottom Right</option>
+                  </select>
+                </div>
 
-                    <!-- Opacity -->
-                    <div class="slider-group" style="margin-top: var(--space-3);">
-                      <div class="slider-group__header">
-                        <label class="slider-group__label">Background Image Opacity</label>
-                        <span class="slider-group__value" id="current-opacity-value">100%</span>
-                      </div>
-                      <input type="range" id="current-opacity" min="0" max="100" value="100">
-                    </div>
+                <!-- Size (Dropdown) -->
+                <div class="control-group" style="margin-top: var(--space-3);">
+                  <label class="bold-text">Size</label>
+                  <select id="current-size" class="w-100">
+                    <option value="cover" selected>Cover</option>
+                    <option value="contain">Contain</option>
+                    <option value="auto">Auto</option>
+                    <option value="100% 100%">100%</option>
+                    <option value="50% 50%">50%</option>
+                  </select>
+                </div>
 
-                    <!-- Attachment -->
-                    <div class="control-group" style="margin-top: var(--space-3);">
-                      <label class="control-group__label">Attachment</label>
-                      <select id="current-attachment">
-                        <option value="scroll" selected>Scroll</option>
-                        <option value="fixed">Fixed</option>
-                      </select>
-                    </div>
-                  </div>
+                <!-- Repeat (Dropdown) -->
+                <div class="control-group" style="margin-top: var(--space-3);">
+                  <label class="bold-text">Repeat</label>
+                  <select id="current-repeat" class="w-100">
+                    <option value="no-repeat" selected>No Repeat</option>
+                    <option value="repeat">Repeat</option>
+                    <option value="repeat-x">Repeat-X</option>
+                    <option value="repeat-y">Repeat-Y</option>
+                  </select>
                 </div>
               </div>
             </div>
 
             <!-- Preview -->
             <div class="preview-panel">
-              <h3 class="preview-panel__title">Preview</h3>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3);">
+                <h3 class="preview-panel__title" style="margin: 0;">Preview</h3>
+                <!-- Render Mode Toggle -->
+                <div class="mode-toggle" id="current-render-mode" style="max-width: 200px;">
+                  <button class="mode-toggle__btn mode-toggle__btn--active" data-mode="hero-card">Hero Card</button>
+                  <button class="mode-toggle__btn" data-mode="circular-card">Circular Card</button>
+                </div>
+              </div>
               <div class="preview-container" id="current-preview-container">
                 <!-- Hero card renders here -->
               </div>
@@ -230,34 +196,50 @@
 
               <!-- Sample Images (Testing Only) -->
               <div class="control-group" style="margin-top: var(--space-4);">
-                <label class="control-group__label">Sample Images <span style="font-size: 11px; color: var(--color-text-muted);">(Testing Only)</span></label>
+                <label class="bold-text">Sample Images <span style="font-size: 11px; color: var(--color-text-muted);">(Testing Only)</span></label>
                 <div class="bg-image-selector" id="current-bg-selector">
-                  <div class="bg-image-option bg-image-option--none bg-image-option--selected" data-src="">
+                  <div class="bg-image-option bg-image-option--none bg-image-option--selected" data-src="" data-id="">
                     None
                   </div>
-                  <div class="bg-image-option" data-src="sample-images/Wood_Grain_BG.jpg">
+                  <div class="bg-image-option" data-src="sample-images/Wood_Grain_BG.jpg" data-id="wood-grain">
                     <img src="sample-images/Wood_Grain_BG.jpg" alt="Wood Grain">
                     <span class="bg-image-option__label">Wood Grain</span>
                   </div>
-                  <div class="bg-image-option" data-src="sample-images/wood-BG.png">
+                  <div class="bg-image-option" data-src="sample-images/wood-BG.png" data-id="wood">
                     <img src="sample-images/wood-BG.png" alt="Wood">
                     <span class="bg-image-option__label">Wood</span>
                   </div>
-                  <div class="bg-image-option" data-src="sample-images/stone-BG.jpg">
+                  <div class="bg-image-option" data-src="sample-images/stone-BG.jpg" data-id="stone">
                     <img src="sample-images/stone-BG.jpg" alt="Stone">
                     <span class="bg-image-option__label">Stone</span>
                   </div>
-                  <div class="bg-image-option" data-src="sample-images/wood-table_BG.png">
+                  <div class="bg-image-option" data-src="sample-images/wood-table_BG.png" data-id="wood-table">
                     <img src="sample-images/wood-table_BG.png" alt="Wood Table">
                     <span class="bg-image-option__label">Wood Table</span>
                   </div>
-                  <div class="bg-image-option" data-src="sample-images/diagonal_BG.png">
+                  <div class="bg-image-option" data-src="sample-images/diagonal_BG.png" data-id="diagonal">
                     <img src="sample-images/diagonal_BG.png" alt="Diagonal">
                     <span class="bg-image-option__label">Diagonal</span>
                   </div>
-                  <div class="bg-image-option" data-src="sample-images/polka-dots_BG.png">
+                  <div class="bg-image-option" data-src="sample-images/polka-dots_BG.png" data-id="polka-dots">
                     <img src="sample-images/polka-dots_BG.png" alt="Polka Dots">
                     <span class="bg-image-option__label">Polka Dots</span>
+                  </div>
+                </div>
+                <!-- QA Test Images -->
+                <label class="bold-text" style="margin-top: var(--space-3); display: block;">QA Test Images</label>
+                <div class="bg-image-selector" id="current-bg-selector-qa" style="margin-top: var(--space-2);">
+                  <div class="bg-image-option" data-src="sample-images/position-test-grid.svg" data-id="position-test-grid">
+                    <img src="sample-images/position-test-grid.svg" alt="Position Grid">
+                    <span class="bg-image-option__label">Position Grid</span>
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/repeat-test-pattern.svg" data-id="repeat-test-pattern">
+                    <img src="sample-images/repeat-test-pattern.svg" alt="Repeat Pattern">
+                    <span class="bg-image-option__label">Repeat Pattern</span>
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/asymmetric-test.svg" data-id="asymmetric-test">
+                    <img src="sample-images/asymmetric-test.svg" alt="Asymmetric Test">
+                    <span class="bg-image-option__label">Asymmetric (2:1)</span>
                   </div>
                 </div>
               </div>
@@ -624,6 +606,22 @@
                     <span class="bg-image-option__label">Polka Dots</span>
                   </div>
                 </div>
+                <!-- QA Test Images -->
+                <label class="control-group__label" style="margin-top: var(--space-3);">QA Test Images</label>
+                <div class="bg-image-selector" id="nextlevel-bg-selector-qa">
+                  <div class="bg-image-option" data-src="sample-images/position-test-grid.svg">
+                    <img src="sample-images/position-test-grid.svg" alt="Position Grid">
+                    <span class="bg-image-option__label">Position Grid</span>
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/repeat-test-pattern.svg">
+                    <img src="sample-images/repeat-test-pattern.svg" alt="Repeat Pattern">
+                    <span class="bg-image-option__label">Repeat Pattern</span>
+                  </div>
+                  <div class="bg-image-option" data-src="sample-images/asymmetric-test.svg">
+                    <img src="sample-images/asymmetric-test.svg" alt="Asymmetric Test">
+                    <span class="bg-image-option__label">Asymmetric (2:1)</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -726,6 +724,18 @@
                 <div class="bg-image-option" data-src="sample-images/polka-dots_BG.png">
                   <img src="sample-images/polka-dots_BG.png" alt="Polka Dots">
                   <span class="bg-image-option__label">Polka Dots</span>
+                </div>
+                <div class="bg-image-option" data-src="sample-images/position-test-grid.svg">
+                  <img src="sample-images/position-test-grid.svg" alt="Position Grid">
+                  <span class="bg-image-option__label">Position Grid</span>
+                </div>
+                <div class="bg-image-option" data-src="sample-images/repeat-test-pattern.svg">
+                  <img src="sample-images/repeat-test-pattern.svg" alt="Repeat Pattern">
+                  <span class="bg-image-option__label">Repeat Pattern</span>
+                </div>
+                <div class="bg-image-option" data-src="sample-images/asymmetric-test.svg">
+                  <img src="sample-images/asymmetric-test.svg" alt="Asymmetric Test">
+                  <span class="bg-image-option__label">Asymmetric (2:1)</span>
                 </div>
               </div>
             </div>

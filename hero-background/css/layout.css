@@ -938,3 +938,178 @@ body {
   padding: var(--space-1) var(--space-2);
   font-size: var(--font-size-sm);
 }
+
+/* =============================================================================
+   Angular-like Component Styles (Current State Tab)
+   ============================================================================= */
+
+/* Control Section (flat, no collapsible) */
+.control-section {
+  padding: 0;
+}
+
+/* Bold Text Labels */
+.bold-text {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-gray-700);
+  display: block;
+  margin-bottom: var(--space-2);
+}
+
+/* Full Width */
+.w-100 {
+  width: 100%;
+}
+
+/* Color Picker Input (swatch style) */
+.color-picker-input {
+  width: 48px;
+  height: 40px;
+  padding: 2px;
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.color-picker-input::-webkit-color-swatch-wrapper {
+  padding: 2px;
+}
+
+.color-picker-input::-webkit-color-swatch {
+  border-radius: 4px;
+  border: none;
+}
+
+/* RGBA Grid Layout (4 columns) */
+.rgba-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-2);
+}
+
+.rgba-grid__col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.rgba-grid__col input {
+  padding: var(--space-2);
+  font-size: var(--font-size-sm);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.rgba-grid__col input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Number inputs without spinner arrows */
+.without-arrows::-webkit-outer-spin-button,
+.without-arrows::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.without-arrows {
+  -moz-appearance: textfield;
+}
+
+/* Alpha Input with % suffix */
+.alpha-input-wrapper {
+  position: relative;
+}
+
+.alpha-input-wrapper::after {
+  content: '%';
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  pointer-events: none;
+}
+
+.alpha-input {
+  padding-right: 28px !important;
+}
+
+/* Buttons Row Centered */
+.buttons-row--centered {
+  justify-content: center;
+}
+
+/* Light Gray Button (PrimeNG-like) */
+.btn--light-gray {
+  background-color: var(--color-gray-100);
+  color: var(--color-gray-700);
+  border: 1px solid var(--color-gray-300);
+  border-radius: 50px;
+}
+
+.btn--light-gray:hover {
+  background-color: var(--color-gray-200);
+}
+
+.btn__icon {
+  font-size: 14px;
+}
+
+/* Media Button */
+.btn--media {
+  padding: var(--space-2) var(--space-3);
+}
+
+/* Icon-only Button */
+.btn--icon-only {
+  padding: var(--space-2);
+  min-width: 36px;
+}
+
+/* Media Picker Placeholder */
+.media-picker-placeholder {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.media-preview {
+  width: 60px;
+  height: 60px;
+  border: 1px dashed var(--color-gray-300);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-gray-100);
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+.media-preview.has-image {
+  border-style: solid;
+  border-color: var(--color-gray-300);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* Thumb background (checkerboard for transparency) */
+.thumb-background {
+  background-image:
+    linear-gradient(45deg, #e0e0e0 25%, transparent 25%),
+    linear-gradient(-45deg, #e0e0e0 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #e0e0e0 75%),
+    linear-gradient(-45deg, transparent 75%, #e0e0e0 75%);
+  background-size: 10px 10px;
+  background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
+}
+
+.media-buttons {
+  display: flex;
+  gap: var(--space-2);
+}

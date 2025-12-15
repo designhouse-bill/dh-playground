@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QA Test Cases - Background Features</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+      padding: 40px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      color: #1a1a2e;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+
+    h2 {
+      margin: 40px 0 20px;
+      color: #2563eb;
+      border-bottom: 2px solid #2563eb;
+      padding-bottom: 8px;
+    }
+
+    h3 {
+      margin: 25px 0 15px;
+      color: #1e40af;
+    }
+
+    .test-case {
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .test-case__header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .test-case__id {
+      background: #2563eb;
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .test-case__title {
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    th {
+      background: #f9fafb;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .test-image {
+      display: inline-block;
+      margin: 5px 0;
+    }
+
+    .test-image img {
+      max-width: 150px;
+      max-height: 100px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .test-image__label {
+      display: block;
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    .quick-ref {
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .quick-ref table th {
+      background: #1e40af;
+      color: #fff;
+    }
+
+    code {
+      background: #f3f4f6;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 13px;
+    }
+
+    .highlight {
+      background: #fef3c7;
+      padding: 2px 4px;
+      border-radius: 2px;
+    }
+
+    .images-grid {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
+
+    .pass { color: #059669; font-weight: 600; }
+    .fail { color: #dc2626; font-weight: 600; }
+
+    @media print {
+      body { padding: 20px; }
+      .test-case { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>QA Test Cases - Background Features</h1>
+  <p class="subtitle">Hero Background Prototype | Version: Current State Tab</p>
+
+  <!-- Quick Reference -->
+  <div class="quick-ref">
+    <h3 style="margin-top: 0;">Quick Reference - Test Images</h3>
+    <div class="images-grid">
+      <div class="test-image">
+        <img src="sample-images/position-test-grid.svg" alt="Position Test Grid">
+        <span class="test-image__label">Position Grid (900x900)</span>
+      </div>
+      <div class="test-image">
+        <img src="sample-images/repeat-test-pattern.svg" alt="Repeat Pattern">
+        <span class="test-image__label">Repeat Pattern (100x100)</span>
+      </div>
+      <div class="test-image">
+        <img src="sample-images/asymmetric-test.svg" alt="Asymmetric Test">
+        <span class="test-image__label">Asymmetric (600x300)</span>
+      </div>
+    </div>
+    <table>
+      <tr>
+        <th>Feature</th>
+        <th>Options to Test</th>
+        <th>Recommended Test Image</th>
+      </tr>
+      <tr>
+        <td>Position</td>
+        <td>9 positions (Top/Center/Bottom x Left/Center/Right)</td>
+        <td><code>position-test-grid.svg</code></td>
+      </tr>
+      <tr>
+        <td>Size</td>
+        <td>5 options (Cover, Contain, Auto, 100%, 50%)</td>
+        <td><code>asymmetric-test.svg</code></td>
+      </tr>
+      <tr>
+        <td>Repeat</td>
+        <td>4 options (No Repeat, Repeat, Repeat-X, Repeat-Y)</td>
+        <td><code>repeat-test-pattern.svg</code></td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Background Color Tests -->
+  <h2>Background Color Tests</h2>
+
+  <div class="test-case">
+    <div class="test-case__header">
+      <span class="test-case__id">TC-BC-001</span>
+      <span class="test-case__title">Solid Color Selection</span>
+    </div>
+    <table>
+      <tr><th width="60">Step</th><th>Action</th><th>Expected Result</th><th width="80">Pass/Fail</th></tr>
+      <tr><td>1</td><td>Set Background Color type dropdown to "Solid"</td><td>Type dropdown shows "Solid"</td><td></td></tr>
+      <tr><td>2</td><td>Use color picker to select red (#FF0000)</td><td>Preview shows red background</td><td></td></tr>
+      <tr><td>3</td><td>Verify RGB inputs</td><td>R=255, G=0, B=0, A=100</td><td></td></tr>
+      <tr><td>4</td><td>Verify JSON output</td><td><code>"hexCode": "#ff0000", "red": 255, "green": 0, "blue": 0, "alpha": 100</code></td><td></td></tr>
+    </table>
+  </div>
+
+  <div class="test-case">
+    <div class="test-case__header">
+      <span class="test-case__id">TC-BC-002</span>
+      <span class="test-case__title">Transparent Background</span>
+    </div>
+    <table>
+      <tr><th width="60">Step</th><th>Action</th><th>Expected Result</th><th width="80">Pass/Fail</th></tr>
+      <tr><td>1</td><td>Click "Transparent" button</td><td>Background becomes transparent (checkerboard visible)</td><td></td></tr>
+      <tr><td>2</td><td>Verify type dropdown</td><td>Shows "Transparent"</td><td></td></tr>
+      <tr><td>3</td><td>Verify Alpha input</td><td>A=0</td><td></td></tr>
+      <tr><td>4</td><td>Verify JSON output</td><td><code>"type": "transparent", "alpha": 0</code></td><td></td></tr>
+    </table>
+  </div>
+
+  <div class="test-case">
+    <div class="test-case__header">
+      <span class="test-case__id">TC-BC-003</span>
+      <span class="test-case__title">Alpha/Opacity Control</span>
+    </div>
+    <table>
+      <tr><th width="60">Step</th><th>Action</th><th>Expected Result</th><th width="80">Pass/Fail</th></tr>
+      <tr><td>1</td><td>Set color to blue (#0000FF)</td><td>Blue background displayed</td><td></td></tr>
+      <tr><td>2</td><td>Change Alpha input to 50</td><td>Background is 50% transparent</td><td></td></tr>
+      <tr><td>3</td><td>Verify JSON output</td><td><code>"alpha": 50</code></td><td></td></tr>
+      <tr><td>4</td><td>Change Alpha to 0</td><td>Type auto-changes to "transparent"</td><td></td></tr>
+    </table>
+  </div>
+
+  <div class="test-case">
+    <div class="test-case__header">
+      <span class="test-case__id">TC-BC-004</span>
+      <span class="test-case__title">RGB Input Validation</span>
+    </div>
+    <table>
+      <tr><th width="60">Step</th><th>Action</th><th>Expected Result</th><th width="80">Pass/Fail</th></tr>
+      <tr><td>1</td><td>Enter R=300</td><td>Value clamps to 255</td><td></td></tr>
+      <tr><td>2</td><td>Enter G=-10</td><td>Value clamps to 0</td><td></td></tr>
+      <tr><td>3</td><td>Enter B=128</td><td>Value accepted as-is</td><td></td></tr>
+    </table>
+  </div>
+
+  <div class="test-case">
+    <div class="test-case__header">
+      <span class="test-case__id">TC-BC-005</span>
+      <span class="test-case__title">Hex Input</span>
+    </div>
+    <table>
+      <tr><th width="60">Step</th><th>Action</th><th>Expected Result</th><th width="80">Pass/Fail</th></tr>
+      <tr><td>1</td><td>Type "#FF5722" in hex field and press Enter</td><td>Preview updates to orange</td><td></td></tr>
+      <tr><td>2</td><td>Type "00FF00" (no #) and press Enter</td><td>Auto-prepends #, shows green</td><td></td></tr>
+      <tr><td>3</td><td>Type "invalid" and press Enter</td><td>No change (validation rejects)</td><td></td></tr>
+    </table>
+  </div>
+
+  <div class="test-case">
+    <div class="test-case__header">
+      <span class="test-case__id">TC-BC-006</span>
+      <span class="test-case__title">Reset Button</span>
+    </div>
+    <table>
+      <tr><th width="60">Step</th><th>Action</th><th>Expected Result</th><th width="80">Pass/Fail</th></tr>
+      <tr><td>1</td><td>Set color to any non-white color</td><td>Color applied to preview</td><td></td></tr>
+      <tr><td>2</td><td>Click "Reset" button</td><td>Returns to white (#FFFFFF), alpha 100%</td><td></td></tr>
+    </table>
+  </div>
+
+  <!-- Background Image Tests -->
+  <h2>Background Image Tests</h2>
+
+  <div class="test-case">
+    <div class="test-case__header">
+      <span class="test-case__id">TC-BI-001</span>
+      <span class="test-case__title">Image Selection</span>
+    </div>
+    <table>
+      <tr><th width="60">Step</th><th>Action</th><th>Expected Result</th><th width="80">Pass/Fail</th></tr>
+      <tr><td>1</td><td>Click "Wood Grain" sample image</td><td>Image applied to preview</td><td></td></tr>
+      <tr><td>2</td><td>Verify media preview thumbnail</td><td>Shows wood grain thumbnail in media picker area</td><td></td></tr>
+      <tr><td>3</td><td>Verify JSON output</td><td><code>"imageHref": "sample-images/Wood_Grain_BG.jpg", "imageName": "wood-grain"</code></td><td></td></tr>
+    </table>
+  </div>
+
+  <div class="test-case">
+    <div class="test-case__header">
+      <span class="test-case__id">TC-BI-002</span>
+      <span class="test-case__title">Image Removal</span>
+    </div>
+    <table>
+      <tr><th width="60">Step</th><th>Action</th><th>Expected Result</th><th width="80">Pass/Fail</th></tr>
+      <tr><td>1</td><td>Select any background image</td><td>Image appears in preview</td><td></td></tr>
+      <tr><td>2</td><td>Click delete (trash) button next to media preview</td><td>Image removed from preview</td><td></td></tr>
+      <tr><td>3</td><td>Verify "None" is selected</td><td>None option highlighted in sample images</td><td></td></tr>
+      <tr><td>4</td><td>Verify JSON</td><td><code>"imageHref": null, "imageName": null</code></td><td></td></tr>
+    </table>
+  </div>
+
+  <h3>TC-BI-003: Position Testing (All 9 Positions)</h3>
+  <p style="margin-bottom: 15px;"><strong>Setup:</strong> Select <code>position-test-grid.svg</code> from QA Test Images. Set Size to <span class="highlight">"Auto"</span>.</p>
+
+  <div class="test-case">
+    <div class="test-case__header">
+      <span class="test-case__id">TC-BI-003</span>
+      <span class="test-case__title">Position - All 9 Positions</span>
+    </div>
+    <table>
+      <tr><th>Position Setting</th><th>Expected Visible Area</th><th width="80">Pass/Fail</th></tr>
+      <tr><td>Top Left</td><td><span class="highlight">TL (RED)</span> cell prominent in view, BR hidden</td><td></td></tr>
+      <tr><td>Top Center</td><td><span class="highlight">TC</span> cell centered at top edge</td><td></td></tr>
+      <tr><td>Top Right</td><td><span class="highlight">TR (GREEN)</span> cell prominent in view, BL hidden</td><td></td></tr>
+      <tr><td>Center Left</td><td><span class="highlight">CL</span> cell visible on left edge</td><td></td></tr>
+      <tr><td>Center Center</td><td><span class="highlight">CC</span> cell centered in view</td><td></td></tr>
+      <tr><td>Center Right</td><td><span class="highlight">CR</span> cell visible on right edge</td><td></td></tr>
+      <tr><td>Bottom Left</td><td><span class="highlight">BL (BLUE)</span> cell prominent in view, TR hidden</td><td></td></tr>
+      <tr><td>Bottom Center</td><td><span class="highlight">BC</span> cell centered at bottom edge</td><td></td></tr>
+      <tr><td>Bottom Right</td><td><span class="highlight">BR (PURPLE)</span> cell prominent in view, TL hidden</td><td></td></tr>
+    </table>
+  </div>
+
+  <h3>TC-BI-004: Size Testing</h3>
+  <p style="margin-bottom: 15px;"><strong>Setup:</strong> Select <code>asymmetric-test.svg</code> from QA Test Images. This 600x300 (2:1) image helps visualize cropping.</p>
+
+  <div class="test-case">
+    <div class="test-case__header">
+      <span class="test-case__id">TC-BI-004</span>
+      <span class="test-case__title">Size Options</span>
+    </div>
+    <table>
+      <tr><th>Size Setting</th><th>Expected Behavior</th><th width="80">Pass/Fail</th></tr>
+      <tr><td>Cover</td><td>Image fills entire card. On square cards, top/bottom edges cropped (only see TL-RED and TR-GREEN, or BL-BLUE and BR-PURPLE)</td><td></td></tr>
+      <tr><td>Contain</td><td>Entire image visible. On square cards, letterboxing (gaps) appear top/bottom</td><td></td></tr>
+      <tr><td>Auto</td><td>Image at original 600x300 dimensions. May overflow or be smaller than card</td><td></td></tr>
+      <tr><td>100%</td><td>Image stretched to fill both dimensions (may distort)</td><td></td></tr>
+      <tr><td>50%</td><td>Image at half size (300x150). Shows as smaller within card</td><td></td></tr>
+    </table>
+  </div>
+
+  <h3>TC-BI-005: Repeat Testing</h3>
+  <p style="margin-bottom: 15px;"><strong>Setup:</strong> Select <code>repeat-test-pattern.svg</code> from QA Test Images. Set Size to <span class="highlight">"Auto"</span>.</p>
+
+  <div class="test-case">
+    <div class="test-case__header">
+      <span class="test-case__id">TC-BI-005</span>
+      <span class="test-case__title">Repeat Options</span>
+    </div>
+    <table>
+      <tr><th>Repeat Setting</th><th>Expected Behavior</th><th width="80">Pass/Fail</th></tr>
+      <tr><td>No Repeat</td><td>Single instance of arrow pattern (arrow points right). Corner dots visible: red TL, green TR, blue BL, purple BR</td><td></td></tr>
+      <tr><td>Repeat</td><td>Pattern tiles in both X and Y directions. Multiple arrows visible in grid</td><td></td></tr>
+      <tr><td>Repeat-X</td><td>Pattern tiles horizontally only. Single row of arrows</td><td></td></tr>
+      <tr><td>Repeat-Y</td><td>Pattern tiles vertically only. Single column of arrows</td><td></td></tr>
+    </table>
+  </div>
+
+  <!-- Render Mode Tests -->
+  <h2>Render Mode Tests</h2>
+
+  <div class="test-case">
+    <div class="test-case__header">
+      <span class="test-case__id">TC-RM-001</span>
+      <span class="test-case__title">Toggle Between Render Modes</span>
+    </div>
+    <table>
+      <tr><th width="60">Step</th><th>Action</th><th>Expected Result</th><th width="80">Pass/Fail</th></tr>
+      <tr><td>1</td><td>Click "Hero Card" mode button</td><td>Standard card preview with simple container</td><td></td></tr>
+      <tr><td>2</td><td>Click "Circular Card" mode button</td><td>Angular-style card with gray border wrapper (.cardwrapper styling)</td><td></td></tr>
+      <tr><td>3</td><td>Change background color</td><td>Both modes reflect the color change</td><td></td></tr>
+      <tr><td>4</td><td>Change background image</td><td>Both modes reflect the image change</td><td></td></tr>
+    </table>
+  </div>
+
+  <!-- Card Size Tests -->
+  <h2>Card Size Tests</h2>
+
+  <div class="test-case">
+    <div class="test-case__header">
+      <span class="test-case__id">TC-CS-001</span>
+      <span class="test-case__title">Card Size Variations</span>
+    </div>
+    <p style="margin-bottom: 10px;">Test with a visible background image to verify scaling across sizes.</p>
+    <table>
+      <tr><th>Card Size</th><th>Expected Dimensions</th><th>Background Renders Correctly</th><th width="80">Pass/Fail</th></tr>
+      <tr><td>1x1</td><td>125 x 125 px</td><td></td><td></td></tr>
+      <tr><td>1x2</td><td>125 x 250 px</td><td></td><td></td></tr>
+      <tr><td>1x3</td><td>125 x 375 px</td><td></td><td></td></tr>
+      <tr><td>2x1</td><td>250 x 125 px</td><td></td><td></td></tr>
+      <tr><td>2x2</td><td>250 x 250 px</td><td></td><td></td></tr>
+      <tr><td>2x3</td><td>250 x 375 px</td><td></td><td></td></tr>
+      <tr><td>3x1</td><td>375 x 125 px</td><td></td><td></td></tr>
+      <tr><td>3x2</td><td>375 x 250 px</td><td></td><td></td></tr>
+      <tr><td>3x3</td><td>375 x 375 px</td><td></td><td></td></tr>
+    </table>
+  </div>
+
+  <!-- JSON Output Tests -->
+  <h2>JSON Output Verification</h2>
+
+  <div class="test-case">
+    <div class="test-case__header">
+      <span class="test-case__id">TC-JSON-001</span>
+      <span class="test-case__title">Verify JSON Structure</span>
+    </div>
+    <p style="margin-bottom: 10px;">The JSON output should match the Angular DTO structure:</p>
+    <table>
+      <tr><th>Field</th><th>Expected Type</th><th>Notes</th></tr>
+      <tr><td>backgroundColor.type</td><td>string</td><td>"solid" or "transparent"</td></tr>
+      <tr><td>backgroundColor.hexCode</td><td>string</td><td>e.g., "#ff0000"</td></tr>
+      <tr><td>backgroundColor.red</td><td>number</td><td>0-255</td></tr>
+      <tr><td>backgroundColor.green</td><td>number</td><td>0-255</td></tr>
+      <tr><td>backgroundColor.blue</td><td>number</td><td>0-255</td></tr>
+      <tr><td>backgroundColor.alpha</td><td>number</td><td>0-100 (percentage)</td></tr>
+      <tr><td>backgroundImage.imageName</td><td>string | null</td><td>Identifier for the image</td></tr>
+      <tr><td>backgroundImage.imageHref</td><td>string | null</td><td>URL/path to image</td></tr>
+      <tr><td>backgroundImage.position</td><td>string</td><td>e.g., "center center"</td></tr>
+      <tr><td>backgroundImage.size</td><td>string</td><td>e.g., "cover"</td></tr>
+      <tr><td>backgroundImage.repeat</td><td>string</td><td>e.g., "no-repeat"</td></tr>
+    </table>
+  </div>
+
+</body>
+</html>

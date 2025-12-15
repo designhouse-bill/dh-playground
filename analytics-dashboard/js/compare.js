@@ -245,6 +245,28 @@ const ComparePage = (function() {
         core.saveState();
       });
     });
+
+    // Initialize compare layer dropdown toggle
+    const dropdownTrigger = document.getElementById('compare-layer-dropdown');
+    if (dropdownTrigger) {
+      dropdownTrigger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const wrapper = document.getElementById('compare-layer-dropdown-wrapper');
+        if (wrapper) {
+          wrapper.classList.toggle('open');
+          this.setAttribute('aria-expanded', wrapper.classList.contains('open'));
+        }
+      });
+
+      // Close dropdown on outside click
+      document.addEventListener('click', function(e) {
+        const wrapper = document.getElementById('compare-layer-dropdown-wrapper');
+        if (wrapper && !wrapper.contains(e.target)) {
+          wrapper.classList.remove('open');
+          dropdownTrigger.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
   }
 
   /* ============================================
@@ -292,22 +314,40 @@ const ComparePage = (function() {
   }
 
   /**
-   * Update layer tab active states
+   * Update layer dropdown active states and value
    */
   function updateLayerTabs() {
-    document.querySelectorAll('.compare-layer-tabs button').forEach(btn => {
+    // Update dropdown value text
+    const valueEl = document.getElementById('compare-layer-value');
+    if (valueEl) {
+      const layerNames = {
+        'promotions': 'Promotions',
+        'categories': 'Categories',
+        'circulars': 'Circulars'
+      };
+      valueEl.textContent = layerNames[currentLayer] || 'Promotions';
+    }
+
+    // Update dropdown menu items
+    document.querySelectorAll('#compare-layer-menu .base-dropdown__item').forEach(btn => {
       const layer = btn.dataset.layer;
       btn.classList.toggle('active', layer === currentLayer);
-      btn.setAttribute('aria-selected', layer === currentLayer);
     });
+
+    // Close the dropdown
+    const wrapper = document.getElementById('compare-layer-dropdown-wrapper');
+    if (wrapper) {
+      wrapper.classList.remove('open');
+    }
   }
 
   /**
-   * Show/hide category and promotion selectors based on layer
+   * Show/hide category, promotion selectors and days filter based on layer
    */
   function updateLayerVisibility() {
     const showCategory = currentLayer === 'categories' || currentLayer === 'promotions';
     const showPromotion = currentLayer === 'promotions';
+    const showDaysFilter = currentLayer === 'promotions';
 
     // Context A
     const aCat = document.getElementById('context-a-category');
@@ -320,6 +360,12 @@ const ComparePage = (function() {
     const bPromo = document.getElementById('context-b-promotion');
     if (bCat) bCat.style.display = showCategory ? 'inline-flex' : 'none';
     if (bPromo) bPromo.style.display = showPromotion ? 'inline-flex' : 'none';
+
+    // Days filter - only show for Promotions layer
+    const daysFilterA = document.getElementById('daysFilterA')?.closest('.compare-filter');
+    const daysFilterB = document.getElementById('daysFilterB')?.closest('.compare-filter');
+    if (daysFilterA) daysFilterA.style.display = showDaysFilter ? 'flex' : 'none';
+    if (daysFilterB) daysFilterB.style.display = showDaysFilter ? 'flex' : 'none';
   }
 
   /* ============================================
@@ -1038,6 +1084,32 @@ const ComparePage = (function() {
     }
 
     grid.innerHTML = html;
+
+    // Initialize performance charts after DOM is updated
+    if (window.PerfCharts) {
+      // Calculate max values for scaling both charts
+      const metricsA = dataA?.metrics || {};
+      const metricsB = dataB?.metrics || {};
+      const maxTotal = Math.max(
+        (metricsA.civ || 0) + (metricsA.cc || 0) + (metricsA.atl || 0),
+        (metricsB.civ || 0) + (metricsB.cc || 0) + (metricsB.atl || 0)
+      );
+
+      // Initialize charts with consistent max values
+      const chartContainers = document.querySelectorAll('.perf-chart[data-views]');
+      chartContainers.forEach(container => {
+        const data = {
+          views: parseInt(container.dataset.views, 10) || 0,
+          clicks: parseInt(container.dataset.clicks, 10) || 0,
+          adds: parseInt(container.dataset.adds, 10) || 0
+        };
+        PerfCharts.createChart(container.id, data, {
+          height: 16,
+          maxTotal: maxTotal || 1,
+          entityName: ''
+        });
+      });
+    }
   }
 
   /**
@@ -1062,7 +1134,7 @@ const ComparePage = (function() {
             <img src="${dataA.logo}" alt="${core.escapeHtml(dataA.name)}" class="compare-hero__logo">
             <h3 class="compare-hero__title">${core.escapeHtml(dataA.name)}</h3>
           </div>
-          ${renderPercentileRow(metricsA.percentile, metricsA.engagementScore)}
+          ${renderPercentileRow(metricsA.percentile, metricsA.engagementScore, false, 0, metricsA, 'compare-perf-circulars-a')}
         </div>
         <div class="compare-cell compare-cell--b">
           ${renderContextSummary('B', contextB)}
@@ -1070,7 +1142,7 @@ const ComparePage = (function() {
             <img src="${dataB.logo}" alt="${core.escapeHtml(dataB.name)}" class="compare-hero__logo">
             <h3 class="compare-hero__title">${core.escapeHtml(dataB.name)}</h3>
           </div>
-          ${renderPercentileRow(metricsB.percentile, metricsB.engagementScore, true, metricsA.percentile)}
+          ${renderPercentileRow(metricsB.percentile, metricsB.engagementScore, true, metricsA.percentile, metricsB, 'compare-perf-circulars-b')}
         </div>
       </div>
 
@@ -1142,7 +1214,7 @@ const ComparePage = (function() {
             <img src="${dataA.image}" alt="${core.escapeHtml(dataA.name)}" class="compare-hero__image">
             <h3 class="compare-hero__title">${core.escapeHtml(dataA.name)}</h3>
           </div>
-          ${renderPercentileRow(metricsA.percentile, metricsA.engagementScore)}
+          ${renderPercentileRow(metricsA.percentile, metricsA.engagementScore, false, 0, metricsA, 'compare-perf-categories-a')}
         </div>
         <div class="compare-cell compare-cell--b">
           ${renderContextSummary('B', contextB)}
@@ -1150,7 +1222,7 @@ const ComparePage = (function() {
             <img src="${dataB.image}" alt="${core.escapeHtml(dataB.name)}" class="compare-hero__image">
             <h3 class="compare-hero__title">${core.escapeHtml(dataB.name)}</h3>
           </div>
-          ${renderPercentileRow(metricsB.percentile, metricsB.engagementScore, true, metricsA.percentile)}
+          ${renderPercentileRow(metricsB.percentile, metricsB.engagementScore, true, metricsA.percentile, metricsB, 'compare-perf-categories-b')}
         </div>
       </div>
 
@@ -1206,7 +1278,7 @@ const ComparePage = (function() {
             <span class="compare-tag compare-tag--category">${core.escapeHtml(dataA.categoryName)}</span>
             <span class="compare-tag compare-tag--deal">${core.escapeHtml(metricsA.dealType || '')}</span>
           </div>
-          ${renderPercentileRow(metricsA.percentile, metricsA.engagementScore)}
+          ${renderPercentileRow(metricsA.percentile, metricsA.engagementScore, false, 0, metricsA, 'compare-perf-promotions-a')}
         </div>
         <div class="compare-cell compare-cell--b">
           ${renderContextSummary('B', contextB)}
@@ -1218,7 +1290,7 @@ const ComparePage = (function() {
             <span class="compare-tag compare-tag--category">${core.escapeHtml(dataB.categoryName)}</span>
             <span class="compare-tag compare-tag--deal">${core.escapeHtml(metricsB.dealType || '')}</span>
           </div>
-          ${renderPercentileRow(metricsB.percentile, metricsB.engagementScore, true, metricsA.percentile)}
+          ${renderPercentileRow(metricsB.percentile, metricsB.engagementScore, true, metricsA.percentile, metricsB, 'compare-perf-promotions-b')}
         </div>
       </div>
 
@@ -1297,11 +1369,35 @@ const ComparePage = (function() {
   }
 
   /**
-   * Render percentile row with bar chart icon (matching BASE Details)
+   * Render percentile row with eCharts performance bar (matching BASE)
    */
-  function renderPercentileRow(percentile, score, showVariance = false, percentileA = 0) {
+  function renderPercentileRow(percentile, score, showVariance = false, percentileA = 0, metrics = null, chartId = null) {
     const variance = showVariance ? calculateVariance(percentileA, percentile) : null;
     const variant = getPercentileVariant(percentile);
+    const uniqueId = chartId || `compare-perf-chart-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+    // If metrics are provided, render eCharts bar, otherwise fallback to simple bar
+    if (metrics && metrics.civ !== undefined) {
+      return `
+        <div class="detail-percentile-row">
+          <div class="perf-chart-container" style="flex: 1;">
+            <div class="perf-chart" id="${uniqueId}"
+                 data-name=""
+                 data-views="${metrics.civ || 0}"
+                 data-clicks="${metrics.cc || 0}"
+                 data-adds="${metrics.atl || 0}"
+                 data-composite="${score || 0}">
+            </div>
+          </div>
+          <span class="percentile-score">${score}</span>
+          <img src="./assets/chart-bar.svg" alt="Percentile" class="percentile-icon">
+          <span class="percentile-value percentile-value--${variant}">${percentile}%</span>
+          ${showVariance && variance ? renderVarianceIndicator(variance) : ''}
+        </div>
+      `;
+    }
+
+    // Fallback to simple CSS bar if no metrics provided
     return `
       <div class="detail-percentile-row">
         <div class="percentile-bar percentile-bar--${variant}">

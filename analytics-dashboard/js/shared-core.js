@@ -1003,7 +1003,76 @@ function filterFiltersForView(filters, targetView) {
   });
 }
 
+/**
+ * Toggle the BASE layer dropdown (Promotions/Categories/Circulars)
+ */
+function toggleBaseLayerDropdown() {
+  const wrapper = document.getElementById('base-layer-dropdown-wrapper');
+  const button = document.getElementById('base-layer-dropdown');
+
+  if (!wrapper || !button) return;
+
+  const isOpen = wrapper.classList.contains('open');
+
+  if (isOpen) {
+    closeBaseLayerDropdown();
+  } else {
+    wrapper.classList.add('open');
+    button.setAttribute('aria-expanded', 'true');
+
+    // Close on outside click
+    setTimeout(() => {
+      document.addEventListener('click', closeBaseLayerDropdownOnOutsideClick);
+    }, 0);
+  }
+}
+
+/**
+ * Close the BASE layer dropdown
+ */
+function closeBaseLayerDropdown() {
+  const wrapper = document.getElementById('base-layer-dropdown-wrapper');
+  const button = document.getElementById('base-layer-dropdown');
+
+  if (wrapper) wrapper.classList.remove('open');
+  if (button) button.setAttribute('aria-expanded', 'false');
+
+  document.removeEventListener('click', closeBaseLayerDropdownOnOutsideClick);
+}
+
+/**
+ * Close BASE layer dropdown when clicking outside
+ */
+function closeBaseLayerDropdownOnOutsideClick(event) {
+  const wrapper = document.getElementById('base-layer-dropdown-wrapper');
+  if (wrapper && !wrapper.contains(event.target)) {
+    closeBaseLayerDropdown();
+  }
+}
+
+/**
+ * Initialize BASE layer dropdown event listeners
+ */
+function initBaseLayerDropdown() {
+  const trigger = document.getElementById('base-layer-dropdown');
+  if (trigger) {
+    trigger.addEventListener('click', function(e) {
+      e.stopPropagation();
+      toggleBaseLayerDropdown();
+    });
+  }
+}
+
+// Initialize dropdown when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initBaseLayerDropdown);
+} else {
+  initBaseLayerDropdown();
+}
+
 // Expose functions globally
 window.toggleBreadcrumbDropdown = toggleBreadcrumbDropdown;
 window.closeBreadcrumbDropdown = closeBreadcrumbDropdown;
 window.navigateWithFilters = navigateWithFilters;
+window.toggleBaseLayerDropdown = toggleBaseLayerDropdown;
+window.closeBaseLayerDropdown = closeBaseLayerDropdown;

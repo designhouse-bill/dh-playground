@@ -312,9 +312,6 @@
           </td>
           <td class="col-category">
             <div class="category-name">
-              <div class="category-icon">
-                <span class="material-symbols-outlined">category</span>
-              </div>
               <span class="category-label">${core.escapeHtml(cat.name)}</span>
             </div>
           </td>

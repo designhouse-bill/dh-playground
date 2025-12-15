@@ -76,20 +76,20 @@
 
       <section class="panel panel--compare-full" role="main" aria-label="Comparison View">
 
-        <!-- Layer Tabs: Circulars | Categories | Promotions -->
-        <div class="compare-layer-tabs" role="tablist">
-          <button class="active" data-layer="circulars" role="tab" aria-selected="true" onclick="ComparePage.selectLayer('circulars')">
-            <span class="material-symbols-outlined" style="margin-right: 8px; font-size: 18px;">store</span>
-            Circulars
-          </button>
-          <button data-layer="categories" role="tab" aria-selected="false" onclick="ComparePage.selectLayer('categories')">
-            <span class="material-symbols-outlined" style="margin-right: 8px; font-size: 18px;">category</span>
-            Categories
-          </button>
-          <button data-layer="promotions" role="tab" aria-selected="false" onclick="ComparePage.selectLayer('promotions')">
-            <span class="material-symbols-outlined" style="margin-right: 8px; font-size: 18px;">local_offer</span>
-            Promotions
-          </button>
+        <!-- Layer Dropdown: Promotions | Categories | Circulars -->
+        <div class="compare-layer-header">
+          <div class="base-dropdown" id="compare-layer-dropdown-wrapper">
+            <button class="base-dropdown__trigger" id="compare-layer-dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="base-dropdown__label">COMPARE</span>
+              <span class="base-dropdown__value" id="compare-layer-value">Promotions</span>
+              <span class="material-symbols-outlined">expand_more</span>
+            </button>
+            <div class="base-dropdown__menu" id="compare-layer-menu" role="menu">
+              <button class="base-dropdown__item active" data-layer="promotions" role="menuitem" onclick="ComparePage.selectLayer('promotions')">Promotions</button>
+              <button class="base-dropdown__item" data-layer="categories" role="menuitem" onclick="ComparePage.selectLayer('categories')">Categories</button>
+              <button class="base-dropdown__item" data-layer="circulars" role="menuitem" onclick="ComparePage.selectLayer('circulars')">Circulars</button>
+            </div>
+          </div>
         </div>
 
         <!-- Dual Context Bar: A (left) | B (right) -->
@@ -405,6 +405,7 @@
   <script src="js/shared-core.js"></script>
   <script src="js/shared-modals.js"></script>
   <script src="js/shared-filters.js"></script>
+  <script src="js/shared-perf-charts.js"></script>
 
   <!-- Page-Specific -->
   <script src="js/compare.js"></script>

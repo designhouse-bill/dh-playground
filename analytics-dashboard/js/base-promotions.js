@@ -440,7 +440,7 @@
 
     // Generate variants badge HTML if this is a parent with children
     const variantsBadgeHTML = promo.isParent && promo.childCount > 0
-      ? `<span class="variants-badge">Includes ${promo.childCount} variant${promo.childCount !== 1 ? 's' : ''}</span>`
+      ? `<span class="variants-badge"><span class="variants-count">${promo.childCount}</span> variant${promo.childCount !== 1 ? 's' : ''}</span>`
       : '';
 
     return `
@@ -585,7 +585,7 @@
 
       // Generate variants badge HTML if this is a parent with children
       const variantsBadgeHTML = promo.isParent && promo.childCount > 0
-        ? `<span class="variants-badge">Includes ${promo.childCount} variant${promo.childCount !== 1 ? 's' : ''}</span>`
+        ? `<span class="variants-badge"><span class="variants-count">${promo.childCount}</span> variant${promo.childCount !== 1 ? 's' : ''}</span>`
         : '';
 
       return `
@@ -999,7 +999,7 @@
 
     // Generate variants badge for detail panel (under title, before tags)
     const detailVariantsBadge = promo.isParent && promo.childCount > 0
-      ? `<span class="detail-variants-badge">Includes ${promo.childCount} variant${promo.childCount !== 1 ? 's' : ''}</span>`
+      ? `<span class="detail-variants-badge"><span class="variants-count">${promo.childCount}</span> variant${promo.childCount !== 1 ? 's' : ''}</span>`
       : '';
 
     detailContent.innerHTML = `

@@ -2277,7 +2277,7 @@ body.app-mode-grid .view-search {
 .promo-data-grid {
   flex: 1;
   overflow: auto;
-  padding: var(--space-4);
+  padding: 0;
   background-color: var(--color-white);
 }
 
@@ -2331,15 +2331,15 @@ body.app-mode-grid .view-search {
 .category-grid-table th,
 .store-grid-table th,
 .promo-grid-table th {
-  padding: var(--space-3) var(--space-4);
+  padding: 0.75rem;
   text-align: left;
-  font-size: var(--font-size-xs);
+  font-size: 0.8rem;
   font-weight: var(--font-weight-semibold);
-  color: var(--color-text-tertiary);
+  color: #171717;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-bottom: 1px solid var(--color-gray-200);
-  background-color: var(--color-gray-50);
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #f3f3f3;
 }
 
 .category-grid-table th.sortable,
@@ -2358,8 +2358,10 @@ body.app-mode-grid .view-search {
 .category-grid-table td,
 .store-grid-table td,
 .promo-grid-table td {
-  padding: var(--space-3) var(--space-4);
-  border-bottom: 1px solid var(--color-gray-100);
+  padding: 0.75rem 0.5rem;
+  font-size: 0.8rem;
+  color: #171717;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 /* BASE Grid column widths - Fixed columns */
@@ -2645,10 +2647,10 @@ body.app-mode-grid .view-search {
 .perf-metric-dropdown__trigger {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 24px;
+  gap: var(--space-1);
+  width: auto;
   height: 24px;
-  padding: 0;
+  padding: 0 var(--space-2) 0 0;
   background: transparent;
   border: none;
   border-radius: var(--radius-md);
@@ -2664,14 +2666,23 @@ body.app-mode-grid .view-search {
 
 .perf-metric-dropdown__trigger .material-symbols-outlined {
   font-size: 18px;
+  flex-shrink: 0;
+}
+
+.perf-metric-dropdown__label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  text-transform: uppercase;
 }
 
 .perf-metric-dropdown__menu {
   display: none;
   position: absolute;
   top: calc(100% + var(--space-1));
-  right: 0;
-  width: 180px;
+  left: 0;
+  width: 200px;
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
@@ -2768,8 +2779,8 @@ body.app-mode-grid .view-search {
 
 /* Percentile column styling */
 .col-percentile {
-  width: 120px;
-  min-width: 120px;
+  width: 115px;
+  min-width: 115px;
   text-align: right;
 }
 
@@ -2779,6 +2790,8 @@ body.app-mode-grid .view-search {
   gap: var(--space-2);
   justify-content: flex-end;
   white-space: nowrap;
+  width: 115px;
+  min-width: 115px;
 }
 
 /* ============================================
@@ -4493,7 +4506,7 @@ body:not(.comparison-active) .detail-comparison {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background-color: var(--color-surface);
+  background-color: var(--color-background);
   overflow: hidden;
 }
 
@@ -4524,10 +4537,23 @@ body:not(.comparison-active) .detail-comparison {
   color: var(--color-text-primary);
 }
 
+.grid-controls__center {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
 .grid-controls__right {
   display: flex;
   align-items: center;
   gap: var(--space-3);
+}
+
+/* Grid Label */
+.grid-label {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
 }
 
 /* Export Button */
@@ -4678,6 +4704,9 @@ body:not(.comparison-active) .detail-comparison {
   flex: 1;
   overflow: auto;
   position: relative;
+  max-width: 1600px;
+  min-width: 1200px;
+  margin: 0 auto;
 }
 
 /* Grid Table */
@@ -4695,14 +4724,15 @@ body:not(.comparison-active) .detail-comparison {
 }
 
 .grid-table th {
-  padding: var(--space-2) var(--space-3);
-  font-size: var(--font-size-sm);
+  padding: 0.75rem;
+  font-size: 0.8rem;
   font-weight: var(--font-weight-semibold);
-  color: var(--color-text-secondary);
+  color: #171717;
   text-align: left;
-  background-color: var(--color-gray-50);
-  border-bottom: 1px solid var(--color-border);
-  vertical-align: top;
+  text-transform: uppercase;
+  background-color: #f3f3f3;
+  border-bottom: 1px solid #e0e0e0;
+  vertical-align: middle;
 }
 
 /* Sticky First Column */
@@ -4723,25 +4753,24 @@ body:not(.comparison-active) .detail-comparison {
 
 .grid-table td:first-child {
   font-weight: var(--font-weight-medium);
-  border-right: 1px solid var(--color-border);
 }
 
 /* Grid Table Body */
 .grid-table td {
-  padding: var(--space-3) var(--space-4);
-  font-size: var(--font-size-sm);
-  color: var(--color-text-primary);
-  background-color: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
+  padding: 0.75rem 0.5rem;
+  font-size: 0.8rem;
+  color: #171717;
+  background-color: white;
+  border-bottom: 1px solid #e0e0e0;
   white-space: nowrap;
 }
 
 .grid-table tbody tr:hover td {
-  background-color: var(--color-gray-50);
+  background-color: #c4e4ff;
 }
 
 .grid-table tbody tr:hover td:first-child {
-  background-color: var(--color-gray-50);
+  background-color: #c4e4ff;
 }
 
 /* Column Types */
@@ -4782,8 +4811,12 @@ body:not(.comparison-active) .detail-comparison {
 }
 
 /* Specific column widths for grid table */
-.grid-table .col-num {
-  width: 50px;
+.grid-table .col-num,
+.grid-table th[data-column="index"],
+.grid-table td:has(.table-position) {
+  width: 48px;
+  min-width: 48px;
+  max-width: 48px;
 }
 
 .grid-table .col-promotion {
@@ -4819,8 +4852,11 @@ body:not(.comparison-active) .detail-comparison {
   font-variant-numeric: tabular-nums;
 }
 
-.grid-table .col-percentile {
-  width: 70px;
+.grid-table .col-percentile,
+.grid-table th[data-column="percentile"],
+.grid-table td.col-percentile {
+  width: 115px;
+  min-width: 115px;
 }
 
 /* Promotion cell with nested thumbnail */
@@ -5030,7 +5066,7 @@ body:not(.comparison-active) .detail-comparison {
   overflow: hidden;
 }
 
-/* Layer Tabs */
+/* Layer Tabs (legacy - keeping for compare page) */
 .compare-layer-tabs {
   display: flex;
   gap: 0;
@@ -5071,6 +5107,116 @@ body:not(.comparison-active) .detail-comparison {
   border-bottom-color: var(--color-primary-500);
   color: var(--color-primary-600);
   font-weight: var(--font-weight-semibold);
+}
+
+/* BASE Layer Dropdown */
+.base-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.base-dropdown__trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: var(--font-size-lg);
+}
+
+.base-dropdown__label {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-xl);
+}
+
+.base-dropdown__value {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-xl);
+}
+
+.base-dropdown__trigger .material-symbols-outlined {
+  font-size: 20px;
+  color: var(--color-text-secondary);
+  transition: transform var(--transition-fast);
+}
+
+.base-dropdown.open .base-dropdown__trigger .material-symbols-outlined {
+  transform: rotate(180deg);
+}
+
+.base-dropdown__menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 180px;
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: all var(--transition-fast);
+  z-index: 100;
+  overflow: hidden;
+}
+
+/* Compare page dropdown - align under the value */
+#compare-layer-dropdown-wrapper .base-dropdown__menu {
+  left: 95px; /* Offset to align under the value, after "COMPARE" label */
+}
+
+.base-dropdown.open .base-dropdown__menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(4px);
+}
+
+.base-dropdown__item {
+  display: block;
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: background-color var(--transition-fast);
+  font-size: var(--font-size-base);
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.base-dropdown__item:first-child {
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.base-dropdown__item:last-child {
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+.base-dropdown__item:hover {
+  background-color: var(--color-primary-100);
+  color: var(--color-text-primary);
+}
+
+.base-dropdown__item.active {
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-600);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Compare Layer Header */
+.compare-layer-header {
+  display: flex;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
 }
 
 /* Dual Context Bar */
@@ -5980,6 +6126,11 @@ body:not(.comparison-active) .detail-comparison {
   width: fit-content;
 }
 
+.variants-count {
+  font-weight: 700;
+  color: #000;
+}
+
 /* Promo name content wrapper for stacking title and variants badge */
 .promo-name-content {
   display: flex;
@@ -6021,11 +6172,10 @@ body:not(.comparison-active) .detail-comparison {
   width: 220px;
 }
 
-/* Category column - decreased width */
+/* Category column - wider for categories page */
 .col-category {
-  min-width: 80px;
-  width: 100px;
-  max-width: 120px;
+  min-width: 160px;
+  width: 200px;
 }
 
 /* Percentile column - add padding to prevent overflow */

@@ -337,6 +337,13 @@
     }
 
     updateGridPagination(total, start, end, totalPages);
+
+    // Initialize performance charts after DOM is updated
+    if (window.PerfCharts && data.length > 0) {
+      // Calculate max values for chart scaling
+      PerfCharts.calculateMaxValues(data);
+      PerfCharts.initAllCharts({ height: 16, dataArray: data });
+    }
   }
 
   /**
@@ -439,7 +446,7 @@
           : '';
         // Generate variants badge HTML if this is a parent with children
         const variantsBadge = promo.isParent && promo.childCount > 0
-          ? `<span class="variants-badge">Includes ${promo.childCount} variant${promo.childCount !== 1 ? 's' : ''}</span>`
+          ? `<span class="variants-badge"><span class="variants-count">${promo.childCount}</span> variant${promo.childCount !== 1 ? 's' : ''}</span>`
           : '';
         displayValue = `<div class="table-promo">${thumbHtml}<div class="table-info"><div class="table-title">${core.escapeHtml(promo.name)}</div>${variantsBadge}</div></div>`;
         break;
@@ -470,15 +477,18 @@
         displayValue = core.getPercentileBadgeHTML ? core.getPercentileBadgeHTML(value) : `${value}%`;
         break;
       case 'performance':
-        const perfPercent = maxScore > 0 ? ((value || 0) / maxScore * 100) : 0;
-        const perfClass = promo.percentile >= 75 ? 'high' : promo.percentile >= 50 ? 'medium' : 'low';
         cellClass += ' col-perf table-performance';
+        const chartId = `perf-chart-grid-${promo.id}`;
         displayValue = `
-          <div class="perf-bar table-bar--wide">
-            <div class="perf-bar__track perf-bar__track--${perfClass}">
-              <div class="perf-bar__fill perf-bar__fill--${perfClass}" style="width: ${perfPercent}%"></div>
+          <div class="perf-chart-container">
+            <div class="perf-chart" id="${chartId}"
+                 data-name="${core.escapeHtml(promo.name || '')}"
+                 data-views="${promo.civ || 0}"
+                 data-clicks="${promo.cc || 0}"
+                 data-adds="${promo.atl || 0}"
+                 data-composite="${promo.compositeScore || 0}">
             </div>
-            <span class="perf-bar__value">${core.formatNumber(value)}</span>
+            <span class="perf-chart__value">${core.formatNumber(value)}</span>
           </div>
         `;
         break;

@@ -123,19 +123,17 @@
       <section class="panel panel--category-grid" role="main" aria-label="Categories">
         <div class="panel-header panel-header--categories">
           <div class="panel-header__left">
-            <div class="compare-layer-tabs" role="tablist">
-              <a href="base_promotions.html" role="tab" aria-selected="false">
-                <span class="material-symbols-outlined">local_offer</span>
-                Promotions
-              </a>
-              <a href="base_categories.html" class="active" role="tab" aria-selected="true">
-                <span class="material-symbols-outlined">category</span>
-                Categories
-              </a>
-              <a href="base_circulars.html" role="tab" aria-selected="false">
-                <span class="material-symbols-outlined">store</span>
-                Circulars
-              </a>
+            <div class="base-dropdown" id="base-layer-dropdown-wrapper">
+              <button class="base-dropdown__trigger" id="base-layer-dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="base-dropdown__label">BASE</span>
+                <span class="base-dropdown__value">Categories</span>
+                <span class="material-symbols-outlined">expand_more</span>
+              </button>
+              <div class="base-dropdown__menu" id="base-layer-menu" role="menu">
+                <a href="base_promotions.html" class="base-dropdown__item" role="menuitem">Promotions</a>
+                <a href="base_categories.html" class="base-dropdown__item active" role="menuitem">Categories</a>
+                <a href="base_circulars.html" class="base-dropdown__item" role="menuitem">Circulars</a>
+              </div>
             </div>
             <label class="toggle-switch">
               <input type="checkbox" id="more-data-toggle">
@@ -153,7 +151,6 @@
                 <option value="250">Show 250</option>
                 <option value="all">Show All</option>
               </select>
-              <span class="topn-hint">per page</span>
             </div>
           </div>
           <div class="panel-header__right">

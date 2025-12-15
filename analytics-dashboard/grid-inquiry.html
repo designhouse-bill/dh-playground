@@ -132,17 +132,27 @@
         <!-- Grid Controls Bar -->
         <div class="grid-controls">
           <div class="grid-controls__left">
-            <span class="grid-controls__label">Total:</span>
-            <span class="grid-controls__count" id="grid-record-count">0</span>
-            <span class="grid-controls__label">records</span>
+            <span class="grid-label">GRID</span>
+          </div>
+          <div class="grid-controls__center">
+            <span class="showing-count">Total Promotions: <span id="grid-record-count">0</span></span>
+            <div class="topn-selector">
+              <select id="grid-topn-select" class="topn-select" onchange="changeGridRowsPerPage(this.value)">
+                <option value="25" selected>Show 25</option>
+                <option value="50">Show 50</option>
+                <option value="100">Show 100</option>
+                <option value="250">Show 250</option>
+                <option value="all">Show All</option>
+              </select>
+            </div>
           </div>
           <div class="grid-controls__right">
-            <button class="grid-export-btn" id="grid-export-btn" onclick="exportGridToCSV()" aria-label="Export to CSV">
+            <button class="panel-action-btn" id="grid-export-btn" onclick="exportGridToCSV()" aria-label="Export to CSV">
               <span class="material-symbols-outlined">download</span>
               Export CSV
             </button>
             <div class="grid-columns-toggle">
-              <button class="grid-columns-btn" id="grid-columns-btn" aria-label="Toggle column visibility">
+              <button class="panel-action-btn" id="grid-columns-btn" aria-label="Toggle column visibility">
                 <span class="material-symbols-outlined">view_column</span>
                 Columns
                 <span class="material-symbols-outlined">expand_more</span>
@@ -402,6 +412,7 @@
   <script src="js/shared-core.js"></script>
   <script src="js/shared-modals.js"></script>
   <script src="js/shared-filters.js"></script>
+  <script src="js/shared-perf-charts.js"></script>
 
   <!-- Page-Specific -->
   <script src="js/grid-inquiry.js"></script>

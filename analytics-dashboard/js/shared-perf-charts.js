@@ -343,6 +343,20 @@ const PerfCharts = (() => {
   // =========================================
 
   /**
+   * Get the display label for currently selected metrics
+   */
+  function getSelectedLabel() {
+    if (selectedMetrics.includes('all')) {
+      return 'All (Composite)';
+    }
+    const labels = [];
+    if (selectedMetrics.includes('views')) labels.push('Views');
+    if (selectedMetrics.includes('clicks')) labels.push('Clicks');
+    if (selectedMetrics.includes('adds')) labels.push('Adds');
+    return labels.join(', ') || 'All (Composite)';
+  }
+
+  /**
    * Get HTML for metric filter dropdown in column header
    */
   function getDropdownHTML() {
@@ -350,11 +364,13 @@ const PerfCharts = (() => {
     const viewsChecked = selectedMetrics.includes('views') ? 'checked' : '';
     const clicksChecked = selectedMetrics.includes('clicks') ? 'checked' : '';
     const addsChecked = selectedMetrics.includes('adds') ? 'checked' : '';
+    const selectedLabel = getSelectedLabel();
 
     return `
       <div class="perf-metric-dropdown">
         <button class="perf-metric-dropdown__trigger" onclick="PerfCharts.toggleDropdown(event)" title="Filter metrics">
           <span class="material-symbols-outlined">tune</span>
+          <span class="perf-metric-dropdown__label">${selectedLabel}</span>
         </button>
         <div class="perf-metric-dropdown__menu" id="perf-metric-menu">
           <div class="perf-metric-dropdown__header">Show Metrics</div>
@@ -456,9 +472,20 @@ const PerfCharts = (() => {
     // Re-render all charts and update value displays
     rerenderAllCharts();
     updateAllValueDisplays();
+    updateDropdownLabel();
 
     // Save state to localStorage
     saveState();
+  }
+
+  /**
+   * Update the dropdown trigger label to show current selection
+   */
+  function updateDropdownLabel() {
+    const labelEl = document.querySelector('.perf-metric-dropdown__label');
+    if (labelEl) {
+      labelEl.textContent = getSelectedLabel();
+    }
   }
 
   // =========================================

@@ -5165,9 +5165,14 @@ body:not(.comparison-active) .detail-comparison {
   overflow: hidden;
 }
 
-/* Compare page dropdown - align under the value */
+/* Base page dropdown - align menu under the value text */
+#base-layer-dropdown-wrapper .base-dropdown__menu {
+  left: 62px; /* padding-left (12px) + "BASE" width (~42px) + gap (8px) */
+}
+
+/* Compare page dropdown - align menu under the value text */
 #compare-layer-dropdown-wrapper .base-dropdown__menu {
-  left: 95px; /* Offset to align under the value, after "COMPARE" label */
+  left: 110px; /* padding-left (12px) + "COMPARE" width (~90px) + gap (8px) */
 }
 
 .base-dropdown.open .base-dropdown__menu {

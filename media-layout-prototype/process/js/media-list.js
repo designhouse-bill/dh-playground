@@ -109,32 +109,98 @@ class MediaList {
     this.container.setAttribute('role', 'listbox');
     this.container.setAttribute('aria-label', 'Media items list');
 
+    const visibleItems = this.items.filter(i => !i._hidden);
+    const hiddenItems = this.items.filter(i => i._hidden);
+
     // Empty state
-    if (this.items.length === 0) {
+    if (visibleItems.length === 0 && hiddenItems.length === 0) {
       this._renderEmptyState();
       return;
     }
 
-    // Single image state
-    if (this.items.length === 1) {
+    // Single image state (only if no hidden items - otherwise show list)
+    if (visibleItems.length === 1 && hiddenItems.length === 0) {
       this._renderSingleImageState();
       return;
     }
 
-    // Render items
+    // Render visible items
     const listEl = document.createElement('div');
     listEl.className = 'media-list__items';
 
-    this.items.forEach((item, index) => {
+    visibleItems.forEach((item, index) => {
       const itemEl = this._createItemElement(item, index);
       listEl.appendChild(itemEl);
     });
 
     this.container.appendChild(listEl);
 
+    // Render hidden items section if any
+    if (hiddenItems.length > 0) {
+      const hiddenSection = this._createHiddenItemsSection(hiddenItems);
+      this.container.appendChild(hiddenSection);
+    }
+
     // Render add button
     const addBtn = this._createAddButton();
     this.container.appendChild(addBtn);
+  }
+
+  /**
+   * Create hidden items section (collapsed by default)
+   * @private
+   */
+  _createHiddenItemsSection(hiddenItems) {
+    const section = document.createElement('div');
+    section.className = 'media-list__hidden-section';
+
+    const header = document.createElement('button');
+    header.className = 'media-list__hidden-header';
+    header.innerHTML = `
+      <span class="media-list__hidden-count">${hiddenItems.length} hidden image${hiddenItems.length > 1 ? 's' : ''}</span>
+      <span class="media-list__hidden-hint">Increase image count to show</span>
+      <svg class="media-list__hidden-chevron" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M4 6l4 4 4-4H4z"/>
+      </svg>
+    `;
+
+    const content = document.createElement('div');
+    content.className = 'media-list__hidden-content';
+
+    hiddenItems.forEach((item) => {
+      const hiddenItem = document.createElement('div');
+      hiddenItem.className = 'media-list__hidden-item';
+      hiddenItem.innerHTML = `
+        <div class="media-list__hidden-thumbnail">
+          <img src="${item.image}" alt="${item.name}" loading="lazy" />
+        </div>
+        <span class="media-list__hidden-name">${item.name}</span>
+        <button class="btn-icon btn-remove-hidden" title="Remove permanently" aria-label="Remove ${item.name} permanently">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M4.646 4.646a.5.5 0 01.708 0L8 7.293l2.646-2.647a.5.5 0 01.708.708L8.707 8l2.647 2.646a.5.5 0 01-.708.708L8 8.707l-2.646 2.647a.5.5 0 01-.708-.708L7.293 8 4.646 5.354a.5.5 0 010-.708z"/>
+          </svg>
+        </button>
+      `;
+
+      // Remove hidden item permanently
+      const removeBtn = hiddenItem.querySelector('.btn-remove-hidden');
+      removeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this._handleRemove(item.id);
+      });
+
+      content.appendChild(hiddenItem);
+    });
+
+    // Toggle expand/collapse
+    header.addEventListener('click', () => {
+      section.classList.toggle('media-list__hidden-section--expanded');
+    });
+
+    section.appendChild(header);
+    section.appendChild(content);
+
+    return section;
   }
 
   /**
@@ -236,26 +302,54 @@ class MediaList {
     el.setAttribute('aria-selected', this.selectedId === item.id ? 'true' : 'false');
     el.setAttribute('tabindex', '0');
 
+    // Track if this item is hidden (when template reduces count)
+    if (item._hidden) {
+      el.classList.add('media-item--hidden');
+    }
+
     if (this.selectedId === item.id) {
       el.classList.add('media-item--selected');
     }
+
+    // Calculate stacking order (z-index): last item in list is on top (highest z-index)
+    const visibleItems = this.items.filter(i => !i._hidden);
+    const totalVisible = visibleItems.length;
+    const stackOrder = item.zIndex !== undefined ? item.zIndex : (totalVisible - index);
+    const positionLabel = index + 1; // 1-based position (left to right in grid)
 
     el.innerHTML = `
       <div class="media-item__radio" aria-hidden="true">
         <span class="radio-dot"></span>
       </div>
-      <div class="media-item__drag-handle" title="Drag to reorder">
+      <div class="media-item__drag-handle" title="Drag to reorder position">
         <span class="drag-dots">
           <span></span><span></span>
           <span></span><span></span>
           <span></span><span></span>
         </span>
       </div>
+      <div class="media-item__order-badges">
+        <span class="media-item__position-badge" title="Position order (grid placement): ${positionLabel}">
+          P${positionLabel}
+        </span>
+        <span class="media-item__stack-badge" title="Stack order (z-index, higher = front): ${stackOrder}">
+          Z${stackOrder}
+        </span>
+      </div>
       <div class="media-item__thumbnail">
         <img src="${item.image}" alt="${item.name}" loading="lazy" />
       </div>
       <div class="media-item__label">${item.name}</div>
+      <div class="media-item__fit-badge" title="Image fit: ${item.objectFit || 'cover'}">
+        ${(item.objectFit || 'cover') === 'contain' ? '⊡' : '⊞'}
+      </div>
       <div class="media-item__actions">
+        <button class="btn-icon btn-fit-toggle" title="Toggle Cover/Contain" aria-label="Toggle fit mode for ${item.name}">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <rect x="2" y="2" width="12" height="12" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <rect x="4" y="5" width="8" height="6" rx="0.5" fill="currentColor" opacity="0.5"/>
+          </svg>
+        </button>
         <button class="btn-icon btn-settings" title="Settings" aria-label="Settings for ${item.name}">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
             <path d="M8 10a2 2 0 100-4 2 2 0 000 4z"/>
@@ -292,7 +386,25 @@ class MediaList {
       this._handleSettings(item);
     });
 
+    const fitToggleBtn = el.querySelector('.btn-fit-toggle');
+    fitToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this._handleFitToggle(item);
+    });
+
     return el;
+  }
+
+  /**
+   * Handle fit toggle (cover/contain) for an item
+   */
+  _handleFitToggle(item) {
+    const currentFit = item.objectFit || 'cover';
+    const newFit = currentFit === 'cover' ? 'contain' : 'cover';
+    item.objectFit = newFit;
+
+    this.render();
+    this._emitChange({ fitChange: { itemId: item.id, objectFit: newFit } });
   }
 
   /**
@@ -667,14 +779,20 @@ class MediaList {
 
   /**
    * Public: Set max images (when card size changes)
+   * Items beyond the max are hidden, not deleted, so they can be restored
    */
   setMaxImages(max) {
     this.maxImages = max;
 
-    // Remove excess items if needed
-    if (this.items.length > max) {
-      this.items = this.items.slice(0, max);
-      if (this.selectedId && !this.items.find(i => i.id === this.selectedId)) {
+    // Mark items beyond max as hidden instead of removing them
+    this.items.forEach((item, index) => {
+      item._hidden = index >= max;
+    });
+
+    // Clear selection if selected item is now hidden
+    if (this.selectedId) {
+      const selectedItem = this.items.find(i => i.id === this.selectedId);
+      if (selectedItem && selectedItem._hidden) {
         this.selectedId = null;
       }
     }
@@ -693,17 +811,38 @@ class MediaList {
   }
 
   /**
-   * Public: Get current items
+   * Public: Get current visible items (excludes hidden items)
    */
   getItems() {
+    return this.items.filter(i => !i._hidden);
+  }
+
+  /**
+   * Public: Get all items including hidden ones
+   */
+  getAllItems() {
     return [...this.items];
   }
 
   /**
-   * Public: Get images array (for preview)
+   * Public: Get images array for visible items (for preview)
    */
   getImages() {
-    return this.items.map(i => i.image);
+    return this.items.filter(i => !i._hidden).map(i => i.image);
+  }
+
+  /**
+   * Public: Get visible item count
+   */
+  getVisibleCount() {
+    return this.items.filter(i => !i._hidden).length;
+  }
+
+  /**
+   * Public: Check if there are hidden items
+   */
+  hasHiddenItems() {
+    return this.items.some(i => i._hidden);
   }
 
   /**

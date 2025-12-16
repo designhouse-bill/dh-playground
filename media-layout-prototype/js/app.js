@@ -12,10 +12,14 @@ const AppState = {
   template: null,
   imageCount: 2, // Target image count (1-5)
 
-  // Background settings
+  // Background settings (includes image properties: position, size, repeat)
   background: {
     type: 'color',
-    value: '#ffffff'
+    value: '#ffffff',
+    position: 'center center',
+    size: 'cover',
+    repeat: 'no-repeat',
+    color: '#ffffff' // Background color even when image is set
   },
 
   // Image slots
@@ -138,10 +142,31 @@ const AppState = {
 
   /**
    * Update background
+   * @param {string} type - 'color' or 'image'
+   * @param {string} value - Color value or image URL
+   * @param {Object} fullConfig - Optional full config with position, size, repeat
    */
-  setBackground(type, value) {
-    this.background = { type, value };
-    this._notify('background', { type, value });
+  setBackground(type, value, fullConfig = null) {
+    if (fullConfig) {
+      this.background = {
+        type,
+        value,
+        position: fullConfig.position || 'center center',
+        size: fullConfig.size || 'cover',
+        repeat: fullConfig.repeat || 'no-repeat',
+        color: fullConfig.color || '#ffffff'
+      };
+    } else {
+      this.background = {
+        type,
+        value,
+        position: this.background.position || 'center center',
+        size: this.background.size || 'cover',
+        repeat: this.background.repeat || 'no-repeat',
+        color: type === 'color' ? value : this.background.color
+      };
+    }
+    this._notify('background', this.background);
   },
 
   /**
@@ -533,14 +558,29 @@ function renderPreview() {
   const container = document.getElementById('preview-container');
   if (!container) return;
 
-  // Handle color (solid or gradient) vs image backgrounds
-  let bgStyle;
-  if (AppState.background.type === 'image') {
-    bgStyle = `background-image: url(${AppState.background.value}); background-size: cover; background-position: center;`;
-  } else if (AppState.background.value.includes('gradient')) {
-    bgStyle = `background: ${AppState.background.value};`;
+  const bg = AppState.background;
+
+  // Build background style with all properties
+  let bgStyle = '';
+
+  // Background color (always applied, even when image is set)
+  if (bg.type === 'image' && bg.color) {
+    // When image is set, use the separate color property
+    bgStyle += `background-color: ${bg.color};`;
+  } else if (bg.value === 'transparent') {
+    bgStyle += 'background-color: transparent;';
+  } else if (bg.value && bg.value.includes('gradient')) {
+    bgStyle += `background: ${bg.value};`;
   } else {
-    bgStyle = `background-color: ${AppState.background.value};`;
+    bgStyle += `background-color: ${bg.value};`;
+  }
+
+  // Background image with full properties
+  if (bg.type === 'image' && bg.value) {
+    bgStyle += ` background-image: url('${bg.value}');`;
+    bgStyle += ` background-position: ${bg.position || 'center center'};`;
+    bgStyle += ` background-size: ${bg.size || 'cover'};`;
+    bgStyle += ` background-repeat: ${bg.repeat || 'no-repeat'};`;
   }
 
   // Sort slots by z-index for rendering order
@@ -1164,10 +1204,13 @@ function initLayoutPanel() {
 
 /**
  * Initialize Background Chooser in main content area
+ * Uses split mode: color controls in Background Color card, image controls in Background Image card
  */
 function initBackgroundChooser() {
-  const container = document.getElementById('background-chooser-container');
-  if (!container || typeof BackgroundChooser === 'undefined') {
+  const imageContainer = document.getElementById('background-chooser-container');
+  const colorContainer = document.getElementById('background-color-container');
+
+  if (!imageContainer || typeof BackgroundChooser === 'undefined') {
     console.warn('Background chooser container or class not found');
     return;
   }
@@ -1175,8 +1218,11 @@ function initBackgroundChooser() {
   sidebarBackgroundChooser = new BackgroundChooser({
     type: AppState.background.type,
     value: AppState.background.value,
-    onChange: (type, value) => {
-      AppState.setBackground(type, value);
+    position: AppState.background.position,
+    size: AppState.background.size,
+    repeat: AppState.background.repeat,
+    onChange: (type, value, fullConfig) => {
+      AppState.setBackground(type, value, fullConfig);
       renderPreview();
       // Update layout panel background picker if open
       if (layoutPanel && layoutPanel.isOpen) {
@@ -1185,10 +1231,17 @@ function initBackgroundChooser() {
     }
   });
 
-  sidebarBackgroundChooser.init(container);
+  // Initialize with split mode if color container exists
+  if (colorContainer) {
+    sidebarBackgroundChooser.init(imageContainer, colorContainer);
+  } else {
+    // Fallback to legacy single container mode
+    sidebarBackgroundChooser.init(imageContainer);
+  }
 
   // Add compact class for the editor card
-  container.querySelector('.background-chooser')?.classList.add('background-chooser--compact');
+  imageContainer.querySelector('.background-chooser')?.classList.add('background-chooser--compact');
+  colorContainer?.querySelector('.background-chooser')?.classList.add('background-chooser--compact');
 }
 
 /**

@@ -2489,6 +2489,277 @@ body.modal-open {
   color: var(--color-white);
 }
 
+/* =============================================================================
+   Media Item Fit Badge & Toggle
+   ============================================================================= */
+
+.media-item__fit-badge {
+  font-size: 12px;
+  color: var(--color-gray-400);
+  opacity: 0.6;
+  transition: opacity var(--transition-fast);
+}
+
+.media-item:hover .media-item__fit-badge {
+  opacity: 0;
+}
+
+.btn-fit-toggle {
+  color: var(--color-gray-400);
+}
+
+.btn-fit-toggle:hover {
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--color-primary);
+}
+
+/* =============================================================================
+   Order Badges (Position & Stacking)
+   ============================================================================= */
+
+.media-item__order-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.media-item__position-badge,
+.media-item__stack-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 600;
+  padding: 1px 4px;
+  border-radius: 3px;
+  line-height: 1.2;
+  min-width: 22px;
+}
+
+.media-item__position-badge {
+  background: var(--color-gray-100);
+  color: var(--color-gray-500);
+  border: 1px solid var(--color-gray-200);
+}
+
+.media-item__stack-badge {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+}
+
+.media-item--selected .media-item__position-badge {
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--color-primary);
+  border-color: rgba(37, 99, 235, 0.3);
+}
+
+.media-item--selected .media-item__stack-badge {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* =============================================================================
+   Hidden Items Section
+   ============================================================================= */
+
+.media-list__hidden-section {
+  border-top: 1px dashed var(--color-gray-300);
+  background: var(--color-gray-50);
+}
+
+.media-list__hidden-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-3);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color var(--transition-fast);
+}
+
+.media-list__hidden-header:hover {
+  background: var(--color-gray-100);
+}
+
+.media-list__hidden-count {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-gray-600);
+}
+
+.media-list__hidden-hint {
+  flex: 1;
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-400);
+}
+
+.media-list__hidden-chevron {
+  color: var(--color-gray-400);
+  transition: transform var(--transition-fast);
+}
+
+.media-list__hidden-section--expanded .media-list__hidden-chevron {
+  transform: rotate(180deg);
+}
+
+.media-list__hidden-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.media-list__hidden-section--expanded .media-list__hidden-content {
+  max-height: 300px;
+}
+
+.media-list__hidden-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-top: 1px solid var(--color-gray-200);
+  opacity: 0.7;
+}
+
+.media-list__hidden-item:hover {
+  opacity: 1;
+  background: var(--color-gray-100);
+}
+
+.media-list__hidden-thumbnail {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--color-gray-200);
+}
+
+.media-list__hidden-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(50%);
+}
+
+.media-list__hidden-name {
+  flex: 1;
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btn-remove-hidden {
+  width: 24px;
+  height: 24px;
+}
+
+.btn-remove-hidden:hover {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+/* Hidden media item styling */
+.media-item--hidden {
+  display: none;
+}
+
+/* =============================================================================
+   Editor Cards (Collapsible Sections)
+   ============================================================================= */
+
+.editor-card {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-3);
+  overflow: hidden;
+}
+
+.editor-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-gray-50);
+  border: none;
+  border-bottom: 1px solid transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color var(--transition-fast);
+}
+
+.editor-card--open .editor-card__header {
+  border-bottom-color: var(--color-gray-200);
+}
+
+.editor-card__header:hover {
+  background: var(--color-gray-100);
+}
+
+.editor-card__header:focus {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--color-primary);
+}
+
+.editor-card__title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-gray-700);
+  margin: 0;
+}
+
+.editor-card__chevron {
+  color: var(--color-gray-400);
+  transition: transform var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.editor-card--open .editor-card__chevron {
+  transform: rotate(180deg);
+}
+
+.editor-card__content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+  padding: 0 var(--space-4);
+}
+
+.editor-card--open .editor-card__content {
+  max-height: 1000px;
+  padding: var(--space-4);
+}
+
+/* Background Cards (Color & Image) */
+.bg-color-container,
+.bg-image-container {
+  min-height: 60px;
+}
+
+.bg-color-container {
+  /* Placeholder for background color picker */
+}
+
+.bg-image-container {
+  /* Placeholder for background image chooser */
+}
+
+/* Image Count Selector in Hero Image Card */
+.image-count-selector-container {
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
 /* ========================================
    Animations & Transitions
    ======================================== */

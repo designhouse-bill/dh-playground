@@ -306,6 +306,11 @@
       border: 1px solid var(--surface-border);
       border-radius: var(--border-radius-lg);
       overflow: hidden;
+      margin-bottom: var(--spacing-3);
+    }
+
+    .editor-card:last-child {
+      margin-bottom: 0;
     }
 
     .editor-card__header {
@@ -315,6 +320,39 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+    }
+
+    /* Collapsible card header as button */
+    .editor-card__header--toggle {
+      width: 100%;
+      border: none;
+      cursor: pointer;
+      transition: background-color var(--transition-fast);
+    }
+
+    .editor-card__header--toggle:hover {
+      background: var(--surface-hover);
+    }
+
+    .editor-card__header--toggle:focus {
+      outline: none;
+      box-shadow: inset 0 0 0 2px var(--primary-color);
+    }
+
+    /* Chevron rotation */
+    .editor-card__chevron {
+      color: var(--text-color-muted);
+      transition: transform var(--transition-fast);
+      flex-shrink: 0;
+    }
+
+    .editor-card--open .editor-card__chevron {
+      transform: rotate(180deg);
+    }
+
+    /* Collapsed state - hide border bottom */
+    .editor-card--collapsible:not(.editor-card--open) .editor-card__header {
+      border-bottom-color: transparent;
     }
 
     .editor-card__title {
@@ -333,10 +371,26 @@
       padding: var(--spacing-4);
     }
 
+    /* Collapsible body */
+    .editor-card__body--collapsible {
+      max-height: 0;
+      overflow: hidden;
+      padding: 0 var(--spacing-4);
+      transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+    }
+
+    .editor-card--open .editor-card__body--collapsible {
+      max-height: 1000px;
+      padding: var(--spacing-4);
+    }
+
     /* Scrollable card body */
     .editor-card--scrollable {
       display: flex;
       flex-direction: column;
+    }
+
+    .editor-card--scrollable.editor-card--open {
       max-height: 400px;
     }
 
@@ -344,6 +398,25 @@
       flex: 1;
       overflow-y: auto;
       max-height: 300px;
+    }
+
+    /* Image Count Selector in Hero Image card */
+    .image-count-selector-wrapper {
+      margin-bottom: var(--spacing-3);
+      padding-bottom: var(--spacing-3);
+      border-bottom: 1px solid var(--surface-border);
+    }
+
+    .image-count-selector-wrapper .form-label {
+      display: block;
+      font-size: var(--font-size-xs);
+      font-weight: 500;
+      color: var(--text-color-secondary);
+      margin-bottom: var(--spacing-2);
+    }
+
+    .layers-list-wrapper {
+      /* Wrapper for layers list within Hero Image card */
     }
 
     /* Layers list in card */
@@ -597,43 +670,81 @@
       <!-- Content -->
       <div class="app-content">
         <div class="content-grid content-grid--4col">
-          <!-- Column 1: Background -->
+          <!-- Column 1: Background Color + Background Image -->
           <div class="editor-column editor-column--background">
-            <div class="editor-card">
-              <div class="editor-card__header">
-                <h3 class="editor-card__title">Background</h3>
+            <!-- Background Color Card -->
+            <div class="editor-card editor-card--collapsible editor-card--open" id="bg-color-card">
+              <button class="editor-card__header editor-card__header--toggle" aria-expanded="true" aria-controls="bg-color-content">
+                <h3 class="editor-card__title">Background Color</h3>
+                <svg class="editor-card__chevron" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M4 6l4 4 4-4H4z"/>
+                </svg>
+              </button>
+              <div class="editor-card__body editor-card__body--collapsible" id="bg-color-content">
+                <div id="background-color-container"></div>
               </div>
-              <div class="editor-card__body" id="background-chooser-container"></div>
+            </div>
+
+            <!-- Background Image Card -->
+            <div class="editor-card editor-card--collapsible editor-card--open" id="bg-image-card">
+              <button class="editor-card__header editor-card__header--toggle" aria-expanded="true" aria-controls="bg-image-content">
+                <h3 class="editor-card__title">Background Image</h3>
+                <svg class="editor-card__chevron" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M4 6l4 4 4-4H4z"/>
+                </svg>
+              </button>
+              <div class="editor-card__body editor-card__body--collapsible" id="bg-image-content">
+                <div id="background-chooser-container"></div>
+              </div>
             </div>
           </div>
 
-          <!-- Column 2: Quick Templates + Layers -->
+          <!-- Column 2: Hero Templates + Hero Image -->
           <div class="editor-column editor-column--templates">
-            <!-- Quick Templates Card -->
-            <div class="editor-card editor-card--scrollable">
-              <div class="editor-card__header">
-                <h3 class="editor-card__title">Quick Templates</h3>
-                <div class="image-count-selector" id="image-count-selector"></div>
+            <!-- Hero Templates Card -->
+            <div class="editor-card editor-card--collapsible editor-card--open editor-card--scrollable" id="hero-templates-card">
+              <button class="editor-card__header editor-card__header--toggle" aria-expanded="true" aria-controls="hero-templates-content">
+                <h3 class="editor-card__title">Hero Templates</h3>
+                <svg class="editor-card__chevron" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M4 6l4 4 4-4H4z"/>
+                </svg>
+              </button>
+              <div class="editor-card__body editor-card__body--collapsible editor-card__body--scroll" id="hero-templates-content">
+                <div id="template-strip-container"></div>
               </div>
-              <div class="editor-card__body editor-card__body--scroll" id="template-strip-container"></div>
             </div>
 
-            <!-- Layers Card -->
-            <div class="editor-card">
-              <div class="editor-card__header">
-                <h3 class="editor-card__title">Layers</h3>
+            <!-- Hero Image Card (formerly Layers) -->
+            <div class="editor-card editor-card--collapsible editor-card--open" id="hero-image-card">
+              <button class="editor-card__header editor-card__header--toggle" aria-expanded="true" aria-controls="hero-image-content">
+                <h3 class="editor-card__title">Hero Image</h3>
+                <svg class="editor-card__chevron" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M4 6l4 4 4-4H4z"/>
+                </svg>
+              </button>
+              <div class="editor-card__body editor-card__body--collapsible" id="hero-image-content">
+                <!-- Image Count Selector moved here -->
+                <div class="image-count-selector-wrapper">
+                  <label class="form-label">Image Count</label>
+                  <div class="image-count-selector" id="image-count-selector"></div>
+                </div>
+                <div class="layers-list-wrapper" id="layers-list"></div>
               </div>
-              <div class="editor-card__body" id="layers-list"></div>
             </div>
           </div>
 
-          <!-- Column 3: Adjustments -->
+          <!-- Column 3: Hero Adjustments -->
           <div class="editor-column editor-column--adjustments">
-            <div class="editor-card">
-              <div class="editor-card__header">
-                <h3 class="editor-card__title">Adjustments</h3>
+            <div class="editor-card editor-card--collapsible editor-card--open" id="hero-adjustments-card">
+              <button class="editor-card__header editor-card__header--toggle" aria-expanded="true" aria-controls="hero-adjustments-content">
+                <h3 class="editor-card__title">Hero Adjustments</h3>
+                <svg class="editor-card__chevron" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M4 6l4 4 4-4H4z"/>
+                </svg>
+              </button>
+              <div class="editor-card__body editor-card__body--collapsible" id="hero-adjustments-content">
+                <div id="slot-info"></div>
               </div>
-              <div class="editor-card__body" id="slot-info"></div>
             </div>
           </div>
 
@@ -703,6 +814,24 @@
   <script src="js/template-strip.js"></script>
   <script src="js/layout-panel.js"></script>
   <script src="js/background-chooser.js"></script>
+
+  <!-- Collapsible Editor Cards -->
+  <script>
+    // Initialize collapsible editor cards
+    document.addEventListener('DOMContentLoaded', () => {
+      const collapsibleCards = document.querySelectorAll('.editor-card--collapsible');
+
+      collapsibleCards.forEach(card => {
+        const header = card.querySelector('.editor-card__header--toggle');
+        if (!header) return;
+
+        header.addEventListener('click', () => {
+          const isOpen = card.classList.toggle('editor-card--open');
+          header.setAttribute('aria-expanded', isOpen);
+        });
+      });
+    });
+  </script>
 
   <!-- Main app -->
   <script src="js/app.js"></script>

@@ -142,11 +142,11 @@ class PreviewRenderer {
   /**
    * Create a preview item element
    * @param {number} index
-   * @param {string} imageSrc
+   * @param {string|Object} imageData - Either image src string or item object with image and objectFit
    * @param {Object} placement
    * @returns {HTMLElement}
    */
-  createItemElement(index, imageSrc, placement) {
+  createItemElement(index, imageData, placement) {
     const item = document.createElement('div');
     item.className = 'preview-item';
     item.setAttribute('data-index', index);
@@ -159,6 +159,12 @@ class PreviewRenderer {
       if (placement.gridRow) item.style.gridRow = placement.gridRow;
     }
 
+    // Handle both string (legacy) and object formats
+    const imageSrc = typeof imageData === 'string' ? imageData : imageData.image;
+    const itemObjectFit = typeof imageData === 'object' && imageData.objectFit
+      ? imageData.objectFit
+      : this.config.objectFit;
+
     // Create image element
     const img = document.createElement('img');
     img.src = imageSrc;
@@ -166,8 +172,8 @@ class PreviewRenderer {
     img.className = 'preview-item__image';
     img.draggable = false;
 
-    // Apply object-fit
-    img.style.objectFit = this.config.objectFit;
+    // Apply object-fit (per-item if specified, otherwise global)
+    img.style.objectFit = itemObjectFit;
 
     item.appendChild(img);
 
@@ -471,10 +477,21 @@ class PreviewRenderer {
 
   /**
    * Set images array
-   * @param {string[]} images
+   * @param {string[]|Object[]} images - Array of image strings or item objects
    */
   setImages(images) {
     this.config.images = images;
+    if (this.containerEl) {
+      this.render(this.containerEl);
+    }
+  }
+
+  /**
+   * Set items with full object data (image, objectFit, etc.)
+   * @param {Object[]} items - Array of item objects with image, objectFit properties
+   */
+  setItems(items) {
+    this.config.images = items;
     if (this.containerEl) {
       this.render(this.containerEl);
     }

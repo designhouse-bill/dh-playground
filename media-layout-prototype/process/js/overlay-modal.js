@@ -91,23 +91,65 @@ class OverlayModal {
     this.elements.leftColumn = document.createElement('div');
     this.elements.leftColumn.className = 'modal-left-column';
 
-    // Left column sections
-    const layoutSection = document.createElement('section');
-    layoutSection.className = 'modal-section';
-    layoutSection.innerHTML = '<h3 class="modal-section-title">Layout</h3>';
-    const layoutContainer = document.createElement('div');
-    layoutContainer.className = 'layout-selector-container';
-    layoutSection.appendChild(layoutContainer);
+    // Helper to create collapsible editor card
+    const createEditorCard = (id, title, isOpen = true) => {
+      const card = document.createElement('section');
+      card.className = `editor-card${isOpen ? ' editor-card--open' : ''}`;
+      card.id = id;
+      card.innerHTML = `
+        <button type="button" class="editor-card__header" aria-expanded="${isOpen}" aria-controls="${id}-content">
+          <h3 class="editor-card__title">${title}</h3>
+          <svg class="editor-card__chevron" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M4 6l4 4 4-4H4z"/>
+          </svg>
+        </button>
+        <div class="editor-card__content" id="${id}-content">
+        </div>
+      `;
+      // Toggle functionality
+      const header = card.querySelector('.editor-card__header');
+      header.addEventListener('click', () => {
+        const isExpanded = card.classList.toggle('editor-card--open');
+        header.setAttribute('aria-expanded', isExpanded);
+      });
+      return card;
+    };
 
-    const mediaSection = document.createElement('section');
-    mediaSection.className = 'modal-section modal-section-flex';
-    mediaSection.innerHTML = '<h3 class="modal-section-title">Media Items</h3>';
+    // Background Color Card
+    const bgColorCard = createEditorCard('bg-color-card', 'Background Color', false);
+    const bgColorContainer = document.createElement('div');
+    bgColorContainer.className = 'bg-color-container';
+    bgColorCard.querySelector('.editor-card__content').appendChild(bgColorContainer);
+
+    // Background Image Card
+    const bgImageCard = createEditorCard('bg-image-card', 'Background Image', false);
+    const bgImageContainer = document.createElement('div');
+    bgImageContainer.className = 'bg-image-container';
+    bgImageCard.querySelector('.editor-card__content').appendChild(bgImageContainer);
+
+    // Hero Templates Card (Quick Templates)
+    const templatesCard = createEditorCard('hero-templates-card', 'Hero Templates', true);
+    const templatesContainer = document.createElement('div');
+    templatesContainer.className = 'layout-selector-container';
+    templatesCard.querySelector('.editor-card__content').appendChild(templatesContainer);
+
+    // Hero Image Card (Media Items / Layers)
+    const heroImageCard = createEditorCard('hero-image-card', 'Hero Image', true);
+    const heroImageContent = heroImageCard.querySelector('.editor-card__content');
+    // Image count selector will be inside hero image card
+    const imageCountContainer = document.createElement('div');
+    imageCountContainer.className = 'image-count-selector-container';
+    imageCountContainer.id = 'modal-image-count-container';
+    heroImageContent.appendChild(imageCountContainer);
+    // Media list container
     const mediaContainer = document.createElement('div');
     mediaContainer.className = 'media-list-container';
-    mediaSection.appendChild(mediaContainer);
+    heroImageContent.appendChild(mediaContainer);
 
-    this.elements.leftColumn.appendChild(layoutSection);
-    this.elements.leftColumn.appendChild(mediaSection);
+    this.elements.leftColumn.appendChild(bgColorCard);
+    this.elements.leftColumn.appendChild(bgImageCard);
+    this.elements.leftColumn.appendChild(templatesCard);
+    this.elements.leftColumn.appendChild(heroImageCard);
 
     // Create right column (preview + adjustments)
     this.elements.rightColumn = document.createElement('div');
@@ -120,15 +162,14 @@ class OverlayModal {
     previewContainer.className = 'preview-container';
     previewSection.appendChild(previewContainer);
 
-    const adjustmentSection = document.createElement('section');
-    adjustmentSection.className = 'modal-section modal-adjustment-section';
-    adjustmentSection.innerHTML = '<h3 class="modal-section-title">Adjustments</h3>';
+    // Hero Adjustments Card
+    const adjustmentCard = createEditorCard('hero-adjustments-card', 'Hero Adjustments', true);
     const adjustmentContainer = document.createElement('div');
     adjustmentContainer.className = 'adjustment-panel-container';
-    adjustmentSection.appendChild(adjustmentContainer);
+    adjustmentCard.querySelector('.editor-card__content').appendChild(adjustmentContainer);
 
     this.elements.rightColumn.appendChild(previewSection);
-    this.elements.rightColumn.appendChild(adjustmentSection);
+    this.elements.rightColumn.appendChild(adjustmentCard);
 
     this.elements.body.appendChild(this.elements.leftColumn);
     this.elements.body.appendChild(this.elements.rightColumn);
@@ -156,15 +197,12 @@ class OverlayModal {
   }
 
   initializeComponents() {
-    // Initialize Layout Selector
+    // Initialize Layout Selector (Hero Templates)
     const layoutContainer = this.elements.leftColumn.querySelector('.layout-selector-container');
 
     // Create sub-containers for layout selector components
+    // Image count is now in the Hero Image card
     layoutContainer.innerHTML = `
-      <div class="selector-group">
-        <label class="selector-group__label">Image Count</label>
-        <div id="modal-image-count-container"></div>
-      </div>
       <div class="selector-group">
         <label class="selector-group__label">Layout Type</label>
         <div id="modal-layout-type-container"></div>
@@ -179,6 +217,15 @@ class OverlayModal {
       </div>
     `;
 
+    // Image count selector is now in Hero Image card
+    const imageCountContainer = this.elements.leftColumn.querySelector('#modal-image-count-container');
+    imageCountContainer.innerHTML = `
+      <div class="selector-group">
+        <label class="selector-group__label">Image Count</label>
+        <div id="modal-image-count-selector"></div>
+      </div>
+    `;
+
     this.components.layoutSelector = new LayoutSelector({
       cardSize: '2x2',
       imageCount: this.state.mediaItems.length || 3,
@@ -189,7 +236,7 @@ class OverlayModal {
     });
 
     this.components.layoutSelector.init({
-      imageCount: layoutContainer.querySelector('#modal-image-count-container'),
+      imageCount: imageCountContainer.querySelector('#modal-image-count-selector'),
       layoutType: layoutContainer.querySelector('#modal-layout-type-container'),
       emphasis: layoutContainer.querySelector('#modal-emphasis-container'),
       direction: layoutContainer.querySelector('#modal-direction-container')
@@ -204,7 +251,7 @@ class OverlayModal {
       onReorder: (items) => this.handleItemsReorder(items),
       onAdd: (item) => this.handleAddItem(),
       onRemove: (item) => this.handleRemoveItem(item.id),
-      onChange: () => {}
+      onChange: (data) => this.handleMediaListChange(data)
     });
     this.components.mediaList.init(mediaContainer, this.state.mediaItems);
 
@@ -313,10 +360,7 @@ class OverlayModal {
 
   handleItemsReorder(items) {
     this.state.mediaItems = items;
-    if (this.components.previewRenderer) {
-      this.components.previewRenderer.setImages(items.map(item => item.image));
-      this.components.previewRenderer.render();
-    }
+    this.updatePreviewWithItems();
 
     // Update position in adjustment panel if item is selected
     if (this.state.selectedItemId && this.components.adjustmentPanel) {
@@ -338,10 +382,7 @@ class OverlayModal {
     // The MediaList component handles adding via its modal
     // Just update our state when it notifies us
     this.state.mediaItems = this.components.mediaList.getItems();
-    if (this.components.previewRenderer) {
-      this.components.previewRenderer.setImages(this.state.mediaItems.map(item => item.image));
-      this.components.previewRenderer.render();
-    }
+    this.updatePreviewWithItems();
   }
 
   handleRemoveItem(itemId) {
@@ -349,10 +390,7 @@ class OverlayModal {
     this.state.mediaItems = this.components.mediaList.getItems();
     this.state.itemAdjustments.delete(itemId);
 
-    if (this.components.previewRenderer) {
-      this.components.previewRenderer.setImages(this.state.mediaItems.map(item => item.image));
-      this.components.previewRenderer.render();
-    }
+    this.updatePreviewWithItems();
 
     // Clear selection if removed item was selected
     if (this.state.selectedItemId === itemId) {
@@ -360,6 +398,32 @@ class OverlayModal {
       if (this.components.adjustmentPanel) {
         this.components.adjustmentPanel.clearSelection();
       }
+    }
+  }
+
+  /**
+   * Handle general media list changes (fit toggle, etc.)
+   */
+  handleMediaListChange(data) {
+    // Update state from media list
+    this.state.mediaItems = this.components.mediaList.getItems();
+
+    // Handle fit change specifically
+    if (data && data.fitChange) {
+      console.log('Fit changed:', data.fitChange);
+    }
+
+    this.updatePreviewWithItems();
+  }
+
+  /**
+   * Update preview with full item objects (includes objectFit per item)
+   */
+  updatePreviewWithItems() {
+    if (this.components.previewRenderer) {
+      // Pass full item objects so preview can use per-item objectFit
+      this.components.previewRenderer.setItems(this.state.mediaItems);
+      this.components.previewRenderer.render();
     }
   }
 

@@ -1,0 +1,495 @@
+/* =============================================================================
+   Layout Panel Component
+   Slide-up panel with Quick Set and Advanced views
+   ============================================================================= */
+
+/* Panel Overlay (backdrop) */
+.layout-panel-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 900;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-base);
+}
+
+.layout-panel-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Panel Container */
+.layout-panel {
+  position: fixed;
+  bottom: 0;
+  left: var(--sidebar-width);
+  right: 0;
+  background: var(--surface-card);
+  border-top: 1px solid var(--surface-border);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 950;
+  transform: translateY(100%);
+  transition: transform var(--transition-base), height var(--transition-base);
+  display: flex;
+  flex-direction: column;
+}
+
+.layout-panel.active {
+  transform: translateY(0);
+}
+
+/* Panel States */
+.layout-panel[data-state="collapsed"] {
+  height: var(--panel-collapsed);
+}
+
+.layout-panel[data-state="quick"] {
+  height: var(--panel-quick);
+}
+
+.layout-panel[data-state="advanced"] {
+  height: var(--panel-advanced);
+}
+
+/* Panel Header / Tab Bar */
+.layout-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--spacing-4);
+  height: var(--panel-collapsed);
+  min-height: var(--panel-collapsed);
+  border-bottom: 1px solid var(--surface-border);
+  background: var(--surface-section);
+  cursor: pointer;
+}
+
+.layout-panel__header:hover {
+  background: var(--surface-hover);
+}
+
+.layout-panel__title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.layout-panel__title i {
+  color: var(--primary-color);
+}
+
+/* View Toggle Tabs */
+.layout-panel__tabs {
+  display: flex;
+  gap: var(--spacing-1);
+}
+
+.layout-panel__tab {
+  padding: var(--spacing-2) var(--spacing-4);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--text-color-secondary);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.layout-panel__tab:hover {
+  color: var(--text-color);
+  background: var(--surface-hover);
+}
+
+.layout-panel__tab.active {
+  color: var(--primary-color);
+  background: var(--primary-color-light);
+  border-color: var(--primary-color);
+}
+
+/* Header Actions */
+.layout-panel__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.layout-panel__close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--text-color-secondary);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.layout-panel__close:hover {
+  background: var(--surface-hover);
+  color: var(--text-color);
+}
+
+/* Panel Body */
+.layout-panel__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-4);
+}
+
+/* Panel Footer */
+.layout-panel__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-top: 1px solid var(--surface-border);
+  background: var(--surface-ground);
+}
+
+/* =============================================================================
+   Quick View Layout
+   ============================================================================= */
+
+.quick-view {
+  display: none;
+}
+
+.quick-view.active {
+  display: block;
+}
+
+.quick-view__row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-6);
+}
+
+.quick-view__section {
+  flex: 1;
+}
+
+.quick-view__section-title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: var(--spacing-3);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.quick-view__section-title i {
+  color: var(--text-color-muted);
+}
+
+/* Quick Size Selector */
+.quick-size-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-2);
+}
+
+.quick-size-btn {
+  padding: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--text-color-secondary);
+  background: var(--surface-section);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.quick-size-btn:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.quick-size-btn.active {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+/* Quick Image Count */
+.quick-count-row {
+  display: flex;
+  gap: var(--spacing-2);
+}
+
+.quick-count-btn {
+  flex: 1;
+  padding: var(--spacing-2);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--text-color-secondary);
+  background: var(--surface-section);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.quick-count-btn:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.quick-count-btn.active {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+/* Quick Preview Thumbnail */
+.quick-preview {
+  width: 200px;
+  min-width: 200px;
+  aspect-ratio: 1;
+  background: var(--surface-ground);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--surface-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.quick-preview__card {
+  transform: scale(0.5);
+  transform-origin: center;
+}
+
+/* =============================================================================
+   Advanced View Layout
+   ============================================================================= */
+
+.advanced-view {
+  display: none;
+}
+
+.advanced-view.active {
+  display: block;
+}
+
+.advanced-view__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 280px;
+  gap: var(--spacing-6);
+}
+
+@media (max-width: 1200px) {
+  .advanced-view__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .advanced-view__preview {
+    display: none;
+  }
+}
+
+.advanced-view__section {
+  background: var(--surface-section);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-4);
+}
+
+.advanced-view__section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-4);
+  padding-bottom: var(--spacing-3);
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.advanced-view__section-title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.advanced-view__section-title i {
+  color: var(--primary-color);
+}
+
+/* Slot List in Advanced View */
+.slot-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.slot-list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--surface-ground);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.slot-list-item:hover {
+  border-color: var(--primary-color);
+}
+
+.slot-list-item.selected {
+  border-color: var(--primary-color);
+  background: var(--primary-color-light);
+}
+
+.slot-list-item__drag {
+  color: var(--text-color-muted);
+  cursor: grab;
+}
+
+.slot-list-item__thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+  background: var(--surface-section);
+}
+
+.slot-list-item__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.slot-list-item__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.slot-list-item__name {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slot-list-item__meta {
+  font-size: var(--font-size-xs);
+  color: var(--text-color-muted);
+}
+
+.slot-list-item__layer {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--text-color-muted);
+  background: var(--surface-section);
+  padding: 2px 8px;
+  border-radius: var(--border-radius-sm);
+}
+
+/* Emphasis Selector */
+.emphasis-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-2);
+}
+
+.emphasis-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-1);
+  padding: var(--spacing-3);
+  background: var(--surface-section);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.emphasis-btn:hover {
+  border-color: var(--primary-color);
+}
+
+.emphasis-btn.active {
+  border-color: var(--primary-color);
+  background: var(--primary-color-light);
+}
+
+.emphasis-btn__icon {
+  font-size: 1.5rem;
+  color: var(--text-color-muted);
+}
+
+.emphasis-btn.active .emphasis-btn__icon {
+  color: var(--primary-color);
+}
+
+.emphasis-btn__label {
+  font-size: var(--font-size-xs);
+  color: var(--text-color-secondary);
+}
+
+/* Advanced Preview */
+.advanced-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-ground);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-4);
+  min-height: 300px;
+}
+
+.advanced-preview__label {
+  font-size: var(--font-size-xs);
+  color: var(--text-color-muted);
+  margin-top: var(--spacing-3);
+}
+
+/* =============================================================================
+   Responsive
+   ============================================================================= */
+
+@media (max-width: 768px) {
+  .layout-panel {
+    left: 0;
+  }
+
+  .layout-panel[data-state="quick"] {
+    height: 60vh;
+  }
+
+  .layout-panel[data-state="advanced"] {
+    height: 80vh;
+  }
+
+  .quick-view__row {
+    flex-direction: column;
+  }
+
+  .quick-preview {
+    width: 100%;
+    max-width: 200px;
+    margin: 0 auto;
+  }
+
+  .advanced-view__grid {
+    grid-template-columns: 1fr;
+  }
+}

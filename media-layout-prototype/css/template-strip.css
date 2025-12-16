@@ -1,0 +1,275 @@
+/* =============================================================================
+   Template Strip Component
+   One-click template selection for Quick Set view
+   ============================================================================= */
+
+.template-strip {
+  background: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-4);
+}
+
+.template-strip__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-3);
+}
+
+.template-strip__title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.template-strip__title i {
+  color: var(--primary-color);
+}
+
+.template-strip__info {
+  font-size: var(--font-size-xs);
+  color: var(--text-color-muted);
+}
+
+/* Scrollable container */
+.template-strip__scroll {
+  display: flex;
+  gap: var(--spacing-2);
+  overflow-x: auto;
+  padding-bottom: var(--spacing-2);
+  margin-bottom: calc(var(--spacing-2) * -1);
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface-border) transparent;
+}
+
+.template-strip__scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.template-strip__scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.template-strip__scroll::-webkit-scrollbar-thumb {
+  background: var(--surface-border);
+  border-radius: 3px;
+}
+
+.template-strip__scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--text-color-muted);
+}
+
+/* Template Card */
+.template-card {
+  flex-shrink: 0;
+  width: 88px;
+  background: var(--surface-section);
+  border: 2px solid var(--surface-border);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-2);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.template-card:hover {
+  border-color: var(--primary-color);
+  background: var(--primary-color-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.template-card:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.template-card--selected {
+  border-color: var(--primary-color);
+  background: var(--primary-color-light);
+  box-shadow: var(--shadow);
+}
+
+.template-card--selected .template-card__label {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.template-card--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Template Preview - Absolute positioning container */
+.template-card__preview {
+  width: 64px;
+  height: 64px;
+  background: var(--surface-ground);
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Background hint for lifestyle templates */
+.template-card__bg-hint {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--category-produce) 0%, var(--category-produce-light) 100%);
+  opacity: 0.4;
+}
+
+/* Preview slots - absolutely positioned */
+.template-card__slot {
+  background: var(--primary-color);
+  border-radius: 3px;
+  opacity: 0.5;
+  transform-origin: center center;
+}
+
+.template-card__slot--hero {
+  opacity: 0.85;
+  background: var(--primary-color);
+}
+
+/* Template Label */
+.template-card__label {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-color-secondary);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Badge for popular templates */
+.template-card__badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: var(--green-500);
+  color: white;
+  font-size: 8px;
+  font-weight: 700;
+  padding: 2px 4px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+/* Template Categories (for advanced view) */
+.template-categories {
+  display: flex;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-3);
+  flex-wrap: wrap;
+}
+
+.template-category-btn {
+  padding: var(--spacing-1) var(--spacing-3);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--text-color-secondary);
+  background: var(--surface-section);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.template-category-btn:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.template-category-btn--active {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+/* Template Grid (for advanced view and compact mode) */
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+  gap: var(--spacing-3);
+}
+
+/* Compact mode for editor card */
+.template-strip--compact {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.template-strip--compact .template-grid {
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: var(--spacing-2);
+}
+
+/* Empty state */
+.template-strip__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-6);
+  color: var(--text-color-muted);
+  text-align: center;
+}
+
+.template-strip__empty i {
+  font-size: 2rem;
+  margin-bottom: var(--spacing-2);
+  opacity: 0.5;
+}
+
+.template-strip__empty-text {
+  font-size: var(--font-size-sm);
+}
+
+/* Keyboard navigation indicator */
+.template-card[data-key]::after {
+  content: attr(data-key);
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text-color-muted);
+  background: var(--surface-ground);
+  padding: 1px 4px;
+  border-radius: 3px;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.template-strip:focus-within .template-card[data-key]::after {
+  opacity: 1;
+}
+
+/* Animation for template selection */
+@keyframes template-select-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(59, 130, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+.template-card--just-selected {
+  animation: template-select-pulse 0.4s ease-out;
+}

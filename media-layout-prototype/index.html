@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Media Layout Prototype</title>
+
+  <!-- PrimeIcons -->
+  <link rel="stylesheet" href="https://unpkg.com/primeicons@6.0.1/primeicons.css">
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="css/primeng-overrides.css">
+  <link rel="stylesheet" href="css/template-strip.css">
+  <link rel="stylesheet" href="css/layout-panel.css">
+  <link rel="stylesheet" href="css/background-chooser.css">
+
+  <!-- Process CSS (reference) -->
+  <link rel="stylesheet" href="process/css/tokens.css">
+
+  <style>
+    /* Additional page-specific styles */
+
+    /* Preview Area - Absolute positioning for overlapping slots */
+    .preview-area {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: visible;
+    }
+
+    /* Preview Slot - Square, positioned absolutely, can overlap */
+    .preview-slot {
+      position: absolute;
+      cursor: pointer;
+      transition: box-shadow var(--transition-fast), outline var(--transition-fast);
+      outline: 2px solid transparent;
+      outline-offset: 2px;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      background: transparent;
+    }
+
+    .preview-slot:hover {
+      outline-color: rgba(59, 130, 246, 0.4);
+    }
+
+    .preview-slot.selected {
+      outline-color: var(--primary-color);
+      outline-width: 3px;
+      box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.15), var(--shadow-lg);
+    }
+
+    .preview-slot img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      pointer-events: none;
+    }
+
+    /* Z-index badge */
+    .preview-slot__layer {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+      pointer-events: none;
+    }
+
+    .preview-empty {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface-hover);
+      border-radius: var(--border-radius-md);
+    }
+
+    /* Preview container centering */
+    #preview-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 450px;
+      background: var(--surface-ground);
+      border-radius: var(--border-radius-lg);
+      padding: var(--spacing-6);
+    }
+
+    /* Image Count Selector */
+    .image-count-selector {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-2);
+    }
+
+    .image-count-selector .p-selectbutton {
+      flex-wrap: nowrap;
+    }
+
+    /* Card Size Grid - 3x3 layout */
+    .card-size-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-2);
+    }
+
+    .card-size-btn {
+      padding: var(--spacing-2) var(--spacing-3);
+      font-family: var(--font-family);
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      border: 1px solid var(--surface-border);
+      border-radius: var(--border-radius);
+      background: var(--surface-section);
+      color: var(--text-color-secondary);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .card-size-btn:hover {
+      border-color: var(--primary-color);
+      background: var(--surface-hover);
+    }
+
+    .card-size-btn--selected {
+      background: var(--primary-color);
+      border-color: var(--primary-color);
+      color: white;
+    }
+
+    /* Image picker modal */
+    .image-picker-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all var(--transition-base);
+    }
+
+    .image-picker-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .image-picker-modal {
+      background: var(--surface-card);
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--shadow-xl);
+      width: 90%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transform: scale(0.95);
+      transition: transform var(--transition-base);
+    }
+
+    .image-picker-overlay.active .image-picker-modal {
+      transform: scale(1);
+    }
+
+    .image-picker-header {
+      padding: var(--spacing-4);
+      border-bottom: 1px solid var(--surface-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .image-picker-header h3 {
+      margin: 0;
+      font-size: var(--font-size-lg);
+    }
+
+    .image-picker-body {
+      padding: var(--spacing-4);
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .image-picker-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-3);
+    }
+
+    .image-picker-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-2);
+      padding: var(--spacing-3);
+      border: 2px solid var(--surface-border);
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .image-picker-item:hover {
+      border-color: var(--primary-color);
+      background: var(--primary-color-light);
+    }
+
+    .image-picker-item img {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      border-radius: var(--border-radius-sm);
+    }
+
+    .image-picker-item span {
+      font-size: var(--font-size-xs);
+      text-align: center;
+      color: var(--text-color-secondary);
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Slider styling */
+    .p-slider-input {
+      width: 100%;
+      height: 6px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: var(--surface-border);
+      border-radius: 3px;
+      outline: none;
+    }
+
+    .p-slider-input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      background: white;
+      border: 2px solid var(--primary-color);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform var(--transition-fast);
+    }
+
+    .p-slider-input::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+    }
+
+    .p-slider-input::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      background: white;
+      border: 2px solid var(--primary-color);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    /* Disabled button style */
+    .p-button-disabled,
+    .p-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Content grid - Editor layout */
+    .content-grid {
+      display: grid;
+      gap: var(--spacing-4);
+    }
+
+    .content-grid--editor {
+      grid-template-columns: 320px 1fr;
+    }
+
+    /* 4-column layout using flexbox for equal widths */
+    .content-grid--4col {
+      display: flex;
+      gap: var(--spacing-4);
+      align-items: flex-start;
+    }
+
+    .editor-column {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-4);
+    }
+
+    /* Editor Cards */
+    .editor-card {
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--border-radius-lg);
+      overflow: hidden;
+    }
+
+    .editor-card__header {
+      padding: var(--spacing-3) var(--spacing-4);
+      border-bottom: 1px solid var(--surface-border);
+      background: var(--surface-section);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .editor-card__title {
+      margin: 0;
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .editor-card__subtitle {
+      font-size: var(--font-size-xs);
+      color: var(--text-color-muted);
+    }
+
+    .editor-card__body {
+      padding: var(--spacing-4);
+    }
+
+    /* Scrollable card body */
+    .editor-card--scrollable {
+      display: flex;
+      flex-direction: column;
+      max-height: 400px;
+    }
+
+    .editor-card__body--scroll {
+      flex: 1;
+      overflow-y: auto;
+      max-height: 300px;
+    }
+
+    /* Layers list in card */
+    .layers-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-1);
+    }
+
+    .layer-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-2);
+      padding: var(--spacing-2) var(--spacing-3);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--border-radius);
+      background: var(--surface-card);
+      cursor: pointer;
+      transition: background-color var(--transition-fast),
+                  box-shadow var(--transition-fast),
+                  border-color var(--transition-fast),
+                  opacity var(--transition-fast);
+      user-select: none;
+    }
+
+    .layer-item:hover {
+      background: var(--surface-hover);
+      border-color: var(--primary-color);
+    }
+
+    .layer-item:focus {
+      outline: none;
+      box-shadow: inset 0 0 0 2px var(--primary-color);
+    }
+
+    .layer-item--selected {
+      background: var(--primary-color-light);
+      border-color: var(--primary-color);
+      border-left-width: 3px;
+    }
+
+    .layer-item--selected:hover {
+      background: rgba(59, 130, 246, 0.15);
+    }
+
+    .layer-item--dragging {
+      opacity: 0.7;
+      box-shadow: var(--shadow-lg);
+      z-index: 100;
+    }
+
+    .layer-item--drop-target {
+      background: rgba(59, 130, 246, 0.1);
+      border: 2px dashed var(--primary-color);
+    }
+
+    /* Drag Handle */
+    .layer-item__drag-handle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 24px;
+      cursor: grab;
+      flex-shrink: 0;
+    }
+
+    .layer-item__drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .drag-dots {
+      display: grid;
+      grid-template-columns: repeat(2, 4px);
+      grid-template-rows: repeat(3, 4px);
+      gap: 2px;
+    }
+
+    .drag-dots span {
+      width: 4px;
+      height: 4px;
+      background: var(--text-color-muted);
+      border-radius: 50%;
+      transition: background-color var(--transition-fast);
+    }
+
+    .layer-item:hover .drag-dots span {
+      background: var(--text-color-secondary);
+    }
+
+    .layer-item__index {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface-ground);
+      border-radius: var(--border-radius-sm);
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-color-secondary);
+    }
+
+    .layer-item__thumb {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+      border-radius: var(--border-radius-sm);
+      background: var(--surface-ground);
+    }
+
+    .layer-item__name {
+      flex: 1;
+      font-size: var(--font-size-sm);
+      color: var(--text-color);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 1200px) {
+      .content-grid--4col {
+        flex-wrap: wrap;
+      }
+
+      .editor-column {
+        flex: 1 1 calc(50% - var(--spacing-4));
+        min-width: 280px;
+      }
+
+      .editor-column--preview {
+        flex: 1 1 100%;
+        order: -1;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .content-grid--4col {
+        flex-direction: column;
+      }
+
+      .editor-column {
+        flex: 1 1 100%;
+      }
+    }
+
+    /* Keyboard shortcuts help */
+    .keyboard-help {
+      position: fixed;
+      bottom: var(--spacing-4);
+      right: var(--spacing-4);
+      z-index: 100;
+    }
+
+    .keyboard-help-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--surface-dark);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: var(--font-size-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-lg);
+      transition: all var(--transition-fast);
+    }
+
+    .keyboard-help-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .keyboard-help-tooltip {
+      position: absolute;
+      bottom: 100%;
+      right: 0;
+      margin-bottom: var(--spacing-2);
+      background: var(--surface-dark);
+      color: var(--surface-dark-text);
+      padding: var(--spacing-4);
+      border-radius: var(--border-radius-md);
+      box-shadow: var(--shadow-xl);
+      min-width: 200px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all var(--transition-fast);
+    }
+
+    .keyboard-help:hover .keyboard-help-tooltip {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .keyboard-help-tooltip h4 {
+      margin: 0 0 var(--spacing-3) 0;
+      font-size: var(--font-size-sm);
+      color: var(--surface-dark-text-muted);
+    }
+
+    .keyboard-help-tooltip ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .keyboard-help-tooltip li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--spacing-1) 0;
+      font-size: var(--font-size-sm);
+    }
+
+    .keyboard-help-tooltip kbd {
+      background: var(--surface-dark-hover);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: var(--font-size-xs);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout app-layout--no-sidebar">
+    <!-- Main Content -->
+    <main class="app-main">
+      <!-- Header -->
+      <header class="app-header">
+        <div class="header-brand">
+          <div class="header-logo">
+            <i class="pi pi-image"></i>
+          </div>
+          <h1 class="header-title">Media Layout</h1>
+        </div>
+        <div class="header-actions">
+          <button class="p-button p-button-secondary" id="configure-layout-btn">
+            <i class="pi pi-cog"></i>
+            Configure Layout
+          </button>
+          <button class="p-button p-button-primary" id="export-config-btn">
+            <i class="pi pi-download"></i>
+            Export Config
+          </button>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <div class="app-content">
+        <div class="content-grid content-grid--4col">
+          <!-- Column 1: Background -->
+          <div class="editor-column editor-column--background">
+            <div class="editor-card">
+              <div class="editor-card__header">
+                <h3 class="editor-card__title">Background</h3>
+              </div>
+              <div class="editor-card__body" id="background-chooser-container"></div>
+            </div>
+          </div>
+
+          <!-- Column 2: Quick Templates + Layers -->
+          <div class="editor-column editor-column--templates">
+            <!-- Quick Templates Card -->
+            <div class="editor-card editor-card--scrollable">
+              <div class="editor-card__header">
+                <h3 class="editor-card__title">Quick Templates</h3>
+                <div class="image-count-selector" id="image-count-selector"></div>
+              </div>
+              <div class="editor-card__body editor-card__body--scroll" id="template-strip-container"></div>
+            </div>
+
+            <!-- Layers Card -->
+            <div class="editor-card">
+              <div class="editor-card__header">
+                <h3 class="editor-card__title">Layers</h3>
+              </div>
+              <div class="editor-card__body" id="layers-list"></div>
+            </div>
+          </div>
+
+          <!-- Column 3: Adjustments -->
+          <div class="editor-column editor-column--adjustments">
+            <div class="editor-card">
+              <div class="editor-card__header">
+                <h3 class="editor-card__title">Adjustments</h3>
+              </div>
+              <div class="editor-card__body" id="slot-info"></div>
+            </div>
+          </div>
+
+          <!-- Column 4: Preview + Card Size -->
+          <div class="editor-column editor-column--preview">
+            <div class="editor-card">
+              <div class="editor-card__header">
+                <h3 class="editor-card__title">Preview</h3>
+                <span class="editor-card__subtitle">Click on image slots to select</span>
+              </div>
+              <div class="editor-card__body" id="preview-container"></div>
+            </div>
+
+            <!-- Card Size Card -->
+            <div class="editor-card">
+              <div class="editor-card__header">
+                <h3 class="editor-card__title">Card Size</h3>
+              </div>
+              <div class="editor-card__body" id="card-size-selector"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Image Picker Modal -->
+  <div class="image-picker-overlay" id="image-picker-modal">
+    <div class="image-picker-modal">
+      <div class="image-picker-header">
+        <h3>Add Image</h3>
+        <button class="p-button p-button-text" id="close-picker-btn">
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+      <div class="image-picker-body">
+        <p class="text-muted text-sm mb-4">Select a product image to add:</p>
+        <div class="image-picker-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Layout Panel Container -->
+  <div id="layout-panel-container"></div>
+
+  <!-- Keyboard Shortcuts Help -->
+  <div class="keyboard-help">
+    <button class="keyboard-help-btn">?</button>
+    <div class="keyboard-help-tooltip">
+      <h4>Keyboard Shortcuts</h4>
+      <ul>
+        <li><span>Toggle Panel</span> <kbd>Cmd+M</kbd></li>
+        <li><span>Quick View</span> <kbd>Cmd+1</kbd></li>
+        <li><span>Advanced View</span> <kbd>Cmd+2</kbd></li>
+        <li><span>Close Panel</span> <kbd>Esc</kbd></li>
+        <li><span>Select Template</span> <kbd>1-9</kbd></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <!-- Load process scripts for constraints and templates -->
+  <script src="process/js/constraints.js"></script>
+  <script src="process/js/templates.js"></script>
+
+  <!-- Components -->
+  <script src="js/template-strip.js"></script>
+  <script src="js/layout-panel.js"></script>
+  <script src="js/background-chooser.js"></script>
+
+  <!-- Main app -->
+  <script src="js/app.js"></script>
+</body>
+</html>

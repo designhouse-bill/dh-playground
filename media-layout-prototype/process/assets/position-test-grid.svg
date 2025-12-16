@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900" width="900" height="900">
+  <!-- Position Test Grid - 9 sections for testing background-position -->
+
+  <!-- Row 1: Red shades -->
+  <rect x="0" y="0" width="300" height="300" fill="#FF6B6B"/>
+  <rect x="300" y="0" width="300" height="300" fill="#FF8E8E"/>
+  <rect x="600" y="0" width="300" height="300" fill="#FFB4B4"/>
+
+  <!-- Row 2: Green shades -->
+  <rect x="0" y="300" width="300" height="300" fill="#6BCB77"/>
+  <rect x="300" y="300" width="300" height="300" fill="#8ED99C"/>
+  <rect x="600" y="300" width="300" height="300" fill="#B4E7BE"/>
+
+  <!-- Row 3: Blue shades -->
+  <rect x="0" y="600" width="300" height="300" fill="#6B9FFF"/>
+  <rect x="300" y="600" width="300" height="300" fill="#8EB8FF"/>
+  <rect x="600" y="600" width="300" height="300" fill="#B4D1FF"/>
+
+  <!-- Grid lines -->
+  <line x1="300" y1="0" x2="300" y2="900" stroke="#333" stroke-width="3"/>
+  <line x1="600" y1="0" x2="600" y2="900" stroke="#333" stroke-width="3"/>
+  <line x1="0" y1="300" x2="900" y2="300" stroke="#333" stroke-width="3"/>
+  <line x1="0" y1="600" x2="900" y2="600" stroke="#333" stroke-width="3"/>
+
+  <!-- Border -->
+  <rect x="0" y="0" width="900" height="900" fill="none" stroke="#333" stroke-width="4"/>
+
+  <!-- Labels - Row 1 -->
+  <text x="150" y="120" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#fff">TOP LEFT</text>
+  <text x="150" y="180" text-anchor="middle" font-family="Arial, sans-serif" font-size="64" font-weight="900" fill="#fff">TL</text>
+
+  <text x="450" y="120" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#fff">TOP CENTER</text>
+  <text x="450" y="180" text-anchor="middle" font-family="Arial, sans-serif" font-size="64" font-weight="900" fill="#fff">TC</text>
+
+  <text x="750" y="120" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#8B0000">TOP RIGHT</text>
+  <text x="750" y="180" text-anchor="middle" font-family="Arial, sans-serif" font-size="64" font-weight="900" fill="#8B0000">TR</text>
+
+  <!-- Labels - Row 2 -->
+  <text x="150" y="420" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#fff">CENTER LEFT</text>
+  <text x="150" y="480" text-anchor="middle" font-family="Arial, sans-serif" font-size="64" font-weight="900" fill="#fff">CL</text>
+
+  <text x="450" y="420" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#1B4D1B">CENTER CENTER</text>
+  <text x="450" y="480" text-anchor="middle" font-family="Arial, sans-serif" font-size="64" font-weight="900" fill="#1B4D1B">CC</text>
+
+  <text x="750" y="420" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#1B4D1B">CENTER RIGHT</text>
+  <text x="750" y="480" text-anchor="middle" font-family="Arial, sans-serif" font-size="64" font-weight="900" fill="#1B4D1B">CR</text>
+
+  <!-- Labels - Row 3 -->
+  <text x="150" y="720" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#fff">BOTTOM LEFT</text>
+  <text x="150" y="780" text-anchor="middle" font-family="Arial, sans-serif" font-size="64" font-weight="900" fill="#fff">BL</text>
+
+  <text x="450" y="720" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#1B1B4D">BOTTOM CENTER</text>
+  <text x="450" y="780" text-anchor="middle" font-family="Arial, sans-serif" font-size="64" font-weight="900" fill="#1B1B4D">BC</text>
+
+  <text x="750" y="720" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#1B1B4D">BOTTOM RIGHT</text>
+  <text x="750" y="780" text-anchor="middle" font-family="Arial, sans-serif" font-size="64" font-weight="900" fill="#1B1B4D">BR</text>
+</svg>

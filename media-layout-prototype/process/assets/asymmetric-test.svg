@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300" width="600" height="300">
+  <!-- Asymmetric Test Image (2:1 aspect ratio) - For testing background-size and cropping -->
+
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f5f5f5"/>
+      <stop offset="100%" style="stop-color:#e0e0e0"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="600" height="300" fill="url(#bgGradient)"/>
+
+  <!-- Quadrants with transparent overlays -->
+  <rect x="0" y="0" width="300" height="150" fill="rgba(255, 107, 107, 0.3)"/>
+  <rect x="300" y="0" width="300" height="150" fill="rgba(107, 203, 119, 0.3)"/>
+  <rect x="0" y="150" width="300" height="150" fill="rgba(107, 159, 255, 0.3)"/>
+  <rect x="300" y="150" width="300" height="150" fill="rgba(155, 89, 182, 0.3)"/>
+
+  <!-- Corner circles with labels -->
+  <!-- Top Left - Red -->
+  <circle cx="150" cy="75" r="50" fill="#FF6B6B"/>
+  <text x="150" y="68" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#fff">TL</text>
+  <text x="150" y="88" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#fff">RED</text>
+
+  <!-- Top Right - Green -->
+  <circle cx="450" cy="75" r="50" fill="#6BCB77"/>
+  <text x="450" y="68" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#fff">TR</text>
+  <text x="450" y="88" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#fff">GREEN</text>
+
+  <!-- Bottom Left - Blue -->
+  <circle cx="150" cy="225" r="50" fill="#6B9FFF"/>
+  <text x="150" y="218" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#fff">BL</text>
+  <text x="150" y="238" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#fff">BLUE</text>
+
+  <!-- Bottom Right - Purple -->
+  <circle cx="450" cy="225" r="50" fill="#9B59B6"/>
+  <text x="450" y="218" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#fff">BR</text>
+  <text x="450" y="238" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#fff">PURPLE</text>
+
+  <!-- Dimension indicator -->
+  <text x="300" y="290" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#666">600 x 300 (2:1 aspect ratio)</text>
+
+  <!-- Border -->
+  <rect x="0" y="0" width="600" height="300" fill="none" stroke="#333" stroke-width="4"/>
+</svg>

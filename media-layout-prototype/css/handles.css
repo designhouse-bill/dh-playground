@@ -1,0 +1,337 @@
+/**
+ * Direct Manipulation Handles Styles
+ *
+ * Styles for selection handles, resize corners, and rotation handle.
+ * Only loaded when drag/resize/rotate is enabled.
+ *
+ * @module handles.css
+ */
+
+/* =============================================================================
+   Container State
+   ============================================================================= */
+
+.direct-manipulation-enabled {
+  cursor: default;
+}
+
+.direct-manipulation-enabled .hero-preview__cell {
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* =============================================================================
+   Selected Cell
+   ============================================================================= */
+
+.hero-preview__cell--dm-selected {
+  z-index: 100 !important;
+  outline: 2px solid var(--color-primary, #3b82f6);
+  outline-offset: 0;
+}
+
+/* =============================================================================
+   Handles Container
+   ============================================================================= */
+
+.dm-handles {
+  position: absolute;
+  inset: -8px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* =============================================================================
+   Base Handle Style
+   ============================================================================= */
+
+.dm-handle {
+  position: absolute;
+  pointer-events: auto;
+  background: white;
+  border: 2px solid var(--color-primary, #3b82f6);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.dm-handle:hover {
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+}
+
+.dm-handle:active {
+  transform: scale(1.1);
+}
+
+/* =============================================================================
+   Resize Handles (Corner)
+   ============================================================================= */
+
+.dm-handle--resize {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.dm-handle--resize[data-corner="nw"] {
+  top: 0;
+  left: 0;
+  cursor: nwse-resize;
+}
+
+.dm-handle--resize[data-corner="ne"] {
+  top: 0;
+  right: 0;
+  cursor: nesw-resize;
+}
+
+.dm-handle--resize[data-corner="sw"] {
+  bottom: 0;
+  left: 0;
+  cursor: nesw-resize;
+}
+
+.dm-handle--resize[data-corner="se"] {
+  bottom: 0;
+  right: 0;
+  cursor: nwse-resize;
+}
+
+/* =============================================================================
+   Rotation Handle
+   ============================================================================= */
+
+.dm-handle--rotate {
+  top: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  cursor: grab;
+  background: white;
+  border: 2px solid var(--color-primary, #3b82f6);
+}
+
+.dm-handle--rotate:active {
+  cursor: grabbing;
+}
+
+/* Rotation icon inside handle */
+.dm-handle--rotate::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  transform: translate(-50%, -50%);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%233b82f6'%3E%3Cpath d='M8 3a5 5 0 00-4.546 2.914.5.5 0 01-.908-.418A6 6 0 018 2v1zm0 0V1.5a.5.5 0 011 0V3a5 5 0 014.546 2.914.5.5 0 11-.908.418A4 4 0 008 3z'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+/* =============================================================================
+   Rotation Line (connects handle to cell)
+   ============================================================================= */
+
+.dm-handle-rotation-line {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  width: 2px;
+  height: 12px;
+  background: var(--color-primary, #3b82f6);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+/* =============================================================================
+   Edge Handles (Optional - for future edge resize)
+   ============================================================================= */
+
+.dm-handle--edge-n,
+.dm-handle--edge-s {
+  width: 24px;
+  height: 6px;
+  border-radius: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.dm-handle--edge-n {
+  top: 0;
+  cursor: ns-resize;
+}
+
+.dm-handle--edge-s {
+  bottom: 0;
+  cursor: ns-resize;
+}
+
+.dm-handle--edge-e,
+.dm-handle--edge-w {
+  width: 6px;
+  height: 24px;
+  border-radius: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.dm-handle--edge-e {
+  right: 0;
+  cursor: ew-resize;
+}
+
+.dm-handle--edge-w {
+  left: 0;
+  cursor: ew-resize;
+}
+
+/* =============================================================================
+   During Drag States
+   ============================================================================= */
+
+.dm-dragging {
+  cursor: grabbing !important;
+}
+
+.dm-dragging .hero-preview__cell {
+  cursor: grabbing !important;
+}
+
+.dm-resizing .hero-preview__cell {
+  cursor: nwse-resize !important;
+}
+
+.dm-rotating .hero-preview__cell {
+  cursor: grabbing !important;
+}
+
+/* =============================================================================
+   Keyboard Focus States
+   ============================================================================= */
+
+.dm-handle:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4);
+}
+
+.hero-preview__cell--dm-selected:focus-visible {
+  outline: 2px solid var(--color-primary, #3b82f6);
+  outline-offset: 2px;
+}
+
+/* =============================================================================
+   Reduced Motion
+   ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .dm-handle {
+    transition: none;
+  }
+
+  .dm-handle:active {
+    transform: none;
+  }
+}
+
+/* =============================================================================
+   Tooltip Hints (Optional)
+   ============================================================================= */
+
+.dm-handle--rotate::after {
+  content: 'Rotate';
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 2px 6px;
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  font-size: 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.dm-handle--rotate:hover::after {
+  opacity: 1;
+}
+
+.dm-handle--resize::after {
+  content: 'Resize';
+  position: absolute;
+  padding: 2px 6px;
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  font-size: 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.dm-handle--resize[data-corner="nw"]::after {
+  bottom: -20px;
+  right: -30px;
+}
+
+.dm-handle--resize[data-corner="ne"]::after {
+  bottom: -20px;
+  left: -30px;
+}
+
+.dm-handle--resize[data-corner="sw"]::after {
+  top: -20px;
+  right: -30px;
+}
+
+.dm-handle--resize[data-corner="se"]::after {
+  top: -20px;
+  left: -30px;
+}
+
+.dm-handle--resize:hover::after {
+  opacity: 1;
+}
+
+/* =============================================================================
+   Info Overlay (Shows current values during drag)
+   ============================================================================= */
+
+.dm-info-overlay {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 16px;
+  background: rgba(0, 0, 0, 0.85);
+  color: white;
+  font-size: 12px;
+  font-family: monospace;
+  border-radius: 6px;
+  pointer-events: none;
+  z-index: 10000;
+  display: none;
+}
+
+.dm-info-overlay--visible {
+  display: block;
+}
+
+.dm-info-overlay__row {
+  display: flex;
+  gap: 16px;
+}
+
+.dm-info-overlay__label {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.dm-info-overlay__value {
+  font-weight: bold;
+}

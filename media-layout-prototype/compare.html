@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hero Layout - Version Comparison</title>
+  <style>
+    :root {
+      --color-primary: #2563eb;
+      --color-primary-50: #eff6ff;
+      --color-primary-100: #dbeafe;
+      --color-primary-700: #1d4ed8;
+      --color-gray-50: #f9fafb;
+      --color-gray-100: #f3f4f6;
+      --color-gray-200: #e5e7eb;
+      --color-gray-300: #d1d5db;
+      --color-gray-400: #9ca3af;
+      --color-gray-500: #6b7280;
+      --color-gray-600: #4b5563;
+      --color-gray-700: #374151;
+      --color-gray-800: #1f2937;
+      --color-gray-900: #111827;
+      --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font-family);
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--color-gray-900);
+      background: var(--color-gray-50);
+    }
+
+    .page-header {
+      background: white;
+      border-bottom: 1px solid var(--color-gray-200);
+      padding: 1.5rem 2rem;
+    }
+
+    .page-header h1 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .page-header p {
+      margin: 0;
+      color: var(--color-gray-600);
+    }
+
+    .comparison-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      padding: 2rem;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .version-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .version-card__header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--color-gray-200);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .version-card__title {
+      margin: 0;
+      font-size: 1.125rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .version-badge {
+      display: inline-flex;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-radius: 4px;
+    }
+
+    .version-badge--slider {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .version-badge--drag {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .version-card__body {
+      padding: 1.5rem;
+    }
+
+    .version-card__preview {
+      aspect-ratio: 16 / 9;
+      background: var(--color-gray-100);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+
+    .version-card__preview iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .version-card__link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      background: var(--color-primary);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: background 0.15s ease;
+    }
+
+    .version-card__link:hover {
+      background: var(--color-primary-700);
+    }
+
+    .feature-list {
+      margin: 1.5rem 0 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.625rem 0;
+      border-bottom: 1px solid var(--color-gray-100);
+    }
+
+    .feature-list li:last-child {
+      border-bottom: none;
+    }
+
+    .feature-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .feature-icon--check {
+      color: #10b981;
+    }
+
+    .feature-icon--optional {
+      color: var(--color-gray-400);
+    }
+
+    .feature-text {
+      color: var(--color-gray-700);
+    }
+
+    .feature-text strong {
+      color: var(--color-gray-900);
+    }
+
+    /* Comparison Table */
+    .comparison-table-container {
+      padding: 0 2rem 2rem;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .comparison-table {
+      width: 100%;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      border-collapse: collapse;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+      padding: 1rem 1.5rem;
+      text-align: left;
+      border-bottom: 1px solid var(--color-gray-200);
+    }
+
+    .comparison-table th {
+      background: var(--color-gray-50);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-gray-600);
+    }
+
+    .comparison-table th:first-child {
+      width: 40%;
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .comparison-table td:not(:first-child) {
+      text-align: center;
+    }
+
+    .check-icon {
+      color: #10b981;
+    }
+
+    .cross-icon {
+      color: var(--color-gray-300);
+    }
+
+    /* Decision Section */
+    .decision-section {
+      padding: 0 2rem 3rem;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .decision-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      padding: 2rem;
+      color: white;
+    }
+
+    .decision-card h2 {
+      margin: 0 0 1rem 0;
+      font-size: 1.25rem;
+    }
+
+    .decision-card p {
+      margin: 0 0 1.5rem 0;
+      opacity: 0.9;
+    }
+
+    .decision-criteria {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .criteria-item {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+
+    .criteria-item h3 {
+      margin: 0 0 0.5rem 0;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .criteria-item p {
+      margin: 0;
+      font-size: 0.8125rem;
+      opacity: 0.85;
+    }
+  </style>
+</head>
+<body>
+  <header class="page-header">
+    <h1>Hero Layout Editor - Version Comparison</h1>
+    <p>Compare the slider-only version with the direct manipulation (drag/resize/rotate) version to decide which approach best fits your needs.</p>
+  </header>
+
+  <div class="comparison-container">
+    <!-- Slider Version -->
+    <div class="version-card">
+      <div class="version-card__header">
+        <h2 class="version-card__title">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="4" y1="21" x2="4" y2="14"/>
+            <line x1="4" y1="10" x2="4" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12" y2="3"/>
+            <line x1="20" y1="21" x2="20" y2="16"/>
+            <line x1="20" y1="12" x2="20" y2="3"/>
+            <line x1="1" y1="14" x2="7" y2="14"/>
+            <line x1="9" y1="8" x2="15" y2="8"/>
+            <line x1="17" y1="16" x2="23" y2="16"/>
+          </svg>
+          Slider Version
+          <span class="version-badge version-badge--slider">Simpler</span>
+        </h2>
+      </div>
+      <div class="version-card__body">
+        <div class="version-card__preview">
+          <iframe src="slider-version.html" title="Slider Version Preview"></iframe>
+        </div>
+        <a href="slider-version.html" class="version-card__link" target="_blank">
+          Open Slider Version
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
+            <polyline points="15,3 21,3 21,9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>
+
+        <ul class="feature-list">
+          <li>
+            <svg class="feature-icon feature-icon--check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20,6 9,17 4,12"/>
+            </svg>
+            <span class="feature-text"><strong>Precise numeric control</strong> - Sliders with exact values for position, scale, rotation</span>
+          </li>
+          <li>
+            <svg class="feature-icon feature-icon--check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20,6 9,17 4,12"/>
+            </svg>
+            <span class="feature-text"><strong>Simpler implementation</strong> - Less code, fewer edge cases</span>
+          </li>
+          <li>
+            <svg class="feature-icon feature-icon--check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20,6 9,17 4,12"/>
+            </svg>
+            <span class="feature-text"><strong>Keyboard accessible</strong> - Full control without mouse</span>
+          </li>
+          <li>
+            <svg class="feature-icon feature-icon--check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20,6 9,17 4,12"/>
+            </svg>
+            <span class="feature-text"><strong>Familiar pattern</strong> - Standard form controls users already know</span>
+          </li>
+          <li>
+            <svg class="feature-icon feature-icon--optional" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="15" y1="9" x2="9" y2="15"/>
+              <line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+            <span class="feature-text"><strong>Less intuitive</strong> - Requires mental mapping from sliders to preview</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Drag Version -->
+    <div class="version-card">
+      <div class="version-card__header">
+        <h2 class="version-card__title">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 14l-4 4 4 4 4-4-4-4z"/>
+            <path d="M10 10l4-4-4-4-4 4 4 4z"/>
+            <path d="M14 10l4-4-4-4-4 4 4 4z"/>
+            <path d="M10 14l-4 4 4 4 4-4-4-4z"/>
+          </svg>
+          Drag Version
+          <span class="version-badge version-badge--drag">Advanced</span>
+        </h2>
+      </div>
+      <div class="version-card__body">
+        <div class="version-card__preview">
+          <iframe src="drag-version.html" title="Drag Version Preview"></iframe>
+        </div>
+        <a href="drag-version.html" class="version-card__link" target="_blank">
+          Open Drag Version
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
+            <polyline points="15,3 21,3 21,9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>
+
+        <ul class="feature-list">
+          <li>
+            <svg class="feature-icon feature-icon--check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20,6 9,17 4,12"/>
+            </svg>
+            <span class="feature-text"><strong>Direct manipulation</strong> - Drag, resize, rotate directly in preview</span>
+          </li>
+          <li>
+            <svg class="feature-icon feature-icon--check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20,6 9,17 4,12"/>
+            </svg>
+            <span class="feature-text"><strong>More intuitive</strong> - WYSIWYG editing like design tools</span>
+          </li>
+          <li>
+            <svg class="feature-icon feature-icon--check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20,6 9,17 4,12"/>
+            </svg>
+            <span class="feature-text"><strong>Faster workflow</strong> - Quick adjustments without switching contexts</span>
+          </li>
+          <li>
+            <svg class="feature-icon feature-icon--check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20,6 9,17 4,12"/>
+            </svg>
+            <span class="feature-text"><strong>Two-way sync</strong> - Sliders update as you drag, and vice versa</span>
+          </li>
+          <li>
+            <svg class="feature-icon feature-icon--optional" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="15" y1="9" x2="9" y2="15"/>
+              <line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+            <span class="feature-text"><strong>More complex</strong> - Additional code, edge cases, testing needed</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feature Comparison Table -->
+  <div class="comparison-table-container">
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Slider Version</th>
+          <th>Drag Version</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Adjust position (X/Y offset)</td>
+          <td><svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg></td>
+          <td><svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg></td>
+        </tr>
+        <tr>
+          <td>Proportional scale</td>
+          <td><svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg></td>
+          <td><svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg></td>
+        </tr>
+        <tr>
+          <td>Rotation</td>
+          <td><svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg></td>
+          <td><svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg></td>
+        </tr>
+        <tr>
+          <td>Opacity control</td>
+          <td><svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg></td>
+          <td><svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg></td>
+        </tr>
+        <tr>
+          <td>Z-index / layer control</td>
+          <td><svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg></td>
+          <td><svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg></td>
+        </tr>
+        <tr>
+          <td>Content mode (cover/contain)</td>
+          <td><svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg></td>
+          <td><svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg></td>
+        </tr>
+        <tr>
+          <td>Template selection</td>
+          <td><svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg></td>
+          <td><svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg></td>
+        </tr>
+        <tr>
+          <td><strong>Direct drag in preview</strong></td>
+          <td><svg class="cross-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></td>
+          <td><svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg></td>
+        </tr>
+        <tr>
+          <td><strong>Corner resize handles</strong></td>
+          <td><svg class="cross-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></td>
+          <td><svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg></td>
+        </tr>
+        <tr>
+          <td><strong>Rotation handle</strong></td>
+          <td><svg class="cross-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></td>
+          <td><svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg></td>
+        </tr>
+        <tr>
+          <td><strong>Keyboard nudge shortcuts</strong></td>
+          <td><svg class="cross-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></td>
+          <td><svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg></td>
+        </tr>
+        <tr>
+          <td>Code complexity</td>
+          <td>Lower (~2000 LOC)</td>
+          <td>Higher (~2500 LOC)</td>
+        </tr>
+        <tr>
+          <td>Additional dependencies</td>
+          <td>None</td>
+          <td>handles.css, direct-manipulation.js</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Decision Section -->
+  <div class="decision-section">
+    <div class="decision-card">
+      <h2>Making Your Decision</h2>
+      <p>Both versions share the same core architecture and state management. The drag version adds ONE additional module. Consider these factors:</p>
+
+      <div class="decision-criteria">
+        <div class="criteria-item">
+          <h3>Choose Slider Version If...</h3>
+          <p>Your users prefer precise numeric control, you want simpler maintenance, or you need maximum accessibility compliance.</p>
+        </div>
+        <div class="criteria-item">
+          <h3>Choose Drag Version If...</h3>
+          <p>Your users expect design-tool-like interactions, workflow speed is critical, or you're building for desktop-only use.</p>
+        </div>
+        <div class="criteria-item">
+          <h3>Easy to Switch</h3>
+          <p>Because drag is modular, you can start with sliders and add drag later, or ship both and let users toggle their preference.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

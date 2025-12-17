@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hero Image Layout - Drag Version</title>
+  <link rel="stylesheet" href="css/handles.css">
+  <style>
+    /* =============================================================================
+       Design Tokens
+       ============================================================================= */
+    :root {
+      --color-primary: #2563eb;
+      --color-primary-hover: #1d4ed8;
+      --color-primary-50: #eff6ff;
+      --color-primary-100: #dbeafe;
+      --color-primary-200: #bfdbfe;
+      --color-primary-700: #1d4ed8;
+
+      --color-white: #ffffff;
+      --color-gray-50: #f9fafb;
+      --color-gray-100: #f3f4f6;
+      --color-gray-200: #e5e7eb;
+      --color-gray-300: #d1d5db;
+      --color-gray-400: #9ca3af;
+      --color-gray-500: #6b7280;
+      --color-gray-600: #4b5563;
+      --color-gray-700: #374151;
+      --color-gray-800: #1f2937;
+      --color-gray-900: #111827;
+
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+
+      --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+
+      --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      --transition-fast: 150ms ease;
+      --transition-base: 200ms ease;
+    }
+
+    /* =============================================================================
+       Base Styles
+       ============================================================================= */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font-family);
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--color-gray-900);
+      background: var(--color-gray-100);
+    }
+
+    /* =============================================================================
+       Layout
+       ============================================================================= */
+    .app-container {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-header {
+      background: white;
+      border-bottom: 1px solid var(--color-gray-200);
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .app-header h1 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--color-gray-800);
+    }
+
+    .app-header__badges {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .app-header__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.25rem 0.625rem;
+      background: var(--color-primary-50);
+      color: var(--color-primary-700);
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .app-header__badge--feature {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .app-main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 320px 1fr 320px;
+      gap: 1px;
+      background: var(--color-gray-200);
+    }
+
+    .panel {
+      background: white;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+
+    .panel__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 0.75rem;
+      margin-bottom: 0.75rem;
+      border-bottom: 1px solid var(--color-gray-200);
+    }
+
+    .panel__title {
+      margin: 0;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--color-gray-700);
+    }
+
+    /* =============================================================================
+       Preview Panel (Center)
+       ============================================================================= */
+    .preview-panel {
+      background: var(--color-gray-100);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .preview-panel__container {
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .preview-panel__card-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .preview-panel__card-size {
+      font-size: 0.875rem;
+      color: var(--color-gray-600);
+    }
+
+    .preview-panel__hint {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      padding: 0.75rem;
+      background: var(--color-primary-50);
+      border-radius: var(--radius-md);
+      font-size: 0.75rem;
+      color: var(--color-primary-700);
+    }
+
+    .preview-panel__hint svg {
+      flex-shrink: 0;
+    }
+
+    /* =============================================================================
+       Card Size Selector
+       ============================================================================= */
+    .card-size-selector {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .card-size-btn {
+      padding: 0.375rem 0.625rem;
+      background: white;
+      border: 1px solid var(--color-gray-300);
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .card-size-btn:hover {
+      border-color: var(--color-gray-400);
+      background: var(--color-gray-50);
+    }
+
+    .card-size-btn--active {
+      border-color: var(--color-primary);
+      background: var(--color-primary-50);
+      color: var(--color-primary-700);
+    }
+
+    /* =============================================================================
+       Adjustment Panel Styles
+       ============================================================================= */
+    .adjustment-panel__section {
+      margin-bottom: 1.25rem;
+    }
+
+    .adjustment-panel__section-title {
+      margin: 0 0 0.625rem 0;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--color-gray-500);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .adjustment-panel__placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1rem;
+      text-align: center;
+      color: var(--color-gray-400);
+    }
+
+    .adjustment-panel__placeholder-icon {
+      margin-bottom: 0.75rem;
+    }
+
+    .adjustment-panel__placeholder-text {
+      margin: 0;
+      font-size: 0.875rem;
+    }
+
+    /* =============================================================================
+       Slider Input Component
+       ============================================================================= */
+    .slider-input {
+      margin-bottom: 1rem;
+    }
+
+    .slider-input__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.375rem;
+    }
+
+    .slider-input__label {
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--color-gray-700);
+    }
+
+    .slider-input__value-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .slider-input__input {
+      width: 60px;
+      padding: 0.25rem 0.375rem;
+      border: 1px solid var(--color-gray-300);
+      border-radius: var(--radius-sm);
+      font-size: 0.8125rem;
+      text-align: right;
+    }
+
+    .slider-input__input:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 2px var(--color-primary-100);
+    }
+
+    .slider-input__unit {
+      font-size: 0.75rem;
+      color: var(--color-gray-500);
+      min-width: 1.25rem;
+    }
+
+    .slider-input__track-wrapper {
+      position: relative;
+      height: 20px;
+      display: flex;
+      align-items: center;
+    }
+
+    .slider-input__slider {
+      position: absolute;
+      width: 100%;
+      height: 6px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: transparent;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    .slider-input__slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      background: white;
+      border: 2px solid var(--color-primary);
+      border-radius: 50%;
+      cursor: grab;
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .slider-input__slider::-webkit-slider-thumb:active {
+      cursor: grabbing;
+    }
+
+    .slider-input__track {
+      position: absolute;
+      width: 100%;
+      height: 6px;
+      background: var(--color-gray-200);
+      border-radius: 3px;
+    }
+
+    .slider-input__fill {
+      position: absolute;
+      height: 6px;
+      background: var(--color-primary);
+      border-radius: 3px;
+      pointer-events: none;
+    }
+
+    /* =============================================================================
+       Selected Image Info
+       ============================================================================= */
+    .selected-image-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: var(--color-gray-50);
+      border-radius: var(--radius-md);
+      margin-bottom: 1rem;
+    }
+
+    .selected-image-info__thumbnail {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      background: var(--color-gray-200);
+    }
+
+    .selected-image-info__thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .selected-image-info__details {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .selected-image-info__name {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--color-gray-800);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .selected-image-info__position {
+      font-size: 0.75rem;
+      color: var(--color-gray-500);
+    }
+
+    .selected-image-info__reset {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.375rem 0.625rem;
+      background: white;
+      border: 1px solid var(--color-gray-300);
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      cursor: pointer;
+      color: var(--color-gray-600);
+      transition: all var(--transition-fast);
+    }
+
+    .selected-image-info__reset:hover {
+      border-color: var(--color-gray-400);
+      background: var(--color-gray-50);
+    }
+
+    /* =============================================================================
+       Keyboard Shortcuts Panel
+       ============================================================================= */
+    .shortcuts-panel {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--color-gray-200);
+    }
+
+    .shortcuts-panel__title {
+      margin: 0 0 0.75rem 0;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--color-gray-500);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .shortcuts-panel__list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .shortcut-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+    }
+
+    .shortcut-item__keys {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .shortcut-key {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 0.375rem;
+      background: var(--color-gray-100);
+      border: 1px solid var(--color-gray-300);
+      border-radius: 3px;
+      font-size: 0.625rem;
+      font-weight: 600;
+      color: var(--color-gray-600);
+    }
+
+    .shortcut-item__action {
+      color: var(--color-gray-600);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <h1>Hero Image Layout Editor</h1>
+      <div class="app-header__badges">
+        <span class="app-header__badge app-header__badge--feature">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
+          </svg>
+          Direct Manipulation
+        </span>
+        <span class="app-header__badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+          Drag Version
+        </span>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-main">
+      <!-- Left Panel: Media List + Template Selector -->
+      <aside class="panel panel--left">
+        <div class="panel__header">
+          <h2 class="panel__title">Images</h2>
+        </div>
+        <div id="media-list-container"></div>
+
+        <div class="panel__header" style="margin-top: 1.5rem;">
+          <h2 class="panel__title">Layout Template</h2>
+        </div>
+        <div id="template-selector-container"></div>
+      </aside>
+
+      <!-- Center Panel: Preview -->
+      <section class="preview-panel">
+        <div class="preview-panel__container">
+          <div class="preview-panel__card-info">
+            <span class="preview-panel__card-size">Card Size: <strong id="current-card-size">2x2</strong></span>
+            <div class="card-size-selector" id="card-size-selector">
+              <button class="card-size-btn" data-size="1x1">1x1</button>
+              <button class="card-size-btn" data-size="2x1">2x1</button>
+              <button class="card-size-btn" data-size="2x2">2x2</button>
+              <button class="card-size-btn" data-size="3x2">3x2</button>
+              <button class="card-size-btn" data-size="3x3">3x3</button>
+            </div>
+          </div>
+          <div id="preview-container"></div>
+          <div class="preview-panel__hint">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 16v-4M12 8h.01"/>
+            </svg>
+            <span>
+              <strong>Click</strong> to select, <strong>drag</strong> to move, <strong>corners</strong> to resize, <strong>top handle</strong> to rotate.
+              Hold <strong>Shift</strong> for 15-degree rotation snap.
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Panel: Adjustments -->
+      <aside class="panel panel--right">
+        <div class="panel__header">
+          <h2 class="panel__title">Image Adjustments</h2>
+        </div>
+        <div id="adjustment-panel-container"></div>
+
+        <!-- Keyboard Shortcuts -->
+        <div class="shortcuts-panel">
+          <h4 class="shortcuts-panel__title">Keyboard Shortcuts</h4>
+          <div class="shortcuts-panel__list">
+            <div class="shortcut-item">
+              <div class="shortcut-item__keys">
+                <span class="shortcut-key">Arrow</span>
+              </div>
+              <span class="shortcut-item__action">Nudge 1px</span>
+            </div>
+            <div class="shortcut-item">
+              <div class="shortcut-item__keys">
+                <span class="shortcut-key">Shift</span>
+                <span class="shortcut-key">Arrow</span>
+              </div>
+              <span class="shortcut-item__action">Nudge 10px</span>
+            </div>
+            <div class="shortcut-item">
+              <div class="shortcut-item__keys">
+                <span class="shortcut-key">[</span>
+                <span class="shortcut-key">]</span>
+              </div>
+              <span class="shortcut-item__action">Rotate 1deg</span>
+            </div>
+            <div class="shortcut-item">
+              <div class="shortcut-item__keys">
+                <span class="shortcut-key">Cmd/Ctrl</span>
+                <span class="shortcut-key">+/-</span>
+              </div>
+              <span class="shortcut-item__action">Scale 10%</span>
+            </div>
+            <div class="shortcut-item">
+              <div class="shortcut-item__keys">
+                <span class="shortcut-key">Esc</span>
+              </div>
+              <span class="shortcut-item__action">Deselect</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/templates-v2.js"></script>
+  <script src="js/hero-state.js"></script>
+  <script src="js/constraints.js"></script>
+  <script src="js/template-selector.js"></script>
+  <script src="js/media-list.js"></script>
+  <script src="js/preview-v2.js"></script>
+  <script src="js/direct-manipulation.js"></script>
+
+  <script>
+    // =============================================================================
+    // Slider Input Component (Inline for demo)
+    // =============================================================================
+    class SliderInput {
+      constructor(options) {
+        this.id = options.id || `slider-${Math.random().toString(36).substr(2, 9)}`;
+        this.label = options.label || 'Value';
+        this.min = options.min !== undefined ? options.min : 0;
+        this.max = options.max !== undefined ? options.max : 100;
+        this.step = options.step || 1;
+        this.value = options.value !== undefined ? options.value : this.min;
+        this.unit = options.unit || '';
+        this.onChange = options.onChange || (() => {});
+
+        this.element = null;
+        this.slider = null;
+        this.input = null;
+        this.fill = null;
+      }
+
+      render() {
+        const container = document.createElement('div');
+        container.className = 'slider-input';
+        container.id = this.id;
+
+        container.innerHTML = `
+          <div class="slider-input__header">
+            <label class="slider-input__label">${this.label}</label>
+            <div class="slider-input__value-wrapper">
+              <input type="number"
+                     class="slider-input__input"
+                     min="${this.min}"
+                     max="${this.max}"
+                     step="${this.step}"
+                     value="${this.value}">
+              ${this.unit ? `<span class="slider-input__unit">${this.unit}</span>` : ''}
+            </div>
+          </div>
+          <div class="slider-input__track-wrapper">
+            <input type="range"
+                   class="slider-input__slider"
+                   min="${this.min}"
+                   max="${this.max}"
+                   step="${this.step}"
+                   value="${this.value}">
+            <div class="slider-input__track"></div>
+            <div class="slider-input__fill" style="width: ${this._getFilledPercent()}%"></div>
+          </div>
+        `;
+
+        this.element = container;
+        this.slider = container.querySelector('.slider-input__slider');
+        this.input = container.querySelector('.slider-input__input');
+        this.fill = container.querySelector('.slider-input__fill');
+
+        this._attachEvents();
+        return container;
+      }
+
+      _attachEvents() {
+        this.slider.addEventListener('input', (e) => {
+          const value = parseFloat(e.target.value);
+          this._setValue(value, 'slider');
+        });
+
+        this.input.addEventListener('input', (e) => {
+          let value = parseFloat(e.target.value);
+          if (isNaN(value)) return;
+          value = Math.min(Math.max(value, this.min), this.max);
+          this._setValue(value, 'input');
+        });
+
+        this.input.addEventListener('blur', (e) => {
+          let value = parseFloat(e.target.value);
+          if (isNaN(value)) value = this.min;
+          value = Math.min(Math.max(value, this.min), this.max);
+          this._setValue(value, 'input');
+        });
+      }
+
+      _setValue(value, source) {
+        const precision = this._getPrecision();
+        this.value = parseFloat(value.toFixed(precision));
+
+        if (source !== 'slider') {
+          this.slider.value = this.value;
+        }
+        if (source !== 'input') {
+          this.input.value = this.value;
+        }
+
+        this._updateFill();
+        this.onChange(this.value);
+      }
+
+      _updateFill() {
+        if (this.fill) {
+          this.fill.style.width = `${this._getFilledPercent()}%`;
+        }
+      }
+
+      _getFilledPercent() {
+        return ((this.value - this.min) / (this.max - this.min)) * 100;
+      }
+
+      _getPrecision() {
+        const stepStr = this.step.toString();
+        const decimal = stepStr.indexOf('.');
+        return decimal === -1 ? 0 : stepStr.length - decimal - 1;
+      }
+
+      setValue(value, triggerChange = false) {
+        this.value = Math.min(Math.max(value, this.min), this.max);
+        this.slider.value = this.value;
+        this.input.value = this.value;
+        this._updateFill();
+        if (triggerChange) {
+          this.onChange(this.value);
+        }
+      }
+    }
+
+    // =============================================================================
+    // Adjustment Panel (With two-way sync for drag)
+    // =============================================================================
+    class AdjustmentPanelV2 {
+      constructor(options = {}) {
+        this.container = null;
+        this.heroState = options.heroState || window.heroState;
+        this.sliders = {};
+        this._unsubscribe = null;
+      }
+
+      init(container) {
+        this.container = typeof container === 'string'
+          ? document.getElementById(container)
+          : container;
+
+        if (!this.container) return;
+
+        // Subscribe to heroState changes
+        if (this.heroState && typeof this.heroState.subscribe === 'function') {
+          this._unsubscribe = this.heroState.subscribe((event, data) => {
+            if (event === 'selection') {
+              this.render();
+            } else if (event === 'image' && data.action === 'adjust') {
+              // Update slider without re-rendering (for drag sync)
+              this._syncSlider(data.property, data.newValue);
+            } else if (event === 'images') {
+              this.render();
+            }
+          });
+        }
+
+        this.render();
+      }
+
+      /**
+       * Sync a single slider value (called during drag)
+       */
+      _syncSlider(property, value) {
+        if (this.sliders[property]) {
+          this.sliders[property].setValue(value);
+        }
+      }
+
+      render() {
+        if (!this.container) return;
+
+        const selectedIndex = this.heroState ? this.heroState.selectedIndex : null;
+        const images = this.heroState ? this.heroState.images : [];
+
+        if (selectedIndex === null || selectedIndex === undefined || !images[selectedIndex]) {
+          this._renderNoSelection();
+          return;
+        }
+
+        const image = images[selectedIndex];
+        this._renderPanel(image, selectedIndex, images.length);
+      }
+
+      _renderNoSelection() {
+        this.container.innerHTML = `
+          <div class="adjustment-panel__placeholder">
+            <div class="adjustment-panel__placeholder-icon">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="8" y="8" width="32" height="32" rx="4" />
+                <circle cx="18" cy="18" r="4" />
+                <path d="M8 32 L18 22 L28 32 L40 20" />
+              </svg>
+            </div>
+            <p class="adjustment-panel__placeholder-text">Click an image in the preview to select and adjust</p>
+          </div>
+        `;
+        this.sliders = {};
+      }
+
+      _renderPanel(image, index, total) {
+        this.container.innerHTML = '';
+        this.sliders = {};
+
+        // Selected image info
+        const info = document.createElement('div');
+        info.className = 'selected-image-info';
+        info.innerHTML = `
+          <div class="selected-image-info__thumbnail">
+            <img src="${image.src}" alt="${image.name || 'Image'}" />
+          </div>
+          <div class="selected-image-info__details">
+            <div class="selected-image-info__name">${image.name || 'Image ' + (index + 1)}</div>
+            <div class="selected-image-info__position">Position ${index + 1} of ${total}</div>
+          </div>
+          <button class="selected-image-info__reset" id="reset-adjustments">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M8 3a5 5 0 00-4.546 2.914.5.5 0 01-.908-.418A6 6 0 118 14a5.972 5.972 0 01-4.546-2.086l-.354.354a.5.5 0 01-.853-.354V9.5a.5.5 0 01.5-.5h2.414a.5.5 0 01.354.854l-.354.353A4.973 4.973 0 008 13a5 5 0 000-10z"/>
+            </svg>
+            Reset
+          </button>
+        `;
+        this.container.appendChild(info);
+
+        // Reset button handler
+        info.querySelector('#reset-adjustments').addEventListener('click', () => {
+          this._resetAdjustments(index);
+        });
+
+        // Position Section
+        const posSection = this._createSection('Position');
+
+        this.sliders.offsetX = new SliderInput({
+          label: 'Offset X',
+          min: -100,
+          max: 100,
+          step: 1,
+          value: image.offsetX || 0,
+          unit: 'px',
+          onChange: (value) => this._handleChange(index, 'offsetX', value)
+        });
+
+        this.sliders.offsetY = new SliderInput({
+          label: 'Offset Y',
+          min: -100,
+          max: 100,
+          step: 1,
+          value: image.offsetY || 0,
+          unit: 'px',
+          onChange: (value) => this._handleChange(index, 'offsetY', value)
+        });
+
+        posSection.appendChild(this.sliders.offsetX.render());
+        posSection.appendChild(this.sliders.offsetY.render());
+        this.container.appendChild(posSection);
+
+        // Transform Section
+        const transformSection = this._createSection('Transform');
+
+        this.sliders.scale = new SliderInput({
+          label: 'Scale',
+          min: 0.5,
+          max: 2.0,
+          step: 0.05,
+          value: image.scale || 1,
+          unit: 'x',
+          onChange: (value) => this._handleChange(index, 'scale', value)
+        });
+
+        this.sliders.rotation = new SliderInput({
+          label: 'Rotation',
+          min: -180,
+          max: 180,
+          step: 1,
+          value: image.rotation || 0,
+          unit: 'deg',
+          onChange: (value) => this._handleChange(index, 'rotation', value)
+        });
+
+        transformSection.appendChild(this.sliders.scale.render());
+        transformSection.appendChild(this.sliders.rotation.render());
+        this.container.appendChild(transformSection);
+
+        // Opacity Section
+        const opacitySection = this._createSection('Appearance');
+
+        this.sliders.opacity = new SliderInput({
+          label: 'Opacity',
+          min: 0,
+          max: 100,
+          step: 1,
+          value: image.opacity !== undefined ? image.opacity : 100,
+          unit: '%',
+          onChange: (value) => this._handleChange(index, 'opacity', value)
+        });
+
+        this.sliders.zIndex = new SliderInput({
+          label: 'Layer (Z-Index)',
+          min: 0,
+          max: 10,
+          step: 1,
+          value: image.zIndex || 0,
+          unit: '',
+          onChange: (value) => this._handleChange(index, 'zIndex', value)
+        });
+
+        opacitySection.appendChild(this.sliders.opacity.render());
+        opacitySection.appendChild(this.sliders.zIndex.render());
+        this.container.appendChild(opacitySection);
+      }
+
+      _createSection(title) {
+        const section = document.createElement('div');
+        section.className = 'adjustment-panel__section';
+
+        const header = document.createElement('h4');
+        header.className = 'adjustment-panel__section-title';
+        header.textContent = title;
+        section.appendChild(header);
+
+        return section;
+      }
+
+      _handleChange(index, property, value) {
+        // Call heroState.updateImageAdjustment - the single source of truth
+        if (this.heroState && typeof this.heroState.updateImageAdjustment === 'function') {
+          this.heroState.updateImageAdjustment(index, property, value);
+        }
+      }
+
+      _resetAdjustments(index) {
+        if (!this.heroState) return;
+
+        const defaults = {
+          offsetX: 0,
+          offsetY: 0,
+          scale: 1,
+          rotation: 0,
+          opacity: 100,
+          zIndex: 0
+        };
+
+        Object.entries(defaults).forEach(([prop, value]) => {
+          this.heroState.updateImageAdjustment(index, prop, value);
+        });
+
+        // Update sliders
+        Object.entries(this.sliders).forEach(([key, slider]) => {
+          if (defaults[key] !== undefined) {
+            slider.setValue(defaults[key]);
+          }
+        });
+      }
+
+      destroy() {
+        if (this._unsubscribe) {
+          this._unsubscribe();
+        }
+      }
+    }
+
+    // =============================================================================
+    // App Initialization
+    // =============================================================================
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize heroState with default values
+      if (typeof heroState !== 'undefined') {
+        heroState.cardSize = '2x2';
+        heroState.templateId = 'h-2-equal';
+      }
+
+      // Initialize Media List
+      const mediaList = new MediaList({
+        maxImages: 4,
+        cardSize: '2x2',
+        heroState: heroState,
+        onSelect: (item, index) => {
+          console.log('MediaList selected:', index);
+          if (heroState) {
+            heroState.setSelectedIndex(index);
+          }
+        },
+        onChange: (data) => {
+          console.log('Media list changed:', data);
+          if (templateSelector && data.count) {
+            templateSelector.setImageCount(data.count);
+          }
+        }
+      });
+      mediaList.init('media-list-container');
+
+      // Initialize Template Selector
+      const templateSelector = new TemplateSelector({
+        initialTemplate: 'h-2-equal',
+        imageCount: mediaList.getItems().length,
+        cardSize: '2x2',
+        onSelect: (templateId, oldTemplateId) => {
+          console.log('Template selected:', templateId);
+          if (heroState) {
+            heroState.setTemplate(templateId);
+          }
+        }
+      });
+      templateSelector.init(document.getElementById('template-selector-container'));
+
+      // Initialize Preview Renderer
+      const preview = new PreviewRenderer({
+        heroState: heroState
+      });
+      preview.init('preview-container');
+
+      // Initialize Direct Manipulation (THE KEY DIFFERENCE FROM SLIDER VERSION)
+      const directManipulation = new DirectManipulation({
+        heroState: heroState,
+        minScale: 0.5,
+        maxScale: 2.0,
+        snapRotation: false
+      });
+      directManipulation.init(document.getElementById('preview-container'));
+
+      // Initialize Adjustment Panel
+      const adjustmentPanel = new AdjustmentPanelV2({
+        heroState: heroState
+      });
+      adjustmentPanel.init('adjustment-panel-container');
+
+      // Card Size Selector
+      const cardSizeSelector = document.getElementById('card-size-selector');
+      const cardSizeLabel = document.getElementById('current-card-size');
+
+      cardSizeSelector.addEventListener('click', (e) => {
+        const btn = e.target.closest('.card-size-btn');
+        if (!btn) return;
+
+        const newSize = btn.dataset.size;
+
+        // Update button states
+        cardSizeSelector.querySelectorAll('.card-size-btn').forEach(b => {
+          b.classList.toggle('card-size-btn--active', b.dataset.size === newSize);
+        });
+
+        // Update label
+        cardSizeLabel.textContent = newSize;
+
+        // Update heroState
+        if (heroState) {
+          heroState.setCardSize(newSize);
+        }
+
+        // Update media list max images
+        const maxImages = typeof getMaxImages === 'function' ? getMaxImages(newSize) : 5;
+        mediaList.setMaxImages(maxImages);
+
+        // Update template selector
+        templateSelector.setCardSize(newSize);
+      });
+
+      // Set initial active card size button
+      const initialBtn = cardSizeSelector.querySelector('[data-size="2x2"]');
+      if (initialBtn) {
+        initialBtn.classList.add('card-size-btn--active');
+      }
+
+      // Select first image by default
+      setTimeout(() => {
+        if (mediaList.getItems().length > 0) {
+          mediaList.selectByIndex(0);
+        }
+      }, 100);
+
+      console.log('Drag Version initialized with DirectManipulation');
+    });
+  </script>
+</body>
+</html>

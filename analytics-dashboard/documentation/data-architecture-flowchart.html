@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics Dashboard - Data Architecture Flowchart</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f8f9fa;
+      color: #1a1a2e;
+    }
+    .header {
+      background: white;
+      border-bottom: 1px solid #e0e0e0;
+      padding: 1rem 2rem;
+    }
+    .header h1 { font-size: 1.5rem; font-weight: 600; }
+    .header p { color: #6c757d; font-size: 0.875rem; margin-top: 0.25rem; }
+    .tabs {
+      display: flex;
+      background: white;
+      border-bottom: 1px solid #e0e0e0;
+      padding: 0 2rem;
+    }
+    .tab {
+      padding: 1rem 1.5rem;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #6c757d;
+      border-bottom: 2px solid transparent;
+    }
+    .tab:hover { color: #4272D8; }
+    .tab.active { color: #4272D8; border-bottom-color: #4272D8; }
+    .main { display: flex; height: calc(100vh - 120px); }
+    .diagram-area { flex: 1; padding: 1.5rem; overflow: hidden; display: flex; flex-direction: column; }
+    .diagram-section { display: none; flex: 1; flex-direction: column; }
+    .diagram-section.active { display: flex; }
+    .section-header { margin-bottom: 1rem; }
+    .section-header h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .section-header p { font-size: 0.8125rem; color: #6c757d; }
+    .legend { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+    .legend-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: #6c757d; }
+    .legend-color { width: 14px; height: 14px; border-radius: 3px; }
+    .legend-color.brand { background: #4272D8; }
+    .legend-color.subbrand { background: #5C8AE6; }
+    .legend-color.store { background: #B8D64D; }
+    .legend-color.atomic { background: #4E5370; }
+    .legend-color.optional { background: #FFE082; border: 2px dashed #999; }
+    .diagram-viewport {
+      flex: 1;
+      overflow: auto;
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 2rem;
+    }
+    .mermaid { min-height: 400px; }
+    .zoom-controls {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+    .zoom-btn {
+      padding: 0.5rem 1rem;
+      border: 1px solid #e0e0e0;
+      background: white;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 0.875rem;
+    }
+    .zoom-btn:hover { background: #f8f9fa; }
+    .detail-panel {
+      width: 380px;
+      background: white;
+      border-left: 1px solid #e0e0e0;
+      padding: 1.5rem;
+      overflow-y: auto;
+    }
+    .detail-panel h2 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; color: #4272D8; }
+    .detail-panel h4 { font-size: 0.8125rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .detail-panel p { font-size: 0.8125rem; color: #6c757d; margin-bottom: 0.75rem; }
+    .detail-panel .code-block {
+      background: #f1f3f4;
+      border-radius: 6px;
+      padding: 0.75rem;
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 0.6875rem;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .example-row { display: flex; padding: 0.375rem 0; border-bottom: 1px solid #f1f3f4; font-size: 0.8125rem; }
+    .example-row:last-child { border-bottom: none; }
+    .example-label { width: 110px; color: #6c757d; }
+    .example-value { color: #1a1a2e; font-weight: 500; }
+    .badge {
+      display: inline-block;
+      padding: 0.125rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.6875rem;
+      font-weight: 500;
+      margin-right: 0.5rem;
+    }
+    .badge-brand { background: #4272D8; color: white; }
+    .badge-store { background: #B8D64D; color: black; }
+    .badge-atomic { background: #4E5370; color: white; }
+    .badge-filter { background: #FFE082; color: black; }
+    .error-message { color: #dc3545; padding: 1rem; background: #fff5f5; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>Analytics Dashboard - Data Architecture</h1>
+    <p>Interactive visualization of data flow from atomic records to aggregated dashboard views</p>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="hierarchy">Entity Hierarchy</button>
+    <button class="tab" data-tab="aggregation">Data Aggregation</button>
+    <button class="tab" data-tab="metrics">Metrics Calculation</button>
+    <button class="tab" data-tab="dashboard">Dashboard Flow</button>
+  </nav>
+
+  <main class="main">
+    <div class="diagram-area">
+
+      <!-- Tab 1: Entity Hierarchy -->
+      <section class="diagram-section active" id="hierarchy">
+        <div class="section-header">
+          <h3>Entity Hierarchy</h3>
+          <p>Top-down structure from ALL STORES to individual store locations</p>
+        </div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-color brand"></div>Brand</div>
+          <div class="legend-item"><div class="legend-color subbrand"></div>Sub-Brand</div>
+          <div class="legend-item"><div class="legend-color store"></div>Store</div>
+          <div class="legend-item"><div class="legend-color optional"></div>Optional Layer</div>
+        </div>
+        <div class="zoom-controls">
+          <button class="zoom-btn" onclick="zoom('hierarchy', 0.9)">Zoom Out</button>
+          <button class="zoom-btn" onclick="zoom('hierarchy', 1.1)">Zoom In</button>
+          <button class="zoom-btn" onclick="zoom('hierarchy', 'reset')">Reset</button>
+        </div>
+        <div class="diagram-viewport">
+          <div id="hierarchy-diagram"></div>
+        </div>
+      </section>
+
+      <!-- Tab 2: Data Aggregation -->
+      <section class="diagram-section" id="aggregation">
+        <div class="section-header">
+          <h3>Data Aggregation Flow</h3>
+          <p>Bottom-up view showing how atomic records aggregate through the hierarchy</p>
+        </div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-color atomic"></div>Atomic Record</div>
+          <div class="legend-item"><div class="legend-color store"></div>Aggregated</div>
+          <div class="legend-item"><div class="legend-color brand"></div>Higher Level</div>
+        </div>
+        <div class="zoom-controls">
+          <button class="zoom-btn" onclick="zoom('aggregation', 0.9)">Zoom Out</button>
+          <button class="zoom-btn" onclick="zoom('aggregation', 1.1)">Zoom In</button>
+          <button class="zoom-btn" onclick="zoom('aggregation', 'reset')">Reset</button>
+        </div>
+        <div class="diagram-viewport">
+          <div id="aggregation-diagram"></div>
+        </div>
+      </section>
+
+      <!-- Tab 3: Metrics Calculation -->
+      <section class="diagram-section" id="metrics">
+        <div class="section-header">
+          <h3>Metrics Calculation</h3>
+          <p>How raw engagement metrics are transformed into weighted scores</p>
+        </div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-color brand"></div>Raw Metrics</div>
+          <div class="legend-item"><div class="legend-color subbrand"></div>Weighted</div>
+          <div class="legend-item"><div class="legend-color store"></div>Composite</div>
+        </div>
+        <div class="zoom-controls">
+          <button class="zoom-btn" onclick="zoom('metrics', 0.9)">Zoom Out</button>
+          <button class="zoom-btn" onclick="zoom('metrics', 1.1)">Zoom In</button>
+          <button class="zoom-btn" onclick="zoom('metrics', 'reset')">Reset</button>
+        </div>
+        <div class="diagram-viewport">
+          <div id="metrics-diagram"></div>
+        </div>
+      </section>
+
+      <!-- Tab 4: Dashboard Flow -->
+      <section class="diagram-section" id="dashboard">
+        <div class="section-header">
+          <h3>Dashboard Data Flow</h3>
+          <p>How data flows through filters into the three dashboard view modes</p>
+        </div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-color atomic"></div>Data Source</div>
+          <div class="legend-item"><div class="legend-color optional"></div>Filter</div>
+          <div class="legend-item"><div class="legend-color store"></div>View</div>
+        </div>
+        <div class="zoom-controls">
+          <button class="zoom-btn" onclick="zoom('dashboard', 0.9)">Zoom Out</button>
+          <button class="zoom-btn" onclick="zoom('dashboard', 1.1)">Zoom In</button>
+          <button class="zoom-btn" onclick="zoom('dashboard', 'reset')">Reset</button>
+        </div>
+        <div class="diagram-viewport">
+          <div id="dashboard-diagram"></div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Detail Panel -->
+    <aside class="detail-panel">
+      <h2 id="detail-title">Click a Node</h2>
+      <p id="detail-desc">Select any node in the diagram to see its definition, example data, and implementation details.</p>
+      <div id="detail-content"></div>
+    </aside>
+  </main>
+
+  <script>
+    // Diagram definitions as strings
+    const diagrams = {
+      hierarchy: `graph TD
+        classDef allstores fill:#1a1a2e,color:white,stroke:#1a1a2e
+        classDef brand fill:#4272D8,color:white,stroke:#3661c7
+        classDef subbrand fill:#5C8AE6,color:white,stroke:#4a7ad4
+        classDef store fill:#B8D64D,color:#1a1a2e,stroke:#a5c143
+        classDef optional fill:#FFE082,color:#1a1a2e,stroke:#999,stroke-dasharray:5 5
+
+        ALL["ALL STORES<br/>95 stores across 6 brands"]:::allstores
+
+        ALL --> SAF["Safeway<br/>16 stores"]:::brand
+        ALL --> VON["Vons<br/>16 stores"]:::brand
+        ALL --> ALB["Albertsons<br/>16 stores"]:::brand
+        ALL --> JEW["Jewel-Osco<br/>16 stores"]:::brand
+        ALL --> ACM["Acme Markets<br/>15 stores"]:::brand
+        ALL --> SHA["Shaws<br/>16 stores"]:::brand
+
+        SAF --> BG1["Brand Group<br/>Optional"]:::optional
+        SAF --> SB1["NorCal North<br/>3 stores"]:::subbrand
+        SAF --> SB2["NorCal East<br/>3 stores"]:::subbrand
+        SAF --> SB3["NorCal South<br/>2 stores"]:::subbrand
+
+        SB1 --> SG1["Store Group<br/>Optional"]:::optional
+        SB1 --> S101["SF Market St<br/>store-101"]:::store
+        SB1 --> S102["SF Mission<br/>store-102"]:::store
+        SB1 --> S103["SF Sunset<br/>store-103"]:::store
+
+        click ALL call showDetail("all-stores")
+        click SAF call showDetail("brand-safeway")
+        click VON call showDetail("brand-vons")
+        click SB1 call showDetail("subbrand-norcal")
+        click S101 call showDetail("store-101")
+        click BG1 call showDetail("brand-group")
+        click SG1 call showDetail("store-group")`,
+
+      aggregation: `graph BT
+        classDef atomic fill:#4E5370,color:white,stroke:#3d4259
+        classDef store fill:#B8D64D,color:#1a1a2e,stroke:#a5c143
+        classDef subbrand fill:#5C8AE6,color:white,stroke:#4a7ad4
+        classDef brand fill:#4272D8,color:white,stroke:#3661c7
+        classDef allstores fill:#1a1a2e,color:white,stroke:#1a1a2e
+
+        AR["ATOMIC RECORD<br/>Store + Week + Promotion<br/>CIV: 295 | CC: 35 | ATL: 1"]:::atomic
+        STORE["STORE AGGREGATE<br/>SF Market St Week 47<br/>Sum of ~93 promotions"]:::store
+        SB["SUB-BRAND AGGREGATE<br/>NorCal North Week 47<br/>Sum of 3 stores"]:::subbrand
+        BRAND["BRAND AGGREGATE<br/>Safeway Week 47<br/>Sum of 6 sub-brands"]:::brand
+        ALLTOP["ALL STORES<br/>Week 47 Total<br/>Sum of 6 brands"]:::allstores
+
+        AR -->|"SUM promotions"| STORE
+        STORE -->|"SUM stores"| SB
+        SB -->|"SUM sub-brands"| BRAND
+        BRAND -->|"SUM brands"| ALLTOP
+
+        click AR call showDetail("atomic-record")
+        click STORE call showDetail("store-aggregate")
+        click SB call showDetail("subbrand-aggregate")
+        click BRAND call showDetail("brand-aggregate")
+        click ALLTOP call showDetail("all-aggregate")`,
+
+      metrics: `graph LR
+        classDef raw fill:#4272D8,color:white,stroke:#3661c7
+        classDef weight fill:#5C8AE6,color:white,stroke:#4a7ad4
+        classDef score fill:#B8D64D,color:#1a1a2e,stroke:#a5c143
+        classDef final fill:#4E5370,color:white,stroke:#3d4259
+
+        CIV["CIV<br/>Views: 295"]:::raw
+        CC["CC<br/>Clicks: 35"]:::raw
+        ATL["ATL<br/>Adds: 1"]:::raw
+
+        VS["views_score<br/>295 x 1 = 295"]:::weight
+        CS["clicks_score<br/>35 x 5 = 175"]:::weight
+        AS["adds_score<br/>1 x 20 = 20"]:::weight
+
+        COMP["composite_score<br/>295+175+20 = 490"]:::score
+        PCT["percentile<br/>Rank: 72nd"]:::final
+
+        CIV --> VS
+        CC --> CS
+        ATL --> AS
+        VS --> COMP
+        CS --> COMP
+        AS --> COMP
+        COMP --> PCT
+
+        click CIV call showDetail("metric-civ")
+        click CC call showDetail("metric-cc")
+        click ATL call showDetail("metric-atl")
+        click COMP call showDetail("composite-score")
+        click PCT call showDetail("percentile")`,
+
+      dashboard: `graph TD
+        classDef data fill:#4E5370,color:white,stroke:#3d4259
+        classDef agg fill:#5C8AE6,color:white,stroke:#4a7ad4
+        classDef filter fill:#FFE082,color:#1a1a2e,stroke:#e6c86e
+        classDef view fill:#B8D64D,color:#1a1a2e,stroke:#a5c143
+
+        ATOMIC["Atomic Records<br/>44,175 records"]:::data
+        AGG["Aggregation Layer<br/>mock-data.js"]:::agg
+
+        WEEK["Week Filter<br/>Week 47"]:::filter
+        ENTITY["Entity Filter<br/>Safeway"]:::filter
+        CAT["Category Filter<br/>Produce, Dairy..."]:::filter
+        DEAL["Deal Type Filter<br/>BOGO, $ Off..."]:::filter
+
+        BASE["Base Mode<br/>Drill-down view"]:::view
+        GRID["Grid Mode<br/>Sortable table"]:::view
+        COMPARE["Compare Mode<br/>A vs B"]:::view
+
+        ATOMIC --> AGG
+        AGG --> WEEK
+        WEEK --> ENTITY
+        ENTITY --> CAT
+        CAT --> DEAL
+        DEAL --> BASE
+        DEAL --> GRID
+        DEAL --> COMPARE
+
+        click ATOMIC call showDetail("data-atomic")
+        click AGG call showDetail("data-aggregation")
+        click WEEK call showDetail("filter-week")
+        click ENTITY call showDetail("filter-entity")
+        click BASE call showDetail("view-base")
+        click GRID call showDetail("view-grid")
+        click COMPARE call showDetail("view-compare")`
+    };
+
+    // Node detail data
+    const nodeDetails = {
+      'all-stores': {
+        title: 'ALL STORES (Top Level)',
+        badge: 'badge-atomic',
+        desc: 'The highest aggregation level representing all stores across all brands.',
+        example: { 'Total Stores': '95', 'Total Brands': '6', 'Brands': 'Safeway, Vons, Albertsons, Jewel-Osco, Acme, Shaws' },
+        code: `// mock-entities.js\nbrand: {\n  id: 'brand-all',\n  name: 'All Stores',\n  storeCount: 95\n}`
+      },
+      'brand-safeway': {
+        title: 'Brand: Safeway',
+        badge: 'badge-brand',
+        desc: 'A Brand represents a wholesaler-level entity containing multiple regional sub-brands.',
+        example: { 'id': 'brand-safeway', 'storeCount': '16', 'subBrandCount': '6' },
+        code: `{\n  id: 'brand-safeway',\n  name: 'Safeway',\n  storeCount: 16\n}`
+      },
+      'brand-vons': {
+        title: 'Brand: Vons',
+        badge: 'badge-brand',
+        desc: 'Vons operates in Southern California with 16 stores across 6 sub-brands.',
+        example: { 'id': 'brand-vons', 'storeCount': '16' },
+        code: `{ id: 'brand-vons', name: 'Vons' }`
+      },
+      'subbrand-norcal': {
+        title: 'Sub-Brand: NorCal North',
+        badge: 'badge-brand',
+        desc: 'A Sub-Brand is a regional division within a Brand containing multiple stores.',
+        example: { 'id': 'subbrand-safeway-norcal-north', 'stores': '3', 'region': 'San Francisco' },
+        code: `{\n  id: 'subbrand-safeway-norcal-north',\n  brandId: 'brand-safeway',\n  storeCount: 3\n}`
+      },
+      'store-101': {
+        title: 'Store: SF Market St',
+        badge: 'badge-store',
+        desc: 'An individual retail location. The lowest level of the entity hierarchy.',
+        example: { 'id': 'store-101', 'name': 'SF Market St', 'address': '2020 Market St, SF', 'size': 'large' },
+        code: `{\n  id: 'store-101',\n  name: 'SF Market St',\n  size: 'large'\n}`
+      },
+      'brand-group': {
+        title: 'Brand Group (Optional)',
+        badge: 'badge-filter',
+        desc: 'Optional grouping layer between Brand and Sub-Brand. NOT currently implemented.',
+        example: { 'Status': 'Future', 'Use Case': 'Group sub-brands by business unit' },
+        code: `// FUTURE\nbrandGroups: [{\n  id: 'west-coast',\n  subBrandIds: [...]\n}]`
+      },
+      'store-group': {
+        title: 'Store Group (Optional)',
+        badge: 'badge-filter',
+        desc: 'Optional grouping layer between Sub-Brand and Store. Used for circular versions.',
+        example: { 'Status': 'Future', 'Use Case': 'Floral A vs Floral B versions' },
+        code: `// FUTURE\nstoreGroups: [{\n  id: 'floral-a',\n  storeIds: [...]\n}]`
+      },
+      'atomic-record': {
+        title: 'Atomic Record (1x1x1)',
+        badge: 'badge-atomic',
+        desc: 'The fundamental data unit: ONE promotion at ONE store for ONE week.',
+        example: { 'store': 'SF Market St', 'week': '47', 'promo': 'Organic Bananas', 'CIV': '295', 'CC': '35', 'ATL': '1' },
+        code: `{\n  "id": "rec-00000",\n  "storeId": "store-101",\n  "weekNum": 47,\n  "civ": 295, "cc": 35, "atl": 1\n}`
+      },
+      'store-aggregate': {
+        title: 'Store Aggregate',
+        badge: 'badge-store',
+        desc: 'Sum of all promotion metrics for a single store in a single week.',
+        example: { 'Store': 'SF Market St', 'Week': '47', 'Promotions': '~93' },
+        code: `records.filter(r => r.storeId === 'store-101')\n  .reduce((sum, r) => ({\n    civ: sum.civ + r.civ\n  }))`
+      },
+      'subbrand-aggregate': {
+        title: 'Sub-Brand Aggregate',
+        badge: 'badge-brand',
+        desc: 'Sum of all store aggregates within a sub-brand.',
+        example: { 'Sub-Brand': 'NorCal North', 'Stores': '3' },
+        code: `stores.filter(s => s.subBrand === 'norcal-north')\n  .reduce(...)`
+      },
+      'brand-aggregate': {
+        title: 'Brand Aggregate',
+        badge: 'badge-brand',
+        desc: 'Sum of all sub-brand aggregates within a brand.',
+        example: { 'Brand': 'Safeway', 'Sub-Brands': '6', 'Stores': '16' },
+        code: `subBrands.filter(sb => sb.brandId === 'safeway')\n  .reduce(...)`
+      },
+      'all-aggregate': {
+        title: 'All Stores Aggregate',
+        badge: 'badge-atomic',
+        desc: 'Sum of all brand aggregates. Total company-wide performance.',
+        example: { 'Scope': '95 stores', 'Brands': '6' },
+        code: `brands.reduce((sum, b) => ({\n  civ: sum.civ + b.totalCiv\n}))`
+      },
+      'metric-civ': {
+        title: 'CIV (Circular Item Views)',
+        badge: 'badge-brand',
+        desc: 'Number of times a promotion was displayed in viewport. Passive engagement.',
+        example: { 'Example': '295', 'Weight': 'x1', 'Range': '50-500' },
+        code: `"civ": 295\n"viewsScore": civ * 1  // 295`
+      },
+      'metric-cc': {
+        title: 'CC (Circular Clicks)',
+        badge: 'badge-brand',
+        desc: 'Number of clicks to expand or interact with a promotion. Active interest.',
+        example: { 'Example': '35', 'Weight': 'x5', 'Rate': '2-12% of views' },
+        code: `"cc": 35\n"clicksScore": cc * 5  // 175`
+      },
+      'metric-atl': {
+        title: 'ATL (Add To List)',
+        badge: 'badge-brand',
+        desc: 'Number of add-to-list actions. Strongest engagement signal.',
+        example: { 'Example': '1', 'Weight': 'x20', 'Rate': '0-2% of views' },
+        code: `"atl": 1\n"addsScore": atl * 20  // 20`
+      },
+      'composite-score': {
+        title: 'Composite Score',
+        badge: 'badge-store',
+        desc: 'Total weighted score combining all three metrics.',
+        example: { 'Formula': 'views + clicks + adds', 'Example': '295+175+20 = 490' },
+        code: `compositeScore = viewsScore + clicksScore + addsScore\n// 295 + 175 + 20 = 490`
+      },
+      'percentile': {
+        title: 'Percentile Ranking',
+        badge: 'badge-atomic',
+        desc: '0-100 ranking relative to peers. Higher = better.',
+        example: { 'Example': '72', 'Meaning': 'Better than 72%' },
+        code: `PERCENT_RANK() OVER (\n  ORDER BY composite_score\n) * 100`
+      },
+      'data-atomic': {
+        title: 'Atomic Records',
+        badge: 'badge-atomic',
+        desc: 'Raw data layer with 44,175 atomic records.',
+        example: { 'File': 'promotion-records-data.js', 'Records': '44,175' },
+        code: `window.promotionRecordsData = [\n  // 44,175 records\n]`
+      },
+      'data-aggregation': {
+        title: 'Aggregation Layer',
+        badge: 'badge-brand',
+        desc: 'Functions that aggregate atomic records by dimensions.',
+        example: { 'File': 'mock-data.js', 'Operations': 'SUM, GROUP BY' },
+        code: `MockData.getStoresWithMetrics(weekId, entityId)`
+      },
+      'filter-week': {
+        title: 'Week Filter',
+        badge: 'badge-filter',
+        desc: 'Selected week determines which atomic records are included.',
+        example: { 'Selection': 'Week 47', 'Range': 'Nov 18-24, 2025' },
+        code: `weeks = [\n  { id: 'week-47', dateRange: 'Nov 18-24' }\n]`
+      },
+      'filter-entity': {
+        title: 'Entity Filter',
+        badge: 'badge-filter',
+        desc: 'Selected entity level determines scope of aggregation.',
+        example: { 'Selection': 'Safeway', 'Scope': '16 stores' },
+        code: `// Drill-down:\nAll -> Brand -> Sub-Brand -> Store`
+      },
+      'view-base': {
+        title: 'Base Mode',
+        badge: 'badge-store',
+        desc: 'Default view with progressive disclosure: Circulars -> Categories -> Promotions.',
+        example: { 'Pages': '3 HTML pages', 'Navigation': 'Click to drill' },
+        code: `Circulars -> Categories -> Promotions`
+      },
+      'view-grid': {
+        title: 'Grid Mode',
+        badge: 'badge-store',
+        desc: 'Full data grid with all promotions in sortable, filterable table.',
+        example: { 'Page': 'grid-inquiry.html', 'Features': 'Sort, filter, paginate' },
+        code: `// Features:\n- Sortable columns\n- Column visibility\n- Pagination`
+      },
+      'view-compare': {
+        title: 'Compare Mode',
+        badge: 'badge-store',
+        desc: 'Side-by-side comparison of two contexts (A vs B).',
+        example: { 'Page': 'compare.html', 'Use': 'Week-over-week' },
+        code: `Side A: Week 46 + Safeway\nSide B: Week 47 + Safeway`
+      }
+    };
+
+    // Zoom state
+    const zoomLevels = { hierarchy: 1, aggregation: 1, metrics: 1, dashboard: 1 };
+
+    function zoom(diagramId, factor) {
+      const container = document.getElementById(diagramId + '-diagram');
+      if (factor === 'reset') {
+        zoomLevels[diagramId] = 1;
+      } else {
+        zoomLevels[diagramId] = Math.max(0.5, Math.min(3, zoomLevels[diagramId] * factor));
+      }
+      container.style.transform = `scale(${zoomLevels[diagramId]})`;
+      container.style.transformOrigin = 'top left';
+    }
+
+    // Show detail panel
+    window.showDetail = function(nodeId) {
+      const detail = nodeDetails[nodeId];
+      if (!detail) return;
+
+      document.getElementById('detail-title').innerHTML =
+        `<span class="badge ${detail.badge}">${detail.badge.replace('badge-', '').toUpperCase()}</span> ${detail.title}`;
+      document.getElementById('detail-desc').textContent = detail.desc;
+
+      let html = '<h4>Example Data</h4>';
+      for (const [key, val] of Object.entries(detail.example)) {
+        html += `<div class="example-row"><span class="example-label">${key}</span><span class="example-value">${val}</span></div>`;
+      }
+      html += `<h4>Implementation</h4><div class="code-block">${detail.code}</div>`;
+      document.getElementById('detail-content').innerHTML = html;
+    };
+
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        document.querySelectorAll('.diagram-section').forEach(s => s.classList.remove('active'));
+        document.getElementById(tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Initialize Mermaid and render diagrams
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'base',
+      securityLevel: 'loose',
+      flowchart: {
+        htmlLabels: true,
+        curve: 'basis',
+        nodeSpacing: 50,
+        rankSpacing: 60
+      }
+    });
+
+    async function renderDiagrams() {
+      for (const [id, definition] of Object.entries(diagrams)) {
+        const container = document.getElementById(id + '-diagram');
+        try {
+          const { svg } = await mermaid.render(id + '-svg', definition);
+          container.innerHTML = svg;
+          console.log(`${id} diagram rendered successfully`);
+        } catch (error) {
+          container.innerHTML = `<div class="error-message">Error rendering ${id}: ${error.message}</div>`;
+          console.error(`${id} error:`, error);
+        }
+      }
+    }
+
+    // Run after page loads
+    document.addEventListener('DOMContentLoaded', renderDiagrams);
+  </script>
+</body>
+</html>

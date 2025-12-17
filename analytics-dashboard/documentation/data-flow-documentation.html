@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Dashboard — Data Flow Documentation</title>
+    <style>
+        :root {
+            /* Dashboard Colors */
+            --views-blue: #4272D8;
+            --views-blue-light: #5C8FE6;
+            --views-blue-lighter: #7BA8F0;
+            --clicks-green: #B8D64D;
+            --clicks-green-dark: #8FAA3D;
+            --adds-gray: #4E5370;
+            --adds-gray-light: #6B7190;
+            
+            /* UI Colors */
+            --bg: #f4f6f9;
+            --card-bg: #ffffff;
+            --text: #2c3e50;
+            --text-muted: #6c7a89;
+            --border: #e1e5eb;
+            --border-light: #f0f2f5;
+            
+            /* Transitions */
+            --transition-fast: 0.15s ease;
+            --transition-med: 0.25s ease;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        /* ===== HEADER ===== */
+        .header {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .header h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .header h1::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--views-blue);
+            border-radius: 2px;
+        }
+        
+        .header-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .nav-tab {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .nav-tab:hover {
+            border-color: var(--views-blue-light);
+            color: var(--views-blue);
+        }
+        
+        .nav-tab.active {
+            background: var(--views-blue);
+            border-color: var(--views-blue);
+            color: white;
+        }
+        
+        /* ===== MAIN CONTENT ===== */
+        .main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        /* ===== SECTION: ATOMIC ===== */
+        .atomic-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 800px) {
+            .atomic-section { grid-template-columns: 1fr; }
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.5rem;
+            transition: box-shadow var(--transition-med);
+        }
+        
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .card-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+        
+        .card-icon.atomic { background: var(--views-blue); color: white; }
+        .card-icon.computed { background: var(--clicks-green); color: white; }
+        .card-icon.metadata { background: var(--adds-gray); color: white; }
+        
+        .card h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+        
+        .card-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        .grain-display {
+            background: linear-gradient(135deg, #f0f4ff, #fff);
+            border: 2px solid var(--views-blue);
+            border-radius: 8px;
+            padding: 1.25rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .grain-formula {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--views-blue);
+            margin-bottom: 0.5rem;
+        }
+        
+        .grain-example {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
+        
+        .metric-item {
+            background: var(--bg);
+            border-radius: 6px;
+            padding: 0.75rem;
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .metric-value.civ { color: var(--views-blue); }
+        .metric-value.cc { color: var(--clicks-green-dark); }
+        .metric-value.atl { color: var(--adds-gray); }
+        
+        .metric-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        
+        .data-list {
+            list-style: none;
+        }
+        
+        .data-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .data-list li:last-child { border-bottom: none; }
+        
+        .data-list .label { color: var(--text-muted); }
+        .data-list .value { font-weight: 500; }
+        
+        /* ===== SECTION: ENTITY HIERARCHY ===== */
+        .hierarchy-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .flow-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .flow-arrow {
+            color: var(--border);
+            font-size: 1.25rem;
+            transition: color var(--transition-fast);
+        }
+        
+        .flow-row:hover .flow-arrow {
+            color: var(--views-blue-light);
+        }
+        
+        .entity-box {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem 1.25rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            position: relative;
+        }
+        
+        .entity-box:hover {
+            border-color: var(--views-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(66, 114, 216, 0.15);
+        }
+        
+        .entity-box.active {
+            border-color: var(--views-blue);
+            background: linear-gradient(135deg, #f0f4ff, #fff);
+        }
+        
+        .entity-box.optional {
+            border-style: dashed;
+        }
+        
+        .entity-box .name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .entity-box .desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        .entity-detail {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            display: none;
+            animation: slideIn 0.25s ease;
+        }
+        
+        .entity-detail.visible {
+            display: block;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .entity-detail h4 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .entity-detail h4::before {
+            content: '';
+            width: 3px;
+            height: 16px;
+            background: var(--views-blue);
+            border-radius: 2px;
+        }
+        
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .detail-card {
+            background: var(--bg);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        
+        .detail-card h5 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.03em;
+        }
+        
+        .detail-card p {
+            font-size: 0.9rem;
+        }
+        
+        .detail-card ul {
+            list-style: none;
+            font-size: 0.85rem;
+        }
+        
+        .detail-card ul li {
+            padding: 0.25rem 0;
+            padding-left: 1rem;
+            position: relative;
+        }
+        
+        .detail-card ul li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--views-blue);
+        }
+        
+        .scale-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--views-blue);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        /* ===== SECTION: FILTERS ===== */
+        .filters-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 800px) {
+            .filters-section { grid-template-columns: 1fr; }
+        }
+        
+        .filter-group h4 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            letter-spacing: 0.03em;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .filter-btn:hover {
+            border-color: var(--clicks-green);
+            background: linear-gradient(135deg, #f8fdf0, #fff);
+        }
+        
+        .filter-btn.active {
+            border-color: var(--clicks-green);
+            background: var(--clicks-green);
+            color: white;
+        }
+        
+        .filter-detail {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            display: none;
+            animation: slideIn 0.25s ease;
+        }
+        
+        .filter-detail.visible {
+            display: block;
+        }
+        
+        .filter-effect {
+            background: linear-gradient(135deg, #f8fdf0, #fff);
+            border: 1px solid var(--clicks-green);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .filter-effect-label {
+            font-size: 0.75rem;
+            color: var(--clicks-green-dark);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* ===== SECTION: DASHBOARD VIEWS ===== */
+        .views-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 900px) {
+            .views-grid { grid-template-columns: 1fr; }
+        }
+        
+        .view-card {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all var(--transition-med);
+        }
+        
+        .view-card:hover {
+            border-color: var(--views-blue);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(66, 114, 216, 0.12);
+        }
+        
+        .view-card.active {
+            border-color: var(--views-blue);
+        }
+        
+        .view-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .view-header h4 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .view-header p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        .view-body {
+            padding: 1.25rem;
+        }
+        
+        .view-flow {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        
+        .view-flow .step {
+            background: var(--bg);
+            padding: 0.35rem 0.75rem;
+            border-radius: 4px;
+            font-weight: 500;
+            color: var(--text);
+        }
+        
+        .view-flow .arrow {
+            color: var(--border);
+        }
+        
+        .view-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .view-tag {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            background: var(--bg);
+            border-radius: 4px;
+            color: var(--text-muted);
+        }
+        
+        .view-detail {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            display: none;
+            animation: slideIn 0.25s ease;
+        }
+        
+        .view-detail.visible {
+            display: block;
+        }
+        
+        /* ===== FLOW CONNECTOR ===== */
+        .section-connector {
+            display: flex;
+            justify-content: center;
+            padding: 1.5rem 0;
+        }
+        
+        .connector-line {
+            width: 2px;
+            height: 40px;
+            background: linear-gradient(to bottom, var(--border), var(--views-blue-light));
+            position: relative;
+        }
+        
+        .connector-line::after {
+            content: '▼';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--views-blue-light);
+            font-size: 0.75rem;
+        }
+        
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+        
+        /* ===== UTILITY ===== */
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge.optional {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        
+        .badge.required {
+            background: #e3f2fd;
+            color: var(--views-blue);
+        }
+        
+        /* Print Styles */
+        @media print {
+            .header { position: static; }
+            .nav-tabs { display: none; }
+            .section { display: block !important; page-break-inside: avoid; }
+            .entity-detail, .filter-detail, .view-detail { display: block !important; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div>
+                <h1>Data Flow Documentation</h1>
+                <p class="header-subtitle">Analytics Dashboard v2.0 — From Atomic Record to Dashboard Display</p>
+            </div>
+            <nav class="nav-tabs">
+                <button class="nav-tab active" data-section="atomic">Atomic Record</button>
+                <button class="nav-tab" data-section="hierarchy">Entity Hierarchy</button>
+                <button class="nav-tab" data-section="filters">Date & Filters</button>
+                <button class="nav-tab" data-section="views">Dashboard Views</button>
+            </nav>
+        </div>
+    </header>
+    
+    <main class="main">
+        <!-- ===== SECTION 1: ATOMIC RECORD ===== -->
+        <section id="atomic" class="section active">
+            <div class="grain-display">
+                <div class="grain-formula">1 Store × 1 Week × 1 Promotion = 1 Record</div>
+                <div class="grain-example">Example: Store #101 • Week 47 (Nov 18-24) • "Bananas $0.44/lb"</div>
+            </div>
+            
+            <div class="atomic-section">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon atomic">📊</div>
+                        <div>
+                            <h3>Raw Engagement Metrics</h3>
+                            <div class="card-subtitle">Captured from digital circular events</div>
+                        </div>
+                    </div>
+                    <div class="metric-grid">
+                        <div class="metric-item">
+                            <div class="metric-value civ">381</div>
+                            <div class="metric-label">CIV (Views)</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value cc">36</div>
+                            <div class="metric-label">CC (Clicks)</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value atl">6</div>
+                            <div class="metric-label">ATL (Adds)</div>
+                        </div>
+                    </div>
+                    <ul class="data-list" style="margin-top: 1rem;">
+                        <li>
+                            <span class="label">CIV — Circular Item Views</span>
+                            <span class="value">Impressions in viewport</span>
+                        </li>
+                        <li>
+                            <span class="label">CC — Circular Clicks</span>
+                            <span class="value">Shopper clicked to expand</span>
+                        </li>
+                        <li>
+                            <span class="label">ATL — Add To List</span>
+                            <span class="value">Added to shopping list</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon computed">⚡</div>
+                        <div>
+                            <h3>Pre-Computed Scores</h3>
+                            <div class="card-subtitle">Calculated at ingestion for fast aggregation</div>
+                        </div>
+                    </div>
+                    <ul class="data-list">
+                        <li>
+                            <span class="label">Views Score</span>
+                            <span class="value">CIV × 1 = 381</span>
+                        </li>
+                        <li>
+                            <span class="label">Clicks Score</span>
+                            <span class="value">CC × 5 = 180</span>
+                        </li>
+                        <li>
+                            <span class="label">Adds Score</span>
+                            <span class="value">ATL × 20 = 120</span>
+                        </li>
+                        <li style="background: linear-gradient(135deg, #f0f4ff, transparent); margin: 0.5rem -0.5rem; padding: 0.75rem; border-radius: 6px;">
+                            <span class="label" style="font-weight: 600; color: var(--views-blue);">Composite Score</span>
+                            <span class="value" style="color: var(--views-blue);">= 681</span>
+                        </li>
+                    </ul>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 1rem;">
+                        Weights reflect engagement value: views (passive), clicks (active), adds (intent)
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon metadata">🏷️</div>
+                        <div>
+                            <h3>Promotion Attributes</h3>
+                            <div class="card-subtitle">Properties of the promotion item</div>
+                        </div>
+                    </div>
+                    <ul class="data-list">
+                        <li>
+                            <span class="label">Category</span>
+                            <span class="value">Produce</span>
+                        </li>
+                        <li>
+                            <span class="label">Deal Type</span>
+                            <span class="value">Fixed Price</span>
+                        </li>
+                        <li>
+                            <span class="label">Card Size</span>
+                            <span class="value">1×1</span>
+                        </li>
+                        <li>
+                            <span class="label">Original Position</span>
+                            <span class="value">Row 3 of 75</span>
+                        </li>
+                        <li>
+                            <span class="label">Days Run</span>
+                            <span class="value">7 days</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon" style="background: var(--views-blue-lighter);">🏪</div>
+                        <div>
+                            <h3>Entity Context</h3>
+                            <div class="card-subtitle">Where this record belongs in hierarchy</div>
+                        </div>
+                    </div>
+                    <ul class="data-list">
+                        <li>
+                            <span class="label">Store</span>
+                            <span class="value">Safeway #101</span>
+                        </li>
+                        <li>
+                            <span class="label">Sub-Brand</span>
+                            <span class="value">Safeway NorCal</span>
+                        </li>
+                        <li>
+                            <span class="label">Brand</span>
+                            <span class="value">Safeway</span>
+                        </li>
+                        <li>
+                            <span class="label">Week</span>
+                            <span class="value">Week 47 (Nov 18-24)</span>
+                        </li>
+                        <li>
+                            <span class="label">Publication ID</span>
+                            <span class="value">pub-2025-47-101</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="section-connector">
+                <div class="connector-line"></div>
+            </div>
+        </section>
+        
+        <!-- ===== SECTION 2: ENTITY HIERARCHY ===== -->
+        <section id="hierarchy" class="section">
+            <div class="card" style="margin-bottom: 1.5rem;">
+                <h3 style="margin-bottom: 0.5rem;">Entity Aggregation Path</h3>
+                <p style="font-size: 0.9rem; color: var(--text-muted);">Click any level to see what data aggregates and how it's used. Dashed borders indicate optional groupings.</p>
+            </div>
+            
+            <div class="hierarchy-flow">
+                <div class="flow-row">
+                    <div class="entity-box" data-entity="store">
+                        <div class="name">Store</div>
+                        <div class="desc">Individual Location</div>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="entity-box optional" data-entity="store-group">
+                        <div class="name">Store Group</div>
+                        <div class="desc">Version Group</div>
+                        <span class="badge optional">Optional</span>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="entity-box" data-entity="sub-brand">
+                        <div class="name">Sub-Brand</div>
+                        <div class="desc">Retailer Banner</div>
+                    </div>
+                </div>
+                
+                <div class="flow-row" style="padding-left: 2rem;">
+                    <span class="flow-arrow" style="transform: rotate(90deg);">→</span>
+                </div>
+                
+                <div class="flow-row">
+                    <div class="entity-box" data-entity="sub-brand">
+                        <div class="name">Sub-Brand</div>
+                        <div class="desc">Retailer Banner</div>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="entity-box optional" data-entity="brand-group">
+                        <div class="name">Brand Group</div>
+                        <div class="desc">Custom: Sub-Brands + Stores</div>
+                        <span class="badge optional">Optional</span>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="entity-box" data-entity="brand">
+                        <div class="name">Brand</div>
+                        <div class="desc">Wholesaler Level</div>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="entity-box" data-entity="all-stores" style="border-color: var(--clicks-green); background: linear-gradient(135deg, #f8fdf0, #fff);">
+                        <div class="name">All Stores</div>
+                        <div class="desc">Top Level</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Entity Details (shown on click) -->
+            <div id="entity-detail-store" class="entity-detail">
+                <h4>Store Level</h4>
+                <div class="detail-grid">
+                    <div class="detail-card">
+                        <h5>What Aggregates</h5>
+                        <p>All promotions for this store in selected week(s)</p>
+                        <ul>
+                            <li>SUM of CIV, CC, ATL</li>
+                            <li>SUM of composite scores</li>
+                            <li>COUNT of promotions</li>
+                            <li>COUNT of categories</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card">
+                        <h5>Example Scale</h5>
+                        <p><span class="scale-indicator">~93 promotions / week</span></p>
+                        <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">One store running a full circular with all 8 categories</p>
+                    </div>
+                    <div class="detail-card">
+                        <h5>Used By Dashboard</h5>
+                        <ul>
+                            <li>Base View: Circulars page (row)</li>
+                            <li>Grid View: Store column filter</li>
+                            <li>Compare: Store vs Store</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card">
+                        <h5>Percentile Context</h5>
+                        <p>Ranked against other stores within same Sub-Brand for selected week</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="entity-detail-store-group" class="entity-detail">
+                <h4>Store Group (Version Group)</h4>
+                <div class="detail-grid">
+                    <div class="detail-card">
+                        <h5>What It Is</h5>
+                        <p>A subset of stores within a Sub-Brand that share the same circular version (e.g., Floral A, Floral B)</p>
+                        <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">Different versions may have different promotions due to regional distributors</p>
+                    </div>
+                    <div class="detail-card">
+                        <h5>What Aggregates</h5>
+                        <ul>
+                            <li>SUM across all stores in group</li>
+                            <li>COUNT of stores in group</li>
+                            <li>Same metrics as store level</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card">
+                        <h5>Example Scale</h5>
+                        <p><span class="scale-indicator">3-5 stores / group</span></p>
+                        <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">~279-465 promo-records per group per week</p>
+                    </div>
+                    <div class="detail-card">
+                        <h5>Used By Dashboard</h5>
+                        <ul>
+                            <li>Entity Selector: Group selection</li>
+                            <li>Compare: Group vs Group</li>
+                            <li>Useful for version performance analysis</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="entity-detail-sub-brand" class="entity-detail">
+                <h4>Sub-Brand (Retailer Banner)</h4>
+                <div class="detail-grid">
+                    <div class="detail-card">
+                        <h5>What It Is</h5>
+                        <p>The retailer banner level — e.g., Foodtown Brooklyn, Brookshire Brothers</p>
+                        <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">This is the primary operating level for most retailers</p>
+                    </div>
+                    <div class="detail-card">
+                        <h5>What Aggregates</h5>
+                        <ul>
+                            <li>SUM across all stores</li>
+                            <li>COUNT of stores</li>
+                            <li>COUNT of store groups (versions)</li>
+                            <li>All engagement metrics</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card">
+                        <h5>Example Scale</h5>
+                        <p><span class="scale-indicator">12-50 stores / sub-brand</span></p>
+                        <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">~1,116-4,650 promo-records per sub-brand per week</p>
+                    </div>
+                    <div class="detail-card">
+                        <h5>Used By Dashboard</h5>
+                        <ul>
+                            <li>Default view for most users</li>
+                            <li>Entity Selector: Primary selection</li>
+                            <li>All views aggregate to this level</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="entity-detail-brand-group" class="entity-detail">
+                <h4>Brand Group (Custom Analytics Group)</h4>
+                <div class="detail-grid">
+                    <div class="detail-card">
+                        <h5>What It Is</h5>
+                        <p>A custom grouping created for analytics purposes. Can include:</p>
+                        <ul>
+                            <li>Multiple Sub-Brands</li>
+                            <li>Individual Stores (from any Sub-Brand)</li>
+                            <li>Mix of both</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card">
+                        <h5>What Aggregates</h5>
+                        <ul>
+                            <li>SUM across selected entities</li>
+                            <li>COUNT of sub-brands included</li>
+                            <li>COUNT of stores included</li>
+                            <li>All engagement metrics</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card">
+                        <h5>Example Use Cases</h5>
+                        <ul>
+                            <li>Regional comparison (NorCal vs SoCal)</li>
+                            <li>High-performing stores across banners</li>
+                            <li>Test vs control groups</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card">
+                        <h5>Used By Dashboard</h5>
+                        <ul>
+                            <li>Entity Selector: Groups tab</li>
+                            <li>Compare: Group vs Group</li>
+                            <li>Saved for repeated analysis</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="entity-detail-brand" class="entity-detail">
+                <h4>Brand (Wholesaler Level)</h4>
+                <div class="detail-grid">
+                    <div class="detail-card">
+                        <h5>What It Is</h5>
+                        <p>The top organizational level — typically a wholesaler like ARS (Allegiance Regional Services)</p>
+                        <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">Contains multiple Sub-Brands (retailer banners) underneath</p>
+                    </div>
+                    <div class="detail-card">
+                        <h5>What Aggregates</h5>
+                        <ul>
+                            <li>SUM across all Sub-Brands</li>
+                            <li>COUNT of sub-brands</li>
+                            <li>COUNT of total stores</li>
+                            <li>All engagement metrics</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card">
+                        <h5>Example Scale</h5>
+                        <p><span class="scale-indicator">2-6 sub-brands / brand</span></p>
+                        <p><span class="scale-indicator">36-200 stores / brand</span></p>
+                        <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">~3,348-18,600 promo-records per brand per week</p>
+                    </div>
+                    <div class="detail-card">
+                        <h5>Used By Dashboard</h5>
+                        <ul>
+                            <li>Executive overview</li>
+                            <li>Cross-banner comparison</li>
+                            <li>Entity Selector: Top of tree</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="entity-detail-all-stores" class="entity-detail">
+                <h4>All Stores (Top Level)</h4>
+                <div class="detail-grid">
+                    <div class="detail-card">
+                        <h5>What It Is</h5>
+                        <p>Complete aggregation across all brands, sub-brands, and stores in the system</p>
+                        <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">Used for platform-wide analytics and benchmarking</p>
+                    </div>
+                    <div class="detail-card">
+                        <h5>What Aggregates</h5>
+                        <ul>
+                            <li>SUM across everything</li>
+                            <li>COUNT of brands</li>
+                            <li>COUNT of sub-brands</li>
+                            <li>COUNT of stores</li>
+                            <li>All engagement metrics</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card">
+                        <h5>Current Scale (Mock Data)</h5>
+                        <p><span class="scale-indicator">6 brands</span></p>
+                        <p><span class="scale-indicator">36 sub-brands</span></p>
+                        <p><span class="scale-indicator">95 stores</span></p>
+                        <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">~44,175 promo-records per week (all stores)</p>
+                    </div>
+                    <div class="detail-card">
+                        <h5>Used By Dashboard</h5>
+                        <ul>
+                            <li>Platform benchmarking</li>
+                            <li>Overall performance trends</li>
+                            <li>Ideal-level reporting</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-connector">
+                <div class="connector-line"></div>
+            </div>
+        </section>
+        
+        <!-- ===== SECTION 3: DATE & FILTERS ===== -->
+        <section id="filters" class="section">
+            <div class="filters-section">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon" style="background: var(--views-blue);">📅</div>
+                        <div>
+                            <h3>Date Selection</h3>
+                            <div class="card-subtitle">Temporal scope of the data</div>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <h4>Select Time Range</h4>
+                        <div class="filter-buttons">
+                            <button class="filter-btn" data-filter="single-week">Single Week</button>
+                            <button class="filter-btn" data-filter="multi-week">Multi-Week</button>
+                            <button class="filter-btn" data-filter="4-week">4 Week</button>
+                            <button class="filter-btn" data-filter="quarter">Quarter</button>
+                            <button class="filter-btn" data-filter="ytd">YTD</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon" style="background: var(--clicks-green);">🔍</div>
+                        <div>
+                            <h3>Content Filters</h3>
+                            <div class="card-subtitle">Narrow down what promotions are included</div>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <h4>Filter By</h4>
+                        <div class="filter-buttons">
+                            <button class="filter-btn" data-filter="category">Category</button>
+                            <button class="filter-btn" data-filter="deal-type">Deal Type</button>
+                            <button class="filter-btn" data-filter="card-size">Card Size</button>
+                            <button class="filter-btn" data-filter="search">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Filter Details -->
+            <div id="filter-detail-single-week" class="filter-detail">
+                <h4>Single Week Selection</h4>
+                <p>View data for one specific circular week. This is the default and most common selection.</p>
+                <div class="filter-effect">
+                    <div class="filter-effect-label">Effect on Data</div>
+                    <p>Filters atomic records to only those matching the selected week_num. Percentiles calculated within this single week.</p>
+                </div>
+                <div class="detail-grid" style="margin-top: 1rem;">
+                    <div class="detail-card">
+                        <h5>Example</h5>
+                        <p>Week 47: Nov 18-24, 2025</p>
+                    </div>
+                    <div class="detail-card">
+                        <h5>Record Count</h5>
+                        <p>~8,835 records (95 stores × 93 promos)</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="filter-detail-multi-week" class="filter-detail">
+                <h4>Multi-Week Selection</h4>
+                <p>View data across multiple weeks for trend analysis. Metrics aggregate across all selected weeks.</p>
+                <div class="filter-effect">
+                    <div class="filter-effect-label">Effect on Data</div>
+                    <p>SUM of metrics across weeks. Useful for seeing total performance over a campaign period. Percentiles calculated across the combined dataset.</p>
+                </div>
+            </div>
+            
+            <div id="filter-detail-4-week" class="filter-detail">
+                <h4>4-Week Rolling View</h4>
+                <p>Quick selection for the last 4 weeks of data. Common for monthly performance reviews.</p>
+                <div class="filter-effect">
+                    <div class="filter-effect-label">Effect on Data</div>
+                    <p>Automatically selects current week and 3 prior weeks. Aggregates all metrics across the 4-week period.</p>
+                </div>
+            </div>
+            
+            <div id="filter-detail-quarter" class="filter-detail">
+                <h4>Quarter Selection</h4>
+                <p>View data for a full quarter (13 weeks). Useful for quarterly business reviews.</p>
+                <div class="filter-effect">
+                    <div class="filter-effect-label">Effect on Data</div>
+                    <p>Aggregates 13 weeks of data. Larger dataset enables more meaningful percentile rankings.</p>
+                </div>
+            </div>
+            
+            <div id="filter-detail-ytd" class="filter-detail">
+                <h4>Year to Date</h4>
+                <p>All data from January 1st through current week.</p>
+                <div class="filter-effect">
+                    <div class="filter-effect-label">Effect on Data</div>
+                    <p>Largest possible dataset for the current year. Best for annual trend analysis.</p>
+                </div>
+            </div>
+            
+            <div id="filter-detail-category" class="filter-detail">
+                <h4>Category Filter</h4>
+                <p>Filter promotions by product category.</p>
+                <div class="filter-effect">
+                    <div class="filter-effect-label">Effect on Data</div>
+                    <p>Only promotions matching the selected category are included in aggregations. Percentiles recalculated within the filtered set.</p>
+                </div>
+                <div class="detail-grid" style="margin-top: 1rem;">
+                    <div class="detail-card">
+                        <h5>Available Categories</h5>
+                        <ul>
+                            <li>Produce</li>
+                            <li>Meat & Seafood</li>
+                            <li>Dairy</li>
+                            <li>Bakery</li>
+                            <li>Frozen Foods</li>
+                            <li>Beverages</li>
+                            <li>Snacks & Candy</li>
+                            <li>Household</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card">
+                        <h5>Dashboard Behavior</h5>
+                        <p>Displayed as filter chip. Can be applied from Categories page drill-down or Add Filter dialog.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="filter-detail-deal-type" class="filter-detail">
+                <h4>Deal Type Filter</h4>
+                <p>Filter promotions by their deal structure.</p>
+                <div class="filter-effect">
+                    <div class="filter-effect-label">Effect on Data</div>
+                    <p>Only promotions with matching deal_type are included. Useful for analyzing which deal structures perform best.</p>
+                </div>
+                <div class="detail-grid" style="margin-top: 1rem;">
+                    <div class="detail-card">
+                        <h5>Deal Types</h5>
+                        <ul>
+                            <li>Fixed Price ($0.44/lb)</li>
+                            <li>BOGO (Buy One Get One)</li>
+                            <li>BOGO 50%</li>
+                            <li>$ Off (Dollar off)</li>
+                            <li># / Price (2 for $5)</li>
+                            <li>Mix & Match</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card">
+                        <h5>Dashboard Behavior</h5>
+                        <p>Displayed as filter chip. Single selection — new replaces old.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="filter-detail-card-size" class="filter-detail">
+                <h4>Card Size Filter</h4>
+                <p>Filter promotions by their display size in the circular layout.</p>
+                <div class="filter-effect">
+                    <div class="filter-effect-label">Effect on Data</div>
+                    <p>Only promotions with matching card_size are included. Useful for analyzing visibility impact.</p>
+                </div>
+                <div class="detail-grid" style="margin-top: 1rem;">
+                    <div class="detail-card">
+                        <h5>Card Sizes</h5>
+                        <ul>
+                            <li>1×1 (Standard)</li>
+                            <li>2×1 (Wide)</li>
+                            <li>2×2 (Feature)</li>
+                            <li>3×2 (Hero)</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card">
+                        <h5>Analysis Use</h5>
+                        <p>Compare performance relative to visual prominence in the circular.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="filter-detail-search" class="filter-detail">
+                <h4>Promotion Search</h4>
+                <p>Text search to find specific promotions by name.</p>
+                <div class="filter-effect">
+                    <div class="filter-effect-label">Effect on Data</div>
+                    <p>Matches promotion title containing the search term. Case-insensitive partial match.</p>
+                </div>
+                <div class="detail-grid" style="margin-top: 1rem;">
+                    <div class="detail-card">
+                        <h5>Example Searches</h5>
+                        <ul>
+                            <li>"banana" → Bananas $0.44/lb</li>
+                            <li>"coca" → Coca-Cola 12-pack</li>
+                            <li>"chicken" → All chicken promotions</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card">
+                        <h5>Dashboard Behavior</h5>
+                        <p>Available in Grid view column filter and Add Filter dialog.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-connector">
+                <div class="connector-line"></div>
+            </div>
+        </section>
+        
+        <!-- ===== SECTION 4: DASHBOARD VIEWS ===== -->
+        <section id="views" class="section">
+            <div class="views-grid">
+                <div class="view-card" data-view="base">
+                    <div class="view-header">
+                        <h4>Base View</h4>
+                        <p>Progressive drill-down exploration</p>
+                    </div>
+                    <div class="view-body">
+                        <div class="view-flow">
+                            <span class="step">Circulars</span>
+                            <span class="arrow">→</span>
+                            <span class="step">Categories</span>
+                            <span class="arrow">→</span>
+                            <span class="step">Promotions</span>
+                        </div>
+                        <div class="view-tags">
+                            <span class="view-tag">Aggregated data</span>
+                            <span class="view-tag">Detail panels</span>
+                            <span class="view-tag">Context preserved</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="view-card" data-view="grid">
+                    <div class="view-header">
+                        <h4>Grid View</h4>
+                        <p>Full data table exploration</p>
+                    </div>
+                    <div class="view-body">
+                        <div class="view-flow">
+                            <span class="step">All Promotions</span>
+                            <span class="arrow">→</span>
+                            <span class="step">Sort/Filter</span>
+                            <span class="arrow">→</span>
+                            <span class="step">Export</span>
+                        </div>
+                        <div class="view-tags">
+                            <span class="view-tag">Atomic records</span>
+                            <span class="view-tag">All columns</span>
+                            <span class="view-tag">Pagination</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="view-card" data-view="compare">
+                    <div class="view-header">
+                        <h4>Compare View</h4>
+                        <p>Side-by-side A/B analysis</p>
+                    </div>
+                    <div class="view-body">
+                        <div class="view-flow">
+                            <span class="step">Panel A</span>
+                            <span class="arrow">vs</span>
+                            <span class="step">Panel B</span>
+                        </div>
+                        <div class="view-tags">
+                            <span class="view-tag">Independent context</span>
+                            <span class="view-tag">Synced display</span>
+                            <span class="view-tag">Delta indicators</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- View Details -->
+            <div id="view-detail-base" class="view-detail">
+                <h4>Base View — Progressive Drill-Down</h4>
+                <div class="detail-grid">
+                    <div class="detail-card">
+                        <h5>Circulars Page (Stores)</h5>
+                        <p>Shows stores with aggregated metrics for selected entity + week.</p>
+                        <ul>
+                            <li>Data: agg_store_weekly</li>
+                            <li>Columns: Store, Views, Clicks, Adds, Performance, %tile</li>
+                            <li>Action: Click row → Detail panel</li>
+                            <li>Drill: View Categories button</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card">
+                        <h5>Categories Page</h5>
+                        <p>Shows categories with aggregated metrics. Inherits store filter if drilled.</p>
+                        <ul>
+                            <li>Data: agg_category_weekly</li>
+                            <li>Columns: Category, Promos, Views, Clicks, Adds, Performance, %tile</li>
+                            <li>Action: Click row → Detail panel</li>
+                            <li>Drill: View Promotions button</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card">
+                        <h5>Promotions Page</h5>
+                        <p>Shows individual promotions. Inherits store + category filters if drilled.</p>
+                        <ul>
+                            <li>Data: promotion_engagement_facts</li>
+                            <li>Columns: All promotion details + metrics</li>
+                            <li>Views: Card view or Table view</li>
+                            <li>Detail panel: Full promotion info</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card">
+                        <h5>Context Preservation</h5>
+                        <p>Filters displayed as removable chips. Clicking ✕ navigates back up hierarchy. URL params enable deep linking.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="view-detail-grid" class="view-detail">
+                <h4>Grid View — Full Data Exploration</h4>
+                <div class="detail-grid">
+                    <div class="detail-card">
+                        <h5>Data Source</h5>
+                        <p>Pulls directly from atomic records (promotion_engagement_facts) filtered by current entity + week selection.</p>
+                    </div>
+                    <div class="detail-card">
+                        <h5>Features</h5>
+                        <ul>
+                            <li>All columns visible (toggleable)</li>
+                            <li>Sort by any column</li>
+                            <li>Per-column filters</li>
+                            <li>Pagination: 25, 50, 100 rows</li>
+                            <li>Top N selector</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card">
+                        <h5>Column Categories</h5>
+                        <ul>
+                            <li>Identity: Promo, Category, Store</li>
+                            <li>Metrics: CIV, CC, ATL, Composite</li>
+                            <li>Ranking: Percentile, Performance</li>
+                            <li>Attributes: Deal Type, Card Size, Days Run</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card">
+                        <h5>Use Cases</h5>
+                        <ul>
+                            <li>Find specific promotions</li>
+                            <li>Export data for external analysis</li>
+                            <li>Advanced multi-column filtering</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="view-detail-compare" class="view-detail">
+                <h4>Compare View — A/B Analysis</h4>
+                <div class="detail-grid">
+                    <div class="detail-card">
+                        <h5>Panel Independence</h5>
+                        <p>Each panel has its own context:</p>
+                        <ul>
+                            <li>Date selector</li>
+                            <li>Entity selector</li>
+                            <li>Applied filters</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card">
+                        <h5>Comparison Types</h5>
+                        <ul>
+                            <li>Week vs Week (same entity)</li>
+                            <li>Store vs Store (same week)</li>
+                            <li>Category vs Category</li>
+                            <li>Any combination</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card">
+                        <h5>Synchronized Display</h5>
+                        <p>Both panels show same level of data (Circulars, Categories, or Promotions). Sorting synced across panels.</p>
+                    </div>
+                    <div class="detail-card">
+                        <h5>Delta Indicators</h5>
+                        <p>Visual indicators show difference between A and B:</p>
+                        <ul>
+                            <li>↑ Green: B higher than A</li>
+                            <li>↓ Red: B lower than A</li>
+                            <li>Percentage difference shown</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="footer">
+        Analytics Dashboard v2.0 — Data Flow Documentation — December 2025
+    </footer>
+    
+    <script>
+        // Navigation tabs
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Update active tab
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Show corresponding section
+                const sectionId = tab.dataset.section;
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                document.getElementById(sectionId).classList.add('active');
+                
+                // Clear any open details
+                document.querySelectorAll('.entity-detail, .filter-detail, .view-detail').forEach(d => d.classList.remove('visible'));
+                document.querySelectorAll('.entity-box, .filter-btn, .view-card').forEach(e => e.classList.remove('active'));
+            });
+        });
+        
+        // Entity boxes
+        document.querySelectorAll('.entity-box').forEach(box => {
+            box.addEventListener('click', () => {
+                const entityId = box.dataset.entity;
+                const detailEl = document.getElementById(`entity-detail-${entityId}`);
+                
+                // Toggle active state
+                const isActive = box.classList.contains('active');
+                document.querySelectorAll('.entity-box').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.entity-detail').forEach(d => d.classList.remove('visible'));
+                
+                if (!isActive && detailEl) {
+                    box.classList.add('active');
+                    detailEl.classList.add('visible');
+                    detailEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            });
+        });
+        
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const filterId = btn.dataset.filter;
+                const detailEl = document.getElementById(`filter-detail-${filterId}`);
+                
+                // Toggle active state
+                const isActive = btn.classList.contains('active');
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.filter-detail').forEach(d => d.classList.remove('visible'));
+                
+                if (!isActive && detailEl) {
+                    btn.classList.add('active');
+                    detailEl.classList.add('visible');
+                    detailEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            });
+        });
+        
+        // View cards
+        document.querySelectorAll('.view-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const viewId = card.dataset.view;
+                const detailEl = document.getElementById(`view-detail-${viewId}`);
+                
+                // Toggle active state
+                const isActive = card.classList.contains('active');
+                document.querySelectorAll('.view-card').forEach(c => c.classList.remove('active'));
+                document.querySelectorAll('.view-detail').forEach(d => d.classList.remove('visible'));
+                
+                if (!isActive && detailEl) {
+                    card.classList.add('active');
+                    detailEl.classList.add('visible');
+                    detailEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -416,19 +416,20 @@ class BackgroundChooser {
         <div class="bg-chooser__section">
           <label class="bg-chooser__label">Background Image</label>
 
-          <!-- Media Picker Placeholder -->
-          <div class="bg-chooser__media-picker">
-            <div class="bg-chooser__media-preview ${img.imageHref ? 'has-image' : ''}" id="bg-media-preview"
+          <!-- Hero-style Media Picker Row (two-row grid layout) -->
+          <div class="bg-chooser__media-row bg-chooser__media-row--hero">
+            <div class="bg-chooser__thumb ${img.imageHref ? 'has-image' : ''}" id="bg-media-preview"
                  style="${img.imageHref ? `background-image: url('${img.imageHref}')` : ''}">
             </div>
-            <div class="bg-chooser__media-buttons">
-              <button class="bg-chooser__btn bg-chooser__btn--media" id="bg-btn-add-media">
-                <i class="pi pi-image"></i> Replace Media
-              </button>
-              <button class="bg-chooser__btn bg-chooser__btn--icon" id="bg-btn-delete-media" title="Delete">
-                <i class="pi pi-trash"></i>
+            <span class="bg-chooser__media-url" title="${img.imageHref || 'No image selected'}">${img.imageHref || 'No image selected'}</span>
+            <div class="bg-chooser__media-actions">
+              <button class="bg-chooser__btn bg-chooser__btn--change-media" id="bg-btn-add-media">
+                <i class="pi pi-images"></i> ${img.imageHref ? 'Change Media' : 'Add Media'}
               </button>
             </div>
+            <button class="bg-chooser__btn bg-chooser__btn--remove" id="bg-btn-delete-media" title="Remove">
+              <i class="pi pi-times"></i>
+            </button>
           </div>
 
           <!-- Position Dropdown -->
@@ -563,24 +564,28 @@ class BackgroundChooser {
     if (!this.imageContainer) return;
 
     const img = this.config.backgroundImage;
+    // Get display name from URL or show placeholder
+    const displayUrl = img.imageHref || 'No image selected';
+    const hasImage = !!img.imageHref;
 
     this.imageContainer.innerHTML = `
       <div class="background-chooser">
         <!-- Background Image Section -->
         <div class="bg-chooser__section">
-          <!-- Media Picker Placeholder -->
-          <div class="bg-chooser__media-picker">
-            <div class="bg-chooser__media-preview ${img.imageHref ? 'has-image' : ''}" id="bg-media-preview"
-                 style="${img.imageHref ? `background-image: url('${img.imageHref}')` : ''}">
+          <!-- Hero-style Media Picker Row (two-row grid layout) -->
+          <div class="bg-chooser__media-row bg-chooser__media-row--hero">
+            <div class="bg-chooser__thumb ${hasImage ? 'has-image' : ''}" id="bg-media-preview"
+                 style="${hasImage ? `background-image: url('${img.imageHref}')` : ''}">
             </div>
-            <div class="bg-chooser__media-buttons">
-              <button class="bg-chooser__btn bg-chooser__btn--media" id="bg-btn-add-media">
-                <i class="pi pi-image"></i> Replace Media
-              </button>
-              <button class="bg-chooser__btn bg-chooser__btn--icon" id="bg-btn-delete-media" title="Delete">
-                <i class="pi pi-trash"></i>
+            <span class="bg-chooser__media-url" title="${displayUrl}">${displayUrl}</span>
+            <div class="bg-chooser__media-actions">
+              <button class="bg-chooser__btn bg-chooser__btn--change-media" id="bg-btn-add-media">
+                <i class="pi pi-images"></i> ${hasImage ? 'Change Media' : 'Add Media'}
               </button>
             </div>
+            <button class="bg-chooser__btn bg-chooser__btn--remove" id="bg-btn-delete-media" title="Remove">
+              <i class="pi pi-times"></i>
+            </button>
           </div>
 
           <!-- Position Dropdown -->

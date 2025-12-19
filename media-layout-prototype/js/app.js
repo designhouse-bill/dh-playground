@@ -10,7 +10,7 @@ const AppState = {
   layout: 'horizontal',
   emphasis: 'equal',
   template: null,
-  imageCount: 2, // Target image count (1-5)
+  imageCount: 1, // Target image count (1-5)
 
   // Background settings (includes image properties: position, size, repeat)
   background: {
@@ -35,6 +35,37 @@ const AppState = {
   // Subscribers for state changes
   _subscribers: [],
 
+  // 9-Config Model: Independent layout per card size
+  allConfigs: {
+    '1x1': { isCustomized: false, templateId: null, slots: null },
+    '2x1': { isCustomized: false, templateId: null, slots: null },
+    '3x1': { isCustomized: false, templateId: null, slots: null },
+    '1x2': { isCustomized: false, templateId: null, slots: null },
+    '2x2': { isCustomized: false, templateId: null, slots: null },
+    '3x2': { isCustomized: false, templateId: null, slots: null },
+    '1x3': { isCustomized: false, templateId: null, slots: null },
+    '2x3': { isCustomized: false, templateId: null, slots: null },
+    '3x3': { isCustomized: false, templateId: null, slots: null }
+  },
+
+  // Dirty state tracking: only sizes with actual user modifications get purple dot
+  _dirtyConfigs: new Set(),
+
+  // Preview width for responsive testing
+  previewMaxWidth: 472,
+
+  // Grid system (computed properties)
+  get gridSystem() {
+    const self = this;
+    return {
+      get unitSize() { return self.previewMaxWidth / 3; },
+      get cols() { return parseInt(self.cardSize.split('x')[0]); },
+      get rows() { return parseInt(self.cardSize.split('x')[1]); },
+      get canvasWidth() { return this.cols * this.unitSize; },
+      get canvasHeight() { return this.rows * this.unitSize; }
+    };
+  },
+
   /**
    * Subscribe to state changes
    */
@@ -53,12 +84,122 @@ const AppState = {
   },
 
   /**
-   * Update card size
+   * Save current slots configuration to the active card size
+   * Called automatically when switching sizes or manually via UI
    */
-  setCardSize(size) {
+  saveConfigForCurrentSize() {
+    const sizeKey = this.cardSize;
+    this.allConfigs[sizeKey] = {
+      isCustomized: true,
+      templateId: this.template?.id || null,
+      slots: this.slots.map(slot => ({
+        ...slot,
+        image: { ...slot.image },
+        position: { ...slot.position }
+      }))
+    };
+    this._notify('configSaved', { size: sizeKey });
+  },
+
+  /**
+   * Load config for a specific size
+   * If customized, restores saved slots; otherwise keeps current template-based layout
+   */
+  loadConfigForSize(sizeKey) {
+    const config = this.allConfigs[sizeKey];
+    if (config && config.isCustomized && config.slots) {
+      // Restore saved slots with deep copy
+      this.slots = config.slots.map(s => ({
+        ...s,
+        image: { ...s.image },
+        position: { ...s.position }
+      }));
+      // Restore template reference if available
+      if (config.templateId && typeof getTemplateById === 'function') {
+        this.template = getTemplateById(config.templateId);
+      }
+      this._notify('configLoaded', { size: sizeKey, isCustomized: true });
+    }
+    // If not customized, keep current slots (derived from template)
+  },
+
+  /**
+   * Check if a size has been customized (has actual user modifications)
+   */
+  isConfigCustomized(sizeKey) {
+    return this._dirtyConfigs.has(sizeKey);
+  },
+
+  /**
+   * Mark the current config as dirty (user made actual modification)
+   * Call this when: drag, scale, rotate, template change, z-index change
+   */
+  markCurrentConfigDirty() {
+    this._dirtyConfigs.add(this.cardSize);
+    this._notify('configDirty', { size: this.cardSize });
+  },
+
+  /**
+   * Clear dirty flag for a size (e.g., when resetting to defaults)
+   */
+  clearConfigDirty(sizeKey) {
+    this._dirtyConfigs.delete(sizeKey);
+    this._notify('configClean', { size: sizeKey });
+  },
+
+  /**
+   * Set preview max width for responsive testing
+   */
+  setPreviewMaxWidth(width) {
+    this.previewMaxWidth = Math.max(320, Math.min(472, width));
+    this._notify('previewWidth', { width: this.previewMaxWidth });
+  },
+
+  /**
+   * Mark excess images as inactive when size constraints change
+   * Returns slots with active property set appropriately
+   */
+  handleImageCountConstraint(newSize, currentSlots) {
+    if (typeof getMaxImages !== 'function') return currentSlots;
+
+    const maxImages = getMaxImages(newSize);
+    if (currentSlots.length > maxImages) {
+      return currentSlots.map((slot, index) => ({
+        ...slot,
+        active: index < maxImages
+      }));
+    }
+    return currentSlots.map(slot => ({ ...slot, active: slot.active !== false }));
+  },
+
+  /**
+   * Update card size with 9-config model support
+   * Saves current config before switching, loads saved config if available
+   * Shows image selection modal if reducing to a size with fewer allowed images
+   */
+  setCardSize(size, skipModal = false) {
     if (this.cardSize === size) return;
 
     const oldSize = this.cardSize;
+
+    // Save current config before switching (if we have slots)
+    if (this.slots.length > 0) {
+      this.saveConfigForCurrentSize();
+    }
+
+    // Check if we need to show image selection modal
+    if (!skipModal && typeof getMaxImages === 'function' && typeof imageSelectionModal !== 'undefined' && imageSelectionModal) {
+      const maxImages = getMaxImages(size);
+      const activeSlots = this.slots.filter(s => s.active !== false);
+
+      if (activeSlots.length > maxImages) {
+        // Store pending size and show modal
+        pendingSizeChange = size;
+        imageSelectionModal.show(this.slots, maxImages, size);
+        return; // Don't proceed until user selects
+      }
+    }
+
     this.cardSize = size;
 
     // Validate layout for new size
@@ -66,12 +207,13 @@ const AppState = {
       this.layout = getDefaultLayout(size);
     }
 
-    // Validate image count
-    if (typeof getMaxImages === 'function') {
-      const maxImages = getMaxImages(size);
-      if (this.slots.length > maxImages) {
-        this.slots = this.slots.slice(0, maxImages);
-      }
+    // Check if new size has a saved config
+    if (this.isConfigCustomized(size)) {
+      // Load saved config for this size
+      this.loadConfigForSize(size);
+    } else {
+      // Handle image count constraint - mark excess as inactive instead of removing
+      this.slots = this.handleImageCountConstraint(size, this.slots);
     }
 
     this._notify('cardSize', { oldSize, newSize: size });
@@ -418,10 +560,16 @@ function loadSampleImages() {
  * Initialize sample slots for demo
  */
 function initializeDemoSlots() {
-  // Add first 2 sample images as demo slots
-  if (AppState.sampleImages.length >= 2) {
+  // Add first sample image as demo slot (single hero)
+  if (AppState.sampleImages.length >= 1) {
     AppState.addSlot(AppState.sampleImages[0]);
-    AppState.addSlot(AppState.sampleImages[1]);
+  }
+
+  // Apply Centered Hero template by default
+  if (typeof applyTemplateToState === 'function') {
+    applyTemplateToState('hero-centered');
+    // Clear the dirty flag since this is initial setup, not user modification
+    AppState._dirtyConfigs.clear();
   }
 }
 
@@ -477,36 +625,100 @@ function setupKeyboardShortcuts() {
  * Render the card size selector as 3x3 grid
  */
 function renderCardSizeSelector() {
-  const container = document.getElementById('card-size-selector');
-  if (!container) return;
-
-  // Arrange in 3x3 grid order
-  const sizes = [
-    ['1x1', '2x1', '3x1'],
-    ['1x2', '2x2', '3x2'],
-    ['1x3', '2x3', '3x3']
-  ];
-
-  container.innerHTML = `
-    <div class="card-size-grid">
-      ${sizes.map(row => row.map(size => `
+  // Render the 3x3 card size grid
+  const gridContainer = document.getElementById('card-size-grid');
+  if (gridContainer) {
+    const sizes = ['1x1', '2x1', '3x1', '1x2', '2x2', '3x2', '1x3', '2x3', '3x3'];
+    gridContainer.innerHTML = sizes.map(size => {
+      const isCustomized = AppState.isConfigCustomized(size);
+      return `
         <button class="card-size-btn ${AppState.cardSize === size ? 'card-size-btn--selected' : ''}"
                 data-size="${size}">
-          ${size}
+          ${size.replace('x', '×')}
+          ${isCustomized ? '<span class="customized-dot"></span>' : ''}
         </button>
-      `).join('')).join('')}
-    </div>
-  `;
+      `;
+    }).join('');
 
-  // Add click handlers
-  container.querySelectorAll('[data-size]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      AppState.setCardSize(btn.dataset.size);
-      renderCardSizeSelector();
-      renderPreview();
-      renderLayoutOptions();
-      updateTemplateStripSize();
+    // Add click handlers
+    gridContainer.querySelectorAll('[data-size]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        AppState.setCardSize(btn.dataset.size);
+        renderAll();
+      });
     });
+  }
+
+  // Render config status badges
+  const configList = document.getElementById('config-list');
+  if (configList) {
+    const sizes = ['1x1', '2x1', '3x1', '1x2', '2x2', '3x2', '1x3', '2x3', '3x3'];
+    configList.innerHTML = sizes.map(size => {
+      const config = AppState.allConfigs[size];
+      const cls = config.isCustomized ? 'customized' : 'default';
+      return `<span class="config-badge ${cls}">${size.replace('x', '×')}</span>`;
+    }).join('');
+  }
+
+  // Update grid info
+  updateGridInfo();
+}
+
+/**
+ * Update grid info display
+ */
+function updateGridInfo() {
+  const grid = AppState.gridSystem;
+
+  const unitSizeEl = document.getElementById('grid-unit-size');
+  if (unitSizeEl) unitSizeEl.textContent = `${Math.round(grid.unitSize)}px`;
+
+  const canvasDimEl = document.getElementById('grid-canvas-dim');
+  if (canvasDimEl) canvasDimEl.textContent = `${Math.round(grid.canvasWidth)}×${Math.round(grid.canvasHeight)}px`;
+
+  const cardSizeEl = document.getElementById('grid-card-size');
+  if (cardSizeEl) cardSizeEl.textContent = `${grid.cols}×${grid.rows}`;
+}
+
+/**
+ * Setup width control slider and presets
+ */
+function setupWidthControl() {
+  const widthSlider = document.getElementById('width-slider');
+  const widthValue = document.getElementById('width-value');
+
+  if (widthSlider) {
+    widthSlider.value = AppState.previewMaxWidth;
+    widthSlider.addEventListener('input', () => {
+      const width = parseInt(widthSlider.value);
+      AppState.setPreviewMaxWidth(width);
+      if (widthValue) widthValue.textContent = `${width}px`;
+      updateWidthPresets(width);
+      updateGridInfo();
+      renderPreview();
+    });
+  }
+
+  // Width presets
+  document.querySelectorAll('.width-preset-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const width = parseInt(btn.dataset.width);
+      AppState.setPreviewMaxWidth(width);
+      if (widthSlider) widthSlider.value = width;
+      if (widthValue) widthValue.textContent = `${width}px`;
+      updateWidthPresets(width);
+      updateGridInfo();
+      renderPreview();
+    });
+  });
+}
+
+/**
+ * Update width preset button active states
+ */
+function updateWidthPresets(activeWidth) {
+  document.querySelectorAll('.width-preset-btn').forEach(btn => {
+    btn.classList.toggle('active', parseInt(btn.dataset.width) === activeWidth);
   });
 }
 
@@ -552,106 +764,643 @@ function renderLayoutOptions() {
 }
 
 /**
- * Render the preview card with absolute positioned slots
+ * Render the preview card with canvas-based slots and Moveable.js support
  */
 function renderPreview() {
   const container = document.getElementById('preview-container');
   if (!container) return;
 
+  const grid = AppState.gridSystem;
   const bg = AppState.background;
 
-  // Build background style with all properties
+  // Build background style for the card canvas
   let bgStyle = '';
-
-  // Background color (always applied, even when image is set)
-  if (bg.type === 'image' && bg.color) {
-    // When image is set, use the separate color property
-    bgStyle += `background-color: ${bg.color};`;
-  } else if (bg.value === 'transparent') {
-    bgStyle += 'background-color: transparent;';
-  } else if (bg.value && bg.value.includes('gradient')) {
-    bgStyle += `background: ${bg.value};`;
-  } else {
-    bgStyle += `background-color: ${bg.value};`;
-  }
-
-  // Background image with full properties
   if (bg.type === 'image' && bg.value) {
-    bgStyle += ` background-image: url('${bg.value}');`;
-    bgStyle += ` background-position: ${bg.position || 'center center'};`;
-    bgStyle += ` background-size: ${bg.size || 'cover'};`;
-    bgStyle += ` background-repeat: ${bg.repeat || 'no-repeat'};`;
+    // Background image with color fallback
+    const bgPosition = bg.position || 'center center';
+    const bgSize = bg.size || 'cover';
+    const bgRepeat = bg.repeat || 'no-repeat';
+    const bgColor = bg.color || '#ffffff';
+    bgStyle = `background-color: ${bgColor}; background-image: url('${bg.value}'); background-position: ${bgPosition}; background-size: ${bgSize}; background-repeat: ${bgRepeat};`;
+  } else {
+    // Solid color background
+    bgStyle = `background: ${bg.value || '#ffffff'};`;
   }
 
   // Sort slots by z-index for rendering order
   const sortedSlots = [...AppState.slots].sort((a, b) => a.zIndex - b.zIndex);
 
   container.innerHTML = `
-    <div class="preview-card" data-size="${AppState.cardSize}" style="${bgStyle}">
-      <div class="preview-area">
-        ${sortedSlots.length > 0
-          ? sortedSlots.map((slot) => {
-              const index = AppState.slots.indexOf(slot);
-              // Calculate slot dimensions - square slots
-              const slotSize = slot.size || 50; // percentage of card width
-              // Position is percentage from top-left
-              const posX = slot.position.x;
-              const posY = slot.position.y;
-              // Transform includes scale and rotation
-              const transform = `scale(${slot.scale}) rotate(${slot.rotation || 0}deg)`;
-
-              return `
-                <div class="preview-slot ${AppState.selectedSlotIndex === index ? 'selected' : ''}"
-                     data-slot-index="${index}"
-                     style="
-                       left: ${posX}%;
-                       top: ${posY}%;
-                       width: ${slotSize}%;
-                       height: ${slotSize}%;
-                       z-index: ${slot.zIndex};
-                       transform: ${transform};
-                       transform-origin: center center;
-                     ">
-                  <span class="preview-slot__layer">${slot.zIndex}</span>
-                  <img src="${slot.image.url}"
-                       alt="${slot.image.name}"
-                       style="object-fit: contain;">
-                </div>
-              `;
-            }).join('')
-          : `
-              <div class="preview-empty">
-                <i class="pi pi-image" style="font-size: 3rem; color: var(--text-color-muted);"></i>
-                <p class="text-muted text-sm mt-4">No images added</p>
-              </div>
-            `
-        }
+    <div class="canvas-wrapper">
+      <div class="grid-background" style="width: ${AppState.previewMaxWidth}px; height: ${AppState.previewMaxWidth}px;">
+        ${Array(9).fill('<div class="grid-cell"></div>').join('')}
       </div>
+
+      <div class="card-canvas" id="card-canvas"
+           style="width: ${Math.round(grid.canvasWidth)}px; height: ${Math.round(grid.canvasHeight)}px; ${bgStyle}">
+        <div class="card-canvas__content" id="canvas-content">
+          ${sortedSlots.length > 0
+            ? sortedSlots.map((slot) => {
+                const index = AppState.slots.indexOf(slot);
+                const slotSize = slot.size || 50;
+                const posX = slot.position?.x || 0;
+                const posY = slot.position?.y || 0;
+                const rotation = slot.rotation || 0;
+
+                return `
+                  <div class="canvas-product ${AppState.selectedSlotIndex === index ? 'selected' : ''}"
+                       id="product-${index}"
+                       data-slot-index="${index}"
+                       style="
+                         left: ${posX}%;
+                         top: ${posY}%;
+                         width: ${slotSize}%;
+                         z-index: ${slot.zIndex};
+                         transform: rotate(${rotation}deg);
+                       ">
+                    <div class="canvas-product__visual">
+                      ${slot.image?.url
+                        ? `<img src="${slot.image.url}" alt="${slot.image.name || ''}">`
+                        : `<div class="demo-product slot-${index}">${index + 1}</div>`
+                      }
+                    </div>
+                  </div>
+                `;
+              }).join('')
+            : ''
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="canvas-status-bar">
+      <span><span class="label">Size:</span> <span class="value">${grid.cols}×${grid.rows}</span></span>
+      <span><span class="label">Canvas:</span> <span class="value">${Math.round(grid.canvasWidth)}×${Math.round(grid.canvasHeight)}</span></span>
+      <span><span class="label">Selected:</span> <span class="value">${AppState.selectedSlotIndex >= 0 ? AppState.selectedSlotIndex + 1 : '-'}</span></span>
+      <span><span class="label">Images:</span> <span class="value">${AppState.slots.length}</span></span>
     </div>
   `;
 
   // Add slot click handlers
-  container.querySelectorAll('[data-slot-index]').forEach(slot => {
-    slot.addEventListener('click', (e) => {
-      e.stopPropagation();
-      AppState.selectSlot(parseInt(slot.dataset.slotIndex));
-      renderPreview();
-      renderSlotInfo();
-      renderImageList();
-      renderLayersList();
+  container.querySelectorAll('[data-slot-index]').forEach(product => {
+    product.addEventListener('mousedown', (e) => {
+      // Don't interfere with Moveable controls
+      if (e.target.closest('.moveable-control')) return;
+      const index = parseInt(product.dataset.slotIndex);
+      selectSlot(index);
     });
   });
 
-  // Click on empty area to deselect
-  container.querySelector('.preview-area')?.addEventListener('click', (e) => {
-    if (e.target.classList.contains('preview-area')) {
-      AppState.selectSlot(-1);
-      renderPreview();
-      renderSlotInfo();
-      renderImageList();
-      renderLayersList();
+  // Add click handler on canvas content to deselect when clicking empty area
+  const canvasContent = container.querySelector('#canvas-content');
+  if (canvasContent) {
+    canvasContent.addEventListener('mousedown', (e) => {
+      // Only deselect if clicking directly on canvas-content (not on products or Moveable controls)
+      if (e.target === canvasContent || e.target.classList.contains('card-canvas__content')) {
+        deselectSlot();
+      }
+    });
+  }
+
+  // Setup Moveable for the selected slot
+  setupMoveableForSelected();
+}
+
+/**
+ * Deselect current slot (set selection to none)
+ */
+function deselectSlot() {
+  if (AppState.selectedSlotIndex === -1) return;
+
+  AppState.selectSlot(-1);
+
+  // Remove visual selection
+  document.querySelectorAll('.canvas-product').forEach(p => {
+    p.classList.remove('selected');
+  });
+
+  // Update selected image buttons
+  document.querySelectorAll('.image-select-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+
+  // Destroy Moveable controls
+  if (currentMoveable) {
+    currentMoveable.destroy();
+    currentMoveable = null;
+  }
+
+  updateAdjustmentSliders();
+  renderLiveData();
+  renderSelectedImageButtons();
+  renderSlotInfo();
+}
+
+/**
+ * Select a slot and update UI
+ */
+function selectSlot(index) {
+  if (AppState.selectedSlotIndex === index) return;
+  if (index >= AppState.slots.length) return;
+
+  AppState.selectSlot(index);
+
+  // Update visual selection
+  document.querySelectorAll('.canvas-product').forEach((p, i) => {
+    p.classList.toggle('selected', parseInt(p.dataset.slotIndex) === index);
+  });
+
+  // Update selected image buttons
+  document.querySelectorAll('.image-select-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', i === index);
+  });
+
+  setupMoveableForSelected();
+  updateAdjustmentSliders();
+  renderLiveData();
+  renderSelectedImageButtons();
+}
+
+/**
+ * Setup Moveable.js for the currently selected slot
+ */
+let currentMoveable = null;
+let scaleStartState = null; // Track initial state for center-based scaling
+
+function setupMoveableForSelected() {
+  // Destroy existing Moveable
+  if (currentMoveable) {
+    currentMoveable.destroy();
+    currentMoveable = null;
+  }
+  scaleStartState = null;
+
+  if (AppState.selectedSlotIndex < 0) return;
+  if (typeof Moveable === 'undefined') return;
+
+  const target = document.getElementById(`product-${AppState.selectedSlotIndex}`);
+  const canvasContent = document.getElementById('canvas-content');
+  if (!target || !canvasContent) return;
+
+  currentMoveable = new Moveable(canvasContent, {
+    target: target,
+    container: canvasContent,
+    draggable: true,
+    scalable: true,
+    rotatable: true,
+    keepRatio: true,
+    // Add throttle for less sensitive controls
+    throttleDrag: 2,      // Minimum 2px movement before drag fires
+    throttleScale: 0.02,  // Minimum 2% scale change before firing
+    throttleRotate: 1,    // Minimum 1 degree rotation before firing
+    renderDirections: ["nw", "ne", "sw", "se"],
+    rotationPosition: "top",
+    origin: false,        // Hide origin point indicator
+  });
+
+  currentMoveable.on('drag', e => {
+    const rect = canvasContent.getBoundingClientRect();
+    const xPercent = (e.left / rect.width) * 100;
+    const yPercent = (e.top / rect.height) * 100;
+
+    const slot = AppState.slots[AppState.selectedSlotIndex];
+    if (slot) {
+      slot.position = { x: xPercent, y: yPercent };
+    }
+
+    e.target.style.left = `${xPercent}%`;
+    e.target.style.top = `${yPercent}%`;
+
+    // Mark config as dirty (user made actual modification)
+    AppState.markCurrentConfigDirty();
+    renderCardSizeSelector(); // Update purple dots
+
+    updateAdjustmentSliders();
+    renderLiveData();
+    renderJsonCode();
+  });
+
+  // Scale from center: capture initial state on scale start
+  currentMoveable.on('scaleStart', e => {
+    const slot = AppState.slots[AppState.selectedSlotIndex];
+    if (slot) {
+      const size = slot.size || 50;
+      const posX = slot.position?.x || 0;
+      const posY = slot.position?.y || 0;
+      scaleStartState = {
+        size: size,
+        centerX: posX + size / 2,
+        centerY: posY + size / 2
+      };
     }
   });
+
+  currentMoveable.on('scale', e => {
+    const slot = AppState.slots[AppState.selectedSlotIndex];
+    if (!slot || !scaleStartState) return;
+
+    // Calculate new size from scale (relative to start size)
+    const newSize = Math.max(10, Math.min(100, scaleStartState.size * e.scale[0]));
+    slot.size = newSize;
+
+    // Scale from center: adjust position to keep center point fixed
+    slot.position = {
+      x: scaleStartState.centerX - newSize / 2,
+      y: scaleStartState.centerY - newSize / 2
+    };
+
+    // Apply to element (height handled by CSS aspect-ratio: 1)
+    e.target.style.left = `${slot.position.x}%`;
+    e.target.style.top = `${slot.position.y}%`;
+    e.target.style.width = `${slot.size}%`;
+    e.target.style.transform = `rotate(${slot.rotation || 0}deg)`;
+
+    // Mark config as dirty (user made actual modification)
+    AppState.markCurrentConfigDirty();
+    renderCardSizeSelector(); // Update purple dots
+
+    updateAdjustmentSliders();
+    renderLiveData();
+    renderJsonCode();
+  });
+
+  currentMoveable.on('scaleEnd', e => {
+    scaleStartState = null;
+  });
+
+  currentMoveable.on('rotate', e => {
+    const slot = AppState.slots[AppState.selectedSlotIndex];
+    if (slot) {
+      slot.rotation = e.rotate;
+    }
+    e.target.style.transform = `rotate(${e.rotate}deg)`;
+
+    // Mark config as dirty (user made actual modification)
+    AppState.markCurrentConfigDirty();
+    renderCardSizeSelector(); // Update purple dots
+
+    updateAdjustmentSliders();
+    renderLiveData();
+    renderJsonCode();
+  });
+}
+
+/**
+ * Update adjustment sliders to reflect current slot values
+ */
+function updateAdjustmentSliders() {
+  const slot = AppState.slots[AppState.selectedSlotIndex];
+  if (!slot) return;
+
+  const sliderX = document.getElementById('slider-x');
+  const sliderY = document.getElementById('slider-y');
+  const sliderSize = document.getElementById('slider-size');
+  const sliderRotation = document.getElementById('slider-rotation');
+
+  if (sliderSize) {
+    sliderSize.value = slot.size || 50;
+    document.getElementById('slider-size-val').value = `${Math.round(slot.size || 50)}%`;
+  }
+  if (sliderX) {
+    sliderX.value = slot.position?.x || 0;
+    document.getElementById('slider-x-val').value = `${(slot.position?.x || 0).toFixed(0)}%`;
+  }
+  if (sliderY) {
+    sliderY.value = slot.position?.y || 0;
+    document.getElementById('slider-y-val').value = `${(slot.position?.y || 0).toFixed(0)}%`;
+  }
+  if (sliderRotation) {
+    sliderRotation.value = slot.rotation || 0;
+    document.getElementById('slider-rotation-val').value = `${Math.round(slot.rotation || 0)}°`;
+  }
+
+  // Update layer buttons (dynamically rendered based on image count)
+  renderLayerButtons();
+}
+
+/**
+ * Setup adjustment slider and button event listeners
+ */
+function setupAdjustmentSliders() {
+  const sliderX = document.getElementById('slider-x');
+  const sliderY = document.getElementById('slider-y');
+  const sliderSize = document.getElementById('slider-size');
+  const sliderRotation = document.getElementById('slider-rotation');
+
+  // Helper function to update slot and UI
+  const updateSlotValue = (property, value, displayId, displayFormat) => {
+    const slot = AppState.slots[AppState.selectedSlotIndex];
+    if (!slot) return;
+
+    if (property === 'posX') {
+      slot.position = { ...slot.position, x: value };
+    } else if (property === 'posY') {
+      slot.position = { ...slot.position, y: value };
+    } else if (property === 'size') {
+      slot.size = value;
+    } else if (property === 'rotation') {
+      slot.rotation = value;
+    } else if (property === 'zIndex') {
+      slot.zIndex = value;
+    }
+
+    document.getElementById(displayId).value = displayFormat(value);
+    applySlotToDOM(AppState.selectedSlotIndex);
+    if (currentMoveable) currentMoveable.updateRect();
+    AppState.markCurrentConfigDirty();
+    renderCardSizeSelector();
+    renderLiveData();
+    renderJsonCode();
+  };
+
+  // Size slider and stepper buttons
+  if (sliderSize) {
+    sliderSize.addEventListener('input', () => {
+      updateSlotValue('size', parseFloat(sliderSize.value), 'slider-size-val', v => `${Math.round(v)}%`);
+    });
+  }
+
+  document.getElementById('size-decrease')?.addEventListener('click', () => {
+    const slot = AppState.slots[AppState.selectedSlotIndex];
+    if (!slot) return;
+    const newValue = Math.max(10, (slot.size || 50) - 5);
+    if (sliderSize) sliderSize.value = newValue;
+    updateSlotValue('size', newValue, 'slider-size-val', v => `${Math.round(v)}%`);
+  });
+
+  document.getElementById('size-increase')?.addEventListener('click', () => {
+    const slot = AppState.slots[AppState.selectedSlotIndex];
+    if (!slot) return;
+    const newValue = Math.min(200, (slot.size || 50) + 5);
+    if (sliderSize) sliderSize.value = newValue;
+    updateSlotValue('size', newValue, 'slider-size-val', v => `${Math.round(v)}%`);
+  });
+
+  // Position X slider and stepper buttons
+  if (sliderX) {
+    sliderX.addEventListener('input', () => {
+      updateSlotValue('posX', parseFloat(sliderX.value), 'slider-x-val', v => `${v.toFixed(0)}%`);
+    });
+  }
+
+  document.getElementById('pos-x-decrease')?.addEventListener('click', () => {
+    const slot = AppState.slots[AppState.selectedSlotIndex];
+    if (!slot) return;
+    const newValue = Math.max(-100, (slot.position?.x || 0) - 5);
+    if (sliderX) sliderX.value = newValue;
+    updateSlotValue('posX', newValue, 'slider-x-val', v => `${v.toFixed(0)}%`);
+  });
+
+  document.getElementById('pos-x-increase')?.addEventListener('click', () => {
+    const slot = AppState.slots[AppState.selectedSlotIndex];
+    if (!slot) return;
+    const newValue = Math.min(100, (slot.position?.x || 0) + 5);
+    if (sliderX) sliderX.value = newValue;
+    updateSlotValue('posX', newValue, 'slider-x-val', v => `${v.toFixed(0)}%`);
+  });
+
+  // Position Y slider and stepper buttons
+  if (sliderY) {
+    sliderY.addEventListener('input', () => {
+      updateSlotValue('posY', parseFloat(sliderY.value), 'slider-y-val', v => `${v.toFixed(0)}%`);
+    });
+  }
+
+  document.getElementById('pos-y-decrease')?.addEventListener('click', () => {
+    const slot = AppState.slots[AppState.selectedSlotIndex];
+    if (!slot) return;
+    const newValue = Math.max(-100, (slot.position?.y || 0) - 5);
+    if (sliderY) sliderY.value = newValue;
+    updateSlotValue('posY', newValue, 'slider-y-val', v => `${v.toFixed(0)}%`);
+  });
+
+  document.getElementById('pos-y-increase')?.addEventListener('click', () => {
+    const slot = AppState.slots[AppState.selectedSlotIndex];
+    if (!slot) return;
+    const newValue = Math.min(100, (slot.position?.y || 0) + 5);
+    if (sliderY) sliderY.value = newValue;
+    updateSlotValue('posY', newValue, 'slider-y-val', v => `${v.toFixed(0)}%`);
+  });
+
+  // Rotation slider and stepper buttons
+  if (sliderRotation) {
+    sliderRotation.addEventListener('input', () => {
+      updateSlotValue('rotation', parseFloat(sliderRotation.value), 'slider-rotation-val', v => `${Math.round(v)}°`);
+    });
+  }
+
+  document.getElementById('rotation-decrease')?.addEventListener('click', () => {
+    const slot = AppState.slots[AppState.selectedSlotIndex];
+    if (!slot) return;
+    const newValue = Math.max(-180, (slot.rotation || 0) - 5);
+    if (sliderRotation) sliderRotation.value = newValue;
+    updateSlotValue('rotation', newValue, 'slider-rotation-val', v => `${Math.round(v)}°`);
+  });
+
+  document.getElementById('rotation-increase')?.addEventListener('click', () => {
+    const slot = AppState.slots[AppState.selectedSlotIndex];
+    if (!slot) return;
+    const newValue = Math.min(180, (slot.rotation || 0) + 5);
+    if (sliderRotation) sliderRotation.value = newValue;
+    updateSlotValue('rotation', newValue, 'slider-rotation-val', v => `${Math.round(v)}°`);
+  });
+
+  // Editable value input handlers (Enter key and blur to apply)
+  const setupValueInput = (inputId, sliderId, property, min, max, parser, formatter) => {
+    const input = document.getElementById(inputId);
+    const slider = document.getElementById(sliderId);
+    if (!input) return;
+
+    const applyValue = () => {
+      const slot = AppState.slots[AppState.selectedSlotIndex];
+      if (!slot) return;
+
+      // Parse the value (strip % or ° suffix)
+      let rawValue = input.value.replace(/[%°]/g, '').trim();
+      let numValue = parser(rawValue);
+
+      // Clamp to min/max
+      if (isNaN(numValue)) {
+        // Reset to current value if invalid
+        updateAdjustmentSliders();
+        return;
+      }
+      numValue = Math.max(min, Math.min(max, numValue));
+
+      // Update slider and slot
+      if (slider) slider.value = numValue;
+      updateSlotValue(property, numValue, inputId, formatter);
+    };
+
+    // Apply on Enter key
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        applyValue();
+        input.blur();
+      }
+    });
+
+    // Apply on blur (focus loss)
+    input.addEventListener('blur', applyValue);
+  };
+
+  // Setup all value inputs
+  setupValueInput('slider-size-val', 'slider-size', 'size', 10, 200, parseFloat, v => `${Math.round(v)}%`);
+  setupValueInput('slider-x-val', 'slider-x', 'posX', -100, 100, parseFloat, v => `${v.toFixed(0)}%`);
+  setupValueInput('slider-y-val', 'slider-y', 'posY', -100, 100, parseFloat, v => `${v.toFixed(0)}%`);
+  setupValueInput('slider-rotation-val', 'slider-rotation', 'rotation', -180, 180, parseFloat, v => `${Math.round(v)}°`);
+
+  // Reset button handlers
+  document.getElementById('reset-size')?.addEventListener('click', () => {
+    if (sliderSize) sliderSize.value = 50;
+    updateSlotValue('size', 50, 'slider-size-val', v => `${Math.round(v)}%`);
+  });
+
+  document.getElementById('reset-pos-x')?.addEventListener('click', () => {
+    if (sliderX) sliderX.value = 0;
+    updateSlotValue('posX', 0, 'slider-x-val', v => `${v.toFixed(0)}%`);
+  });
+
+  document.getElementById('reset-pos-y')?.addEventListener('click', () => {
+    if (sliderY) sliderY.value = 0;
+    updateSlotValue('posY', 0, 'slider-y-val', v => `${v.toFixed(0)}%`);
+  });
+
+  document.getElementById('reset-rotation')?.addEventListener('click', () => {
+    if (sliderRotation) sliderRotation.value = 0;
+    updateSlotValue('rotation', 0, 'slider-rotation-val', v => `${Math.round(v)}°`);
+  });
+
+  // Auto-center button handler
+  document.getElementById('auto-center-btn')?.addEventListener('click', () => {
+    const slot = AppState.slots[AppState.selectedSlotIndex];
+    if (!slot) return;
+
+    // Calculate center position based on size
+    // For an image with size S%, center position = (100 - S) / 2
+    const size = slot.size || 50;
+    const centerX = (100 - size) / 2;
+    const centerY = (100 - size) / 2;
+
+    // Update both X and Y positions
+    slot.position = { x: centerX, y: centerY };
+
+    // Update sliders
+    if (sliderX) sliderX.value = centerX;
+    if (sliderY) sliderY.value = centerY;
+    document.getElementById('slider-x-val').value = `${centerX.toFixed(0)}%`;
+    document.getElementById('slider-y-val').value = `${centerY.toFixed(0)}%`;
+
+    // Update UI
+    applySlotToDOM(AppState.selectedSlotIndex);
+    if (currentMoveable) currentMoveable.updateRect();
+    AppState.markCurrentConfigDirty();
+    renderCardSizeSelector();
+    renderLiveData();
+    renderJsonCode();
+  });
+
+  // Layer buttons are now dynamically rendered - see renderLayerButtons()
+}
+
+/**
+ * Apply slot state to DOM element
+ */
+function applySlotToDOM(index) {
+  const slot = AppState.slots[index];
+  if (!slot) return;
+
+  const product = document.getElementById(`product-${index}`);
+  if (!product) return;
+
+  product.style.left = `${slot.position?.x || 0}%`;
+  product.style.top = `${slot.position?.y || 0}%`;
+  product.style.width = `${slot.size || 50}%`;
+  // height is handled by CSS aspect-ratio: 1 for square containers
+  product.style.zIndex = slot.zIndex || 1;
+  product.style.transform = `rotate(${slot.rotation || 0}deg)`;
+}
+
+/**
+ * Render live data for all slots
+ */
+function renderLiveData() {
+  const container = document.getElementById('live-data');
+  if (!container) return;
+
+  if (AppState.slots.length === 0) {
+    container.innerHTML = '<p class="text-muted text-xs">No images to display</p>';
+    return;
+  }
+
+  container.innerHTML = AppState.slots.map((slot, i) => `
+    <div style="margin-bottom: 8px; ${i === AppState.selectedSlotIndex ? 'background: var(--primary-color-light); padding: 4px; border-radius: 4px;' : ''}">
+      <div class="live-data-title">Image ${i + 1}</div>
+      <div class="live-data-row">
+        <span class="live-data-label">position</span>
+        <span class="live-data-value">${(slot.position?.x || 0).toFixed(0)}%, ${(slot.position?.y || 0).toFixed(0)}%</span>
+      </div>
+      <div class="live-data-row">
+        <span class="live-data-label">size</span>
+        <span class="live-data-value">${(slot.size || 50).toFixed(0)}%</span>
+      </div>
+      <div class="live-data-row">
+        <span class="live-data-label">rotation</span>
+        <span class="live-data-value">${(slot.rotation || 0).toFixed(0)}°</span>
+      </div>
+      <div class="live-data-row">
+        <span class="live-data-label">z-index</span>
+        <span class="live-data-value">${slot.zIndex || 1}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+/**
+ * Render selected image buttons in Hero Adjustments (with thumbnails)
+ */
+function renderSelectedImageButtons() {
+  const container = document.getElementById('selected-image-buttons');
+  if (!container) return;
+
+  container.innerHTML = '';
+
+  // Only show buttons for existing slots (no placeholder buttons)
+  for (let i = 0; i < AppState.slots.length; i++) {
+    const slot = AppState.slots[i];
+    const btn = document.createElement('button');
+    btn.className = 'image-select-btn';
+    if (i === AppState.selectedSlotIndex) btn.classList.add('active');
+
+    // Use thumbnail image instead of colored dot
+    if (slot.image?.url) {
+      btn.innerHTML = `<img src="${slot.image.url}" alt="${slot.image.name || ''}" class="thumb"><span class="slot-number">${i + 1}</span>`;
+    } else {
+      btn.innerHTML = `<span class="slot-number">${i + 1}</span>`;
+    }
+
+    btn.onclick = () => {
+      selectSlot(i);
+    };
+    container.appendChild(btn);
+  }
+}
+
+/**
+ * Render all UI components
+ */
+function renderAll() {
+  renderCardSizeSelector();
+  renderPreview();
+  renderImageCountSelector();
+  renderLayersList();
+  renderSlotInfo();
+  renderSelectedImageButtons();
+  renderLiveData();
+  renderLayerButtons();
+  renderJsonCode();
+  updateTemplateStripSize();
 }
 
 /**
@@ -751,7 +1500,7 @@ function renderSlotInfo() {
     <!-- Actions -->
     <div class="flex justify-between pt-3" style="border-top: 1px solid var(--surface-border);">
       <button class="p-button p-button-text p-button-sm" id="remove-slot-btn">
-        <i class="pi pi-trash"></i> Remove
+        <i class="pi pi-times"></i> Remove
       </button>
       <button class="p-button p-button-secondary p-button-sm" id="reset-slot-btn">
         <i class="pi pi-refresh"></i> Reset
@@ -762,6 +1511,8 @@ function renderSlotInfo() {
   // Layer order buttons
   document.getElementById('send-back-btn')?.addEventListener('click', () => {
     AppState.sendToBack(AppState.selectedSlotIndex);
+    AppState.markCurrentConfigDirty();
+    renderCardSizeSelector();
     renderPreview();
     renderSlotInfo();
     renderImageList();
@@ -770,6 +1521,8 @@ function renderSlotInfo() {
 
   document.getElementById('send-backward-btn')?.addEventListener('click', () => {
     AppState.sendBackward(AppState.selectedSlotIndex);
+    AppState.markCurrentConfigDirty();
+    renderCardSizeSelector();
     renderPreview();
     renderSlotInfo();
     renderImageList();
@@ -778,6 +1531,8 @@ function renderSlotInfo() {
 
   document.getElementById('bring-forward-btn')?.addEventListener('click', () => {
     AppState.bringForward(AppState.selectedSlotIndex);
+    AppState.markCurrentConfigDirty();
+    renderCardSizeSelector();
     renderPreview();
     renderSlotInfo();
     renderImageList();
@@ -786,6 +1541,8 @@ function renderSlotInfo() {
 
   document.getElementById('bring-front-btn')?.addEventListener('click', () => {
     AppState.bringToFront(AppState.selectedSlotIndex);
+    AppState.markCurrentConfigDirty();
+    renderCardSizeSelector();
     renderPreview();
     renderSlotInfo();
     renderImageList();
@@ -816,6 +1573,8 @@ function renderSlotInfo() {
         });
       }
 
+      AppState.markCurrentConfigDirty();
+      renderCardSizeSelector();
       renderPreview();
       renderSlotInfo();
     });
@@ -846,25 +1605,18 @@ function renderSlotInfo() {
 }
 
 /**
- * Render image count selector (1-5)
+ * Render image count selector (1-5) - Full width with equal buttons
  */
 function renderImageCountSelector() {
   const container = document.getElementById('image-count-selector');
   if (!container) return;
 
-  container.innerHTML = `
-    <div class="image-count-selector">
-      <div class="p-selectbutton">
-        ${[1, 2, 3, 4, 5].map(count => `
-          <button class="p-button p-button-sm ${AppState.imageCount === count ? 'p-highlight' : ''}"
-                  data-count="${count}"
-                  style="min-width: 36px;">
-            ${count}
-          </button>
-        `).join('')}
-      </div>
-    </div>
-  `;
+  container.innerHTML = [1, 2, 3, 4, 5].map(count => `
+    <button class="image-count-btn ${AppState.imageCount === count ? 'active' : ''}"
+            data-count="${count}">
+      ${count}
+    </button>
+  `).join('');
 
   // Add click handlers
   container.querySelectorAll('[data-count]').forEach(btn => {
@@ -876,12 +1628,163 @@ function renderImageCountSelector() {
       renderLayersList();
       renderPreview();
       renderSlotInfo();
+      renderLayerButtons(); // Update layer buttons based on new count
+      renderSelectedImageButtons();
     });
   });
 }
 
 /**
- * Render layers list in the main content area card with drag-and-drop
+ * Render layer buttons based on image count
+ * 1 = No buttons (hide section)
+ * 2 = Top, Bottom
+ * 3 = Top, Middle, Bottom
+ * 4 = Top, Middle Top, Middle Bottom, Bottom
+ * 5 = Top, Middle Top, Middle, Middle Bottom, Bottom
+ */
+function renderLayerButtons() {
+  const layerGroup = document.getElementById('layer-group');
+  const container = document.getElementById('layer-buttons');
+  if (!container || !layerGroup) return;
+
+  const imageCount = AppState.slots.length;
+
+  // Hide layer section if only 1 image
+  if (imageCount <= 1) {
+    layerGroup.style.display = 'none';
+    return;
+  }
+
+  layerGroup.style.display = '';
+
+  // Define layer configurations based on image count
+  // Higher z-index = renders on top in CSS, so Top has highest z value
+  const layerConfigs = {
+    2: [
+      { z: 2, label: 'Top' },
+      { z: 1, label: 'Bottom' }
+    ],
+    3: [
+      { z: 3, label: 'Top' },
+      { z: 2, label: 'Middle' },
+      { z: 1, label: 'Bottom' }
+    ],
+    4: [
+      { z: 4, label: 'Top' },
+      { z: 3, label: 'Mid Top' },
+      { z: 2, label: 'Mid Bot' },
+      { z: 1, label: 'Bottom' }
+    ],
+    5: [
+      { z: 5, label: 'Top' },
+      { z: 4, label: 'Mid Top' },
+      { z: 3, label: 'Middle' },
+      { z: 2, label: 'Mid Bot' },
+      { z: 1, label: 'Bottom' }
+    ]
+  };
+
+  const config = layerConfigs[imageCount] || layerConfigs[3];
+  const currentZ = AppState.slots[AppState.selectedSlotIndex]?.zIndex || 1;
+
+  container.innerHTML = config.map(layer => `
+    <button class="layer-btn ${currentZ === layer.z ? 'active' : ''}"
+            data-z="${layer.z}"
+            title="Layer ${layer.z} (${layer.label})">
+      ${layer.label}
+    </button>
+  `).join('');
+
+  // Add click handlers
+  container.querySelectorAll('.layer-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const slot = AppState.slots[AppState.selectedSlotIndex];
+      if (!slot) return;
+
+      const currentZ = slot.zIndex;
+      const targetZ = parseInt(btn.dataset.z);
+
+      // Skip if already at target layer
+      if (currentZ === targetZ) return;
+
+      // Cascade reorder: push other images to make room
+      // Higher z-index = Top (front), Lower z-index = Bottom (back)
+      if (targetZ > currentZ) {
+        // Moving up (to front): push others down (decrease their z-index)
+        AppState.slots.forEach(s => {
+          if (s !== slot && s.zIndex > currentZ && s.zIndex <= targetZ) {
+            s.zIndex -= 1;
+          }
+        });
+      } else {
+        // Moving down (to back): push others up (increase their z-index)
+        AppState.slots.forEach(s => {
+          if (s !== slot && s.zIndex >= targetZ && s.zIndex < currentZ) {
+            s.zIndex += 1;
+          }
+        });
+      }
+
+      // Set the selected slot to target layer
+      slot.zIndex = targetZ;
+
+      // Update active state on buttons
+      container.querySelectorAll('.layer-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Update all affected UI elements
+      AppState.slots.forEach((s, i) => applySlotToDOM(i));
+      AppState.markCurrentConfigDirty();
+      renderCardSizeSelector();
+      renderLiveData();
+      renderPreview();
+      renderJsonCode();
+      renderLayersList();
+    });
+  });
+}
+
+/**
+ * Render JSON code window with image data
+ */
+function renderJsonCode() {
+  const container = document.getElementById('json-code');
+  if (!container) return;
+
+  // Build image data object
+  const imageData = AppState.slots.map((slot, index) => ({
+    id: index + 1,
+    name: slot.image?.name || `Image ${index + 1}`,
+    position: {
+      x: Math.round(slot.position?.x || 0),
+      y: Math.round(slot.position?.y || 0)
+    },
+    size: Math.round(slot.size || 50),
+    rotation: Math.round(slot.rotation || 0),
+    zIndex: slot.zIndex || 1
+  }));
+
+  const jsonString = JSON.stringify(imageData, null, 2);
+  container.textContent = jsonString;
+
+  // Setup copy button handler (only once)
+  const copyBtn = document.getElementById('json-copy-btn');
+  if (copyBtn && !copyBtn.hasAttribute('data-initialized')) {
+    copyBtn.setAttribute('data-initialized', 'true');
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(jsonString).then(() => {
+        copyBtn.innerHTML = '<i class="pi pi-check"></i>';
+        setTimeout(() => {
+          copyBtn.innerHTML = '<i class="pi pi-copy"></i>';
+        }, 1500);
+      });
+    });
+  }
+}
+
+/**
+ * Render hero image list in the Hero Image card
+ * Format: Thumbnail + URL/filename + Replace button + X button
  */
 function renderLayersList() {
   const container = document.getElementById('layers-list');
@@ -894,54 +1797,69 @@ function renderLayersList() {
     container.innerHTML = `
       <div class="flex flex-col items-center justify-center" style="padding: var(--spacing-6);">
         <i class="pi pi-images" style="font-size: 2rem; color: var(--text-color-muted);"></i>
-        <p class="text-muted text-sm mt-3">No layers yet</p>
-        <p class="text-xs text-muted">Add images to create layers</p>
+        <p class="text-muted text-sm mt-3">No images yet</p>
+        <p class="text-xs text-muted">Select an image count above</p>
       </div>
     `;
     return;
   }
 
   container.innerHTML = `
-    <div class="layers-list" role="listbox" aria-label="Layers list">
-      ${sortedByLayer.map((slot, displayIndex) => {
+    <div class="hero-image-list">
+      ${sortedByLayer.map((slot) => {
         const slotIndex = AppState.slots.indexOf(slot);
-        const layerPosition = displayIndex + 1; // 1 = top (highest z-index)
+        // Generate a display URL (truncate filename for display)
+        const displayUrl = slot.image.url || slot.image.filename || 'No URL';
         return `
-          <div class="layer-item ${AppState.selectedSlotIndex === slotIndex ? 'layer-item--selected' : ''}"
-               draggable="true"
-               data-slot-index="${slotIndex}"
-               data-display-index="${displayIndex}"
-               role="option"
-               aria-selected="${AppState.selectedSlotIndex === slotIndex}"
-               tabindex="0">
-            <div class="layer-item__drag-handle" title="Drag to reorder">
-              <span class="drag-dots">
-                <span></span><span></span>
-                <span></span><span></span>
-                <span></span><span></span>
-              </span>
+          <div class="hero-image-item ${AppState.selectedSlotIndex === slotIndex ? 'hero-image-item--selected' : ''}"
+               data-slot-index="${slotIndex}">
+            <img src="${slot.image.url}" alt="${slot.image.name}" class="hero-image-item__thumb">
+            <span class="hero-image-item__url" title="${displayUrl}">${displayUrl}</span>
+            <div class="hero-image-item__actions">
+              <button class="hero-image-item__replace-btn" data-action="replace" data-slot-index="${slotIndex}">
+                <i class="pi pi-images"></i> Change Media
+              </button>
             </div>
-            <div class="layer-item__index">${layerPosition}</div>
-            <img src="${slot.image.url}" alt="${slot.image.name}" class="layer-item__thumb">
-            <span class="layer-item__name">${slot.image.name}</span>
+            <button class="hero-image-item__remove-btn" data-action="remove" data-slot-index="${slotIndex}" title="Remove image">
+              <i class="pi pi-times"></i>
+            </button>
           </div>
         `;
       }).join('')}
     </div>
   `;
 
-  // Setup drag and drop
-  setupLayersDragAndDrop(container);
-
-  // Slot selection
-  container.querySelectorAll('[data-slot-index]').forEach(item => {
+  // Slot selection (click on row)
+  container.querySelectorAll('.hero-image-item').forEach(item => {
     item.addEventListener('click', (e) => {
-      // Don't select if clicking drag handle
-      if (e.target.closest('.layer-item__drag-handle')) return;
+      // Don't select if clicking buttons
+      if (e.target.closest('button')) return;
       AppState.selectSlot(parseInt(item.dataset.slotIndex));
       renderLayersList();
       renderSlotInfo();
       renderPreview();
+      renderSelectedImageButtons();
+      updateAdjustmentSliders();
+    });
+  });
+
+  // Replace button
+  container.querySelectorAll('[data-action="replace"]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const slotIndex = parseInt(btn.dataset.slotIndex);
+      showImageReplacePicker(slotIndex);
+    });
+  });
+
+  // Remove button
+  container.querySelectorAll('[data-action="remove"]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const slotIndex = parseInt(btn.dataset.slotIndex);
+      AppState.removeSlot(slotIndex);
+      AppState.setImageCount(AppState.slots.length);
+      renderAll();
     });
   });
 }
@@ -1024,7 +1942,11 @@ function reorderLayersByDrag(fromDisplayIndex, toDisplayIndex) {
     AppState.slots[slotIndex].zIndex = maxZ - displayIndex;
   });
 
+  // Mark config as dirty (user made actual modification)
+  AppState.markCurrentConfigDirty();
+
   // Re-render everything
+  renderCardSizeSelector();
   renderLayersList();
   renderPreview();
   renderSlotInfo();
@@ -1115,6 +2037,44 @@ function hideImagePicker() {
   }
 }
 
+// Track which slot is being replaced
+let replaceSlotIndex = null;
+
+/**
+ * Show image picker to replace an existing image
+ */
+function showImageReplacePicker(slotIndex) {
+  replaceSlotIndex = slotIndex;
+  const modal = document.getElementById('image-picker-modal');
+  if (!modal) return;
+
+  const grid = modal.querySelector('.image-picker-grid');
+  if (grid) {
+    grid.innerHTML = AppState.sampleImages.map(img => `
+      <div class="image-picker-item" data-image-id="${img.id}">
+        <img src="${img.url}" alt="${img.name}">
+        <span>${img.name}</span>
+      </div>
+    `).join('');
+
+    grid.querySelectorAll('[data-image-id]').forEach(item => {
+      item.addEventListener('click', () => {
+        const img = AppState.sampleImages.find(i => i.id === item.dataset.imageId);
+        if (img && replaceSlotIndex !== null) {
+          // Replace the image in the slot
+          AppState.slots[replaceSlotIndex].image = img;
+          AppState.markCurrentConfigDirty();
+          replaceSlotIndex = null;
+          hideImagePicker();
+          renderAll();
+        }
+      });
+    });
+  }
+
+  modal.classList.add('active');
+}
+
 // Template Strip instance
 let templateStrip = null;
 
@@ -1123,6 +2083,112 @@ let layoutPanel = null;
 
 // Background Chooser instance (sidebar)
 let sidebarBackgroundChooser = null;
+
+// Moveable Controller instance
+let moveableController = null;
+
+// Image Selection Modal instance
+let imageSelectionModal = null;
+
+// Pending size change (for modal flow)
+let pendingSizeChange = null;
+
+/**
+ * Initialize Image Selection Modal
+ */
+function initImageSelectionModal() {
+  if (typeof ImageSelectionModal === 'undefined') {
+    console.warn('ImageSelectionModal class not found');
+    return;
+  }
+
+  imageSelectionModal = new ImageSelectionModal({
+    onSelect: (selectedIndices) => {
+      if (!pendingSizeChange) return;
+
+      // Mark slots as active/inactive based on selection
+      AppState.slots.forEach((slot, index) => {
+        slot.active = selectedIndices.includes(index);
+      });
+
+      // Complete the size change
+      const targetSize = pendingSizeChange;
+      pendingSizeChange = null;
+
+      AppState.cardSize = targetSize;
+
+      // Validate layout for new size
+      if (typeof isLayoutAllowed === 'function' && !isLayoutAllowed(targetSize, AppState.layout)) {
+        AppState.layout = getDefaultLayout(targetSize);
+      }
+
+      // Load config if customized
+      if (AppState.isConfigCustomized(targetSize)) {
+        AppState.loadConfigForSize(targetSize);
+      }
+
+      AppState._notify('cardSize', { oldSize: null, newSize: targetSize });
+
+      // Re-render UI
+      renderCardSizeSelector();
+      renderPreview();
+      renderLayoutOptions();
+      renderImageList();
+      renderLayersList();
+      renderSlotInfo();
+      updateTemplateStripSize();
+    },
+    onCancel: () => {
+      // User cancelled - restore the size selector without changing
+      pendingSizeChange = null;
+      renderCardSizeSelector();
+    }
+  });
+
+  console.log('ImageSelectionModal initialized');
+}
+
+/**
+ * Initialize Moveable Controller for drag/drop/scale/rotate
+ */
+function initMoveableController() {
+  if (typeof MoveableController === 'undefined') {
+    console.warn('MoveableController class not found');
+    return;
+  }
+
+  moveableController = new MoveableController({
+    onUpdate: (slotIndex, updates) => {
+      // Update AppState when user drags/scales/rotates
+      AppState.updateSlot(slotIndex, updates);
+      // Update slider UI
+      renderSlotInfo();
+    },
+    onSelect: (index) => {
+      // Update selection in AppState
+      AppState.selectSlot(index);
+      renderPreview();
+      renderSlotInfo();
+      renderImageList();
+      renderLayersList();
+    }
+  });
+
+  // Initialize with preview area
+  const previewArea = document.querySelector('.preview-area');
+  if (previewArea) {
+    moveableController.init(previewArea);
+  }
+
+  // Subscribe to selection changes from other UI (like layers list)
+  AppState.subscribe((changeType, data) => {
+    if (changeType === 'selection' && moveableController) {
+      moveableController.updateSelection(data.index);
+    }
+  });
+
+  console.log('MoveableController initialized');
+}
 
 /**
  * Initialize Template Strip component
@@ -1136,6 +2202,7 @@ function initTemplateStrip() {
 
   templateStrip = new TemplateStrip({
     cardSize: AppState.cardSize,
+    imageCount: AppState.slots.length || 1,
     selectedTemplateId: AppState.template?.id || null,
     onSelect: (template, previousId) => {
       console.log('Template selected:', template.name);
@@ -1166,6 +2233,16 @@ function initTemplateStrip() {
 function updateTemplateStripSize() {
   if (templateStrip) {
     templateStrip.setCardSize(AppState.cardSize);
+    templateStrip.setImageCount(AppState.slots.length || 1);
+  }
+}
+
+/**
+ * Update template strip when image count changes
+ */
+function updateTemplateStripImageCount() {
+  if (templateStrip) {
+    templateStrip.setImageCount(AppState.slots.length || 1);
   }
 }
 
@@ -1259,6 +2336,11 @@ function initApp() {
   // Initialize demo slots
   initializeDemoSlots();
 
+  // Select first slot by default
+  if (AppState.slots.length > 0) {
+    AppState.selectedSlotIndex = 0;
+  }
+
   // Initial render
   renderCardSizeSelector();
   renderImageCountSelector();
@@ -1266,6 +2348,16 @@ function initApp() {
   renderImageList();
   renderLayersList();
   renderSlotInfo();
+  renderSelectedImageButtons();
+  renderLiveData();
+  renderLayerButtons();
+  renderJsonCode();
+
+  // Setup adjustment sliders
+  setupAdjustmentSliders();
+
+  // Setup width control
+  setupWidthControl();
 
   // Initialize Template Strip
   initTemplateStrip();
@@ -1275,6 +2367,12 @@ function initApp() {
 
   // Initialize Background Chooser
   initBackgroundChooser();
+
+  // Initialize Moveable Controller for drag/drop (deprecated - using inline Moveable now)
+  // initMoveableController();
+
+  // Initialize Image Selection Modal
+  initImageSelectionModal();
 
   // Modal close button
   document.getElementById('close-picker-btn')?.addEventListener('click', hideImagePicker);

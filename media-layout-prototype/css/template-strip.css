@@ -273,3 +273,189 @@
 .template-card--just-selected {
   animation: template-select-pulse 0.4s ease-out;
 }
+
+/* =============================================================================
+   Active/Inactive Zones
+   ============================================================================= */
+
+/* Zone container */
+.template-zone {
+  margin-bottom: var(--spacing-3);
+}
+
+.template-zone:last-child {
+  margin-bottom: 0;
+}
+
+/* Zone label */
+.template-zone__label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--text-color-secondary);
+  margin-bottom: var(--spacing-2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.template-zone--active .template-zone__label {
+  color: var(--green-600, #16a34a);
+}
+
+.template-zone--active .template-zone__label i {
+  color: var(--green-500, #22c55e);
+}
+
+.template-zone--inactive .template-zone__label {
+  color: var(--text-color-muted);
+}
+
+/* Zone divider */
+.template-zone__divider {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  margin: var(--spacing-4) 0;
+}
+
+.template-zone__divider-line {
+  flex: 1;
+  height: 1px;
+  background: var(--surface-border);
+}
+
+.template-zone__divider-text {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--text-color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Inactive zone styling */
+.template-zone--inactive {
+  opacity: 0.7;
+}
+
+.template-grid--inactive {
+  gap: var(--spacing-2);
+}
+
+/* =============================================================================
+   Inactive Template Card
+   ============================================================================= */
+
+.template-card--inactive {
+  opacity: 0.5;
+  cursor: pointer;
+  border-style: dashed;
+  background: var(--surface-ground);
+}
+
+.template-card--inactive:hover {
+  opacity: 0.8;
+  border-color: var(--text-color-muted);
+  background: var(--surface-section);
+  transform: none;
+  box-shadow: none;
+}
+
+.template-card--inactive .template-card__preview {
+  filter: grayscale(50%);
+}
+
+.template-card--inactive .template-card__slot {
+  background: var(--text-color-muted);
+}
+
+/* Inactive reason badge */
+.template-card__reason {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  font-size: 8px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.template-card--inactive:hover .template-card__reason {
+  opacity: 1;
+}
+
+/* Image count indicator */
+.template-card__image-count {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 9px;
+  color: var(--text-color-muted);
+  margin-top: auto;
+}
+
+.template-card__image-count i {
+  font-size: 8px;
+}
+
+/* Shake animation for invalid activation attempt */
+@keyframes template-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+
+.template-card--shake {
+  animation: template-shake 0.4s ease-out;
+}
+
+/* =============================================================================
+   Compact Empty State
+   ============================================================================= */
+
+.template-strip__empty--small {
+  padding: var(--spacing-3);
+}
+
+/* =============================================================================
+   Dark Mode / Sidebar Overrides
+   ============================================================================= */
+
+.app-sidebar .template-zone__label {
+  color: var(--surface-dark-text-muted);
+}
+
+.app-sidebar .template-zone--active .template-zone__label {
+  color: var(--green-400, #4ade80);
+}
+
+.app-sidebar .template-zone__divider-line {
+  background: var(--surface-dark-border);
+}
+
+.app-sidebar .template-zone__divider-text {
+  color: var(--surface-dark-text-muted);
+}
+
+.app-sidebar .template-card--inactive {
+  background: var(--surface-dark-hover);
+  border-color: var(--surface-dark-border);
+}
+
+.app-sidebar .template-card--inactive:hover {
+  background: var(--surface-dark-active);
+  border-color: var(--surface-dark-text-muted);
+}
+
+.app-sidebar .template-card__image-count {
+  color: var(--surface-dark-text-muted);
+}

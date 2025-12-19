@@ -83,22 +83,194 @@
       border-radius: var(--border-radius-md);
     }
 
-    /* Preview container centering */
+    /* Preview container - updated for canvas */
     #preview-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 400px;
+      background: var(--surface-ground);
+      border-radius: var(--border-radius-lg);
+      padding: var(--spacing-4);
+      position: relative;
+    }
+
+    /* Canvas wrapper for grid background */
+    .canvas-wrapper {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 450px;
-      background: var(--surface-ground);
-      border-radius: var(--border-radius-lg);
-      padding: var(--spacing-6);
     }
 
-    /* Image Count Selector */
-    .image-count-selector {
+    .grid-background {
+      position: absolute;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 1px;
+      opacity: 0.15;
+      pointer-events: none;
+      transition: width 0.3s ease, height 0.3s ease;
+    }
+
+    .grid-cell {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px dashed var(--surface-border);
+      border-radius: 2px;
+    }
+
+    /* Card canvas */
+    .card-canvas {
+      position: relative;
+      background: var(--orange, #e8692d);
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      transition: width 0.3s ease, height 0.3s ease;
+    }
+
+    .card-canvas__content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow: hidden;
+      border-radius: var(--border-radius-lg);
+    }
+
+    /* Canvas products/slots */
+    .canvas-product {
+      position: absolute;
+      cursor: pointer;
+      user-select: none;
+      aspect-ratio: 1; /* Force square containers */
+      transition:
+        left 0.3s ease,
+        top 0.3s ease,
+        width 0.3s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .canvas-product:hover {
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
+    }
+
+    .canvas-product.selected {
+      box-shadow: 0 0 0 3px var(--primary-color);
+    }
+
+    .canvas-product.dragging {
+      transition: box-shadow 0.15s ease;
+    }
+
+    .canvas-product__visual {
+      width: 100%;
+      height: 100%;
       display: flex;
       align-items: center;
-      gap: var(--spacing-2);
+      justify-content: center;
+      background: rgba(255,255,255,0.08);
+      border-radius: var(--border-radius);
+    }
+
+    .canvas-product__visual img {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+    }
+
+    /* Demo product placeholders */
+    .demo-product {
+      width: 35%;
+      height: 85%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 14px;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+      border-radius: 6px 6px 3px 3px;
+    }
+
+    .demo-product.slot-0 { background: linear-gradient(135deg, #7c1d1d 0%, #b71c1c 30%, #e53935 50%, #b71c1c 70%, #7c1d1d 100%); }
+    .demo-product.slot-1 { background: linear-gradient(135deg, #d4d4a8 0%, #e8e8c8 30%, #f5f5dc 50%, #e8e8c8 70%, #d4d4a8 100%); color: #333; width: 30%; }
+    .demo-product.slot-2 { background: linear-gradient(135deg, #0d47a1 0%, #1565c0 30%, #1976d2 50%, #1565c0 70%, #0d47a1 100%); }
+    .demo-product.slot-3 { background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 30%, #388e3c 50%, #2e7d32 70%, #1b5e20 100%); }
+    .demo-product.slot-4 { background: linear-gradient(135deg, #e65100 0%, #f57c00 30%, #fb8c00 50%, #f57c00 70%, #e65100 100%); }
+
+    .price-bubble {
+      position: absolute;
+      right: 4%;
+      bottom: 8%;
+      width: 18%;
+      aspect-ratio: 1;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: var(--orange, #e8692d);
+      box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+      pointer-events: none;
+      font-size: clamp(0.5rem, 2vw, 1rem);
+    }
+
+    /* Status bar */
+    .canvas-status-bar {
+      margin-top: var(--spacing-3);
+      padding: var(--spacing-2) var(--spacing-3);
+      background: var(--surface-section);
+      border-radius: var(--border-radius);
+      font-size: var(--font-size-xs);
+      font-family: var(--font-family-mono, monospace);
+      display: flex;
+      gap: var(--spacing-4);
+      color: var(--text-color-secondary);
+    }
+
+    .canvas-status-bar .label {
+      color: var(--text-color-muted);
+    }
+
+    .canvas-status-bar .value {
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    /* Image Count Selector - Full width with equal buttons */
+    .image-count-selector {
+      display: flex;
+      width: 100%;
+      gap: var(--spacing-1);
+    }
+
+    .image-count-selector .image-count-btn {
+      flex: 1;
+      padding: var(--spacing-2) var(--spacing-2);
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      border: 2px solid var(--surface-border);
+      background: var(--surface-section);
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      text-align: center;
+    }
+
+    .image-count-selector .image-count-btn:hover {
+      border-color: var(--primary-color);
+    }
+
+    .image-count-selector .image-count-btn.active {
+      border-color: var(--primary-color);
+      background: var(--primary-color);
+      color: white;
     }
 
     .image-count-selector .p-selectbutton {
@@ -110,6 +282,7 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: var(--spacing-2);
+      margin-bottom: var(--spacing-4);
     }
 
     .card-size-btn {
@@ -123,6 +296,7 @@
       color: var(--text-color-secondary);
       cursor: pointer;
       transition: all var(--transition-fast);
+      position: relative;
     }
 
     .card-size-btn:hover {
@@ -134,6 +308,474 @@
       background: var(--primary-color);
       border-color: var(--primary-color);
       color: white;
+    }
+
+    .card-size-btn .customized-dot {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 8px;
+      height: 8px;
+      background: #8b5cf6;
+      border-radius: 50%;
+    }
+
+    .card-size-btn--selected .customized-dot {
+      background: white;
+    }
+
+    /* Width control */
+    .width-control {
+      margin-bottom: var(--spacing-4);
+    }
+
+    .width-control-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: var(--font-size-xs);
+      margin-bottom: var(--spacing-2);
+      color: var(--text-color-secondary);
+    }
+
+    .width-control-label .value {
+      font-family: var(--font-family-mono, monospace);
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    .width-presets {
+      display: flex;
+      gap: var(--spacing-1);
+      margin-top: var(--spacing-2);
+    }
+
+    .width-preset-btn {
+      flex: 1;
+      padding: var(--spacing-1) var(--spacing-2);
+      font-size: 10px;
+      border: 1px solid var(--surface-border);
+      background: var(--surface-section);
+      border-radius: var(--border-radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      color: var(--text-color-secondary);
+    }
+
+    .width-preset-btn:hover {
+      border-color: var(--primary-color);
+    }
+
+    .width-preset-btn.active {
+      background: var(--primary-color);
+      border-color: var(--primary-color);
+      color: white;
+    }
+
+    /* Grid info panel */
+    .grid-info {
+      background: var(--surface-section);
+      border-radius: var(--border-radius);
+      padding: var(--spacing-3);
+      font-size: var(--font-size-xs);
+      margin-bottom: var(--spacing-4);
+    }
+
+    .grid-info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: var(--spacing-1) 0;
+    }
+
+    .grid-info-label {
+      color: var(--text-color-muted);
+    }
+
+    .grid-info-value {
+      font-family: var(--font-family-mono, monospace);
+      color: var(--success-color, #22c55e);
+      font-weight: 600;
+    }
+
+    /* 9-Config status */
+    .config-status {
+      background: var(--surface-section);
+      border-radius: var(--border-radius);
+      padding: var(--spacing-3);
+      margin-bottom: var(--spacing-4);
+    }
+
+    .config-status-title {
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      color: #8b5cf6;
+      margin-bottom: var(--spacing-2);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-2);
+    }
+
+    .config-status-desc {
+      font-size: 10px;
+      color: var(--text-color-muted);
+      margin-bottom: var(--spacing-2);
+    }
+
+    .config-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .config-badge {
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .config-badge.default {
+      background: var(--surface-ground);
+      color: var(--text-color-muted);
+    }
+
+    .config-badge.customized {
+      background: rgba(139, 92, 246, 0.15);
+      color: #8b5cf6;
+    }
+
+    /* Adjustment sliders */
+    .adjustment-group {
+      margin-bottom: var(--spacing-4);
+    }
+
+    .adjustment-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: var(--font-size-xs);
+      margin-bottom: var(--spacing-2);
+      color: var(--text-color-secondary);
+    }
+
+    .adjustment-label .value {
+      font-family: var(--font-family-mono, monospace);
+      color: var(--primary-color);
+      font-weight: 500;
+    }
+
+    /* Editable value input */
+    .adjustment-label .value-input {
+      font-family: var(--font-family-mono, monospace);
+      font-size: var(--font-size-xs);
+      font-weight: 500;
+      color: var(--primary-color);
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: var(--border-radius-sm);
+      padding: 2px 6px;
+      width: 60px;
+      text-align: right;
+      transition: all var(--transition-fast);
+    }
+
+    .adjustment-label .value-input:hover {
+      border-color: var(--surface-border);
+      background: var(--surface-ground);
+    }
+
+    .adjustment-label .value-input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      background: var(--surface-card);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    /* Reset button next to value input */
+    .adjustment-label .reset-btn {
+      font-size: 10px;
+      color: var(--text-color-muted);
+      background: transparent;
+      border: none;
+      padding: 2px 4px;
+      cursor: pointer;
+      opacity: 0.6;
+      transition: all var(--transition-fast);
+    }
+
+    .adjustment-label .reset-btn:hover {
+      color: var(--primary-color);
+      opacity: 1;
+    }
+
+    /* Auto-center button */
+    .auto-center-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: var(--surface-ground);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      color: var(--text-color-secondary);
+      font-size: 14px;
+      transition: all var(--transition-fast);
+    }
+
+    .auto-center-btn:hover {
+      background: var(--primary-color-light);
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    .auto-center-btn:active {
+      transform: scale(0.95);
+    }
+
+    .adjustment-slider {
+      width: 100%;
+      height: 6px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: var(--surface-border);
+      border-radius: 3px;
+      outline: none;
+    }
+
+    .adjustment-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      background: white;
+      border: 2px solid var(--primary-color);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .adjustment-hint {
+      font-size: 10px;
+      color: var(--text-color-muted);
+      text-align: right;
+      margin-top: var(--spacing-1);
+    }
+
+    /* Stepper controls (slider with +/- buttons) */
+    .adjustment-stepper {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-2);
+    }
+
+    .adjustment-stepper .adjustment-slider {
+      flex: 1;
+    }
+
+    .stepper-btn {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--surface-border);
+      background: var(--surface-section);
+      border-radius: var(--border-radius);
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-color);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition-fast);
+    }
+
+    .stepper-btn:hover {
+      background: var(--surface-hover);
+      border-color: var(--primary-color);
+    }
+
+    .stepper-btn:active {
+      background: var(--primary-color-light);
+    }
+
+    /* Layer buttons */
+    .layer-buttons {
+      display: flex;
+      gap: var(--spacing-1);
+    }
+
+    .layer-btn {
+      flex: 1;
+      padding: var(--spacing-2) var(--spacing-2);
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      border: 2px solid var(--surface-border);
+      background: var(--surface-section);
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      text-align: center;
+    }
+
+    .layer-btn:hover {
+      border-color: var(--primary-color);
+    }
+
+    .layer-btn.active {
+      border-color: var(--primary-color);
+      background: var(--primary-color-light);
+      color: var(--primary-color);
+    }
+
+    /* Selected image indicator */
+    .selected-image-indicator {
+      margin-bottom: var(--spacing-4);
+      padding-bottom: var(--spacing-3);
+      border-bottom: 1px solid var(--surface-border);
+    }
+
+    .selected-image-label {
+      font-size: var(--font-size-xs);
+      color: var(--text-color-muted);
+      margin-bottom: var(--spacing-2);
+    }
+
+    .selected-image-buttons {
+      display: flex;
+      gap: var(--spacing-1);
+      flex-wrap: wrap;
+    }
+
+    .image-select-btn {
+      padding: var(--spacing-1);
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      border: 2px solid var(--surface-border);
+      background: var(--surface-section);
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-1);
+      min-width: 40px;
+      min-height: 40px;
+      color: var(--text-color-secondary);
+    }
+
+    .image-select-btn:hover {
+      border-color: var(--primary-color);
+    }
+
+    .image-select-btn.active {
+      border-color: var(--primary-color);
+      background: var(--primary-color-light);
+    }
+
+    .image-select-btn.inactive {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .image-select-btn .thumb {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+      border-radius: 4px;
+    }
+
+    .image-select-btn .slot-number {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      font-size: 9px;
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+
+    .image-select-btn {
+      position: relative;
+    }
+
+    /* JSON Code Window */
+    .json-code-window {
+      margin-top: var(--spacing-4);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+    }
+
+    .json-code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--spacing-2) var(--spacing-3);
+      background: var(--surface-section);
+      border-bottom: 1px solid var(--surface-border);
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      color: var(--text-color-secondary);
+    }
+
+    .json-copy-btn {
+      padding: var(--spacing-1) var(--spacing-2);
+      border: 1px solid var(--surface-border);
+      background: var(--surface-card);
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--text-color-secondary);
+      transition: all var(--transition-fast);
+    }
+
+    .json-copy-btn:hover {
+      background: var(--surface-hover);
+      border-color: var(--primary-color);
+    }
+
+    .json-code {
+      margin: 0;
+      padding: var(--spacing-3);
+      background: #1e1e1e;
+      color: #9cdcfe;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 11px;
+      line-height: 1.5;
+      max-height: 200px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* Live data section */
+    .live-data {
+      background: var(--surface-section);
+      border-radius: var(--border-radius);
+      padding: var(--spacing-3);
+      margin-top: var(--spacing-4);
+    }
+
+    .live-data-title {
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-bottom: var(--spacing-2);
+    }
+
+    .live-data-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      padding: 2px 0;
+    }
+
+    .live-data-label {
+      color: var(--text-color-muted);
+    }
+
+    .live-data-value {
+      font-family: var(--font-family-mono, monospace);
+      color: var(--success-color, #22c55e);
     }
 
     /* Image picker modal */
@@ -328,10 +970,13 @@
       border: none;
       cursor: pointer;
       transition: background-color var(--transition-fast);
+      padding: 0.8rem;
+      background-color: #f2f3f3;
+      color: #000;
     }
 
     .editor-card__header--toggle:hover {
-      background: var(--surface-hover);
+      background: #e8e9e9;
     }
 
     .editor-card__header--toggle:focus {
@@ -535,6 +1180,116 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+
+    /* Hero Image Item - two-row layout matching design */
+    .hero-image-item {
+      display: grid;
+      grid-template-columns: 48px 1fr auto;
+      grid-template-rows: auto auto;
+      gap: var(--spacing-2) var(--spacing-3);
+      padding: var(--spacing-3);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--border-radius);
+      background: var(--surface-card);
+      margin-bottom: var(--spacing-2);
+      align-items: center;
+    }
+
+    .hero-image-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .hero-image-item--selected {
+      border-color: var(--primary-color);
+      background: var(--primary-color-light);
+    }
+
+    .hero-image-item__thumb {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      border-radius: var(--border-radius);
+      background: var(--surface-ground);
+      border: 1px solid var(--surface-border);
+      flex-shrink: 0;
+      grid-row: 1 / 3;
+    }
+
+    .hero-image-item__url {
+      font-size: var(--font-size-sm);
+      color: var(--text-color-secondary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    .hero-image-item__actions {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-2);
+      grid-column: 2;
+      grid-row: 2;
+    }
+
+    .hero-image-item__replace-btn {
+      padding: var(--spacing-2) var(--spacing-4);
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      color: var(--text-color);
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border);
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-2);
+    }
+
+    .hero-image-item__replace-btn:hover {
+      background: var(--surface-hover);
+      border-color: var(--text-color-secondary);
+    }
+
+    .hero-image-item__remove-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: var(--text-color-secondary);
+      background: transparent;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      grid-column: 3;
+      grid-row: 1 / 3;
+    }
+
+    .hero-image-item__remove-btn:hover {
+      color: var(--danger-color);
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    /* Moveable styles */
+    .moveable-control-box .moveable-line {
+      background: var(--primary-color) !important;
+    }
+
+    .moveable-control-box .moveable-control {
+      background: white !important;
+      border: 2px solid var(--primary-color) !important;
+    }
+
+    .moveable-control-box .moveable-rotation .moveable-control {
+      background: var(--primary-color) !important;
+      border-color: white !important;
     }
 
     @media (max-width: 1200px) {
@@ -743,7 +1498,114 @@
                 </svg>
               </button>
               <div class="editor-card__body editor-card__body--collapsible" id="hero-adjustments-content">
-                <div id="slot-info"></div>
+                <!-- Selected Image Indicator -->
+                <div class="selected-image-indicator">
+                  <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <div class="selected-image-label">Selected Image</div>
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+                      <button class="auto-center-btn" id="auto-center-btn" title="Center image horizontally and vertically">
+                        <i class="pi pi-arrows-alt"></i>
+                      </button>
+                      <span style="font-size: 9px; color: var(--text-color-secondary);">Auto Center</span>
+                    </div>
+                  </div>
+                  <div class="selected-image-buttons" id="selected-image-buttons">
+                    <!-- Populated by JS -->
+                  </div>
+                </div>
+
+                <!-- Adjustment Controls -->
+                <div id="adjustment-sliders">
+                  <!-- Size (first) -->
+                  <div class="adjustment-group">
+                    <div class="adjustment-label">
+                      <span>Size</span>
+                      <div style="display: flex; align-items: center; gap: 4px;">
+                        <input type="text" class="value-input" id="slider-size-val" value="80%">
+                        <button class="reset-btn" id="reset-size" title="Reset to 50%">Reset</button>
+                      </div>
+                    </div>
+                    <div class="adjustment-stepper">
+                      <button class="stepper-btn" id="size-decrease" title="Decrease size">-</button>
+                      <input type="range" class="adjustment-slider" id="slider-size" min="10" max="200" value="80" step="5">
+                      <button class="stepper-btn" id="size-increase" title="Increase size">+</button>
+                    </div>
+                  </div>
+
+                  <!-- Position X -->
+                  <div class="adjustment-group">
+                    <div class="adjustment-label">
+                      <span>Position X</span>
+                      <div style="display: flex; align-items: center; gap: 4px;">
+                        <input type="text" class="value-input" id="slider-x-val" value="10%">
+                        <button class="reset-btn" id="reset-pos-x" title="Reset to 0%">Reset</button>
+                      </div>
+                    </div>
+                    <div class="adjustment-stepper">
+                      <button class="stepper-btn" id="pos-x-decrease" title="Move left">-</button>
+                      <input type="range" class="adjustment-slider" id="slider-x" min="-100" max="100" value="10" step="1">
+                      <button class="stepper-btn" id="pos-x-increase" title="Move right">+</button>
+                    </div>
+                  </div>
+
+                  <!-- Position Y -->
+                  <div class="adjustment-group">
+                    <div class="adjustment-label">
+                      <span>Position Y</span>
+                      <div style="display: flex; align-items: center; gap: 4px;">
+                        <input type="text" class="value-input" id="slider-y-val" value="10%">
+                        <button class="reset-btn" id="reset-pos-y" title="Reset to 0%">Reset</button>
+                      </div>
+                    </div>
+                    <div class="adjustment-stepper">
+                      <button class="stepper-btn" id="pos-y-decrease" title="Move up">-</button>
+                      <input type="range" class="adjustment-slider" id="slider-y" min="-100" max="100" value="10" step="1">
+                      <button class="stepper-btn" id="pos-y-increase" title="Move down">+</button>
+                    </div>
+                  </div>
+
+                  <!-- Rotation -->
+                  <div class="adjustment-group">
+                    <div class="adjustment-label">
+                      <span>Rotation</span>
+                      <div style="display: flex; align-items: center; gap: 4px;">
+                        <input type="text" class="value-input" id="slider-rotation-val" value="0°">
+                        <button class="reset-btn" id="reset-rotation" title="Reset to 0°">Reset</button>
+                      </div>
+                    </div>
+                    <div class="adjustment-stepper">
+                      <button class="stepper-btn" id="rotation-decrease" title="Rotate left">-</button>
+                      <input type="range" class="adjustment-slider" id="slider-rotation" min="-180" max="180" value="0" step="1">
+                      <button class="stepper-btn" id="rotation-increase" title="Rotate right">+</button>
+                    </div>
+                  </div>
+
+                  <!-- Z-Index (Layer buttons) - Dynamic based on image count -->
+                  <div class="adjustment-group" id="layer-group">
+                    <div class="adjustment-label">
+                      <span>Layer</span>
+                    </div>
+                    <div class="layer-buttons" id="layer-buttons">
+                      <!-- Populated by JS based on image count -->
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Live Data -->
+                <div class="live-data" id="live-data">
+                  <!-- Populated by JS -->
+                </div>
+
+                <!-- JSON Code Window -->
+                <div class="json-code-window">
+                  <div class="json-code-header">
+                    <span>Image Data (JSON)</span>
+                    <button class="json-copy-btn" id="json-copy-btn" title="Copy JSON">
+                      <i class="pi pi-copy"></i>
+                    </button>
+                  </div>
+                  <pre class="json-code" id="json-code"><!-- Populated by JS --></pre>
+                </div>
               </div>
             </div>
           </div>
@@ -753,9 +1615,11 @@
             <div class="editor-card">
               <div class="editor-card__header">
                 <h3 class="editor-card__title">Preview</h3>
-                <span class="editor-card__subtitle">Click on image slots to select</span>
+                <span class="editor-card__subtitle">Drag, scale, or rotate images</span>
               </div>
-              <div class="editor-card__body" id="preview-container"></div>
+              <div class="editor-card__body" id="preview-container">
+                <!-- Canvas rendered by JS -->
+              </div>
             </div>
 
             <!-- Card Size Card -->
@@ -763,7 +1627,55 @@
               <div class="editor-card__header">
                 <h3 class="editor-card__title">Card Size</h3>
               </div>
-              <div class="editor-card__body" id="card-size-selector"></div>
+              <div class="editor-card__body" id="card-size-selector">
+                <!-- Card Size Grid -->
+                <div class="card-size-grid" id="card-size-grid">
+                  <!-- Populated by JS -->
+                </div>
+
+                <!-- Width Control -->
+                <div class="width-control">
+                  <div class="width-control-label">
+                    <span>Preview Width</span>
+                    <span class="value" id="width-value">360px</span>
+                  </div>
+                  <input type="range" class="adjustment-slider" id="width-slider" min="320" max="472" value="360" step="1">
+                  <div class="width-presets" id="width-presets">
+                    <button class="width-preset-btn" data-width="320">320</button>
+                    <button class="width-preset-btn active" data-width="360">360</button>
+                    <button class="width-preset-btn" data-width="420">420</button>
+                    <button class="width-preset-btn" data-width="472">472</button>
+                  </div>
+                </div>
+
+                <!-- Grid Info -->
+                <div class="grid-info">
+                  <div class="grid-info-row">
+                    <span class="grid-info-label">Unit Size</span>
+                    <span class="grid-info-value" id="grid-unit-size">120px</span>
+                  </div>
+                  <div class="grid-info-row">
+                    <span class="grid-info-label">Canvas</span>
+                    <span class="grid-info-value" id="grid-canvas-dim">360×240px</span>
+                  </div>
+                  <div class="grid-info-row">
+                    <span class="grid-info-label">Card Size</span>
+                    <span class="grid-info-value" id="grid-card-size">3×2</span>
+                  </div>
+                </div>
+
+                <!-- 9-Config Status -->
+                <div class="config-status">
+                  <div class="config-status-title">
+                    <i class="pi pi-th-large"></i>
+                    Per-Size Configs
+                  </div>
+                  <div class="config-status-desc">Each size stores its own layout. Purple = customized.</div>
+                  <div class="config-list" id="config-list">
+                    <!-- Populated by JS -->
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -806,6 +1718,9 @@
   </div>
 
   <!-- Scripts -->
+  <!-- Moveable.js CDN for drag/drop/scale/rotate -->
+  <script src="https://cdn.jsdelivr.net/npm/moveable@0.53.0/dist/moveable.min.js"></script>
+
   <!-- Load process scripts for constraints and templates -->
   <script src="process/js/constraints.js"></script>
   <script src="process/js/templates.js"></script>
@@ -833,7 +1748,7 @@
     });
   </script>
 
-  <!-- Main app -->
+  <!-- Main app with Moveable integration -->
   <script src="js/app.js"></script>
 </body>
 </html>

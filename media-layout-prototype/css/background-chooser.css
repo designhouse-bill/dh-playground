@@ -66,23 +66,32 @@
 }
 
 .bg-chooser__color-input {
-  width: 44px;
-  height: 36px;
-  padding: 2px;
-  border: 2px solid var(--surface-border);
-  border-radius: var(--border-radius);
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+  border: 2px solid #dcdcdc;
+  border-radius: 50%;
   cursor: pointer;
   background: none;
   flex-shrink: 0;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
 .bg-chooser__color-input::-webkit-color-swatch-wrapper {
-  padding: 0;
+  padding: 3px;
+  border-radius: 50%;
 }
 
 .bg-chooser__color-input::-webkit-color-swatch {
   border: none;
-  border-radius: 4px;
+  border-radius: 50%;
+}
+
+.bg-chooser__color-input::-moz-color-swatch {
+  border: none;
+  border-radius: 50%;
 }
 
 .bg-chooser__hex-input {
@@ -275,7 +284,7 @@
   color: var(--text-color-secondary);
 }
 
-/* Media buttons row */
+/* Media buttons row (legacy) */
 .bg-chooser__media-buttons {
   display: flex;
   gap: var(--spacing-2);
@@ -288,6 +297,175 @@
 .bg-chooser__btn--icon {
   padding: var(--spacing-2);
   min-width: auto;
+}
+
+/* =============================================================================
+   Compact Media Row - Inline thumbnail + Add Media + Trash
+   ============================================================================= */
+.bg-chooser__media-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-4);
+}
+
+/* Hero-style two-row grid layout (matches Hero Image items) */
+.bg-chooser__media-row--hero {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  grid-template-rows: auto auto;
+  gap: var(--spacing-2) var(--spacing-3);
+  padding: var(--spacing-3);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--border-radius);
+  background: var(--surface-card);
+  align-items: center;
+}
+
+.bg-chooser__media-row--hero .bg-chooser__thumb {
+  grid-row: 1 / 3;
+}
+
+.bg-chooser__media-url {
+  font-size: var(--font-size-sm);
+  color: var(--text-color-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.bg-chooser__media-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  grid-column: 2;
+  grid-row: 2;
+}
+
+/* Change Media button (pill style) */
+.bg-chooser__btn--change-media {
+  padding: var(--spacing-2) var(--spacing-4);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--text-color);
+  background: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.bg-chooser__btn--change-media:hover {
+  background: var(--surface-hover);
+  border-color: var(--text-color-secondary);
+}
+
+/* Remove button (X icon) */
+.bg-chooser__btn--remove {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: var(--text-color-secondary);
+  background: transparent;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  grid-column: 3;
+  grid-row: 1 / 3;
+  padding: 0;
+}
+
+.bg-chooser__btn--remove:hover {
+  color: var(--red-500, #ef4444);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Small square thumbnail with transparency grid */
+.bg-chooser__thumb {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border: 1px solid var(--surface-border);
+  border-radius: var(--border-radius);
+  /* Transparency grid pattern */
+  background-color: #fff;
+  background-image:
+    linear-gradient(45deg, #e0e0e0 25%, transparent 25%),
+    linear-gradient(-45deg, #e0e0e0 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #e0e0e0 75%),
+    linear-gradient(-45deg, transparent 75%, #e0e0e0 75%);
+  background-size: 8px 8px;
+  background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
+}
+
+.bg-chooser__thumb.has-image {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Add Media button */
+.bg-chooser__btn--add-media {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-4);
+  background: var(--surface-section);
+  border: 1px solid var(--surface-border);
+  border-radius: 20px;
+  font-size: var(--font-size-sm);
+  color: var(--text-color);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.bg-chooser__btn--add-media:hover {
+  border-color: var(--primary-color);
+  background: var(--primary-color-light);
+  color: var(--primary-color);
+}
+
+.bg-chooser__btn--add-media i {
+  font-size: 14px;
+}
+
+/* Trash button */
+.bg-chooser__btn--trash {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-section);
+  border: 1px solid var(--surface-border);
+  border-radius: 50%;
+  color: var(--text-color-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.bg-chooser__btn--trash:hover {
+  border-color: var(--red-500, #ef4444);
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--red-500, #ef4444);
+}
+
+.bg-chooser__btn--trash i {
+  font-size: 14px;
 }
 
 /* Sample Backgrounds Grid */
@@ -509,4 +687,38 @@
 
 .app-sidebar .bg-chooser__label-hint {
   color: var(--surface-dark-text-muted);
+}
+
+/* Dark mode for compact media row */
+.app-sidebar .bg-chooser__thumb {
+  border-color: var(--surface-dark-border);
+  background-color: var(--surface-dark-hover);
+  background-image:
+    linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255,255,255,0.1) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.1) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.1) 75%);
+}
+
+.app-sidebar .bg-chooser__btn--add-media {
+  background: var(--surface-dark-hover);
+  border-color: var(--surface-dark-border);
+  color: var(--surface-dark-text);
+}
+
+.app-sidebar .bg-chooser__btn--add-media:hover {
+  background: var(--surface-dark-active);
+  border-color: var(--primary-color);
+}
+
+.app-sidebar .bg-chooser__btn--trash {
+  background: var(--surface-dark-hover);
+  border-color: var(--surface-dark-border);
+  color: var(--surface-dark-text-muted);
+}
+
+.app-sidebar .bg-chooser__btn--trash:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: var(--red-500, #ef4444);
+  color: var(--red-500, #ef4444);
 }

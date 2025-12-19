@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Media Layout POC v5 - 9-Config Model</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #1a1a1a;
+      --surface: #242424;
+      --surface-2: #2e2e2e;
+      --border: #3a3a3a;
+      --text: #e5e5e5;
+      --text-muted: #888;
+      --accent: #3b82f6;
+      --orange: #e8692d;
+      --green: #22c55e;
+      --purple: #8b5cf6;
+    }
+
+    body {
+      font-family: 'IBM Plex Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* =========================================
+       3-COLUMN LAYOUT
+       Left: Controls | Center: Canvas | Right: Size/Grid
+       ========================================= */
+    .layout {
+      display: grid;
+      grid-template-columns: 280px 1fr 240px;
+      height: 100vh;
+    }
+
+    /* =========================================
+       LEFT SIDEBAR - Controls
+       ========================================= */
+    .sidebar-left {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 1rem;
+      overflow-y: auto;
+    }
+
+    .sidebar-left h2 {
+      font-size: 0.8rem;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Template buttons */
+    .template-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.4rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .template-btn {
+      padding: 0.5rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .template-btn:hover {
+      background: var(--border);
+    }
+
+    .template-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* Product selector */
+    .product-selector {
+      display: flex;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+    }
+
+    .product-select-btn {
+      flex: 1;
+      padding: 0.5rem;
+      background: var(--surface-2);
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+
+    .product-select-btn:hover {
+      border-color: var(--accent);
+    }
+
+    .product-select-btn.active {
+      border-color: var(--accent);
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    .product-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+    }
+
+    .product-dot.a { background: #b71c1c; }
+    .product-dot.b { background: #e8e8c8; border: 1px solid #999; }
+
+    /* Sliders */
+    .slider-group {
+      margin-bottom: 1rem;
+    }
+
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.3rem;
+      font-size: 0.75rem;
+    }
+
+    .slider-label span:last-child {
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--accent);
+      font-size: 0.7rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 5px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: var(--surface-2);
+      border-radius: 3px;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      background: var(--accent);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .zindex-hint {
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      text-align: right;
+      margin-top: 0.2rem;
+    }
+
+    /* Live data */
+    .data-section {
+      background: var(--surface-2);
+      border-radius: 6px;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+    }
+
+    .data-section h3 {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.7rem;
+      color: var(--accent);
+      margin-bottom: 0.4rem;
+    }
+
+    .data-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.15rem 0;
+    }
+
+    .data-label { color: var(--text-muted); }
+    .data-value { color: var(--green); }
+
+    .save-btn {
+      width: 100%;
+      padding: 0.6rem;
+      background: var(--green);
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+
+    .save-btn:hover {
+      background: #16a34a;
+    }
+
+    /* =========================================
+       CENTER - Canvas Area
+       ========================================= */
+    .canvas-area {
+      background: #0d0d0d;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      position: relative;
+    }
+
+    .canvas-header {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      right: 1rem;
+    }
+
+    .canvas-header h1 {
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .canvas-header p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Grid wrapper */
+    .grid-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .grid-background {
+      position: absolute;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 2px;
+      opacity: 0.12;
+      pointer-events: none;
+      transition: width 0.3s ease, height 0.3s ease;
+    }
+
+    .grid-cell {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+
+    /* Card canvas */
+    .card-canvas {
+      position: relative;
+      background: var(--orange);
+      border-radius: 8px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      overflow: hidden;
+      transition: width 0.3s ease, height 0.3s ease;
+    }
+
+    .card-canvas__content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow: hidden;
+      border-radius: 8px;
+    }
+
+    /* Products */
+    .canvas-product {
+      position: absolute;
+      cursor: pointer;
+      user-select: none;
+      transition: 
+        left 0.3s ease,
+        top 0.3s ease,
+        width 0.3s ease,
+        height 0.3s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .canvas-product:hover {
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+    }
+
+    .canvas-product.selected {
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+
+    .canvas-product.dragging {
+      transition: box-shadow 0.15s ease;
+    }
+
+    .canvas-product__visual {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* Square container for product image */
+      background: rgba(255,255,255,0.05);
+      border-radius: 4px;
+    }
+
+    .demo-product {
+      max-width: 90%;
+      max-height: 90%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 0.9rem;
+      filter: drop-shadow(0 4px 16px rgba(0,0,0,0.4));
+    }
+
+    /* Vertical product (bottles) */
+    .demo-product.vertical {
+      width: 35%;
+      height: 85%;
+      background: linear-gradient(135deg, #7c1d1d 0%, #b71c1c 30%, #e53935 50%, #b71c1c 70%, #7c1d1d 100%);
+      border-radius: 8px 8px 4px 4px;
+    }
+
+    /* Horizontal product (boxes) */
+    .demo-product.horizontal {
+      width: 80%;
+      height: 50%;
+      background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #1e3a5f 100%);
+      border-radius: 4px;
+      color: white;
+    }
+
+    .demo-product.vertical.light {
+      background: linear-gradient(135deg, #d4d4a8 0%, #e8e8c8 30%, #f5f5dc 50%, #e8e8c8 70%, #d4d4a8 100%);
+      color: #333;
+      width: 30%;
+    }
+
+    .price-bubble {
+      position: absolute;
+      right: 4%;
+      bottom: 8%;
+      width: 20%;
+      aspect-ratio: 1;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: var(--orange);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+      pointer-events: none;
+      font-size: clamp(0.6rem, 2.5vw, 1.2rem);
+    }
+
+    /* Status bar */
+    .status-bar {
+      position: absolute;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--surface);
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-family: 'IBM Plex Mono', monospace;
+      border: 1px solid var(--border);
+      display: flex;
+      gap: 1rem;
+    }
+
+    .status-bar .label {
+      color: var(--text-muted);
+    }
+
+    /* =========================================
+       RIGHT SIDEBAR - Size & Grid Controls
+       ========================================= */
+    .sidebar-right {
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      padding: 1rem;
+      overflow-y: auto;
+    }
+
+    .sidebar-right h2 {
+      font-size: 0.8rem;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Card size grid */
+    .card-size-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.35rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .card-size-btn {
+      aspect-ratio: 1;
+      background: var(--surface-2);
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .card-size-btn:hover {
+      border-color: var(--accent);
+    }
+
+    .card-size-btn.active {
+      border-color: var(--green);
+      background: rgba(34, 197, 94, 0.15);
+    }
+
+    .card-size-btn .size-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .card-size-btn .customized {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 8px;
+      height: 8px;
+      background: var(--purple);
+      border-radius: 50%;
+    }
+
+    /* Width control */
+    .width-control {
+      margin-bottom: 1.25rem;
+    }
+
+    .width-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .width-label span:last-child {
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    .width-presets {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.3rem;
+      margin-top: 0.5rem;
+    }
+
+    .width-preset-btn {
+      padding: 0.4rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-size: 0.65rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .width-preset-btn:hover {
+      border-color: var(--accent);
+    }
+
+    .width-preset-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* Grid info */
+    .grid-info {
+      background: var(--surface-2);
+      border-radius: 6px;
+      padding: 0.75rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      margin-bottom: 1rem;
+    }
+
+    .grid-info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.2rem 0;
+    }
+
+    .grid-info-label { color: var(--text-muted); }
+    .grid-info-value { color: var(--green); font-weight: 600; }
+
+    /* Config status */
+    .config-status {
+      background: var(--surface-2);
+      border-radius: 6px;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .config-status h3 {
+      font-size: 0.7rem;
+      color: var(--purple);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .config-status p {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .config-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+      margin-top: 0.5rem;
+    }
+
+    .config-badge {
+      padding: 0.15rem 0.4rem;
+      border-radius: 3px;
+      font-size: 0.6rem;
+      font-weight: 600;
+    }
+
+    .config-badge.default {
+      background: var(--surface);
+      color: var(--text-muted);
+    }
+
+    .config-badge.customized {
+      background: rgba(139, 92, 246, 0.2);
+      color: var(--purple);
+    }
+
+    /* Instructions */
+    .instructions {
+      background: var(--surface-2);
+      border-radius: 6px;
+      padding: 0.6rem;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .instructions strong {
+      color: var(--text);
+    }
+
+    /* Moveable styles */
+    .moveable-control-box .moveable-line {
+      background: var(--accent) !important;
+    }
+
+    .moveable-control-box .moveable-control {
+      background: white !important;
+      border: 2px solid var(--accent) !important;
+    }
+
+    .moveable-control-box .moveable-rotation .moveable-control {
+      background: var(--accent) !important;
+      border-color: white !important;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="layout">
+    
+    <!-- LEFT SIDEBAR - Controls -->
+    <div class="sidebar-left">
+      
+      <h2>Template</h2>
+      <div class="template-buttons">
+        <button class="template-btn active" data-template="heroIn">Hero In</button>
+        <button class="template-btn" data-template="heroOut">Hero Out</button>
+        <button class="template-btn" data-template="straight">Straight</button>
+        <button class="template-btn" data-template="overlap">Overlap</button>
+      </div>
+
+      <h2>Selected Product</h2>
+      <div class="product-selector">
+        <button class="product-select-btn active" id="selectA" onclick="selectProduct('A')">
+          <span class="product-dot a"></span> A
+        </button>
+        <button class="product-select-btn" id="selectB" onclick="selectProduct('B')">
+          <span class="product-dot b"></span> B
+        </button>
+      </div>
+
+      <h2>Adjustments</h2>
+      
+      <div class="slider-group">
+        <div class="slider-label">
+          <span>Position X</span>
+          <span id="sliderXVal">5.0%</span>
+        </div>
+        <input type="range" id="sliderX" min="0" max="80" value="5" step="0.5">
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-label">
+          <span>Position Y</span>
+          <span id="sliderYVal">8.0%</span>
+        </div>
+        <input type="range" id="sliderY" min="0" max="80" value="8" step="0.5">
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-label">
+          <span>Scale</span>
+          <span id="sliderScaleVal">100%</span>
+        </div>
+        <input type="range" id="sliderScale" min="50" max="150" value="100" step="1">
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-label">
+          <span>Rotation</span>
+          <span id="sliderRotationVal">5°</span>
+        </div>
+        <input type="range" id="sliderRotation" min="-45" max="45" value="5" step="1">
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-label">
+          <span>Z-Index</span>
+          <span id="sliderZVal">2</span>
+        </div>
+        <input type="range" id="sliderZ" min="1" max="5" value="2" step="1">
+        <div class="zindex-hint">Higher = in front</div>
+      </div>
+
+      <h2>Live Data</h2>
+      <div class="data-section">
+        <h3>Product A</h3>
+        <div class="data-row"><span class="data-label">position</span><span class="data-value" id="dataApos">5%, 8%</span></div>
+        <div class="data-row"><span class="data-label">scale</span><span class="data-value" id="dataAs">1.00</span></div>
+        <div class="data-row"><span class="data-label">rotation</span><span class="data-value" id="dataAr">5°</span></div>
+      </div>
+      <div class="data-section">
+        <h3>Product B</h3>
+        <div class="data-row"><span class="data-label">position</span><span class="data-value" id="dataBpos">52%, 15%</span></div>
+        <div class="data-row"><span class="data-label">scale</span><span class="data-value" id="dataBs">1.00</span></div>
+        <div class="data-row"><span class="data-label">rotation</span><span class="data-value" id="dataBr">-5°</span></div>
+      </div>
+
+      <button class="save-btn" onclick="saveConfig()">💾 Save This Size Config</button>
+
+    </div>
+
+    <!-- CENTER - Canvas -->
+    <div class="canvas-area">
+      
+      <div class="canvas-header">
+        <h1>Media Layout Editor</h1>
+        <p>Each of 9 card sizes stores its own config. Adjustments persist per promotion.</p>
+      </div>
+
+      <div class="grid-wrapper">
+        <div class="grid-background" id="gridBackground">
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+        </div>
+
+        <div class="card-canvas" id="cardCanvas">
+          <div class="card-canvas__content" id="canvasContent">
+            
+            <!-- Product A - Vertical (bottle) -->
+            <div class="canvas-product selected" id="productA">
+              <div class="canvas-product__visual">
+                <div class="demo-product vertical">A</div>
+              </div>
+            </div>
+
+            <!-- Product B - Vertical (bottle, light) -->
+            <div class="canvas-product" id="productB">
+              <div class="canvas-product__visual">
+                <div class="demo-product vertical light">B</div>
+              </div>
+            </div>
+
+            <div class="price-bubble">$5.99</div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="status-bar">
+        <span><span class="label">Size:</span> <span id="statSize">3×2</span></span>
+        <span><span class="label">Canvas:</span> <span id="statCanvas">472×314</span></span>
+        <span><span class="label">Selected:</span> <span id="statSelected">A</span></span>
+      </div>
+
+    </div>
+
+    <!-- RIGHT SIDEBAR - Size & Grid -->
+    <div class="sidebar-right">
+      
+      <h2>Card Size</h2>
+      <div class="card-size-grid" id="cardSizeGrid">
+        <button class="card-size-btn" data-cols="1" data-rows="1">
+          <span class="size-label">1×1</span>
+        </button>
+        <button class="card-size-btn" data-cols="2" data-rows="1">
+          <span class="size-label">2×1</span>
+        </button>
+        <button class="card-size-btn" data-cols="3" data-rows="1">
+          <span class="size-label">3×1</span>
+        </button>
+        <button class="card-size-btn" data-cols="1" data-rows="2">
+          <span class="size-label">1×2</span>
+        </button>
+        <button class="card-size-btn" data-cols="2" data-rows="2">
+          <span class="size-label">2×2</span>
+        </button>
+        <button class="card-size-btn active" data-cols="3" data-rows="2">
+          <span class="size-label">3×2</span>
+          <span class="customized"></span>
+        </button>
+        <button class="card-size-btn" data-cols="1" data-rows="3">
+          <span class="size-label">1×3</span>
+        </button>
+        <button class="card-size-btn" data-cols="2" data-rows="3">
+          <span class="size-label">2×3</span>
+        </button>
+        <button class="card-size-btn" data-cols="3" data-rows="3">
+          <span class="size-label">3×3</span>
+        </button>
+      </div>
+
+      <h2>Preview Width</h2>
+      <div class="width-control">
+        <div class="width-label">
+          <span>Max Width (3 units)</span>
+          <span id="widthValue">472px</span>
+        </div>
+        <input type="range" id="widthSlider" min="300" max="472" value="472" step="1">
+        <div class="width-presets">
+          <button class="width-preset-btn" data-width="300">300px</button>
+          <button class="width-preset-btn" data-width="360">360px</button>
+          <button class="width-preset-btn" data-width="414">414px</button>
+          <button class="width-preset-btn active" data-width="472">472px</button>
+        </div>
+      </div>
+
+      <h2>Grid Math</h2>
+      <div class="grid-info">
+        <div class="grid-info-row">
+          <span class="grid-info-label">1 unit</span>
+          <span class="grid-info-value" id="unitSize">157px</span>
+        </div>
+        <div class="grid-info-row">
+          <span class="grid-info-label">Canvas</span>
+          <span class="grid-info-value" id="canvasDim">472×314px</span>
+        </div>
+        <div class="grid-info-row">
+          <span class="grid-info-label">Card Size</span>
+          <span class="grid-info-value" id="cardSizeDisplay">3×2</span>
+        </div>
+      </div>
+
+      <h2>9-Config Status</h2>
+      <div class="config-status">
+        <h3>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
+          </svg>
+          Per-Promotion Configs
+        </h3>
+        <p>Each size stores its own layout. Purple dot = customized from default.</p>
+        <div class="config-list" id="configList">
+          <span class="config-badge default">1×1</span>
+          <span class="config-badge default">2×1</span>
+          <span class="config-badge default">3×1</span>
+          <span class="config-badge default">1×2</span>
+          <span class="config-badge default">2×2</span>
+          <span class="config-badge customized">3×2</span>
+          <span class="config-badge default">1×3</span>
+          <span class="config-badge default">2×3</span>
+          <span class="config-badge default">3×3</span>
+        </div>
+      </div>
+
+      <div class="instructions">
+        <strong>How it works:</strong><br>
+        Select a card size → adjust layout → save. Each of 9 sizes has independent config that persists with this promotion type.
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/moveable@0.53.0/dist/moveable.min.js"></script>
+  
+  <script>
+    // =========================================
+    // GRID SYSTEM
+    // =========================================
+    const gridSystem = {
+      maxWidth: 472,
+      cols: 3,
+      rows: 2,
+      
+      get unitSize() { return this.maxWidth / 3; },
+      get canvasWidth() { return this.cols * this.unitSize; },
+      get canvasHeight() { return this.rows * this.unitSize; }
+    };
+
+    // =========================================
+    // 9-CONFIG MODEL
+    // Each card size has its own stored config
+    // =========================================
+    const allConfigs = {
+      '1x1': { isCustomized: false, templateId: 'heroIn', products: null },
+      '2x1': { isCustomized: false, templateId: 'heroIn', products: null },
+      '3x1': { isCustomized: false, templateId: 'heroIn', products: null },
+      '1x2': { isCustomized: false, templateId: 'heroIn', products: null },
+      '2x2': { isCustomized: false, templateId: 'heroIn', products: null },
+      '3x2': { isCustomized: true, templateId: 'heroIn', products: {
+        A: { x: 5, y: 8, w: 45, h: 80, scale: 1, rotation: 5, zIndex: 2 },
+        B: { x: 50, y: 12, w: 40, h: 75, scale: 1, rotation: -5, zIndex: 1 }
+      }},
+      '1x3': { isCustomized: false, templateId: 'heroIn', products: null },
+      '2x3': { isCustomized: false, templateId: 'heroIn', products: null },
+      '3x3': { isCustomized: false, templateId: 'heroIn', products: null }
+    };
+
+    // Default templates
+    const templates = {
+      heroIn: {
+        A: { x: 5, y: 8, w: 45, h: 80, scale: 1, rotation: 5, zIndex: 2 },
+        B: { x: 50, y: 12, w: 40, h: 75, scale: 1, rotation: -5, zIndex: 1 }
+      },
+      heroOut: {
+        A: { x: 5, y: 8, w: 45, h: 80, scale: 1, rotation: -5, zIndex: 2 },
+        B: { x: 50, y: 12, w: 40, h: 75, scale: 1, rotation: 5, zIndex: 1 }
+      },
+      straight: {
+        A: { x: 5, y: 8, w: 45, h: 80, scale: 1, rotation: 0, zIndex: 2 },
+        B: { x: 50, y: 12, w: 40, h: 75, scale: 1, rotation: 0, zIndex: 1 }
+      },
+      overlap: {
+        A: { x: 10, y: 8, w: 45, h: 80, scale: 1, rotation: -8, zIndex: 2 },
+        B: { x: 28, y: 12, w: 45, h: 78, scale: 1, rotation: 5, zIndex: 1 }
+      }
+    };
+
+    // Current working state
+    const state = {
+      selected: 'A',
+      currentSize: '3x2',
+      products: {
+        A: { x: 5, y: 8, w: 45, h: 80, scale: 1, rotation: 5, zIndex: 2 },
+        B: { x: 50, y: 12, w: 40, h: 75, scale: 1, rotation: -5, zIndex: 1 }
+      }
+    };
+
+    // DOM refs
+    const productA = document.getElementById('productA');
+    const productB = document.getElementById('productB');
+    const canvas = document.getElementById('cardCanvas');
+    const canvasContent = document.getElementById('canvasContent');
+    const gridBackground = document.getElementById('gridBackground');
+
+    let moveable = null;
+
+    // =========================================
+    // INITIALIZE
+    // =========================================
+    function init() {
+      if (typeof Moveable === 'undefined') {
+        console.error('Moveable.js not loaded');
+        return;
+      }
+
+      updateCanvasSize();
+      loadConfigForSize(state.currentSize);
+      applyStateToDOM();
+      createMoveableForSelected();
+      setupEventListeners();
+      updateAllDisplays();
+      updateConfigStatusUI();
+      
+      console.log('Media Layout v5 initialized');
+    }
+
+    // =========================================
+    // CONFIG MANAGEMENT
+    // =========================================
+    function loadConfigForSize(sizeKey) {
+      const config = allConfigs[sizeKey];
+      const templateId = config.templateId;
+      
+      if (config.isCustomized && config.products) {
+        // Load customized config
+        state.products.A = { ...config.products.A };
+        state.products.B = { ...config.products.B };
+      } else {
+        // Load from template
+        const template = templates[templateId];
+        state.products.A = { ...template.A };
+        state.products.B = { ...template.B };
+      }
+      
+      state.currentSize = sizeKey;
+    }
+
+    function saveCurrentConfig() {
+      const sizeKey = state.currentSize;
+      allConfigs[sizeKey] = {
+        isCustomized: true,
+        templateId: document.querySelector('.template-btn.active')?.dataset.template || 'heroIn',
+        products: {
+          A: { ...state.products.A },
+          B: { ...state.products.B }
+        }
+      };
+      
+      updateConfigStatusUI();
+      updateCardSizeButtons();
+      
+      console.log(`Saved config for ${sizeKey}:`, allConfigs[sizeKey]);
+    }
+
+    function updateConfigStatusUI() {
+      const configList = document.getElementById('configList');
+      const sizes = ['1x1', '2x1', '3x1', '1x2', '2x2', '3x2', '1x3', '2x3', '3x3'];
+      
+      configList.innerHTML = sizes.map(size => {
+        const config = allConfigs[size];
+        const cls = config.isCustomized ? 'customized' : 'default';
+        const label = size.replace('x', '×');
+        return `<span class="config-badge ${cls}">${label}</span>`;
+      }).join('');
+    }
+
+    function updateCardSizeButtons() {
+      document.querySelectorAll('.card-size-btn').forEach(btn => {
+        const cols = btn.dataset.cols;
+        const rows = btn.dataset.rows;
+        const sizeKey = `${cols}x${rows}`;
+        const config = allConfigs[sizeKey];
+        
+        // Remove existing customized indicator
+        const existing = btn.querySelector('.customized');
+        if (existing) existing.remove();
+        
+        // Add if customized
+        if (config.isCustomized) {
+          const dot = document.createElement('span');
+          dot.className = 'customized';
+          btn.appendChild(dot);
+        }
+      });
+    }
+
+    // =========================================
+    // CANVAS SIZE
+    // =========================================
+    function updateCanvasSize() {
+      const width = gridSystem.canvasWidth;
+      const height = gridSystem.canvasHeight;
+      
+      canvas.style.width = width + 'px';
+      canvas.style.height = height + 'px';
+      
+      gridBackground.style.width = gridSystem.maxWidth + 'px';
+      gridBackground.style.height = gridSystem.maxWidth + 'px';
+      
+      document.getElementById('unitSize').textContent = Math.round(gridSystem.unitSize) + 'px';
+      document.getElementById('canvasDim').textContent = `${Math.round(width)}×${Math.round(height)}px`;
+      document.getElementById('cardSizeDisplay').textContent = `${gridSystem.cols}×${gridSystem.rows}`;
+      document.getElementById('statSize').textContent = `${gridSystem.cols}×${gridSystem.rows}`;
+      document.getElementById('statCanvas').textContent = `${Math.round(width)}×${Math.round(height)}`;
+      
+      if (moveable) {
+        setTimeout(() => moveable.updateRect(), 350);
+      }
+    }
+
+    function setMaxWidth(width) {
+      gridSystem.maxWidth = width;
+      document.getElementById('widthSlider').value = width;
+      document.getElementById('widthValue').textContent = width + 'px';
+      
+      document.querySelectorAll('.width-preset-btn').forEach(btn => {
+        btn.classList.toggle('active', parseInt(btn.dataset.width) === width);
+      });
+      
+      updateCanvasSize();
+    }
+
+    function setCardSize(cols, rows) {
+      gridSystem.cols = cols;
+      gridSystem.rows = rows;
+      
+      const sizeKey = `${cols}x${rows}`;
+      
+      document.querySelectorAll('.card-size-btn').forEach(btn => {
+        const btnCols = parseInt(btn.dataset.cols);
+        const btnRows = parseInt(btn.dataset.rows);
+        btn.classList.toggle('active', btnCols === cols && btnRows === rows);
+      });
+      
+      // Load config for this size
+      loadConfigForSize(sizeKey);
+      applyStateToDOM();
+      createMoveableForSelected();
+      updateCanvasSize();
+      updateAllDisplays();
+      updateSlidersFromState();
+    }
+
+    // =========================================
+    // MOVEABLE
+    // =========================================
+    function createMoveableForSelected() {
+      if (moveable) {
+        moveable.destroy();
+        moveable = null;
+      }
+
+      const target = state.selected === 'A' ? productA : productB;
+
+      moveable = new Moveable(canvasContent, {
+        target: target,
+        container: canvasContent,
+        draggable: true,
+        scalable: true,
+        rotatable: true,
+        keepRatio: false,
+        throttleDrag: 0,
+        throttleScale: 0,
+        throttleRotate: 0,
+        renderDirections: ["nw", "ne", "sw", "se"],
+        rotationPosition: "top",
+      });
+
+      moveable.on('drag', e => {
+        const rect = canvasContent.getBoundingClientRect();
+        const xPercent = (e.left / rect.width) * 100;
+        const yPercent = (e.top / rect.height) * 100;
+        
+        state.products[state.selected].x = xPercent;
+        state.products[state.selected].y = yPercent;
+        
+        e.target.style.left = `${xPercent}%`;
+        e.target.style.top = `${yPercent}%`;
+        
+        updateAllDisplays();
+        updateSlidersFromState();
+      });
+
+      moveable.on('scale', e => {
+        const scaleX = e.scale[0];
+        state.products[state.selected].scale = scaleX;
+        
+        const rect = canvasContent.getBoundingClientRect();
+        const xPercent = (e.drag.left / rect.width) * 100;
+        const yPercent = (e.drag.top / rect.height) * 100;
+        
+        state.products[state.selected].x = xPercent;
+        state.products[state.selected].y = yPercent;
+        
+        e.target.style.left = `${xPercent}%`;
+        e.target.style.top = `${yPercent}%`;
+        e.target.style.transform = `scale(${scaleX}) rotate(${state.products[state.selected].rotation}deg)`;
+        
+        updateAllDisplays();
+        updateSlidersFromState();
+      });
+
+      moveable.on('rotate', e => {
+        state.products[state.selected].rotation = e.rotate;
+        e.target.style.transform = `scale(${state.products[state.selected].scale}) rotate(${e.rotate}deg)`;
+        updateAllDisplays();
+        updateSlidersFromState();
+      });
+    }
+
+    // =========================================
+    // CORE FUNCTIONS
+    // =========================================
+    function selectProduct(id) {
+      if (state.selected === id) return;
+      
+      state.selected = id;
+      
+      document.getElementById('selectA').classList.toggle('active', id === 'A');
+      document.getElementById('selectB').classList.toggle('active', id === 'B');
+      
+      productA.classList.toggle('selected', id === 'A');
+      productB.classList.toggle('selected', id === 'B');
+      
+      createMoveableForSelected();
+      updateSlidersFromState();
+      updateAllDisplays();
+    }
+
+    function applyTemplate(templateId) {
+      const template = templates[templateId];
+      state.products.A = { ...template.A };
+      state.products.B = { ...template.B };
+      
+      applyStateToDOM();
+      createMoveableForSelected();
+      updateSlidersFromState();
+      updateAllDisplays();
+    }
+
+    function applyStateToDOM() {
+      const a = state.products.A;
+      productA.style.left = `${a.x}%`;
+      productA.style.top = `${a.y}%`;
+      productA.style.width = `${a.w}%`;
+      productA.style.height = `${a.h}%`;
+      productA.style.zIndex = a.zIndex;
+      productA.style.transform = `scale(${a.scale}) rotate(${a.rotation}deg)`;
+
+      const b = state.products.B;
+      productB.style.left = `${b.x}%`;
+      productB.style.top = `${b.y}%`;
+      productB.style.width = `${b.w}%`;
+      productB.style.height = `${b.h}%`;
+      productB.style.zIndex = b.zIndex;
+      productB.style.transform = `scale(${b.scale}) rotate(${b.rotation}deg)`;
+    }
+
+    // =========================================
+    // EVENT LISTENERS
+    // =========================================
+    function setupEventListeners() {
+      // Template buttons
+      document.querySelectorAll('.template-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.template-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          applyTemplate(btn.dataset.template);
+        });
+      });
+
+      // Card size buttons
+      document.querySelectorAll('.card-size-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          setCardSize(parseInt(btn.dataset.cols), parseInt(btn.dataset.rows));
+        });
+      });
+
+      // Width slider
+      document.getElementById('widthSlider').addEventListener('input', e => {
+        setMaxWidth(parseInt(e.target.value));
+      });
+
+      // Width presets
+      document.querySelectorAll('.width-preset-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          setMaxWidth(parseInt(btn.dataset.width));
+        });
+      });
+
+      // Product clicks
+      productA.addEventListener('mousedown', (e) => {
+        if (!e.target.closest('.moveable-control')) selectProduct('A');
+      });
+      productB.addEventListener('mousedown', (e) => {
+        if (!e.target.closest('.moveable-control')) selectProduct('B');
+      });
+
+      // Sliders
+      document.getElementById('sliderX').addEventListener('input', e => {
+        state.products[state.selected].x = parseFloat(e.target.value);
+        applyStateToDOM();
+        if (moveable) moveable.updateRect();
+        updateAllDisplays();
+      });
+
+      document.getElementById('sliderY').addEventListener('input', e => {
+        state.products[state.selected].y = parseFloat(e.target.value);
+        applyStateToDOM();
+        if (moveable) moveable.updateRect();
+        updateAllDisplays();
+      });
+
+      document.getElementById('sliderScale').addEventListener('input', e => {
+        state.products[state.selected].scale = parseFloat(e.target.value) / 100;
+        applyStateToDOM();
+        if (moveable) moveable.updateRect();
+        updateAllDisplays();
+      });
+
+      document.getElementById('sliderRotation').addEventListener('input', e => {
+        state.products[state.selected].rotation = parseFloat(e.target.value);
+        applyStateToDOM();
+        if (moveable) moveable.updateRect();
+        updateAllDisplays();
+      });
+
+      document.getElementById('sliderZ').addEventListener('input', e => {
+        state.products[state.selected].zIndex = parseInt(e.target.value);
+        applyStateToDOM();
+        updateAllDisplays();
+      });
+    }
+
+    function updateSlidersFromState() {
+      const p = state.products[state.selected];
+      
+      document.getElementById('sliderX').value = p.x;
+      document.getElementById('sliderXVal').textContent = p.x.toFixed(1) + '%';
+      
+      document.getElementById('sliderY').value = p.y;
+      document.getElementById('sliderYVal').textContent = p.y.toFixed(1) + '%';
+      
+      document.getElementById('sliderScale').value = p.scale * 100;
+      document.getElementById('sliderScaleVal').textContent = (p.scale * 100).toFixed(0) + '%';
+      
+      document.getElementById('sliderRotation').value = p.rotation;
+      document.getElementById('sliderRotationVal').textContent = p.rotation.toFixed(0) + '°';
+      
+      document.getElementById('sliderZ').value = p.zIndex;
+      document.getElementById('sliderZVal').textContent = p.zIndex;
+    }
+
+    function updateAllDisplays() {
+      const a = state.products.A;
+      const b = state.products.B;
+
+      document.getElementById('dataApos').textContent = `${a.x.toFixed(0)}%, ${a.y.toFixed(0)}%`;
+      document.getElementById('dataAs').textContent = a.scale.toFixed(2);
+      document.getElementById('dataAr').textContent = a.rotation.toFixed(0) + '°';
+
+      document.getElementById('dataBpos').textContent = `${b.x.toFixed(0)}%, ${b.y.toFixed(0)}%`;
+      document.getElementById('dataBs').textContent = b.scale.toFixed(2);
+      document.getElementById('dataBr').textContent = b.rotation.toFixed(0) + '°';
+
+      document.getElementById('statSelected').textContent = state.selected;
+
+      document.getElementById('sliderXVal').textContent = state.products[state.selected].x.toFixed(1) + '%';
+      document.getElementById('sliderYVal').textContent = state.products[state.selected].y.toFixed(1) + '%';
+      document.getElementById('sliderScaleVal').textContent = (state.products[state.selected].scale * 100).toFixed(0) + '%';
+      document.getElementById('sliderRotationVal').textContent = state.products[state.selected].rotation.toFixed(0) + '°';
+      document.getElementById('sliderZVal').textContent = state.products[state.selected].zIndex;
+    }
+
+    // =========================================
+    // SAVE CONFIG
+    // =========================================
+    function saveConfig() {
+      saveCurrentConfig();
+      
+      // Also log full export
+      const exportData = {
+        promotionId: 'promo-2liter-sodas',
+        productType: 'bottle-vertical',
+        layouts: { ...allConfigs },
+        savedAt: new Date().toISOString()
+      };
+      
+      console.log('=== FULL PROMOTION CONFIG ===');
+      console.log(JSON.stringify(exportData, null, 2));
+      
+      alert(`Saved config for ${state.currentSize.replace('x', '×')}!\nCheck console for full export.`);
+    }
+
+    // Initialize
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => setTimeout(init, 100));
+    } else {
+      setTimeout(init, 100);
+    }
+  </script>
+
+</body>
+</html>

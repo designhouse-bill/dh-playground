@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editor Media Section Mockup</title>
+
+  <!-- PrimeNG CSS -->
+  <link rel="stylesheet" href="../../css/primeng-overrides.css">
+  <!-- PrimeIcons -->
+  <link rel="stylesheet" href="https://unpkg.com/primeicons@6.0.1/primeicons.css">
+
+  <style>
+    /* Page setup for mockup viewing */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 40px;
+      font-family: var(--font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+      background: #f1f5f9;
+      min-height: 100vh;
+    }
+
+    .mockup-container {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .mockup-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+
+    /* Form Section Pattern */
+    .form-section {
+      background: var(--surface-card, #ffffff);
+      border: 1px solid var(--surface-border, #e5e7eb);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .form-section__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .form-section__title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-color, #1f2937);
+      margin: 0;
+    }
+
+    /* Media Item */
+    .media-item-simple {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+      background: var(--surface-hover, #f3f4f6);
+      border: 1px solid var(--surface-border, #e5e7eb);
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+
+    .media-item__thumb {
+      width: 36px;
+      height: 36px;
+      border-radius: 4px;
+      overflow: hidden;
+      background: #e5e7eb;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .media-item__thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .media-item__thumb i {
+      color: #9ca3af;
+      font-size: 18px;
+    }
+
+    .media-item__name {
+      flex: 1;
+      font-size: 14px;
+      color: var(--text-color, #1f2937);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .media-item__actions {
+      display: flex;
+      gap: 4px;
+    }
+
+    /* Buttons */
+    .p-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 150ms ease;
+      border: 1px solid transparent;
+      text-decoration: none;
+    }
+
+    .p-button-secondary {
+      background: var(--surface-card, #ffffff);
+      border-color: var(--surface-border, #e5e7eb);
+      color: var(--text-color, #1f2937);
+    }
+
+    .p-button-secondary:hover {
+      background: var(--surface-hover, #f3f4f6);
+      border-color: #d1d5db;
+    }
+
+    .p-button-sm {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+
+    .p-button-icon-only {
+      padding: 6px;
+      width: 32px;
+      height: 32px;
+    }
+
+    .p-button-danger-text {
+      background: transparent;
+      border: none;
+      color: #9ca3af;
+    }
+
+    .p-button-danger-text:hover {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    /* Divider */
+    .p-divider {
+      border: 0;
+      border-top: 1px solid var(--surface-border, #e5e7eb);
+      margin: 16px 0;
+    }
+
+    /* Navigation Link */
+    .p-button-text {
+      background: transparent;
+      border: none;
+      color: var(--primary-color, #3B82F6);
+      padding: 12px 16px;
+      width: 100%;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .p-button-text:hover {
+      background: var(--primary-color-light, #EFF6FF);
+    }
+  </style>
+</head>
+<body>
+  <div class="mockup-container">
+    <div class="mockup-label">Editor Media Section Mockup</div>
+
+    <!-- Media Section -->
+    <div class="form-section">
+      <div class="form-section__header">
+        <h3 class="form-section__title">Media</h3>
+      </div>
+
+      <!-- Media Item with Image -->
+      <div class="media-item-simple">
+        <div class="media-item__thumb">
+          <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=100&h=100&fit=crop" alt="Hero image thumbnail">
+        </div>
+        <span class="media-item__name">coca-cola-hero.jpg</span>
+        <div class="media-item__actions">
+          <button class="p-button p-button-secondary p-button-sm">Change Media</button>
+          <button class="p-button p-button-icon-only p-button-danger-text" title="Remove">
+            <i class="pi pi-trash"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <hr class="p-divider">
+
+      <!-- Navigation Link -->
+      <button class="p-button p-button-text">
+        Update Media Layout →
+      </button>
+    </div>
+
+    <!-- Alternate State: No Media -->
+    <div class="mockup-label" style="margin-top: 32px;">State: No Media Selected</div>
+
+    <div class="form-section">
+      <div class="form-section__header">
+        <h3 class="form-section__title">Media</h3>
+      </div>
+
+      <!-- Empty Media Item -->
+      <div class="media-item-simple">
+        <div class="media-item__thumb">
+          <i class="pi pi-image"></i>
+        </div>
+        <span class="media-item__name" style="color: var(--text-color-muted, #9ca3af);">(no media selected)</span>
+        <div class="media-item__actions">
+          <button class="p-button p-button-secondary p-button-sm">Select Media</button>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <hr class="p-divider">
+
+      <!-- Navigation Link -->
+      <button class="p-button p-button-text">
+        Update Media Layout →
+      </button>
+    </div>
+  </div>
+</body>
+</html>

@@ -98,6 +98,10 @@
   --panel-collapsed: 48px;
   --panel-quick: 280px;
   --panel-advanced: 450px;
+
+  /* Custom State Colors */
+  --color-customized: #8b5cf6;   /* Purple dot for customized items */
+  --color-inactive: #9ca3af;     /* Inactive state text */
 }
 
 /* =============================================================================
@@ -515,6 +519,115 @@ body {
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
+}
+
+/* Enhanced Header with Context (Media Layout Page) */
+.app-header--with-context {
+  justify-content: space-between;
+  gap: var(--spacing-4);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-6);
+}
+
+.header-context {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  padding-left: var(--spacing-4);
+  border-left: 1px solid var(--surface-border);
+}
+
+.header-promo-name {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.header-category {
+  font-size: var(--font-size-xs);
+  color: var(--text-color-secondary);
+}
+
+/* Header Navigation (Previous/Next) */
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.header-nav-current {
+  font-size: var(--font-size-sm);
+  color: var(--text-color-secondary);
+  padding: 0 var(--spacing-2);
+  min-width: 60px;
+  text-align: center;
+}
+
+/* Header Right Section */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+/* Developer Tools Dropdown */
+.header-dev-tools {
+  position: relative;
+}
+
+.header-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  min-width: 180px;
+  background: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+  margin-top: var(--spacing-1);
+  padding: var(--spacing-1);
+}
+
+.header-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  width: 100%;
+  padding: var(--spacing-2) var(--spacing-3);
+  font-size: var(--font-size-sm);
+  color: var(--text-color);
+  background: transparent;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: left;
+}
+
+.header-dropdown-item:hover {
+  background: var(--surface-hover);
+}
+
+.header-dropdown-item i {
+  color: var(--text-color-secondary);
+}
+
+/* Close Button */
+.header-close-btn {
+  color: var(--text-color-secondary);
+  padding: var(--spacing-2);
+}
+
+.header-close-btn:hover {
+  color: var(--red-500);
+  background: var(--red-100);
 }
 
 /* Content Area */

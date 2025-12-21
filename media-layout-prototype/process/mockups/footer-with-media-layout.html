@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Footer with Media Layout Tab Mockup</title>
+
+  <!-- PrimeNG CSS -->
+  <link rel="stylesheet" href="../../css/primeng-overrides.css">
+  <!-- PrimeIcons -->
+  <link rel="stylesheet" href="https://unpkg.com/primeicons@6.0.1/primeicons.css">
+
+  <style>
+    /* Page setup for mockup viewing */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 40px;
+      font-family: var(--font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+      background: #f1f5f9;
+      min-height: 100vh;
+    }
+
+    .mockup-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .mockup-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+
+    .mockup-description {
+      font-size: 14px;
+      color: var(--text-color-secondary, #6b7280);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    /* Footer Tab Bar */
+    .footer-tab-bar {
+      background: var(--surface-card, #ffffff);
+      border: 1px solid var(--surface-border, #e5e7eb);
+      border-radius: 8px;
+      display: flex;
+      padding: 4px;
+      gap: 4px;
+      margin-bottom: 32px;
+    }
+
+    /* Tab Button */
+    .footer-tab {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-color-secondary, #6b7280);
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 150ms ease;
+      position: relative;
+    }
+
+    .footer-tab i {
+      font-size: 16px;
+    }
+
+    /* Normal Tab Hover */
+    .footer-tab:hover:not(.footer-tab--disabled):not(.footer-tab--active) {
+      background: var(--surface-hover, #f3f4f6);
+      color: var(--text-color, #1f2937);
+    }
+
+    /* Active Tab */
+    .footer-tab--active {
+      background: var(--primary-color, #3B82F6);
+      color: #ffffff;
+    }
+
+    .footer-tab--active:hover {
+      background: #2563eb;
+    }
+
+    /* Disabled Tab */
+    .footer-tab--disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Tooltip */
+    .footer-tab--disabled::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 6px 10px;
+      background: #1f2937;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 400;
+      border-radius: 4px;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 150ms ease, visibility 150ms ease;
+      z-index: 100;
+      margin-bottom: 8px;
+    }
+
+    .footer-tab--disabled::before {
+      content: '';
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: #1f2937;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 150ms ease, visibility 150ms ease;
+      z-index: 100;
+      margin-bottom: -4px;
+    }
+
+    .footer-tab--disabled:hover::after,
+    .footer-tab--disabled:hover::before {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* State Indicators */
+    .state-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      margin-right: 8px;
+    }
+
+    .state-indicator--normal {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+
+    .state-indicator--active {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .state-indicator--disabled {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .state-legend {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="mockup-container">
+    <div class="mockup-label">Footer Tab Bar Mockup</div>
+    <p class="mockup-description">
+      The footer tab bar with 5 tabs: Editor, Media, <strong>Media Layout</strong>, Promotions, Categories.
+      Media Layout tab is disabled when multiple promotions are selected.
+    </p>
+
+    <!-- State Legend -->
+    <div class="state-legend">
+      <span class="state-indicator state-indicator--normal">Normal</span>
+      <span class="state-indicator state-indicator--active">Active</span>
+      <span class="state-indicator state-indicator--disabled">Disabled (hover for tooltip)</span>
+    </div>
+
+    <!-- State 1: Editor Active -->
+    <div class="mockup-label">State: Editor Tab Active (Single Promotion)</div>
+    <div class="footer-tab-bar">
+      <button class="footer-tab footer-tab--active">
+        <i class="pi pi-pencil"></i>
+        <span>Editor</span>
+      </button>
+      <button class="footer-tab">
+        <i class="pi pi-image"></i>
+        <span>Media</span>
+      </button>
+      <button class="footer-tab">
+        <i class="pi pi-th-large"></i>
+        <span>Media Layout</span>
+      </button>
+      <button class="footer-tab">
+        <i class="pi pi-tag"></i>
+        <span>Promotions</span>
+      </button>
+      <button class="footer-tab">
+        <i class="pi pi-folder"></i>
+        <span>Categories</span>
+      </button>
+    </div>
+
+    <!-- State 2: Media Layout Active -->
+    <div class="mockup-label">State: Media Layout Tab Active</div>
+    <div class="footer-tab-bar">
+      <button class="footer-tab">
+        <i class="pi pi-pencil"></i>
+        <span>Editor</span>
+      </button>
+      <button class="footer-tab">
+        <i class="pi pi-image"></i>
+        <span>Media</span>
+      </button>
+      <button class="footer-tab footer-tab--active">
+        <i class="pi pi-th-large"></i>
+        <span>Media Layout</span>
+      </button>
+      <button class="footer-tab">
+        <i class="pi pi-tag"></i>
+        <span>Promotions</span>
+      </button>
+      <button class="footer-tab">
+        <i class="pi pi-folder"></i>
+        <span>Categories</span>
+      </button>
+    </div>
+
+    <!-- State 3: Multiple Promotions Selected (Media Layout Disabled) -->
+    <div class="mockup-label">State: Multiple Promotions Selected (Media Layout Disabled)</div>
+    <div class="footer-tab-bar">
+      <button class="footer-tab footer-tab--active">
+        <i class="pi pi-pencil"></i>
+        <span>Editor</span>
+      </button>
+      <button class="footer-tab">
+        <i class="pi pi-image"></i>
+        <span>Media</span>
+      </button>
+      <button class="footer-tab footer-tab--disabled" data-tooltip="Select a single promotion to edit layout">
+        <i class="pi pi-th-large"></i>
+        <span>Media Layout</span>
+      </button>
+      <button class="footer-tab">
+        <i class="pi pi-tag"></i>
+        <span>Promotions</span>
+      </button>
+      <button class="footer-tab">
+        <i class="pi pi-folder"></i>
+        <span>Categories</span>
+      </button>
+    </div>
+
+    <!-- State 4: Media Tab Active -->
+    <div class="mockup-label">State: Media Tab Active</div>
+    <div class="footer-tab-bar">
+      <button class="footer-tab">
+        <i class="pi pi-pencil"></i>
+        <span>Editor</span>
+      </button>
+      <button class="footer-tab footer-tab--active">
+        <i class="pi pi-image"></i>
+        <span>Media</span>
+      </button>
+      <button class="footer-tab">
+        <i class="pi pi-th-large"></i>
+        <span>Media Layout</span>
+      </button>
+      <button class="footer-tab">
+        <i class="pi pi-tag"></i>
+        <span>Promotions</span>
+      </button>
+      <button class="footer-tab">
+        <i class="pi pi-folder"></i>
+        <span>Categories</span>
+      </button>
+    </div>
+  </div>
+</body>
+</html>

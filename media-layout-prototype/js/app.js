@@ -1106,7 +1106,10 @@ function setupAdjustmentSliders() {
 
     document.getElementById(displayId).value = displayFormat(value);
     applySlotToDOM(AppState.selectedSlotIndex);
-    if (currentMoveable) currentMoveable.updateRect();
+    // Wait for CSS transition to complete (300ms) before updating Moveable rect
+    setTimeout(() => {
+      if (currentMoveable) currentMoveable.updateRect();
+    }, 320);
     AppState.markCurrentConfigDirty();
     renderCardSizeSelector();
     renderLiveData();
@@ -1294,7 +1297,10 @@ function setupAdjustmentSliders() {
 
     // Update UI
     applySlotToDOM(AppState.selectedSlotIndex);
-    if (currentMoveable) currentMoveable.updateRect();
+    // Wait for CSS transition to complete (300ms) before updating Moveable rect
+    setTimeout(() => {
+      if (currentMoveable) currentMoveable.updateRect();
+    }, 320);
     AppState.markCurrentConfigDirty();
     renderCardSizeSelector();
     renderLiveData();

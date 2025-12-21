@@ -1403,21 +1403,55 @@
     <!-- Main Content -->
     <main class="app-main">
       <!-- Header -->
-      <header class="app-header">
-        <div class="header-brand">
-          <div class="header-logo">
-            <i class="pi pi-image"></i>
+      <header class="app-header app-header--with-context">
+        <!-- Left: Branding + Promotion Context -->
+        <div class="header-left">
+          <div class="header-brand">
+            <div class="header-logo">
+              <i class="pi pi-image"></i>
+            </div>
+            <h1 class="header-title">Media Layout</h1>
           </div>
-          <h1 class="header-title">Media Layout</h1>
+          <div class="header-context">
+            <h2 class="header-promo-name" id="header-promo-name">Coca-Cola Products</h2>
+            <span class="header-category" id="header-category">Drinks</span>
+          </div>
         </div>
-        <div class="header-actions">
-          <button class="p-button p-button-secondary" id="configure-layout-btn">
-            <i class="pi pi-cog"></i>
-            Configure Layout
+
+        <!-- Center: Promotion Navigation -->
+        <div class="header-nav">
+          <button class="p-button p-button-text p-button-sm" id="prev-promo-btn" title="Previous Promotion">
+            <i class="pi pi-chevron-left"></i>
+            <span>Previous</span>
           </button>
-          <button class="p-button p-button-primary" id="export-config-btn">
-            <i class="pi pi-download"></i>
-            Export Config
+          <span class="header-nav-current" id="header-nav-current">3 of 12</span>
+          <button class="p-button p-button-text p-button-sm" id="next-promo-btn" title="Next Promotion">
+            <span>Next</span>
+            <i class="pi pi-chevron-right"></i>
+          </button>
+        </div>
+
+        <!-- Right: Actions + Close -->
+        <div class="header-right">
+          <!-- Developer Tools Dropdown -->
+          <div class="header-dev-tools">
+            <button class="p-button p-button-text p-button-sm" id="dev-tools-dropdown-btn" title="Developer Tools">
+              <i class="pi pi-ellipsis-v"></i>
+            </button>
+            <div class="header-dropdown" id="dev-tools-dropdown" style="display: none;">
+              <button class="header-dropdown-item" id="configure-layout-btn">
+                <i class="pi pi-cog"></i>
+                Configure Layout
+              </button>
+              <button class="header-dropdown-item" id="export-config-btn">
+                <i class="pi pi-download"></i>
+                Export Config
+              </button>
+            </div>
+          </div>
+          <!-- Close Button -->
+          <button class="p-button p-button-text header-close-btn" id="close-media-layout-btn" title="Close Media Layout">
+            <i class="pi pi-times"></i>
           </button>
         </div>
       </header>
@@ -1591,6 +1625,18 @@
                   </div>
                 </div>
 
+              </div>
+            </div>
+
+            <!-- Developer Tools (Collapsed by Default) -->
+            <div class="editor-card editor-card--collapsible" id="dev-tools-card">
+              <button class="editor-card__header editor-card__header--toggle" aria-expanded="false" aria-controls="dev-tools-content">
+                <h3 class="editor-card__title">Developer Tools</h3>
+                <svg class="editor-card__chevron" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M4 6l4 4 4-4H4z"/>
+                </svg>
+              </button>
+              <div class="editor-card__body editor-card__body--collapsible" id="dev-tools-content">
                 <!-- Live Data -->
                 <div class="live-data" id="live-data">
                   <!-- Populated by JS -->
@@ -1745,6 +1791,50 @@
           header.setAttribute('aria-expanded', isOpen);
         });
       });
+
+      // Header Developer Tools Dropdown
+      const devToolsDropdownBtn = document.getElementById('dev-tools-dropdown-btn');
+      const devToolsDropdown = document.getElementById('dev-tools-dropdown');
+
+      if (devToolsDropdownBtn && devToolsDropdown) {
+        devToolsDropdownBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const isVisible = devToolsDropdown.style.display === 'block';
+          devToolsDropdown.style.display = isVisible ? 'none' : 'block';
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+          if (!devToolsDropdown.contains(e.target) && e.target !== devToolsDropdownBtn) {
+            devToolsDropdown.style.display = 'none';
+          }
+        });
+      }
+
+      // Close button handler
+      const closeBtn = document.getElementById('close-media-layout-btn');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+          // In prototype, just show an alert. In production, this would close the panel.
+          alert('Close Media Layout: This would return to the Data Grid in the production app.');
+        });
+      }
+
+      // Previous/Next promotion navigation (placeholder handlers)
+      const prevBtn = document.getElementById('prev-promo-btn');
+      const nextBtn = document.getElementById('next-promo-btn');
+
+      if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+          alert('Previous promotion (placeholder - would navigate in production)');
+        });
+      }
+
+      if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+          alert('Next promotion (placeholder - would navigate in production)');
+        });
+      }
     });
   </script>
 

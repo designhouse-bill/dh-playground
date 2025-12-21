@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editor Background Section Mockup</title>
+
+  <!-- PrimeNG CSS -->
+  <link rel="stylesheet" href="../../css/primeng-overrides.css">
+  <!-- PrimeIcons -->
+  <link rel="stylesheet" href="https://unpkg.com/primeicons@6.0.1/primeicons.css">
+
+  <style>
+    /* Page setup for mockup viewing */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 40px;
+      font-family: var(--font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+      background: #f1f5f9;
+      min-height: 100vh;
+    }
+
+    .mockup-container {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .mockup-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+
+    /* Form Section Pattern */
+    .form-section {
+      background: var(--surface-card, #ffffff);
+      border: 1px solid var(--surface-border, #e5e7eb);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .form-section__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .form-section__title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-color, #1f2937);
+      margin: 0;
+    }
+
+    .form-section__badge {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: #f3f4f6;
+      color: var(--text-color-secondary, #6b7280);
+    }
+
+    /* Background Display (Read-Only) */
+    .background-display {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .background-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+      background: var(--surface-hover, #f3f4f6);
+      border: 1px solid var(--surface-border, #e5e7eb);
+      border-radius: 6px;
+    }
+
+    .background-row__label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-color-secondary, #6b7280);
+      min-width: 50px;
+    }
+
+    .background-row__value {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Color Swatch */
+    .color-swatch {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      flex-shrink: 0;
+    }
+
+    .color-value {
+      font-size: 14px;
+      font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+      color: var(--text-color, #1f2937);
+    }
+
+    /* Image Thumbnail (smaller) */
+    .bg-image-thumb {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      overflow: hidden;
+      background: #e5e7eb;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .bg-image-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .bg-image-thumb i {
+      color: #9ca3af;
+      font-size: 14px;
+    }
+
+    .bg-image-name {
+      font-size: 14px;
+      color: var(--text-color, #1f2937);
+    }
+
+    .bg-image-name--none {
+      color: var(--text-color-muted, #9ca3af);
+      font-style: italic;
+    }
+
+    /* Divider */
+    .p-divider {
+      border: 0;
+      border-top: 1px solid var(--surface-border, #e5e7eb);
+      margin: 16px 0;
+    }
+
+    /* Buttons */
+    .p-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 150ms ease;
+      border: 1px solid transparent;
+      text-decoration: none;
+    }
+
+    /* Navigation Link */
+    .p-button-text {
+      background: transparent;
+      border: none;
+      color: var(--primary-color, #3B82F6);
+      padding: 12px 16px;
+      width: 100%;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .p-button-text:hover {
+      background: var(--primary-color-light, #EFF6FF);
+    }
+  </style>
+</head>
+<body>
+  <div class="mockup-container">
+    <div class="mockup-label">Editor Background Section Mockup (Read-Only)</div>
+
+    <!-- Background Section - With Color and Image -->
+    <div class="form-section">
+      <div class="form-section__header">
+        <h3 class="form-section__title">Background</h3>
+        <span class="form-section__badge">Read-Only</span>
+      </div>
+
+      <div class="background-display">
+        <!-- Color Row -->
+        <div class="background-row">
+          <span class="background-row__label">Color</span>
+          <div class="background-row__value">
+            <div class="color-swatch" style="background-color: #E86930;"></div>
+            <span class="color-value">#E86930</span>
+          </div>
+        </div>
+
+        <!-- Image Row -->
+        <div class="background-row">
+          <span class="background-row__label">Image</span>
+          <div class="background-row__value">
+            <div class="bg-image-thumb">
+              <img src="https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=100&h=100&fit=crop" alt="Background image thumbnail">
+            </div>
+            <span class="bg-image-name">coca-bg.jpg</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <hr class="p-divider">
+
+      <!-- Navigation Link -->
+      <button class="p-button p-button-text">
+        Edit in Media Layout →
+      </button>
+    </div>
+
+    <!-- State: Color Only (No Background Image) -->
+    <div class="mockup-label" style="margin-top: 32px;">State: Color Only (No Background Image)</div>
+
+    <div class="form-section">
+      <div class="form-section__header">
+        <h3 class="form-section__title">Background</h3>
+        <span class="form-section__badge">Read-Only</span>
+      </div>
+
+      <div class="background-display">
+        <!-- Color Row -->
+        <div class="background-row">
+          <span class="background-row__label">Color</span>
+          <div class="background-row__value">
+            <div class="color-swatch" style="background-color: #2563EB;"></div>
+            <span class="color-value">#2563EB</span>
+          </div>
+        </div>
+
+        <!-- Image Row - None -->
+        <div class="background-row">
+          <span class="background-row__label">Image</span>
+          <div class="background-row__value">
+            <div class="bg-image-thumb">
+              <i class="pi pi-image"></i>
+            </div>
+            <span class="bg-image-name bg-image-name--none">(none)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <hr class="p-divider">
+
+      <!-- Navigation Link -->
+      <button class="p-button p-button-text">
+        Edit in Media Layout →
+      </button>
+    </div>
+
+    <!-- State: Default (No customization) -->
+    <div class="mockup-label" style="margin-top: 32px;">State: Default (Using Template Defaults)</div>
+
+    <div class="form-section">
+      <div class="form-section__header">
+        <h3 class="form-section__title">Background</h3>
+        <span class="form-section__badge">Read-Only</span>
+      </div>
+
+      <div class="background-display">
+        <!-- Color Row - Default white -->
+        <div class="background-row">
+          <span class="background-row__label">Color</span>
+          <div class="background-row__value">
+            <div class="color-swatch" style="background-color: #FFFFFF; border: 1px solid #e5e7eb;"></div>
+            <span class="color-value">#FFFFFF</span>
+          </div>
+        </div>
+
+        <!-- Image Row - None -->
+        <div class="background-row">
+          <span class="background-row__label">Image</span>
+          <div class="background-row__value">
+            <div class="bg-image-thumb">
+              <i class="pi pi-image"></i>
+            </div>
+            <span class="bg-image-name bg-image-name--none">(none)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <hr class="p-divider">
+
+      <!-- Navigation Link -->
+      <button class="p-button p-button-text">
+        Edit in Media Layout →
+      </button>
+    </div>
+  </div>
+</body>
+</html>

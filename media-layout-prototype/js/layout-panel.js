@@ -61,7 +61,7 @@ class LayoutPanel {
   /**
    * Open the panel
    */
-  open(view = 'quick') {
+  open(view = 'half') {
     this.isOpen = true;
     this.setState(view);
 
@@ -69,6 +69,7 @@ class LayoutPanel {
     if (this.panelEl) this.panelEl.classList.add('active');
 
     this.renderContent();
+    this.updateSizeToggles();
   }
 
   /**
@@ -89,7 +90,7 @@ class LayoutPanel {
     if (this.isOpen) {
       this.close();
     } else {
-      this.open('quick');
+      this.open('half');
     }
   }
 
@@ -110,16 +111,16 @@ class LayoutPanel {
       this.toggle();
     }
 
-    // Cmd/Ctrl + 1 - Quick view
+    // Cmd/Ctrl + 1 - Half view (55vh)
     if ((e.metaKey || e.ctrlKey) && e.key === '1') {
       e.preventDefault();
-      this.open('quick');
+      this.open('half');
     }
 
-    // Cmd/Ctrl + 2 - Advanced view
+    // Cmd/Ctrl + 2 - Full view (95vh)
     if ((e.metaKey || e.ctrlKey) && e.key === '2') {
       e.preventDefault();
-      this.open('advanced');
+      this.open('full');
     }
 
     // Escape - Close panel
@@ -137,15 +138,26 @@ class LayoutPanel {
     const advancedView = this.panelEl?.querySelector('.advanced-view');
 
     if (quickView) {
-      quickView.classList.toggle('active', this.state === 'quick');
+      quickView.classList.toggle('active', this.state === 'quick' || this.state === 'half' || this.state === 'full');
     }
     if (advancedView) {
       advancedView.classList.toggle('active', this.state === 'advanced');
     }
 
-    // Update tabs
-    this.panelEl?.querySelectorAll('.layout-panel__tab').forEach(tab => {
-      tab.classList.toggle('active', tab.dataset.view === this.state);
+    // Update size toggles
+    this.updateSizeToggles();
+  }
+
+  /**
+   * Update size toggle button states
+   */
+  updateSizeToggles() {
+    this.panelEl?.querySelectorAll('.layout-panel__size-toggle').forEach(toggle => {
+      const size = toggle.dataset.size;
+      const isActive = (size === 'closed' && !this.isOpen) ||
+                       (size === 'half' && this.state === 'half') ||
+                       (size === 'full' && this.state === 'full');
+      toggle.classList.toggle('active', isActive);
     });
   }
 
@@ -159,23 +171,60 @@ class LayoutPanel {
       <div class="layout-panel-overlay"></div>
       <div class="layout-panel" data-state="collapsed">
         <div class="layout-panel__header">
-          <div class="layout-panel__title">
-            <i class="pi pi-sliders-h"></i>
-            <span>Layout Configuration</span>
-          </div>
-
           <div class="layout-panel__tabs">
-            <button class="layout-panel__tab" data-view="quick">
-              <i class="pi pi-bolt"></i> Quick
+            <button class="layout-panel__tab" data-view="editor">
+              <span>Editor</span>
+              <svg class="layout-panel__tab-chevron" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M4 6l4 4 4-4H4z"/>
+              </svg>
             </button>
-            <button class="layout-panel__tab" data-view="advanced">
-              <i class="pi pi-cog"></i> Advanced
+            <button class="layout-panel__tab" data-view="media">
+              <span>Media</span>
+              <svg class="layout-panel__tab-chevron" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M4 6l4 4 4-4H4z"/>
+              </svg>
+            </button>
+            <button class="layout-panel__tab" data-view="design">
+              <span>Design</span>
+              <svg class="layout-panel__tab-chevron" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M4 6l4 4 4-4H4z"/>
+              </svg>
+            </button>
+            <button class="layout-panel__tab" data-view="promotion">
+              <span>Promotion (+Add)</span>
+              <svg class="layout-panel__tab-chevron" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M4 6l4 4 4-4H4z"/>
+              </svg>
+            </button>
+            <button class="layout-panel__tab" data-view="categories">
+              <span>Categories</span>
+              <svg class="layout-panel__tab-chevron" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M4 6l4 4 4-4H4z"/>
+              </svg>
+            </button>
+            <button class="layout-panel__tab" data-view="recipes">
+              <span>Recipes</span>
+              <svg class="layout-panel__tab-chevron" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M4 6l4 4 4-4H4z"/>
+              </svg>
             </button>
           </div>
 
           <div class="layout-panel__actions">
+            <div class="layout-panel__size-toggles">
+              <button class="layout-panel__size-toggle" data-size="closed" title="Close dock">
+                <div class="layout-panel__size-toggle-bar"></div>
+              </button>
+              <button class="layout-panel__size-toggle" data-size="half" title="Half height (55vh)">
+                <div class="layout-panel__size-toggle-bar"></div>
+              </button>
+              <button class="layout-panel__size-toggle" data-size="full" title="Full height (95vh)">
+                <div class="layout-panel__size-toggle-bar"></div>
+              </button>
+            </div>
             <button class="layout-panel__close" title="Close (Esc)">
               <i class="pi pi-times"></i>
+              <span>Close</span>
             </button>
           </div>
         </div>
@@ -289,16 +338,41 @@ class LayoutPanel {
         e.stopPropagation();
         const view = tab.dataset.view;
         if (view) {
-          this.setState(view);
-          this.renderContent();
+          // Update active tab styling
+          this.panelEl?.querySelectorAll('.layout-panel__tab').forEach(t => {
+            t.classList.toggle('active', t === tab);
+          });
+          // For now, tabs are placeholders - they would open different content panels
+          console.log('Tab clicked:', view);
         }
+      });
+    });
+
+    // Size toggle clicks
+    this.panelEl?.querySelectorAll('.layout-panel__size-toggle').forEach(toggle => {
+      toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const size = toggle.dataset.size;
+        if (size === 'closed') {
+          this.close();
+        } else if (size === 'half' || size === 'full') {
+          this.setState(size);
+          if (!this.isOpen) {
+            this.isOpen = true;
+            if (this.overlayEl) this.overlayEl.classList.add('active');
+            if (this.panelEl) this.panelEl.classList.add('active');
+          }
+        }
+        this.updateSizeToggles();
       });
     });
 
     // Header click to toggle
     this.panelEl?.querySelector('.layout-panel__header')?.addEventListener('click', (e) => {
-      // Don't toggle if clicking on tabs or close button
-      if (e.target.closest('.layout-panel__tabs') || e.target.closest('.layout-panel__close')) {
+      // Don't toggle if clicking on tabs, close button, or size toggles
+      if (e.target.closest('.layout-panel__tabs') ||
+          e.target.closest('.layout-panel__close') ||
+          e.target.closest('.layout-panel__size-toggles')) {
         return;
       }
       this.toggle();

@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Layout Panel - Interactive Prototype Documentation</title>
+  <style>
+    :root {
+      --bg: #f8f9fa;
+      --surface: #ffffff;
+      --border: #e0e0e0;
+      --border-dark: #bdbdbd;
+      --text: #333333;
+      --text-muted: #666666;
+      --text-light: #999999;
+      --primary: #1976d2;
+      --primary-light: #e3f2fd;
+      --primary-dark: #1565c0;
+      --accent: #7c4dff;
+      --success: #4caf50;
+      --warning: #ff9800;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 15px;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* Header */
+    .page-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .page-header__title {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .page-header__subtitle {
+      font-size: 18px;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto 24px;
+    }
+
+    /* Launch CTA */
+    .launch-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 32px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      color: white;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 16px;
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+    }
+
+    .launch-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(25, 118, 210, 0.4);
+    }
+
+    .launch-cta__arrow {
+      font-size: 20px;
+    }
+
+    /* Sections */
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+
+    .section__title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section__title-icon {
+      font-size: 24px;
+    }
+
+    .section__desc {
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    /* Flow Diagram */
+    .flow-diagram {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 24px;
+      background: var(--bg);
+      border-radius: 8px;
+      flex-wrap: wrap;
+    }
+
+    .flow-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .flow-step__box {
+      padding: 12px 20px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .flow-step__box--highlight {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary-dark);
+    }
+
+    .flow-step__box--new {
+      background: linear-gradient(135deg, #e8f5e9 0%, #e3f2fd 100%);
+      border-color: var(--success);
+    }
+
+    .flow-step__label {
+      font-size: 10px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .flow-arrow {
+      font-size: 18px;
+      color: var(--text-light);
+    }
+
+    /* Tab Groups Visual */
+    .tab-groups-visual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      padding: 24px;
+      background: var(--bg);
+      border-radius: 8px;
+      margin-top: 16px;
+    }
+
+    .tab-group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .tab-group__label {
+      font-size: 11px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .tab-group__tabs {
+      display: flex;
+      gap: 4px;
+    }
+
+    .tab-visual {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .tab-visual--with-icon svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .tab-visual--new {
+      position: relative;
+    }
+
+    .tab-visual--new::after {
+      content: 'NEW';
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: var(--warning);
+      color: white;
+      font-size: 8px;
+      font-weight: 700;
+      padding: 2px 4px;
+      border-radius: 3px;
+    }
+
+    .tab-divider {
+      width: 1px;
+      height: 32px;
+      background: var(--border-dark);
+      margin: 0 8px;
+    }
+
+    /* Features Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .feature-card {
+      padding: 20px;
+      background: var(--bg);
+      border-radius: 8px;
+    }
+
+    .feature-card__icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+
+    .feature-card__title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .feature-card__desc {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* User Flows */
+    .user-flows {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .user-flow {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 20px;
+      background: var(--bg);
+      border-radius: 8px;
+    }
+
+    .user-flow__letter {
+      width: 32px;
+      height: 32px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .user-flow__content {
+      flex: 1;
+    }
+
+    .user-flow__title {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .user-flow__steps {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .user-flow__path {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--text-light);
+    }
+
+    .user-flow__path-step {
+      padding: 4px 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+    }
+
+    .user-flow__path-arrow {
+      color: var(--border-dark);
+    }
+
+    /* Navigation Features */
+    .nav-features {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .nav-feature {
+      padding: 20px;
+      background: var(--bg);
+      border-radius: 8px;
+    }
+
+    .nav-feature__header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .nav-feature__badge {
+      padding: 4px 8px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .nav-feature__title {
+      font-weight: 600;
+    }
+
+    .nav-feature__desc {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Discovery Points */
+    .discovery-points {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .discovery-point {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 14px;
+      background: var(--bg);
+      border-radius: 6px;
+    }
+
+    .discovery-point__num {
+      width: 24px;
+      height: 24px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .discovery-point__text {
+      font-size: 13px;
+    }
+
+    .discovery-point__location {
+      font-size: 11px;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .page-header__title {
+        font-size: 28px;
+      }
+
+      .nav-features {
+        grid-template-columns: 1fr;
+      }
+
+      .tab-groups-visual {
+        flex-direction: column;
+      }
+
+      .tab-divider {
+        width: 60px;
+        height: 1px;
+        margin: 8px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Page Header -->
+    <header class="page-header">
+      <h1 class="page-header__title">Layout Panel Prototype</h1>
+      <p class="page-header__subtitle">
+        Interactive wireframe demonstrating the pocket modal interface, tab-based navigation,
+        progressive disclosure, and the Layout panel for hero image positioning.
+      </p>
+      <a href="prototype.html" class="launch-cta">
+        Launch Interactive Prototype
+        <span class="launch-cta__arrow">&rarr;</span>
+      </a>
+    </header>
+
+    <!-- Overview Section -->
+    <section class="section">
+      <h2 class="section__title">
+        <span class="section__title-icon">&#128203;</span>
+        Overview
+      </h2>
+      <p class="section__desc">
+        The Layout panel allows users to customize hero image positioning for different card sizes (1x1 to 3x3).
+        It's accessible from the Editor panel via contextual prompts, the Background section, or after selecting
+        an image in the Media Repository. All editing happens within a "pocket modal" that slides up from the bottom.
+      </p>
+
+      <div class="flow-diagram">
+        <div class="flow-step">
+          <div class="flow-step__box">Data Grid</div>
+          <div class="flow-step__label">Select promotion</div>
+        </div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-step">
+          <div class="flow-step__box flow-step__box--highlight">Editor</div>
+          <div class="flow-step__label">Home base</div>
+        </div>
+        <span class="flow-arrow">&harr;</span>
+        <div class="flow-step">
+          <div class="flow-step__box">Media</div>
+          <div class="flow-step__label">Select hero</div>
+        </div>
+        <span class="flow-arrow">&harr;</span>
+        <div class="flow-step">
+          <div class="flow-step__box flow-step__box--new">Layout</div>
+          <div class="flow-step__label">Position hero</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab Structure Section -->
+    <section class="section">
+      <h2 class="section__title">
+        <span class="section__title-icon">&#128194;</span>
+        Tab Structure
+      </h2>
+      <p class="section__desc">
+        Tabs are organized into two groups separated by a visual divider. <strong>Promotion-level tabs</strong> (left)
+        require a selection and operate on the selected promotion. <strong>Circular-level tabs</strong> (right) are
+        always available and operate on the entire circular.
+      </p>
+
+      <div class="tab-groups-visual">
+        <div class="tab-group">
+          <div>
+            <div class="tab-group__label">Promotion Level (requires selection)</div>
+            <div class="tab-group__tabs">
+              <div class="tab-visual tab-visual--with-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M17 5.5H7C6.17157 5.5 5.5 6.17157 5.5 7V17C5.5 17.8284 6.17157 18.5 7 18.5H17C17.8284 18.5 18.5 17.8284 18.5 17V7C18.5 6.17157 17.8284 5.5 17 5.5ZM7 4C5.34315 4 4 5.34315 4 7V17C4 18.6569 5.34315 20 7 20H17C18.6569 20 20 18.6569 20 17V7C20 5.34315 18.6569 4 17 4H7Z" fill="currentColor"/>
+                  <circle cx="15.0769" cy="15.0766" r="1.84615" fill="currentColor"/>
+                </svg>
+                Editor
+              </div>
+              <div class="tab-visual">Media</div>
+              <div class="tab-visual">Design</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-divider"></div>
+
+        <div class="tab-group">
+          <div>
+            <div class="tab-group__label">Circular Level (always available)</div>
+            <div class="tab-group__tabs">
+              <div class="tab-visual">Promotion (+Add)</div>
+              <div class="tab-visual">Categories</div>
+              <div class="tab-visual">Recipes</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="section__desc" style="margin-top: 16px; font-size: 13px;">
+        <strong>Important:</strong> <em>Design</em> and <em>Layout</em> are different features:
+      </p>
+      <ul style="margin-top: 8px; margin-left: 20px; font-size: 13px; color: var(--text-muted);">
+        <li><strong>Design tab</strong> &mdash; Typography, colors, effects, and card styling (visible in tab bar)</li>
+        <li><strong>Layout panel</strong> &mdash; Hero image positioning for different card sizes (accessed via contextual links, not a tab)</li>
+      </ul>
+      <p class="section__desc" style="margin-top: 12px; font-size: 13px;">
+        The Layout panel uses progressive disclosure &mdash; users discover it when they need to customize hero positioning.
+      </p>
+    </section>
+
+    <!-- Pocket Modal Section -->
+    <section class="section">
+      <h2 class="section__title">
+        <span class="section__title-icon">&#128421;</span>
+        Pocket Modal Interface
+      </h2>
+      <p class="section__desc">
+        The editing panels open in a pocket modal that slides up from the bottom of the screen.
+        This keeps the data grid partially visible and provides clear context for navigation.
+        The modal supports two heights: full (95vh) and half (55vh).
+      </p>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-card__icon">&#8593;</div>
+          <div class="feature-card__title">Slides from Bottom</div>
+          <div class="feature-card__desc">Modal animates up from the bottom edge, anchored to the viewport</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon">&#128200;</div>
+          <div class="feature-card__title">Adjustable Height</div>
+          <div class="feature-card__desc">Toggle between 95vh (full) or 55vh (half) via size controls</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon">&#9711;</div>
+          <div class="feature-card__title">Rounded Top Corners</div>
+          <div class="feature-card__desc">12px border radius signals this is a temporary overlay</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon">&#128279;</div>
+          <div class="feature-card__title">Grouped Tabs</div>
+          <div class="feature-card__desc">Two tab groups with divider: Promotion-level | Circular-level</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation Section -->
+    <section class="section">
+      <h2 class="section__title">
+        <span class="section__title-icon">&#127899;</span>
+        Navigation Features
+      </h2>
+      <p class="section__desc">
+        Multiple navigation aids help users maintain context and move efficiently between views.
+      </p>
+
+      <div class="nav-features">
+        <div class="nav-feature">
+          <div class="nav-feature__header">
+            <span class="nav-feature__badge">Breadcrumbs</span>
+            <span class="nav-feature__title">Three-Level Path</span>
+          </div>
+          <div class="nav-feature__desc">
+            Shows "Data Grid &rsaquo; Editor &rsaquo; [Current Tab]". Clicking Data Grid closes modal.
+            Clicking Editor returns to Editor tab.
+          </div>
+        </div>
+        <div class="nav-feature">
+          <div class="nav-feature__header">
+            <span class="nav-feature__badge">Button</span>
+            <span class="nav-feature__title">Back to Editor</span>
+          </div>
+          <div class="nav-feature__desc">
+            Visible on Media and Layout tabs. Quick return to the Editor "home base"
+            without using breadcrumbs.
+          </div>
+        </div>
+        <div class="nav-feature">
+          <div class="nav-feature__header">
+            <span class="nav-feature__badge">Header</span>
+            <span class="nav-feature__title">Promotion Context</span>
+          </div>
+          <div class="nav-feature__desc">
+            Selected promotion name displayed prominently. Prev/Next buttons for
+            navigating between promotions without returning to grid.
+          </div>
+        </div>
+        <div class="nav-feature">
+          <div class="nav-feature__header">
+            <span class="nav-feature__badge">Tab Bar</span>
+            <span class="nav-feature__title">Direct Tab Switching</span>
+          </div>
+          <div class="nav-feature__desc">
+            Click any tab to switch directly. Layout tab shows "NEW" badge and tooltip
+            for first-time users.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- User Flows Section -->
+    <section class="section">
+      <h2 class="section__title">
+        <span class="section__title-icon">&#128736;</span>
+        User Flows
+      </h2>
+      <p class="section__desc">
+        Three primary paths to discover and use the Layout feature.
+      </p>
+
+      <div class="user-flows">
+        <div class="user-flow">
+          <div class="user-flow__letter">A</div>
+          <div class="user-flow__content">
+            <div class="user-flow__title">Contextual Discovery (Recommended)</div>
+            <div class="user-flow__steps">
+              User edits a promotion, sees the prompt card below the Media section,
+              clicks "Open Layout" to customize hero positioning.
+            </div>
+            <div class="user-flow__path">
+              <span class="user-flow__path-step">Grid</span>
+              <span class="user-flow__path-arrow">&rarr;</span>
+              <span class="user-flow__path-step">Editor</span>
+              <span class="user-flow__path-arrow">&rarr;</span>
+              <span class="user-flow__path-step">Prompt Card</span>
+              <span class="user-flow__path-arrow">&rarr;</span>
+              <span class="user-flow__path-step">Layout</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="user-flow">
+          <div class="user-flow__letter">B</div>
+          <div class="user-flow__content">
+            <div class="user-flow__title">Direct Tab Access</div>
+            <div class="user-flow__steps">
+              User notices the Layout tab (with NEW badge), clicks it directly to explore
+              the feature. Requires single promotion selected.
+            </div>
+            <div class="user-flow__path">
+              <span class="user-flow__path-step">Grid</span>
+              <span class="user-flow__path-arrow">&rarr;</span>
+              <span class="user-flow__path-step">Layout Tab</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="user-flow">
+          <div class="user-flow__letter">C</div>
+          <div class="user-flow__content">
+            <div class="user-flow__title">From Media Repository</div>
+            <div class="user-flow__steps">
+              After selecting/changing a hero image in Media, user sees toast notification
+              with "Customize layout" action, clicks to refine positioning.
+            </div>
+            <div class="user-flow__path">
+              <span class="user-flow__path-step">Grid</span>
+              <span class="user-flow__path-arrow">&rarr;</span>
+              <span class="user-flow__path-step">Media</span>
+              <span class="user-flow__path-arrow">&rarr;</span>
+              <span class="user-flow__path-step">Toast Action</span>
+              <span class="user-flow__path-arrow">&rarr;</span>
+              <span class="user-flow__path-step">Layout</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Discovery Points Section -->
+    <section class="section">
+      <h2 class="section__title">
+        <span class="section__title-icon">&#128161;</span>
+        Layout Discovery Points
+      </h2>
+      <p class="section__desc">
+        Multiple entry points guide users to the Layout feature at contextually appropriate moments.
+      </p>
+
+      <div class="discovery-points">
+        <div class="discovery-point">
+          <div class="discovery-point__num">1</div>
+          <div>
+            <div class="discovery-point__text">Prompt card with explanation</div>
+            <div class="discovery-point__location">Editor &rarr; Media section</div>
+          </div>
+        </div>
+        <div class="discovery-point">
+          <div class="discovery-point__num">2</div>
+          <div>
+            <div class="discovery-point__text">Tab with NEW badge + tooltip</div>
+            <div class="discovery-point__location">Footer tab bar</div>
+          </div>
+        </div>
+        <div class="discovery-point">
+          <div class="discovery-point__num">3</div>
+          <div>
+            <div class="discovery-point__text">"Edit in Layout" link</div>
+            <div class="discovery-point__location">Editor &rarr; Background section</div>
+          </div>
+        </div>
+        <div class="discovery-point">
+          <div class="discovery-point__num">4</div>
+          <div>
+            <div class="discovery-point__text">Toast notification action</div>
+            <div class="discovery-point__location">After hero image selection</div>
+          </div>
+        </div>
+        <div class="discovery-point">
+          <div class="discovery-point__num">5</div>
+          <div>
+            <div class="discovery-point__text">"Customize in Layout" link</div>
+            <div class="discovery-point__location">Media Repository sidebar</div>
+          </div>
+        </div>
+        <div class="discovery-point">
+          <div class="discovery-point__num">6</div>
+          <div>
+            <div class="discovery-point__text">Fallback text link (after dismiss)</div>
+            <div class="discovery-point__location">Editor &rarr; Media section</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Key Decisions Section -->
+    <section class="section">
+      <h2 class="section__title">
+        <span class="section__title-icon">&#9989;</span>
+        Key Design Decisions
+      </h2>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-card__icon">&#128196;</div>
+          <div class="feature-card__title">Single Promotion for Layout</div>
+          <div class="feature-card__desc">Layout panel only available when exactly one promotion is selected.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon">&#128683;</div>
+          <div class="feature-card__title">Dismissible Prompts</div>
+          <div class="feature-card__desc">Prompt card can be dismissed permanently, replaced by subtle text link.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon">&#127968;</div>
+          <div class="feature-card__title">Editor as Home Base</div>
+          <div class="feature-card__desc">Editor tab is the primary view. Other tabs support the editing workflow.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon">&#128274;</div>
+          <div class="feature-card__title">Tabs Disabled Without Selection</div>
+          <div class="feature-card__desc">Primary tabs (Editor, Media, Design) require at least one promotion selected.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab Enable Rules Section -->
+    <section class="section">
+      <h2 class="section__title">
+        <span class="section__title-icon">&#128736;</span>
+        Tab Enable/Disable Rules
+      </h2>
+      <p class="section__desc">
+        Tab availability changes based on selection state. This prevents users from accessing editing
+        interfaces when there's nothing to edit.
+      </p>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-card__icon">&#10060;</div>
+          <div class="feature-card__title">No Selection</div>
+          <div class="feature-card__desc">Primary tabs disabled. Only Circular-level tabs (Promotion, Categories, Recipes) available.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon">&#9989;</div>
+          <div class="feature-card__title">Single Selection</div>
+          <div class="feature-card__desc">All tabs enabled. Layout panel accessible via contextual links.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon">&#9888;</div>
+          <div class="feature-card__title">Multi-Selection (2+)</div>
+          <div class="feature-card__desc">Primary tabs enabled. Layout panel disabled (requires single selection).</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon">&#128065;</div>
+          <div class="feature-card__title">Visual Feedback</div>
+          <div class="feature-card__desc">Disabled tabs have 50% opacity and show tooltip on hover explaining why.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Documentation Reference Section -->
+    <section class="section">
+      <h2 class="section__title">
+        <span class="section__title-icon">&#128209;</span>
+        Documentation Reference
+      </h2>
+      <p class="section__desc">
+        This prototype implements the specifications defined in the UI-UX Integration Plan.
+      </p>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-card__icon">&#128466;</div>
+          <div class="feature-card__title">UI-UX-INTEGRATION-PLAN_003.md</div>
+          <div class="feature-card__desc">Complete specification including tab architecture, modal behavior, and implementation phases.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon">&#9881;</div>
+          <div class="feature-card__title">Testing Toggle</div>
+          <div class="feature-card__desc">Prototype includes checkbox to show/hide discovery prompts for UX comparison.</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,3374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Layout - Interactive Prototype</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    /* ==========================================================================
+       CSS VARIABLES
+       ========================================================================== */
+    :root {
+      --bg: #f5f5f5;
+      --surface: #ffffff;
+      --border: #e0e0e0;
+      --border-dark: #bdbdbd;
+      --text: #333333;
+      --text-muted: #757575;
+      --text-light: #9e9e9e;
+      --primary: #1976d2;
+      --primary-light: #e3f2fd;
+      --primary-dark: #1565c0;
+      --danger: #d32f2f;
+      --success: #388e3c;
+      --warning: #f57c00;
+      --hover: #f0f0f0;
+      --selected-row: #e3f2fd;
+      --header-bg: #2d2d2d;
+      --footer-bg: #e8e8e8;
+
+      /* Panel Transition Variables */
+      --transition-duration: 250ms;
+      --transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
+      --scale-out: 0.97;
+      --scale-in: 1.02;
+      --slide-distance: 30px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    /* ==========================================================================
+       APP SHELL
+       ========================================================================== */
+    .app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      background: var(--header-bg);
+      color: white;
+    }
+
+    .app-header__logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .app-header__logo-text {
+      font-weight: 700;
+      font-size: 16px;
+      font-style: italic;
+      color: #ef5350;
+    }
+
+    .app-header__store {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 12px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .app-header__user {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    /* ==========================================================================
+       TOOLBAR
+       ========================================================================== */
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toolbar__left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .toolbar__title {
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .toolbar__dates {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .date-chip {
+      padding: 6px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .date-chip--active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* ==========================================================================
+       SECONDARY TOOLBAR
+       ========================================================================== */
+    .secondary-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .selection-info {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .selection-count {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* ==========================================================================
+       BUTTONS
+       ========================================================================== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      border: 1px solid transparent;
+      text-decoration: none;
+    }
+
+    .btn--primary {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .btn--primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn--secondary {
+      background: var(--surface);
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .btn--secondary:hover {
+      background: var(--primary-light);
+    }
+
+    .btn--ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border-color: var(--border);
+    }
+
+    .btn--ghost:hover {
+      background: var(--hover);
+      color: var(--text);
+    }
+
+    .btn--danger {
+      color: var(--danger);
+    }
+
+    .btn--sm {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    .btn--block {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* ==========================================================================
+       DATA GRID
+       ========================================================================== */
+    .grid-container {
+      flex: 1;
+      overflow: auto;
+      background: var(--surface);
+    }
+
+    .data-grid {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .data-grid th,
+    .data-grid td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .data-grid th {
+      background: var(--bg);
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-size: 11px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .data-grid tbody tr {
+      cursor: pointer;
+      transition: background 0.1s ease;
+    }
+
+    .data-grid tbody tr:hover {
+      background: var(--hover);
+    }
+
+    .data-grid tbody tr.selected {
+      background: var(--selected-row);
+    }
+
+    .data-grid__checkbox {
+      width: 40px;
+    }
+
+    .data-grid__thumb {
+      width: 50px;
+    }
+
+    .data-grid__actions {
+      width: 100px;
+      text-align: right;
+    }
+
+    .thumb {
+      width: 40px;
+      height: 40px;
+      background: var(--border);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-light);
+      font-size: 10px;
+      overflow: hidden;
+    }
+
+    .thumb--coke {
+      background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+      color: white;
+      font-weight: bold;
+      font-size: 8px;
+    }
+
+    .owner-badge {
+      color: var(--danger);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .category-row {
+      background: var(--bg) !important;
+    }
+
+    .category-row td {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* ==========================================================================
+       FOOTER/DOCK TABS - GROUPED DESIGN
+       ========================================================================== */
+    .footer-tabs {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+    }
+
+    /* ----------------------------------------
+       Dock Tabs - Two Grouped Containers
+       ---------------------------------------- */
+    .dock-tabs-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      gap: 0;
+    }
+
+    .dock-tab-group {
+      display: flex;
+      align-items: center;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    /* Right tab group - gray background */
+    .dock-tab-group--secondary {
+      background: var(--bg);
+    }
+
+    .dock-tab-group--secondary .dock-tab {
+      background: transparent;
+    }
+
+    .dock-tab-group--secondary .dock-tab:hover:not(.dock-tab--active) {
+      background: var(--hover);
+    }
+
+    .dock-tab-divider {
+      width: 1px;
+      height: 24px;
+      background: var(--border-dark);
+      margin: 0 16px;
+    }
+
+    .dock-tab {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      border-right: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .dock-tab:last-child {
+      border-right: none;
+    }
+
+    .dock-tab:hover:not(.dock-tab--active) {
+      background: var(--hover);
+      color: var(--text);
+    }
+
+    /* Active tab - blue background */
+    .dock-tab--active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .dock-tab--active:hover {
+      background: var(--primary-dark);
+    }
+
+    .dock-tab__icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    .dock-tab--active .dock-tab__icon {
+      color: white;
+    }
+
+    /* Disabled state - when no promotion is selected */
+    .dock-tab:disabled,
+    .dock-tab[disabled] {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .dock-tab:disabled:hover,
+    .dock-tab[disabled]:hover {
+      background: transparent;
+      color: var(--text-muted);
+    }
+
+    /* ----------------------------------------
+       Dock Actions (right side)
+       ---------------------------------------- */
+    .dock-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* Dock Size Toggle Buttons */
+    .dock-size-toggles {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dock-size-toggle {
+      width: 28px;
+      height: 20px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      overflow: hidden;
+    }
+
+    .dock-size-toggle:hover {
+      border-color: var(--text-muted);
+    }
+
+    .dock-size-toggle.active {
+      border-color: var(--text-muted);
+    }
+
+    .dock-size-toggle__fill {
+      width: 100%;
+      background: var(--text-muted);
+      transition: height 0.15s ease;
+    }
+
+    /* Size toggle fill heights */
+    .dock-size-toggle[data-size="closed"] .dock-size-toggle__fill {
+      height: 0;
+    }
+
+    .dock-size-toggle[data-size="half"] .dock-size-toggle__fill {
+      height: 50%;
+    }
+
+    .dock-size-toggle[data-size="full"] .dock-size-toggle__fill {
+      height: 100%;
+    }
+
+    /* Dock Close Button */
+    .dock-close {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 400;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .dock-close:hover {
+      color: var(--text);
+    }
+
+    .dock-close__icon {
+      font-size: 16px;
+      font-weight: 300;
+    }
+
+    /* ----------------------------------------
+       Legacy Footer Tab Styles (for backwards compatibility)
+       ---------------------------------------- */
+    .footer-tab-divider {
+      width: 1px;
+      background: var(--border-dark);
+      margin: 4px 20px;
+    }
+
+    .footer-tab-group {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+    }
+
+    .footer-tab-group--promotion {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+    }
+
+    .footer-tab-group--circular {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid transparent;
+      border-radius: 4px;
+    }
+
+    .footer-tab {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 18px;
+      background: transparent;
+      border: none;
+      border-right: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: background 0.15s ease, color 0.15s ease;
+      position: relative;
+      white-space: nowrap;
+    }
+
+    .footer-tab:last-child {
+      border-right: none;
+    }
+
+    .footer-tab__icon-svg {
+      flex-shrink: 0;
+      opacity: 0.7;
+      transition: opacity 0.15s ease;
+    }
+
+    .footer-tab-group--promotion .footer-tab {
+      color: var(--text-muted);
+      border-right-color: var(--border);
+    }
+
+    .footer-tab-group--promotion .footer-tab:hover:not(:disabled) {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .footer-tab-group--promotion .footer-tab:hover:not(:disabled) .footer-tab__icon-svg {
+      opacity: 1;
+    }
+
+    .footer-tab-group--promotion .footer-tab--active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .footer-tab-group--promotion .footer-tab--active .footer-tab__icon-svg {
+      opacity: 1;
+    }
+
+    .footer-tab-group--promotion .footer-tab:disabled {
+      background: var(--bg);
+      color: var(--text-light);
+      cursor: not-allowed;
+    }
+
+    .footer-tab-group--promotion .footer-tab:disabled .footer-tab__icon-svg {
+      opacity: 0.4;
+    }
+
+    .footer-tab-group--circular .footer-tab {
+      color: var(--text-light);
+      border-right-color: transparent;
+    }
+
+    .footer-tab-group--circular .footer-tab:hover:not(:disabled) {
+      color: var(--text);
+      background: rgba(255,255,255,0.1);
+    }
+
+    .footer-tab-group--circular .footer-tab--active {
+      color: white;
+      background: rgba(255,255,255,0.15);
+      font-weight: 500;
+    }
+
+    /* ----------------------------------------
+       Footer Tab Badge
+       ---------------------------------------- */
+    .footer-tab__badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: var(--warning);
+      color: white;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 5px;
+      border-radius: 3px;
+    }
+
+    /* First-time tooltip on tab */
+    .tab-tooltip {
+      position: absolute;
+      bottom: calc(100% + 12px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--header-bg);
+      color: white;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      white-space: nowrap;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .tab-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 8px solid transparent;
+      border-top-color: var(--header-bg);
+    }
+
+    .tab-tooltip__title {
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .tab-tooltip__text {
+      color: rgba(255,255,255,0.7);
+      font-size: 11px;
+    }
+
+    /* ==========================================================================
+       MODAL OVERLAY - POCKET STYLE (slides from bottom)
+       ========================================================================== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 1000;
+      display: none;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .modal-overlay.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal {
+      position: absolute;
+      top: auto;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 95vh;
+      background: var(--surface);
+      border-radius: 12px 12px 0 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 -4px 32px rgba(0,0,0,0.2);
+      animation: slideUpPocket 0.25s ease;
+    }
+
+    @keyframes slideUpPocket {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    /* Modal Close Animation - fade + scale down + subtle slide */
+    .modal-overlay.closing {
+      animation: fadeOut 0.3s ease forwards;
+    }
+
+    .modal-overlay.closing .modal {
+      animation: modalDismiss 0.3s ease-out forwards;
+    }
+
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+
+    @keyframes modalDismiss {
+      from {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(40px) scale(0.97);
+      }
+    }
+
+    /* ==========================================================================
+       MODAL HEADER TABS - GROUPED DESIGN (matches footer tabs)
+       ========================================================================== */
+    .modal-header-tabs {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg);
+      padding: 8px 16px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      min-height: 56px;
+    }
+
+    .modal-tabs-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      gap: 0;
+    }
+
+    .modal-tab-divider {
+      width: 1px;
+      height: 24px;
+      background: var(--border-dark);
+      margin: 0 16px;
+    }
+
+    /* ----------------------------------------
+       Modal Tab Groups - Containers
+       ---------------------------------------- */
+    .modal-tab-group {
+      display: flex;
+      align-items: center;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    /* Right tab group - gray background */
+    .modal-tab-group--secondary {
+      background: var(--bg);
+    }
+
+    .modal-tab-group--secondary .modal-tab {
+      background: transparent;
+    }
+
+    .modal-tab-group--secondary .modal-tab:hover:not(.modal-tab--active):not(:disabled) {
+      background: var(--hover);
+    }
+
+    /* ----------------------------------------
+       Modal Tab - Shared Base Styles
+       ---------------------------------------- */
+    .modal-tab {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 16px;
+      background: transparent;
+      border: none;
+      border-right: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: background 0.15s ease, color 0.15s ease;
+      position: relative;
+      white-space: nowrap;
+    }
+
+    .modal-tab:last-child {
+      border-right: none;
+    }
+
+    .modal-tab:hover:not(.modal-tab--active):not(:disabled) {
+      background: var(--hover);
+      color: var(--text);
+    }
+
+    .modal-tab__icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    /* Active tab - blue background */
+    .modal-tab--active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .modal-tab--active:hover {
+      background: var(--primary-dark);
+    }
+
+    .modal-tab--active .modal-tab__icon {
+      color: white;
+    }
+
+    .modal-tab:disabled {
+      background: var(--bg);
+      color: var(--text-light);
+      cursor: not-allowed;
+    }
+
+    /* ----------------------------------------
+       Modal Actions (right side) - Size toggles + Close
+       ---------------------------------------- */
+    .modal-header-tabs__actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* Size toggles reuse dock-size-toggle styles */
+    .modal-size-toggles {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .modal-size-toggle {
+      width: 28px;
+      height: 20px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      overflow: hidden;
+    }
+
+    .modal-size-toggle:hover {
+      border-color: var(--text-muted);
+    }
+
+    .modal-size-toggle.active {
+      border-color: var(--text-muted);
+    }
+
+    .modal-size-toggle__fill {
+      width: 100%;
+      background: var(--text-muted);
+      transition: height 0.15s ease;
+    }
+
+    .modal-size-toggle[data-size="closed"] .modal-size-toggle__fill {
+      height: 0;
+    }
+
+    .modal-size-toggle[data-size="half"] .modal-size-toggle__fill {
+      height: 50%;
+    }
+
+    .modal-size-toggle[data-size="full"] .modal-size-toggle__fill {
+      height: 100%;
+    }
+
+    /* Modal Close Button */
+    .modal-close {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+
+    .modal-close:hover {
+      color: var(--text);
+    }
+
+    .modal-close__icon {
+      font-size: 16px;
+    }
+
+    /* ==========================================================================
+       BACK TO EDITOR BUTTON (Option A)
+       ========================================================================== */
+    .back-to-editor {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: var(--primary-light);
+      border: 1px solid var(--primary);
+      border-radius: 4px;
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      margin-right: 16px;
+    }
+
+    .back-to-editor:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .back-to-editor.hidden {
+      display: none;
+    }
+
+    /* ==========================================================================
+       BREADCRUMB NAVIGATION (Option C)
+       ========================================================================== */
+    .panel-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+      padding: 6px 20px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .panel-breadcrumb__item {
+      color: var(--primary);
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .panel-breadcrumb__item:hover {
+      text-decoration: underline;
+    }
+
+    .panel-breadcrumb__separator {
+      color: var(--text-light);
+      font-size: 10px;
+    }
+
+    .panel-breadcrumb__current {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* ==========================================================================
+       PANEL HEADER - RESTRUCTURED LAYOUT
+       ========================================================================== */
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .panel-header__left-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .panel-header__promo-section {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .panel-header__promo-name {
+      font-weight: 600;
+      color: var(--danger);
+      font-size: 16px;
+    }
+
+    .panel-header__subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .panel-header__right-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-header__nav-btn {
+      padding: 6px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .panel-header__nav-btn:hover {
+      background: var(--hover);
+      color: var(--text);
+    }
+
+    /* ==========================================================================
+       PANEL BODY - TRANSITION CONTAINER
+       ========================================================================== */
+    .panel-body {
+      flex: 1;
+      overflow: hidden;
+      background: var(--bg);
+      position: relative;
+    }
+
+    /* ----------------------------------------
+       Panel Content - Base Transition Styles
+       ---------------------------------------- */
+    .panel-content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 100%;
+      overflow: auto;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(var(--scale-in));
+      transition:
+        opacity var(--transition-duration) var(--transition-easing),
+        transform var(--transition-duration) var(--transition-easing),
+        visibility 0s var(--transition-duration);
+    }
+
+    .panel-content.active {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1) translateX(0);
+      transition:
+        opacity var(--transition-duration) var(--transition-easing),
+        transform var(--transition-duration) var(--transition-easing),
+        visibility 0s 0s;
+      z-index: 1;
+    }
+
+    .panel-content.exiting {
+      opacity: 0;
+      visibility: visible;
+      transform: scale(var(--scale-out));
+      z-index: 0;
+      transition:
+        opacity var(--transition-duration) var(--transition-easing),
+        transform var(--transition-duration) var(--transition-easing),
+        visibility 0s var(--transition-duration);
+    }
+
+    /* ----------------------------------------
+       Promotion Tab Transitions - Horizontal Slide
+       ---------------------------------------- */
+    .panel-body[data-transition-type="promotion"][data-direction="forward"] .panel-content.active {
+      transform: scale(1) translateX(0);
+    }
+
+    .panel-body[data-transition-type="promotion"][data-direction="forward"] .panel-content:not(.active):not(.exiting) {
+      transform: scale(var(--scale-in)) translateX(var(--slide-distance));
+    }
+
+    .panel-body[data-transition-type="promotion"][data-direction="forward"] .panel-content.exiting {
+      transform: scale(var(--scale-out)) translateX(calc(var(--slide-distance) * -1));
+    }
+
+    .panel-body[data-transition-type="promotion"][data-direction="backward"] .panel-content.active {
+      transform: scale(1) translateX(0);
+    }
+
+    .panel-body[data-transition-type="promotion"][data-direction="backward"] .panel-content:not(.active):not(.exiting) {
+      transform: scale(var(--scale-in)) translateX(calc(var(--slide-distance) * -1));
+    }
+
+    .panel-body[data-transition-type="promotion"][data-direction="backward"] .panel-content.exiting {
+      transform: scale(var(--scale-out)) translateX(var(--slide-distance));
+    }
+
+    /* ----------------------------------------
+       Circular Tab Transitions - Vertical Slide
+       ---------------------------------------- */
+    .panel-body[data-transition-type="circular"] .panel-content.active {
+      transform: scale(1) translateY(0);
+    }
+
+    .panel-body[data-transition-type="circular"] .panel-content:not(.active):not(.exiting) {
+      transform: scale(1) translateY(20px);
+    }
+
+    .panel-body[data-transition-type="circular"] .panel-content.exiting {
+      transform: scale(1) translateY(-20px);
+    }
+
+    /* ----------------------------------------
+       Shared Element Transitions
+       ---------------------------------------- */
+    [data-shared-element] {
+      /* Marker for elements that animate between panels */
+    }
+
+    .shared-element-clone {
+      position: fixed;
+      z-index: 1000;
+      pointer-events: none;
+      transition:
+        transform var(--transition-duration) var(--transition-easing),
+        width var(--transition-duration) var(--transition-easing),
+        height var(--transition-duration) var(--transition-easing);
+    }
+
+    .shared-element-hidden {
+      visibility: hidden !important;
+    }
+
+    /* ----------------------------------------
+       Accessibility - Reduced Motion
+       ---------------------------------------- */
+    @media (prefers-reduced-motion: reduce) {
+      .panel-content {
+        transition: opacity var(--transition-duration) var(--transition-easing);
+        transform: none !important;
+      }
+      .panel-content.active,
+      .panel-content.exiting {
+        transform: none !important;
+      }
+      .shared-element-clone {
+        transition: none;
+      }
+    }
+
+    /* ==========================================================================
+       EDITOR PANEL - 4 COLUMNS
+       ========================================================================== */
+    .editor-grid {
+      display: grid;
+      grid-template-columns: 280px 280px 280px 1fr;
+      gap: 16px;
+      padding: 16px;
+      min-height: 100%;
+    }
+
+    .editor-column {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ==========================================================================
+       CARDS
+       ========================================================================== */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .card__header {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+      font-size: 13px;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card__body {
+      padding: 14px;
+    }
+
+    /* ==========================================================================
+       FORM ELEMENTS
+       ========================================================================== */
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 13px;
+      background: var(--surface);
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .form-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    /* ==========================================================================
+       MEDIA ITEM
+       ========================================================================== */
+    .media-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--surface);
+    }
+
+    .media-item__thumb {
+      width: 50px;
+      height: 50px;
+      background: var(--border);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-light);
+      font-size: 10px;
+      flex-shrink: 0;
+    }
+
+    .media-item__thumb--coke {
+      background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+      color: white;
+      font-weight: bold;
+      font-size: 8px;
+    }
+
+    .media-item__info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .media-item__name {
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .media-item__actions {
+      display: flex;
+      gap: 4px;
+    }
+
+    /* ==========================================================================
+       PROMPT CARD (Progressive Disclosure)
+       ========================================================================== */
+    .prompt-card {
+      background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+      border: 1px dashed var(--primary);
+      border-radius: 8px;
+      padding: 14px;
+      margin-top: 14px;
+    }
+
+    .prompt-card.hidden {
+      display: none;
+    }
+
+    .prompt-card__header {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .prompt-card__icon {
+      font-size: 18px;
+    }
+
+    .prompt-card__title {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .prompt-card__text {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .prompt-card__actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .prompt-card__btn {
+      padding: 8px 14px;
+      background: var(--primary);
+      border: none;
+      border-radius: 4px;
+      color: white;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .prompt-card__btn:hover {
+      background: var(--primary-dark);
+    }
+
+    .prompt-card__dismiss {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .prompt-card__dismiss:hover {
+      text-decoration: underline;
+    }
+
+    /* Fallback link */
+    .fallback-link {
+      display: none;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    .fallback-link.visible {
+      display: block;
+    }
+
+    .link {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .link:hover {
+      text-decoration: underline;
+    }
+
+    /* ==========================================================================
+       MEDIA REPOSITORY - 3 COLUMNS
+       ========================================================================== */
+    .media-repo-grid {
+      display: grid;
+      grid-template-columns: 220px 1fr 280px;
+      height: 100%;
+    }
+
+    .media-repo-sidebar {
+      padding: 16px;
+      border-right: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .media-repo-main {
+      padding: 16px;
+      overflow: auto;
+    }
+
+    .media-repo-preview {
+      padding: 16px;
+      border-left: 1px solid var(--border);
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* Image Grid */
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .image-grid__item {
+      aspect-ratio: 1;
+      background: var(--border);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-light);
+      font-size: 10px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.15s ease;
+      position: relative;
+    }
+
+    .image-grid__item:hover {
+      border-color: var(--border-dark);
+    }
+
+    .image-grid__item.selected {
+      border-color: var(--primary);
+    }
+
+    .image-grid__item--coke {
+      background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+      color: white;
+      font-weight: bold;
+    }
+
+    .image-grid__item__badge {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      background: var(--success);
+      color: white;
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+
+    /* Preview placeholder */
+    .preview-placeholder {
+      background: var(--bg);
+      border: 2px dashed var(--border);
+      border-radius: 6px;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-light);
+      min-height: 150px;
+    }
+
+    .preview-placeholder__icon {
+      font-size: 36px;
+      margin-bottom: 8px;
+    }
+
+    .preview-placeholder__text {
+      font-size: 12px;
+    }
+
+    /* ==========================================================================
+       TOAST NOTIFICATION
+       ========================================================================== */
+    .toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--header-bg);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      display: none;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      z-index: 2000;
+      font-size: 13px;
+      animation: slideUp 0.3s ease;
+    }
+
+    .toast.visible {
+      display: flex;
+    }
+
+    .toast__icon {
+      color: var(--success);
+      font-size: 16px;
+    }
+
+    .toast__message {
+      flex: 1;
+    }
+
+    .toast__action {
+      color: #90caf9;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .toast__action:hover {
+      text-decoration: underline;
+    }
+
+    .toast__close {
+      color: rgba(255,255,255,0.6);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .toast__close:hover {
+      color: white;
+    }
+
+    /* ==========================================================================
+       MEDIA LAYOUT PANEL - 4 COLUMNS
+       ========================================================================== */
+    .media-layout-grid {
+      display: grid;
+      grid-template-columns: 240px 240px 240px 1fr;
+      gap: 16px;
+      padding: 16px;
+      min-height: 100%;
+    }
+
+    /* Size Grid */
+    .size-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .size-grid__item {
+      padding: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.15s ease;
+    }
+
+    .size-grid__item:hover {
+      border-color: var(--border-dark);
+      background: var(--hover);
+    }
+
+    .size-grid__item.selected {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* Range slider */
+    .slider-group {
+      margin-bottom: 16px;
+    }
+
+    .slider-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .slider-value {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      background: var(--primary);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       STATUS INDICATOR
+       ========================================================================== */
+    .status-bar {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      z-index: 3000;
+    }
+
+    .status-bar label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       DISABLED TOOLTIP
+       ========================================================================== */
+    .disabled-tooltip {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--header-bg);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 11px;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.15s ease;
+      z-index: 100;
+    }
+
+    .disabled-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: var(--header-bg);
+    }
+
+    .footer-tab:disabled:hover .disabled-tooltip {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* ==========================================================================
+       UTILITY
+       ========================================================================== */
+    .text-muted { color: var(--text-muted); }
+    .text-sm { font-size: 12px; }
+    .text-danger { color: var(--danger); }
+    .mt-sm { margin-top: 8px; }
+    .mt-md { margin-top: 14px; }
+    .mb-sm { margin-bottom: 8px; }
+    .mb-md { margin-bottom: 14px; }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 14px 0;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <!-- Status Bar Toggle -->
+  <div class="status-bar">
+    <label>
+      <input type="checkbox" id="togglePrompts" checked>
+      Show discovery prompts
+    </label>
+  </div>
+
+  <!-- ======================================================================
+       MAIN APP
+       ====================================================================== -->
+  <div class="app">
+
+    <!-- App Header -->
+    <header class="app-header">
+      <div class="app-header__logo">
+        <span class="app-header__logo-text">ideal.sale</span>
+        <div class="app-header__store">
+          <span>Winn Dixie</span>
+          <strong>All Stores</strong>
+        </div>
+      </div>
+      <div class="app-header__user">User: Klingensmith Bill</div>
+    </header>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="toolbar__left">
+        <span class="toolbar__title">CIRCULAR BUILDER</span>
+        <div class="toolbar__dates">
+          <span class="date-chip">DEC 14</span>
+          <span class="date-chip date-chip--active">DEC 21</span>
+          <span class="date-chip">DEC 28</span>
+          <span class="date-chip">JAN 04</span>
+        </div>
+      </div>
+      <div>
+        <button class="btn btn--ghost btn--sm">Export</button>
+        <button class="btn btn--primary btn--sm" style="margin-left: 8px;">+ New Card</button>
+      </div>
+    </div>
+
+    <!-- Secondary Toolbar -->
+    <div class="secondary-toolbar">
+      <div class="breadcrumb">
+        <span>Browse/Home</span>
+        <span class="text-muted">|</span>
+        <span class="selection-info">(<span class="selection-count" id="selectionCount">1</span> Selected)</span>
+      </div>
+      <div>
+        <input type="text" class="form-input" placeholder="Search..." style="width: 200px; padding: 6px 10px;">
+      </div>
+    </div>
+
+    <!-- Data Grid -->
+    <div class="grid-container">
+      <table class="data-grid">
+        <thead>
+          <tr>
+            <th class="data-grid__checkbox"><input type="checkbox" id="selectAll"></th>
+            <th class="data-grid__thumb"></th>
+            <th>TITLE</th>
+            <th>OWNER</th>
+            <th>SIZE</th>
+            <th>DEAL TYPE</th>
+            <th>PRICE</th>
+            <th class="data-grid__actions">UTILITIES</th>
+          </tr>
+        </thead>
+        <tbody id="gridBody">
+          <!-- Category: Drinks -->
+          <tr class="category-row">
+            <td><input type="checkbox"></td>
+            <td></td>
+            <td colspan="6"><strong>Drinks</strong></td>
+          </tr>
+          <tr data-id="1">
+            <td><input type="checkbox" class="row-checkbox" data-id="1"></td>
+            <td><div class="thumb thumb--coke">COKE</div></td>
+            <td>Long Drink</td>
+            <td><span class="owner-badge">1 THEME</span></td>
+            <td>1 x 2</td>
+            <td>Fixed Price</td>
+            <td>$11.99</td>
+            <td class="data-grid__actions">
+              <button class="btn btn--ghost btn--sm btn-edit" data-id="1">Edit</button>
+            </td>
+          </tr>
+          <tr data-id="2">
+            <td><input type="checkbox" class="row-checkbox" data-id="2"></td>
+            <td><div class="thumb" style="background: #00a0dc; color: white; font-size: 8px; font-weight: bold;">PWR</div></td>
+            <td>Powerade</td>
+            <td><span class="owner-badge">1 THEME</span></td>
+            <td>3 x 2</td>
+            <td>Fixed Price</td>
+            <td>$8.49</td>
+            <td class="data-grid__actions">
+              <button class="btn btn--ghost btn--sm btn-edit" data-id="2">Edit</button>
+            </td>
+          </tr>
+          <tr data-id="3">
+            <td><input type="checkbox" class="row-checkbox" data-id="3"></td>
+            <td><div class="thumb" style="background: #0072ce; color: white; font-size: 8px; font-weight: bold;">AQU</div></td>
+            <td>Aquafina Water</td>
+            <td><span class="owner-badge">1 THEME</span></td>
+            <td>2 x 2</td>
+            <td>Amount Off</td>
+            <td>$1</td>
+            <td class="data-grid__actions">
+              <button class="btn btn--ghost btn--sm btn-edit" data-id="3">Edit</button>
+            </td>
+          </tr>
+          <tr data-id="4">
+            <td><input type="checkbox" class="row-checkbox" data-id="4"></td>
+            <td><div class="thumb thumb--coke">COKE</div></td>
+            <td>Coca-Cola Products</td>
+            <td><span class="owner-badge">1 THEME</span></td>
+            <td>3 x 3</td>
+            <td># / Price</td>
+            <td>$5</td>
+            <td class="data-grid__actions">
+              <button class="btn btn--ghost btn--sm btn-edit" data-id="4">Edit</button>
+            </td>
+          </tr>
+          <tr data-id="5" class="selected">
+            <td><input type="checkbox" class="row-checkbox" data-id="5" checked></td>
+            <td><div class="thumb thumb--coke">COKE</div></td>
+            <td><strong>Coca-Cola Products</strong></td>
+            <td><span class="owner-badge">1 THEME</span></td>
+            <td>1 x 1</td>
+            <td># for Price</td>
+            <td>$9</td>
+            <td class="data-grid__actions">
+              <button class="btn btn--ghost btn--sm btn-edit" data-id="5">Edit</button>
+            </td>
+          </tr>
+          <tr data-id="6">
+            <td><input type="checkbox" class="row-checkbox" data-id="6"></td>
+            <td><div class="thumb" style="background: #004b93; color: white; font-size: 8px; font-weight: bold;">PEPS</div></td>
+            <td>Pepsi Products</td>
+            <td><span class="owner-badge">1 THEME</span></td>
+            <td>3 x 2</td>
+            <td>From X</td>
+            <td>$1.99</td>
+            <td class="data-grid__actions">
+              <button class="btn btn--ghost btn--sm btn-edit" data-id="6">Edit</button>
+            </td>
+          </tr>
+          <!-- Category: Meat -->
+          <tr class="category-row">
+            <td><input type="checkbox"></td>
+            <td></td>
+            <td colspan="6"><strong>Meat</strong></td>
+          </tr>
+          <tr class="category-row">
+            <td><input type="checkbox"></td>
+            <td></td>
+            <td colspan="6"><strong>Value & Variety</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ======================================================================
+         FOOTER/DOCK TABS - Grouped Design
+         ======================================================================
+
+         UX RULE - TAB ENABLED STATE (IMPORTANT FOR DEV & QA):
+         =====================================================
+         PRIMARY TABS (Editor, Media, Design):
+           - Should be DISABLED/INACTIVE when NO promotion is selected
+           - Become ENABLED/ACTIVE when 1 or more promotions are selected
+           - These tabs operate on the selected promotion(s)
+
+         SECONDARY TABS (Promotion (+Add), Categories, Recipes):
+           - Always ENABLED/ACTIVE regardless of selection
+           - These tabs don't require a promotion to be selected
+
+         Visual States:
+           - Disabled: opacity 0.5, cursor not-allowed
+           - Enabled (inactive): normal appearance, white background
+           - Enabled (active): blue background, white text
+
+         See: updatePrimaryTabsState() in JavaScript
+         ====================================================================== -->
+    <div class="footer-tabs">
+      <!-- Dock Tabs Container -->
+      <div class="dock-tabs-container">
+        <!-- Left Group: Editor, Media, Design (white background)
+             NOTE: These tabs are DISABLED when no promotion is selected -->
+        <div class="dock-tab-group">
+          <button class="dock-tab dock-tab--active" id="footerTabEditor" data-tab="editor">
+            <span class="material-icons dock-tab__icon">edit</span>
+            <span>Editor</span>
+          </button>
+          <button class="dock-tab" id="footerTabMedia" data-tab="media">
+            <span class="material-icons dock-tab__icon">photo</span>
+            <span>Media</span>
+          </button>
+          <button class="dock-tab" id="footerTabDesign" data-tab="design">
+            <span class="material-icons dock-tab__icon">dashboard</span>
+            <span>Design</span>
+          </button>
+        </div>
+
+        <!-- Divider -->
+        <div class="dock-tab-divider"></div>
+
+        <!-- Right Group: Promotion (+Add), Categories, Recipes (gray background)
+             NOTE: These tabs are ALWAYS ENABLED - they don't require a selection -->
+        <div class="dock-tab-group dock-tab-group--secondary">
+          <button class="dock-tab" id="footerTabPromotion" data-tab="promotion">
+            <span>Promotion (+Add)</span>
+          </button>
+          <button class="dock-tab" id="footerTabCategories" data-tab="categories">
+            <span>Categories</span>
+          </button>
+          <button class="dock-tab" id="footerTabRecipes" data-tab="recipes">
+            <span>Recipes</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Dock Actions (right side) -->
+      <div class="dock-actions">
+        <div class="dock-size-toggles">
+          <button class="dock-size-toggle active" data-size="closed" title="Close dock">
+            <div class="dock-size-toggle__fill"></div>
+          </button>
+          <button class="dock-size-toggle" data-size="half" title="Half height (55vh)">
+            <div class="dock-size-toggle__fill"></div>
+          </button>
+          <button class="dock-size-toggle" data-size="full" title="Full height (95vh)">
+            <div class="dock-size-toggle__fill"></div>
+          </button>
+        </div>
+        <button class="dock-close" id="dockCloseBtn" title="Close dock">
+          <span class="dock-close__icon">&times;</span>
+          <span>Close</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ======================================================================
+       MODAL OVERLAY
+       ====================================================================== -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+
+      <!-- Modal Header Tabs - Grouped Design -->
+      <div class="modal-header-tabs">
+        <div class="modal-tabs-container">
+          <!-- Left Group: Editor, Media, Design (white background) -->
+          <div class="modal-tab-group">
+            <button class="modal-tab modal-tab--active" id="modalTabEditor" data-tab="editor">
+              <span class="material-icons modal-tab__icon">edit</span>
+              <span>Editor</span>
+            </button>
+            <button class="modal-tab" id="modalTabMedia" data-tab="media">
+              <span class="material-icons modal-tab__icon">photo</span>
+              <span>Media</span>
+            </button>
+            <button class="modal-tab" id="modalTabDesign" data-tab="design">
+              <span class="material-icons modal-tab__icon">dashboard</span>
+              <span>Design</span>
+            </button>
+          </div>
+
+          <!-- Divider between groups -->
+          <div class="modal-tab-divider"></div>
+
+          <!-- Right Group: Promotion (+Add), Categories, Recipes (gray background) -->
+          <div class="modal-tab-group modal-tab-group--secondary">
+            <button class="modal-tab" id="modalTabPromotion" data-tab="promotion">Promotion (+Add)</button>
+            <button class="modal-tab" id="modalTabCategories" data-tab="categories">Categories</button>
+            <button class="modal-tab" id="modalTabRecipes" data-tab="recipes">Recipes</button>
+          </div>
+        </div>
+
+        <!-- Actions: Size toggles + Close (aligned right) -->
+        <div class="modal-header-tabs__actions">
+          <div class="modal-size-toggles">
+            <button class="modal-size-toggle" data-size="closed" title="Close modal">
+              <div class="modal-size-toggle__fill"></div>
+            </button>
+            <button class="modal-size-toggle" data-size="half" title="Half height (55vh)">
+              <div class="modal-size-toggle__fill"></div>
+            </button>
+            <button class="modal-size-toggle active" data-size="full" title="Full height (95vh)">
+              <div class="modal-size-toggle__fill"></div>
+            </button>
+          </div>
+          <button class="modal-close" id="modalClose">
+            <span class="modal-close__icon">&times;</span>
+            <span>Close</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Breadcrumb Navigation (Option C) - Now includes Data Grid -->
+      <div class="panel-breadcrumb" id="panelBreadcrumb">
+        <span class="panel-breadcrumb__item" id="breadcrumbDataGrid">Data Grid</span>
+        <span class="panel-breadcrumb__separator">&rsaquo;</span>
+        <span class="panel-breadcrumb__item" id="breadcrumbEditor">Editor</span>
+        <span class="panel-breadcrumb__separator breadcrumb-sep-2">&rsaquo;</span>
+        <span class="panel-breadcrumb__current" id="breadcrumbCurrent">Editor</span>
+      </div>
+
+      <!-- Panel Header - Restructured Layout -->
+      <div class="panel-header">
+        <div class="panel-header__left-group">
+          <!-- Option A: Back to Editor Button -->
+          <button class="back-to-editor hidden" id="btnBackToEditor">
+            &larr; Editor
+          </button>
+
+          <!-- Promotion Info -->
+          <div class="panel-header__promo-section">
+            <span class="panel-header__promo-name" id="promoName">Coca-Cola Products</span>
+            <div class="panel-header__subtitle" id="panelSubtitle">Edit Single Promotion</div>
+          </div>
+        </div>
+
+        <!-- Navigation Buttons - Grouped Right -->
+        <div class="panel-header__right-group">
+          <button class="panel-header__nav-btn" id="btnPrev">&larr; Previous</button>
+          <button class="panel-header__nav-btn" id="btnNext">Next &rarr;</button>
+        </div>
+      </div>
+
+      <!-- Panel Body -->
+      <div class="panel-body">
+
+        <!-- ============================================================
+             EDITOR PANEL
+             ============================================================ -->
+        <div class="panel-content" id="panelEditor">
+          <div class="editor-grid">
+
+            <!-- Column 1: Content -->
+            <div class="editor-column">
+              <div class="card">
+                <div class="card__header">Content</div>
+                <div class="card__body">
+                  <div class="form-group">
+                    <label class="form-label">Title *</label>
+                    <input type="text" class="form-input" id="inputTitle" value="Coca-Cola Products">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <input type="text" class="form-input" value="6 pk., 16.9 oz. btls. or 6 pk. 7.5 oz. cans">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Category *</label>
+                    <input type="text" class="form-input" value="(Browse) Drinks">
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label">Width *</label>
+                      <input type="text" class="form-input" id="inputWidth" value="1">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Height *</label>
+                      <input type="text" class="form-input" id="inputHeight" value="1">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card__header">Coupon</div>
+                <div class="card__body">
+                  <p class="text-sm text-muted">Manually include Coupon on this Promotion</p>
+                  <div class="form-group mt-sm">
+                    <label class="form-label">Coupon ID</label>
+                    <input type="text" class="form-input" value="">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Column 2: Deal/Offer -->
+            <div class="editor-column">
+              <div class="card">
+                <div class="card__header">Deal/Offer</div>
+                <div class="card__body">
+                  <div class="form-group">
+                    <label class="form-label">Card Style</label>
+                    <select class="form-input">
+                      <option>Default Reversed</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Deal Type *</label>
+                    <select class="form-input">
+                      <option># for Price</option>
+                    </select>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label">Quantity</label>
+                      <input type="text" class="form-input" value="2">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Price</label>
+                      <input type="text" class="form-input" value="9">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">UPC</label>
+                    <input type="text" class="form-input" value="">
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card__header">Headline</div>
+                <div class="card__body">
+                  <div class="form-group">
+                    <label class="form-label">Headline</label>
+                    <select class="form-input">
+                      <option>Select Headline</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Column 3: Date + Media + Background -->
+            <div class="editor-column">
+              <div class="card">
+                <div class="card__header">Date range</div>
+                <div class="card__body">
+                  <div class="form-group">
+                    <label class="form-label">Starts on</label>
+                    <input type="text" class="form-input" value="2024-03-17, 12:00 AM">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Expires</label>
+                    <input type="text" class="form-input" value="2027-03-23, 11:59 PM">
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card__header">Media</div>
+                <div class="card__body">
+                  <div class="media-item">
+                    <div class="media-item__thumb media-item__thumb--coke" data-shared-element="hero-image">COKE</div>
+                    <div class="media-item__info">
+                      <div class="media-item__name">coca cola products 6pk.jpg</div>
+                    </div>
+                    <div class="media-item__actions">
+                      <button class="btn btn--ghost btn--sm" id="btnChangeMedia">Change</button>
+                      <button class="btn btn--ghost btn--sm">&times;</button>
+                    </div>
+                  </div>
+
+                  <!-- PROMPT CARD (Progressive Disclosure) -->
+                  <div class="prompt-card" id="promptCard">
+                    <div class="prompt-card__header">
+                      <span class="prompt-card__icon">&#128161;</span>
+                      <span class="prompt-card__title">Customize image positioning</span>
+                    </div>
+                    <p class="prompt-card__text">
+                      Control how this hero image appears across different card sizes (1x1 to 3x3).
+                      Adjust position, scale, and rotation for each size.
+                    </p>
+                    <div class="prompt-card__actions">
+                      <button class="prompt-card__btn" id="promptOpenLayout">Open Layout &rarr;</button>
+                      <button class="prompt-card__dismiss" id="promptDismiss">Don't show again</button>
+                    </div>
+                  </div>
+
+                  <!-- Fallback Link (shown after dismiss) -->
+                  <div class="fallback-link" id="fallbackLink">
+                    <a href="#" class="link" id="linkMediaLayoutEditor">Customize layout &rarr;</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card__header">Background</div>
+                <div class="card__body">
+                  <div class="form-group">
+                    <label class="form-label">Background Color</label>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <div style="width: 32px; height: 32px; background: #FFFFFF; border: 1px solid var(--border); border-radius: 4px;"></div>
+                      <input type="text" class="form-input" value="#FFFFFF" style="width: 100px;">
+                    </div>
+                  </div>
+                  <div class="divider"></div>
+                  <a href="#" class="link" id="linkMediaLayoutBg">Edit in Layout &rarr;</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Column 4: Preview -->
+            <div class="editor-column">
+              <div class="card">
+                <div class="card__header">Preview Promotion</div>
+                <div class="card__body">
+                  <div class="preview-placeholder">
+                    <div class="preview-placeholder__icon">&#128444;</div>
+                    <div class="preview-placeholder__text">Card Preview</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card__header">Hero Image</div>
+                <div class="card__body">
+                  <div class="media-item">
+                    <div class="media-item__thumb media-item__thumb--coke" data-shared-element="hero-image">COKE</div>
+                    <div class="media-item__info">
+                      <div class="media-item__name">coca cola products 6p...</div>
+                    </div>
+                    <div class="media-item__actions">
+                      <button class="btn btn--ghost btn--sm">Replace</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card__header">Background Image</div>
+                <div class="card__body">
+                  <div class="media-item">
+                    <div class="media-item__thumb">-</div>
+                    <div class="media-item__info">
+                      <div class="media-item__name text-muted">(none)</div>
+                    </div>
+                    <div class="media-item__actions">
+                      <button class="btn btn--ghost btn--sm">Replace</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ============================================================
+             MEDIA REPOSITORY PANEL
+             ============================================================ -->
+        <div class="panel-content" id="panelMedia">
+          <div class="media-repo-grid">
+
+            <!-- Left Sidebar: Filters -->
+            <div class="media-repo-sidebar">
+              <button class="btn btn--ghost btn--sm btn--danger mb-md">Clear All Filters</button>
+
+              <div class="form-group">
+                <label class="form-label">Animation Status</label>
+                <select class="form-input">
+                  <option>Animation Status</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Source</label>
+                <select class="form-input">
+                  <option>Source</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Date Range</label>
+                <label style="font-size: 12px; display: flex; align-items: center; gap: 6px;">
+                  <input type="checkbox" checked> All Dates
+                </label>
+              </div>
+            </div>
+
+            <!-- Center: Image Grid -->
+            <div class="media-repo-main">
+              <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+                <input type="text" class="form-input" placeholder="coca cola" style="flex: 1;">
+                <button class="btn btn--primary">Search</button>
+              </div>
+
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;">
+                <span style="padding: 4px 10px; background: var(--primary-light); border-radius: 12px; font-size: 11px;">Animation Status: Static &times;</span>
+                <span style="padding: 4px 10px; background: var(--primary-light); border-radius: 12px; font-size: 11px;">Source: Syndigo &times;</span>
+              </div>
+
+              <p class="text-sm text-muted mb-md">Results: 71</p>
+
+              <div class="image-grid">
+                <div class="image-grid__item image-grid__item--coke selected" data-img="1">
+                  <span class="image-grid__item__badge">ACTIVE</span>
+                  COKE
+                </div>
+                <div class="image-grid__item" data-img="2" style="background: linear-gradient(135deg, #00a651 0%, #008c45 100%); color: white;">SPRT</div>
+                <div class="image-grid__item image-grid__item--coke" data-img="3">6PK</div>
+                <div class="image-grid__item image-grid__item--coke" data-img="4">LOGO</div>
+                <div class="image-grid__item image-grid__item--coke" data-img="5">CAN</div>
+                <div class="image-grid__item image-grid__item--coke" data-img="6">ZERO</div>
+                <div class="image-grid__item image-grid__item--coke" data-img="7">BTL</div>
+                <div class="image-grid__item image-grid__item--coke" data-img="8">12PK</div>
+                <div class="image-grid__item" data-img="9">IMG</div>
+                <div class="image-grid__item" data-img="10">IMG</div>
+                <div class="image-grid__item" data-img="11">IMG</div>
+                <div class="image-grid__item" data-img="12">IMG</div>
+              </div>
+            </div>
+
+            <!-- Right Sidebar: Preview -->
+            <div class="media-repo-preview">
+              <h3 class="text-sm" style="font-weight: 600;">Preview Promotion</h3>
+
+              <div class="preview-placeholder" style="min-height: 120px;">
+                <div class="preview-placeholder__icon">&#128444;</div>
+              </div>
+
+              <div class="card">
+                <div class="card__header">Hero Image</div>
+                <div class="card__body">
+                  <div class="media-item">
+                    <div class="media-item__thumb media-item__thumb--coke">COKE</div>
+                    <div class="media-item__info">
+                      <div class="media-item__name">coca cola products 6...</div>
+                    </div>
+                    <div class="media-item__actions">
+                      <button class="btn btn--ghost btn--sm">Replace</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card__header">Background Image</div>
+                <div class="card__body">
+                  <div class="media-item">
+                    <div class="media-item__thumb">-</div>
+                    <div class="media-item__info">
+                      <div class="media-item__name text-muted">(none)</div>
+                    </div>
+                    <div class="media-item__actions">
+                      <button class="btn btn--ghost btn--sm">Replace</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="divider"></div>
+              <a href="#" class="link" id="linkMediaLayoutRepo">Customize in Layout &rarr;</a>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ============================================================
+             DESIGN PANEL
+             ============================================================ -->
+        <div class="panel-content" id="panelDesign">
+          <div class="editor-grid">
+            <!-- Column 1: Typography -->
+            <div class="editor-column">
+              <div class="card">
+                <div class="card__header">Typography</div>
+                <div class="card__body">
+                  <div class="form-group">
+                    <label class="form-label">Font Family</label>
+                    <select class="form-input">
+                      <option>System Default</option>
+                      <option>Arial</option>
+                      <option>Helvetica</option>
+                      <option>Georgia</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Title Size</label>
+                    <input type="text" class="form-input" value="24px">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Title Color</label>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      <div style="width: 30px; height: 30px; background: #333333; border: 1px solid var(--border); border-radius: 4px;"></div>
+                      <input type="text" class="form-input" value="#333333" style="width: 100px;">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card__header">Spacing</div>
+                <div class="card__body">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label">Padding</label>
+                      <input type="text" class="form-input" value="16px">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Margin</label>
+                      <input type="text" class="form-input" value="8px">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Column 2: Colors & Effects -->
+            <div class="editor-column">
+              <div class="card">
+                <div class="card__header">Colors</div>
+                <div class="card__body">
+                  <div class="form-group">
+                    <label class="form-label">Background Color</label>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      <div style="width: 30px; height: 30px; background: #FFFFFF; border: 1px solid var(--border); border-radius: 4px;"></div>
+                      <input type="text" class="form-input" value="#FFFFFF" style="width: 100px;">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Border Color</label>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      <div style="width: 30px; height: 30px; background: #E0E0E0; border: 1px solid var(--border); border-radius: 4px;"></div>
+                      <input type="text" class="form-input" value="#E0E0E0" style="width: 100px;">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card__header">Effects</div>
+                <div class="card__body">
+                  <div class="form-group">
+                    <label class="form-label">Border Radius</label>
+                    <input type="text" class="form-input" value="8px">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Shadow</label>
+                    <select class="form-input">
+                      <option>None</option>
+                      <option selected>Light</option>
+                      <option>Medium</option>
+                      <option>Heavy</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Column 3: Preview -->
+            <div class="editor-column">
+              <div class="card">
+                <div class="card__header">Preview</div>
+                <div class="card__body">
+                  <div class="promo-preview" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <div style="font-size: 24px; font-weight: 600; color: #333; margin-bottom: 8px;">Coca-Cola Products</div>
+                    <div style="color: #757575; font-size: 14px;">6 pk., 16.9 oz. btls. or 6 pk. 7.5 oz. cans</div>
+                    <div style="margin-top: 16px; width: 100%; height: 120px; background: linear-gradient(135deg, #e53935 0%, #c62828 100%); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">COKE</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================
+             MEDIA LAYOUT PANEL
+             ============================================================ -->
+        <div class="panel-content" id="panelMediaLayout">
+          <div class="media-layout-grid">
+
+            <!-- Column 1: Background -->
+            <div class="editor-column">
+              <div class="card">
+                <div class="card__header">Background Color</div>
+                <div class="card__body">
+                  <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px;">
+                    <div style="width: 40px; height: 40px; background: #FFFFFF; border: 1px solid var(--border); border-radius: 4px;"></div>
+                    <input type="text" class="form-input" value="#FFFFFF" style="width: 100px;">
+                  </div>
+                  <p class="text-sm text-muted">Color picker controls</p>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card__header">Background Image</div>
+                <div class="card__body">
+                  <div class="media-item">
+                    <div class="media-item__thumb">-</div>
+                    <div class="media-item__info">
+                      <div class="media-item__name text-muted">(none)</div>
+                    </div>
+                  </div>
+                  <button class="btn btn--secondary btn--sm btn--block mt-sm">Select Image</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Column 2: Templates + Hero -->
+            <div class="editor-column">
+              <div class="card">
+                <div class="card__header">Hero Templates</div>
+                <div class="card__body">
+                  <div class="size-grid">
+                    <div class="size-grid__item">Center</div>
+                    <div class="size-grid__item selected">Bottom</div>
+                    <div class="size-grid__item">Top</div>
+                    <div class="size-grid__item">Left</div>
+                    <div class="size-grid__item">Right</div>
+                    <div class="size-grid__item">Custom</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card__header">Hero Image</div>
+                <div class="card__body">
+                  <div class="media-item">
+                    <div class="media-item__thumb media-item__thumb--coke" data-shared-element="hero-image">COKE</div>
+                    <div class="media-item__info">
+                      <div class="media-item__name">coca cola products 6pk.jpg</div>
+                    </div>
+                  </div>
+                  <button class="btn btn--secondary btn--sm btn--block mt-sm">Change Image</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Column 3: Adjustments -->
+            <div class="editor-column">
+              <div class="card">
+                <div class="card__header">Hero Adjustments</div>
+                <div class="card__body">
+                  <div class="slider-group">
+                    <div class="slider-label">
+                      <span>Position X</span>
+                      <span class="slider-value">50%</span>
+                    </div>
+                    <input type="range" min="0" max="100" value="50">
+                  </div>
+                  <div class="slider-group">
+                    <div class="slider-label">
+                      <span>Position Y</span>
+                      <span class="slider-value">80%</span>
+                    </div>
+                    <input type="range" min="0" max="100" value="80">
+                  </div>
+                  <div class="slider-group">
+                    <div class="slider-label">
+                      <span>Scale</span>
+                      <span class="slider-value">100%</span>
+                    </div>
+                    <input type="range" min="50" max="200" value="100">
+                  </div>
+                  <div class="slider-group">
+                    <div class="slider-label">
+                      <span>Rotation</span>
+                      <span class="slider-value">0&deg;</span>
+                    </div>
+                    <input type="range" min="-180" max="180" value="0">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Column 4: Preview + Size -->
+            <div class="editor-column">
+              <div class="card">
+                <div class="card__header">Preview</div>
+                <div class="card__body">
+                  <div class="preview-placeholder" style="min-height: 200px;">
+                    <div class="preview-placeholder__icon">&#128444;</div>
+                    <div class="preview-placeholder__text">Draggable Canvas</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card__header">Card Size</div>
+                <div class="card__body">
+                  <div class="size-grid" id="sizeGrid">
+                    <div class="size-grid__item selected" data-size="1x1">1x1</div>
+                    <div class="size-grid__item" data-size="2x1">2x1</div>
+                    <div class="size-grid__item" data-size="3x1">3x1</div>
+                    <div class="size-grid__item" data-size="1x2">1x2</div>
+                    <div class="size-grid__item" data-size="2x2">2x2</div>
+                    <div class="size-grid__item" data-size="3x2">3x2</div>
+                    <div class="size-grid__item" data-size="1x3">1x3</div>
+                    <div class="size-grid__item" data-size="2x3">2x3</div>
+                    <div class="size-grid__item" data-size="3x3">3x3</div>
+                  </div>
+                  <p class="text-sm text-muted mt-sm text-center">Current: <strong id="currentSize">1x1</strong></p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ============================================================
+             PROMOTION PANEL (Stub)
+             ============================================================ -->
+        <div class="panel-content" id="panelPromotion">
+          <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-muted);">
+            <div style="text-align: center;">
+              <div style="font-size: 48px; margin-bottom: 16px;">+</div>
+              <div style="font-size: 18px; font-weight: 500;">Add Promotion</div>
+              <div style="font-size: 14px; margin-top: 8px;">This panel is under development</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================
+             CATEGORIES PANEL (Stub)
+             ============================================================ -->
+        <div class="panel-content" id="panelCategories">
+          <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-muted);">
+            <div style="text-align: center;">
+              <div style="font-size: 48px; margin-bottom: 16px;">&#128193;</div>
+              <div style="font-size: 18px; font-weight: 500;">Categories</div>
+              <div style="font-size: 14px; margin-top: 8px;">This panel is under development</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================
+             RECIPES PANEL (Stub)
+             ============================================================ -->
+        <div class="panel-content" id="panelRecipes">
+          <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-muted);">
+            <div style="text-align: center;">
+              <div style="font-size: 48px; margin-bottom: 16px;">&#128209;</div>
+              <div style="font-size: 18px; font-weight: 500;">Recipes</div>
+              <div style="font-size: 14px; margin-top: 8px;">This panel is under development</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">
+    <span class="toast__icon">&#10003;</span>
+    <span class="toast__message">Image assigned to hero</span>
+    <button class="toast__action" id="toastAction">Customize layout &rarr;</button>
+    <button class="toast__close" id="toastClose">&times;</button>
+  </div>
+
+  <!-- ======================================================================
+       JAVASCRIPT
+       ====================================================================== -->
+  <script>
+    (function() {
+      'use strict';
+
+      // ==========================================================================
+      // STATE
+      // ==========================================================================
+      const state = {
+        selectedIds: [5], // Start with one selected
+        currentTab: null, // null until modal opens
+        previousTab: null,
+        modalOpen: false,
+        promptDismissed: false,
+        showPrompts: true,
+        currentPromoIndex: 4, // Index in promotions array
+        transitionInProgress: false
+      };
+
+      // Tab order for determining transition direction
+      const tabOrder = {
+        'editor': 0,
+        'media': 1,
+        'design': 2,
+        'media-layout': 3,
+        'promotion': 10,
+        'categories': 11,
+        'recipes': 12
+      };
+
+      // Tab group mapping for transition types
+      const tabGroups = {
+        'editor': 'promotion',
+        'media': 'promotion',
+        'design': 'promotion',
+        'media-layout': 'promotion',
+        'promotion': 'circular',
+        'categories': 'circular',
+        'recipes': 'circular'
+      };
+
+      const promotions = [
+        { id: 1, title: 'Long Drink', size: '1x2', category: 'Drinks' },
+        { id: 2, title: 'Powerade', size: '3x2', category: 'Drinks' },
+        { id: 3, title: 'Aquafina Water', size: '2x2', category: 'Drinks' },
+        { id: 4, title: 'Coca-Cola Products', size: '3x3', category: 'Drinks' },
+        { id: 5, title: 'Coca-Cola Products', size: '1x1', category: 'Drinks' },
+        { id: 6, title: 'Pepsi Products', size: '3x2', category: 'Drinks' }
+      ];
+
+      // ==========================================================================
+      // DOM REFERENCES
+      // ==========================================================================
+      const modalOverlay = document.getElementById('modalOverlay');
+      const selectionCount = document.getElementById('selectionCount');
+      const footerTabMediaLayout = document.getElementById('footerTabMediaLayout');
+      const modalTabMediaLayout = document.getElementById('modalTabMediaLayout');
+      const tabTooltip = document.getElementById('tabTooltip');
+      const newBadge = document.getElementById('newBadge');
+      const promptCard = document.getElementById('promptCard');
+      const fallbackLink = document.getElementById('fallbackLink');
+      const toast = document.getElementById('toast');
+      const promoName = document.getElementById('promoName');
+      const panelSubtitle = document.getElementById('panelSubtitle');
+      const currentSize = document.getElementById('currentSize');
+      const inputTitle = document.getElementById('inputTitle');
+      const inputWidth = document.getElementById('inputWidth');
+      const inputHeight = document.getElementById('inputHeight');
+
+      // New navigation elements (Option A & C)
+      const btnBackToEditor = document.getElementById('btnBackToEditor');
+      const breadcrumbDataGrid = document.getElementById('breadcrumbDataGrid');
+      const breadcrumbEditor = document.getElementById('breadcrumbEditor');
+      const breadcrumbCurrent = document.getElementById('breadcrumbCurrent');
+      const panelBreadcrumb = document.getElementById('panelBreadcrumb');
+      const breadcrumbSep1 = document.querySelector('.panel-breadcrumb__separator');
+      const breadcrumbSep2 = document.querySelector('.breadcrumb-sep-2');
+
+      // ==========================================================================
+      // HELPERS
+      // ==========================================================================
+      function updateSelectionCount() {
+        selectionCount.textContent = state.selectedIds.length;
+      }
+
+      function updateMediaLayoutTabState() {
+        const enabled = state.selectedIds.length === 1;
+        footerTabMediaLayout.disabled = !enabled;
+        if (modalTabMediaLayout) modalTabMediaLayout.disabled = !enabled;
+      }
+
+      /**
+       * UX RULE: Primary Tabs (Editor, Media, Design) Enabled State
+       * ============================================================
+       * These tabs should be INACTIVE/DISABLED when NO promotion is selected.
+       * They become ACTIVE only when 1 or more promotions are selected.
+       *
+       * The secondary tabs (Promotion (+Add), Categories, Recipes) are always available
+       * as they don't operate on a specific promotion selection.
+       *
+       * This prevents users from trying to edit/view media/design for nothing.
+       */
+      function updatePrimaryTabsState() {
+        const hasSelection = state.selectedIds.length > 0;
+
+        // Dock/Footer tabs - primary group (Editor, Media, Design)
+        const primaryDockTabs = [
+          document.getElementById('footerTabEditor'),
+          document.getElementById('footerTabMedia'),
+          document.getElementById('footerTabDesign')
+        ];
+
+        primaryDockTabs.forEach(tab => {
+          if (tab) tab.disabled = !hasSelection;
+        });
+
+        // Modal tabs - primary group (Editor, Media, Design)
+        const primaryModalTabs = [
+          document.getElementById('modalTabEditor'),
+          document.getElementById('modalTabMedia'),
+          document.getElementById('modalTabDesign')
+        ];
+
+        primaryModalTabs.forEach(tab => {
+          if (tab) tab.disabled = !hasSelection;
+        });
+      }
+
+      function updatePromoContext() {
+        const promo = promotions[state.currentPromoIndex];
+        if (promo) {
+          promoName.textContent = promo.title;
+          inputTitle.value = promo.title;
+          const [w, h] = promo.size.split('x');
+          inputWidth.value = w;
+          inputHeight.value = h;
+          currentSize.textContent = promo.size;
+        }
+      }
+
+      function updatePromptVisibility() {
+        if (state.showPrompts && !state.promptDismissed) {
+          promptCard.classList.remove('hidden');
+          fallbackLink.classList.remove('visible');
+          tabTooltip.style.display = 'block';
+          newBadge.style.display = 'block';
+        } else {
+          promptCard.classList.add('hidden');
+          fallbackLink.classList.add('visible');
+          tabTooltip.style.display = 'none';
+          if (state.promptDismissed) {
+            newBadge.style.display = 'none';
+          }
+        }
+      }
+
+      function openModal(tab) {
+        state.modalOpen = true;
+        modalOverlay.classList.add('active');
+        switchTab(tab);
+        // Hide tab tooltip after first modal open
+        tabTooltip.style.display = 'none';
+      }
+
+      function closeModal() {
+        if (!state.modalOpen) return;
+        state.modalOpen = false;
+
+        // Add closing class to trigger exit animation
+        modalOverlay.classList.add('closing');
+
+        // Wait for animation to complete, then hide
+        setTimeout(() => {
+          modalOverlay.classList.remove('active', 'closing');
+          hideToast();
+        }, 300); // Match animation duration
+      }
+
+      function switchTab(tab) {
+        // Prevent overlapping transitions or switching to same tab
+        if (state.transitionInProgress || state.currentTab === tab) return;
+
+        state.transitionInProgress = true;
+        const previousTab = state.currentTab;
+        state.previousTab = previousTab;
+        state.currentTab = tab;
+
+        // Determine transition direction and type
+        const direction = getTransitionDirection(previousTab, tab);
+        const transitionType = getTransitionType(previousTab, tab);
+
+        // Get panel body and set transition attributes
+        const panelBody = document.querySelector('.panel-body');
+        panelBody.setAttribute('data-transition-type', transitionType);
+        panelBody.setAttribute('data-direction', direction);
+
+        // Update modal tabs (instant - no animation)
+        document.querySelectorAll('.modal-tab').forEach(t => {
+          t.classList.toggle('modal-tab--active', t.dataset.tab === tab);
+        });
+
+        // Get current and next panels
+        const currentPanel = document.getElementById(getPanelId(previousTab));
+        const nextPanel = document.getElementById(getPanelId(tab));
+
+        if (currentPanel && nextPanel) {
+          // Perform the transition
+          performTransition(currentPanel, nextPanel, transitionType);
+        } else if (nextPanel) {
+          // No previous panel (first load), just show
+          nextPanel.classList.add('active');
+          state.transitionInProgress = false;
+        } else {
+          // No panel exists for this tab yet - reset state to allow future transitions
+          console.warn('No panel found for tab:', tab);
+          state.transitionInProgress = false;
+        }
+
+        // Update panel header subtitle (instant)
+        const subtitles = {
+          'editor': 'Edit Single Promotion',
+          'media': 'Media Repository',
+          'design': 'Customize Appearance',
+          'media-layout': 'Customize Hero Positioning',
+          'promotion': 'Add Promotion',
+          'categories': 'Manage Categories',
+          'recipes': 'Manage Recipes'
+        };
+        if (subtitles[tab]) {
+          panelSubtitle.textContent = subtitles[tab];
+        }
+
+        // Update breadcrumb navigation (Option C)
+        updateBreadcrumb(tab);
+
+        // Update Back to Editor button visibility (Option A)
+        updateBackButton(tab);
+      }
+
+      // Helper: Get panel ID from tab name
+      function getPanelId(tab) {
+        const idMap = {
+          'editor': 'panelEditor',
+          'media': 'panelMedia',
+          'design': 'panelDesign',
+          'media-layout': 'panelMediaLayout',
+          'promotion': 'panelPromotion',
+          'categories': 'panelCategories',
+          'recipes': 'panelRecipes'
+        };
+        return idMap[tab];
+      }
+
+      // Helper: Determine transition direction
+      function getTransitionDirection(fromTab, toTab) {
+        const fromOrder = tabOrder[fromTab] || 0;
+        const toOrder = tabOrder[toTab] || 0;
+        return toOrder > fromOrder ? 'forward' : 'backward';
+      }
+
+      // Helper: Determine transition type
+      function getTransitionType(fromTab, toTab) {
+        const fromGroup = tabGroups[fromTab];
+        const toGroup = tabGroups[toTab];
+        // If switching between groups, use crossfade
+        if (fromGroup !== toGroup) return 'crossfade';
+        return fromGroup; // 'promotion' or 'circular'
+      }
+
+      // Perform the panel transition
+      function performTransition(currentPanel, nextPanel, transitionType) {
+        // Add exiting class to current panel
+        currentPanel.classList.add('exiting');
+        currentPanel.classList.remove('active');
+
+        // Activate next panel
+        nextPanel.classList.add('active');
+
+        // Check for shared elements and animate them (promotion tabs only)
+        if (transitionType === 'promotion') {
+          animateSharedElements(currentPanel, nextPanel);
+        }
+
+        // Clean up after transition completes
+        const transitionDuration = 250; // Match CSS variable
+        setTimeout(() => {
+          currentPanel.classList.remove('exiting');
+          state.transitionInProgress = false;
+        }, transitionDuration);
+      }
+
+      // Animate shared elements between panels
+      function animateSharedElements(fromPanel, toPanel) {
+        const sharedSelectors = [
+          { selector: '[data-shared-element="hero-image"]', id: 'hero-image' },
+          { selector: '[data-shared-element="preview"]', id: 'preview' }
+        ];
+
+        sharedSelectors.forEach(({ selector, id }) => {
+          const fromElement = fromPanel.querySelector(selector);
+          const toElement = toPanel.querySelector(selector);
+
+          if (fromElement && toElement) {
+            const clone = createSharedElementClone(fromElement, toElement, id);
+            if (clone) {
+              // Hide originals during animation
+              fromElement.classList.add('shared-element-hidden');
+              toElement.classList.add('shared-element-hidden');
+
+              // Add clone to body
+              document.body.appendChild(clone.element);
+
+              // Trigger animation to destination
+              requestAnimationFrame(() => {
+                clone.element.style.transform = `translate(${clone.toRect.left}px, ${clone.toRect.top}px)`;
+                clone.element.style.width = `${clone.toRect.width}px`;
+                clone.element.style.height = `${clone.toRect.height}px`;
+              });
+
+              // Clean up after animation
+              setTimeout(() => {
+                fromElement.classList.remove('shared-element-hidden');
+                toElement.classList.remove('shared-element-hidden');
+                clone.element.remove();
+              }, 250);
+            }
+          }
+        });
+      }
+
+      // Create a clone of shared element for animation
+      function createSharedElementClone(fromElement, toElement, id) {
+        const fromRect = fromElement.getBoundingClientRect();
+        const toRect = toElement.getBoundingClientRect();
+
+        // Skip if elements are at same position
+        if (Math.abs(fromRect.left - toRect.left) < 5 &&
+            Math.abs(fromRect.top - toRect.top) < 5) {
+          return null;
+        }
+
+        const clone = fromElement.cloneNode(true);
+        clone.classList.add('shared-element-clone');
+        clone.setAttribute('data-shared-id', id);
+        clone.style.position = 'fixed';
+        clone.style.left = '0';
+        clone.style.top = '0';
+        clone.style.width = `${fromRect.width}px`;
+        clone.style.height = `${fromRect.height}px`;
+        clone.style.transform = `translate(${fromRect.left}px, ${fromRect.top}px)`;
+        clone.style.margin = '0';
+
+        return {
+          element: clone,
+          fromRect,
+          toRect
+        };
+      }
+
+      function updateBreadcrumb(tab) {
+        const tabNames = {
+          'editor': 'Editor',
+          'media': 'Media',
+          'media-layout': 'Layout'
+        };
+
+        // Data Grid is always visible as first breadcrumb item
+        breadcrumbDataGrid.style.display = 'inline';
+        breadcrumbSep1.style.display = 'inline';
+
+        if (tab === 'editor') {
+          // On Editor tab: show "Data Grid > Editor"
+          breadcrumbEditor.style.display = 'none';
+          breadcrumbSep2.style.display = 'none';
+          breadcrumbCurrent.textContent = 'Editor';
+        } else {
+          // On other tabs: show "Data Grid > Editor > Current Tab"
+          breadcrumbEditor.style.display = 'inline';
+          breadcrumbSep2.style.display = 'inline';
+          breadcrumbCurrent.textContent = tabNames[tab] || tab;
+        }
+      }
+
+      function updateBackButton(tab) {
+        if (tab === 'editor') {
+          btnBackToEditor.classList.add('hidden');
+        } else {
+          btnBackToEditor.classList.remove('hidden');
+        }
+      }
+
+      function showToast() {
+        toast.classList.add('visible');
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+          if (toast.classList.contains('visible')) {
+            hideToast();
+          }
+        }, 5000);
+      }
+
+      function hideToast() {
+        toast.classList.remove('visible');
+      }
+
+      function navigatePromo(direction) {
+        const newIndex = state.currentPromoIndex + direction;
+        if (newIndex >= 0 && newIndex < promotions.length) {
+          state.currentPromoIndex = newIndex;
+          state.selectedIds = [promotions[newIndex].id];
+          updatePromoContext();
+          updateSelectionUI();
+        }
+      }
+
+      function updateSelectionUI() {
+        updateSelectionCount();
+        updateMediaLayoutTabState();
+        updatePrimaryTabsState();
+
+        // Update row styles
+        document.querySelectorAll('.data-grid tbody tr[data-id]').forEach(row => {
+          const id = parseInt(row.dataset.id);
+          const checkbox = row.querySelector('.row-checkbox');
+          if (state.selectedIds.includes(id)) {
+            row.classList.add('selected');
+            if (checkbox) checkbox.checked = true;
+          } else {
+            row.classList.remove('selected');
+            if (checkbox) checkbox.checked = false;
+          }
+        });
+      }
+
+      // ==========================================================================
+      // EVENT LISTENERS
+      // ==========================================================================
+
+      // Option A: Back to Editor button
+      btnBackToEditor.addEventListener('click', function() {
+        switchTab('editor');
+      });
+
+      // Option C: Breadcrumb "Data Grid" click - closes modal to return to grid
+      breadcrumbDataGrid.addEventListener('click', function() {
+        closeModal();
+      });
+
+      // Option C: Breadcrumb "Editor" click
+      breadcrumbEditor.addEventListener('click', function() {
+        switchTab('editor');
+      });
+
+      // Toggle prompts checkbox
+      document.getElementById('togglePrompts').addEventListener('change', function() {
+        state.showPrompts = this.checked;
+        updatePromptVisibility();
+      });
+
+      // Row checkboxes
+      document.querySelectorAll('.row-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function(e) {
+          e.stopPropagation();
+          const id = parseInt(this.dataset.id);
+          if (this.checked) {
+            state.selectedIds.push(id);
+            state.currentPromoIndex = promotions.findIndex(p => p.id === id);
+          } else {
+            state.selectedIds = state.selectedIds.filter(i => i !== id);
+          }
+          updateSelectionUI();
+          updatePromoContext();
+        });
+      });
+
+      // Row clicks
+      document.querySelectorAll('.data-grid tbody tr[data-id]').forEach(row => {
+        row.addEventListener('click', function(e) {
+          if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
+          const id = parseInt(this.dataset.id);
+          state.selectedIds = [id];
+          state.currentPromoIndex = promotions.findIndex(p => p.id === id);
+          updateSelectionUI();
+          updatePromoContext();
+        });
+      });
+
+      // Edit buttons
+      document.querySelectorAll('.btn-edit').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const id = parseInt(this.dataset.id);
+          state.selectedIds = [id];
+          state.currentPromoIndex = promotions.findIndex(p => p.id === id);
+          updateSelectionUI();
+          updatePromoContext();
+          openModal('editor');
+        });
+      });
+
+      // Footer tabs (legacy - for backwards compatibility)
+      document.querySelectorAll('.footer-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+          if (this.disabled) return;
+          const tabName = this.dataset.tab;
+          if (['editor', 'media', 'media-layout'].includes(tabName)) {
+            openModal(tabName);
+          }
+        });
+      });
+
+      // Dock tabs (grouped design)
+      document.querySelectorAll('.dock-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+          // Update active state - remove from all, add to clicked
+          document.querySelectorAll('.dock-tab').forEach(t => t.classList.remove('dock-tab--active'));
+          this.classList.add('dock-tab--active');
+
+          const tabName = this.dataset.tab;
+          // Open modal for all tabs
+          openModal(tabName);
+          console.log('Dock tab clicked:', tabName);
+        });
+      });
+
+      // Size toggle state
+      let currentModalSize = 'full'; // Default to full (95vh)
+
+      function updateAllSizeToggles() {
+        // Update dock size toggles
+        document.querySelectorAll('.dock-size-toggle').forEach(toggle => {
+          toggle.classList.toggle('active', toggle.dataset.size === currentModalSize);
+        });
+        // Update modal size toggles
+        document.querySelectorAll('.modal-size-toggle').forEach(toggle => {
+          toggle.classList.toggle('active', toggle.dataset.size === currentModalSize);
+        });
+      }
+
+      function setModalSize(size) {
+        currentModalSize = size;
+        updateAllSizeToggles();
+
+        const modal = document.querySelector('.modal');
+        if (modal) {
+          if (size === 'closed') {
+            closeModal();
+          } else if (size === 'half') {
+            modal.style.height = '55vh';
+            if (!state.modalOpen) {
+              openModal('editor');
+            }
+          } else if (size === 'full') {
+            modal.style.height = '95vh';
+            if (!state.modalOpen) {
+              openModal('editor');
+            }
+          }
+        }
+      }
+
+      // Dock size toggle clicks
+      document.querySelectorAll('.dock-size-toggle').forEach(toggle => {
+        toggle.addEventListener('click', function(e) {
+          e.stopPropagation();
+          setModalSize(this.dataset.size);
+        });
+      });
+
+      // Modal size toggle clicks
+      document.querySelectorAll('.modal-size-toggle').forEach(toggle => {
+        toggle.addEventListener('click', function(e) {
+          e.stopPropagation();
+          setModalSize(this.dataset.size);
+        });
+      });
+
+      // Dock close button
+      const dockCloseBtn = document.getElementById('dockCloseBtn');
+      if (dockCloseBtn) {
+        dockCloseBtn.addEventListener('click', function() {
+          setModalSize('closed');
+        });
+      }
+
+      // Modal tabs (grouped design)
+      document.querySelectorAll('.modal-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+          if (this.disabled) return;
+
+          // Update active state - remove from all, add to clicked
+          document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('modal-tab--active'));
+          this.classList.add('modal-tab--active');
+
+          const tabName = this.dataset.tab;
+          // Switch tab for all supported tabs
+          switchTab(tabName);
+          console.log('Modal tab clicked:', tabName);
+        });
+      });
+
+      // Close modal
+      document.getElementById('modalClose').addEventListener('click', closeModal);
+      modalOverlay.addEventListener('click', function(e) {
+        if (e.target === modalOverlay) closeModal();
+      });
+
+      // Previous/Next navigation
+      document.getElementById('btnPrev').addEventListener('click', () => navigatePromo(-1));
+      document.getElementById('btnNext').addEventListener('click', () => navigatePromo(1));
+
+      // Change Media button -> go to Media tab
+      document.getElementById('btnChangeMedia').addEventListener('click', function() {
+        switchTab('media');
+      });
+
+      // Prompt card actions
+      document.getElementById('promptOpenLayout').addEventListener('click', function() {
+        switchTab('media-layout');
+      });
+
+      document.getElementById('promptDismiss').addEventListener('click', function() {
+        state.promptDismissed = true;
+        updatePromptVisibility();
+      });
+
+      // Media Layout links
+      document.getElementById('linkMediaLayoutEditor').addEventListener('click', function(e) {
+        e.preventDefault();
+        switchTab('media-layout');
+      });
+
+      document.getElementById('linkMediaLayoutBg').addEventListener('click', function(e) {
+        e.preventDefault();
+        switchTab('media-layout');
+      });
+
+      document.getElementById('linkMediaLayoutRepo').addEventListener('click', function(e) {
+        e.preventDefault();
+        switchTab('media-layout');
+      });
+
+      // Image grid clicks (simulate image selection -> show toast)
+      document.querySelectorAll('.image-grid__item').forEach(item => {
+        item.addEventListener('click', function() {
+          // Deselect all
+          document.querySelectorAll('.image-grid__item').forEach(i => i.classList.remove('selected'));
+          // Select this one
+          this.classList.add('selected');
+          // Show toast
+          if (state.showPrompts) {
+            showToast();
+          }
+        });
+      });
+
+      // Toast actions
+      document.getElementById('toastAction').addEventListener('click', function() {
+        hideToast();
+        switchTab('media-layout');
+      });
+
+      document.getElementById('toastClose').addEventListener('click', hideToast);
+
+      // Size grid
+      document.querySelectorAll('#sizeGrid .size-grid__item').forEach(item => {
+        item.addEventListener('click', function() {
+          document.querySelectorAll('#sizeGrid .size-grid__item').forEach(i => i.classList.remove('selected'));
+          this.classList.add('selected');
+          currentSize.textContent = this.dataset.size;
+        });
+      });
+
+      // ==========================================================================
+      // INITIALIZE
+      // ==========================================================================
+      updateSelectionUI();
+      updatePromoContext();
+      updatePromptVisibility();
+
+    })();
+  </script>
+
+</body>
+</html>

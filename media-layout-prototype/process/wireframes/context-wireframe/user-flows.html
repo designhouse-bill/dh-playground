@@ -1,0 +1,1628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Flow Scenarios - Visual Reference</title>
+  <style>
+    :root {
+      --bg: #f8f9fa;
+      --surface: #ffffff;
+      --border: #e0e0e0;
+      --border-dark: #bdbdbd;
+      --text: #333333;
+      --text-muted: #666666;
+      --text-light: #999999;
+      --primary: #1976d2;
+      --primary-light: #e3f2fd;
+      --primary-dark: #1565c0;
+      --accent: #7c4dff;
+      --success: #4caf50;
+      --success-light: #e8f5e9;
+      --warning: #ff9800;
+      --warning-light: #fff3e0;
+      --danger: #f44336;
+      --danger-light: #ffebee;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 15px;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* Header */
+    .page-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .page-header__title {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .page-header__subtitle {
+      font-size: 18px;
+      color: var(--text-muted);
+      max-width: 700px;
+      margin: 0 auto 24px;
+    }
+
+    .page-header__meta {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    /* Navigation Links */
+    .nav-links {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .nav-link:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+    }
+
+    /* Sections */
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+
+    .section__title {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section__title-icon {
+      font-size: 26px;
+    }
+
+    .section__subtitle {
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+
+    /* Category Badge */
+    .category-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    /* Flow Card */
+    .flow-card {
+      background: var(--bg);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .flow-card:last-child {
+      margin-bottom: 0;
+    }
+
+    .flow-card__header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .flow-card__title-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .flow-card__id {
+      width: 36px;
+      height: 36px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .flow-card__id--new {
+      background: var(--success);
+    }
+
+    .flow-card__title {
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .flow-card__new-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      background: var(--warning);
+      color: white;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    .flow-card__meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .flow-card__clicks {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .flow-card__clicks strong {
+      color: var(--text);
+    }
+
+    /* Ranking Badge */
+    .rank-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .rank-badge--excellent {
+      background: var(--success-light);
+      color: var(--success);
+    }
+
+    .rank-badge--good {
+      background: var(--primary-light);
+      color: var(--primary-dark);
+    }
+
+    .rank-badge--fair {
+      background: var(--warning-light);
+      color: #e65100;
+    }
+
+    .rank-badge--poor {
+      background: var(--danger-light);
+      color: var(--danger);
+    }
+
+    /* Flow Diagram */
+    .flow-diagram {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 20px;
+      background: var(--surface);
+      border-radius: 8px;
+      overflow-x: auto;
+      margin-bottom: 16px;
+    }
+
+    .flow-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .flow-step__box {
+      padding: 12px 18px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .flow-step__box--start {
+      background: var(--bg);
+      border-color: var(--border-dark);
+    }
+
+    .flow-step__box--action {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary-dark);
+    }
+
+    .flow-step__box--end {
+      background: var(--success-light);
+      border-color: var(--success);
+      color: #2e7d32;
+    }
+
+    .flow-step__label {
+      font-size: 10px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .flow-arrow {
+      font-size: 20px;
+      color: var(--text-light);
+      flex-shrink: 0;
+    }
+
+    /* Steps List */
+    .steps-list {
+      list-style: none;
+      counter-reset: step;
+    }
+
+    .steps-list__item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    .steps-list__item:last-child {
+      border-bottom: none;
+    }
+
+    .steps-list__item::before {
+      counter-increment: step;
+      content: counter(step);
+      width: 24px;
+      height: 24px;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    /* Pros/Cons */
+    .pros-cons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 600px) {
+      .pros-cons {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .pros, .cons {
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+
+    .pros {
+      background: var(--success-light);
+    }
+
+    .cons {
+      background: var(--warning-light);
+    }
+
+    .pros__title, .cons__title {
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .pros__title {
+      color: var(--success);
+    }
+
+    .cons__title {
+      color: #e65100;
+    }
+
+    .pros ul, .cons ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .pros li, .cons li {
+      padding: 4px 0;
+      padding-left: 16px;
+      position: relative;
+    }
+
+    .pros li::before {
+      content: "+";
+      position: absolute;
+      left: 0;
+      color: var(--success);
+      font-weight: bold;
+    }
+
+    .cons li::before {
+      content: "-";
+      position: absolute;
+      left: 0;
+      color: #e65100;
+      font-weight: bold;
+    }
+
+    /* Edge Cases */
+    .edge-cases-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .edge-case {
+      padding: 16px;
+      background: var(--bg);
+      border-radius: 8px;
+      border-left: 4px solid var(--warning);
+    }
+
+    .edge-case__id {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--warning);
+      margin-bottom: 6px;
+    }
+
+    .edge-case__scenario {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .edge-case__behavior {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Keyboard Shortcuts */
+    .shortcuts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .shortcut {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      background: var(--bg);
+      border-radius: 8px;
+    }
+
+    .shortcut__key {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 40px;
+      height: 36px;
+      padding: 0 12px;
+      background: var(--surface);
+      border: 1px solid var(--border-dark);
+      border-radius: 6px;
+      font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 2px 0 var(--border-dark);
+    }
+
+    .shortcut__action {
+      font-size: 14px;
+    }
+
+    /* Ranking Matrix */
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .matrix-table th,
+    .matrix-table td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .matrix-table th {
+      background: var(--bg);
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+
+    .matrix-table tr:hover td {
+      background: var(--bg);
+    }
+
+    .matrix-table td:first-child {
+      font-weight: 600;
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 24px 0;
+    }
+
+    /* Discovery Badge */
+    .discovery-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .discovery-badge--high {
+      background: var(--success-light);
+      color: var(--success);
+    }
+
+    .discovery-badge--medium {
+      background: var(--primary-light);
+      color: var(--primary-dark);
+    }
+
+    .discovery-badge--low {
+      background: var(--warning-light);
+      color: #e65100;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Page Header -->
+    <header class="page-header">
+      <h1 class="page-header__title">User Flow Scenarios</h1>
+      <p class="page-header__subtitle">
+        Visual reference for 17 user flows across 5 task categories. Each flow is ranked 1-10 based on
+        efficiency, intuitiveness, and discoverability.
+      </p>
+      <p class="page-header__meta">Document Version 1.0 | December 22, 2025</p>
+
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">&larr; Documentation</a>
+        <a href="prototype.html" class="nav-link">Launch Prototype &rarr;</a>
+      </div>
+    </header>
+
+    <!-- ================================================================
+         CATEGORY A: CHANGE HERO IMAGE
+         ================================================================ -->
+    <section class="section">
+      <h2 class="section__title">
+        <span class="section__title-icon">A</span>
+        Change Hero Image
+        <span class="category-badge">5 FLOWS</span>
+      </h2>
+      <p class="section__subtitle">
+        Five ways to change the hero image assigned to a promotion, from standard workflows to power-user shortcuts.
+      </p>
+
+      <!-- Flow A1 -->
+      <div class="flow-card">
+        <div class="flow-card__header">
+          <div class="flow-card__title-group">
+            <span class="flow-card__id">A1</span>
+            <span class="flow-card__title">Standard Edit Path</span>
+          </div>
+          <div class="flow-card__meta">
+            <span class="flow-card__clicks"><strong>6</strong> clicks</span>
+            <span class="rank-badge rank-badge--good">8/10</span>
+          </div>
+        </div>
+
+        <div class="flow-diagram">
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--start">Data Grid</div>
+            <div class="flow-step__label">Start</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box">Select Row</div>
+            <div class="flow-step__label">Context</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--action">Edit Button</div>
+            <div class="flow-step__label">Action</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box">Editor Panel</div>
+            <div class="flow-step__label">Modal</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--action">Change Media</div>
+            <div class="flow-step__label">Action</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--end">Media Repo</div>
+            <div class="flow-step__label">Complete</div>
+          </div>
+        </div>
+
+        <ol class="steps-list">
+          <li class="steps-list__item">Select promotion row in Data Grid (sets context)</li>
+          <li class="steps-list__item">Click "Edit" button in UTILITIES column</li>
+          <li class="steps-list__item">Modal opens to Editor panel</li>
+          <li class="steps-list__item">Click "Change Media" button in Media card</li>
+          <li class="steps-list__item">Modal switches to Media Repository</li>
+          <li class="steps-list__item">Select new image from grid</li>
+        </ol>
+
+        <div class="pros-cons">
+          <div class="pros">
+            <div class="pros__title">Pros</div>
+            <ul>
+              <li>Follows expected editing pattern</li>
+              <li>Edit button is prominent in row</li>
+              <li>Clear step-by-step progression</li>
+            </ul>
+          </div>
+          <div class="cons">
+            <div class="cons__title">Cons</div>
+            <ul>
+              <li>Most clicks of any path (6)</li>
+              <li>Requires scrolling to find Media card</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flow A2 -->
+      <div class="flow-card">
+        <div class="flow-card__header">
+          <div class="flow-card__title-group">
+            <span class="flow-card__id">A2</span>
+            <span class="flow-card__title">Footer Tab Path</span>
+          </div>
+          <div class="flow-card__meta">
+            <span class="flow-card__clicks"><strong>4</strong> clicks</span>
+            <span class="rank-badge rank-badge--excellent">9/10</span>
+          </div>
+        </div>
+
+        <div class="flow-diagram">
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--start">Data Grid</div>
+            <div class="flow-step__label">Start</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box">Select Row</div>
+            <div class="flow-step__label">Context</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--action">Media Tab</div>
+            <div class="flow-step__label">Footer</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--end">Media Repo</div>
+            <div class="flow-step__label">Complete</div>
+          </div>
+        </div>
+
+        <ol class="steps-list">
+          <li class="steps-list__item">Select promotion row in Data Grid (sets context)</li>
+          <li class="steps-list__item">Click "Media" tab in footer dock</li>
+          <li class="steps-list__item">Modal opens directly to Media Repository</li>
+          <li class="steps-list__item">Select new image from grid</li>
+        </ol>
+
+        <div class="pros-cons">
+          <div class="pros">
+            <div class="pros__title">Pros</div>
+            <ul>
+              <li>Fewer clicks than standard path</li>
+              <li>Footer tabs always visible</li>
+              <li>Skips Editor panel entirely</li>
+            </ul>
+          </div>
+          <div class="cons">
+            <div class="cons__title">Cons</div>
+            <ul>
+              <li>Requires knowing footer tabs exist</li>
+              <li>Tabs may be overlooked by new users</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flow A3 -->
+      <div class="flow-card">
+        <div class="flow-card__header">
+          <div class="flow-card__title-group">
+            <span class="flow-card__id flow-card__id--new">A3</span>
+            <span class="flow-card__title">Thumbnail Click Shortcut<span class="flow-card__new-badge">NEW</span></span>
+          </div>
+          <div class="flow-card__meta">
+            <span class="flow-card__clicks"><strong>3</strong> clicks</span>
+            <span class="rank-badge rank-badge--good">7/10</span>
+          </div>
+        </div>
+
+        <div class="flow-diagram">
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--start">Data Grid</div>
+            <div class="flow-step__label">Start</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--action">Click Thumbnail</div>
+            <div class="flow-step__label">Shortcut</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--end">Media Repo</div>
+            <div class="flow-step__label">Complete</div>
+          </div>
+        </div>
+
+        <ol class="steps-list">
+          <li class="steps-list__item">Click hero thumbnail directly in promotion row</li>
+          <li class="steps-list__item">Row selects AND modal opens to Media Repository</li>
+          <li class="steps-list__item">Select new image from grid</li>
+        </ol>
+
+        <div class="pros-cons">
+          <div class="pros">
+            <div class="pros__title">Pros</div>
+            <ul>
+              <li>Fastest click path (3 clicks)</li>
+              <li>Direct visual connection to task</li>
+              <li>Efficient for power users</li>
+            </ul>
+          </div>
+          <div class="cons">
+            <div class="cons__title">Cons</div>
+            <ul>
+              <li>Not immediately discoverable</li>
+              <li>Requires learning the shortcut</li>
+              <li>Thumbnail may be small on mobile</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flow A4 -->
+      <div class="flow-card">
+        <div class="flow-card__header">
+          <div class="flow-card__title-group">
+            <span class="flow-card__id flow-card__id--new">A4</span>
+            <span class="flow-card__title">Ellipse Menu<span class="flow-card__new-badge">NEW</span></span>
+          </div>
+          <div class="flow-card__meta">
+            <span class="flow-card__clicks"><strong>4</strong> clicks</span>
+            <span class="rank-badge rank-badge--good">8/10</span>
+          </div>
+        </div>
+
+        <div class="flow-diagram">
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--start">Data Grid</div>
+            <div class="flow-step__label">Start</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box">Click Ellipse</div>
+            <div class="flow-step__label">Menu</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--action">Replace Media</div>
+            <div class="flow-step__label">Option</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--end">Media Repo</div>
+            <div class="flow-step__label">Complete</div>
+          </div>
+        </div>
+
+        <ol class="steps-list">
+          <li class="steps-list__item">Select promotion row in Data Grid (sets context)</li>
+          <li class="steps-list__item">Click ellipse (&vellip;) menu in UTILITIES column</li>
+          <li class="steps-list__item">Select "Replace Media" from dropdown</li>
+          <li class="steps-list__item">Modal opens to Media Repository</li>
+        </ol>
+
+        <div class="pros-cons">
+          <div class="pros">
+            <div class="pros__title">Pros</div>
+            <ul>
+              <li>Discoverable in context menu</li>
+              <li>Groups related actions together</li>
+              <li>Familiar dropdown pattern</li>
+            </ul>
+          </div>
+          <div class="cons">
+            <div class="cons__title">Cons</div>
+            <ul>
+              <li>Requires extra click for menu</li>
+              <li>Menu options may be crowded</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flow A5 -->
+      <div class="flow-card">
+        <div class="flow-card__header">
+          <div class="flow-card__title-group">
+            <span class="flow-card__id">A5</span>
+            <span class="flow-card__title">Replace Button (From Editor)</span>
+          </div>
+          <div class="flow-card__meta">
+            <span class="flow-card__clicks"><strong>3</strong> clicks</span>
+            <span class="rank-badge rank-badge--excellent">9/10</span>
+          </div>
+        </div>
+
+        <div class="flow-diagram">
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--start">Editor Panel</div>
+            <div class="flow-step__label">Context</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--action">Replace Button</div>
+            <div class="flow-step__label">Hero Card</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--end">Media Repo</div>
+            <div class="flow-step__label">Complete</div>
+          </div>
+        </div>
+
+        <ol class="steps-list">
+          <li class="steps-list__item">(Already in Editor panel with promotion selected)</li>
+          <li class="steps-list__item">Click "Replace" button in Hero Image card</li>
+          <li class="steps-list__item">Modal switches to Media Repository</li>
+          <li class="steps-list__item">Select new image from grid</li>
+        </ol>
+      </div>
+
+    </section>
+
+    <!-- ================================================================
+         CATEGORY B: ACCESS LAYOUT PANEL
+         ================================================================ -->
+    <section class="section">
+      <h2 class="section__title">
+        <span class="section__title-icon">B</span>
+        Access Layout Panel
+        <span class="category-badge">4 FLOWS</span>
+      </h2>
+      <p class="section__subtitle">
+        Four entry points to the Layout panel. Layout is accessed via contextual links (progressive disclosure), not as a primary tab.
+      </p>
+
+      <!-- Flow B1 -->
+      <div class="flow-card">
+        <div class="flow-card__header">
+          <div class="flow-card__title-group">
+            <span class="flow-card__id">B1</span>
+            <span class="flow-card__title">Contextual Prompt Card</span>
+            <span class="discovery-badge discovery-badge--high">HIGH DISCOVERY</span>
+          </div>
+          <div class="flow-card__meta">
+            <span class="flow-card__clicks"><strong>2</strong> clicks</span>
+            <span class="rank-badge rank-badge--excellent">10/10</span>
+          </div>
+        </div>
+
+        <div class="flow-diagram">
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--start">Editor Panel</div>
+            <div class="flow-step__label">Context</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--action">Prompt Card</div>
+            <div class="flow-step__label">"Open Layout"</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--end">Layout Panel</div>
+            <div class="flow-step__label">Complete</div>
+          </div>
+        </div>
+
+        <ol class="steps-list">
+          <li class="steps-list__item">(In Editor panel with promotion selected)</li>
+          <li class="steps-list__item">Click "Open Layout &rarr;" button in prompt card</li>
+        </ol>
+
+        <div class="pros-cons">
+          <div class="pros">
+            <div class="pros__title">Pros</div>
+            <ul>
+              <li>Highly visible with explanation</li>
+              <li>Educates users about Layout feature</li>
+              <li>Appears at relevant moment</li>
+            </ul>
+          </div>
+          <div class="cons">
+            <div class="cons__title">Cons</div>
+            <ul>
+              <li>Can be dismissed (then hidden)</li>
+              <li>Takes up space in Editor</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flow B2 -->
+      <div class="flow-card">
+        <div class="flow-card__header">
+          <div class="flow-card__title-group">
+            <span class="flow-card__id">B2</span>
+            <span class="flow-card__title">Background Section Link</span>
+            <span class="discovery-badge discovery-badge--medium">MEDIUM</span>
+          </div>
+          <div class="flow-card__meta">
+            <span class="flow-card__clicks"><strong>3</strong> clicks</span>
+            <span class="rank-badge rank-badge--good">8/10</span>
+          </div>
+        </div>
+
+        <div class="flow-diagram">
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--start">Editor Panel</div>
+            <div class="flow-step__label">Context</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box">Background Card</div>
+            <div class="flow-step__label">Scroll</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--action">"Edit in Layout"</div>
+            <div class="flow-step__label">Link</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--end">Layout Panel</div>
+            <div class="flow-step__label">Complete</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flow B3 -->
+      <div class="flow-card">
+        <div class="flow-card__header">
+          <div class="flow-card__title-group">
+            <span class="flow-card__id">B3</span>
+            <span class="flow-card__title">Toast Notification Action</span>
+            <span class="discovery-badge discovery-badge--high">HIGH DISCOVERY</span>
+          </div>
+          <div class="flow-card__meta">
+            <span class="flow-card__clicks"><strong>2</strong> clicks</span>
+            <span class="rank-badge rank-badge--excellent">9/10</span>
+          </div>
+        </div>
+
+        <div class="flow-diagram">
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--start">Media Repo</div>
+            <div class="flow-step__label">Context</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box">Select Image</div>
+            <div class="flow-step__label">Trigger</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--action">Toast Action</div>
+            <div class="flow-step__label">"Customize"</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--end">Layout Panel</div>
+            <div class="flow-step__label">Complete</div>
+          </div>
+        </div>
+
+        <ol class="steps-list">
+          <li class="steps-list__item">(In Media Repository, select a new image)</li>
+          <li class="steps-list__item">Toast appears: "Image assigned to hero"</li>
+          <li class="steps-list__item">Click "Customize layout &rarr;" in toast</li>
+        </ol>
+      </div>
+
+      <!-- Flow B4 -->
+      <div class="flow-card">
+        <div class="flow-card__header">
+          <div class="flow-card__title-group">
+            <span class="flow-card__id">B4</span>
+            <span class="flow-card__title">Fallback Text Link</span>
+            <span class="discovery-badge discovery-badge--low">LOW</span>
+          </div>
+          <div class="flow-card__meta">
+            <span class="flow-card__clicks"><strong>2</strong> clicks</span>
+            <span class="rank-badge rank-badge--fair">6/10</span>
+          </div>
+        </div>
+
+        <div class="flow-diagram">
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--start">Editor Panel</div>
+            <div class="flow-step__label">After Dismiss</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--action">"Customize layout"</div>
+            <div class="flow-step__label">Text Link</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--end">Layout Panel</div>
+            <div class="flow-step__label">Complete</div>
+          </div>
+        </div>
+
+        <ol class="steps-list">
+          <li class="steps-list__item">(In Editor, after dismissing prompt card)</li>
+          <li class="steps-list__item">Click "Customize layout &rarr;" text link</li>
+        </ol>
+      </div>
+
+    </section>
+
+    <!-- ================================================================
+         CATEGORY C: TAB NAVIGATION
+         ================================================================ -->
+    <section class="section">
+      <h2 class="section__title">
+        <span class="section__title-icon">C</span>
+        Tab Navigation
+        <span class="category-badge">4 FLOWS</span>
+      </h2>
+      <p class="section__subtitle">
+        Four ways to navigate between panels within the modal.
+      </p>
+
+      <!-- Flow C1 -->
+      <div class="flow-card">
+        <div class="flow-card__header">
+          <div class="flow-card__title-group">
+            <span class="flow-card__id">C1</span>
+            <span class="flow-card__title">Direct Tab Click</span>
+          </div>
+          <div class="flow-card__meta">
+            <span class="flow-card__clicks"><strong>1</strong> click</span>
+            <span class="rank-badge rank-badge--excellent">10/10</span>
+          </div>
+        </div>
+
+        <div class="flow-diagram">
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--start">Any Panel</div>
+            <div class="flow-step__label">Current</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--action">Click Tab</div>
+            <div class="flow-step__label">Header</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--end">Target Panel</div>
+            <div class="flow-step__label">Complete</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flow C2 -->
+      <div class="flow-card">
+        <div class="flow-card__header">
+          <div class="flow-card__title-group">
+            <span class="flow-card__id">C2</span>
+            <span class="flow-card__title">Breadcrumb Navigation</span>
+          </div>
+          <div class="flow-card__meta">
+            <span class="flow-card__clicks"><strong>1</strong> click</span>
+            <span class="rank-badge rank-badge--good">8/10</span>
+          </div>
+        </div>
+
+        <div class="flow-diagram">
+          <div class="flow-step">
+            <div class="flow-step__box">Data Grid</div>
+            <div class="flow-step__label">Closes Modal</div>
+          </div>
+          <span class="flow-arrow">&rsaquo;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--action">Editor</div>
+            <div class="flow-step__label">Returns Here</div>
+          </div>
+          <span class="flow-arrow">&rsaquo;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--end">Current</div>
+            <div class="flow-step__label">You Are Here</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flow C3 -->
+      <div class="flow-card">
+        <div class="flow-card__header">
+          <div class="flow-card__title-group">
+            <span class="flow-card__id">C3</span>
+            <span class="flow-card__title">Back to Editor Button</span>
+          </div>
+          <div class="flow-card__meta">
+            <span class="flow-card__clicks"><strong>1</strong> click</span>
+            <span class="rank-badge rank-badge--excellent">10/10</span>
+          </div>
+        </div>
+
+        <div class="flow-diagram">
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--start">Media/Layout</div>
+            <div class="flow-step__label">Current</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--action">&larr; Editor</div>
+            <div class="flow-step__label">Button</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--end">Editor Panel</div>
+            <div class="flow-step__label">Complete</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flow C4 -->
+      <div class="flow-card">
+        <div class="flow-card__header">
+          <div class="flow-card__title-group">
+            <span class="flow-card__id">C4</span>
+            <span class="flow-card__title">Close and Reopen</span>
+          </div>
+          <div class="flow-card__meta">
+            <span class="flow-card__clicks"><strong>4</strong> clicks</span>
+            <span class="rank-badge rank-badge--poor">4/10</span>
+          </div>
+        </div>
+
+        <div class="flow-diagram">
+          <div class="flow-step">
+            <div class="flow-step__box">Modal</div>
+            <div class="flow-step__label">Current</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box">Close</div>
+            <div class="flow-step__label">Inefficient</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box">Grid</div>
+            <div class="flow-step__label">Return</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box">Reselect</div>
+            <div class="flow-step__label">Redundant</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--end">New Tab</div>
+            <div class="flow-step__label">Finally</div>
+          </div>
+        </div>
+
+        <div class="cons" style="margin-top: 16px;">
+          <div class="cons__title">Not Recommended</div>
+          <ul>
+            <li>Very inefficient (4 clicks)</li>
+            <li>Loses modal state</li>
+            <li>Use direct tab click instead</li>
+          </ul>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ================================================================
+         CATEGORY D: PROMOTION NAVIGATION
+         ================================================================ -->
+    <section class="section">
+      <h2 class="section__title">
+        <span class="section__title-icon">D</span>
+        Promotion Navigation
+        <span class="category-badge">2 FLOWS</span>
+      </h2>
+      <p class="section__subtitle">
+        Two ways to navigate between promotions while in the modal.
+      </p>
+
+      <!-- Flow D1 -->
+      <div class="flow-card">
+        <div class="flow-card__header">
+          <div class="flow-card__title-group">
+            <span class="flow-card__id">D1</span>
+            <span class="flow-card__title">Previous/Next Buttons</span>
+          </div>
+          <div class="flow-card__meta">
+            <span class="flow-card__clicks"><strong>1</strong> click</span>
+            <span class="rank-badge rank-badge--excellent">10/10</span>
+          </div>
+        </div>
+
+        <div class="flow-diagram">
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--action">&larr; Previous</div>
+            <div class="flow-step__label">Button</div>
+          </div>
+          <span class="flow-arrow">&harr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--end">Current Promo</div>
+            <div class="flow-step__label">Context</div>
+          </div>
+          <span class="flow-arrow">&harr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--action">Next &rarr;</div>
+            <div class="flow-step__label">Button</div>
+          </div>
+        </div>
+
+        <div class="pros-cons">
+          <div class="pros">
+            <div class="pros__title">Pros</div>
+            <ul>
+              <li>Single click navigation</li>
+              <li>Stays in modal (no context loss)</li>
+              <li>Updates all content in place</li>
+            </ul>
+          </div>
+          <div class="cons">
+            <div class="cons__title">Cons</div>
+            <ul>
+              <li>Disabled at list boundaries</li>
+              <li>Sequential only (can't jump to specific row)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flow D2 -->
+      <div class="flow-card">
+        <div class="flow-card__header">
+          <div class="flow-card__title-group">
+            <span class="flow-card__id">D2</span>
+            <span class="flow-card__title">Return to Grid</span>
+          </div>
+          <div class="flow-card__meta">
+            <span class="flow-card__clicks"><strong>4</strong> clicks</span>
+            <span class="rank-badge rank-badge--fair">5/10</span>
+          </div>
+        </div>
+
+        <div class="flow-diagram">
+          <div class="flow-step">
+            <div class="flow-step__box">Modal</div>
+            <div class="flow-step__label">Close</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box">Data Grid</div>
+            <div class="flow-step__label">Return</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--action">Select Row</div>
+            <div class="flow-step__label">Different</div>
+          </div>
+          <span class="flow-arrow">&rarr;</span>
+          <div class="flow-step">
+            <div class="flow-step__box flow-step__box--end">Open Modal</div>
+            <div class="flow-step__label">Complete</div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ================================================================
+         CATEGORY E: KEYBOARD SHORTCUTS
+         ================================================================ -->
+    <section class="section">
+      <h2 class="section__title">
+        <span class="section__title-icon">E</span>
+        Keyboard Shortcuts
+        <span class="category-badge">PROPOSED</span>
+      </h2>
+      <p class="section__subtitle">
+        Proposed keyboard shortcuts for power users. Single keystroke access to common actions.
+      </p>
+
+      <div class="shortcuts-grid">
+        <div class="shortcut">
+          <span class="shortcut__key">M</span>
+          <span class="shortcut__action">Open Media tab</span>
+        </div>
+        <div class="shortcut">
+          <span class="shortcut__key">E</span>
+          <span class="shortcut__action">Open Editor</span>
+        </div>
+        <div class="shortcut">
+          <span class="shortcut__key">L</span>
+          <span class="shortcut__action">Open Layout panel</span>
+        </div>
+        <div class="shortcut">
+          <span class="shortcut__key">&larr;</span>
+          <span class="shortcut__action">Previous promotion</span>
+        </div>
+        <div class="shortcut">
+          <span class="shortcut__key">&rarr;</span>
+          <span class="shortcut__action">Next promotion</span>
+        </div>
+        <div class="shortcut">
+          <span class="shortcut__key">Esc</span>
+          <span class="shortcut__action">Close modal</span>
+        </div>
+      </div>
+
+      <div class="pros-cons" style="margin-top: 24px;">
+        <div class="pros">
+          <div class="pros__title">Pros</div>
+          <ul>
+            <li>Extremely efficient (single keystroke)</li>
+            <li>Consistent with common patterns</li>
+            <li>Power users will love it</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <div class="cons__title">Cons</div>
+          <ul>
+            <li>Low initial discoverability</li>
+            <li>Requires documentation/learning</li>
+          </ul>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ================================================================
+         RANKING SUMMARY
+         ================================================================ -->
+    <section class="section">
+      <h2 class="section__title">
+        <span class="section__title-icon">&#128202;</span>
+        Ranking Summary
+      </h2>
+      <p class="section__subtitle">
+        All flows ranked by score. Use this to prioritize implementation and testing.
+      </p>
+
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>ID</th>
+            <th>Flow Name</th>
+            <th>Clicks</th>
+            <th>Score</th>
+            <th>Discovery</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>B1</td>
+            <td>Contextual Prompt Card</td>
+            <td>2</td>
+            <td><span class="rank-badge rank-badge--excellent">10</span></td>
+            <td><span class="discovery-badge discovery-badge--high">High</span></td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>C1</td>
+            <td>Direct Tab Click</td>
+            <td>1</td>
+            <td><span class="rank-badge rank-badge--excellent">10</span></td>
+            <td><span class="discovery-badge discovery-badge--high">High</span></td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>C3</td>
+            <td>Back to Editor Button</td>
+            <td>1</td>
+            <td><span class="rank-badge rank-badge--excellent">10</span></td>
+            <td><span class="discovery-badge discovery-badge--high">High</span></td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>D1</td>
+            <td>Previous/Next Buttons</td>
+            <td>1</td>
+            <td><span class="rank-badge rank-badge--excellent">10</span></td>
+            <td><span class="discovery-badge discovery-badge--high">High</span></td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>A2</td>
+            <td>Footer Tab Path</td>
+            <td>4</td>
+            <td><span class="rank-badge rank-badge--excellent">9</span></td>
+            <td><span class="discovery-badge discovery-badge--medium">Medium</span></td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>A5</td>
+            <td>Replace Button</td>
+            <td>3</td>
+            <td><span class="rank-badge rank-badge--excellent">9</span></td>
+            <td><span class="discovery-badge discovery-badge--medium">Medium</span></td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>B3</td>
+            <td>Toast Action</td>
+            <td>2</td>
+            <td><span class="rank-badge rank-badge--excellent">9</span></td>
+            <td><span class="discovery-badge discovery-badge--high">High</span></td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td>A1</td>
+            <td>Standard Edit Path</td>
+            <td>6</td>
+            <td><span class="rank-badge rank-badge--good">8</span></td>
+            <td><span class="discovery-badge discovery-badge--high">High</span></td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td>A4</td>
+            <td>Ellipse Menu</td>
+            <td>4</td>
+            <td><span class="rank-badge rank-badge--good">8</span></td>
+            <td><span class="discovery-badge discovery-badge--medium">Medium</span></td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td>B2</td>
+            <td>Background Link</td>
+            <td>3</td>
+            <td><span class="rank-badge rank-badge--good">8</span></td>
+            <td><span class="discovery-badge discovery-badge--medium">Medium</span></td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td>C2</td>
+            <td>Breadcrumb Navigation</td>
+            <td>1</td>
+            <td><span class="rank-badge rank-badge--good">8</span></td>
+            <td><span class="discovery-badge discovery-badge--medium">Medium</span></td>
+          </tr>
+          <tr>
+            <td>12</td>
+            <td>A3</td>
+            <td>Thumbnail Shortcut</td>
+            <td>3</td>
+            <td><span class="rank-badge rank-badge--good">7</span></td>
+            <td><span class="discovery-badge discovery-badge--low">Low</span></td>
+          </tr>
+          <tr>
+            <td>13</td>
+            <td>B4</td>
+            <td>Fallback Link</td>
+            <td>2</td>
+            <td><span class="rank-badge rank-badge--fair">6</span></td>
+            <td><span class="discovery-badge discovery-badge--low">Low</span></td>
+          </tr>
+          <tr>
+            <td>14</td>
+            <td>D2</td>
+            <td>Return to Grid</td>
+            <td>4</td>
+            <td><span class="rank-badge rank-badge--fair">5</span></td>
+            <td><span class="discovery-badge discovery-badge--high">High</span></td>
+          </tr>
+          <tr>
+            <td>15</td>
+            <td>C4</td>
+            <td>Close and Reopen</td>
+            <td>4</td>
+            <td><span class="rank-badge rank-badge--poor">4</span></td>
+            <td><span class="discovery-badge discovery-badge--high">High</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ================================================================
+         EDGE CASES
+         ================================================================ -->
+    <section class="section">
+      <h2 class="section__title">
+        <span class="section__title-icon">&#9888;</span>
+        Edge Cases
+      </h2>
+      <p class="section__subtitle">
+        13 documented edge cases grouped by category. Each describes the scenario and expected behavior.
+      </p>
+
+      <h3 style="font-size: 16px; margin-bottom: 16px; color: var(--text-muted);">Selection Edge Cases</h3>
+      <div class="edge-cases-grid">
+        <div class="edge-case">
+          <div class="edge-case__id">E1</div>
+          <div class="edge-case__scenario">No promotion selected</div>
+          <div class="edge-case__behavior">Primary tabs (Editor, Media, Design) disabled with 50% opacity. Tooltip: "Select a promotion to edit"</div>
+        </div>
+        <div class="edge-case">
+          <div class="edge-case__id">E2</div>
+          <div class="edge-case__scenario">Multiple promotions selected (2+)</div>
+          <div class="edge-case__behavior">Layout panel links disabled. All other primary tabs remain enabled.</div>
+        </div>
+        <div class="edge-case">
+          <div class="edge-case__id">E3</div>
+          <div class="edge-case__scenario">Category row selected</div>
+          <div class="edge-case__behavior">No action available. Category rows are grouping headers only.</div>
+        </div>
+        <div class="edge-case">
+          <div class="edge-case__id">E4</div>
+          <div class="edge-case__scenario">Deselect row while modal open</div>
+          <div class="edge-case__behavior">Modal remains open. Context preserved for current promotion.</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <h3 style="font-size: 16px; margin-bottom: 16px; color: var(--text-muted);">Media Edge Cases</h3>
+      <div class="edge-cases-grid">
+        <div class="edge-case">
+          <div class="edge-case__id">E5</div>
+          <div class="edge-case__scenario">No hero image assigned</div>
+          <div class="edge-case__behavior">Show "No image" placeholder. "Add Image" button available.</div>
+        </div>
+        <div class="edge-case">
+          <div class="edge-case__id">E6</div>
+          <div class="edge-case__scenario">Image fails to load</div>
+          <div class="edge-case__behavior">Error state with retry button. Fallback placeholder shown.</div>
+        </div>
+        <div class="edge-case">
+          <div class="edge-case__id">E7</div>
+          <div class="edge-case__scenario">Search returns no results</div>
+          <div class="edge-case__behavior">Empty state message: "No images found. Try different search terms."</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <h3 style="font-size: 16px; margin-bottom: 16px; color: var(--text-muted);">Navigation Edge Cases</h3>
+      <div class="edge-cases-grid">
+        <div class="edge-case">
+          <div class="edge-case__id">E8</div>
+          <div class="edge-case__scenario">Click "Data Grid" in breadcrumb</div>
+          <div class="edge-case__behavior">Closes modal. Returns to grid view. Selection preserved.</div>
+        </div>
+        <div class="edge-case">
+          <div class="edge-case__id">E9</div>
+          <div class="edge-case__scenario">Previous at first / Next at last item</div>
+          <div class="edge-case__behavior">Button disabled. Visual indicator (grayed out).</div>
+        </div>
+        <div class="edge-case">
+          <div class="edge-case__id">E10</div>
+          <div class="edge-case__scenario">Tab switch during transition</div>
+          <div class="edge-case__behavior">Queue the switch OR block until transition complete.</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <h3 style="font-size: 16px; margin-bottom: 16px; color: var(--text-muted);">Layout Panel Edge Cases</h3>
+      <div class="edge-cases-grid">
+        <div class="edge-case">
+          <div class="edge-case__id">E11</div>
+          <div class="edge-case__scenario">Switch card size with unsaved changes</div>
+          <div class="edge-case__behavior">Auto-save current size config. No confirmation needed.</div>
+        </div>
+        <div class="edge-case">
+          <div class="edge-case__id">E12</div>
+          <div class="edge-case__scenario">All 9 sizes have custom configs</div>
+          <div class="edge-case__behavior">Visual indicator (purple dot) on each customized size.</div>
+        </div>
+        <div class="edge-case">
+          <div class="edge-case__id">E13</div>
+          <div class="edge-case__scenario">Reset to default template</div>
+          <div class="edge-case__behavior">Confirmation dialog: "Reset positioning to default?"</div>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+</body>
+</html>

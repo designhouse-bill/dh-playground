@@ -1,0 +1,285 @@
+/**
+ * Circular Date Banner - Main Banner Styles
+ */
+
+/* ==========================================================================
+   Banner Container
+   ========================================================================== */
+.circular-date-banner {
+  width: 100%;
+  background-color: var(--color-primary);
+  padding: var(--spacing-sm) var(--spacing-xs);
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   Banner Content
+   ========================================================================== */
+.banner__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+/* ==========================================================================
+   Banner Title (e.g., "WEEKLY AD")
+   ========================================================================== */
+.banner__title {
+  font-family: var(--font-heading);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* ==========================================================================
+   Banner Day Names (e.g., "Wednesday - Tuesday")
+   ========================================================================== */
+.banner__day-names {
+  font-family: var(--font-primary);
+  font-size: 0.5625rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0;
+  line-height: 1.2;
+  opacity: 0.8;
+}
+
+/* ==========================================================================
+   Banner Date Range
+   ========================================================================== */
+.banner__date-range {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25em;
+  font-family: var(--font-primary);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-light);
+  margin: 0;
+  line-height: 1.4;
+  opacity: 0.95;
+}
+
+/* Date parts - each part stays together (nowrap) */
+.banner__date-part {
+  white-space: nowrap;
+}
+
+.banner__date-part--separator {
+  padding: 0 0.1em;
+}
+
+/* ==========================================================================
+   Responsive Adjustments
+   ========================================================================== */
+
+/* Mobile-first base styles are defined above (< 640px):
+   - header: 14px (0.875rem)
+   - dates: 12px (0.75rem)
+   - day names: 9px (0.5625rem)
+   - padding: sm xs
+*/
+
+/* Tablet (640px - 1024px) */
+@media (min-width: 640px) {
+  .circular-date-banner {
+    padding: var(--spacing-md) var(--spacing-sm);
+  }
+
+  .banner__title {
+    font-size: 1rem; /* 16px */
+  }
+
+  .banner__date-range {
+    font-size: 0.875rem; /* 14px */
+  }
+
+  .banner__day-names {
+    font-size: 0.6875rem; /* 11px */
+  }
+}
+
+/* Desktop (> 1024px) */
+@media (min-width: 1024px) {
+  .circular-date-banner {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+
+  .banner__title {
+    font-size: 1.125rem; /* 18px */
+  }
+
+  .banner__date-range {
+    font-size: 1rem; /* 16px */
+  }
+
+  .banner__day-names {
+    font-size: 0.75rem; /* 12px */
+  }
+}
+
+/* ==========================================================================
+   Day Names Stacking (Mobile only when showDayNames is true)
+   ========================================================================== */
+@media (max-width: 639px) {
+  /* When day names are shown on mobile, stack them below date range */
+  .banner__content--stacked {
+    gap: var(--spacing-xxs, 2px);
+  }
+
+  .banner__content--stacked .banner__day-names {
+    order: 3;
+    margin-top: var(--spacing-xs);
+  }
+}
+
+/* ==========================================================================
+   Sticky Scroll Behavior
+   ========================================================================== */
+
+/*
+ * Sticky behavior uses a wrapper pattern:
+ * - .banner-sticky-wrapper: position: sticky + overflow: hidden (defined in page CSS)
+ * - .circular-date-banner: transforms to hide/show within the wrapper
+ * This allows the banner to animate "in place" revealing from the top of the column
+ */
+
+/* When sticky is enabled, add transition for smooth reveal animation */
+.circular-date-banner--sticky-enabled {
+  /* Transition for smooth reveal animation */
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Add shadow when sticky and scrolled past threshold */
+.circular-date-banner--sticky-active {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Hidden state - slid up out of view (reveals by sliding down) */
+.circular-date-banner--hidden {
+  transform: translateY(-100%);
+  box-shadow: none;
+  /* Slightly faster hide animation */
+  transition: transform 0.2s cubic-bezier(0.4, 0, 1, 1),
+              box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
+}
+
+/* Visible state - slides down to reveal in place */
+.circular-date-banner--visible {
+  transform: translateY(0);
+}
+
+/* Reduce motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .circular-date-banner--sticky-enabled,
+  .circular-date-banner--hidden {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+   Horizontal Layout Mode
+   ========================================================================== */
+
+/* Horizontal layout - inline or two-line with day names */
+.circular-date-banner--horizontal {
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.circular-date-banner--horizontal .banner__content {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 100%;
+}
+
+.circular-date-banner--horizontal .banner__title {
+  /* Title visibility controlled by showTitle config */
+  flex-shrink: 0;
+}
+
+.circular-date-banner--horizontal .banner__day-names {
+  display: none; /* Day names are inline with date in horizontal mode */
+}
+
+.circular-date-banner--horizontal .banner__date-range {
+  justify-content: flex-end; /* Align dates to the right in horizontal mode */
+  font-size: 0.8125rem; /* 13px */
+  font-weight: var(--font-weight-semibold);
+  opacity: 1;
+  letter-spacing: 0.02em;
+}
+
+/* Two-line date layout (hidden by default) */
+.banner__date-lines {
+  display: none;
+}
+
+.banner__date-start,
+.banner__date-end {
+  font-family: var(--font-primary);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-light);
+  margin: 0;
+  line-height: 1.4;
+  opacity: 0.95;
+}
+
+.circular-date-banner--horizontal .banner__date-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.circular-date-banner--horizontal .banner__date-start,
+.circular-date-banner--horizontal .banner__date-end {
+  font-size: 0.8125rem;
+  font-weight: var(--font-weight-semibold);
+  opacity: 1;
+  letter-spacing: 0.02em;
+}
+
+/* Tablet (640px - 1024px) */
+@media (min-width: 640px) {
+  .circular-date-banner--horizontal {
+    padding: var(--spacing-sm) var(--spacing-lg);
+  }
+
+  .circular-date-banner--horizontal .banner__date-range {
+    font-size: 0.875rem; /* 14px */
+  }
+
+  .circular-date-banner--horizontal .banner__date-start,
+  .circular-date-banner--horizontal .banner__date-end {
+    font-size: 0.875rem;
+  }
+}
+
+/* Desktop (> 1024px) */
+@media (min-width: 1024px) {
+  .circular-date-banner--horizontal {
+    padding: var(--spacing-md) var(--spacing-xl);
+  }
+
+  .circular-date-banner--horizontal .banner__date-range {
+    font-size: 1rem; /* 16px */
+  }
+
+  .circular-date-banner--horizontal .banner__date-start,
+  .circular-date-banner--horizontal .banner__date-end {
+    font-size: 1rem;
+  }
+}

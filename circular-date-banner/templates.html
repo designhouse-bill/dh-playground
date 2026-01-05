@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Banner Configuration Templates - Complexity Showcase</title>
+  <link rel="stylesheet" href="styles/variables.css">
+  <link rel="stylesheet" href="styles/banner.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-primary, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+      background-color: #f3f4f6;
+      color: #1f2937;
+      line-height: 1.5;
+    }
+
+    /* Page Header */
+    .page-header {
+      background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
+      color: white;
+      padding: 48px 24px;
+      text-align: center;
+    }
+
+    .page-header__title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .page-header__subtitle {
+      font-size: 1.125rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Stats Panel */
+    .stats-panel {
+      background: white;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 24px;
+    }
+
+    .stats-panel__inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 24px;
+    }
+
+    .stat-card {
+      text-align: center;
+      padding: 16px;
+      background: #f9fafb;
+      border-radius: 8px;
+    }
+
+    .stat-card__number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #1e40af;
+      line-height: 1;
+    }
+
+    .stat-card__label {
+      font-size: 0.875rem;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    .stat-card--warning .stat-card__number {
+      color: #dc2626;
+    }
+
+    /* Main Content */
+    .main-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    /* Section */
+    .section {
+      margin-bottom: 48px;
+    }
+
+    .section__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .section__title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .section__count {
+      background: #1e40af;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    /* Templates Grid */
+    .templates-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 1200px) {
+      .templates-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .templates-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .templates-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Template Card */
+    .template-card {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .template-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .template-card__preview {
+      background: #f9fafb;
+      min-height: 60px;
+    }
+
+    .template-card__info {
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .template-card__name {
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .template-card__settings-btn {
+      background: none;
+      border: none;
+      padding: 4px 8px;
+      cursor: pointer;
+      color: #6b7280;
+      font-size: 0.75rem;
+      border-radius: 4px;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .template-card__settings-btn:hover {
+      background: #e5e7eb;
+      color: #1f2937;
+    }
+
+    /* Banner Styles Override for Preview */
+    .template-card__preview .circular-date-banner {
+      width: 100%;
+    }
+
+    /* Settings Overlay */
+    .settings-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .settings-overlay--visible {
+      display: flex;
+    }
+
+    .settings-modal {
+      background: white;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 80vh;
+      overflow: auto;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .settings-modal__header {
+      padding: 20px 24px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .settings-modal__title {
+      font-size: 1.125rem;
+      font-weight: 600;
+    }
+
+    .settings-modal__close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #6b7280;
+      line-height: 1;
+      padding: 4px;
+    }
+
+    .settings-modal__close:hover {
+      color: #1f2937;
+    }
+
+    .settings-modal__preview {
+      padding: 24px;
+      background: #f3f4f6;
+    }
+
+    .settings-modal__config {
+      padding: 24px;
+    }
+
+    .settings-modal__config-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #6b7280;
+      margin-bottom: 12px;
+    }
+
+    .settings-modal__config-code {
+      background: #1f2937;
+      color: #e5e7eb;
+      padding: 16px;
+      border-radius: 8px;
+      font-family: 'SF Mono', Monaco, Consolas, monospace;
+      font-size: 0.75rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    /* Conclusion Panel */
+    .conclusion-panel {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border: 2px solid #f59e0b;
+      border-radius: 12px;
+      padding: 32px;
+      margin-top: 48px;
+    }
+
+    .conclusion-panel__title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #92400e;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .conclusion-panel__content {
+      color: #78350f;
+    }
+
+    .conclusion-panel__list {
+      margin: 16px 0;
+      padding-left: 24px;
+    }
+
+    .conclusion-panel__list li {
+      margin-bottom: 8px;
+    }
+
+    .conclusion-panel__recommendation {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 16px;
+      border-left: 4px solid #059669;
+    }
+
+    .conclusion-panel__recommendation-title {
+      font-weight: 600;
+      color: #065f46;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Page Header -->
+  <header class="page-header">
+    <h1 class="page-header__title">Banner Configuration Templates</h1>
+    <p class="page-header__subtitle">
+      Demonstrating the combinatorial complexity of granular banner configuration options
+    </p>
+  </header>
+
+  <!-- Stats Panel -->
+  <div class="stats-panel">
+    <div class="stats-panel__inner">
+      <div class="stat-card">
+        <div class="stat-card__number">7</div>
+        <div class="stat-card__label">Layout Variables</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__number">9</div>
+        <div class="stat-card__label">Alignment Combos (Horiz)</div>
+      </div>
+      <div class="stat-card stat-card--warning">
+        <div class="stat-card__number">96+</div>
+        <div class="stat-card__label">Minimum Unique Layouts</div>
+      </div>
+      <div class="stat-card stat-card--warning">
+        <div class="stat-card__number">432+</div>
+        <div class="stat-card__label">With Alignment Variants</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Horizontal Templates Section -->
+    <section class="section">
+      <div class="section__header">
+        <h2 class="section__title">Horizontal Layout Templates</h2>
+        <span class="section__count" id="horizontal-count">0 templates</span>
+      </div>
+      <div class="templates-grid" id="horizontal-grid">
+        <!-- Templates will be rendered here -->
+      </div>
+    </section>
+
+    <!-- Vertical Templates Section -->
+    <section class="section">
+      <div class="section__header">
+        <h2 class="section__title">Vertical Layout Templates</h2>
+        <span class="section__count" id="vertical-count">0 templates</span>
+      </div>
+      <div class="templates-grid" id="vertical-grid">
+        <!-- Templates will be rendered here -->
+      </div>
+    </section>
+
+    <!-- Conclusion Panel -->
+    <div class="conclusion-panel">
+      <h3 class="conclusion-panel__title">
+        <span>&#9888;</span> UX Complexity Analysis
+      </h3>
+      <div class="conclusion-panel__content">
+        <p>
+          The templates above represent only a <strong>subset</strong> of possible configurations.
+          The actual number of unique combinations is significantly higher when accounting for all variables.
+        </p>
+
+        <h4 style="margin-top: 16px; font-weight: 600;">Configuration Variables:</h4>
+        <ul class="conclusion-panel__list">
+          <li><strong>Layout Mode:</strong> 2 options (horizontal, vertical)</li>
+          <li><strong>Flex Direction:</strong> 2 options (normal, reverse)</li>
+          <li><strong>Show Title:</strong> 2 options (yes, no)</li>
+          <li><strong>Show Day Names:</strong> 2 options (yes, no)</li>
+          <li><strong>Day Name Format:</strong> 2 options (abbreviated, full)</li>
+          <li><strong>Show Year:</strong> 2 options (yes, no)</li>
+          <li><strong>Text Case:</strong> 2 options (capitalize, uppercase)</li>
+          <li><strong>Title Alignment:</strong> 3 options (left, center, right) - horizontal only</li>
+          <li><strong>Date Alignment:</strong> 3 options (left, center, right) - horizontal only</li>
+        </ul>
+
+        <p>
+          <strong>Basic calculation:</strong> 2 &times; 2 &times; 2 &times; 2 &times; 2 &times; 2 &times; 2 = <strong>128 base combinations</strong><br>
+          <strong>With alignment (horizontal):</strong> 128 &times; 9 = <strong>1,152 combinations</strong>
+        </p>
+
+        <div class="conclusion-panel__recommendation">
+          <div class="conclusion-panel__recommendation-title">Recommendation: Preset-Based Approach</div>
+          <p>
+            Instead of exposing all configuration options, offer <strong>5-8 curated presets</strong>
+            that cover common use cases. This reduces decision fatigue, ensures brand consistency,
+            and simplifies QA testing. An "Advanced" mode can remain available for edge cases.
+          </p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Settings Overlay -->
+  <div class="settings-overlay" id="settings-overlay">
+    <div class="settings-modal">
+      <div class="settings-modal__header">
+        <h3 class="settings-modal__title" id="modal-title">Template Settings</h3>
+        <button class="settings-modal__close" id="modal-close">&times;</button>
+      </div>
+      <div class="settings-modal__preview" id="modal-preview">
+        <!-- Preview will be rendered here -->
+      </div>
+      <div class="settings-modal__config">
+        <div class="settings-modal__config-title">Configuration Object</div>
+        <pre class="settings-modal__config-code" id="modal-config"></pre>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import DateUtils from './scripts/dateUtils.js';
+
+    // Template definitions
+    const horizontalTemplates = [
+      // Base variations
+      {
+        name: "Default (Title Left, Dates Right)",
+        config: { layoutMode: 'horizontal', showTitle: true, showDayNames: true, dayNameFormat: 'abbreviated', showYear: false, dateTextTransform: 'capitalize', flexDirection: 'normal', titleAlignment: 'left', dateAlignment: 'right' }
+      },
+      {
+        name: "Reversed (Dates Left, Title Right)",
+        config: { layoutMode: 'horizontal', showTitle: true, showDayNames: true, dayNameFormat: 'abbreviated', showYear: false, dateTextTransform: 'capitalize', flexDirection: 'reverse', titleAlignment: 'right', dateAlignment: 'left' }
+      },
+      {
+        name: "No Title (Dates Only)",
+        config: { layoutMode: 'horizontal', showTitle: false, showDayNames: true, dayNameFormat: 'abbreviated', showYear: false, dateTextTransform: 'capitalize', flexDirection: 'normal', titleAlignment: 'left', dateAlignment: 'center' }
+      },
+      {
+        name: "Full Day Names",
+        config: { layoutMode: 'horizontal', showTitle: true, showDayNames: true, dayNameFormat: 'full', showYear: false, dateTextTransform: 'capitalize', flexDirection: 'normal', titleAlignment: 'left', dateAlignment: 'right' }
+      },
+      {
+        name: "No Day Names",
+        config: { layoutMode: 'horizontal', showTitle: true, showDayNames: false, dayNameFormat: 'abbreviated', showYear: false, dateTextTransform: 'capitalize', flexDirection: 'normal', titleAlignment: 'left', dateAlignment: 'right' }
+      },
+      {
+        name: "With Year",
+        config: { layoutMode: 'horizontal', showTitle: true, showDayNames: true, dayNameFormat: 'abbreviated', showYear: true, dateTextTransform: 'capitalize', flexDirection: 'normal', titleAlignment: 'left', dateAlignment: 'right' }
+      },
+      {
+        name: "UPPERCASE",
+        config: { layoutMode: 'horizontal', showTitle: true, showDayNames: true, dayNameFormat: 'abbreviated', showYear: false, dateTextTransform: 'uppercase', flexDirection: 'normal', titleAlignment: 'left', dateAlignment: 'right' }
+      },
+      // Alignment variations
+      {
+        name: "Center / Center",
+        config: { layoutMode: 'horizontal', showTitle: true, showDayNames: true, dayNameFormat: 'abbreviated', showYear: false, dateTextTransform: 'capitalize', flexDirection: 'normal', titleAlignment: 'center', dateAlignment: 'center' }
+      },
+      {
+        name: "Right / Left",
+        config: { layoutMode: 'horizontal', showTitle: true, showDayNames: true, dayNameFormat: 'abbreviated', showYear: false, dateTextTransform: 'capitalize', flexDirection: 'normal', titleAlignment: 'right', dateAlignment: 'left' }
+      },
+      {
+        name: "Left / Left",
+        config: { layoutMode: 'horizontal', showTitle: true, showDayNames: true, dayNameFormat: 'abbreviated', showYear: false, dateTextTransform: 'capitalize', flexDirection: 'normal', titleAlignment: 'left', dateAlignment: 'left' }
+      },
+      {
+        name: "Right / Right",
+        config: { layoutMode: 'horizontal', showTitle: true, showDayNames: true, dayNameFormat: 'abbreviated', showYear: false, dateTextTransform: 'capitalize', flexDirection: 'normal', titleAlignment: 'right', dateAlignment: 'right' }
+      },
+      // Combined variations
+      {
+        name: "Full Names + Year + UPPER",
+        config: { layoutMode: 'horizontal', showTitle: true, showDayNames: true, dayNameFormat: 'full', showYear: true, dateTextTransform: 'uppercase', flexDirection: 'normal', titleAlignment: 'left', dateAlignment: 'right' }
+      },
+      {
+        name: "No Title + Full Names",
+        config: { layoutMode: 'horizontal', showTitle: false, showDayNames: true, dayNameFormat: 'full', showYear: false, dateTextTransform: 'capitalize', flexDirection: 'normal', titleAlignment: 'left', dateAlignment: 'center' }
+      },
+      {
+        name: "No Title + Year + UPPER",
+        config: { layoutMode: 'horizontal', showTitle: false, showDayNames: true, dayNameFormat: 'abbreviated', showYear: true, dateTextTransform: 'uppercase', flexDirection: 'normal', titleAlignment: 'left', dateAlignment: 'center' }
+      },
+      {
+        name: "Reversed + Full Names",
+        config: { layoutMode: 'horizontal', showTitle: true, showDayNames: true, dayNameFormat: 'full', showYear: false, dateTextTransform: 'capitalize', flexDirection: 'reverse', titleAlignment: 'right', dateAlignment: 'left' }
+      },
+      {
+        name: "Reversed + UPPERCASE",
+        config: { layoutMode: 'horizontal', showTitle: true, showDayNames: true, dayNameFormat: 'abbreviated', showYear: false, dateTextTransform: 'uppercase', flexDirection: 'reverse', titleAlignment: 'right', dateAlignment: 'left' }
+      },
+      {
+        name: "No Days + Year",
+        config: { layoutMode: 'horizontal', showTitle: true, showDayNames: false, dayNameFormat: 'abbreviated', showYear: true, dateTextTransform: 'capitalize', flexDirection: 'normal', titleAlignment: 'left', dateAlignment: 'right' }
+      },
+      {
+        name: "No Days + UPPERCASE",
+        config: { layoutMode: 'horizontal', showTitle: true, showDayNames: false, dayNameFormat: 'abbreviated', showYear: false, dateTextTransform: 'uppercase', flexDirection: 'normal', titleAlignment: 'left', dateAlignment: 'right' }
+      },
+      {
+        name: "Center All + Year",
+        config: { layoutMode: 'horizontal', showTitle: true, showDayNames: true, dayNameFormat: 'abbreviated', showYear: true, dateTextTransform: 'capitalize', flexDirection: 'normal', titleAlignment: 'center', dateAlignment: 'center' }
+      },
+      {
+        name: "Minimal (No Title, No Days)",
+        config: { layoutMode: 'horizontal', showTitle: false, showDayNames: false, dayNameFormat: 'abbreviated', showYear: false, dateTextTransform: 'capitalize', flexDirection: 'normal', titleAlignment: 'left', dateAlignment: 'center' }
+      }
+    ];
+
+    const verticalTemplates = [
+      {
+        name: "Default Centered",
+        config: { layoutMode: 'vertical', showTitle: true, showDayNames: true, dayNameFormat: 'abbreviated', showYear: false, dateTextTransform: 'capitalize', flexDirection: 'normal', alignment: 'center' }
+      },
+      {
+        name: "Reversed (Dates on Top)",
+        config: { layoutMode: 'vertical', showTitle: true, showDayNames: true, dayNameFormat: 'abbreviated', showYear: false, dateTextTransform: 'capitalize', flexDirection: 'reverse', alignment: 'center' }
+      },
+      {
+        name: "No Title",
+        config: { layoutMode: 'vertical', showTitle: false, showDayNames: true, dayNameFormat: 'abbreviated', showYear: false, dateTextTransform: 'capitalize', flexDirection: 'normal', alignment: 'center' }
+      },
+      {
+        name: "Full Day Names",
+        config: { layoutMode: 'vertical', showTitle: true, showDayNames: true, dayNameFormat: 'full', showYear: false, dateTextTransform: 'capitalize', flexDirection: 'normal', alignment: 'center' }
+      },
+      {
+        name: "No Day Names",
+        config: { layoutMode: 'vertical', showTitle: true, showDayNames: false, dayNameFormat: 'abbreviated', showYear: false, dateTextTransform: 'capitalize', flexDirection: 'normal', alignment: 'center' }
+      },
+      {
+        name: "With Year",
+        config: { layoutMode: 'vertical', showTitle: true, showDayNames: true, dayNameFormat: 'abbreviated', showYear: true, dateTextTransform: 'capitalize', flexDirection: 'normal', alignment: 'center' }
+      },
+      {
+        name: "UPPERCASE",
+        config: { layoutMode: 'vertical', showTitle: true, showDayNames: true, dayNameFormat: 'abbreviated', showYear: false, dateTextTransform: 'uppercase', flexDirection: 'normal', alignment: 'center' }
+      },
+      {
+        name: "Full Names + Year",
+        config: { layoutMode: 'vertical', showTitle: true, showDayNames: true, dayNameFormat: 'full', showYear: true, dateTextTransform: 'capitalize', flexDirection: 'normal', alignment: 'center' }
+      },
+      {
+        name: "Full Names + UPPERCASE",
+        config: { layoutMode: 'vertical', showTitle: true, showDayNames: true, dayNameFormat: 'full', showYear: false, dateTextTransform: 'uppercase', flexDirection: 'normal', alignment: 'center' }
+      },
+      {
+        name: "No Title + Year",
+        config: { layoutMode: 'vertical', showTitle: false, showDayNames: true, dayNameFormat: 'abbreviated', showYear: true, dateTextTransform: 'capitalize', flexDirection: 'normal', alignment: 'center' }
+      },
+      {
+        name: "Reversed + UPPERCASE",
+        config: { layoutMode: 'vertical', showTitle: true, showDayNames: true, dayNameFormat: 'abbreviated', showYear: false, dateTextTransform: 'uppercase', flexDirection: 'reverse', alignment: 'center' }
+      },
+      {
+        name: "Minimal (No Title, No Days)",
+        config: { layoutMode: 'vertical', showTitle: false, showDayNames: false, dayNameFormat: 'abbreviated', showYear: false, dateTextTransform: 'capitalize', flexDirection: 'normal', alignment: 'center' }
+      }
+    ];
+
+    // Calculate date range
+    const dateRange = DateUtils.calculateCircularDateRange('Wednesday', new Date());
+    const { startDate, endDate } = dateRange;
+
+    // Render a single banner preview
+    function renderBanner(config) {
+      const isHorizontal = config.layoutMode === 'horizontal';
+      const horizontalClass = isHorizontal ? 'circular-date-banner--horizontal' : '';
+
+      // Get date strings
+      let startText, endText;
+      if (config.showDayNames) {
+        const formatOpts = {
+          dayNameFormat: config.dayNameFormat || 'abbreviated',
+          showYear: config.showYear ?? false,
+          locale: 'en',
+          twoLine: true
+        };
+        const result = DateUtils.formatInlineDateRange(startDate, endDate, formatOpts);
+        startText = result.startLine;
+        endText = result.endLine;
+      } else {
+        const formatOpts = {
+          format: 'explicit',
+          showYear: config.showYear ?? false,
+          showDayNames: false,
+          locale: 'en'
+        };
+        const dateRangeText = DateUtils.formatDateRange(startDate, endDate, formatOpts);
+        const parts = dateRangeText.split(' - ');
+        startText = parts[0] || dateRangeText;
+        endText = parts[1] || '';
+      }
+
+      // Build styles
+      const contentStyle = [];
+      if (isHorizontal) {
+        contentStyle.push(config.flexDirection === 'reverse' ? 'flex-direction: row-reverse' : 'flex-direction: row');
+      } else {
+        contentStyle.push(config.flexDirection === 'reverse' ? 'flex-direction: column-reverse' : 'flex-direction: column');
+      }
+
+      const dateStyle = `text-transform: ${config.dateTextTransform || 'capitalize'}`;
+
+      return `
+        <header class="circular-date-banner ${horizontalClass}" style="background-color: #1a5f2a; color: #ffffff;">
+          <div class="banner__content" style="${contentStyle.join('; ')}">
+            ${config.showTitle !== false ? '<h1 class="banner__title" style="font-size: 0.875rem;">WEEKLY AD</h1>' : ''}
+            <div class="banner__date-range" style="font-size: 0.75rem; ${dateStyle}">
+              <div class="banner__date-part banner__date-part--start">${startText}</div>
+              ${endText ? '<div class="banner__date-part banner__date-part--separator" style="padding: 0 0.25em;">-</div>' : ''}
+              ${endText ? `<div class="banner__date-part banner__date-part--end">${endText}</div>` : ''}
+            </div>
+          </div>
+        </header>
+      `;
+    }
+
+    // Render template card
+    function renderTemplateCard(template, index) {
+      return `
+        <div class="template-card" data-template-index="${index}" data-template-type="${template.config.layoutMode}">
+          <div class="template-card__preview">
+            ${renderBanner(template.config)}
+          </div>
+          <div class="template-card__info">
+            <span class="template-card__name">${template.name}</span>
+            <button class="template-card__settings-btn" data-template-index="${index}" data-template-type="${template.config.layoutMode}">
+              Settings
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    // Initialize
+    function init() {
+      // Render horizontal templates
+      const horizontalGrid = document.getElementById('horizontal-grid');
+      horizontalGrid.innerHTML = horizontalTemplates.map((t, i) => renderTemplateCard(t, i)).join('');
+      document.getElementById('horizontal-count').textContent = `${horizontalTemplates.length} templates`;
+
+      // Render vertical templates
+      const verticalGrid = document.getElementById('vertical-grid');
+      verticalGrid.innerHTML = verticalTemplates.map((t, i) => renderTemplateCard(t, i)).join('');
+      document.getElementById('vertical-count').textContent = `${verticalTemplates.length} templates`;
+
+      // Settings overlay handlers
+      const overlay = document.getElementById('settings-overlay');
+      const modalClose = document.getElementById('modal-close');
+
+      document.querySelectorAll('.template-card__settings-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const index = parseInt(e.target.dataset.templateIndex);
+          const type = e.target.dataset.templateType;
+          const templates = type === 'horizontal' ? horizontalTemplates : verticalTemplates;
+          const template = templates[index];
+
+          document.getElementById('modal-title').textContent = template.name;
+          document.getElementById('modal-preview').innerHTML = renderBanner(template.config);
+          document.getElementById('modal-config').textContent = JSON.stringify(template.config, null, 2);
+
+          overlay.classList.add('settings-overlay--visible');
+        });
+      });
+
+      modalClose.addEventListener('click', () => {
+        overlay.classList.remove('settings-overlay--visible');
+      });
+
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+          overlay.classList.remove('settings-overlay--visible');
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          overlay.classList.remove('settings-overlay--visible');
+        }
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>

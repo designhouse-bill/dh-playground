@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Circular Date Banner - Prototype</title>
+
+  <!-- CSS Files (load in order: variables first) -->
+  <link rel="stylesheet" href="styles/variables.css">
+  <link rel="stylesheet" href="styles/banner.css">
+  <link rel="stylesheet" href="styles/patterns.css">
+  <link rel="stylesheet" href="styles/pill.css">
+  <link rel="stylesheet" href="styles/controls.css">
+
+  <style>
+    /* Page-level styles for the prototype demo */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: var(--spacing-lg);
+      background-color: #e8e8e8;
+      font-family: var(--font-primary);
+      min-height: 100vh;
+    }
+
+    /* Mock Promotions Column Layout */
+    .page-layout {
+      display: flex;
+      justify-content: center;
+      gap: var(--spacing-lg);
+      padding-right: 340px; /* Make room for config panel */
+    }
+
+    .promotions-column {
+      position: relative; /* Establishes positioning context for sticky banner */
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 472px;
+      background-color: #fff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: max-width 0.3s ease;
+    }
+
+    /* Sticky wrapper - clips the banner for reveal animation when sticky is enabled */
+    .banner-sticky-wrapper--active {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      overflow: hidden; /* Clips banner when it slides up for reveal animation */
+    }
+
+    /* Width is controlled via inline style from the width slider (320px - 472px) */
+
+    /* Promotions Grid Container */
+    .promotions-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 8px;
+    }
+
+    /* Mobile: 4px gap and padding */
+    @media (max-width: 639px) {
+      .promotions-grid {
+        gap: 4px;
+        padding: 4px;
+      }
+    }
+
+    /* Placeholder promotion cards */
+    .placeholder-card {
+      background-color: #f0f0f0;
+      border: 1px dashed #ccc;
+      border-radius: 4px;
+      text-align: center;
+      color: #999;
+      font-size: 0.625rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 80px;
+      box-sizing: border-box;
+    }
+
+    /* Grid size classes - columns (width) */
+    .placeholder-card--1x1 { grid-column: span 1; grid-row: span 1; }
+    .placeholder-card--1x2 { grid-column: span 1; grid-row: span 2; }
+    .placeholder-card--1x3 { grid-column: span 1; grid-row: span 3; }
+    .placeholder-card--2x1 { grid-column: span 2; grid-row: span 1; }
+    .placeholder-card--2x2 { grid-column: span 2; grid-row: span 2; }
+    .placeholder-card--2x3 { grid-column: span 2; grid-row: span 3; }
+    .placeholder-card--3x1 { grid-column: span 3; grid-row: span 1; }
+    .placeholder-card--3x2 { grid-column: span 3; grid-row: span 2; }
+    .placeholder-card--3x3 { grid-column: span 3; grid-row: span 3; }
+
+    /* Row heights based on span */
+    .placeholder-card--1x1,
+    .placeholder-card--2x1,
+    .placeholder-card--3x1 {
+      min-height: 80px;
+    }
+
+    .placeholder-card--1x2,
+    .placeholder-card--2x2,
+    .placeholder-card--3x2 {
+      min-height: 168px; /* 80*2 + 8 gap */
+    }
+
+    .placeholder-card--1x3,
+    .placeholder-card--2x3,
+    .placeholder-card--3x3 {
+      min-height: 256px; /* 80*3 + 8*2 gaps */
+    }
+
+    /* Mobile row heights (4px gap) */
+    @media (max-width: 639px) {
+      .placeholder-card--1x2,
+      .placeholder-card--2x2,
+      .placeholder-card--3x2 {
+        min-height: 164px; /* 80*2 + 4 gap */
+      }
+
+      .placeholder-card--1x3,
+      .placeholder-card--2x3,
+      .placeholder-card--3x3 {
+        min-height: 248px; /* 80*3 + 4*2 gaps */
+      }
+    }
+
+    /* Desktop body padding */
+    @media (min-width: 1024px) {
+      body {
+        padding: var(--spacing-xl);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .page-layout {
+        padding-right: 0;
+      }
+    }
+
+    /* Mobile: full width with padding */
+    @media (max-width: 639px) {
+      body {
+        padding: var(--spacing-sm);
+      }
+
+      .promotions-column {
+        max-width: 100%;
+      }
+    }
+
+
+    /* Width Slider Control */
+    .width-control {
+      margin-bottom: var(--spacing-md);
+    }
+
+    .width-control-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.6875rem;
+      margin-bottom: var(--spacing-xs);
+      color: #6b7280;
+    }
+
+    .width-control-label .value {
+      font-family: monospace;
+      color: var(--color-primary, #1a5f2a);
+      font-weight: 600;
+    }
+
+    .width-slider {
+      width: 100%;
+      height: 6px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: #e5e7eb;
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .width-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--color-primary, #1a5f2a);
+      cursor: pointer;
+      border: 2px solid #fff;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+      transition: transform 0.15s ease;
+    }
+
+    .width-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+    }
+
+    .width-slider::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--color-primary, #1a5f2a);
+      cursor: pointer;
+      border: 2px solid #fff;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .width-presets {
+      display: flex;
+      gap: 4px;
+      margin-top: var(--spacing-xs);
+    }
+
+    .width-preset-btn {
+      flex: 1;
+      padding: 6px 8px;
+      font-size: 0.625rem;
+      font-weight: var(--font-weight-medium);
+      font-family: var(--font-primary);
+      border: 1px solid #d1d5db;
+      background: #f9fafb;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      color: #6b7280;
+    }
+
+    .width-preset-btn:hover {
+      border-color: var(--color-primary, #1a5f2a);
+      color: var(--color-primary, #1a5f2a);
+    }
+
+    .width-preset-btn.active {
+      background: var(--color-primary, #1a5f2a);
+      border-color: var(--color-primary, #1a5f2a);
+      color: #fff;
+    }
+
+    /* Scroll Position Indicator (Debug) */
+    .scroll-indicator {
+      position: fixed;
+      bottom: var(--spacing-md);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1001;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 12px;
+      font-family: monospace;
+      font-size: 0.6875rem;
+      color: #374151;
+      background-color: rgba(255, 255, 255, 0.95);
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .scroll-indicator__label {
+      color: #6b7280;
+    }
+
+    .scroll-indicator__value {
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary, #1a5f2a);
+      min-width: 40px;
+    }
+
+    .scroll-indicator__state {
+      margin-left: 8px;
+      padding: 2px 6px;
+      font-size: 0.5625rem;
+      font-weight: var(--font-weight-semibold);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-radius: 3px;
+      background-color: #e5e7eb;
+      color: #6b7280;
+    }
+
+    .scroll-indicator__state--sticky {
+      background-color: #dbeafe;
+      color: #1e40af;
+    }
+
+    .scroll-indicator__state--hidden {
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+
+    @media (max-width: 639px) {
+      .scroll-indicator {
+        bottom: 60px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 6px 10px;
+        font-size: 0.625rem;
+      }
+    }
+
+    /* Preset Buttons */
+    .preset-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .preset-btn {
+      padding: 8px 12px;
+      font-size: 0.6875rem;
+      font-weight: var(--font-weight-medium);
+      font-family: var(--font-primary);
+      color: #374151;
+      background-color: #f9fafb;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .preset-btn:hover {
+      background-color: #f3f4f6;
+      border-color: #9ca3af;
+      transform: translateY(-1px);
+    }
+
+    .preset-btn:active {
+      transform: translateY(0);
+    }
+
+    .preset-btn[data-preset="minimal"] {
+      border-left: 3px solid #374151;
+    }
+
+    .preset-btn[data-preset="standard"] {
+      border-left: 3px solid #1a5f2a;
+    }
+
+    .preset-btn[data-preset="bold"] {
+      border-left: 3px solid #991b1b;
+    }
+
+    .preset-btn[data-preset="spanish"] {
+      border-left: 3px solid #1e40af;
+    }
+
+    /* Copy Feedback */
+    .copy-feedback {
+      margin-top: var(--spacing-sm);
+      padding: 8px 12px;
+      font-size: 0.75rem;
+      font-weight: var(--font-weight-medium);
+      color: #166534;
+      background-color: #dcfce7;
+      border: 1px solid #bbf7d0;
+      border-radius: 4px;
+      text-align: center;
+      animation: fadeInOut 2s ease-in-out;
+    }
+
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateY(-4px); }
+      15% { opacity: 1; transform: translateY(0); }
+      85% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-4px); }
+    }
+
+    /* Pattern Preview Section */
+    .pattern-preview-section {
+      max-width: 900px;
+      margin: var(--spacing-xl) auto;
+      padding-right: 340px;
+    }
+
+    .pattern-preview-section h2 {
+      font-size: 1rem;
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-dark);
+      margin: 0 0 var(--spacing-md) 0;
+    }
+
+    @media (max-width: 900px) {
+      .pattern-preview-section {
+        padding-right: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-layout">
+    <!-- Mock Promotions Column -->
+    <div class="promotions-column">
+      <!-- Sticky wrapper - handles position:sticky and clips the banner for reveal animation -->
+      <div class="banner-sticky-wrapper">
+        <!-- Circular Date Banner Component -->
+        <header class="circular-date-banner">
+          <div class="banner__content">
+            <p class="banner__day-names"></p>
+            <h1 class="banner__title">WEEKLY AD</h1>
+            <!-- Single-line date range with flex wrap for overflow -->
+            <div class="banner__date-range">
+              <div class="banner__date-part banner__date-part--start"></div>
+              <div class="banner__date-part banner__date-part--separator">-</div>
+              <div class="banner__date-part banner__date-part--end"></div>
+            </div>
+            <!-- Two-line date layout (for horizontal mode) -->
+            <div class="banner__date-lines">
+              <div class="banner__date-start"></div>
+              <div class="banner__date-end"></div>
+            </div>
+          </div>
+        </header>
+      </div>
+
+      <!-- Promotions Grid -->
+      <div class="promotions-grid">
+        <!-- Row 1: Full width hero (3x2) -->
+        <div class="placeholder-card placeholder-card--3x2">3x2 Hero</div>
+
+        <!-- Row 3: Three 1x1 cards -->
+        <div class="placeholder-card placeholder-card--1x1">1x1</div>
+        <div class="placeholder-card placeholder-card--1x1">1x1</div>
+        <div class="placeholder-card placeholder-card--1x1">1x1</div>
+
+        <!-- Row 4: 2x2 + 1x2 -->
+        <div class="placeholder-card placeholder-card--2x2">2x2</div>
+        <div class="placeholder-card placeholder-card--1x2">1x2</div>
+
+        <!-- Row 6: Full width banner (3x1) -->
+        <div class="placeholder-card placeholder-card--3x1">3x1 Banner</div>
+
+        <!-- Row 7: 1x3 + 2x3 -->
+        <div class="placeholder-card placeholder-card--1x3">1x3</div>
+        <div class="placeholder-card placeholder-card--2x3">2x3</div>
+
+        <!-- Row 10: Three 1x1 cards -->
+        <div class="placeholder-card placeholder-card--1x1">1x1</div>
+        <div class="placeholder-card placeholder-card--1x1">1x1</div>
+        <div class="placeholder-card placeholder-card--1x1">1x1</div>
+
+        <!-- Row 11: 2x1 + 1x1 -->
+        <div class="placeholder-card placeholder-card--2x1">2x1</div>
+        <div class="placeholder-card placeholder-card--1x1">1x1</div>
+
+        <!-- Row 12: 1x1 + 2x1 -->
+        <div class="placeholder-card placeholder-card--1x1">1x1</div>
+        <div class="placeholder-card placeholder-card--2x1">2x1</div>
+
+        <!-- Row 13: Full width (3x2) -->
+        <div class="placeholder-card placeholder-card--3x2">3x2</div>
+
+        <!-- Row 15: 1x2 + 1x2 + 1x2 -->
+        <div class="placeholder-card placeholder-card--1x2">1x2</div>
+        <div class="placeholder-card placeholder-card--1x2">1x2</div>
+        <div class="placeholder-card placeholder-card--1x2">1x2</div>
+
+        <!-- Row 17: 3x3 full grid -->
+        <div class="placeholder-card placeholder-card--3x3">3x3</div>
+
+        <!-- Row 20: Six 1x1 cards (2 rows) -->
+        <div class="placeholder-card placeholder-card--1x1">1x1</div>
+        <div class="placeholder-card placeholder-card--1x1">1x1</div>
+        <div class="placeholder-card placeholder-card--1x1">1x1</div>
+        <div class="placeholder-card placeholder-card--1x1">1x1</div>
+        <div class="placeholder-card placeholder-card--1x1">1x1</div>
+        <div class="placeholder-card placeholder-card--1x1">1x1</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll Position Indicator (Debug) -->
+  <div class="scroll-indicator" id="scroll-indicator">
+    <span class="scroll-indicator__label">Scroll Y:</span>
+    <span class="scroll-indicator__value" id="scroll-y-value">0</span>px
+    <span class="scroll-indicator__state" id="scroll-state">normal</span>
+  </div>
+
+  <!-- Configuration Panel -->
+  <aside class="config-panel">
+    <div class="config-panel__header">
+      <h2 class="config-panel__title">Banner Configuration</h2>
+      <div class="config-panel__header-actions">
+        <a href="templates.html" class="config-panel__link" title="View all template variations">Templates</a>
+        <button type="button" class="config-panel__reset-btn" id="reset-config-btn">Reset</button>
+        <span class="config-panel__toggle">-</span>
+      </div>
+    </div>
+    <div class="config-panel__body">
+
+      <!-- Section: Content -->
+      <div class="config-section">
+        <div class="config-section__header">
+          <h3 class="config-section__title">Content</h3>
+          <span class="config-section__toggle"></span>
+        </div>
+        <div class="config-section__content">
+          <!-- Enabled Toggle -->
+          <div class="config-group">
+            <div class="config-checkbox-group">
+              <input type="checkbox" id="config-enabled" class="config-checkbox" data-config-key="enabled" checked>
+              <label class="config-checkbox-label" for="config-enabled">Banner Enabled</label>
+            </div>
+          </div>
+
+          <!-- Header Text (English) -->
+          <div class="config-group">
+            <label class="config-label" for="config-header-text">Header Text (English)</label>
+            <input type="text" id="config-header-text" class="config-input" data-config-key="headerText" value="WEEKLY AD">
+          </div>
+
+          <!-- Header Text (Translated) -->
+          <div class="config-group">
+            <label class="config-label" for="config-header-text-translated">Header Text (Spanish)</label>
+            <input type="text" id="config-header-text-translated" class="config-input" data-config-key="headerTextTranslated" value="OFERTAS SEMANALES">
+          </div>
+
+          <!-- Locale Toggle -->
+          <div class="config-group">
+            <label class="config-label" for="config-locale">Language</label>
+            <select id="config-locale" class="config-select" data-config-key="locale">
+              <option value="en">English</option>
+              <option value="es">Spanish (Español)</option>
+            </select>
+          </div>
+
+          <!-- Start Day of Week -->
+          <div class="config-group">
+            <label class="config-label" for="config-start-day">Circular Starts On</label>
+            <select id="config-start-day" class="config-select" data-config-key="startDayOfWeek">
+              <option value="Sunday">Sunday</option>
+              <option value="Monday">Monday</option>
+              <option value="Tuesday">Tuesday</option>
+              <option value="Wednesday">Wednesday</option>
+              <option value="Thursday">Thursday</option>
+              <option value="Friday">Friday</option>
+              <option value="Saturday">Saturday</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Layout -->
+      <div class="config-section">
+        <div class="config-section__header">
+          <h3 class="config-section__title">Layout</h3>
+          <span class="config-section__toggle"></span>
+        </div>
+        <div class="config-section__content">
+          <!-- Layout Mode -->
+          <div class="config-group">
+            <label class="config-label">Layout Mode</label>
+            <div class="config-radio-set">
+              <div class="config-radio-group">
+                <input type="radio" id="config-layout-vertical" name="layoutMode" class="config-radio" data-config-key="layoutMode" value="vertical" checked>
+                <label class="config-radio-label" for="config-layout-vertical">Vertical (Stacked)</label>
+              </div>
+              <div class="config-radio-group">
+                <input type="radio" id="config-layout-horizontal" name="layoutMode" class="config-radio" data-config-key="layoutMode" value="horizontal">
+                <label class="config-radio-label" for="config-layout-horizontal">Horizontal (Inline)</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Date Layout (Horizontal only) -->
+          <div class="config-group">
+            <label class="config-label">Date Layout (Horizontal)</label>
+            <div class="config-radio-set">
+              <div class="config-radio-group">
+                <input type="radio" id="config-date-single" name="dateLayout" class="config-radio" data-config-key="dateLayout" value="single-line" checked>
+                <label class="config-radio-label" for="config-date-single">Single Line</label>
+              </div>
+              <div class="config-radio-group">
+                <input type="radio" id="config-date-two" name="dateLayout" class="config-radio" data-config-key="dateLayout" value="two-line">
+                <label class="config-radio-label" for="config-date-two">Two Lines</label>
+              </div>
+            </div>
+            <p class="config-help">Two lines shows start and end dates on separate lines.</p>
+          </div>
+
+          <!-- Flex Direction (Order) -->
+          <div class="config-group">
+            <label class="config-label">Element Order</label>
+            <div class="config-radio-set">
+              <div class="config-radio-group">
+                <input type="radio" id="config-flex-normal" name="flexDirection" class="config-radio" data-config-key="flexDirection" value="normal" checked>
+                <label class="config-radio-label" for="config-flex-normal">Normal</label>
+              </div>
+              <div class="config-radio-group">
+                <input type="radio" id="config-flex-reverse" name="flexDirection" class="config-radio" data-config-key="flexDirection" value="reverse">
+                <label class="config-radio-label" for="config-flex-reverse">Reverse</label>
+              </div>
+            </div>
+            <p class="config-help">Reverse swaps title/date order. Vertical: title below dates. Horizontal: dates on left.</p>
+          </div>
+
+          <!-- Title Alignment -->
+          <div class="config-group">
+            <label class="config-label">Title Alignment</label>
+            <div class="config-radio-set">
+              <div class="config-radio-group">
+                <input type="radio" id="config-title-align-left" name="titleAlignment" class="config-radio" data-config-key="titleAlignment" value="left" checked>
+                <label class="config-radio-label" for="config-title-align-left">Left</label>
+              </div>
+              <div class="config-radio-group">
+                <input type="radio" id="config-title-align-center" name="titleAlignment" class="config-radio" data-config-key="titleAlignment" value="center">
+                <label class="config-radio-label" for="config-title-align-center">Center</label>
+              </div>
+              <div class="config-radio-group">
+                <input type="radio" id="config-title-align-right" name="titleAlignment" class="config-radio" data-config-key="titleAlignment" value="right">
+                <label class="config-radio-label" for="config-title-align-right">Right</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Date Alignment -->
+          <div class="config-group">
+            <label class="config-label">Date Alignment</label>
+            <div class="config-radio-set">
+              <div class="config-radio-group">
+                <input type="radio" id="config-date-align-left" name="dateAlignment" class="config-radio" data-config-key="dateAlignment" value="left">
+                <label class="config-radio-label" for="config-date-align-left">Left</label>
+              </div>
+              <div class="config-radio-group">
+                <input type="radio" id="config-date-align-center" name="dateAlignment" class="config-radio" data-config-key="dateAlignment" value="center">
+                <label class="config-radio-label" for="config-date-align-center">Center</label>
+              </div>
+              <div class="config-radio-group">
+                <input type="radio" id="config-date-align-right" name="dateAlignment" class="config-radio" data-config-key="dateAlignment" value="right" checked>
+                <label class="config-radio-label" for="config-date-align-right">Right</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Date Display -->
+      <div class="config-section">
+        <div class="config-section__header">
+          <h3 class="config-section__title">Date Display</h3>
+          <span class="config-section__toggle"></span>
+        </div>
+        <div class="config-section__content">
+          <!-- Date Format -->
+          <div class="config-group">
+            <label class="config-label" for="config-date-format">Date Format</label>
+            <select id="config-date-format" class="config-select" data-config-key="dateFormat">
+              <option value="compact">Compact (Nov 6 - 12)</option>
+              <option value="explicit">Explicit (Nov 6 - Nov 12)</option>
+              <option value="numeric">Numeric (11/6 - 11/12)</option>
+            </select>
+          </div>
+
+          <!-- Show Title -->
+          <div class="config-group">
+            <div class="config-checkbox-group">
+              <input type="checkbox" id="config-show-title" class="config-checkbox" data-config-key="showTitle" checked>
+              <label class="config-checkbox-label" for="config-show-title">Show Title</label>
+            </div>
+          </div>
+
+          <!-- Show Day Names -->
+          <div class="config-group">
+            <div class="config-checkbox-group">
+              <input type="checkbox" id="config-show-day-names" class="config-checkbox" data-config-key="showDayNames">
+              <label class="config-checkbox-label" for="config-show-day-names">Show Day Names</label>
+            </div>
+          </div>
+
+          <!-- Show Year -->
+          <div class="config-group">
+            <div class="config-checkbox-group">
+              <input type="checkbox" id="config-show-year" class="config-checkbox" data-config-key="showYear">
+              <label class="config-checkbox-label" for="config-show-year">Show Year</label>
+            </div>
+          </div>
+
+          <!-- Day Name Format -->
+          <div class="config-group">
+            <label class="config-label" for="config-day-name-format">Day Name Format</label>
+            <select id="config-day-name-format" class="config-select" data-config-key="dayNameFormat">
+              <option value="abbreviated">Abbreviated (Wed, Tue)</option>
+              <option value="full">Full (Wednesday, Tuesday)</option>
+            </select>
+          </div>
+
+          <!-- Date Text Transform -->
+          <div class="config-group">
+            <label class="config-label" for="config-date-text-transform">Date Line Case</label>
+            <select id="config-date-text-transform" class="config-select" data-config-key="dateTextTransform">
+              <option value="capitalize">Capitalize (Wed, Dec 31)</option>
+              <option value="uppercase">UPPERCASE (WED, DEC 31)</option>
+            </select>
+            <p class="config-help">Controls text case for dates and day names.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Typography -->
+      <div class="config-section">
+        <div class="config-section__header">
+          <h3 class="config-section__title">Typography</h3>
+          <span class="config-section__toggle"></span>
+        </div>
+        <div class="config-section__content">
+          <!-- Font Family -->
+          <div class="config-group">
+            <label class="config-label" for="config-font-family">Font Family</label>
+            <select id="config-font-family" class="config-select" data-config-key="fontFamily">
+              <option value="primary">Primary (System UI)</option>
+              <option value="heading">Heading (Georgia)</option>
+            </select>
+          </div>
+
+          <!-- Font Weight -->
+          <div class="config-group">
+            <label class="config-label" for="config-font-weight">Font Weight</label>
+            <select id="config-font-weight" class="config-select" data-config-key="fontWeight">
+              <option value="400">400 - Normal</option>
+              <option value="500">500 - Medium</option>
+              <option value="600">600 - Semibold</option>
+              <option value="700">700 - Bold</option>
+              <option value="800">800 - Extra Bold</option>
+            </select>
+          </div>
+
+          <!-- Text Transform -->
+          <div class="config-group">
+            <label class="config-label" for="config-text-transform">Text Transform</label>
+            <select id="config-text-transform" class="config-select" data-config-key="textTransform">
+              <option value="none">None</option>
+              <option value="uppercase">UPPERCASE</option>
+              <option value="capitalize">Capitalize</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Colors -->
+      <div class="config-section">
+        <div class="config-section__header">
+          <h3 class="config-section__title">Colors</h3>
+          <span class="config-section__toggle"></span>
+        </div>
+        <div class="config-section__content">
+          <!-- Background Color -->
+          <div class="config-group">
+            <label class="config-label">Background Color</label>
+            <div class="config-color-group">
+              <input type="color" id="config-bg-color" class="config-color-input" data-config-key="backgroundColor" value="#1a5f2a">
+              <span class="config-color-value" id="config-bg-color-value">#1a5f2a</span>
+            </div>
+          </div>
+
+          <!-- Text Color -->
+          <div class="config-group">
+            <label class="config-label">Text Color</label>
+            <div class="config-color-group">
+              <input type="color" id="config-text-color" class="config-color-input" data-config-key="textColor" value="#ffffff">
+              <span class="config-color-value" id="config-text-color-value">#ffffff</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Layout -->
+      <div class="config-section">
+        <div class="config-section__header">
+          <h3 class="config-section__title">Layout</h3>
+          <span class="config-section__toggle"></span>
+        </div>
+        <div class="config-section__content">
+          <!-- Alignment -->
+          <div class="config-group">
+            <label class="config-label">Alignment</label>
+            <div class="config-radio-set">
+              <div class="config-radio-group">
+                <input type="radio" id="config-align-left" name="alignment" class="config-radio" data-config-key="alignment" value="left">
+                <label class="config-radio-label" for="config-align-left">Left</label>
+              </div>
+              <div class="config-radio-group">
+                <input type="radio" id="config-align-center" name="alignment" class="config-radio" data-config-key="alignment" value="center" checked>
+                <label class="config-radio-label" for="config-align-center">Center</label>
+              </div>
+              <div class="config-radio-group">
+                <input type="radio" id="config-align-right" name="alignment" class="config-radio" data-config-key="alignment" value="right">
+                <label class="config-radio-label" for="config-align-right">Right</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Padding -->
+          <div class="config-inline-group">
+            <div class="config-group">
+              <label class="config-label" for="config-padding-v">Vertical Padding</label>
+              <select id="config-padding-v" class="config-select" data-config-key="paddingVertical">
+                <option value="sm">Small</option>
+                <option value="md">Medium</option>
+                <option value="lg">Large</option>
+                <option value="xl">Extra Large</option>
+              </select>
+            </div>
+            <div class="config-group">
+              <label class="config-label" for="config-padding-h">Horizontal Padding</label>
+              <select id="config-padding-h" class="config-select" data-config-key="paddingHorizontal">
+                <option value="sm">Small</option>
+                <option value="md">Medium</option>
+                <option value="lg">Large</option>
+                <option value="xl">Extra Large</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Border -->
+      <div class="config-section">
+        <div class="config-section__header">
+          <h3 class="config-section__title">Border</h3>
+          <span class="config-section__toggle"></span>
+        </div>
+        <div class="config-section__content">
+          <!-- Border Style -->
+          <div class="config-group">
+            <label class="config-label" for="config-border-style">Border Style</label>
+            <select id="config-border-style" class="config-select" data-config-key="borderStyle">
+              <option value="none">None</option>
+              <option value="solid">Solid (All Sides)</option>
+              <option value="bottom-only">Bottom Only</option>
+            </select>
+          </div>
+
+          <div class="config-inline-group">
+            <!-- Border Color -->
+            <div class="config-group">
+              <label class="config-label">Border Color</label>
+              <div class="config-color-group">
+                <input type="color" id="config-border-color" class="config-color-input" data-config-key="borderColor" value="#000000">
+              </div>
+            </div>
+
+            <!-- Border Width -->
+            <div class="config-group">
+              <label class="config-label" for="config-border-width">Width (px)</label>
+              <input type="number" id="config-border-width" class="config-input" data-config-key="borderWidth" value="2" min="1" max="10">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Background Pattern -->
+      <div class="config-section">
+        <div class="config-section__header">
+          <h3 class="config-section__title">Background Pattern</h3>
+          <span class="config-section__toggle"></span>
+        </div>
+        <div class="config-section__content">
+          <div class="config-group">
+            <label class="config-label" for="config-pattern">Pattern</label>
+            <select id="config-pattern" class="config-select" data-config-key="backgroundPattern">
+              <option value="none">None (Solid Color)</option>
+              <option value="diagonal-lines">Diagonal Lines</option>
+              <option value="dots">Dots</option>
+              <option value="crosshatch">Crosshatch</option>
+              <option value="waves">Waves</option>
+              <option value="chevron">Chevron</option>
+              <option value="grid">Grid</option>
+              <option value="noise">Noise / Texture</option>
+            </select>
+          </div>
+
+          <div class="config-group">
+            <label class="config-label">Pattern Opacity</label>
+            <div class="config-range-group">
+              <input type="range" id="config-pattern-opacity" class="config-range" data-config-key="patternOpacity" min="0.05" max="0.4" step="0.05" value="0.15">
+              <span class="config-range-value" data-range-display="patternOpacity">0.15</span>
+            </div>
+            <p class="config-help">Adjust pattern visibility (0.05 - 0.4)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Validity Pill -->
+      <div class="config-section">
+        <div class="config-section__header">
+          <h3 class="config-section__title">Validity Pill</h3>
+          <span class="config-section__toggle"></span>
+        </div>
+        <div class="config-section__content">
+          <!-- Show Pill -->
+          <div class="config-group">
+            <div class="config-checkbox-group">
+              <input type="checkbox" id="config-show-pill" class="config-checkbox" data-config-key="showValidityPill" checked>
+              <label class="config-checkbox-label" for="config-show-pill">Show Validity Pill</label>
+            </div>
+          </div>
+
+          <!-- Position -->
+          <div class="config-group">
+            <label class="config-label">Position</label>
+            <div class="config-radio-set">
+              <div class="config-radio-group">
+                <input type="radio" id="config-pill-left" name="pillPosition" class="config-radio" data-config-key="pillPosition" value="bottom-left" checked>
+                <label class="config-radio-label" for="config-pill-left">Bottom Left</label>
+              </div>
+              <div class="config-radio-group">
+                <input type="radio" id="config-pill-right" name="pillPosition" class="config-radio" data-config-key="pillPosition" value="bottom-right">
+                <label class="config-radio-label" for="config-pill-right">Bottom Right</label>
+              </div>
+            </div>
+          </div>
+
+          <p class="config-help">Click/tap the pill to expand. On desktop, hover also expands. Changes color when expiring (2 days) or expired.</p>
+        </div>
+      </div>
+
+      <!-- Section: Scroll Behavior -->
+      <div class="config-section">
+        <div class="config-section__header">
+          <h3 class="config-section__title">Scroll Behavior</h3>
+          <span class="config-section__toggle"></span>
+        </div>
+        <div class="config-section__content">
+          <!-- Enable Sticky -->
+          <div class="config-group">
+            <div class="config-checkbox-group">
+              <input type="checkbox" id="config-sticky-enabled" class="config-checkbox" data-config-key="stickyEnabled" checked>
+              <label class="config-checkbox-label" for="config-sticky-enabled">Enable Sticky Banner</label>
+            </div>
+          </div>
+
+          <!-- Sticky Threshold -->
+          <div class="config-group">
+            <label class="config-label" for="config-sticky-threshold">Sticky Threshold (px)</label>
+            <input type="number" id="config-sticky-threshold" class="config-input" data-config-key="stickyThreshold" value="200" min="50" max="500" step="50">
+            <p class="config-help">Distance to scroll before banner becomes sticky (50-500px).</p>
+          </div>
+
+          <p class="config-help">When enabled, banner sticks to top when scrolling down. Hides on continued scroll down, reappears when scrolling up.</p>
+        </div>
+      </div>
+
+      <!-- Section: Preview Width -->
+      <div class="config-section">
+        <div class="config-section__header">
+          <h3 class="config-section__title">Preview Width</h3>
+          <span class="config-section__toggle"></span>
+        </div>
+        <div class="config-section__content">
+          <div class="config-group">
+            <div class="width-control">
+              <div class="width-control-label">
+                <span>Column Width</span>
+                <span class="value" id="width-value">360px</span>
+              </div>
+              <input type="range" class="width-slider" id="width-slider" min="320" max="472" value="360" step="1">
+              <div class="width-presets" id="width-presets">
+                <button type="button" class="width-preset-btn" data-width="320">320</button>
+                <button type="button" class="width-preset-btn active" data-width="360">360</button>
+                <button type="button" class="width-preset-btn" data-width="420">420</button>
+                <button type="button" class="width-preset-btn" data-width="472">472</button>
+              </div>
+            </div>
+            <p class="config-help">Adjust the preview column width (320px - 472px).</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Presets -->
+      <div class="config-section">
+        <div class="config-section__header">
+          <h3 class="config-section__title">Quick Presets</h3>
+          <span class="config-section__toggle"></span>
+        </div>
+        <div class="config-section__content">
+          <div class="config-group">
+            <div class="preset-buttons">
+              <button type="button" class="preset-btn" data-preset="minimal">Minimal</button>
+              <button type="button" class="preset-btn" data-preset="standard">Standard</button>
+              <button type="button" class="preset-btn" data-preset="bold">Bold</button>
+              <button type="button" class="preset-btn" data-preset="spanish">Spanish</button>
+            </div>
+            <p class="config-help">Apply pre-configured styles. "Standard" matches the default green theme.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Export -->
+      <div class="config-section">
+        <div class="config-section__header">
+          <h3 class="config-section__title">Export / Import</h3>
+          <span class="config-section__toggle"></span>
+        </div>
+        <div class="config-section__content">
+          <div class="config-group">
+            <button type="button" id="copy-config-btn" class="config-button config-button--secondary">
+              Copy Config JSON
+            </button>
+            <p class="config-help">Copy current configuration to clipboard for use in Angular migration.</p>
+          </div>
+          <div id="copy-feedback" class="copy-feedback" style="display: none;">
+            Copied to clipboard!
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Testing -->
+      <div class="config-section">
+        <div class="config-section__header">
+          <h3 class="config-section__title">Testing</h3>
+          <span class="config-section__toggle"></span>
+        </div>
+        <div class="config-section__content">
+          <!-- Reference Date -->
+          <div class="config-group">
+            <label class="config-label" for="config-reference-date">Reference Date (Simulated Today)</label>
+            <input type="date" id="config-reference-date" class="config-input" data-config-key="referenceDate">
+            <p class="config-help">Change this to test how the banner and pill appear on different days. Try setting to the last day of a circular to see "expiring" state.</p>
+          </div>
+
+          <button type="button" id="run-tests-btn" class="config-button config-button--secondary">
+            Run DateUtils Tests
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- Pattern Preview Grid -->
+  <section class="pattern-preview-section">
+    <h2>Pattern Preview</h2>
+    <div class="pattern-preview-grid">
+      <!-- None -->
+      <div class="pattern-swatch pattern-swatch--green swatch-none">
+        <span class="pattern-swatch__label">None</span>
+      </div>
+
+      <!-- Diagonal Lines -->
+      <div class="pattern-swatch pattern-swatch--green swatch-diagonal-lines">
+        <span class="pattern-swatch__label">Diagonal Lines</span>
+      </div>
+
+      <!-- Dots -->
+      <div class="pattern-swatch pattern-swatch--green swatch-dots">
+        <span class="pattern-swatch__label">Dots</span>
+      </div>
+
+      <!-- Crosshatch -->
+      <div class="pattern-swatch pattern-swatch--green swatch-crosshatch">
+        <span class="pattern-swatch__label">Crosshatch</span>
+      </div>
+
+      <!-- Waves -->
+      <div class="pattern-swatch pattern-swatch--green swatch-waves">
+        <span class="pattern-swatch__label">Waves</span>
+      </div>
+
+      <!-- Chevron -->
+      <div class="pattern-swatch pattern-swatch--green swatch-chevron">
+        <span class="pattern-swatch__label">Chevron</span>
+      </div>
+
+      <!-- Grid -->
+      <div class="pattern-swatch pattern-swatch--green swatch-grid">
+        <span class="pattern-swatch__label">Grid</span>
+      </div>
+
+      <!-- Noise -->
+      <div class="pattern-swatch pattern-swatch--green swatch-noise">
+        <span class="pattern-swatch__label">Noise</span>
+      </div>
+    </div>
+
+    <!-- Additional color variations -->
+    <h2 style="margin-top: var(--spacing-lg);">Color Variations</h2>
+    <div class="pattern-preview-grid">
+      <!-- Blue variations -->
+      <div class="pattern-swatch pattern-swatch--blue swatch-diagonal-lines">
+        <span class="pattern-swatch__label">Blue + Lines</span>
+      </div>
+      <div class="pattern-swatch pattern-swatch--blue swatch-dots">
+        <span class="pattern-swatch__label">Blue + Dots</span>
+      </div>
+      <div class="pattern-swatch pattern-swatch--blue swatch-crosshatch">
+        <span class="pattern-swatch__label">Blue + Crosshatch</span>
+      </div>
+
+      <!-- Red variations -->
+      <div class="pattern-swatch pattern-swatch--red swatch-diagonal-lines">
+        <span class="pattern-swatch__label">Red + Lines</span>
+      </div>
+      <div class="pattern-swatch pattern-swatch--red swatch-waves">
+        <span class="pattern-swatch__label">Red + Waves</span>
+      </div>
+      <div class="pattern-swatch pattern-swatch--red swatch-chevron">
+        <span class="pattern-swatch__label">Red + Chevron</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- JavaScript Modules -->
+  <script type="module">
+    import BannerConfig from './scripts/config.js';
+    import DateUtils from './scripts/dateUtils.js';
+    import Banner from './scripts/banner.js';
+    import Pill from './scripts/pill.js';
+    import Controls from './scripts/controls.js';
+
+    // Initialize all modules
+    BannerConfig.init();
+    Banner.init();
+    Pill.init();
+    Controls.init();
+
+    // Initial render
+    Banner.render(BannerConfig.getAll());
+    Pill.render(BannerConfig.getAll());
+
+    // Update color value displays
+    const updateColorDisplays = () => {
+      const bgColor = document.getElementById('config-bg-color');
+      const bgColorValue = document.getElementById('config-bg-color-value');
+      const textColor = document.getElementById('config-text-color');
+      const textColorValue = document.getElementById('config-text-color-value');
+
+      if (bgColor && bgColorValue) {
+        bgColorValue.textContent = bgColor.value;
+        bgColor.addEventListener('input', () => {
+          bgColorValue.textContent = bgColor.value;
+        });
+      }
+
+      if (textColor && textColorValue) {
+        textColorValue.textContent = textColor.value;
+        textColor.addEventListener('input', () => {
+          textColorValue.textContent = textColor.value;
+        });
+      }
+    };
+    updateColorDisplays();
+
+    // Reset button
+    document.getElementById('reset-config-btn').addEventListener('click', () => {
+      if (confirm('Reset all settings to defaults?')) {
+        BannerConfig.reset();
+        Controls.syncFormToConfig();
+        updateColorDisplays();
+      }
+    });
+
+    // Run tests button
+    document.getElementById('run-tests-btn').addEventListener('click', () => {
+      const refDate = BannerConfig.get('referenceDate') || new Date();
+      console.log('%c=== Running DateUtils Tests ===', 'font-weight: bold; color: #1a5f2a');
+      console.log('Reference date:', refDate.toDateString());
+      DateUtils.runTests(refDate);
+    });
+
+    // Preset buttons
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const presetName = btn.dataset.preset;
+        BannerConfig.applyPreset(presetName);
+        Controls.syncFormToConfig();
+        updateColorDisplays();
+        console.log('[App] Applied preset:', presetName);
+      });
+    });
+
+    // Copy Config JSON button
+    document.getElementById('copy-config-btn').addEventListener('click', async () => {
+      const success = await BannerConfig.copyToClipboard();
+      const feedback = document.getElementById('copy-feedback');
+
+      if (success && feedback) {
+        feedback.style.display = 'block';
+        // Reset animation by cloning
+        const newFeedback = feedback.cloneNode(true);
+        feedback.parentNode.replaceChild(newFeedback, feedback);
+        newFeedback.style.display = 'block';
+
+        // Hide after animation
+        setTimeout(() => {
+          newFeedback.style.display = 'none';
+        }, 2000);
+      }
+    });
+
+    // Width Slider Functionality
+    const widthSlider = document.getElementById('width-slider');
+    const widthValue = document.getElementById('width-value');
+    const promotionsColumn = document.querySelector('.promotions-column');
+    const widthPresetBtns = document.querySelectorAll('.width-preset-btn');
+
+    // Set the preview column width
+    const setPreviewWidth = (width) => {
+      // Clamp width between 320 and 472
+      width = Math.max(320, Math.min(472, width));
+
+      if (promotionsColumn) {
+        promotionsColumn.style.maxWidth = `${width}px`;
+      }
+
+      if (widthValue) {
+        widthValue.textContent = `${width}px`;
+      }
+
+      if (widthSlider) {
+        widthSlider.value = width;
+      }
+
+      // Update preset button states
+      updateWidthPresets(width);
+      console.log('[App] Preview width set to:', width);
+    };
+
+    // Update preset button active states
+    const updateWidthPresets = (width) => {
+      widthPresetBtns.forEach(btn => {
+        const btnWidth = parseInt(btn.dataset.width);
+        if (btnWidth === width) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    };
+
+    // Width slider input handler
+    if (widthSlider) {
+      widthSlider.addEventListener('input', () => {
+        const width = parseInt(widthSlider.value);
+        setPreviewWidth(width);
+      });
+    }
+
+    // Width preset button click handlers
+    widthPresetBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const width = parseInt(btn.dataset.width);
+        setPreviewWidth(width);
+      });
+    });
+
+    // Initialize with default width (360px)
+    setPreviewWidth(360);
+
+    // Scroll Position Indicator
+    const scrollYValue = document.getElementById('scroll-y-value');
+    const scrollState = document.getElementById('scroll-state');
+
+    const updateScrollIndicator = (scrollY, state) => {
+      if (scrollYValue) {
+        scrollYValue.textContent = Math.round(scrollY);
+      }
+      if (scrollState) {
+        // Remove all state classes
+        scrollState.classList.remove('scroll-indicator__state--sticky', 'scroll-indicator__state--hidden');
+
+        if (state.isHidden) {
+          scrollState.textContent = 'hidden';
+          scrollState.classList.add('scroll-indicator__state--hidden');
+        } else if (state.isSticky) {
+          scrollState.textContent = 'active';
+          scrollState.classList.add('scroll-indicator__state--sticky');
+        } else {
+          scrollState.textContent = 'normal';
+        }
+      }
+    };
+
+    // Listen for banner scroll events
+    document.addEventListener('banner:scroll', (e) => {
+      updateScrollIndicator(e.detail.scrollY, e.detail);
+    });
+
+    // Also update on regular scroll for when sticky is disabled
+    window.addEventListener('scroll', () => {
+      if (!BannerConfig.get('stickyEnabled')) {
+        updateScrollIndicator(window.scrollY, { isSticky: false, isHidden: false });
+      }
+    }, { passive: true });
+
+    // Listen for config changes
+    BannerConfig.on('change', ({ key, value }) => {
+      console.log('[App] Config changed:', key, '=', value);
+    });
+
+    // Expose utilities to window for console testing
+    window.DateUtils = DateUtils;
+    window.BannerConfig = BannerConfig;
+    window.Banner = Banner;
+    window.Pill = Pill;
+    window.Controls = Controls;
+
+    console.log('[App] Circular Date Banner prototype initialized');
+    console.log('[App] Configuration persisted to localStorage');
+    console.log('[App] Available in console: DateUtils, BannerConfig, Banner, Pill, Controls');
+  </script>
+</body>
+</html>

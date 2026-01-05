@@ -1,0 +1,284 @@
+/**
+ * Circular Date Banner - Floating Validity Pill
+ * Compact pill showing days remaining, expands to show full details
+ */
+
+/* ==========================================================================
+   Pill Container
+   ========================================================================== */
+.validity-pill {
+  position: sticky;
+  bottom: 80px;
+  z-index: 900;
+  font-family: var(--font-primary);
+  align-self: flex-start; /* Prevents full-width stretching in flex container */
+  width: fit-content; /* Hug content width */
+
+  /* Entrance animation */
+  opacity: 0;
+  transform: translateY(20px);
+  animation: pillEntrance 0.4s ease forwards;
+  animation-delay: 0.3s;
+}
+
+/* Position variants */
+.validity-pill--bottom-left {
+  margin-left: var(--spacing-md);
+  margin-right: auto;
+}
+
+.validity-pill--bottom-right {
+  margin-left: auto;
+  margin-right: var(--spacing-md);
+  align-self: flex-end;
+}
+
+/* Hidden state */
+.validity-pill--hidden {
+  display: none;
+}
+
+/* Entrance animation */
+@keyframes pillEntrance {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   Pill Inner Container
+   ========================================================================== */
+.validity-pill__container {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: var(--pill-bg-color, #374151);
+  color: var(--pill-text-color, #ffffff);
+  border-radius: 24px;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.15),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    border-radius 0.25s ease,
+    box-shadow 0.2s ease;
+}
+
+.validity-pill__container:hover {
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.2),
+    0 3px 6px rgba(0, 0, 0, 0.12);
+}
+
+/* Smooth expand hint rotation */
+.validity-pill__expand-hint {
+  transition: transform 0.25s ease-out;
+}
+
+/* Right-aligned variant */
+.validity-pill--bottom-right .validity-pill__container {
+  align-items: flex-end;
+}
+
+/* ==========================================================================
+   Collapsed State (Default)
+   ========================================================================== */
+.validity-pill__collapsed {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: 10px 16px;
+  min-height: 44px; /* Touch target */
+  box-sizing: border-box;
+}
+
+.validity-pill__countdown {
+  font-size: 0.8125rem;
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+}
+
+/* Status-specific styling */
+.validity-pill--expiring .validity-pill__container {
+  background-color: #4b5563;
+}
+
+.validity-pill--expired .validity-pill__container {
+  background-color: #1f2937;
+}
+
+/* Expand indicator */
+.validity-pill__expand-hint {
+  font-size: 0.625rem;
+  opacity: 0.7;
+  margin-left: var(--spacing-xs);
+}
+
+.validity-pill--expanded .validity-pill__expand-hint {
+  transform: rotate(180deg);
+}
+
+/* ==========================================================================
+   Expanded State
+   On desktop: hover triggers expansion (via @media hover:hover rules)
+   On mobile/touch: tap adds .validity-pill--expanded class with auto-collapse
+   ========================================================================== */
+
+/* Grid wrapper for animatable height */
+.validity-pill__expanded-wrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.25s ease-out;
+}
+
+.validity-pill__expanded {
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease-out, visibility 0.25s ease-out;
+}
+
+.validity-pill__expanded-inner {
+  padding: 0 16px 12px 16px;
+}
+
+/* Mobile tap expansion (via JS class toggle) */
+.validity-pill--expanded .validity-pill__expanded-wrapper {
+  grid-template-rows: 1fr;
+}
+
+.validity-pill--expanded .validity-pill__expanded {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.2s ease-out 0.05s, visibility 0s;
+}
+
+.validity-pill--expanded .validity-pill__container {
+  border-radius: 16px;
+}
+
+/* Expanded content */
+.validity-pill__header {
+  font-size: 0.625rem;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.8;
+  margin-bottom: 6px;
+}
+
+.validity-pill__dates {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.validity-pill__date-start,
+.validity-pill__date-end {
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  line-height: 1.3;
+}
+
+/* Divider */
+.validity-pill__divider {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.2);
+  margin: 0 8px 8px 8px ;
+}
+
+/* ==========================================================================
+   Responsive Adjustments
+   ========================================================================== */
+
+/* Mobile (< 640px): Larger touch targets, simpler expanded view */
+@media (max-width: 639px) {
+  .validity-pill {
+    bottom: var(--spacing-sm);
+  }
+
+  .validity-pill--bottom-left {
+    margin-left: var(--spacing-sm);
+  }
+
+  .validity-pill--bottom-right {
+    margin-right: var(--spacing-sm);
+  }
+
+  /* Larger touch target on mobile (minimum 48px height) */
+  .validity-pill__collapsed {
+    padding: 14px 18px;
+    min-height: 48px;
+  }
+
+  .validity-pill__countdown {
+    font-size: 0.875rem;
+  }
+
+  /* Simpler expanded view on mobile */
+  .validity-pill__expanded-inner {
+    padding: 0 16px 14px 16px;
+  }
+
+  .validity-pill__date-start,
+  .validity-pill__date-end {
+    font-size: 0.8125rem;
+  }
+}
+
+/* Tablet (640px - 1024px) */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .validity-pill__collapsed {
+    padding: 10px 16px;
+    min-height: 44px;
+  }
+
+  .validity-pill__countdown {
+    font-size: 0.8125rem;
+  }
+}
+
+/* ==========================================================================
+   Desktop Hover Behavior
+   ========================================================================== */
+@media (hover: hover) {
+  .validity-pill:hover .validity-pill__expanded-wrapper {
+    grid-template-rows: 1fr;
+  }
+
+  .validity-pill:hover .validity-pill__expanded {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.2s ease-out 0.05s, visibility 0s;
+  }
+
+  .validity-pill:hover .validity-pill__container {
+    border-radius: 16px;
+  }
+
+  .validity-pill:hover .validity-pill__expand-hint {
+    transform: rotate(180deg);
+  }
+}
+
+/* ==========================================================================
+   Reduced Motion
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .validity-pill {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .validity-pill__container,
+  .validity-pill__expand-hint,
+  .validity-pill__expanded-wrapper,
+  .validity-pill__expanded {
+    transition: none;
+  }
+}

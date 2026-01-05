@@ -1,0 +1,300 @@
+/**
+ * Circular Date Banner - CSS-Only Background Patterns
+ * All patterns use pseudo-elements to overlay the background color
+ * Control opacity via --pattern-opacity custom property
+ */
+
+/* ==========================================================================
+   Base Pattern Styles
+   ========================================================================== */
+
+/* All patterns share this base setup */
+[class*="pattern-"]::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  opacity: var(--pattern-opacity, 0.1);
+  z-index: 0;
+}
+
+/* Ensure banner content stays above pattern */
+[class*="pattern-"] {
+  position: relative;
+}
+
+[class*="pattern-"] .banner__content {
+  position: relative;
+  z-index: 1;
+}
+
+/* ==========================================================================
+   Pattern 1: Diagonal Lines
+   Repeating 45-degree thin lines
+   ========================================================================== */
+.pattern-diagonal-lines::before {
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 8px,
+    rgba(255, 255, 255, 0.5) 8px,
+    rgba(255, 255, 255, 0.5) 10px
+  );
+}
+
+/* ==========================================================================
+   Pattern 2: Dots (Polka Dots)
+   Small dots in a grid arrangement using radial-gradient
+   ========================================================================== */
+.pattern-dots::before {
+  background-image: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.6) 2px,
+    transparent 2px
+  );
+  background-size: 16px 16px;
+  background-position: 0 0;
+}
+
+/* ==========================================================================
+   Pattern 3: Crosshatch
+   Crossed diagonal lines creating a fabric/textile look
+   ========================================================================== */
+.pattern-crosshatch::before {
+  background:
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 6px,
+      rgba(255, 255, 255, 0.4) 6px,
+      rgba(255, 255, 255, 0.4) 7px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 6px,
+      rgba(255, 255, 255, 0.4) 6px,
+      rgba(255, 255, 255, 0.4) 7px
+    );
+}
+
+/* ==========================================================================
+   Pattern 4: Waves
+   Wavy horizontal lines using curved gradients
+   ========================================================================== */
+.pattern-waves::before {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 20px,
+      rgba(255, 255, 255, 0.3) 20px,
+      rgba(255, 255, 255, 0.3) 40px
+    ),
+    repeating-radial-gradient(
+      ellipse 100% 40px at 50% 0%,
+      transparent 0px,
+      transparent 10px,
+      rgba(255, 255, 255, 0.2) 10px,
+      rgba(255, 255, 255, 0.2) 11px,
+      transparent 11px,
+      transparent 20px
+    );
+  background-size: 40px 20px;
+}
+
+/* Alternative waves using SVG data URI for smoother curves */
+.pattern-waves::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='12' viewBox='0 0 40 12'%3E%3Cpath d='M0 6 Q10 0 20 6 T40 6' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-size: 40px 12px;
+}
+
+/* ==========================================================================
+   Pattern 5: Chevron
+   V-shaped repeating pattern (zigzag/herringbone)
+   ========================================================================== */
+.pattern-chevron::before {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.4) 25%, transparent 25%) -20px 0,
+    linear-gradient(225deg, rgba(255, 255, 255, 0.4) 25%, transparent 25%) -20px 0,
+    linear-gradient(315deg, rgba(255, 255, 255, 0.4) 25%, transparent 25%),
+    linear-gradient(45deg, rgba(255, 255, 255, 0.4) 25%, transparent 25%);
+  background-size: 40px 20px;
+  background-color: transparent;
+}
+
+/* ==========================================================================
+   Pattern 6: Grid
+   Simple grid lines (subtle graph paper look)
+   ========================================================================== */
+.pattern-grid::before {
+  background-image:
+    linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.3) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.3) 1px,
+      transparent 1px
+    );
+  background-size: 20px 20px;
+}
+
+/* ==========================================================================
+   Pattern 7: Noise
+   Subtle texture using SVG data URI for organic feel
+   ========================================================================== */
+.pattern-noise::before {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  mix-blend-mode: overlay;
+}
+
+/* ==========================================================================
+   Pattern Preview Swatches (Demo Grid)
+   ========================================================================== */
+.pattern-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  margin-top: var(--spacing-xl);
+}
+
+.pattern-swatch {
+  position: relative;
+  height: 80px;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pattern-swatch::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.pattern-swatch__label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: var(--font-weight-medium);
+  text-align: center;
+  z-index: 2;
+}
+
+/* Swatch base colors */
+.pattern-swatch--green {
+  background-color: var(--color-primary);
+}
+
+.pattern-swatch--blue {
+  background-color: #1e40af;
+}
+
+.pattern-swatch--red {
+  background-color: #b91c1c;
+}
+
+/* Individual swatch patterns with preview opacity */
+.pattern-swatch.swatch-diagonal-lines::before {
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 8px,
+    rgba(255, 255, 255, 0.5) 8px,
+    rgba(255, 255, 255, 0.5) 10px
+  );
+  opacity: 0.2;
+}
+
+.pattern-swatch.swatch-dots::before {
+  background-image: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.6) 2px,
+    transparent 2px
+  );
+  background-size: 16px 16px;
+  opacity: 0.25;
+}
+
+.pattern-swatch.swatch-crosshatch::before {
+  background:
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 6px,
+      rgba(255, 255, 255, 0.4) 6px,
+      rgba(255, 255, 255, 0.4) 7px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 6px,
+      rgba(255, 255, 255, 0.4) 6px,
+      rgba(255, 255, 255, 0.4) 7px
+    );
+  opacity: 0.2;
+}
+
+.pattern-swatch.swatch-waves::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='12' viewBox='0 0 40 12'%3E%3Cpath d='M0 6 Q10 0 20 6 T40 6' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-size: 40px 12px;
+  opacity: 0.25;
+}
+
+.pattern-swatch.swatch-chevron::before {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.4) 25%, transparent 25%) -20px 0,
+    linear-gradient(225deg, rgba(255, 255, 255, 0.4) 25%, transparent 25%) -20px 0,
+    linear-gradient(315deg, rgba(255, 255, 255, 0.4) 25%, transparent 25%),
+    linear-gradient(45deg, rgba(255, 255, 255, 0.4) 25%, transparent 25%);
+  background-size: 40px 20px;
+  opacity: 0.2;
+}
+
+.pattern-swatch.swatch-grid::before {
+  background-image:
+    linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.3) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.3) 1px,
+      transparent 1px
+    );
+  background-size: 20px 20px;
+  opacity: 0.25;
+}
+
+.pattern-swatch.swatch-noise::before {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  mix-blend-mode: overlay;
+  opacity: 0.3;
+}
+
+/* No pattern swatch */
+.pattern-swatch.swatch-none::before {
+  display: none;
+}

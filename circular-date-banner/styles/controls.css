@@ -1,0 +1,533 @@
+/**
+ * Circular Date Banner - Configuration Panel Controls
+ * Professional styling inspired by PrimeNG aesthetic
+ */
+
+/* ==========================================================================
+   Config Panel Container
+   ========================================================================== */
+.config-panel {
+  position: fixed;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  width: 320px;
+  max-height: calc(100vh - var(--spacing-xl));
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.08);
+  font-family: var(--font-primary);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.2s ease;
+}
+
+.config-panel:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Collapsed state */
+.config-panel--collapsed {
+  max-height: none;
+}
+
+.config-panel--collapsed .config-panel__body {
+  display: none;
+}
+
+/* ==========================================================================
+   Panel Header
+   ========================================================================== */
+.config-panel__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: linear-gradient(to bottom, #f9fafb, #f3f4f6);
+  border-bottom: 1px solid #e5e7eb;
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.config-panel__header:hover {
+  background: linear-gradient(to bottom, #f3f4f6, #e5e7eb);
+}
+
+.config-panel__title {
+  font-size: 0.8125rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-dark);
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+.config-panel__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  font-size: 1rem;
+  font-weight: var(--font-weight-bold);
+  color: #6b7280;
+  background-color: #e5e7eb;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.config-panel__header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.config-panel__reset-btn {
+  padding: 4px 8px;
+  font-size: 0.6875rem;
+  font-weight: var(--font-weight-medium);
+  color: #6b7280;
+  background-color: transparent;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.config-panel__reset-btn:hover {
+  color: #ef4444;
+  border-color: #ef4444;
+  background-color: #fef2f2;
+}
+
+.config-panel__link {
+  padding: 4px 8px;
+  font-size: 0.6875rem;
+  font-weight: var(--font-weight-medium);
+  color: #1e40af;
+  background-color: transparent;
+  border: 1px solid #93c5fd;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.config-panel__link:hover {
+  color: #1e3a8a;
+  border-color: #1e40af;
+  background-color: #eff6ff;
+}
+
+/* ==========================================================================
+   Panel Body
+   ========================================================================== */
+.config-panel__body {
+  padding: var(--spacing-md);
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Custom scrollbar */
+.config-panel__body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.config-panel__body::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 3px;
+}
+
+.config-panel__body::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.config-panel__body::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* ==========================================================================
+   Config Sections
+   ========================================================================== */
+.config-section {
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.config-section:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.config-section__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+  cursor: pointer;
+  user-select: none;
+}
+
+.config-section__header:hover .config-section__title {
+  color: var(--color-primary);
+}
+
+.config-section__title {
+  font-size: 0.6875rem;
+  font-weight: var(--font-weight-bold);
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0;
+  transition: color 0.15s ease;
+}
+
+.config-section__toggle {
+  font-size: 0.625rem;
+  color: #9ca3af;
+  transition: transform 0.2s ease;
+}
+
+.config-section__content {
+  overflow: hidden;
+  transition: max-height 0.25s ease-out, opacity 0.2s ease-out;
+  max-height: 1000px;
+  opacity: 1;
+}
+
+.config-section--collapsed .config-section__content {
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.config-section--collapsed .config-section__toggle {
+  transform: rotate(-90deg);
+}
+
+.config-section--collapsed .config-section__toggle::after {
+  content: '+';
+}
+
+.config-section__toggle::after {
+  content: '-';
+}
+
+/* ==========================================================================
+   Form Groups
+   ========================================================================== */
+.config-group {
+  margin-bottom: var(--spacing-sm);
+}
+
+.config-group:last-child {
+  margin-bottom: 0;
+}
+
+.config-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-medium);
+  color: #374151;
+  margin-bottom: 4px;
+}
+
+/* ==========================================================================
+   Input Fields
+   ========================================================================== */
+.config-input,
+.config-select {
+  width: 100%;
+  padding: var(--spacing-sm) 10px;
+  font-size: 0.8125rem;
+  font-family: var(--font-primary);
+  color: var(--color-text-dark);
+  background-color: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.config-input:hover,
+.config-select:hover {
+  border-color: #9ca3af;
+}
+
+.config-input:focus,
+.config-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(26, 95, 42, 0.15);
+}
+
+.config-input::placeholder {
+  color: #9ca3af;
+}
+
+/* Number input */
+.config-input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.config-input[type="number"]::-webkit-inner-spin-button,
+.config-input[type="number"]::-webkit-outer-spin-button {
+  opacity: 1;
+}
+
+/* ==========================================================================
+   Color Input
+   ========================================================================== */
+.config-color-group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.config-color-input {
+  width: 40px;
+  height: 32px;
+  padding: 2px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #ffffff;
+}
+
+.config-color-input::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.config-color-input::-webkit-color-swatch {
+  border: none;
+  border-radius: 4px;
+}
+
+.config-color-value {
+  flex: 1;
+  font-size: 0.75rem;
+  font-family: monospace;
+  color: #6b7280;
+  background-color: #f9fafb;
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid #e5e7eb;
+}
+
+/* ==========================================================================
+   Checkbox & Radio
+   ========================================================================== */
+.config-checkbox-group,
+.config-radio-group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: 6px 0;
+}
+
+.config-checkbox,
+.config-radio {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+}
+
+.config-checkbox-label,
+.config-radio-label {
+  font-size: 0.8125rem;
+  color: var(--color-text-dark);
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Radio button group container */
+.config-radio-set {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+/* ==========================================================================
+   Range Slider
+   ========================================================================== */
+.config-range-group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.config-range {
+  flex: 1;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: #e5e7eb;
+  border-radius: 2px;
+  outline: none;
+}
+
+.config-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.config-range::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.config-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: var(--color-primary);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.config-range-value {
+  min-width: 32px;
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-medium);
+  color: #6b7280;
+  text-align: right;
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+.config-button {
+  width: 100%;
+  padding: 10px var(--spacing-md);
+  font-size: 0.8125rem;
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-primary);
+  color: #ffffff;
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.config-button:hover {
+  background-color: var(--color-primary-light);
+}
+
+.config-button:active {
+  transform: scale(0.97);
+}
+
+.config-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(26, 95, 42, 0.2);
+}
+
+.config-button--secondary {
+  color: #374151;
+  background-color: #f3f4f6;
+  border: 1px solid #d1d5db;
+}
+
+.config-button--secondary:hover {
+  background-color: #e5e7eb;
+}
+
+.config-button--danger {
+  color: #ffffff;
+  background-color: #ef4444;
+}
+
+.config-button--danger:hover {
+  background-color: #dc2626;
+}
+
+.config-button--small {
+  padding: 6px 12px;
+  font-size: 0.75rem;
+}
+
+/* ==========================================================================
+   Inline Groups (Two controls side by side)
+   ========================================================================== */
+.config-inline-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-sm);
+}
+
+/* ==========================================================================
+   Help Text
+   ========================================================================== */
+.config-help {
+  font-size: 0.6875rem;
+  color: #9ca3af;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* ==========================================================================
+   Divider
+   ========================================================================== */
+.config-divider {
+  height: 1px;
+  background-color: #f3f4f6;
+  margin: var(--spacing-md) 0;
+}
+
+/* ==========================================================================
+   Status Badge
+   ========================================================================== */
+.config-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 0.625rem;
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 4px;
+}
+
+.config-badge--success {
+  color: #166534;
+  background-color: #dcfce7;
+}
+
+.config-badge--warning {
+  color: #854d0e;
+  background-color: #fef9c3;
+}
+
+.config-badge--info {
+  color: #1e40af;
+  background-color: #dbeafe;
+}
+
+/* ==========================================================================
+   Responsive Adjustments
+   ========================================================================== */
+@media (max-width: 640px) {
+  .config-panel {
+    width: calc(100vw - var(--spacing-lg));
+    right: var(--spacing-sm);
+    top: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-md));
+  }
+}

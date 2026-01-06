@@ -1,16 +1,16 @@
 /**
- * Banner Rendering Logic
- * Handles rendering and updating the banner component with full configuration support
+ * Preview Banner Module
+ * Renders a preview banner in the modal that updates in real-time with config changes
+ * Mirrors Banner.js rendering logic but without sticky scroll behavior
  */
 
 import DateUtils from './dateUtils.js';
 import BannerConfig from './config.js';
 
-const Banner = {
+const PreviewBanner = {
   // DOM element references
   elements: {
-    wrapper: null,        // Sticky wrapper element
-    container: null,      // Banner container
+    container: null,
     content: null,
     title: null,
     dateRange: null,
@@ -21,26 +21,6 @@ const Banner = {
     dateStart: null,
     dateEnd: null,
     dayNames: null
-  },
-
-  // Breakpoints (matches CSS)
-  breakpoints: {
-    mobile: 640,
-    tablet: 1024
-  },
-
-  // Current breakpoint
-  currentBreakpoint: 'desktop',
-
-  // Scroll state tracking
-  scroll: {
-    enabled: false,
-    threshold: 200,         // Distance to scroll before hide/show behavior activates
-    lastScrollY: 0,
-    direction: 'down',
-    isActive: false,        // Whether banner has scrolled past threshold (shadow state)
-    isHidden: false,        // Whether banner is hidden (slid up)
-    ticking: false
   },
 
   // Spacing maps for padding classes
@@ -74,19 +54,16 @@ const Banner = {
   ],
 
   /**
-   * Initialize the banner
-   * @param {string} selector - CSS selector for banner container
+   * Initialize the preview banner
+   * @param {string} selector - CSS selector for preview banner container
    */
-  init(selector = '.circular-date-banner') {
+  init(selector = '#modal-preview-banner') {
     this.elements.container = document.querySelector(selector);
 
     if (!this.elements.container) {
-      console.error('[Banner] Container not found:', selector);
+      console.warn('[PreviewBanner] Container not found:', selector);
       return this;
     }
-
-    // Find the sticky wrapper (parent element)
-    this.elements.wrapper = this.elements.container.closest('.banner-sticky-wrapper');
 
     this.elements.content = this.elements.container.querySelector('.banner__content');
     this.elements.title = this.elements.container.querySelector('.banner__title');
@@ -99,298 +76,24 @@ const Banner = {
     this.elements.dateEnd = this.elements.container.querySelector('.banner__date-end');
     this.elements.dayNames = this.elements.container.querySelector('.banner__day-names');
 
-    // Subscribe to config changes
-    BannerConfig.on('change', ({ key, value }) => {
-      // Handle sticky-related config changes
-      if (key === 'stickyEnabled') {
-        if (value) {
-          this.enableStickyScroll(BannerConfig.get('stickyThreshold') || 200);
-        } else {
-          this.disableStickyScroll();
-        }
-      } else if (key === 'stickyThreshold') {
-        this.setStickyThreshold(value);
-      }
+    // Subscribe to config changes for real-time updates
+    BannerConfig.on('change', () => this.render(BannerConfig.getAll()));
+    BannerConfig.on('reset', () => this.render(BannerConfig.getAll()));
+    BannerConfig.on('preset', () => this.render(BannerConfig.getAll()));
 
-      this.render(BannerConfig.getAll());
-    });
+    // Re-render when modal opens (ensures dates are populated)
+    document.addEventListener('modal:open', () => this.render(BannerConfig.getAll()));
 
-    BannerConfig.on('reset', () => {
-      const config = BannerConfig.getAll();
-      if (config.stickyEnabled) {
-        this.enableStickyScroll(config.stickyThreshold || 200);
-      } else {
-        this.disableStickyScroll();
-      }
-      this.render(config);
-    });
-
-    // Set up resize listener
-    this.setupResizeListener();
-
-    // Initial breakpoint detection
-    this.updateBreakpoint();
-
-    // Initialize sticky scroll behavior
-    this.initStickyScroll();
-
-    // Apply initial sticky state from config
-    const config = BannerConfig.getAll();
-    if (config.stickyEnabled) {
-      this.enableStickyScroll(config.stickyThreshold || 200);
-    } else {
-      this.disableStickyScroll();
-    }
-
-    console.log('[Banner] Initialized');
+    console.log('[PreviewBanner] Initialized');
     return this;
   },
 
   /**
-   * Set up resize listener for responsive behavior
-   */
-  setupResizeListener() {
-    let resizeTimeout;
-
-    const handleResize = () => {
-      // Debounce resize events
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => {
-        const previousBreakpoint = this.currentBreakpoint;
-        this.updateBreakpoint();
-
-        // Re-render if breakpoint changed
-        if (previousBreakpoint !== this.currentBreakpoint) {
-          console.log('[Banner] Breakpoint changed:', previousBreakpoint, '->', this.currentBreakpoint);
-          this.render(BannerConfig.getAll());
-        }
-      }, 100);
-    };
-
-    window.addEventListener('resize', handleResize);
-    console.log('[Banner] Resize listener attached');
-  },
-
-  /**
-   * Update current breakpoint based on window width
-   */
-  updateBreakpoint() {
-    const width = window.innerWidth;
-
-    if (width < this.breakpoints.mobile) {
-      this.currentBreakpoint = 'mobile';
-    } else if (width < this.breakpoints.tablet) {
-      this.currentBreakpoint = 'tablet';
-    } else {
-      this.currentBreakpoint = 'desktop';
-    }
-  },
-
-  /**
-   * Get the current breakpoint
-   * @returns {string} 'mobile' | 'tablet' | 'desktop'
-   */
-  getBreakpoint() {
-    return this.currentBreakpoint;
-  },
-
-  /**
-   * Initialize sticky scroll behavior
-   * Uses CSS position: sticky which keeps banner within parent container
-   */
-  initStickyScroll() {
-    if (!this.elements.container) return;
-
-    // Set up scroll listener with throttling via requestAnimationFrame
-    this.boundScrollHandler = this.handleScroll.bind(this);
-    window.addEventListener('scroll', this.boundScrollHandler, { passive: true });
-
-    console.log('[Banner] Sticky scroll initialized');
-  },
-
-  /**
-   * Handle scroll events (throttled via rAF)
-   */
-  handleScroll() {
-    if (!this.scroll.enabled || this.scroll.ticking) return;
-
-    this.scroll.ticking = true;
-
-    requestAnimationFrame(() => {
-      const scrollY = window.scrollY;
-      this.evaluateStickyState(scrollY);
-      this.scroll.ticking = false;
-    });
-  },
-
-  /**
-   * Evaluate and update sticky state based on scroll position
-   * With position: sticky, we only need to:
-   * 1. Track when we're past the threshold (to show shadow)
-   * 2. Hide/show based on scroll direction
-   * @param {number} scrollY - Current scroll position
-   */
-  evaluateStickyState(scrollY) {
-    const { threshold, lastScrollY } = this.scroll;
-
-    // Determine scroll direction (need minimum delta to avoid micro-movements)
-    const delta = scrollY - lastScrollY;
-    const minDelta = 5; // Minimum scroll distance to trigger direction change
-
-    let direction = this.scroll.direction;
-    if (Math.abs(delta) >= minDelta) {
-      direction = delta > 0 ? 'down' : 'up';
-      this.scroll.direction = direction;
-    }
-
-    // Determine if we're past threshold (for shadow/active state)
-    const isPastThreshold = scrollY > threshold;
-
-    // Determine hidden state based on direction and position
-    let shouldHide = false;
-    if (isPastThreshold && direction === 'down') {
-      // Scrolling down past threshold - hide
-      shouldHide = true;
-    } else if (direction === 'up') {
-      // Scrolling up - always show
-      shouldHide = false;
-    }
-
-    // Update state
-    this.setStickyState(isPastThreshold, shouldHide);
-
-    // Update last scroll position
-    this.scroll.lastScrollY = scrollY;
-
-    // Dispatch scroll event for debugging
-    this.dispatchScrollEvent(scrollY, direction);
-  },
-
-  /**
-   * Set the sticky state of the banner
-   * @param {boolean} active - Whether banner is past threshold (shows shadow)
-   * @param {boolean} hidden - Whether banner should be hidden
-   */
-  setStickyState(active, hidden) {
-    const container = this.elements.container;
-    if (!container) return;
-
-    const stateChanged = this.scroll.isActive !== active || this.scroll.isHidden !== hidden;
-    if (!stateChanged) return;
-
-    // Update state
-    this.scroll.isActive = active;
-    this.scroll.isHidden = hidden;
-
-    // Update classes for active state (shadow)
-    container.classList.toggle('circular-date-banner--sticky-active', active);
-
-    // Update classes for hidden/visible state
-    if (hidden) {
-      container.classList.add('circular-date-banner--hidden');
-      container.classList.remove('circular-date-banner--visible');
-    } else {
-      container.classList.remove('circular-date-banner--hidden');
-      container.classList.add('circular-date-banner--visible');
-    }
-
-    console.log('[Banner] Sticky state:', { active, hidden });
-  },
-
-  /**
-   * Dispatch scroll event for external listeners
-   * @param {number} scrollY - Current scroll position
-   * @param {string} direction - Scroll direction
-   */
-  dispatchScrollEvent(scrollY, direction) {
-    const event = new CustomEvent('banner:scroll', {
-      detail: {
-        scrollY,
-        direction,
-        isSticky: this.scroll.isActive,
-        isHidden: this.scroll.isHidden
-      },
-      bubbles: true
-    });
-    document.dispatchEvent(event);
-  },
-
-  /**
-   * Enable sticky scroll behavior
-   * @param {number} threshold - Scroll threshold in pixels
-   */
-  enableStickyScroll(threshold = 200) {
-    this.scroll.enabled = true;
-    this.scroll.threshold = threshold;
-
-    // Add sticky-active class to wrapper (enables position: sticky via CSS)
-    if (this.elements.wrapper) {
-      this.elements.wrapper.classList.add('banner-sticky-wrapper--active');
-    }
-
-    // Add the sticky-enabled class to banner for transitions
-    if (this.elements.container) {
-      this.elements.container.classList.add('circular-date-banner--sticky-enabled');
-    }
-
-    console.log('[Banner] Sticky scroll enabled with threshold:', threshold);
-  },
-
-  /**
-   * Disable sticky scroll behavior
-   */
-  disableStickyScroll() {
-    this.scroll.enabled = false;
-
-    // Remove active class from wrapper
-    if (this.elements.wrapper) {
-      this.elements.wrapper.classList.remove('banner-sticky-wrapper--active');
-    }
-
-    // Remove all sticky-related classes from banner
-    if (this.elements.container) {
-      this.elements.container.classList.remove(
-        'circular-date-banner--sticky-enabled',
-        'circular-date-banner--sticky-active',
-        'circular-date-banner--hidden',
-        'circular-date-banner--visible'
-      );
-    }
-
-    // Reset state
-    this.scroll.isActive = false;
-    this.scroll.isHidden = false;
-
-    console.log('[Banner] Sticky scroll disabled');
-  },
-
-  /**
-   * Update sticky threshold
-   * @param {number} threshold - New threshold value
-   */
-  setStickyThreshold(threshold) {
-    this.scroll.threshold = threshold;
-    // Re-evaluate current state with new threshold
-    if (this.scroll.enabled) {
-      this.evaluateStickyState(window.scrollY);
-    }
-  },
-
-  /**
-   * Get current scroll state
-   * @returns {object} Current scroll state
-   */
-  getScrollState() {
-    return { ...this.scroll };
-  },
-
-  /**
-   * Render the banner with given configuration
+   * Render the preview banner with given configuration
    * @param {object} config - Banner configuration
    */
   render(config) {
     if (!this.elements.container) {
-      console.error('[Banner] Not initialized');
       return this;
     }
 
@@ -453,28 +156,24 @@ const Banner = {
         if (this.elements.dateRange) this.elements.dateRange.style.display = 'none';
         if (this.elements.dateLines) this.elements.dateLines.style.display = '';
       } else if (isHorizontal) {
-        // Horizontal single-line: inline format with day names (using twoLine to get separate parts)
+        // Horizontal single-line: inline format with day names
         const formatOpts = {
           dayNameFormat: config.dayNameFormat || 'abbreviated',
           monthFormat: config.monthFormat || 'abbreviated',
           showYear: config.showYear ?? true,
           locale: config.locale || 'en',
-          twoLine: true // Get start and end separately
+          twoLine: true
         };
         const { startLine, endLine } = DateUtils.formatInlineDateRange(startDate, endDate, formatOpts);
 
-        // Populate separate date parts for flex wrap
         if (this.elements.datePartStart) this.elements.datePartStart.textContent = startLine;
         if (this.elements.datePartEnd) this.elements.datePartEnd.textContent = endLine;
         if (this.elements.datePartSeparator) this.elements.datePartSeparator.style.display = '';
         if (this.elements.dateRange) this.elements.dateRange.style.display = '';
         if (this.elements.dateLines) this.elements.dateLines.style.display = 'none';
       } else {
-        // Vertical layout: use same inline format as horizontal for consistency
-        // When showDayNames is true, day names are inline with dates (e.g., "Wed, Dec 31")
-        // When showDayNames is false, just show dates without day names
+        // Vertical layout
         if (config.showDayNames) {
-          // Use inline format with day names (same as horizontal mode)
           const formatOpts = {
             dayNameFormat: config.dayNameFormat || 'abbreviated',
             monthFormat: config.monthFormat || 'abbreviated',
@@ -488,7 +187,6 @@ const Banner = {
           if (this.elements.datePartEnd) this.elements.datePartEnd.textContent = endLine;
           if (this.elements.datePartSeparator) this.elements.datePartSeparator.style.display = '';
         } else {
-          // No day names - use standard date format
           const formatOpts = {
             format: config.dateFormat || 'explicit',
             monthFormat: config.monthFormat || 'abbreviated',
@@ -499,7 +197,6 @@ const Banner = {
 
           const dateRangeText = DateUtils.formatDateRange(startDate, endDate, formatOpts);
 
-          // Split at separator and populate parts
           const parts = dateRangeText.split(' - ');
           if (parts.length === 2) {
             if (this.elements.datePartStart) this.elements.datePartStart.textContent = parts[0];
@@ -517,8 +214,7 @@ const Banner = {
       }
     }
 
-    // Day names element is no longer used - always hide it
-    // Day names are now inline with dates in both vertical and horizontal modes
+    // Day names element - always hide
     if (this.elements.dayNames) {
       this.elements.dayNames.style.display = 'none';
       if (this.elements.content) {
@@ -529,7 +225,6 @@ const Banner = {
     // Apply styles
     this.applyStyles(config);
 
-    console.log('[Banner] Rendered with config, layout:', config.layoutMode);
     return this;
   },
 
@@ -549,7 +244,7 @@ const Banner = {
     // Background color
     container.style.backgroundColor = config.backgroundColor || '#1a5f2a';
 
-    // Text color (apply to all text elements)
+    // Text color
     const textColor = config.textColor || '#ffffff';
     container.style.color = textColor;
     if (title) title.style.color = textColor;
@@ -572,7 +267,6 @@ const Banner = {
     // Typography - Font Family
     const fontFamily = this.fontFamilyMap[config.fontFamily] || this.fontFamilyMap.primary;
     if (title) {
-      // Title uses heading font by default, but respect config
       title.style.fontFamily = config.fontFamily === 'primary' ? fontFamily : 'var(--font-heading)';
     }
     if (dateRange) dateRange.style.fontFamily = fontFamily;
@@ -585,7 +279,7 @@ const Banner = {
     const textTransform = config.textTransform || 'uppercase';
     if (title) title.style.textTransform = textTransform;
 
-    // Date Text Transform (for date range line)
+    // Date Text Transform
     const dateTextTransform = config.dateTextTransform || 'capitalize';
     if (dateRange) dateRange.style.textTransform = dateTextTransform;
     if (dayNames) dayNames.style.textTransform = dateTextTransform;
@@ -726,45 +420,6 @@ const Banner = {
     }
   },
 
-  /**
-   * Convert text alignment to flex alignment (align-items)
-   * @param {string} alignment - 'left' | 'center' | 'right'
-   * @returns {string} Flex alignment value
-   */
-  getFlexAlignment(alignment) {
-    switch (alignment) {
-      case 'left': return 'flex-start';
-      case 'right': return 'flex-end';
-      default: return 'center';
-    }
-  },
-
-  /**
-   * Convert text alignment to flex justify-content
-   * @param {string} alignment - 'left' | 'center' | 'right'
-   * @returns {string} Flex justify-content value
-   */
-  getFlexJustify(alignment) {
-    switch (alignment) {
-      case 'left': return 'flex-start';
-      case 'right': return 'flex-end';
-      default: return 'center';
-    }
-  },
-
-  /**
-   * Get computed banner dimensions
-   * @returns {object} Width and height
-   */
-  getDimensions() {
-    if (!this.elements.container) return { width: 0, height: 0 };
-
-    const rect = this.elements.container.getBoundingClientRect();
-    return {
-      width: rect.width,
-      height: rect.height
-    };
-  }
 };
 
-export default Banner;
+export default PreviewBanner;

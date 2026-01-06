@@ -4,6 +4,7 @@
  */
 
 const STORAGE_KEY = 'circular-date-banner-config';
+const CONFIG_VERSION = 2; // Increment when config schema changes to force reset
 
 const BannerConfig = {
   // Preset configurations
@@ -15,7 +16,8 @@ const BannerConfig = {
       fontFamily: 'primary',
       fontWeight: 500,
       textTransform: 'uppercase',
-      alignment: 'center',
+      layoutMode: 'horizontal',
+      contentPosition: 'center',
       paddingVertical: 'sm',
       paddingHorizontal: 'sm',
       borderStyle: 'none',
@@ -31,7 +33,8 @@ const BannerConfig = {
       fontFamily: 'primary',
       fontWeight: 600,
       textTransform: 'uppercase',
-      alignment: 'center',
+      layoutMode: 'horizontal',
+      contentPosition: 'center',
       paddingVertical: 'md',
       paddingHorizontal: 'md',
       borderStyle: 'none',
@@ -48,7 +51,8 @@ const BannerConfig = {
       fontFamily: 'heading',
       fontWeight: 700,
       textTransform: 'uppercase',
-      alignment: 'center',
+      layoutMode: 'horizontal',
+      contentPosition: 'center',
       paddingVertical: 'lg',
       paddingHorizontal: 'lg',
       borderStyle: 'bottom-only',
@@ -70,7 +74,8 @@ const BannerConfig = {
       fontFamily: 'primary',
       fontWeight: 600,
       textTransform: 'uppercase',
-      alignment: 'center',
+      layoutMode: 'horizontal',
+      contentPosition: 'center',
       paddingVertical: 'md',
       paddingHorizontal: 'md',
       borderStyle: 'none',
@@ -91,7 +96,7 @@ const BannerConfig = {
     startDayOfWeek: 'Wednesday',
 
     // Layout
-    layoutMode: 'vertical', // 'vertical' (stacked) or 'horizontal' (inline)
+    layoutMode: 'horizontal', // 'vertical' (stacked) or 'horizontal' (inline) - default changed to horizontal
     dateLayout: 'single-line', // 'single-line' or 'two-line' (for horizontal mode)
     flexDirection: 'normal', // 'normal' or 'reverse' - reverses order of title/dates
 
@@ -101,6 +106,7 @@ const BannerConfig = {
     showDayNames: true,
     showYear: false,
     dayNameFormat: 'abbreviated', // 'abbreviated' (Wed) or 'full' (Wednesday)
+    monthFormat: 'abbreviated', // 'abbreviated' (Nov) or 'full' (November)
     dateTextTransform: 'capitalize', // 'uppercase' or 'capitalize'
 
     // Typography
@@ -113,9 +119,9 @@ const BannerConfig = {
     textColor: '#ffffff',
 
     // Layout & Alignment
-    titleAlignment: 'left', // 'left', 'center', 'right'
-    dateAlignment: 'right', // 'left', 'center', 'right'
-    alignment: 'center', // Legacy - overall alignment for vertical mode
+    contentPosition: 'center', // 'center', 'spread', 'left', 'right' - horizontal mode only (renamed from contentAlignment)
+    titleAlignment: 'left', // 'left', 'center', 'right' - text alignment within title
+    dateAlignment: 'right', // 'left', 'center', 'right' - alignment within date container
     paddingVertical: 'md',
     paddingHorizontal: 'md',
 
@@ -176,6 +182,12 @@ const BannerConfig = {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
+        // Check config version - if outdated, return null to force reset to new defaults
+        if (!parsed._configVersion || parsed._configVersion < CONFIG_VERSION) {
+          console.log('[BannerConfig] Outdated config version, resetting to defaults');
+          this.clearStorage();
+          return null;
+        }
         // Convert referenceDate string back to Date
         if (parsed.referenceDate) {
           parsed.referenceDate = new Date(parsed.referenceDate);
@@ -193,7 +205,7 @@ const BannerConfig = {
    */
   saveToStorage() {
     try {
-      const toSave = { ...this.state };
+      const toSave = { ...this.state, _configVersion: CONFIG_VERSION };
       // Convert Date to ISO string for storage
       if (toSave.referenceDate instanceof Date) {
         toSave.referenceDate = toSave.referenceDate.toISOString();

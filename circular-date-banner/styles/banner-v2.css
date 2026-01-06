@@ -1,0 +1,251 @@
+/**
+ * Circular Date Banner v2 - Clean Layout System
+ * 3 layouts: Centered, Spread, Stacked
+ */
+
+/* ==========================================================================
+   CSS Custom Properties (Design Tokens)
+   ========================================================================== */
+:root {
+  /* Spacing */
+  --banner-padding-sm: 8px 12px;
+  --banner-padding-md: 12px 16px;
+  --banner-padding-lg: 16px 24px;
+
+  /* Typography - Sizes */
+  --banner-title-size-sm: 0.75rem;
+  --banner-title-size-md: 0.875rem;
+  --banner-title-size-lg: 1rem;
+
+  --banner-date-size-sm: 0.6875rem;
+  --banner-date-size-md: 0.75rem;
+  --banner-date-size-lg: 0.875rem;
+
+  /* Typography - Weights */
+  --banner-weight-normal: 400;
+  --banner-weight-medium: 500;
+  --banner-weight-semibold: 600;
+  --banner-weight-bold: 700;
+
+  /* Font Families */
+  --banner-font-opensans: 'Open Sans', system-ui, sans-serif;
+  --banner-font-inter: 'Inter', system-ui, sans-serif;
+  --banner-font-poppins: 'Poppins', system-ui, sans-serif;
+  --banner-font-montserrat: 'Montserrat', system-ui, sans-serif;
+  --banner-font-roboto: 'Roboto', system-ui, sans-serif;
+
+  /* Default Colors */
+  --banner-bg: #1a5f2a;
+  --banner-text: #ffffff;
+}
+
+/* ==========================================================================
+   Base Banner Styles
+   ========================================================================== */
+.banner {
+  width: 100%;
+  padding: var(--banner-padding-md);
+  background-color: var(--banner-bg);
+  color: var(--banner-text);
+  box-sizing: border-box;
+}
+
+.banner__content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.banner__title {
+  margin: 0;
+  font-family: var(--banner-font-opensans);
+  font-size: var(--banner-title-size-md);
+  font-weight: var(--banner-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.banner__dates {
+  margin: 0;
+  font-family: var(--banner-font-opensans);
+  font-size: var(--banner-date-size-md);
+  font-weight: var(--banner-weight-medium);
+  text-transform: capitalize;
+  line-height: 1.4;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Layout: Centered (Default)
+   Title and dates centered together inline, wraps when overflow
+   ========================================================================== */
+.banner--centered .banner__content {
+  flex-direction: row;
+  justify-content: center;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+
+/* ==========================================================================
+   Layout: Spread
+   Title on left, dates on right, wraps when overflow
+   ========================================================================== */
+.banner--spread .banner__content {
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+}
+
+/* ==========================================================================
+   Layout: Stacked
+   Title above dates, both centered
+   ========================================================================== */
+.banner--stacked .banner__content {
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  gap: 0.25rem;
+}
+
+/* ==========================================================================
+   Padding Variants
+   ========================================================================== */
+.banner--padding-sm {
+  padding: var(--banner-padding-sm);
+}
+
+.banner--padding-md {
+  padding: var(--banner-padding-md);
+}
+
+.banner--padding-lg {
+  padding: var(--banner-padding-lg);
+}
+
+/* ==========================================================================
+   Title Typography Variants
+   ========================================================================== */
+
+/* Font Family */
+.banner__title--font-opensans { font-family: var(--banner-font-opensans); }
+.banner__title--font-inter { font-family: var(--banner-font-inter); }
+.banner__title--font-poppins { font-family: var(--banner-font-poppins); }
+.banner__title--font-montserrat { font-family: var(--banner-font-montserrat); }
+.banner__title--font-roboto { font-family: var(--banner-font-roboto); }
+
+/* Font Size */
+.banner__title--size-sm { font-size: var(--banner-title-size-sm); }
+.banner__title--size-md { font-size: var(--banner-title-size-md); }
+.banner__title--size-lg { font-size: var(--banner-title-size-lg); }
+
+/* Font Weight */
+.banner__title--weight-normal { font-weight: var(--banner-weight-normal); }
+.banner__title--weight-medium { font-weight: var(--banner-weight-medium); }
+.banner__title--weight-semibold { font-weight: var(--banner-weight-semibold); }
+.banner__title--weight-bold { font-weight: var(--banner-weight-bold); }
+
+/* Text Transform */
+.banner__title--uppercase { text-transform: uppercase; }
+.banner__title--capitalize { text-transform: capitalize; }
+.banner__title--none { text-transform: none; }
+
+/* ==========================================================================
+   Date Typography Variants
+   ========================================================================== */
+
+/* Font Family */
+.banner__dates--font-opensans { font-family: var(--banner-font-opensans); }
+.banner__dates--font-inter { font-family: var(--banner-font-inter); }
+.banner__dates--font-poppins { font-family: var(--banner-font-poppins); }
+.banner__dates--font-montserrat { font-family: var(--banner-font-montserrat); }
+.banner__dates--font-roboto { font-family: var(--banner-font-roboto); }
+
+/* Font Size */
+.banner__dates--size-sm { font-size: var(--banner-date-size-sm); }
+.banner__dates--size-md { font-size: var(--banner-date-size-md); }
+.banner__dates--size-lg { font-size: var(--banner-date-size-lg); }
+
+/* Font Weight */
+.banner__dates--weight-normal { font-weight: var(--banner-weight-normal); }
+.banner__dates--weight-medium { font-weight: var(--banner-weight-medium); }
+.banner__dates--weight-semibold { font-weight: var(--banner-weight-semibold); }
+.banner__dates--weight-bold { font-weight: var(--banner-weight-bold); }
+
+/* Text Transform */
+.banner__dates--uppercase { text-transform: uppercase; }
+.banner__dates--capitalize { text-transform: capitalize; }
+.banner__dates--none { text-transform: none; }
+
+/* ==========================================================================
+   Visibility
+   ========================================================================== */
+.banner__title--hidden {
+  display: none;
+}
+
+/* ==========================================================================
+   Sticky Scroll Behavior
+   ========================================================================== */
+.banner--sticky-enabled {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.banner--sticky-active {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.banner--hidden {
+  transform: translateY(-100%);
+  box-shadow: none;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 1, 1),
+              box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
+}
+
+.banner--visible {
+  transform: translateY(0);
+}
+
+/* Reduce motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .banner--sticky-enabled,
+  .banner--hidden {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+   Responsive Adjustments
+   ========================================================================== */
+
+/* Tablet (640px+) */
+@media (min-width: 640px) {
+  :root {
+    --banner-title-size-sm: 0.875rem;
+    --banner-title-size-md: 1rem;
+    --banner-title-size-lg: 1.125rem;
+
+    --banner-date-size-sm: 0.75rem;
+    --banner-date-size-md: 0.875rem;
+    --banner-date-size-lg: 1rem;
+  }
+}
+
+/* Desktop (1024px+) */
+@media (min-width: 1024px) {
+  :root {
+    --banner-title-size-sm: 1rem;
+    --banner-title-size-md: 1.125rem;
+    --banner-title-size-lg: 1.25rem;
+
+    --banner-date-size-sm: 0.875rem;
+    --banner-date-size-md: 1rem;
+    --banner-date-size-lg: 1.125rem;
+  }
+}

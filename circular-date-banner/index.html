@@ -3,59 +3,67 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Circular Date Banner - Prototype</title>
+  <title>Circular Date Banner v2</title>
 
-  <!-- CSS Files (load in order: variables first) -->
-  <link rel="stylesheet" href="styles/variables.css">
-  <link rel="stylesheet" href="styles/banner.css">
-  <link rel="stylesheet" href="styles/patterns.css">
-  <link rel="stylesheet" href="styles/pill.css">
-  <link rel="stylesheet" href="styles/controls.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Banner v2 CSS -->
+  <link rel="stylesheet" href="styles/banner-v2.css">
 
   <style>
-    /* Page-level styles for the prototype demo */
+    /* ==========================================================================
+       Base Styles
+       ========================================================================== */
     * {
       box-sizing: border-box;
     }
 
     body {
       margin: 0;
-      padding: var(--spacing-lg);
-      background-color: #e8e8e8;
-      font-family: var(--font-primary);
+      padding: 24px;
+      background-color: #f3f4f6;
+      font-family: 'Open Sans', system-ui, sans-serif;
       min-height: 100vh;
     }
 
-    /* Mock Promotions Column Layout */
+    /* ==========================================================================
+       Page Layout
+       ========================================================================== */
     .page-layout {
       display: flex;
       justify-content: center;
-      gap: var(--spacing-lg);
-      padding-right: 340px; /* Make room for config panel */
+      gap: 24px;
+      padding-right: 340px;
+    }
+
+    @media (max-width: 1024px) {
+      .page-layout {
+        padding-right: 0;
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
+    /* ==========================================================================
+       Promotions Column (Preview Area)
+       ========================================================================== */
+    .promotions-wrapper {
+      width: 100%;
+      max-width: 472px;
+      display: flex;
+      flex-direction: column;
     }
 
     .promotions-column {
-      position: relative; /* Establishes positioning context for sticky banner */
-      display: flex;
-      flex-direction: column;
       width: 100%;
-      max-width: 472px;
-      background-color: #fff;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      transition: max-width 0.3s ease;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      /* overflow: hidden removed - breaks position:sticky */
     }
 
-    /* Sticky wrapper - clips the banner for reveal animation when sticky is enabled */
-    .banner-sticky-wrapper--active {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      overflow: hidden; /* Clips banner when it slides up for reveal animation */
-    }
-
-    /* Width is controlled via inline style from the width slider (320px - 472px) */
-
-    /* Promotions Grid Container */
     .promotions-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -63,1248 +71,1808 @@
       padding: 8px;
     }
 
-    /* Mobile: 4px gap and padding */
-    @media (max-width: 639px) {
-      .promotions-grid {
-        gap: 4px;
-        padding: 4px;
-      }
-    }
-
-    /* Placeholder promotion cards */
     .placeholder-card {
-      background-color: #f0f0f0;
-      border: 1px dashed #ccc;
+      background: #f9fafb;
+      border: 1px dashed #d1d5db;
       border-radius: 4px;
-      text-align: center;
-      color: #999;
-      font-size: 0.625rem;
-      font-weight: 500;
+      min-height: 80px;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 80px;
-      box-sizing: border-box;
+      color: #9ca3af;
+      font-size: 0.625rem;
+      font-weight: 500;
     }
 
-    /* Grid size classes - columns (width) */
-    .placeholder-card--1x1 { grid-column: span 1; grid-row: span 1; }
-    .placeholder-card--1x2 { grid-column: span 1; grid-row: span 2; }
-    .placeholder-card--1x3 { grid-column: span 1; grid-row: span 3; }
-    .placeholder-card--2x1 { grid-column: span 2; grid-row: span 1; }
-    .placeholder-card--2x2 { grid-column: span 2; grid-row: span 2; }
-    .placeholder-card--2x3 { grid-column: span 2; grid-row: span 3; }
-    .placeholder-card--3x1 { grid-column: span 3; grid-row: span 1; }
-    .placeholder-card--3x2 { grid-column: span 3; grid-row: span 2; }
-    .placeholder-card--3x3 { grid-column: span 3; grid-row: span 3; }
+    .placeholder-card--2x1 { grid-column: span 2; }
+    .placeholder-card--3x1 { grid-column: span 3; }
+    .placeholder-card--2x2 { grid-column: span 2; grid-row: span 2; min-height: 168px; }
 
-    /* Row heights based on span */
-    .placeholder-card--1x1,
-    .placeholder-card--2x1,
-    .placeholder-card--3x1 {
-      min-height: 80px;
+    /* ==========================================================================
+       Sidebar
+       ========================================================================== */
+    .sidebar {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      width: 320px;
+      max-height: calc(100vh - 48px);
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
-    .placeholder-card--1x2,
-    .placeholder-card--2x2,
-    .placeholder-card--3x2 {
-      min-height: 168px; /* 80*2 + 8 gap */
-    }
-
-    .placeholder-card--1x3,
-    .placeholder-card--2x3,
-    .placeholder-card--3x3 {
-      min-height: 256px; /* 80*3 + 8*2 gaps */
-    }
-
-    /* Mobile row heights (4px gap) */
-    @media (max-width: 639px) {
-      .placeholder-card--1x2,
-      .placeholder-card--2x2,
-      .placeholder-card--3x2 {
-        min-height: 164px; /* 80*2 + 4 gap */
-      }
-
-      .placeholder-card--1x3,
-      .placeholder-card--2x3,
-      .placeholder-card--3x3 {
-        min-height: 248px; /* 80*3 + 4*2 gaps */
+    @media (max-width: 1024px) {
+      .sidebar {
+        display: none;
       }
     }
 
-    /* Desktop body padding */
-    @media (min-width: 1024px) {
-      body {
-        padding: var(--spacing-xl);
-      }
-    }
-
-    @media (max-width: 900px) {
-      .page-layout {
-        padding-right: 0;
-      }
-    }
-
-    /* Mobile: full width with padding */
-    @media (max-width: 639px) {
-      body {
-        padding: var(--spacing-sm);
-      }
-
-      .promotions-column {
-        max-width: 100%;
-      }
-    }
-
-
-    /* Width Slider Control */
-    .width-control {
-      margin-bottom: var(--spacing-md);
-    }
-
-    .width-control-label {
+    .sidebar__header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #e5e7eb;
       display: flex;
       justify-content: space-between;
-      font-size: 0.6875rem;
-      margin-bottom: var(--spacing-xs);
-      color: #6b7280;
+      align-items: center;
     }
 
-    .width-control-label .value {
-      font-family: monospace;
-      color: var(--color-primary, #1a5f2a);
+    .sidebar__title {
+      font-size: 1rem;
       font-weight: 600;
+      color: #1f2937;
+      margin: 0;
     }
 
-    .width-slider {
-      width: 100%;
-      height: 6px;
-      -webkit-appearance: none;
-      appearance: none;
-      background: #e5e7eb;
-      border-radius: 3px;
-      outline: none;
-      cursor: pointer;
-    }
-
-    .width-slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: var(--color-primary, #1a5f2a);
-      cursor: pointer;
-      border: 2px solid #fff;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-      transition: transform 0.15s ease;
-    }
-
-    .width-slider::-webkit-slider-thumb:hover {
-      transform: scale(1.1);
-    }
-
-    .width-slider::-moz-range-thumb {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: var(--color-primary, #1a5f2a);
-      cursor: pointer;
-      border: 2px solid #fff;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-    }
-
-    .width-presets {
-      display: flex;
-      gap: 4px;
-      margin-top: var(--spacing-xs);
-    }
-
-    .width-preset-btn {
+    .sidebar__body {
       flex: 1;
-      padding: 6px 8px;
-      font-size: 0.625rem;
-      font-weight: var(--font-weight-medium);
-      font-family: var(--font-primary);
-      border: 1px solid #d1d5db;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .sidebar__footer {
+      padding: 16px 20px;
+      border-top: 1px solid #e5e7eb;
       background: #f9fafb;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      color: #6b7280;
     }
 
-    .width-preset-btn:hover {
-      border-color: var(--color-primary, #1a5f2a);
-      color: var(--color-primary, #1a5f2a);
-    }
-
-    .width-preset-btn.active {
-      background: var(--color-primary, #1a5f2a);
-      border-color: var(--color-primary, #1a5f2a);
-      color: #fff;
-    }
-
-    /* Scroll Position Indicator (Debug) */
-    .scroll-indicator {
+    /* ==========================================================================
+       Modal Overlay
+       ========================================================================== */
+    .modal-overlay {
       position: fixed;
-      bottom: var(--spacing-md);
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 1001;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
       display: flex;
       align-items: center;
-      gap: 4px;
-      padding: 8px 12px;
-      font-family: monospace;
-      font-size: 0.6875rem;
-      color: #374151;
-      background-color: rgba(255, 255, 255, 0.95);
-      border: 1px solid #e5e7eb;
-      border-radius: 6px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      justify-content: center;
+      z-index: 1000;
+      padding: 24px;
     }
 
-    .scroll-indicator__label {
+    .modal-overlay.hidden {
+      display: none;
+    }
+
+    .modal {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      max-width: 600px;
+      max-height: calc(100vh - 48px);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal__header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal__title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin: 0;
+    }
+
+    .modal__close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
       color: #6b7280;
+      cursor: pointer;
+      padding: 4px 8px;
+      line-height: 1;
+      border-radius: 4px;
     }
 
-    .scroll-indicator__value {
-      font-weight: var(--font-weight-bold);
-      color: var(--color-primary, #1a5f2a);
-      min-width: 40px;
+    .modal__close:hover {
+      background: #f3f4f6;
+      color: #1f2937;
     }
 
-    .scroll-indicator__state {
-      margin-left: 8px;
-      padding: 2px 6px;
-      font-size: 0.5625rem;
-      font-weight: var(--font-weight-semibold);
+    .modal__body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .modal__footer {
+      padding: 16px 20px;
+      border-top: 1px solid #e5e7eb;
+      background: #f9fafb;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    /* ==========================================================================
+       Preview Component
+       ========================================================================== */
+    .preview {
+      background: #e5e7eb;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 24px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .preview__label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #6b7280;
       text-transform: uppercase;
       letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    .preview__banner {
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    /* ==========================================================================
+       Config Section
+       ========================================================================== */
+    .config-section {
+      margin-bottom: 24px;
+    }
+
+    .config-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .config-section__title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #374151;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 0 0 12px 0;
+    }
+
+    .config-section__divider {
+      border: none;
+      border-top: 1px solid #e5e7eb;
+      margin: 24px 0;
+    }
+
+    /* ==========================================================================
+       Layout Selector
+       ========================================================================== */
+    .layout-selector {
+      display: flex;
+      gap: 8px;
+    }
+
+    .layout-option {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 8px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      background: #fff;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .layout-option:hover {
+      border-color: #9ca3af;
+    }
+
+    .layout-option.active {
+      border-color: #2196F3;
+      background: #e3f2fd;
+    }
+
+    .layout-option__icon {
+      width: 48px;
+      height: 24px;
+      background: #e5e7eb;
       border-radius: 3px;
-      background-color: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      padding: 3px 6px;
+    }
+
+    .layout-option.active .layout-option__icon {
+      background: #bbdefb;
+    }
+
+    .layout-option__icon-bar {
+      background: #6b7280;
+      border-radius: 1px;
+    }
+
+    .layout-option.active .layout-option__icon-bar {
+      background: #1976D2;
+    }
+
+    /* Centered icon */
+    .layout-option[data-layout="centered"] .layout-option__icon {
+      justify-content: center;
+    }
+    .layout-option[data-layout="centered"] .layout-option__icon-bar:first-child {
+      width: 14px;
+      height: 4px;
+    }
+    .layout-option[data-layout="centered"] .layout-option__icon-bar:last-child {
+      width: 18px;
+      height: 3px;
+    }
+
+    /* Spread icon */
+    .layout-option[data-layout="spread"] .layout-option__icon {
+      justify-content: space-between;
+    }
+    .layout-option[data-layout="spread"] .layout-option__icon-bar:first-child {
+      width: 12px;
+      height: 4px;
+    }
+    .layout-option[data-layout="spread"] .layout-option__icon-bar:last-child {
+      width: 16px;
+      height: 3px;
+    }
+
+    /* Stacked icon */
+    .layout-option[data-layout="stacked"] .layout-option__icon {
+      flex-direction: column;
+      gap: 2px;
+    }
+    .layout-option[data-layout="stacked"] .layout-option__icon-bar:first-child {
+      width: 18px;
+      height: 4px;
+    }
+    .layout-option[data-layout="stacked"] .layout-option__icon-bar:last-child {
+      width: 24px;
+      height: 3px;
+    }
+
+    .layout-option__label {
+      font-size: 0.6875rem;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .layout-option.active .layout-option__label {
+      color: #1976D2;
+    }
+
+    /* ==========================================================================
+       Checkbox Group
+       ========================================================================== */
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: #2196F3;
+      cursor: pointer;
+    }
+
+    .checkbox-item label {
+      font-size: 0.8125rem;
+      color: #374151;
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       Color Pickers
+       ========================================================================== */
+    .color-group {
+      display: flex;
+      gap: 16px;
+    }
+
+    .color-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .color-item__label {
+      font-size: 0.8125rem;
+      color: #374151;
+    }
+
+    .color-item__input {
+      width: 36px;
+      height: 28px;
+      padding: 2px;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       Radio Group
+       ========================================================================== */
+    .radio-group {
+      display: flex;
+      gap: 12px;
+    }
+
+    .radio-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+
+    .radio-item input[type="radio"] {
+      width: 14px;
+      height: 14px;
+      accent-color: #2196F3;
+      cursor: pointer;
+    }
+
+    .radio-item label {
+      font-size: 0.8125rem;
+      color: #374151;
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       Select Groups (Typography)
+       ========================================================================== */
+    .typography-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .typography-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .select-group {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex: 1;
+      min-width: 70px;
+    }
+
+    .select-group__label {
+      font-size: 0.6875rem;
       color: #6b7280;
     }
 
-    .scroll-indicator__state--sticky {
-      background-color: #dbeafe;
-      color: #1e40af;
+    .select-group select {
+      padding: 5px 24px 5px 8px;
+      font-size: 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      background: #fff;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%236b7280' d='M2 3l3 4 3-4'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 6px center;
     }
 
-    .scroll-indicator__state--hidden {
-      background-color: #fef3c7;
-      color: #92400e;
+    .select-group select:focus {
+      outline: none;
+      border-color: #2196F3;
+      box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
     }
 
-    @media (max-width: 639px) {
-      .scroll-indicator {
-        bottom: 60px;
-        left: 50%;
-        transform: translateX(-50%);
-        padding: 6px 10px;
-        font-size: 0.625rem;
-      }
-    }
-
-    /* Preset Buttons */
-    .preset-buttons {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
+    /* ==========================================================================
+       Preset Buttons
+       ========================================================================== */
+    .preset-group {
+      display: flex;
+      gap: 8px;
     }
 
     .preset-btn {
-      padding: 8px 12px;
-      font-size: 0.6875rem;
-      font-weight: var(--font-weight-medium);
-      font-family: var(--font-primary);
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      font-weight: 500;
       color: #374151;
-      background-color: #f9fafb;
-      border: 1px solid #d1d5db;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
       border-radius: 4px;
       cursor: pointer;
       transition: all 0.15s ease;
     }
 
     .preset-btn:hover {
-      background-color: #f3f4f6;
-      border-color: #9ca3af;
-      transform: translateY(-1px);
+      background: #e5e7eb;
     }
 
-    .preset-btn:active {
+    /* ==========================================================================
+       Buttons
+       ========================================================================== */
+    .btn {
+      padding: 8px 16px;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn--secondary {
+      color: #374151;
+      background: #fff;
+      border: 1px solid #d1d5db;
+    }
+
+    .btn--secondary:hover {
+      background: #f3f4f6;
+    }
+
+    .btn--primary {
+      color: #fff;
+      background: #2196F3;
+      border: 1px solid #2196F3;
+    }
+
+    .btn--primary:hover {
+      background: #1976D2;
+      border-color: #1976D2;
+    }
+
+    .btn--icon {
+      padding: 8px;
+      background: none;
+      border: none;
+      color: #6b7280;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .btn--icon:hover {
+      background: #f3f4f6;
+      color: #1f2937;
+    }
+
+    /* ==========================================================================
+       Validity Pill (inline with dates)
+       ========================================================================== */
+    .banner__dates {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .banner__dates-text {
+      flex-shrink: 0;
+    }
+
+    .banner__validity-pill {
+      padding: 2px 8px;
+      font-size: 0.625rem;
+      font-weight: 500;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      /* text-transform controlled by JS config.validityTransform */
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* Spread layout: dates align to the right, no wrap needed */
+    .banner--spread .banner__dates {
+      justify-content: flex-end;
+      flex-wrap: nowrap;
+    }
+
+    /* Stacked layout: center the dates container */
+    .banner--stacked .banner__dates {
+      justify-content: center;
+    }
+
+    .banner__validity-pill--hidden {
+      display: none;
+    }
+
+    .banner {
+      z-index: 100;
+    }
+
+    /* Sticky banner should have higher z-index and shadow */
+    .banner--sticky-active {
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Hide/show transitions for sticky banner */
+    .banner--hidden {
+      transform: translateY(-100%);
+      box-shadow: none;
+    }
+
+    .banner--visible {
       transform: translateY(0);
     }
 
-    .preset-btn[data-preset="minimal"] {
-      border-left: 3px solid #374151;
+    .banner--sticky-enabled {
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                  box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .preset-btn[data-preset="standard"] {
-      border-left: 3px solid #1a5f2a;
+    /* ==========================================================================
+       Floating Validity Pill (Days Left)
+       ========================================================================== */
+    .promotions-wrapper {
+      position: relative;
     }
 
-    .preset-btn[data-preset="bold"] {
-      border-left: 3px solid #991b1b;
+    .floating-validity-pill {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 64px;
+      height: 64px;
+      background: #1a5f2a;
+      color: #fff;
+      border-radius: 50%;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      z-index: 50;
     }
 
-    .preset-btn[data-preset="spanish"] {
-      border-left: 3px solid #1e40af;
+    .floating-validity-pill__days {
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1;
     }
 
-    /* Copy Feedback */
-    .copy-feedback {
-      margin-top: var(--spacing-sm);
-      padding: 8px 12px;
+    .floating-validity-pill__label {
+      font-size: 0.5rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      opacity: 0.9;
+    }
+
+    /* ==========================================================================
+       Input Group (Text inputs)
+       ========================================================================== */
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .input-group__label {
       font-size: 0.75rem;
-      font-weight: var(--font-weight-medium);
-      color: #166534;
-      background-color: #dcfce7;
-      border: 1px solid #bbf7d0;
+      color: #6b7280;
+    }
+
+    .input-group input[type="text"] {
+      padding: 6px 10px;
+      font-size: 0.8125rem;
+      border: 1px solid #d1d5db;
       border-radius: 4px;
-      text-align: center;
-      animation: fadeInOut 2s ease-in-out;
+      background: #fff;
     }
 
-    @keyframes fadeInOut {
-      0% { opacity: 0; transform: translateY(-4px); }
-      15% { opacity: 1; transform: translateY(0); }
-      85% { opacity: 1; transform: translateY(0); }
-      100% { opacity: 0; transform: translateY(-4px); }
+    .input-group input[type="text"]:focus {
+      outline: none;
+      border-color: #2196F3;
+      box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
     }
 
-    /* Pattern Preview Section */
-    .pattern-preview-section {
-      max-width: 900px;
-      margin: var(--spacing-xl) auto;
-      padding-right: 340px;
+    .input-row {
+      display: flex;
+      gap: 12px;
     }
 
-    .pattern-preview-section h2 {
-      font-size: 1rem;
-      font-weight: var(--font-weight-semibold);
-      color: var(--color-text-dark);
-      margin: 0 0 var(--spacing-md) 0;
+    .input-row .input-group {
+      flex: 1;
     }
 
-    @media (max-width: 900px) {
-      .pattern-preview-section {
-        padding-right: 0;
+    /* ==========================================================================
+       Toggle Group (Language Selector)
+       ========================================================================== */
+    .toggle-group {
+      display: inline-flex;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .toggle-group__btn {
+      padding: 6px 14px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      background: #fff;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      color: #6b7280;
+    }
+
+    .toggle-group__btn:not(:last-child) {
+      border-right: 1px solid #d1d5db;
+    }
+
+    .toggle-group__btn:hover {
+      background: #f3f4f6;
+    }
+
+    .toggle-group__btn.active {
+      background: #2196F3;
+      color: #fff;
+    }
+
+    /* ==========================================================================
+       Toggle Switch
+       ========================================================================== */
+    .toggle-switch {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #e5e7eb;
+      margin-bottom: 16px;
+    }
+
+    .toggle-switch__label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .toggle-switch__input {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      appearance: none;
+      background: #d1d5db;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .toggle-switch__input:checked {
+      background: #22c55e;
+    }
+
+    .toggle-switch__input::before {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+      transition: transform 0.2s ease;
+    }
+
+    .toggle-switch__input:checked::before {
+      transform: translateX(20px);
+    }
+
+    /* ==========================================================================
+       Utility
+       ========================================================================== */
+    .open-modal-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      padding: 12px 20px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #fff;
+      background: #2196F3;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+      z-index: 100;
+    }
+
+    .open-modal-btn:hover {
+      background: #1976D2;
+    }
+
+    @media (min-width: 1025px) {
+      .open-modal-btn {
+        display: none;
       }
     }
   </style>
 </head>
 <body>
+
+  <!-- Page Layout -->
   <div class="page-layout">
-    <!-- Mock Promotions Column -->
-    <div class="promotions-column">
-      <!-- Sticky wrapper - handles position:sticky and clips the banner for reveal animation -->
-      <div class="banner-sticky-wrapper">
-        <!-- Circular Date Banner Component -->
-        <header class="circular-date-banner">
-          <div class="banner__content">
-            <p class="banner__day-names"></p>
-            <h1 class="banner__title">WEEKLY AD</h1>
-            <!-- Single-line date range with flex wrap for overflow -->
-            <div class="banner__date-range">
-              <div class="banner__date-part banner__date-part--start"></div>
-              <div class="banner__date-part banner__date-part--separator">-</div>
-              <div class="banner__date-part banner__date-part--end"></div>
-            </div>
-            <!-- Two-line date layout (for horizontal mode) -->
-            <div class="banner__date-lines">
-              <div class="banner__date-start"></div>
-              <div class="banner__date-end"></div>
-            </div>
+    <!-- Promotions Wrapper (contains sticky banner + scroll content) -->
+    <div class="promotions-wrapper">
+      <!-- Main Banner (outside promotions-column for sticky to work) -->
+      <div id="main-banner" class="banner banner--centered banner--padding-md">
+        <div class="banner__content">
+          <div class="banner__title">WEEKLY AD</div>
+          <div class="banner__dates">
+            <span class="banner__dates-text">Wed, Jan 1 - Tue, Jan 7, 2026</span>
+            <span class="banner__validity-pill">Valid</span>
           </div>
-        </header>
+        </div>
       </div>
 
-      <!-- Promotions Grid -->
-      <div class="promotions-grid">
-        <!-- Row 1: Full width hero (3x2) -->
-        <div class="placeholder-card placeholder-card--3x2">3x2 Hero</div>
-
-        <!-- Row 3: Three 1x1 cards -->
-        <div class="placeholder-card placeholder-card--1x1">1x1</div>
-        <div class="placeholder-card placeholder-card--1x1">1x1</div>
-        <div class="placeholder-card placeholder-card--1x1">1x1</div>
-
-        <!-- Row 4: 2x2 + 1x2 -->
+      <!-- Promotions Column with Grid -->
+      <div class="promotions-column">
+        <!-- Placeholder Grid -->
+        <div class="promotions-grid">
+        <!-- Row 1 -->
+        <div class="placeholder-card">1x1</div>
+        <div class="placeholder-card">1x1</div>
+        <div class="placeholder-card">1x1</div>
+        <!-- Row 2-3 (2x2 spans) -->
         <div class="placeholder-card placeholder-card--2x2">2x2</div>
-        <div class="placeholder-card placeholder-card--1x2">1x2</div>
-
-        <!-- Row 6: Full width banner (3x1) -->
-        <div class="placeholder-card placeholder-card--3x1">3x1 Banner</div>
-
-        <!-- Row 7: 1x3 + 2x3 -->
-        <div class="placeholder-card placeholder-card--1x3">1x3</div>
-        <div class="placeholder-card placeholder-card--2x3">2x3</div>
-
-        <!-- Row 10: Three 1x1 cards -->
-        <div class="placeholder-card placeholder-card--1x1">1x1</div>
-        <div class="placeholder-card placeholder-card--1x1">1x1</div>
-        <div class="placeholder-card placeholder-card--1x1">1x1</div>
-
-        <!-- Row 11: 2x1 + 1x1 -->
+        <div class="placeholder-card">1x1</div>
+        <div class="placeholder-card">1x1</div>
+        <!-- Row 4 -->
+        <div class="placeholder-card placeholder-card--3x1">3x1</div>
+        <!-- Row 5 -->
+        <div class="placeholder-card">1x1</div>
         <div class="placeholder-card placeholder-card--2x1">2x1</div>
-        <div class="placeholder-card placeholder-card--1x1">1x1</div>
-
-        <!-- Row 12: 1x1 + 2x1 -->
-        <div class="placeholder-card placeholder-card--1x1">1x1</div>
+        <!-- Row 6 -->
+        <div class="placeholder-card">1x1</div>
+        <div class="placeholder-card">1x1</div>
+        <div class="placeholder-card">1x1</div>
+        <!-- Duplicate rows for scrolling -->
+        <!-- Row 7 -->
+        <div class="placeholder-card">1x1</div>
+        <div class="placeholder-card">1x1</div>
+        <div class="placeholder-card">1x1</div>
+        <!-- Row 8-9 (2x2 spans) -->
+        <div class="placeholder-card placeholder-card--2x2">2x2</div>
+        <div class="placeholder-card">1x1</div>
+        <div class="placeholder-card">1x1</div>
+        <!-- Row 10 -->
+        <div class="placeholder-card placeholder-card--3x1">3x1</div>
+        <!-- Row 11 -->
+        <div class="placeholder-card">1x1</div>
         <div class="placeholder-card placeholder-card--2x1">2x1</div>
+        <!-- Row 12 -->
+        <div class="placeholder-card">1x1</div>
+        <div class="placeholder-card">1x1</div>
+        <div class="placeholder-card">1x1</div>
+        <!-- Row 13 -->
+        <div class="placeholder-card placeholder-card--2x1">2x1</div>
+        <div class="placeholder-card">1x1</div>
+        <!-- Row 14 -->
+        <div class="placeholder-card">1x1</div>
+        <div class="placeholder-card">1x1</div>
+        <div class="placeholder-card">1x1</div>
+        <!-- Row 15-16 (2x2 spans) -->
+        <div class="placeholder-card placeholder-card--2x2">2x2</div>
+        <div class="placeholder-card">1x1</div>
+        <div class="placeholder-card">1x1</div>
+        <!-- Row 17 -->
+        <div class="placeholder-card placeholder-card--3x1">3x1</div>
+        </div>
+      </div>
+      <!-- End Promotions Column -->
 
-        <!-- Row 13: Full width (3x2) -->
-        <div class="placeholder-card placeholder-card--3x2">3x2</div>
-
-        <!-- Row 15: 1x2 + 1x2 + 1x2 -->
-        <div class="placeholder-card placeholder-card--1x2">1x2</div>
-        <div class="placeholder-card placeholder-card--1x2">1x2</div>
-        <div class="placeholder-card placeholder-card--1x2">1x2</div>
-
-        <!-- Row 17: 3x3 full grid -->
-        <div class="placeholder-card placeholder-card--3x3">3x3</div>
-
-        <!-- Row 20: Six 1x1 cards (2 rows) -->
-        <div class="placeholder-card placeholder-card--1x1">1x1</div>
-        <div class="placeholder-card placeholder-card--1x1">1x1</div>
-        <div class="placeholder-card placeholder-card--1x1">1x1</div>
-        <div class="placeholder-card placeholder-card--1x1">1x1</div>
-        <div class="placeholder-card placeholder-card--1x1">1x1</div>
-        <div class="placeholder-card placeholder-card--1x1">1x1</div>
+      <!-- Floating Validity Pill -->
+      <div class="floating-validity-pill" id="floating-validity-pill">
+        <span class="floating-validity-pill__days">6</span>
+        <span class="floating-validity-pill__label">Days Left</span>
       </div>
     </div>
+    <!-- End Promotions Wrapper -->
   </div>
 
-  <!-- Scroll Position Indicator (Debug) -->
-  <div class="scroll-indicator" id="scroll-indicator">
-    <span class="scroll-indicator__label">Scroll Y:</span>
-    <span class="scroll-indicator__value" id="scroll-y-value">0</span>px
-    <span class="scroll-indicator__state" id="scroll-state">normal</span>
-  </div>
-
-  <!-- Configuration Panel -->
-  <aside class="config-panel">
-    <div class="config-panel__header">
-      <h2 class="config-panel__title">Banner Configuration</h2>
-      <div class="config-panel__header-actions">
-        <a href="templates.html" class="config-panel__link" title="View all template variations">Templates</a>
-        <button type="button" class="config-panel__reset-btn" id="reset-config-btn">Reset</button>
-        <span class="config-panel__toggle">-</span>
-      </div>
+  <!-- Sidebar (Desktop) -->
+  <aside class="sidebar">
+    <div class="sidebar__header">
+      <h2 class="sidebar__title">Banner Config</h2>
     </div>
-    <div class="config-panel__body">
-
-      <!-- Section: Content -->
-      <div class="config-section">
-        <div class="config-section__header">
-          <h3 class="config-section__title">Content</h3>
-          <span class="config-section__toggle"></span>
-        </div>
-        <div class="config-section__content">
-          <!-- Enabled Toggle -->
-          <div class="config-group">
-            <div class="config-checkbox-group">
-              <input type="checkbox" id="config-enabled" class="config-checkbox" data-config-key="enabled" checked>
-              <label class="config-checkbox-label" for="config-enabled">Banner Enabled</label>
-            </div>
-          </div>
-
-          <!-- Header Text (English) -->
-          <div class="config-group">
-            <label class="config-label" for="config-header-text">Header Text (English)</label>
-            <input type="text" id="config-header-text" class="config-input" data-config-key="headerText" value="WEEKLY AD">
-          </div>
-
-          <!-- Header Text (Translated) -->
-          <div class="config-group">
-            <label class="config-label" for="config-header-text-translated">Header Text (Spanish)</label>
-            <input type="text" id="config-header-text-translated" class="config-input" data-config-key="headerTextTranslated" value="OFERTAS SEMANALES">
-          </div>
-
-          <!-- Locale Toggle -->
-          <div class="config-group">
-            <label class="config-label" for="config-locale">Language</label>
-            <select id="config-locale" class="config-select" data-config-key="locale">
-              <option value="en">English</option>
-              <option value="es">Spanish (Español)</option>
-            </select>
-          </div>
-
-          <!-- Start Day of Week -->
-          <div class="config-group">
-            <label class="config-label" for="config-start-day">Circular Starts On</label>
-            <select id="config-start-day" class="config-select" data-config-key="startDayOfWeek">
-              <option value="Sunday">Sunday</option>
-              <option value="Monday">Monday</option>
-              <option value="Tuesday">Tuesday</option>
-              <option value="Wednesday">Wednesday</option>
-              <option value="Thursday">Thursday</option>
-              <option value="Friday">Friday</option>
-              <option value="Saturday">Saturday</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section: Layout -->
-      <div class="config-section">
-        <div class="config-section__header">
-          <h3 class="config-section__title">Layout</h3>
-          <span class="config-section__toggle"></span>
-        </div>
-        <div class="config-section__content">
-          <!-- Layout Mode -->
-          <div class="config-group">
-            <label class="config-label">Layout Mode</label>
-            <div class="config-radio-set">
-              <div class="config-radio-group">
-                <input type="radio" id="config-layout-vertical" name="layoutMode" class="config-radio" data-config-key="layoutMode" value="vertical" checked>
-                <label class="config-radio-label" for="config-layout-vertical">Vertical (Stacked)</label>
-              </div>
-              <div class="config-radio-group">
-                <input type="radio" id="config-layout-horizontal" name="layoutMode" class="config-radio" data-config-key="layoutMode" value="horizontal">
-                <label class="config-radio-label" for="config-layout-horizontal">Horizontal (Inline)</label>
-              </div>
-            </div>
-          </div>
-
-          <!-- Date Layout (Horizontal only) -->
-          <div class="config-group">
-            <label class="config-label">Date Layout (Horizontal)</label>
-            <div class="config-radio-set">
-              <div class="config-radio-group">
-                <input type="radio" id="config-date-single" name="dateLayout" class="config-radio" data-config-key="dateLayout" value="single-line" checked>
-                <label class="config-radio-label" for="config-date-single">Single Line</label>
-              </div>
-              <div class="config-radio-group">
-                <input type="radio" id="config-date-two" name="dateLayout" class="config-radio" data-config-key="dateLayout" value="two-line">
-                <label class="config-radio-label" for="config-date-two">Two Lines</label>
-              </div>
-            </div>
-            <p class="config-help">Two lines shows start and end dates on separate lines.</p>
-          </div>
-
-          <!-- Flex Direction (Order) -->
-          <div class="config-group">
-            <label class="config-label">Element Order</label>
-            <div class="config-radio-set">
-              <div class="config-radio-group">
-                <input type="radio" id="config-flex-normal" name="flexDirection" class="config-radio" data-config-key="flexDirection" value="normal" checked>
-                <label class="config-radio-label" for="config-flex-normal">Normal</label>
-              </div>
-              <div class="config-radio-group">
-                <input type="radio" id="config-flex-reverse" name="flexDirection" class="config-radio" data-config-key="flexDirection" value="reverse">
-                <label class="config-radio-label" for="config-flex-reverse">Reverse</label>
-              </div>
-            </div>
-            <p class="config-help">Reverse swaps title/date order. Vertical: title below dates. Horizontal: dates on left.</p>
-          </div>
-
-          <!-- Title Alignment -->
-          <div class="config-group">
-            <label class="config-label">Title Alignment</label>
-            <div class="config-radio-set">
-              <div class="config-radio-group">
-                <input type="radio" id="config-title-align-left" name="titleAlignment" class="config-radio" data-config-key="titleAlignment" value="left" checked>
-                <label class="config-radio-label" for="config-title-align-left">Left</label>
-              </div>
-              <div class="config-radio-group">
-                <input type="radio" id="config-title-align-center" name="titleAlignment" class="config-radio" data-config-key="titleAlignment" value="center">
-                <label class="config-radio-label" for="config-title-align-center">Center</label>
-              </div>
-              <div class="config-radio-group">
-                <input type="radio" id="config-title-align-right" name="titleAlignment" class="config-radio" data-config-key="titleAlignment" value="right">
-                <label class="config-radio-label" for="config-title-align-right">Right</label>
-              </div>
-            </div>
-          </div>
-
-          <!-- Date Alignment -->
-          <div class="config-group">
-            <label class="config-label">Date Alignment</label>
-            <div class="config-radio-set">
-              <div class="config-radio-group">
-                <input type="radio" id="config-date-align-left" name="dateAlignment" class="config-radio" data-config-key="dateAlignment" value="left">
-                <label class="config-radio-label" for="config-date-align-left">Left</label>
-              </div>
-              <div class="config-radio-group">
-                <input type="radio" id="config-date-align-center" name="dateAlignment" class="config-radio" data-config-key="dateAlignment" value="center">
-                <label class="config-radio-label" for="config-date-align-center">Center</label>
-              </div>
-              <div class="config-radio-group">
-                <input type="radio" id="config-date-align-right" name="dateAlignment" class="config-radio" data-config-key="dateAlignment" value="right" checked>
-                <label class="config-radio-label" for="config-date-align-right">Right</label>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section: Date Display -->
-      <div class="config-section">
-        <div class="config-section__header">
-          <h3 class="config-section__title">Date Display</h3>
-          <span class="config-section__toggle"></span>
-        </div>
-        <div class="config-section__content">
-          <!-- Date Format -->
-          <div class="config-group">
-            <label class="config-label" for="config-date-format">Date Format</label>
-            <select id="config-date-format" class="config-select" data-config-key="dateFormat">
-              <option value="compact">Compact (Nov 6 - 12)</option>
-              <option value="explicit">Explicit (Nov 6 - Nov 12)</option>
-              <option value="numeric">Numeric (11/6 - 11/12)</option>
-            </select>
-          </div>
-
-          <!-- Show Title -->
-          <div class="config-group">
-            <div class="config-checkbox-group">
-              <input type="checkbox" id="config-show-title" class="config-checkbox" data-config-key="showTitle" checked>
-              <label class="config-checkbox-label" for="config-show-title">Show Title</label>
-            </div>
-          </div>
-
-          <!-- Show Day Names -->
-          <div class="config-group">
-            <div class="config-checkbox-group">
-              <input type="checkbox" id="config-show-day-names" class="config-checkbox" data-config-key="showDayNames">
-              <label class="config-checkbox-label" for="config-show-day-names">Show Day Names</label>
-            </div>
-          </div>
-
-          <!-- Show Year -->
-          <div class="config-group">
-            <div class="config-checkbox-group">
-              <input type="checkbox" id="config-show-year" class="config-checkbox" data-config-key="showYear">
-              <label class="config-checkbox-label" for="config-show-year">Show Year</label>
-            </div>
-          </div>
-
-          <!-- Day Name Format -->
-          <div class="config-group">
-            <label class="config-label" for="config-day-name-format">Day Name Format</label>
-            <select id="config-day-name-format" class="config-select" data-config-key="dayNameFormat">
-              <option value="abbreviated">Abbreviated (Wed, Tue)</option>
-              <option value="full">Full (Wednesday, Tuesday)</option>
-            </select>
-          </div>
-
-          <!-- Date Text Transform -->
-          <div class="config-group">
-            <label class="config-label" for="config-date-text-transform">Date Line Case</label>
-            <select id="config-date-text-transform" class="config-select" data-config-key="dateTextTransform">
-              <option value="capitalize">Capitalize (Wed, Dec 31)</option>
-              <option value="uppercase">UPPERCASE (WED, DEC 31)</option>
-            </select>
-            <p class="config-help">Controls text case for dates and day names.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section: Typography -->
-      <div class="config-section">
-        <div class="config-section__header">
-          <h3 class="config-section__title">Typography</h3>
-          <span class="config-section__toggle"></span>
-        </div>
-        <div class="config-section__content">
-          <!-- Font Family -->
-          <div class="config-group">
-            <label class="config-label" for="config-font-family">Font Family</label>
-            <select id="config-font-family" class="config-select" data-config-key="fontFamily">
-              <option value="primary">Primary (System UI)</option>
-              <option value="heading">Heading (Georgia)</option>
-            </select>
-          </div>
-
-          <!-- Font Weight -->
-          <div class="config-group">
-            <label class="config-label" for="config-font-weight">Font Weight</label>
-            <select id="config-font-weight" class="config-select" data-config-key="fontWeight">
-              <option value="400">400 - Normal</option>
-              <option value="500">500 - Medium</option>
-              <option value="600">600 - Semibold</option>
-              <option value="700">700 - Bold</option>
-              <option value="800">800 - Extra Bold</option>
-            </select>
-          </div>
-
-          <!-- Text Transform -->
-          <div class="config-group">
-            <label class="config-label" for="config-text-transform">Text Transform</label>
-            <select id="config-text-transform" class="config-select" data-config-key="textTransform">
-              <option value="none">None</option>
-              <option value="uppercase">UPPERCASE</option>
-              <option value="capitalize">Capitalize</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section: Colors -->
-      <div class="config-section">
-        <div class="config-section__header">
-          <h3 class="config-section__title">Colors</h3>
-          <span class="config-section__toggle"></span>
-        </div>
-        <div class="config-section__content">
-          <!-- Background Color -->
-          <div class="config-group">
-            <label class="config-label">Background Color</label>
-            <div class="config-color-group">
-              <input type="color" id="config-bg-color" class="config-color-input" data-config-key="backgroundColor" value="#1a5f2a">
-              <span class="config-color-value" id="config-bg-color-value">#1a5f2a</span>
-            </div>
-          </div>
-
-          <!-- Text Color -->
-          <div class="config-group">
-            <label class="config-label">Text Color</label>
-            <div class="config-color-group">
-              <input type="color" id="config-text-color" class="config-color-input" data-config-key="textColor" value="#ffffff">
-              <span class="config-color-value" id="config-text-color-value">#ffffff</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section: Layout -->
-      <div class="config-section">
-        <div class="config-section__header">
-          <h3 class="config-section__title">Layout</h3>
-          <span class="config-section__toggle"></span>
-        </div>
-        <div class="config-section__content">
-          <!-- Alignment -->
-          <div class="config-group">
-            <label class="config-label">Alignment</label>
-            <div class="config-radio-set">
-              <div class="config-radio-group">
-                <input type="radio" id="config-align-left" name="alignment" class="config-radio" data-config-key="alignment" value="left">
-                <label class="config-radio-label" for="config-align-left">Left</label>
-              </div>
-              <div class="config-radio-group">
-                <input type="radio" id="config-align-center" name="alignment" class="config-radio" data-config-key="alignment" value="center" checked>
-                <label class="config-radio-label" for="config-align-center">Center</label>
-              </div>
-              <div class="config-radio-group">
-                <input type="radio" id="config-align-right" name="alignment" class="config-radio" data-config-key="alignment" value="right">
-                <label class="config-radio-label" for="config-align-right">Right</label>
-              </div>
-            </div>
-          </div>
-
-          <!-- Padding -->
-          <div class="config-inline-group">
-            <div class="config-group">
-              <label class="config-label" for="config-padding-v">Vertical Padding</label>
-              <select id="config-padding-v" class="config-select" data-config-key="paddingVertical">
-                <option value="sm">Small</option>
-                <option value="md">Medium</option>
-                <option value="lg">Large</option>
-                <option value="xl">Extra Large</option>
-              </select>
-            </div>
-            <div class="config-group">
-              <label class="config-label" for="config-padding-h">Horizontal Padding</label>
-              <select id="config-padding-h" class="config-select" data-config-key="paddingHorizontal">
-                <option value="sm">Small</option>
-                <option value="md">Medium</option>
-                <option value="lg">Large</option>
-                <option value="xl">Extra Large</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section: Border -->
-      <div class="config-section">
-        <div class="config-section__header">
-          <h3 class="config-section__title">Border</h3>
-          <span class="config-section__toggle"></span>
-        </div>
-        <div class="config-section__content">
-          <!-- Border Style -->
-          <div class="config-group">
-            <label class="config-label" for="config-border-style">Border Style</label>
-            <select id="config-border-style" class="config-select" data-config-key="borderStyle">
-              <option value="none">None</option>
-              <option value="solid">Solid (All Sides)</option>
-              <option value="bottom-only">Bottom Only</option>
-            </select>
-          </div>
-
-          <div class="config-inline-group">
-            <!-- Border Color -->
-            <div class="config-group">
-              <label class="config-label">Border Color</label>
-              <div class="config-color-group">
-                <input type="color" id="config-border-color" class="config-color-input" data-config-key="borderColor" value="#000000">
-              </div>
-            </div>
-
-            <!-- Border Width -->
-            <div class="config-group">
-              <label class="config-label" for="config-border-width">Width (px)</label>
-              <input type="number" id="config-border-width" class="config-input" data-config-key="borderWidth" value="2" min="1" max="10">
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section: Background Pattern -->
-      <div class="config-section">
-        <div class="config-section__header">
-          <h3 class="config-section__title">Background Pattern</h3>
-          <span class="config-section__toggle"></span>
-        </div>
-        <div class="config-section__content">
-          <div class="config-group">
-            <label class="config-label" for="config-pattern">Pattern</label>
-            <select id="config-pattern" class="config-select" data-config-key="backgroundPattern">
-              <option value="none">None (Solid Color)</option>
-              <option value="diagonal-lines">Diagonal Lines</option>
-              <option value="dots">Dots</option>
-              <option value="crosshatch">Crosshatch</option>
-              <option value="waves">Waves</option>
-              <option value="chevron">Chevron</option>
-              <option value="grid">Grid</option>
-              <option value="noise">Noise / Texture</option>
-            </select>
-          </div>
-
-          <div class="config-group">
-            <label class="config-label">Pattern Opacity</label>
-            <div class="config-range-group">
-              <input type="range" id="config-pattern-opacity" class="config-range" data-config-key="patternOpacity" min="0.05" max="0.4" step="0.05" value="0.15">
-              <span class="config-range-value" data-range-display="patternOpacity">0.15</span>
-            </div>
-            <p class="config-help">Adjust pattern visibility (0.05 - 0.4)</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section: Validity Pill -->
-      <div class="config-section">
-        <div class="config-section__header">
-          <h3 class="config-section__title">Validity Pill</h3>
-          <span class="config-section__toggle"></span>
-        </div>
-        <div class="config-section__content">
-          <!-- Show Pill -->
-          <div class="config-group">
-            <div class="config-checkbox-group">
-              <input type="checkbox" id="config-show-pill" class="config-checkbox" data-config-key="showValidityPill" checked>
-              <label class="config-checkbox-label" for="config-show-pill">Show Validity Pill</label>
-            </div>
-          </div>
-
-          <!-- Position -->
-          <div class="config-group">
-            <label class="config-label">Position</label>
-            <div class="config-radio-set">
-              <div class="config-radio-group">
-                <input type="radio" id="config-pill-left" name="pillPosition" class="config-radio" data-config-key="pillPosition" value="bottom-left" checked>
-                <label class="config-radio-label" for="config-pill-left">Bottom Left</label>
-              </div>
-              <div class="config-radio-group">
-                <input type="radio" id="config-pill-right" name="pillPosition" class="config-radio" data-config-key="pillPosition" value="bottom-right">
-                <label class="config-radio-label" for="config-pill-right">Bottom Right</label>
-              </div>
-            </div>
-          </div>
-
-          <p class="config-help">Click/tap the pill to expand. On desktop, hover also expands. Changes color when expiring (2 days) or expired.</p>
-        </div>
-      </div>
-
-      <!-- Section: Scroll Behavior -->
-      <div class="config-section">
-        <div class="config-section__header">
-          <h3 class="config-section__title">Scroll Behavior</h3>
-          <span class="config-section__toggle"></span>
-        </div>
-        <div class="config-section__content">
-          <!-- Enable Sticky -->
-          <div class="config-group">
-            <div class="config-checkbox-group">
-              <input type="checkbox" id="config-sticky-enabled" class="config-checkbox" data-config-key="stickyEnabled" checked>
-              <label class="config-checkbox-label" for="config-sticky-enabled">Enable Sticky Banner</label>
-            </div>
-          </div>
-
-          <!-- Sticky Threshold -->
-          <div class="config-group">
-            <label class="config-label" for="config-sticky-threshold">Sticky Threshold (px)</label>
-            <input type="number" id="config-sticky-threshold" class="config-input" data-config-key="stickyThreshold" value="200" min="50" max="500" step="50">
-            <p class="config-help">Distance to scroll before banner becomes sticky (50-500px).</p>
-          </div>
-
-          <p class="config-help">When enabled, banner sticks to top when scrolling down. Hides on continued scroll down, reappears when scrolling up.</p>
-        </div>
-      </div>
-
-      <!-- Section: Preview Width -->
-      <div class="config-section">
-        <div class="config-section__header">
-          <h3 class="config-section__title">Preview Width</h3>
-          <span class="config-section__toggle"></span>
-        </div>
-        <div class="config-section__content">
-          <div class="config-group">
-            <div class="width-control">
-              <div class="width-control-label">
-                <span>Column Width</span>
-                <span class="value" id="width-value">360px</span>
-              </div>
-              <input type="range" class="width-slider" id="width-slider" min="320" max="472" value="360" step="1">
-              <div class="width-presets" id="width-presets">
-                <button type="button" class="width-preset-btn" data-width="320">320</button>
-                <button type="button" class="width-preset-btn active" data-width="360">360</button>
-                <button type="button" class="width-preset-btn" data-width="420">420</button>
-                <button type="button" class="width-preset-btn" data-width="472">472</button>
-              </div>
-            </div>
-            <p class="config-help">Adjust the preview column width (320px - 472px).</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section: Presets -->
-      <div class="config-section">
-        <div class="config-section__header">
-          <h3 class="config-section__title">Quick Presets</h3>
-          <span class="config-section__toggle"></span>
-        </div>
-        <div class="config-section__content">
-          <div class="config-group">
-            <div class="preset-buttons">
-              <button type="button" class="preset-btn" data-preset="minimal">Minimal</button>
-              <button type="button" class="preset-btn" data-preset="standard">Standard</button>
-              <button type="button" class="preset-btn" data-preset="bold">Bold</button>
-              <button type="button" class="preset-btn" data-preset="spanish">Spanish</button>
-            </div>
-            <p class="config-help">Apply pre-configured styles. "Standard" matches the default green theme.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section: Export -->
-      <div class="config-section">
-        <div class="config-section__header">
-          <h3 class="config-section__title">Export / Import</h3>
-          <span class="config-section__toggle"></span>
-        </div>
-        <div class="config-section__content">
-          <div class="config-group">
-            <button type="button" id="copy-config-btn" class="config-button config-button--secondary">
-              Copy Config JSON
-            </button>
-            <p class="config-help">Copy current configuration to clipboard for use in Angular migration.</p>
-          </div>
-          <div id="copy-feedback" class="copy-feedback" style="display: none;">
-            Copied to clipboard!
-          </div>
-        </div>
-      </div>
-
-      <!-- Section: Testing -->
-      <div class="config-section">
-        <div class="config-section__header">
-          <h3 class="config-section__title">Testing</h3>
-          <span class="config-section__toggle"></span>
-        </div>
-        <div class="config-section__content">
-          <!-- Reference Date -->
-          <div class="config-group">
-            <label class="config-label" for="config-reference-date">Reference Date (Simulated Today)</label>
-            <input type="date" id="config-reference-date" class="config-input" data-config-key="referenceDate">
-            <p class="config-help">Change this to test how the banner and pill appear on different days. Try setting to the last day of a circular to see "expiring" state.</p>
-          </div>
-
-          <button type="button" id="run-tests-btn" class="config-button config-button--secondary">
-            Run DateUtils Tests
-          </button>
-        </div>
-      </div>
-
+    <div class="sidebar__body">
+      <!-- Config content will be injected here -->
+      <div id="sidebar-config"></div>
+    </div>
+    <div class="sidebar__footer">
+      <button type="button" class="btn btn--secondary" id="sidebar-reset">Reset</button>
     </div>
   </aside>
 
-  <!-- Pattern Preview Grid -->
-  <section class="pattern-preview-section">
-    <h2>Pattern Preview</h2>
-    <div class="pattern-preview-grid">
-      <!-- None -->
-      <div class="pattern-swatch pattern-swatch--green swatch-none">
-        <span class="pattern-swatch__label">None</span>
-      </div>
+  <!-- Modal Trigger (Mobile) -->
+  <button type="button" class="open-modal-btn" id="open-modal">Configure Banner</button>
 
-      <!-- Diagonal Lines -->
-      <div class="pattern-swatch pattern-swatch--green swatch-diagonal-lines">
-        <span class="pattern-swatch__label">Diagonal Lines</span>
+  <!-- Modal Overlay -->
+  <div class="modal-overlay hidden" id="modal-overlay">
+    <div class="modal">
+      <div class="modal__header">
+        <h2 class="modal__title">Banner Configuration</h2>
+        <button class="modal__close" id="modal-close">&times;</button>
       </div>
-
-      <!-- Dots -->
-      <div class="pattern-swatch pattern-swatch--green swatch-dots">
-        <span class="pattern-swatch__label">Dots</span>
+      <div class="modal__body">
+        <!-- Preview -->
+        <div class="preview">
+          <div class="preview__label">Live Preview</div>
+          <div class="preview__banner">
+            <div id="modal-preview-banner" class="banner banner--centered banner--padding-md">
+              <div class="banner__content">
+                <div class="banner__title">WEEKLY AD</div>
+                <div class="banner__dates">
+                  <span class="banner__dates-text">Wed, Jan 1 - Tue, Jan 7, 2026</span>
+                  <span class="banner__validity-pill">Valid</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Config content will be injected here -->
+        <div id="modal-config"></div>
       </div>
-
-      <!-- Crosshatch -->
-      <div class="pattern-swatch pattern-swatch--green swatch-crosshatch">
-        <span class="pattern-swatch__label">Crosshatch</span>
-      </div>
-
-      <!-- Waves -->
-      <div class="pattern-swatch pattern-swatch--green swatch-waves">
-        <span class="pattern-swatch__label">Waves</span>
-      </div>
-
-      <!-- Chevron -->
-      <div class="pattern-swatch pattern-swatch--green swatch-chevron">
-        <span class="pattern-swatch__label">Chevron</span>
-      </div>
-
-      <!-- Grid -->
-      <div class="pattern-swatch pattern-swatch--green swatch-grid">
-        <span class="pattern-swatch__label">Grid</span>
-      </div>
-
-      <!-- Noise -->
-      <div class="pattern-swatch pattern-swatch--green swatch-noise">
-        <span class="pattern-swatch__label">Noise</span>
+      <div class="modal__footer">
+        <button type="button" class="btn btn--secondary" id="modal-reset">Reset</button>
+        <button type="button" class="btn btn--primary" id="modal-apply">Done</button>
       </div>
     </div>
+  </div>
 
-    <!-- Additional color variations -->
-    <h2 style="margin-top: var(--spacing-lg);">Color Variations</h2>
-    <div class="pattern-preview-grid">
-      <!-- Blue variations -->
-      <div class="pattern-swatch pattern-swatch--blue swatch-diagonal-lines">
-        <span class="pattern-swatch__label">Blue + Lines</span>
-      </div>
-      <div class="pattern-swatch pattern-swatch--blue swatch-dots">
-        <span class="pattern-swatch__label">Blue + Dots</span>
-      </div>
-      <div class="pattern-swatch pattern-swatch--blue swatch-crosshatch">
-        <span class="pattern-swatch__label">Blue + Crosshatch</span>
-      </div>
+  <script>
+    // ==========================================================================
+    // Configuration System (Inline)
+    // ==========================================================================
+    const STORAGE_KEY = 'banner-config-v2';
+    const CONFIG_VERSION = 2; // Incremented to reset localStorage and load new locale/pill/sticky defaults
 
-      <!-- Red variations -->
-      <div class="pattern-swatch pattern-swatch--red swatch-diagonal-lines">
-        <span class="pattern-swatch__label">Red + Lines</span>
-      </div>
-      <div class="pattern-swatch pattern-swatch--red swatch-waves">
-        <span class="pattern-swatch__label">Red + Waves</span>
-      </div>
-      <div class="pattern-swatch pattern-swatch--red swatch-chevron">
-        <span class="pattern-swatch__label">Red + Chevron</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- JavaScript Modules -->
-  <script type="module">
-    import BannerConfig from './scripts/config.js';
-    import DateUtils from './scripts/dateUtils.js';
-    import Banner from './scripts/banner.js';
-    import Pill from './scripts/pill.js';
-    import Controls from './scripts/controls.js';
-
-    // Initialize all modules
-    BannerConfig.init();
-    Banner.init();
-    Pill.init();
-    Controls.init();
-
-    // Initial render
-    Banner.render(BannerConfig.getAll());
-    Pill.render(BannerConfig.getAll());
-
-    // Update color value displays
-    const updateColorDisplays = () => {
-      const bgColor = document.getElementById('config-bg-color');
-      const bgColorValue = document.getElementById('config-bg-color-value');
-      const textColor = document.getElementById('config-text-color');
-      const textColorValue = document.getElementById('config-text-color-value');
-
-      if (bgColor && bgColorValue) {
-        bgColorValue.textContent = bgColor.value;
-        bgColor.addEventListener('input', () => {
-          bgColorValue.textContent = bgColor.value;
-        });
-      }
-
-      if (textColor && textColorValue) {
-        textColorValue.textContent = textColor.value;
-        textColor.addEventListener('input', () => {
-          textColorValue.textContent = textColor.value;
-        });
-      }
-    };
-    updateColorDisplays();
-
-    // Reset button
-    document.getElementById('reset-config-btn').addEventListener('click', () => {
-      if (confirm('Reset all settings to defaults?')) {
-        BannerConfig.reset();
-        Controls.syncFormToConfig();
-        updateColorDisplays();
-      }
-    });
-
-    // Run tests button
-    document.getElementById('run-tests-btn').addEventListener('click', () => {
-      const refDate = BannerConfig.get('referenceDate') || new Date();
-      console.log('%c=== Running DateUtils Tests ===', 'font-weight: bold; color: #1a5f2a');
-      console.log('Reference date:', refDate.toDateString());
-      DateUtils.runTests(refDate);
-    });
-
-    // Preset buttons
-    document.querySelectorAll('.preset-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const presetName = btn.dataset.preset;
-        BannerConfig.applyPreset(presetName);
-        Controls.syncFormToConfig();
-        updateColorDisplays();
-        console.log('[App] Applied preset:', presetName);
-      });
-    });
-
-    // Copy Config JSON button
-    document.getElementById('copy-config-btn').addEventListener('click', async () => {
-      const success = await BannerConfig.copyToClipboard();
-      const feedback = document.getElementById('copy-feedback');
-
-      if (success && feedback) {
-        feedback.style.display = 'block';
-        // Reset animation by cloning
-        const newFeedback = feedback.cloneNode(true);
-        feedback.parentNode.replaceChild(newFeedback, feedback);
-        newFeedback.style.display = 'block';
-
-        // Hide after animation
-        setTimeout(() => {
-          newFeedback.style.display = 'none';
-        }, 2000);
-      }
-    });
-
-    // Width Slider Functionality
-    const widthSlider = document.getElementById('width-slider');
-    const widthValue = document.getElementById('width-value');
-    const promotionsColumn = document.querySelector('.promotions-column');
-    const widthPresetBtns = document.querySelectorAll('.width-preset-btn');
-
-    // Set the preview column width
-    const setPreviewWidth = (width) => {
-      // Clamp width between 320 and 472
-      width = Math.max(320, Math.min(472, width));
-
-      if (promotionsColumn) {
-        promotionsColumn.style.maxWidth = `${width}px`;
-      }
-
-      if (widthValue) {
-        widthValue.textContent = `${width}px`;
-      }
-
-      if (widthSlider) {
-        widthSlider.value = width;
-      }
-
-      // Update preset button states
-      updateWidthPresets(width);
-      console.log('[App] Preview width set to:', width);
-    };
-
-    // Update preset button active states
-    const updateWidthPresets = (width) => {
-      widthPresetBtns.forEach(btn => {
-        const btnWidth = parseInt(btn.dataset.width);
-        if (btnWidth === width) {
-          btn.classList.add('active');
-        } else {
-          btn.classList.remove('active');
+    const BannerConfig = {
+      presets: {
+        standard: {
+          bannerEnabled: true,
+          layout: 'centered',
+          showTitle: true,
+          showDayNames: true,
+          showYear: false,
+          useFullDayNames: false,
+          useFullMonthNames: false,
+          backgroundColor: '#1a5f2a',
+          textColor: '#ffffff',
+          padding: 'md',
+          titleFontFamily: 'opensans',
+          titleFontSize: 'md',
+          titleFontWeight: 'semibold',
+          titleTransform: 'uppercase',
+          dateFontFamily: 'opensans',
+          dateFontSize: 'md',
+          dateFontWeight: 'medium',
+          dateTransform: 'capitalize',
+          locale: 'en',
+          headerText: 'WEEKLY AD',
+          headerTextSpanish: 'OFERTAS SEMANALES',
+          showValidityPill: true,
+          validityText: 'Valid',
+          validityTextSpanish: 'Válido',
+          dayLeftText: 'Day Left',
+          dayLeftTextSpanish: 'Día Restante',
+          daysLeftText: 'Days Left',
+          daysLeftTextSpanish: 'Días Restantes',
+          validityTransform: 'uppercase',
+          stickyEnabled: true,
+          stickyHideOnScroll: true
+        },
+        minimal: {
+          bannerEnabled: true,
+          layout: 'centered',
+          showTitle: true,
+          showDayNames: false,
+          showYear: false,
+          useFullDayNames: false,
+          useFullMonthNames: false,
+          backgroundColor: '#374151',
+          textColor: '#ffffff',
+          padding: 'sm',
+          titleFontFamily: 'opensans',
+          titleFontSize: 'sm',
+          titleFontWeight: 'medium',
+          titleTransform: 'uppercase',
+          dateFontFamily: 'opensans',
+          dateFontSize: 'sm',
+          dateFontWeight: 'normal',
+          dateTransform: 'capitalize',
+          locale: 'en',
+          headerText: 'WEEKLY AD',
+          headerTextSpanish: 'OFERTAS SEMANALES',
+          showValidityPill: false,
+          validityText: 'Valid',
+          validityTextSpanish: 'Válido',
+          dayLeftText: 'Day Left',
+          dayLeftTextSpanish: 'Día Restante',
+          daysLeftText: 'Days Left',
+          daysLeftTextSpanish: 'Días Restantes',
+          validityTransform: 'uppercase',
+          stickyEnabled: false,
+          stickyHideOnScroll: false
+        },
+        bold: {
+          bannerEnabled: true,
+          layout: 'spread',
+          showTitle: true,
+          showDayNames: true,
+          showYear: false,
+          useFullDayNames: false,
+          useFullMonthNames: false,
+          backgroundColor: '#991b1b',
+          textColor: '#ffffff',
+          padding: 'lg',
+          titleFontFamily: 'montserrat',
+          titleFontSize: 'lg',
+          titleFontWeight: 'bold',
+          titleTransform: 'uppercase',
+          dateFontFamily: 'montserrat',
+          dateFontSize: 'md',
+          dateFontWeight: 'semibold',
+          dateTransform: 'capitalize',
+          locale: 'en',
+          headerText: 'WEEKLY AD',
+          headerTextSpanish: 'OFERTAS SEMANALES',
+          showValidityPill: true,
+          validityText: 'Valid',
+          validityTextSpanish: 'Válido',
+          dayLeftText: 'Day Left',
+          dayLeftTextSpanish: 'Día Restante',
+          daysLeftText: 'Days Left',
+          daysLeftTextSpanish: 'Días Restantes',
+          validityTransform: 'uppercase',
+          stickyEnabled: true,
+          stickyHideOnScroll: true
         }
-      });
+      },
+
+      defaults: {
+        // Banner activation
+        bannerEnabled: true, // Master toggle to show/hide banner
+
+        // Layout
+        layout: 'centered',
+        showTitle: true,
+        showDayNames: true,
+        showYear: false,
+        useFullDayNames: false, // false = "Wed" | true = "Wednesday"
+        useFullMonthNames: false, // false = "Jan" | true = "January"
+        backgroundColor: '#1a5f2a',
+        textColor: '#ffffff',
+        padding: 'md',
+
+        // Typography - Title
+        titleFontFamily: 'opensans',
+        titleFontSize: 'md',
+        titleFontWeight: 'semibold',
+        titleTransform: 'uppercase',
+
+        // Typography - Dates
+        dateFontFamily: 'opensans',
+        dateFontSize: 'md',
+        dateFontWeight: 'medium',
+        dateTransform: 'capitalize',
+
+        // Language/Locale
+        locale: 'en',
+        headerText: 'WEEKLY AD',
+        headerTextSpanish: 'OFERTAS SEMANALES',
+
+        // Validity Pill
+        showValidityPill: true,
+        validityText: 'Valid',
+        validityTextSpanish: 'Válido',
+        dayLeftText: 'Day Left',           // Singular
+        dayLeftTextSpanish: 'Día Restante', // Singular
+        daysLeftText: 'Days Left',          // Plural
+        daysLeftTextSpanish: 'Días Restantes', // Plural
+        validityTransform: 'uppercase', // 'uppercase' | 'capitalize' | 'none'
+
+        // Sticky Scroll Behavior
+        stickyEnabled: true,
+        stickyHideOnScroll: true,
+        stickyThreshold: 200  // How far to scroll before hiding
+      },
+
+      state: {},
+
+      init() {
+        const saved = this.loadFromStorage();
+        this.state = saved ? { ...this.defaults, ...saved } : { ...this.defaults };
+        return this;
+      },
+
+      loadFromStorage() {
+        try {
+          const saved = localStorage.getItem(STORAGE_KEY);
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (!parsed._configVersion || parsed._configVersion < CONFIG_VERSION) {
+              localStorage.removeItem(STORAGE_KEY);
+              return null;
+            }
+            return parsed;
+          }
+        } catch (e) {}
+        return null;
+      },
+
+      saveToStorage() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...this.state, _configVersion: CONFIG_VERSION }));
+        } catch (e) {}
+      },
+
+      set(key, value) {
+        if (key in this.state) {
+          this.state[key] = value;
+          this.saveToStorage();
+          this.updateAllBanners();
+          this.syncAllControls();
+        }
+      },
+
+      setMultiple(updates) {
+        Object.entries(updates).forEach(([key, value]) => {
+          if (key in this.state) this.state[key] = value;
+        });
+        this.saveToStorage();
+        this.updateAllBanners();
+        this.syncAllControls();
+      },
+
+      get(key) {
+        return this.state[key];
+      },
+
+      getAll() {
+        return { ...this.state };
+      },
+
+      reset() {
+        this.state = { ...this.defaults };
+        localStorage.removeItem(STORAGE_KEY);
+        this.updateAllBanners();
+        this.syncAllControls();
+      },
+
+      applyPreset(name) {
+        const preset = this.presets[name];
+        if (preset) this.setMultiple(preset);
+      },
+
+      // Update all banner elements
+      updateAllBanners() {
+        const mainBanner = document.getElementById('main-banner');
+        const previewBanner = document.getElementById('modal-preview-banner');
+
+        // Handle main banner visibility based on bannerEnabled
+        if (mainBanner) {
+          if (this.state.bannerEnabled) {
+            mainBanner.style.display = '';
+            this.applyToBanner(mainBanner);
+          } else {
+            mainBanner.style.display = 'none';
+          }
+        }
+
+        // Always update preview banner (so user can see what they're configuring)
+        if (previewBanner) {
+          this.applyToBanner(previewBanner);
+        }
+      },
+
+      applyToBanner(banner) {
+        if (!banner) return;
+
+        const config = this.state;
+        const title = banner.querySelector('.banner__title');
+        const datesContainer = banner.querySelector('.banner__dates');
+        const datesText = banner.querySelector('.banner__dates-text');
+        const pill = banner.querySelector('.banner__validity-pill');
+
+        // Banner classes
+        banner.className = `banner banner--${config.layout} banner--padding-${config.padding}`;
+        if (config.stickyEnabled) banner.classList.add('banner--sticky-enabled');
+
+        // Title classes
+        if (title) {
+          title.className = `banner__title banner__title--font-${config.titleFontFamily} banner__title--size-${config.titleFontSize} banner__title--weight-${config.titleFontWeight} banner__title--${config.titleTransform}`;
+          if (!config.showTitle) title.classList.add('banner__title--hidden');
+          // Use locale-appropriate header text
+          title.textContent = config.locale === 'es' ? config.headerTextSpanish : config.headerText;
+        }
+
+        // Dates classes (apply typography classes to container)
+        if (datesContainer) {
+          datesContainer.className = `banner__dates banner__dates--font-${config.dateFontFamily} banner__dates--size-${config.dateFontSize} banner__dates--weight-${config.dateFontWeight} banner__dates--${config.dateTransform}`;
+        }
+
+        // Update date text
+        if (datesText) {
+          // Update date text based on locale and full/abbreviated names
+          const fullDay = config.useFullDayNames;
+          const fullMonth = config.useFullMonthNames;
+
+          // Day names
+          const dayStart = config.locale === 'es'
+            ? (fullDay ? 'Miércoles' : 'Mié')
+            : (fullDay ? 'Wednesday' : 'Wed');
+          const dayEnd = config.locale === 'es'
+            ? (fullDay ? 'Martes' : 'Mar')
+            : (fullDay ? 'Tuesday' : 'Tue');
+
+          // Month names
+          const month = config.locale === 'es'
+            ? (fullMonth ? 'Enero' : 'Ene')
+            : (fullMonth ? 'January' : 'Jan');
+
+          // Build date text
+          let dateText = '';
+          if (config.locale === 'es') {
+            // Spanish: "Mié, 1 Ene - Mar, 7 Ene" or "1 Ene - 7 Ene"
+            if (config.showDayNames) {
+              dateText = `${dayStart}, 1 ${month} - ${dayEnd}, 7 ${month}`;
+            } else {
+              dateText = `1 ${month} - 7 ${month}`;
+            }
+          } else {
+            // English: "Wed, Jan 1 - Tue, Jan 7" or "Jan 1 - Jan 7"
+            if (config.showDayNames) {
+              dateText = `${dayStart}, ${month} 1 - ${dayEnd}, ${month} 7`;
+            } else {
+              dateText = `${month} 1 - ${month} 7`;
+            }
+          }
+
+          // Add year if enabled
+          if (config.showYear) {
+            dateText += ', 2026';
+          }
+
+          datesText.textContent = dateText;
+        }
+
+        // Validity pill
+        if (pill) {
+          pill.style.display = config.showValidityPill ? 'inline-block' : 'none';
+
+          // Get validity text based on locale
+          const validityLabel = config.locale === 'es'
+            ? (config.validityTextSpanish || 'Válido')
+            : (config.validityText || 'Valid');
+
+          // Calculate days left (using demo end date of Jan 7, 2026)
+          const today = new Date();
+          const endDate = new Date(2026, 0, 7); // Jan 7, 2026
+          const timeDiff = endDate.getTime() - today.getTime();
+          const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+          // Show "| X Day(s) Left" only when less than 2 days remaining
+          if (daysLeft >= 0 && daysLeft < 2) {
+            // Use singular or plural based on count
+            let daysLeftLabel;
+            if (daysLeft === 1) {
+              // Singular: "1 Day Left"
+              daysLeftLabel = config.locale === 'es'
+                ? (config.dayLeftTextSpanish || 'Día Restante')
+                : (config.dayLeftText || 'Day Left');
+            } else {
+              // Plural: "0 Days Left", "2 Days Left", etc.
+              daysLeftLabel = config.locale === 'es'
+                ? (config.daysLeftTextSpanish || 'Días Restantes')
+                : (config.daysLeftText || 'Days Left');
+            }
+            pill.textContent = `${validityLabel} | ${daysLeft} ${daysLeftLabel}`;
+          } else {
+            pill.textContent = validityLabel;
+          }
+
+          // Apply text transform
+          const transform = config.validityTransform || 'uppercase';
+          pill.style.textTransform = transform === 'none' ? 'none' : transform;
+        }
+
+        // Inline styles (colors)
+        banner.style.backgroundColor = config.backgroundColor;
+        banner.style.color = config.textColor;
+      },
+
+      // Sync all controls with current state
+      syncAllControls() {
+        // Will be implemented after controls are created
+      }
     };
 
-    // Width slider input handler
-    if (widthSlider) {
-      widthSlider.addEventListener('input', () => {
-        const width = parseInt(widthSlider.value);
-        setPreviewWidth(width);
+    // ==========================================================================
+    // Config Panel HTML Template
+    // ==========================================================================
+    function createConfigPanel(prefix) {
+      return `
+        <!-- Activate Banner Toggle -->
+        <div class="toggle-switch">
+          <label class="toggle-switch__label" for="${prefix}-bannerEnabled">Activate Banner</label>
+          <input type="checkbox" class="toggle-switch__input" id="${prefix}-bannerEnabled" data-config="bannerEnabled" checked>
+        </div>
+
+        <!-- Language -->
+        <div class="config-section">
+          <h3 class="config-section__title">Language</h3>
+          <div class="toggle-group" data-config="locale">
+            <button type="button" class="toggle-group__btn active" data-value="en">English</button>
+            <button type="button" class="toggle-group__btn" data-value="es">Español</button>
+          </div>
+        </div>
+
+        <!-- Header Text -->
+        <div class="config-section">
+          <h3 class="config-section__title">Header Text</h3>
+          <div class="input-row">
+            <div class="input-group">
+              <label class="input-group__label" for="${prefix}-headerText">English</label>
+              <input type="text" id="${prefix}-headerText" data-config="headerText" value="WEEKLY AD">
+            </div>
+            <div class="input-group">
+              <label class="input-group__label" for="${prefix}-headerTextSpanish">Spanish</label>
+              <input type="text" id="${prefix}-headerTextSpanish" data-config="headerTextSpanish" value="OFERTAS SEMANALES">
+            </div>
+          </div>
+        </div>
+
+        <!-- Layout -->
+        <div class="config-section">
+          <h3 class="config-section__title">Layout</h3>
+          <div class="layout-selector" data-config="layout">
+            <div class="layout-option active" data-layout="centered">
+              <div class="layout-option__icon">
+                <div class="layout-option__icon-bar"></div>
+                <div class="layout-option__icon-bar"></div>
+              </div>
+              <span class="layout-option__label">Centered</span>
+            </div>
+            <div class="layout-option" data-layout="spread">
+              <div class="layout-option__icon">
+                <div class="layout-option__icon-bar"></div>
+                <div class="layout-option__icon-bar"></div>
+              </div>
+              <span class="layout-option__label">Spread</span>
+            </div>
+            <div class="layout-option" data-layout="stacked">
+              <div class="layout-option__icon">
+                <div class="layout-option__icon-bar"></div>
+                <div class="layout-option__icon-bar"></div>
+              </div>
+              <span class="layout-option__label">Stacked</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Display Options -->
+        <div class="config-section">
+          <h3 class="config-section__title">Display Options</h3>
+          <div class="checkbox-group">
+            <div class="checkbox-item">
+              <input type="checkbox" id="${prefix}-showTitle" data-config="showTitle" checked>
+              <label for="${prefix}-showTitle">Show Title</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="${prefix}-showDayNames" data-config="showDayNames" checked>
+              <label for="${prefix}-showDayNames">Show Day Names</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="${prefix}-showYear" data-config="showYear">
+              <label for="${prefix}-showYear">Show Year</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="${prefix}-useFullDayNames" data-config="useFullDayNames">
+              <label for="${prefix}-useFullDayNames">Full Day Names (Wednesday)</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="${prefix}-useFullMonthNames" data-config="useFullMonthNames">
+              <label for="${prefix}-useFullMonthNames">Full Month Names (January)</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Colors -->
+        <div class="config-section">
+          <h3 class="config-section__title">Colors</h3>
+          <div class="color-group">
+            <div class="color-item">
+              <span class="color-item__label">Background:</span>
+              <input type="color" class="color-item__input" id="${prefix}-backgroundColor" data-config="backgroundColor" value="#1a5f2a">
+            </div>
+            <div class="color-item">
+              <span class="color-item__label">Text:</span>
+              <input type="color" class="color-item__input" id="${prefix}-textColor" data-config="textColor" value="#ffffff">
+            </div>
+          </div>
+        </div>
+
+        <!-- Padding -->
+        <div class="config-section">
+          <h3 class="config-section__title">Padding</h3>
+          <div class="radio-group" data-config="padding">
+            <div class="radio-item">
+              <input type="radio" name="${prefix}-padding" id="${prefix}-padding-sm" value="sm">
+              <label for="${prefix}-padding-sm">Small</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" name="${prefix}-padding" id="${prefix}-padding-md" value="md" checked>
+              <label for="${prefix}-padding-md">Medium</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" name="${prefix}-padding" id="${prefix}-padding-lg" value="lg">
+              <label for="${prefix}-padding-lg">Large</label>
+            </div>
+          </div>
+        </div>
+
+        <hr class="config-section__divider">
+
+        <!-- Title Typography -->
+        <div class="config-section">
+          <h3 class="config-section__title">Title Typography</h3>
+          <div class="typography-row">
+            <div class="select-group">
+              <span class="select-group__label">Font</span>
+              <select id="${prefix}-titleFontFamily" data-config="titleFontFamily">
+                <option value="opensans">Open Sans</option>
+                <option value="inter">Inter</option>
+                <option value="poppins">Poppins</option>
+                <option value="montserrat">Montserrat</option>
+                <option value="roboto">Roboto</option>
+              </select>
+            </div>
+            <div class="select-group">
+              <span class="select-group__label">Size</span>
+              <select id="${prefix}-titleFontSize" data-config="titleFontSize">
+                <option value="sm">S</option>
+                <option value="md" selected>M</option>
+                <option value="lg">L</option>
+              </select>
+            </div>
+            <div class="select-group">
+              <span class="select-group__label">Weight</span>
+              <select id="${prefix}-titleFontWeight" data-config="titleFontWeight">
+                <option value="normal">400</option>
+                <option value="medium">500</option>
+                <option value="semibold" selected>600</option>
+                <option value="bold">700</option>
+              </select>
+            </div>
+            <div class="select-group">
+              <span class="select-group__label">Case</span>
+              <select id="${prefix}-titleTransform" data-config="titleTransform">
+                <option value="uppercase" selected>ABC</option>
+                <option value="capitalize">Abc</option>
+                <option value="none">abc</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Date Typography -->
+        <div class="config-section">
+          <h3 class="config-section__title">Date Typography</h3>
+          <div class="typography-row">
+            <div class="select-group">
+              <span class="select-group__label">Font</span>
+              <select id="${prefix}-dateFontFamily" data-config="dateFontFamily">
+                <option value="opensans">Open Sans</option>
+                <option value="inter">Inter</option>
+                <option value="poppins">Poppins</option>
+                <option value="montserrat">Montserrat</option>
+                <option value="roboto">Roboto</option>
+              </select>
+            </div>
+            <div class="select-group">
+              <span class="select-group__label">Size</span>
+              <select id="${prefix}-dateFontSize" data-config="dateFontSize">
+                <option value="sm">S</option>
+                <option value="md" selected>M</option>
+                <option value="lg">L</option>
+              </select>
+            </div>
+            <div class="select-group">
+              <span class="select-group__label">Weight</span>
+              <select id="${prefix}-dateFontWeight" data-config="dateFontWeight">
+                <option value="normal">400</option>
+                <option value="medium" selected>500</option>
+                <option value="semibold">600</option>
+                <option value="bold">700</option>
+              </select>
+            </div>
+            <div class="select-group">
+              <span class="select-group__label">Case</span>
+              <select id="${prefix}-dateTransform" data-config="dateTransform">
+                <option value="uppercase">ABC</option>
+                <option value="capitalize" selected>Abc</option>
+                <option value="none">abc</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <hr class="config-section__divider">
+
+        <!-- Validity Pill -->
+        <div class="config-section">
+          <h3 class="config-section__title">Validity Pill</h3>
+          <div class="checkbox-group" style="margin-bottom: 12px;">
+            <div class="checkbox-item">
+              <input type="checkbox" id="${prefix}-showValidityPill" data-config="showValidityPill" checked>
+              <label for="${prefix}-showValidityPill">Show Validity Pill</label>
+            </div>
+          </div>
+          <div class="input-row" style="margin-bottom: 10px;">
+            <div class="input-group">
+              <label class="input-group__label" for="${prefix}-validityText">Valid Text (EN)</label>
+              <input type="text" id="${prefix}-validityText" data-config="validityText" value="Valid">
+            </div>
+            <div class="input-group">
+              <label class="input-group__label" for="${prefix}-validityTextSpanish">Valid Text (ES)</label>
+              <input type="text" id="${prefix}-validityTextSpanish" data-config="validityTextSpanish" value="Válido">
+            </div>
+          </div>
+          <div class="input-row" style="margin-bottom: 10px;">
+            <div class="input-group">
+              <label class="input-group__label" for="${prefix}-dayLeftText">1 Day Left (EN)</label>
+              <input type="text" id="${prefix}-dayLeftText" data-config="dayLeftText" value="Day Left">
+            </div>
+            <div class="input-group">
+              <label class="input-group__label" for="${prefix}-dayLeftTextSpanish">1 Day Left (ES)</label>
+              <input type="text" id="${prefix}-dayLeftTextSpanish" data-config="dayLeftTextSpanish" value="Día Restante">
+            </div>
+          </div>
+          <div class="input-row" style="margin-bottom: 10px;">
+            <div class="input-group">
+              <label class="input-group__label" for="${prefix}-daysLeftText">X Days Left (EN)</label>
+              <input type="text" id="${prefix}-daysLeftText" data-config="daysLeftText" value="Days Left">
+            </div>
+            <div class="input-group">
+              <label class="input-group__label" for="${prefix}-daysLeftTextSpanish">X Days Left (ES)</label>
+              <input type="text" id="${prefix}-daysLeftTextSpanish" data-config="daysLeftTextSpanish" value="Días Restantes">
+            </div>
+          </div>
+          <div class="typography-row">
+            <div class="select-group">
+              <span class="select-group__label">Text Case</span>
+              <select id="${prefix}-validityTransform" data-config="validityTransform">
+                <option value="uppercase" selected>ABC</option>
+                <option value="capitalize">Abc</option>
+                <option value="none">abc</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scroll Behavior -->
+        <div class="config-section">
+          <h3 class="config-section__title">Scroll Behavior</h3>
+          <div class="checkbox-group">
+            <div class="checkbox-item">
+              <input type="checkbox" id="${prefix}-stickyEnabled" data-config="stickyEnabled" checked>
+              <label for="${prefix}-stickyEnabled">Sticky Header</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="${prefix}-stickyHideOnScroll" data-config="stickyHideOnScroll" checked>
+              <label for="${prefix}-stickyHideOnScroll">Hide on Scroll Down</label>
+            </div>
+          </div>
+          <div class="input-group" style="margin-top: 12px; max-width: 140px;">
+            <label class="input-group__label" for="${prefix}-stickyThreshold">Scroll Threshold (px)</label>
+            <input type="number" id="${prefix}-stickyThreshold" data-config="stickyThreshold" value="200" min="50" max="500" step="25" style="padding: 6px 10px; font-size: 0.8125rem; border: 1px solid #d1d5db; border-radius: 4px; background: #fff;">
+          </div>
+        </div>
+
+        <hr class="config-section__divider">
+
+        <!-- Quick Presets -->
+        <div class="config-section">
+          <h3 class="config-section__title">Quick Presets</h3>
+          <div class="preset-group">
+            <button type="button" class="preset-btn" data-preset="standard">Standard</button>
+            <button type="button" class="preset-btn" data-preset="minimal">Minimal</button>
+            <button type="button" class="preset-btn" data-preset="bold">Bold</button>
+          </div>
+        </div>
+      `;
+    }
+
+    // ==========================================================================
+    // Wire Up Controls
+    // ==========================================================================
+    function wireUpControls(container) {
+      // Layout selector
+      container.querySelectorAll('.layout-option').forEach(option => {
+        option.addEventListener('click', () => {
+          container.querySelectorAll('.layout-option').forEach(o => o.classList.remove('active'));
+          option.classList.add('active');
+          BannerConfig.set('layout', option.dataset.layout);
+        });
+      });
+
+      // Toggle groups (language selector)
+      container.querySelectorAll('.toggle-group[data-config]').forEach(group => {
+        group.querySelectorAll('.toggle-group__btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            group.querySelectorAll('.toggle-group__btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            BannerConfig.set(group.dataset.config, btn.dataset.value);
+          });
+        });
+      });
+
+      // Text inputs
+      container.querySelectorAll('input[type="text"][data-config]').forEach(input => {
+        input.addEventListener('input', () => {
+          BannerConfig.set(input.dataset.config, input.value);
+        });
+      });
+
+      // Number inputs
+      container.querySelectorAll('input[type="number"][data-config]').forEach(input => {
+        input.addEventListener('input', () => {
+          BannerConfig.set(input.dataset.config, parseInt(input.value, 10) || 200);
+        });
+      });
+
+      // Checkboxes
+      container.querySelectorAll('input[type="checkbox"][data-config]').forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+          BannerConfig.set(checkbox.dataset.config, checkbox.checked);
+        });
+      });
+
+      // Color inputs
+      container.querySelectorAll('input[type="color"][data-config]').forEach(input => {
+        input.addEventListener('input', () => {
+          BannerConfig.set(input.dataset.config, input.value);
+        });
+      });
+
+      // Radio buttons
+      container.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+          if (radio.checked) {
+            const configKey = radio.closest('.radio-group')?.dataset.config ||
+                              radio.name.replace(/^(modal-|sidebar-)/, '').replace(/-[a-z]+$/, '');
+            // Extract config key from radio group
+            const group = radio.closest('.radio-group');
+            if (group && group.dataset.config) {
+              BannerConfig.set(group.dataset.config, radio.value);
+            }
+          }
+        });
+      });
+
+      // Selects
+      container.querySelectorAll('select[data-config]').forEach(select => {
+        select.addEventListener('change', () => {
+          BannerConfig.set(select.dataset.config, select.value);
+        });
+      });
+
+      // Preset buttons
+      container.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          BannerConfig.applyPreset(btn.dataset.preset);
+        });
       });
     }
 
-    // Width preset button click handlers
-    widthPresetBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const width = parseInt(btn.dataset.width);
-        setPreviewWidth(width);
+    // ==========================================================================
+    // Sync Controls with Config
+    // ==========================================================================
+    BannerConfig.syncAllControls = function() {
+      const config = this.state;
+
+      // Layout options
+      document.querySelectorAll('.layout-option').forEach(option => {
+        option.classList.toggle('active', option.dataset.layout === config.layout);
       });
-    });
 
-    // Initialize with default width (360px)
-    setPreviewWidth(360);
+      // Toggle groups (language)
+      document.querySelectorAll('.toggle-group[data-config]').forEach(group => {
+        const configKey = group.dataset.config;
+        const value = config[configKey];
+        group.querySelectorAll('.toggle-group__btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.value === value);
+        });
+      });
 
-    // Scroll Position Indicator
-    const scrollYValue = document.getElementById('scroll-y-value');
-    const scrollState = document.getElementById('scroll-state');
+      // Text inputs
+      document.querySelectorAll('input[type="text"][data-config]').forEach(input => {
+        input.value = config[input.dataset.config] || '';
+      });
 
-    const updateScrollIndicator = (scrollY, state) => {
-      if (scrollYValue) {
-        scrollYValue.textContent = Math.round(scrollY);
-      }
-      if (scrollState) {
-        // Remove all state classes
-        scrollState.classList.remove('scroll-indicator__state--sticky', 'scroll-indicator__state--hidden');
+      // Number inputs
+      document.querySelectorAll('input[type="number"][data-config]').forEach(input => {
+        input.value = config[input.dataset.config] || 200;
+      });
 
-        if (state.isHidden) {
-          scrollState.textContent = 'hidden';
-          scrollState.classList.add('scroll-indicator__state--hidden');
-        } else if (state.isSticky) {
-          scrollState.textContent = 'active';
-          scrollState.classList.add('scroll-indicator__state--sticky');
-        } else {
-          scrollState.textContent = 'normal';
-        }
-      }
+      // Checkboxes
+      document.querySelectorAll('input[type="checkbox"][data-config]').forEach(checkbox => {
+        checkbox.checked = config[checkbox.dataset.config];
+      });
+
+      // Color inputs
+      document.querySelectorAll('input[type="color"][data-config]').forEach(input => {
+        input.value = config[input.dataset.config];
+      });
+
+      // Radio groups
+      document.querySelectorAll('.radio-group[data-config]').forEach(group => {
+        const configKey = group.dataset.config;
+        const value = config[configKey];
+        group.querySelectorAll('input[type="radio"]').forEach(radio => {
+          radio.checked = radio.value === value;
+        });
+      });
+
+      // Selects
+      document.querySelectorAll('select[data-config]').forEach(select => {
+        select.value = config[select.dataset.config];
+      });
     };
 
-    // Listen for banner scroll events
-    document.addEventListener('banner:scroll', (e) => {
-      updateScrollIndicator(e.detail.scrollY, e.detail);
-    });
+    // ==========================================================================
+    // Initialize
+    // ==========================================================================
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize config
+      BannerConfig.init();
 
-    // Also update on regular scroll for when sticky is disabled
-    window.addEventListener('scroll', () => {
-      if (!BannerConfig.get('stickyEnabled')) {
-        updateScrollIndicator(window.scrollY, { isSticky: false, isHidden: false });
+      // Inject config panels
+      document.getElementById('sidebar-config').innerHTML = createConfigPanel('sidebar');
+      document.getElementById('modal-config').innerHTML = createConfigPanel('modal');
+
+      // Wire up controls
+      wireUpControls(document.getElementById('sidebar-config'));
+      wireUpControls(document.getElementById('modal-config'));
+
+      // Sync controls with saved config
+      BannerConfig.syncAllControls();
+
+      // Update banners
+      BannerConfig.updateAllBanners();
+
+      // Modal open/close
+      document.getElementById('open-modal').addEventListener('click', () => {
+        document.getElementById('modal-overlay').classList.remove('hidden');
+      });
+
+      document.getElementById('modal-close').addEventListener('click', () => {
+        document.getElementById('modal-overlay').classList.add('hidden');
+      });
+
+      document.getElementById('modal-apply').addEventListener('click', () => {
+        document.getElementById('modal-overlay').classList.add('hidden');
+      });
+
+      document.getElementById('modal-overlay').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) {
+          document.getElementById('modal-overlay').classList.add('hidden');
+        }
+      });
+
+      // Reset buttons
+      document.getElementById('sidebar-reset').addEventListener('click', () => {
+        BannerConfig.reset();
+      });
+
+      document.getElementById('modal-reset').addEventListener('click', () => {
+        BannerConfig.reset();
+      });
+
+      // ==========================================================================
+      // Sticky Scroll Behavior
+      // ==========================================================================
+      const mainBanner = document.getElementById('main-banner');
+      let lastScrollY = 0;
+      let ticking = false;
+
+      function handleScroll() {
+        const config = BannerConfig.state;
+        const currentScrollY = window.scrollY;
+        const threshold = config.stickyThreshold || 200;
+
+        if (!config.stickyEnabled) {
+          mainBanner.classList.remove('banner--hidden', 'banner--visible', 'banner--sticky-active');
+          mainBanner.style.position = '';
+          mainBanner.style.top = '';
+          return;
+        }
+
+        // Make banner sticky
+        mainBanner.style.position = 'sticky';
+        mainBanner.style.top = '0';
+        mainBanner.classList.add('banner--sticky-active');
+
+        if (config.stickyHideOnScroll) {
+          // Hide on scroll down, show on scroll up
+          if (currentScrollY > lastScrollY && currentScrollY > threshold) {
+            // Scrolling down past threshold - hide
+            mainBanner.classList.add('banner--hidden');
+            mainBanner.classList.remove('banner--visible');
+          } else {
+            // Scrolling up or above threshold - show
+            mainBanner.classList.remove('banner--hidden');
+            mainBanner.classList.add('banner--visible');
+          }
+        } else {
+          // Always visible when sticky is enabled but hide-on-scroll is off
+          mainBanner.classList.remove('banner--hidden');
+          mainBanner.classList.add('banner--visible');
+        }
+
+        lastScrollY = currentScrollY;
+        ticking = false;
       }
-    }, { passive: true });
 
-    // Listen for config changes
-    BannerConfig.on('change', ({ key, value }) => {
-      console.log('[App] Config changed:', key, '=', value);
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          window.requestAnimationFrame(handleScroll);
+          ticking = true;
+        }
+      });
+
+      // Initial call to set correct state
+      handleScroll();
+
+      console.log('[BannerConfig] Initialized', BannerConfig.getAll());
     });
-
-    // Expose utilities to window for console testing
-    window.DateUtils = DateUtils;
-    window.BannerConfig = BannerConfig;
-    window.Banner = Banner;
-    window.Pill = Pill;
-    window.Controls = Controls;
-
-    console.log('[App] Circular Date Banner prototype initialized');
-    console.log('[App] Configuration persisted to localStorage');
-    console.log('[App] Available in console: DateUtils, BannerConfig, Banner, Pill, Controls');
   </script>
 </body>
 </html>

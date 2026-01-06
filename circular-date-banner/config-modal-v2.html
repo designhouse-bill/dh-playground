@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Banner Configuration Modal v2</title>
+  <link rel="stylesheet" href="styles/banner-v2.css">
+  <style>
+    /* ==========================================================================
+       Page Base
+       ========================================================================== */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Open Sans', system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+      min-height: 100vh;
+    }
+
+    /* ==========================================================================
+       Modal Container
+       ========================================================================== */
+    .modal {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      max-width: 600px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+
+    .modal__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .modal__title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin: 0;
+    }
+
+    .modal__close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #6b7280;
+      cursor: pointer;
+      padding: 4px;
+      line-height: 1;
+    }
+
+    .modal__close:hover {
+      color: #1f2937;
+    }
+
+    .modal__body {
+      padding: 20px;
+    }
+
+    .modal__footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      padding: 16px 20px;
+      border-top: 1px solid #e5e7eb;
+      background: #f9fafb;
+    }
+
+    /* ==========================================================================
+       Preview Area
+       ========================================================================== */
+    .preview {
+      background: #e5e7eb;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+
+    .preview__label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    .preview__banner {
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    /* ==========================================================================
+       Config Sections
+       ========================================================================== */
+    .config-section {
+      margin-bottom: 24px;
+    }
+
+    .config-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .config-section__title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #374151;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 0 0 12px 0;
+    }
+
+    .config-section__divider {
+      border: none;
+      border-top: 1px solid #e5e7eb;
+      margin: 24px 0;
+    }
+
+    /* ==========================================================================
+       Layout Selector (Visual Buttons)
+       ========================================================================== */
+    .layout-selector {
+      display: flex;
+      gap: 12px;
+    }
+
+    .layout-option {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      background: #ffffff;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .layout-option:hover {
+      border-color: #9ca3af;
+    }
+
+    .layout-option.active {
+      border-color: #2196F3;
+      background: #e3f2fd;
+    }
+
+    .layout-option__icon {
+      width: 60px;
+      height: 32px;
+      background: #e5e7eb;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 4px 8px;
+    }
+
+    .layout-option__icon-bar {
+      background: #6b7280;
+      border-radius: 2px;
+    }
+
+    /* Centered icon */
+    .layout-option[data-layout="centered"] .layout-option__icon {
+      justify-content: center;
+    }
+    .layout-option[data-layout="centered"] .layout-option__icon-bar:first-child {
+      width: 20px;
+      height: 6px;
+    }
+    .layout-option[data-layout="centered"] .layout-option__icon-bar:last-child {
+      width: 24px;
+      height: 4px;
+    }
+
+    /* Spread icon */
+    .layout-option[data-layout="spread"] .layout-option__icon {
+      justify-content: space-between;
+    }
+    .layout-option[data-layout="spread"] .layout-option__icon-bar:first-child {
+      width: 16px;
+      height: 6px;
+    }
+    .layout-option[data-layout="spread"] .layout-option__icon-bar:last-child {
+      width: 24px;
+      height: 4px;
+    }
+
+    /* Stacked icon */
+    .layout-option[data-layout="stacked"] .layout-option__icon {
+      flex-direction: column;
+      gap: 2px;
+    }
+    .layout-option[data-layout="stacked"] .layout-option__icon-bar:first-child {
+      width: 24px;
+      height: 5px;
+    }
+    .layout-option[data-layout="stacked"] .layout-option__icon-bar:last-child {
+      width: 32px;
+      height: 4px;
+    }
+
+    .layout-option__label {
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    /* ==========================================================================
+       Checkbox Group
+       ========================================================================== */
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: #2196F3;
+      cursor: pointer;
+    }
+
+    .checkbox-item label {
+      font-size: 0.875rem;
+      color: #374151;
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       Color Pickers
+       ========================================================================== */
+    .color-group {
+      display: flex;
+      gap: 24px;
+    }
+
+    .color-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .color-item__label {
+      font-size: 0.875rem;
+      color: #374151;
+    }
+
+    .color-item__input {
+      width: 40px;
+      height: 32px;
+      padding: 2px;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       Radio Group (Padding)
+       ========================================================================== */
+    .radio-group {
+      display: flex;
+      gap: 16px;
+    }
+
+    .radio-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .radio-item input[type="radio"] {
+      width: 16px;
+      height: 16px;
+      accent-color: #2196F3;
+      cursor: pointer;
+    }
+
+    .radio-item label {
+      font-size: 0.875rem;
+      color: #374151;
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       Typography Controls
+       ========================================================================== */
+    .typography-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .typography-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .select-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .select-group__label {
+      font-size: 0.75rem;
+      color: #6b7280;
+    }
+
+    .select-group select {
+      padding: 6px 28px 6px 10px;
+      font-size: 0.875rem;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      background: #ffffff;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+    }
+
+    .select-group select:focus {
+      outline: none;
+      border-color: #2196F3;
+      box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+    }
+
+    /* ==========================================================================
+       Preset Buttons
+       ========================================================================== */
+    .preset-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .preset-btn {
+      padding: 8px 16px;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: #374151;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .preset-btn:hover {
+      background: #e5e7eb;
+    }
+
+    /* ==========================================================================
+       Action Buttons
+       ========================================================================== */
+    .btn {
+      padding: 10px 20px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn--secondary {
+      color: #374151;
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+    }
+
+    .btn--secondary:hover {
+      background: #f3f4f6;
+    }
+
+    .btn--primary {
+      color: #ffffff;
+      background: #2196F3;
+      border: 1px solid #2196F3;
+    }
+
+    .btn--primary:hover {
+      background: #1976D2;
+      border-color: #1976D2;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="modal">
+    <div class="modal__header">
+      <h2 class="modal__title">Banner Configuration</h2>
+      <button class="modal__close" type="button">&times;</button>
+    </div>
+
+    <div class="modal__body">
+      <!-- Preview -->
+      <div class="preview">
+        <div class="preview__label">Live Preview</div>
+        <div class="preview__banner">
+          <div id="preview-banner" class="banner banner--centered banner--padding-md">
+            <div class="banner__content">
+              <h1 class="banner__title">WEEKLY AD</h1>
+              <p class="banner__dates">Wed, Jan 1 - Tue, Jan 7, 2026</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layout -->
+      <div class="config-section">
+        <h3 class="config-section__title">Layout</h3>
+        <div class="layout-selector">
+          <div class="layout-option active" data-layout="centered">
+            <div class="layout-option__icon">
+              <div class="layout-option__icon-bar"></div>
+              <div class="layout-option__icon-bar"></div>
+            </div>
+            <span class="layout-option__label">Centered</span>
+          </div>
+          <div class="layout-option" data-layout="spread">
+            <div class="layout-option__icon">
+              <div class="layout-option__icon-bar"></div>
+              <div class="layout-option__icon-bar"></div>
+            </div>
+            <span class="layout-option__label">Spread</span>
+          </div>
+          <div class="layout-option" data-layout="stacked">
+            <div class="layout-option__icon">
+              <div class="layout-option__icon-bar"></div>
+              <div class="layout-option__icon-bar"></div>
+            </div>
+            <span class="layout-option__label">Stacked</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Display Options -->
+      <div class="config-section">
+        <h3 class="config-section__title">Display Options</h3>
+        <div class="checkbox-group">
+          <div class="checkbox-item">
+            <input type="checkbox" id="showTitle" checked>
+            <label for="showTitle">Show Title</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="showDayNames" checked>
+            <label for="showDayNames">Show Day Names</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="showYear">
+            <label for="showYear">Show Year</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Colors -->
+      <div class="config-section">
+        <h3 class="config-section__title">Colors</h3>
+        <div class="color-group">
+          <div class="color-item">
+            <span class="color-item__label">Background:</span>
+            <input type="color" class="color-item__input" id="backgroundColor" value="#1a5f2a">
+          </div>
+          <div class="color-item">
+            <span class="color-item__label">Text:</span>
+            <input type="color" class="color-item__input" id="textColor" value="#ffffff">
+          </div>
+        </div>
+      </div>
+
+      <!-- Padding -->
+      <div class="config-section">
+        <h3 class="config-section__title">Padding</h3>
+        <div class="radio-group">
+          <div class="radio-item">
+            <input type="radio" name="padding" id="paddingSm" value="sm">
+            <label for="paddingSm">Small</label>
+          </div>
+          <div class="radio-item">
+            <input type="radio" name="padding" id="paddingMd" value="md" checked>
+            <label for="paddingMd">Medium</label>
+          </div>
+          <div class="radio-item">
+            <input type="radio" name="padding" id="paddingLg" value="lg">
+            <label for="paddingLg">Large</label>
+          </div>
+        </div>
+      </div>
+
+      <hr class="config-section__divider">
+
+      <!-- Title Typography -->
+      <div class="config-section">
+        <h3 class="config-section__title">Title Typography</h3>
+        <div class="typography-row">
+          <div class="select-group">
+            <span class="select-group__label">Font</span>
+            <select id="titleFontFamily">
+              <option value="opensans">Open Sans</option>
+              <option value="inter">Inter</option>
+              <option value="poppins">Poppins</option>
+              <option value="montserrat">Montserrat</option>
+              <option value="roboto">Roboto</option>
+            </select>
+          </div>
+          <div class="select-group">
+            <span class="select-group__label">Size</span>
+            <select id="titleFontSize">
+              <option value="sm">Small</option>
+              <option value="md" selected>Medium</option>
+              <option value="lg">Large</option>
+            </select>
+          </div>
+          <div class="select-group">
+            <span class="select-group__label">Weight</span>
+            <select id="titleFontWeight">
+              <option value="normal">Normal</option>
+              <option value="medium">Medium</option>
+              <option value="semibold" selected>Semibold</option>
+              <option value="bold">Bold</option>
+            </select>
+          </div>
+          <div class="select-group">
+            <span class="select-group__label">Transform</span>
+            <select id="titleTransform">
+              <option value="uppercase" selected>UPPERCASE</option>
+              <option value="capitalize">Capitalize</option>
+              <option value="none">none</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Date Typography -->
+      <div class="config-section">
+        <h3 class="config-section__title">Date Typography</h3>
+        <div class="typography-row">
+          <div class="select-group">
+            <span class="select-group__label">Font</span>
+            <select id="dateFontFamily">
+              <option value="opensans">Open Sans</option>
+              <option value="inter">Inter</option>
+              <option value="poppins">Poppins</option>
+              <option value="montserrat">Montserrat</option>
+              <option value="roboto">Roboto</option>
+            </select>
+          </div>
+          <div class="select-group">
+            <span class="select-group__label">Size</span>
+            <select id="dateFontSize">
+              <option value="sm">Small</option>
+              <option value="md" selected>Medium</option>
+              <option value="lg">Large</option>
+            </select>
+          </div>
+          <div class="select-group">
+            <span class="select-group__label">Weight</span>
+            <select id="dateFontWeight">
+              <option value="normal">Normal</option>
+              <option value="medium" selected>Medium</option>
+              <option value="semibold">Semibold</option>
+              <option value="bold">Bold</option>
+            </select>
+          </div>
+          <div class="select-group">
+            <span class="select-group__label">Transform</span>
+            <select id="dateTransform">
+              <option value="uppercase">UPPERCASE</option>
+              <option value="capitalize" selected>Capitalize</option>
+              <option value="none">none</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <hr class="config-section__divider">
+
+      <!-- Quick Presets -->
+      <div class="config-section">
+        <h3 class="config-section__title">Quick Presets</h3>
+        <div class="preset-group">
+          <button type="button" class="preset-btn" data-preset="standard">Standard</button>
+          <button type="button" class="preset-btn" data-preset="minimal">Minimal</button>
+          <button type="button" class="preset-btn" data-preset="bold">Bold</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal__footer">
+      <button type="button" class="btn btn--secondary" id="resetBtn">Reset</button>
+      <button type="button" class="btn btn--primary" id="applyBtn">Apply</button>
+    </div>
+  </div>
+
+  <script>
+    // Inline config to avoid CORS issues with file:// protocol
+    const STORAGE_KEY = 'banner-config-v2';
+    const CONFIG_VERSION = 1;
+
+    const BannerConfigV2 = {
+      presets: {
+        standard: {
+          layout: 'centered',
+          showTitle: true,
+          showDayNames: true,
+          showYear: false,
+          backgroundColor: '#1a5f2a',
+          textColor: '#ffffff',
+          padding: 'md',
+          titleFontFamily: 'opensans',
+          titleFontSize: 'md',
+          titleFontWeight: 'semibold',
+          titleTransform: 'uppercase',
+          dateFontFamily: 'opensans',
+          dateFontSize: 'md',
+          dateFontWeight: 'medium',
+          dateTransform: 'capitalize',
+          stickyEnabled: true,
+          stickyThreshold: 200,
+          headerText: 'WEEKLY AD'
+        },
+        minimal: {
+          layout: 'centered',
+          showTitle: true,
+          showDayNames: false,
+          showYear: false,
+          backgroundColor: '#374151',
+          textColor: '#ffffff',
+          padding: 'sm',
+          titleFontFamily: 'opensans',
+          titleFontSize: 'sm',
+          titleFontWeight: 'medium',
+          titleTransform: 'uppercase',
+          dateFontFamily: 'opensans',
+          dateFontSize: 'sm',
+          dateFontWeight: 'normal',
+          dateTransform: 'capitalize',
+          stickyEnabled: false,
+          stickyThreshold: 200,
+          headerText: 'WEEKLY AD'
+        },
+        bold: {
+          layout: 'spread',
+          showTitle: true,
+          showDayNames: true,
+          showYear: false,
+          backgroundColor: '#991b1b',
+          textColor: '#ffffff',
+          padding: 'lg',
+          titleFontFamily: 'montserrat',
+          titleFontSize: 'lg',
+          titleFontWeight: 'bold',
+          titleTransform: 'uppercase',
+          dateFontFamily: 'montserrat',
+          dateFontSize: 'md',
+          dateFontWeight: 'semibold',
+          dateTransform: 'capitalize',
+          stickyEnabled: true,
+          stickyThreshold: 150,
+          headerText: 'WEEKLY AD'
+        }
+      },
+
+      defaults: {
+        layout: 'centered',
+        showTitle: true,
+        showDayNames: true,
+        showYear: false,
+        backgroundColor: '#1a5f2a',
+        textColor: '#ffffff',
+        padding: 'md',
+        titleFontFamily: 'opensans',
+        titleFontSize: 'md',
+        titleFontWeight: 'semibold',
+        titleTransform: 'uppercase',
+        dateFontFamily: 'opensans',
+        dateFontSize: 'md',
+        dateFontWeight: 'medium',
+        dateTransform: 'capitalize',
+        stickyEnabled: true,
+        stickyThreshold: 200,
+        headerText: 'WEEKLY AD',
+        startDayOfWeek: 'Wednesday',
+        locale: 'en'
+      },
+
+      state: {},
+      _listeners: {},
+
+      init() {
+        const saved = this.loadFromStorage();
+        if (saved) {
+          this.state = { ...this.defaults, ...saved };
+        } else {
+          this.state = { ...this.defaults };
+        }
+        return this;
+      },
+
+      loadFromStorage() {
+        try {
+          const saved = localStorage.getItem(STORAGE_KEY);
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (!parsed._configVersion || parsed._configVersion < CONFIG_VERSION) {
+              this.clearStorage();
+              return null;
+            }
+            return parsed;
+          }
+        } catch (e) {
+          console.warn('Failed to load config:', e);
+        }
+        return null;
+      },
+
+      saveToStorage() {
+        try {
+          const toSave = { ...this.state, _configVersion: CONFIG_VERSION };
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+        } catch (e) {
+          console.warn('Failed to save config:', e);
+        }
+        return this;
+      },
+
+      clearStorage() {
+        try {
+          localStorage.removeItem(STORAGE_KEY);
+        } catch (e) {
+          console.warn('Failed to clear config:', e);
+        }
+        return this;
+      },
+
+      set(key, value, save = true) {
+        if (key in this.state) {
+          this.state[key] = value;
+          if (save) this.saveToStorage();
+          this.emit('change', { key, value });
+        }
+        return this;
+      },
+
+      setMultiple(updates, save = true) {
+        Object.entries(updates).forEach(([key, value]) => {
+          if (key in this.state) {
+            this.state[key] = value;
+          }
+        });
+        if (save) this.saveToStorage();
+        this.emit('change', { key: 'multiple', updates });
+        return this;
+      },
+
+      get(key) {
+        return this.state[key];
+      },
+
+      getAll() {
+        return { ...this.state };
+      },
+
+      reset(clearSaved = true) {
+        this.state = { ...this.defaults };
+        if (clearSaved) this.clearStorage();
+        this.emit('reset', this.state);
+        return this;
+      },
+
+      applyPreset(name) {
+        const preset = this.presets[name];
+        if (preset) {
+          this.setMultiple(preset);
+          this.emit('preset', { name, config: preset });
+        }
+        return this;
+      },
+
+      getCSSClasses() {
+        const config = this.state;
+        const classes = ['banner'];
+        classes.push(`banner--${config.layout}`);
+        classes.push(`banner--padding-${config.padding}`);
+        if (config.stickyEnabled) classes.push('banner--sticky-enabled');
+        return classes;
+      },
+
+      getTitleClasses() {
+        const config = this.state;
+        const classes = ['banner__title'];
+        classes.push(`banner__title--font-${config.titleFontFamily}`);
+        classes.push(`banner__title--size-${config.titleFontSize}`);
+        classes.push(`banner__title--weight-${config.titleFontWeight}`);
+        classes.push(`banner__title--${config.titleTransform}`);
+        if (!config.showTitle) classes.push('banner__title--hidden');
+        return classes;
+      },
+
+      getDatesClasses() {
+        const config = this.state;
+        const classes = ['banner__dates'];
+        classes.push(`banner__dates--font-${config.dateFontFamily}`);
+        classes.push(`banner__dates--size-${config.dateFontSize}`);
+        classes.push(`banner__dates--weight-${config.dateFontWeight}`);
+        classes.push(`banner__dates--${config.dateTransform}`);
+        return classes;
+      },
+
+      getInlineStyles() {
+        return {
+          backgroundColor: this.state.backgroundColor,
+          color: this.state.textColor
+        };
+      },
+
+      on(event, callback) {
+        if (!this._listeners[event]) this._listeners[event] = [];
+        this._listeners[event].push(callback);
+        return this;
+      },
+
+      emit(event, data) {
+        if (this._listeners[event]) {
+          this._listeners[event].forEach(cb => cb(data));
+        }
+        return this;
+      }
+    };
+
+    // Initialize config
+    BannerConfigV2.init();
+
+    // DOM Elements
+    const previewBanner = document.getElementById('preview-banner');
+    const previewTitle = previewBanner.querySelector('.banner__title');
+    const previewDates = previewBanner.querySelector('.banner__dates');
+
+    // Layout selector
+    const layoutOptions = document.querySelectorAll('.layout-option');
+
+    // Display checkboxes
+    const showTitleCheckbox = document.getElementById('showTitle');
+    const showDayNamesCheckbox = document.getElementById('showDayNames');
+    const showYearCheckbox = document.getElementById('showYear');
+
+    // Colors
+    const backgroundColorInput = document.getElementById('backgroundColor');
+    const textColorInput = document.getElementById('textColor');
+
+    // Padding radios
+    const paddingRadios = document.querySelectorAll('input[name="padding"]');
+
+    // Title typography
+    const titleFontFamily = document.getElementById('titleFontFamily');
+    const titleFontSize = document.getElementById('titleFontSize');
+    const titleFontWeight = document.getElementById('titleFontWeight');
+    const titleTransform = document.getElementById('titleTransform');
+
+    // Date typography
+    const dateFontFamily = document.getElementById('dateFontFamily');
+    const dateFontSize = document.getElementById('dateFontSize');
+    const dateFontWeight = document.getElementById('dateFontWeight');
+    const dateTransform = document.getElementById('dateTransform');
+
+    // Preset buttons
+    const presetBtns = document.querySelectorAll('.preset-btn');
+
+    // Action buttons
+    const resetBtn = document.getElementById('resetBtn');
+    const applyBtn = document.getElementById('applyBtn');
+
+    /**
+     * Update the preview banner from config
+     */
+    function updatePreview() {
+      const config = BannerConfigV2.getAll();
+
+      // Update banner classes
+      previewBanner.className = BannerConfigV2.getCSSClasses().join(' ');
+
+      // Update title classes
+      previewTitle.className = BannerConfigV2.getTitleClasses().join(' ');
+
+      // Update dates classes
+      previewDates.className = BannerConfigV2.getDatesClasses().join(' ');
+
+      // Update inline styles (colors)
+      const styles = BannerConfigV2.getInlineStyles();
+      previewBanner.style.backgroundColor = styles.backgroundColor;
+      previewBanner.style.color = styles.color;
+
+      // Update date text based on showDayNames and showYear
+      const startDate = new Date(2026, 0, 1); // Jan 1, 2026 (Wednesday)
+      const endDate = new Date(2026, 0, 7);   // Jan 7, 2026 (Tuesday)
+
+      let dateText = '';
+      if (config.showDayNames) {
+        dateText = config.showYear
+          ? 'Wed, Jan 1 - Tue, Jan 7, 2026'
+          : 'Wed, Jan 1 - Tue, Jan 7';
+      } else {
+        dateText = config.showYear
+          ? 'Jan 1 - Jan 7, 2026'
+          : 'Jan 1 - Jan 7';
+      }
+      previewDates.textContent = dateText;
+
+      // Update title text
+      previewTitle.textContent = config.headerText || 'WEEKLY AD';
+    }
+
+    /**
+     * Sync UI controls from config
+     */
+    function syncUIFromConfig() {
+      const config = BannerConfigV2.getAll();
+
+      // Layout
+      layoutOptions.forEach(opt => {
+        opt.classList.toggle('active', opt.dataset.layout === config.layout);
+      });
+
+      // Display
+      showTitleCheckbox.checked = config.showTitle;
+      showDayNamesCheckbox.checked = config.showDayNames;
+      showYearCheckbox.checked = config.showYear;
+
+      // Colors
+      backgroundColorInput.value = config.backgroundColor;
+      textColorInput.value = config.textColor;
+
+      // Padding
+      paddingRadios.forEach(radio => {
+        radio.checked = radio.value === config.padding;
+      });
+
+      // Title typography
+      titleFontFamily.value = config.titleFontFamily;
+      titleFontSize.value = config.titleFontSize;
+      titleFontWeight.value = config.titleFontWeight;
+      titleTransform.value = config.titleTransform;
+
+      // Date typography
+      dateFontFamily.value = config.dateFontFamily;
+      dateFontSize.value = config.dateFontSize;
+      dateFontWeight.value = config.dateFontWeight;
+      dateTransform.value = config.dateTransform;
+
+      updatePreview();
+    }
+
+    // --- Event Handlers ---
+
+    // Layout selector
+    layoutOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        BannerConfigV2.set('layout', option.dataset.layout);
+        layoutOptions.forEach(opt => opt.classList.remove('active'));
+        option.classList.add('active');
+        updatePreview();
+      });
+    });
+
+    // Display checkboxes
+    showTitleCheckbox.addEventListener('change', () => {
+      BannerConfigV2.set('showTitle', showTitleCheckbox.checked);
+      updatePreview();
+    });
+
+    showDayNamesCheckbox.addEventListener('change', () => {
+      BannerConfigV2.set('showDayNames', showDayNamesCheckbox.checked);
+      updatePreview();
+    });
+
+    showYearCheckbox.addEventListener('change', () => {
+      BannerConfigV2.set('showYear', showYearCheckbox.checked);
+      updatePreview();
+    });
+
+    // Colors
+    backgroundColorInput.addEventListener('input', () => {
+      BannerConfigV2.set('backgroundColor', backgroundColorInput.value);
+      updatePreview();
+    });
+
+    textColorInput.addEventListener('input', () => {
+      BannerConfigV2.set('textColor', textColorInput.value);
+      updatePreview();
+    });
+
+    // Padding
+    paddingRadios.forEach(radio => {
+      radio.addEventListener('change', () => {
+        BannerConfigV2.set('padding', radio.value);
+        updatePreview();
+      });
+    });
+
+    // Title typography
+    titleFontFamily.addEventListener('change', () => {
+      BannerConfigV2.set('titleFontFamily', titleFontFamily.value);
+      updatePreview();
+    });
+
+    titleFontSize.addEventListener('change', () => {
+      BannerConfigV2.set('titleFontSize', titleFontSize.value);
+      updatePreview();
+    });
+
+    titleFontWeight.addEventListener('change', () => {
+      BannerConfigV2.set('titleFontWeight', titleFontWeight.value);
+      updatePreview();
+    });
+
+    titleTransform.addEventListener('change', () => {
+      BannerConfigV2.set('titleTransform', titleTransform.value);
+      updatePreview();
+    });
+
+    // Date typography
+    dateFontFamily.addEventListener('change', () => {
+      BannerConfigV2.set('dateFontFamily', dateFontFamily.value);
+      updatePreview();
+    });
+
+    dateFontSize.addEventListener('change', () => {
+      BannerConfigV2.set('dateFontSize', dateFontSize.value);
+      updatePreview();
+    });
+
+    dateFontWeight.addEventListener('change', () => {
+      BannerConfigV2.set('dateFontWeight', dateFontWeight.value);
+      updatePreview();
+    });
+
+    dateTransform.addEventListener('change', () => {
+      BannerConfigV2.set('dateTransform', dateTransform.value);
+      updatePreview();
+    });
+
+    // Presets
+    presetBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        BannerConfigV2.applyPreset(btn.dataset.preset);
+        syncUIFromConfig();
+      });
+    });
+
+    // Reset button
+    resetBtn.addEventListener('click', () => {
+      BannerConfigV2.reset();
+      syncUIFromConfig();
+    });
+
+    // Apply button (for now just log)
+    applyBtn.addEventListener('click', () => {
+      console.log('Applied config:', BannerConfigV2.getAll());
+      alert('Configuration saved!');
+    });
+
+    // Initialize
+    syncUIFromConfig();
+    console.log('[Modal] Initialized with config:', BannerConfigV2.getAll());
+  </script>
+</body>
+</html>

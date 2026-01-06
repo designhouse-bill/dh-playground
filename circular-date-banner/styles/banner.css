@@ -199,10 +199,11 @@
 
 .circular-date-banner--horizontal .banner__content {
   flex-direction: row;
-  justify-content: space-between;
+  flex-wrap: nowrap;
   align-items: center;
   gap: var(--spacing-md);
   width: 100%;
+  /* Note: justify-content is set by position modifier classes */
 }
 
 .circular-date-banner--horizontal .banner__title {
@@ -220,6 +221,7 @@
   font-weight: var(--font-weight-semibold);
   opacity: 1;
   letter-spacing: 0.02em;
+  flex-shrink: 0; /* Prevent shrinking in flex layout */
 }
 
 /* Two-line date layout (hidden by default) */
@@ -242,6 +244,7 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  flex-shrink: 0; /* Prevent shrinking in flex layout */
 }
 
 .circular-date-banner--horizontal .banner__date-start,
@@ -282,4 +285,96 @@
   .circular-date-banner--horizontal .banner__date-end {
     font-size: 1rem;
   }
+}
+
+/* ==========================================================================
+   Content Position Classes (Horizontal Mode)
+   Controls how title + dates are positioned together
+   Higher specificity by combining with --horizontal to override base styles
+   ========================================================================== */
+
+/* Center: Title and dates centered together */
+.circular-date-banner--horizontal.circular-date-banner--position-center .banner__content {
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* Spread: Title on left, dates on right */
+.circular-date-banner--horizontal.circular-date-banner--position-spread .banner__content {
+  justify-content: space-between;
+}
+
+/* Left: Title and dates aligned to left */
+.circular-date-banner--horizontal.circular-date-banner--position-left .banner__content {
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+/* Right: Title and dates aligned to right */
+.circular-date-banner--horizontal.circular-date-banner--position-right .banner__content {
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+/* ==========================================================================
+   Title Alignment Classes
+   Controls text alignment within the title element
+   ========================================================================== */
+
+.banner__title--align-left {
+  text-align: left;
+}
+
+.banner__title--align-center {
+  text-align: center;
+}
+
+.banner__title--align-right {
+  text-align: right;
+}
+
+/* ==========================================================================
+   Date Alignment Classes
+   Controls alignment of date text within its container
+   ========================================================================== */
+
+/* Date containers default to auto width for centering to work properly */
+/* Using horizontal context for proper specificity */
+.circular-date-banner--horizontal .banner__date-range,
+.circular-date-banner--horizontal .banner__date-lines {
+  width: auto;
+}
+
+/* Only use full width in spread mode where elements need to fill the space */
+/* Higher specificity to override the auto width rule above */
+.circular-date-banner--horizontal.circular-date-banner--position-spread .banner__date-range,
+.circular-date-banner--horizontal.circular-date-banner--position-spread .banner__date-lines {
+  width: 100%;
+}
+
+.banner__date-range--align-left {
+  justify-content: flex-start;
+}
+
+.banner__date-range--align-center {
+  justify-content: center;
+}
+
+.banner__date-range--align-right {
+  justify-content: flex-end;
+}
+
+.banner__date-lines--align-left {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.banner__date-lines--align-center {
+  align-items: center;
+  text-align: center;
+}
+
+.banner__date-lines--align-right {
+  align-items: flex-end;
+  text-align: right;
 }

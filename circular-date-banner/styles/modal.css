@@ -1,0 +1,688 @@
+/**
+ * Configuration Modal Styles
+ * Matches production "Logos & Style" tab UI pattern
+ */
+
+/* ==========================================================================
+   Modal Overlay & Dialog
+   ========================================================================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal-dialog {
+  width: 70vw;
+  max-width: 900px;
+  max-height: 90vh;
+  background: #fff;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+/* ==========================================================================
+   Modal Header (matches production .retail-header)
+   ========================================================================== */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.modal-title {
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: #1f2937;
+  letter-spacing: 0.025em;
+}
+
+.modal-header-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* ==========================================================================
+   Modal Meta/Breadcrumb Row
+   ========================================================================== */
+.modal-meta {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+.modal-badge.active {
+  color: #166534;
+  background-color: #dcfce7;
+}
+
+/* ==========================================================================
+   Tab Bar (matches .p-tablist)
+   ========================================================================== */
+.modal-tablist {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0 1rem;
+  background: #fff;
+}
+
+.modal-tab {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.modal-tab:hover {
+  color: #374151;
+}
+
+.modal-tab.active {
+  border-bottom-color: #2196F3;
+  color: #2196F3;
+}
+
+/* ==========================================================================
+   Scrollable Content
+   ========================================================================== */
+.modal-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 1rem;
+}
+
+/* Custom scrollbar */
+.modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* ==========================================================================
+   Panel (matches .p-panel)
+   ========================================================================== */
+.modal-panel {
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  background: #fff;
+}
+
+.modal-panel:last-child {
+  margin-bottom: 0;
+}
+
+.modal-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: #f9fafb;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 6px 6px 0 0;
+  transition: background 0.15s ease;
+}
+
+.modal-panel-header:hover {
+  background: #f3f4f6;
+}
+
+.modal-panel-chevron {
+  font-size: 0.75rem;
+  color: #6b7280;
+  transition: transform 0.2s ease;
+}
+
+.modal-panel.collapsed .modal-panel-chevron {
+  transform: rotate(-90deg);
+}
+
+.modal-panel.collapsed .modal-panel-header {
+  border-radius: 6px;
+}
+
+.modal-panel-content {
+  padding: 1rem;
+  display: block;
+  border-top: 1px solid #e5e7eb;
+}
+
+.modal-panel.collapsed .modal-panel-content {
+  display: none;
+}
+
+/* Nested sub-panels */
+.modal-panel .modal-panel {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.modal-panel .modal-panel:first-child {
+  margin-top: 0;
+}
+
+.modal-panel .modal-panel:last-child {
+  margin-bottom: 0;
+}
+
+/* ==========================================================================
+   Toggle Switch (accessible, matches .p-toggleswitch)
+   ========================================================================== */
+.modal-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* Visually hidden but accessible checkbox */
+.modal-toggle input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.modal-toggle-slider {
+  position: relative;
+  width: 40px;
+  height: 22px;
+  background: #d1d5db;
+  border-radius: 11px;
+  transition: background 0.2s;
+}
+
+.modal-toggle-slider::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  transition: left 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Checked state */
+.modal-toggle.checked .modal-toggle-slider,
+.modal-toggle input:checked + .modal-toggle-slider {
+  background: #2196F3;
+}
+
+.modal-toggle.checked .modal-toggle-slider::before,
+.modal-toggle input:checked + .modal-toggle-slider::before {
+  left: 20px;
+}
+
+/* Focus ring for keyboard navigation */
+.modal-toggle input:focus-visible + .modal-toggle-slider {
+  outline: 2px solid #2196F3;
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Flexbox Grid Utilities (no Bootstrap)
+   ========================================================================== */
+.modal-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.modal-col-6 {
+  flex: 1 1 calc(50% - 0.5rem);
+  min-width: 200px;
+}
+
+.modal-col-12 {
+  flex: 1 1 100%;
+}
+
+/* Utility classes */
+.d-flex {
+  display: flex;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.justify-content-between {
+  justify-content: space-between;
+}
+
+.gap-1 {
+  gap: 0.25rem;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.gap-3 {
+  gap: 0.75rem;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.mb-3 {
+  margin-bottom: 1rem;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
+.mt-3 {
+  margin-top: 1rem;
+}
+
+/* ==========================================================================
+   Buttons (matches .p-button)
+   ========================================================================== */
+.modal-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  border: none;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  font-family: inherit;
+}
+
+.modal-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.3);
+}
+
+.modal-btn-primary {
+  background: #2196F3;
+  color: #fff;
+}
+
+.modal-btn-primary:hover {
+  background: #1976D2;
+}
+
+.modal-btn-secondary {
+  background: transparent;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.modal-btn-secondary:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+/* ==========================================================================
+   Form Controls
+   ========================================================================== */
+.modal-label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.375rem;
+}
+
+.modal-input,
+.modal-select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: #1f2937;
+  background-color: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.modal-input:hover,
+.modal-select:hover {
+  border-color: #9ca3af;
+}
+
+.modal-input:focus,
+.modal-select:focus {
+  outline: none;
+  border-color: #2196F3;
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.15);
+}
+
+/* Number input */
+.modal-input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.modal-input[type="number"]::-webkit-inner-spin-button,
+.modal-input[type="number"]::-webkit-outer-spin-button {
+  opacity: 1;
+}
+
+/* Color input */
+.modal-color-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.modal-color-input {
+  width: 40px;
+  height: 32px;
+  padding: 2px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #fff;
+}
+
+.modal-color-input::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.modal-color-input::-webkit-color-swatch {
+  border: none;
+  border-radius: 4px;
+}
+
+.modal-color-value {
+  flex: 1;
+  font-size: 0.75rem;
+  font-family: monospace;
+  color: #6b7280;
+  background-color: #f9fafb;
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid #e5e7eb;
+}
+
+/* Range slider */
+.modal-range-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.modal-range {
+  flex: 1;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: #e5e7eb;
+  border-radius: 2px;
+  outline: none;
+}
+
+.modal-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #2196F3;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.modal-range::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.modal-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #2196F3;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.modal-range-value {
+  min-width: 40px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;
+  text-align: right;
+}
+
+/* Radio buttons */
+.modal-radio-set {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.modal-radio-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.modal-radio {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: #2196F3;
+}
+
+.modal-radio-label {
+  font-size: 0.8125rem;
+  color: #1f2937;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Checkbox */
+.modal-checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.modal-checkbox {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: #2196F3;
+}
+
+.modal-checkbox-label {
+  font-size: 0.8125rem;
+  color: #1f2937;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+.bold-text {
+  font-weight: 700;
+}
+
+.gray-info {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.modal-help {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 0.25rem;
+  line-height: 1.4;
+}
+
+.modal-section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 1rem 0;
+}
+
+/* ==========================================================================
+   Preset Buttons
+   ========================================================================== */
+.modal-preset-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.modal-preset-btn {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-family: inherit;
+  color: #374151;
+  background-color: #f9fafb;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.modal-preset-btn:hover {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.modal-preset-btn[data-preset="minimal"] {
+  border-left: 3px solid #374151;
+}
+
+.modal-preset-btn[data-preset="standard"] {
+  border-left: 3px solid #1a5f2a;
+}
+
+.modal-preset-btn[data-preset="bold"] {
+  border-left: 3px solid #991b1b;
+}
+
+.modal-preset-btn[data-preset="spanish"] {
+  border-left: 3px solid #1e40af;
+}
+
+/* ==========================================================================
+   Sticky Preview Container
+   ========================================================================== */
+.modal-banner-preview {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #f9fafb;
+  padding: 1rem;
+  margin: -1rem -1rem 1rem -1rem;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.modal-banner-preview__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.modal-banner-preview__content {
+  min-width: 320px;
+  max-width: 472px;
+  margin: 0 auto;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure preview banner doesn't inherit sticky behavior from main page */
+.modal-banner-preview .circular-date-banner {
+  position: relative;
+}
+
+/* ==========================================================================
+   Responsive Adjustments
+   ========================================================================== */
+@media (max-width: 768px) {
+  .modal-dialog {
+    width: 95vw;
+    max-height: 95vh;
+  }
+
+  .modal-col-6 {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .modal-row {
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .modal-header-actions {
+    align-self: flex-end;
+  }
+
+  .modal-preset-buttons {
+    grid-template-columns: 1fr;
+  }
+}

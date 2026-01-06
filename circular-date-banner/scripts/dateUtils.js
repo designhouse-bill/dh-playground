@@ -25,10 +25,28 @@ const DateUtils = {
   DAY_NAMES_ES_SHORT: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
 
   /**
-   * Spanish month names
+   * English month names (full)
+   */
+  MONTH_NAMES: ['January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'],
+
+  /**
+   * English month names (abbreviated)
+   */
+  MONTH_NAMES_SHORT: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+
+  /**
+   * Spanish month names (full)
    */
   MONTH_NAMES_ES: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
                    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+
+  /**
+   * Spanish month names (abbreviated)
+   */
+  MONTH_NAMES_ES_SHORT: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
+                         'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
 
   /**
    * Calculate the circular date range based on a starting day of week
@@ -82,6 +100,7 @@ const DateUtils = {
    * @param {boolean} options.showYear - Whether to show the year
    * @param {boolean} options.showDayNames - Whether to show day names
    * @param {string} options.locale - 'en' | 'es'
+   * @param {string} options.monthFormat - 'abbreviated' | 'full'
    * @returns {string} Formatted date range string
    */
   formatDateRange(startDate, endDate, options = {}) {
@@ -93,7 +112,8 @@ const DateUtils = {
       format = 'compact',
       showYear = false,
       showDayNames = false,
-      locale = 'en'
+      locale = 'en',
+      monthFormat = 'abbreviated'
     } = options;
 
     const isSpanish = locale === 'es';
@@ -116,28 +136,27 @@ const DateUtils = {
       const endMonthNum = endMonth + 1;
       result = `${startMonthNum}/${startDay} - ${endMonthNum}/${endDay}`;
     } else if (isSpanish) {
-      // Spanish formats
-      const startMonthName = this.MONTH_NAMES_ES[startMonth];
-      const endMonthName = this.MONTH_NAMES_ES[endMonth];
+      // Spanish formats - use getMonthName helper
+      const startMonthName = this.getMonthName(startDate, locale, monthFormat);
+      const endMonthName = this.getMonthName(endDate, locale, monthFormat);
 
       if (format === 'compact' && sameMonth) {
-        // "6 - 12 de Noviembre"
+        // "6 - 12 de Noviembre" or "6 - 12 de Nov"
         result = `${startDay} - ${endDay} de ${endMonthName}`;
       } else {
         // "28 de Noviembre - 4 de Diciembre" (explicit or cross-month compact)
         result = `${startDay} de ${startMonthName} - ${endDay} de ${endMonthName}`;
       }
     } else {
-      // English formats
-      const monthOptions = { month: 'short' };
-      const startMonthName = startDate.toLocaleDateString('en-US', monthOptions);
-      const endMonthName = endDate.toLocaleDateString('en-US', monthOptions);
+      // English formats - use getMonthName helper
+      const startMonthName = this.getMonthName(startDate, locale, monthFormat);
+      const endMonthName = this.getMonthName(endDate, locale, monthFormat);
 
       if (format === 'compact' && sameMonth) {
-        // "Nov 6 - 12"
+        // "Nov 6 - 12" or "November 6 - 12"
         result = `${startMonthName} ${startDay} - ${endDay}`;
       } else {
-        // "Nov 6 - Dec 4" (explicit or cross-month compact)
+        // "Nov 6 - Dec 4" or "November 6 - December 4" (explicit or cross-month compact)
         result = `${startMonthName} ${startDay} - ${endMonthName} ${endDay}`;
       }
     }
@@ -203,12 +222,30 @@ const DateUtils = {
   },
 
   /**
+   * Get month name for a date
+   * @param {Date} date - Date
+   * @param {string} locale - 'en' | 'es'
+   * @param {string} format - 'full' | 'abbreviated'
+   * @returns {string} Month name
+   */
+  getMonthName(date, locale = 'en', format = 'abbreviated') {
+    const monthIndex = date.getMonth();
+
+    if (locale === 'es') {
+      return format === 'abbreviated' ? this.MONTH_NAMES_ES_SHORT[monthIndex] : this.MONTH_NAMES_ES[monthIndex];
+    }
+
+    return format === 'abbreviated' ? this.MONTH_NAMES_SHORT[monthIndex] : this.MONTH_NAMES[monthIndex];
+  },
+
+  /**
    * Format inline date range with day names (horizontal layout)
    * Example: "Wednesday, Dec 31 - Tuesday, January 6, 2026"
    * @param {Date} startDate - Start date
    * @param {Date} endDate - End date
    * @param {object} options - Formatting options
    * @param {string} options.dayNameFormat - 'full' | 'abbreviated'
+   * @param {string} options.monthFormat - 'full' | 'abbreviated'
    * @param {boolean} options.showYear - Whether to show the year
    * @param {string} options.locale - 'en' | 'es'
    * @param {boolean} options.twoLine - Return object with startLine and endLine
@@ -221,6 +258,7 @@ const DateUtils = {
 
     const {
       dayNameFormat = 'abbreviated',
+      monthFormat = 'abbreviated',
       showYear = true,
       locale = 'en',
       twoLine = false
@@ -232,35 +270,22 @@ const DateUtils = {
     const startDayName = this.getDayName(startDate, locale, dayNameFormat);
     const endDayName = this.getDayName(endDate, locale, dayNameFormat);
 
+    // Get month names using the monthFormat option
+    const startMonthName = this.getMonthName(startDate, locale, monthFormat);
+    const endMonthName = this.getMonthName(endDate, locale, monthFormat);
+
     // Get date components
     const startDay = startDate.getDate();
     const endDay = endDate.getDate();
-    const startMonth = startDate.getMonth();
-    const endMonth = endDate.getMonth();
     const endYear = endDate.getFullYear();
-
-    // Check if same month
-    const sameMonth = startMonth === endMonth;
 
     let startLine = '';
     let endLine = '';
 
     if (isSpanish) {
-      const startMonthName = this.MONTH_NAMES_ES[startMonth];
-      const endMonthName = this.MONTH_NAMES_ES[endMonth];
-
-      if (sameMonth) {
-        startLine = `${startDayName}, ${startDay} de ${startMonthName}`;
-        endLine = `${endDayName}, ${endDay} de ${endMonthName}`;
-      } else {
-        startLine = `${startDayName}, ${startDay} de ${startMonthName}`;
-        endLine = `${endDayName}, ${endDay} de ${endMonthName}`;
-      }
+      startLine = `${startDayName}, ${startDay} de ${startMonthName}`;
+      endLine = `${endDayName}, ${endDay} de ${endMonthName}`;
     } else {
-      // Use abbreviated month format for both dates (consistent display)
-      const startMonthName = startDate.toLocaleDateString('en-US', { month: 'short' });
-      const endMonthName = endDate.toLocaleDateString('en-US', { month: 'short' });
-
       startLine = `${startDayName}, ${startMonthName} ${startDay}`;
       endLine = `${endDayName}, ${endMonthName} ${endDay}`;
     }

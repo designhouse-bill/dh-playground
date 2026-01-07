@@ -270,6 +270,15 @@
       margin: 24px 0;
     }
 
+    .config-section__subtitle {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 0 0 10px 0;
+    }
+
     /* ==========================================================================
        Layout Selector
        ========================================================================== */
@@ -584,7 +593,7 @@
     .banner__dates {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.75rem;
       flex-wrap: wrap;
       justify-content: center;
     }
@@ -595,11 +604,8 @@
 
     .banner__validity-pill {
       padding: 2px 8px;
-      font-size: 0.625rem;
-      font-weight: 500;
       background: rgba(255, 255, 255, 0.2);
       border-radius: 10px;
-      /* text-transform controlled by JS config.validityTransform */
       letter-spacing: 0.03em;
       white-space: nowrap;
       flex-shrink: 0;
@@ -643,44 +649,6 @@
     .banner--sticky-enabled {
       transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
                   box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    /* ==========================================================================
-       Floating Validity Pill (Days Left)
-       ========================================================================== */
-    .promotions-wrapper {
-      position: relative;
-    }
-
-    .floating-validity-pill {
-      position: absolute;
-      bottom: 16px;
-      right: 16px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      width: 64px;
-      height: 64px;
-      background: #1a5f2a;
-      color: #fff;
-      border-radius: 50%;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-      z-index: 50;
-    }
-
-    .floating-validity-pill__days {
-      font-size: 1.5rem;
-      font-weight: 700;
-      line-height: 1;
-    }
-
-    .floating-validity-pill__label {
-      font-size: 0.5rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      opacity: 0.9;
     }
 
     /* ==========================================================================
@@ -906,12 +874,6 @@
         </div>
       </div>
       <!-- End Promotions Column -->
-
-      <!-- Floating Validity Pill -->
-      <div class="floating-validity-pill" id="floating-validity-pill">
-        <span class="floating-validity-pill__days">6</span>
-        <span class="floating-validity-pill__label">Days Left</span>
-      </div>
     </div>
     <!-- End Promotions Wrapper -->
   </div>
@@ -1004,9 +966,12 @@
           dayLeftTextSpanish: 'Día Restante',
           daysLeftText: 'Days Left',
           daysLeftTextSpanish: 'Días Restantes',
-          validityTransform: 'uppercase',
-          stickyEnabled: true,
-          stickyHideOnScroll: true
+          pillFontFamily: 'opensans',
+          pillFontSize: 'sm',
+          pillFontWeight: 'medium',
+          pillTransform: 'uppercase',
+          stickyEnabled: false,
+          stickyHideOnScroll: false
         },
         minimal: {
           bannerEnabled: true,
@@ -1037,7 +1002,10 @@
           dayLeftTextSpanish: 'Día Restante',
           daysLeftText: 'Days Left',
           daysLeftTextSpanish: 'Días Restantes',
-          validityTransform: 'uppercase',
+          pillFontFamily: 'opensans',
+          pillFontSize: 'sm',
+          pillFontWeight: 'normal',
+          pillTransform: 'uppercase',
           stickyEnabled: false,
           stickyHideOnScroll: false
         },
@@ -1070,7 +1038,10 @@
           dayLeftTextSpanish: 'Día Restante',
           daysLeftText: 'Days Left',
           daysLeftTextSpanish: 'Días Restantes',
-          validityTransform: 'uppercase',
+          pillFontFamily: 'montserrat',
+          pillFontSize: 'sm',
+          pillFontWeight: 'semibold',
+          pillTransform: 'uppercase',
           stickyEnabled: true,
           stickyHideOnScroll: true
         }
@@ -1116,11 +1087,16 @@
         dayLeftTextSpanish: 'Día Restante', // Singular
         daysLeftText: 'Days Left',          // Plural
         daysLeftTextSpanish: 'Días Restantes', // Plural
-        validityTransform: 'uppercase', // 'uppercase' | 'capitalize' | 'none'
+
+        // Typography - Pill
+        pillFontFamily: 'opensans',
+        pillFontSize: 'sm',
+        pillFontWeight: 'medium',
+        pillTransform: 'uppercase', // 'uppercase' | 'capitalize' | 'none'
 
         // Sticky Scroll Behavior
-        stickyEnabled: true,
-        stickyHideOnScroll: true,
+        stickyEnabled: false,
+        stickyHideOnScroll: false,
         stickyThreshold: 200  // How far to scroll before hiding
       },
 
@@ -1287,40 +1263,42 @@
         if (pill) {
           pill.style.display = config.showValidityPill ? 'inline-block' : 'none';
 
+          // Apply pill typography classes
+          pill.className = `banner__validity-pill banner__validity-pill--font-${config.pillFontFamily} banner__validity-pill--size-${config.pillFontSize} banner__validity-pill--weight-${config.pillFontWeight} banner__validity-pill--${config.pillTransform}`;
+
           // Get validity text based on locale
           const validityLabel = config.locale === 'es'
             ? (config.validityTextSpanish || 'Válido')
             : (config.validityText || 'Valid');
 
           // Calculate days left (using demo end date of Jan 7, 2026)
+          // We add 1 because "days left" should include the final day itself
+          // On the final day: 1 Day Left (today is your last chance)
+          // Day after final day: 0 Days Left (it's over)
           const today = new Date();
           const endDate = new Date(2026, 0, 7); // Jan 7, 2026
           const timeDiff = endDate.getTime() - today.getTime();
-          const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+          const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) + 1;
 
-          // Show "| X Day(s) Left" only when less than 2 days remaining
-          if (daysLeft >= 0 && daysLeft < 2) {
-            // Use singular or plural based on count
-            let daysLeftLabel;
-            if (daysLeft === 1) {
-              // Singular: "1 Day Left"
-              daysLeftLabel = config.locale === 'es'
-                ? (config.dayLeftTextSpanish || 'Día Restante')
-                : (config.dayLeftText || 'Day Left');
-            } else {
-              // Plural: "0 Days Left", "2 Days Left", etc.
-              daysLeftLabel = config.locale === 'es'
-                ? (config.daysLeftTextSpanish || 'Días Restantes')
-                : (config.daysLeftText || 'Days Left');
-            }
-            pill.textContent = `${validityLabel} | ${daysLeft} ${daysLeftLabel}`;
+          // Show countdown only for 1-2 days remaining
+          // 0 days means circular is over and resets to "Valid"
+          // Wed-Sun = Valid, Mon = 2 Days Left, Tue = 1 Day Left
+          if (daysLeft === 1) {
+            // Singular: "1 Day Left" (Tuesday - final day)
+            const daysLeftLabel = config.locale === 'es'
+              ? (config.dayLeftTextSpanish || 'Día Restante')
+              : (config.dayLeftText || 'Day Left');
+            pill.textContent = `${daysLeft} ${daysLeftLabel}`;
+          } else if (daysLeft === 2) {
+            // Plural: "2 Days Left" (Monday)
+            const daysLeftLabel = config.locale === 'es'
+              ? (config.daysLeftTextSpanish || 'Días Restantes')
+              : (config.daysLeftText || 'Days Left');
+            pill.textContent = `${daysLeft} ${daysLeftLabel}`;
           } else {
+            // Wed-Sun or circular reset: show "Valid"
             pill.textContent = validityLabel;
           }
-
-          // Apply text transform
-          const transform = config.validityTransform || 'uppercase';
-          pill.style.textTransform = transform === 'none' ? 'none' : transform;
         }
 
         // Inline styles (colors)
@@ -1460,9 +1438,14 @@
 
         <hr class="config-section__divider">
 
-        <!-- Title Typography -->
+        <!-- Typography Section -->
         <div class="config-section">
-          <h3 class="config-section__title">Title Typography</h3>
+          <h3 class="config-section__title">Typography</h3>
+        </div>
+
+        <!-- Title -->
+        <div class="config-section">
+          <h4 class="config-section__subtitle">Title</h4>
           <div class="typography-row">
             <div class="select-group">
               <span class="select-group__label">Font</span>
@@ -1489,22 +1472,24 @@
                 <option value="medium">500</option>
                 <option value="semibold" selected>600</option>
                 <option value="bold">700</option>
+                <option value="extrabold">800</option>
+                <option value="black">900</option>
               </select>
             </div>
             <div class="select-group">
               <span class="select-group__label">Case</span>
               <select id="${prefix}-titleTransform" data-config="titleTransform">
-                <option value="uppercase" selected>ABC</option>
-                <option value="capitalize">Abc</option>
-                <option value="none">abc</option>
+                <option value="uppercase" selected>ABC (uppercase)</option>
+                <option value="capitalize">Abc (capitalize)</option>
+                <option value="none">abc (none)</option>
               </select>
             </div>
           </div>
         </div>
 
-        <!-- Date Typography -->
+        <!-- Date -->
         <div class="config-section">
-          <h3 class="config-section__title">Date Typography</h3>
+          <h4 class="config-section__subtitle">Date</h4>
           <div class="typography-row">
             <div class="select-group">
               <span class="select-group__label">Font</span>
@@ -1531,14 +1516,60 @@
                 <option value="medium" selected>500</option>
                 <option value="semibold">600</option>
                 <option value="bold">700</option>
+                <option value="extrabold">800</option>
+                <option value="black">900</option>
               </select>
             </div>
             <div class="select-group">
               <span class="select-group__label">Case</span>
               <select id="${prefix}-dateTransform" data-config="dateTransform">
-                <option value="uppercase">ABC</option>
-                <option value="capitalize" selected>Abc</option>
-                <option value="none">abc</option>
+                <option value="uppercase">ABC (uppercase)</option>
+                <option value="capitalize" selected>Abc (capitalize)</option>
+                <option value="none">abc (none)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pill -->
+        <div class="config-section">
+          <h4 class="config-section__subtitle">Pill</h4>
+          <div class="typography-row">
+            <div class="select-group">
+              <span class="select-group__label">Font</span>
+              <select id="${prefix}-pillFontFamily" data-config="pillFontFamily">
+                <option value="opensans">Open Sans</option>
+                <option value="inter">Inter</option>
+                <option value="poppins">Poppins</option>
+                <option value="montserrat">Montserrat</option>
+                <option value="roboto">Roboto</option>
+              </select>
+            </div>
+            <div class="select-group">
+              <span class="select-group__label">Size</span>
+              <select id="${prefix}-pillFontSize" data-config="pillFontSize">
+                <option value="sm" selected>S</option>
+                <option value="md">M</option>
+                <option value="lg">L</option>
+              </select>
+            </div>
+            <div class="select-group">
+              <span class="select-group__label">Weight</span>
+              <select id="${prefix}-pillFontWeight" data-config="pillFontWeight">
+                <option value="normal">400</option>
+                <option value="medium" selected>500</option>
+                <option value="semibold">600</option>
+                <option value="bold">700</option>
+                <option value="extrabold">800</option>
+                <option value="black">900</option>
+              </select>
+            </div>
+            <div class="select-group">
+              <span class="select-group__label">Case</span>
+              <select id="${prefix}-pillTransform" data-config="pillTransform">
+                <option value="uppercase" selected>ABC (uppercase)</option>
+                <option value="capitalize">Abc (capitalize)</option>
+                <option value="none">abc (none)</option>
               </select>
             </div>
           </div>
@@ -1575,7 +1606,7 @@
               <input type="text" id="${prefix}-dayLeftTextSpanish" data-config="dayLeftTextSpanish" value="Día Restante">
             </div>
           </div>
-          <div class="input-row" style="margin-bottom: 10px;">
+          <div class="input-row">
             <div class="input-group">
               <label class="input-group__label" for="${prefix}-daysLeftText">X Days Left (EN)</label>
               <input type="text" id="${prefix}-daysLeftText" data-config="daysLeftText" value="Days Left">
@@ -1585,16 +1616,6 @@
               <input type="text" id="${prefix}-daysLeftTextSpanish" data-config="daysLeftTextSpanish" value="Días Restantes">
             </div>
           </div>
-          <div class="typography-row">
-            <div class="select-group">
-              <span class="select-group__label">Text Case</span>
-              <select id="${prefix}-validityTransform" data-config="validityTransform">
-                <option value="uppercase" selected>ABC</option>
-                <option value="capitalize">Abc</option>
-                <option value="none">abc</option>
-              </select>
-            </div>
-          </div>
         </div>
 
         <!-- Scroll Behavior -->
@@ -1602,11 +1623,11 @@
           <h3 class="config-section__title">Scroll Behavior</h3>
           <div class="checkbox-group">
             <div class="checkbox-item">
-              <input type="checkbox" id="${prefix}-stickyEnabled" data-config="stickyEnabled" checked>
+              <input type="checkbox" id="${prefix}-stickyEnabled" data-config="stickyEnabled">
               <label for="${prefix}-stickyEnabled">Sticky Header</label>
             </div>
             <div class="checkbox-item">
-              <input type="checkbox" id="${prefix}-stickyHideOnScroll" data-config="stickyHideOnScroll" checked>
+              <input type="checkbox" id="${prefix}-stickyHideOnScroll" data-config="stickyHideOnScroll">
               <label for="${prefix}-stickyHideOnScroll">Hide on Scroll Down</label>
             </div>
           </div>

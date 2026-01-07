@@ -26,6 +26,8 @@
   --banner-weight-medium: 500;
   --banner-weight-semibold: 600;
   --banner-weight-bold: 700;
+  --banner-weight-extrabold: 800;
+  --banner-weight-black: 900;
 
   /* Font Families */
   --banner-font-opensans: 'Open Sans', system-ui, sans-serif;
@@ -87,7 +89,7 @@
 .banner--centered .banner__content {
   flex-direction: row;
   justify-content: center;
-  gap: 0.25rem;
+  gap: 0.5rem;
   flex-wrap: wrap;
 }
 
@@ -149,6 +151,8 @@
 .banner__title--weight-medium { font-weight: var(--banner-weight-medium); }
 .banner__title--weight-semibold { font-weight: var(--banner-weight-semibold); }
 .banner__title--weight-bold { font-weight: var(--banner-weight-bold); }
+.banner__title--weight-extrabold { font-weight: var(--banner-weight-extrabold); }
+.banner__title--weight-black { font-weight: var(--banner-weight-black); }
 
 /* Text Transform */
 .banner__title--uppercase { text-transform: uppercase; }
@@ -176,11 +180,42 @@
 .banner__dates--weight-medium { font-weight: var(--banner-weight-medium); }
 .banner__dates--weight-semibold { font-weight: var(--banner-weight-semibold); }
 .banner__dates--weight-bold { font-weight: var(--banner-weight-bold); }
+.banner__dates--weight-extrabold { font-weight: var(--banner-weight-extrabold); }
+.banner__dates--weight-black { font-weight: var(--banner-weight-black); }
 
 /* Text Transform */
 .banner__dates--uppercase { text-transform: uppercase; }
 .banner__dates--capitalize { text-transform: capitalize; }
 .banner__dates--none { text-transform: none; }
+
+/* ==========================================================================
+   Pill Typography Variants
+   ========================================================================== */
+
+/* Font Family */
+.banner__validity-pill--font-opensans { font-family: var(--banner-font-opensans); }
+.banner__validity-pill--font-inter { font-family: var(--banner-font-inter); }
+.banner__validity-pill--font-poppins { font-family: var(--banner-font-poppins); }
+.banner__validity-pill--font-montserrat { font-family: var(--banner-font-montserrat); }
+.banner__validity-pill--font-roboto { font-family: var(--banner-font-roboto); }
+
+/* Font Size */
+.banner__validity-pill--size-sm { font-size: 0.625rem; }
+.banner__validity-pill--size-md { font-size: 0.6875rem; }
+.banner__validity-pill--size-lg { font-size: 0.75rem; }
+
+/* Font Weight */
+.banner__validity-pill--weight-normal { font-weight: var(--banner-weight-normal); }
+.banner__validity-pill--weight-medium { font-weight: var(--banner-weight-medium); }
+.banner__validity-pill--weight-semibold { font-weight: var(--banner-weight-semibold); }
+.banner__validity-pill--weight-bold { font-weight: var(--banner-weight-bold); }
+.banner__validity-pill--weight-extrabold { font-weight: var(--banner-weight-extrabold); }
+.banner__validity-pill--weight-black { font-weight: var(--banner-weight-black); }
+
+/* Text Transform */
+.banner__validity-pill--uppercase { text-transform: uppercase; }
+.banner__validity-pill--capitalize { text-transform: capitalize; }
+.banner__validity-pill--none { text-transform: none; }
 
 /* ==========================================================================
    Visibility

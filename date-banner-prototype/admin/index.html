@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Date Banner Prototype</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Design Tokens -->
+  <link rel="stylesheet" href="../css/tokens.css">
+
+  <!-- Vendor -->
+  <link rel="stylesheet" href="../vendor/primeflex.min.css">
+  <link rel="stylesheet" href="../vendor/primeicons/primeicons.css">
+
+  <!-- Banner Styles (for preview) -->
+  <link rel="stylesheet" href="../circular/css/banner.css">
+
+  <!-- Admin Styles -->
+  <link rel="stylesheet" href="css/admin.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: var(--dh-font-family-base);
+      background-color: var(--dh-color-bg);
+      color: var(--dh-color-text);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Storage Warning -->
+  <div id="storage-warning" class="storage-warning">
+    <i class="pi pi-exclamation-triangle"></i>
+    Settings won't persist (file:// mode or localStorage unavailable)
+  </div>
+
+  <!-- Admin Page -->
+  <div class="admin-page">
+    <a href="../index.html" class="back-link">
+      <i class="pi pi-arrow-left"></i>
+      Back to Launcher
+    </a>
+
+    <!-- Modal Dialog Container -->
+    <div class="modal-dialog">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div class="col-md-6">
+          <label class="modal-title bold-text">Date Banner Configuration</label>
+        </div>
+        <div class="col-md-6">
+          <button type="button" class="p-button p-button-secondary p-button-text" data-action="reset">Cancel</button>
+          <button type="button" class="p-button">Save</button>
+        </div>
+      </div>
+
+      <!-- Modal Content -->
+      <div class="modal-content">
+
+        <!-- Preview Section -->
+        <div class="preview-container">
+          <div class="preview__header">
+            <div class="preview__label">Live Preview</div>
+            <div class="preview-mode-toggle">
+              <div class="toggle-group" data-preview-mode>
+                <button type="button" class="toggle-group__btn active" data-value="browse">Browse</button>
+                <button type="button" class="toggle-group__btn" data-value="preview">Sneak Peek</button>
+              </div>
+            </div>
+          </div>
+          <div class="preview__banner-wrapper">
+            <div class="preview__banner">
+              <div id="preview-banner" class="dh-banner dh-banner--centered dh-banner--padding-md">
+                <div class="dh-banner__content">
+                  <div class="dh-banner__title">WEEKLY AD</div>
+                  <div class="dh-banner__dates">
+                    <span class="dh-banner__dates-text">Wed, Jan 1 - Tue, Jan 7, 2026</span>
+                    <span class="dh-banner__validity-pill">Valid</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 1: Banner Settings -->
+        <div class="p-panel mb-4">
+          <div class="p-panel-header">
+            <label class="bold-text">Banner Settings</label>
+          </div>
+          <div class="p-panel-content">
+            <div class="row">
+              <!-- Enable Banner -->
+              <div class="col-md-6 mb-3">
+                <div class="d-flex align-items-center">
+                  <input type="checkbox" class="p-toggleswitch me-2" id="bannerEnabled" data-config="bannerEnabled" checked>
+                  <label class="bold-text" for="bannerEnabled">Enable Banner</label>
+                </div>
+              </div>
+
+              <!-- Language Selector -->
+              <div class="col-md-6 mb-3">
+                <label class="bold-text">Language</label>
+                <div class="toggle-group mt-1" data-config="locale">
+                  <button type="button" class="toggle-group__btn active" data-value="en">English</button>
+                  <button type="button" class="toggle-group__btn" data-value="es">Español</button>
+                </div>
+              </div>
+
+              <!-- Header Text English -->
+              <div class="col-md-6 mb-3">
+                <label class="bold-text">Header Text (English)</label>
+                <input type="text" class="p-inputtext w-100 mt-1" id="headerText" data-config="headerText" value="WEEKLY AD" placeholder="Header Text">
+              </div>
+
+              <!-- Header Text Spanish -->
+              <div class="col-md-6 mb-3">
+                <label class="bold-text">Header Text (Spanish)</label>
+                <input type="text" class="p-inputtext w-100 mt-1" id="headerTextSpanish" data-config="headerTextSpanish" value="OFERTAS SEMANALES" placeholder="Texto del Encabezado">
+              </div>
+
+              <!-- Preview Header Text English -->
+              <div class="col-md-6 mb-3">
+                <label class="bold-text">Preview Header (English)</label>
+                <input type="text" class="p-inputtext w-100 mt-1" id="previewHeaderText" data-config="previewHeaderText" value="SNEAK PEEK" placeholder="Preview Header">
+              </div>
+
+              <!-- Preview Header Text Spanish -->
+              <div class="col-md-6 mb-3">
+                <label class="bold-text">Preview Header (Spanish)</label>
+                <input type="text" class="p-inputtext w-100 mt-1" id="previewHeaderTextSpanish" data-config="previewHeaderTextSpanish" value="ADELANTO" placeholder="Encabezado de Vista Previa">
+              </div>
+
+              <!-- Layout Selector -->
+              <div class="col-md-12 mb-3">
+                <label class="bold-text">Layout</label>
+                <div class="layout-selector mt-2" data-config="layout">
+                  <div class="layout-option active" data-layout="centered">
+                    <div class="layout-option__icon">
+                      <div class="layout-option__icon-bar"></div>
+                      <div class="layout-option__icon-bar"></div>
+                    </div>
+                    <span class="layout-option__label">Centered</span>
+                  </div>
+                  <div class="layout-option" data-layout="spread">
+                    <div class="layout-option__icon">
+                      <div class="layout-option__icon-bar"></div>
+                      <div class="layout-option__icon-bar"></div>
+                    </div>
+                    <span class="layout-option__label">Spread</span>
+                  </div>
+                  <div class="layout-option" data-layout="stacked">
+                    <div class="layout-option__icon">
+                      <div class="layout-option__icon-bar"></div>
+                      <div class="layout-option__icon-bar"></div>
+                    </div>
+                    <span class="layout-option__label">Stacked</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Padding -->
+              <div class="col-md-12">
+                <label class="bold-text">Padding</label>
+                <div class="radio-group mt-2" data-config="padding">
+                  <div class="radio-item">
+                    <input type="radio" name="padding" id="padding-sm" value="sm">
+                    <label for="padding-sm">Small</label>
+                  </div>
+                  <div class="radio-item">
+                    <input type="radio" name="padding" id="padding-md" value="md" checked>
+                    <label for="padding-md">Medium</label>
+                  </div>
+                  <div class="radio-item">
+                    <input type="radio" name="padding" id="padding-lg" value="lg">
+                    <label for="padding-lg">Large</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 2: Display Options -->
+        <div class="p-panel mb-4">
+          <div class="p-panel-header">
+            <label class="bold-text">Display Options</label>
+          </div>
+          <div class="p-panel-content">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="checkbox-row">
+                  <input type="checkbox" class="p-checkbox" id="showTitle" data-config="showTitle" checked>
+                  <label for="showTitle">Show Title</label>
+                </div>
+                <div class="checkbox-row">
+                  <input type="checkbox" class="p-checkbox" id="showDayNames" data-config="showDayNames" checked>
+                  <label for="showDayNames">Show Day Names</label>
+                </div>
+                <div class="checkbox-row">
+                  <input type="checkbox" class="p-checkbox" id="showYear" data-config="showYear">
+                  <label for="showYear">Show Year</label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="checkbox-row">
+                  <input type="checkbox" class="p-checkbox" id="useFullDayNames" data-config="useFullDayNames">
+                  <label for="useFullDayNames">Full Day Names</label>
+                </div>
+                <div class="checkbox-row">
+                  <input type="checkbox" class="p-checkbox" id="useFullMonthNames" data-config="useFullMonthNames">
+                  <label for="useFullMonthNames">Full Month Names</label>
+                </div>
+                <div class="checkbox-row">
+                  <input type="checkbox" class="p-checkbox" id="showValidityPill" data-config="showValidityPill" checked>
+                  <label for="showValidityPill">Show Validity Pill</label>
+                </div>
+              </div>
+            </div>
+
+            <hr class="section-divider">
+
+            <!-- Validity Pill Text -->
+            <label class="bold-text mb-2">Validity Pill Text</label>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="field-label-sm">Valid Text (EN)</label>
+                <input type="text" class="p-inputtext w-100 mt-1" id="validityText" data-config="validityText" value="Valid">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="field-label-sm">Valid Text (ES)</label>
+                <input type="text" class="p-inputtext w-100 mt-1" id="validityTextSpanish" data-config="validityTextSpanish" value="Válido">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="field-label-sm">1 Day Left (EN)</label>
+                <input type="text" class="p-inputtext w-100 mt-1" id="dayLeftText" data-config="dayLeftText" value="Day Left">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="field-label-sm">1 Day Left (ES)</label>
+                <input type="text" class="p-inputtext w-100 mt-1" id="dayLeftTextSpanish" data-config="dayLeftTextSpanish" value="Día Restante">
+              </div>
+              <div class="col-md-6">
+                <label class="field-label-sm">X Days Left (EN)</label>
+                <input type="text" class="p-inputtext w-100 mt-1" id="daysLeftText" data-config="daysLeftText" value="Days Left">
+              </div>
+              <div class="col-md-6">
+                <label class="field-label-sm">X Days Left (ES)</label>
+                <input type="text" class="p-inputtext w-100 mt-1" id="daysLeftTextSpanish" data-config="daysLeftTextSpanish" value="Días Restantes">
+              </div>
+            </div>
+
+            <hr class="section-divider">
+
+            <!-- Preview Pill Text -->
+            <label class="bold-text mb-2">Preview Pill Text ("Starts in X Days")</label>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="field-label-sm">Starts in (EN)</label>
+                <input type="text" class="p-inputtext w-100 mt-1" id="previewPillText" data-config="previewPillText" value="Starts in">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="field-label-sm">Starts in (ES)</label>
+                <input type="text" class="p-inputtext w-100 mt-1" id="previewPillTextSpanish" data-config="previewPillTextSpanish" value="Comienza en">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="field-label-sm">1 Day (EN)</label>
+                <input type="text" class="p-inputtext w-100 mt-1" id="previewDayText" data-config="previewDayText" value="Day">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="field-label-sm">1 Day (ES)</label>
+                <input type="text" class="p-inputtext w-100 mt-1" id="previewDayTextSpanish" data-config="previewDayTextSpanish" value="Día">
+              </div>
+              <div class="col-md-6">
+                <label class="field-label-sm">X Days (EN)</label>
+                <input type="text" class="p-inputtext w-100 mt-1" id="previewDaysText" data-config="previewDaysText" value="Days">
+              </div>
+              <div class="col-md-6">
+                <label class="field-label-sm">X Days (ES)</label>
+                <input type="text" class="p-inputtext w-100 mt-1" id="previewDaysTextSpanish" data-config="previewDaysTextSpanish" value="Días">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 3: Styling -->
+        <div class="p-panel mb-4">
+          <div class="p-panel-header">
+            <label class="bold-text">Styling</label>
+          </div>
+          <div class="p-panel-content">
+            <div class="row">
+              <!-- Colors Column -->
+              <div class="col-md-6">
+                <label class="bold-text">Colors</label>
+
+                <div class="col-md-12 mb-3 mt-2 px-0">
+                  <label class="field-label-sm">Background</label>
+                  <div class="d-flex align-items-center">
+                    <input type="text" class="p-inputtext w-100 mt-1" id="backgroundColorText" data-config="backgroundColor" maxlength="7" placeholder="#1a5f2a" value="#1a5f2a">
+                    <input type="color" class="color-picker ms-3" id="backgroundColor" data-config="backgroundColor" value="#1a5f2a">
+                  </div>
+                </div>
+
+                <div class="col-md-12 mb-3 px-0">
+                  <label class="field-label-sm">Text</label>
+                  <div class="d-flex align-items-center">
+                    <input type="text" class="p-inputtext w-100 mt-1" id="textColorText" data-config="textColor" maxlength="7" placeholder="#ffffff" value="#ffffff">
+                    <input type="color" class="color-picker ms-3" id="textColor" data-config="textColor" value="#ffffff">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Typography Column -->
+              <div class="col-md-6">
+                <label class="bold-text ms-3">Typography</label>
+
+                <!-- Title Typography -->
+                <div class="ms-3 mt-2 mb-3">
+                  <label class="field-label-sm mb-2">Title</label>
+                  <div class="typography-grid">
+                    <div class="typography-field">
+                      <label>Font</label>
+                      <select class="p-select" id="titleFontFamily" data-config="titleFontFamily">
+                        <option value="opensans">Open Sans</option>
+                        <option value="inter">Inter</option>
+                        <option value="poppins">Poppins</option>
+                        <option value="montserrat">Montserrat</option>
+                        <option value="roboto">Roboto</option>
+                      </select>
+                    </div>
+                    <div class="typography-field">
+                      <label>Size</label>
+                      <select class="p-select" id="titleFontSize" data-config="titleFontSize">
+                        <option value="sm">S</option>
+                        <option value="md" selected>M</option>
+                        <option value="lg">L</option>
+                      </select>
+                    </div>
+                    <div class="typography-field">
+                      <label>Weight</label>
+                      <select class="p-select" id="titleFontWeight" data-config="titleFontWeight">
+                        <option value="normal">400</option>
+                        <option value="medium">500</option>
+                        <option value="semibold" selected>600</option>
+                        <option value="bold">700</option>
+                        <option value="extrabold">800</option>
+                        <option value="black">900</option>
+                      </select>
+                    </div>
+                    <div class="typography-field">
+                      <label>Case</label>
+                      <select class="p-select" id="titleTransform" data-config="titleTransform">
+                        <option value="uppercase" selected>ABC</option>
+                        <option value="capitalize">Abc</option>
+                        <option value="none">abc</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Date Typography -->
+                <div class="ms-3 mb-3">
+                  <label class="field-label-sm mb-2">Date</label>
+                  <div class="typography-grid">
+                    <div class="typography-field">
+                      <label>Font</label>
+                      <select class="p-select" id="dateFontFamily" data-config="dateFontFamily">
+                        <option value="opensans">Open Sans</option>
+                        <option value="inter">Inter</option>
+                        <option value="poppins">Poppins</option>
+                        <option value="montserrat">Montserrat</option>
+                        <option value="roboto">Roboto</option>
+                      </select>
+                    </div>
+                    <div class="typography-field">
+                      <label>Size</label>
+                      <select class="p-select" id="dateFontSize" data-config="dateFontSize">
+                        <option value="sm">S</option>
+                        <option value="md" selected>M</option>
+                        <option value="lg">L</option>
+                      </select>
+                    </div>
+                    <div class="typography-field">
+                      <label>Weight</label>
+                      <select class="p-select" id="dateFontWeight" data-config="dateFontWeight">
+                        <option value="normal">400</option>
+                        <option value="medium" selected>500</option>
+                        <option value="semibold">600</option>
+                        <option value="bold">700</option>
+                        <option value="extrabold">800</option>
+                        <option value="black">900</option>
+                      </select>
+                    </div>
+                    <div class="typography-field">
+                      <label>Case</label>
+                      <select class="p-select" id="dateTransform" data-config="dateTransform">
+                        <option value="uppercase">ABC</option>
+                        <option value="capitalize" selected>Abc</option>
+                        <option value="none">abc</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Pill Typography -->
+                <div class="ms-3">
+                  <label class="field-label-sm mb-2">Pill</label>
+                  <div class="typography-grid">
+                    <div class="typography-field">
+                      <label>Font</label>
+                      <select class="p-select" id="pillFontFamily" data-config="pillFontFamily">
+                        <option value="opensans">Open Sans</option>
+                        <option value="inter">Inter</option>
+                        <option value="poppins">Poppins</option>
+                        <option value="montserrat">Montserrat</option>
+                        <option value="roboto">Roboto</option>
+                      </select>
+                    </div>
+                    <div class="typography-field">
+                      <label>Size</label>
+                      <select class="p-select" id="pillFontSize" data-config="pillFontSize">
+                        <option value="sm" selected>S</option>
+                        <option value="md">M</option>
+                        <option value="lg">L</option>
+                      </select>
+                    </div>
+                    <div class="typography-field">
+                      <label>Weight</label>
+                      <select class="p-select" id="pillFontWeight" data-config="pillFontWeight">
+                        <option value="normal">400</option>
+                        <option value="medium" selected>500</option>
+                        <option value="semibold">600</option>
+                        <option value="bold">700</option>
+                        <option value="extrabold">800</option>
+                        <option value="black">900</option>
+                      </select>
+                    </div>
+                    <div class="typography-field">
+                      <label>Case</label>
+                      <select class="p-select" id="pillTransform" data-config="pillTransform">
+                        <option value="uppercase" selected>ABC</option>
+                        <option value="capitalize">Abc</option>
+                        <option value="none">abc</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 4: Scroll Behavior -->
+        <div class="p-panel mb-4">
+          <div class="p-panel-header">
+            <label class="bold-text">Scroll Behavior</label>
+          </div>
+          <div class="p-panel-content">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="checkbox-row">
+                  <input type="checkbox" class="p-checkbox" id="stickyEnabled" data-config="stickyEnabled">
+                  <label for="stickyEnabled">Sticky Header</label>
+                </div>
+                <div class="checkbox-row">
+                  <input type="checkbox" class="p-checkbox" id="stickyHideOnScroll" data-config="stickyHideOnScroll">
+                  <label for="stickyHideOnScroll">Hide on Scroll Down</label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="field-label-sm">Scroll Threshold (px)</label>
+                <input type="number" class="p-inputtext w-100 mt-1" id="stickyThreshold" data-config="stickyThreshold" value="200" min="50" max="500" step="25" style="max-width: 150px;">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 5: Presets & Debug -->
+        <div class="p-panel">
+          <div class="p-panel-header">
+            <label class="bold-text">Presets & Debug</label>
+          </div>
+          <div class="p-panel-content">
+            <div class="row">
+              <!-- Quick Presets -->
+              <div class="col-md-12 mb-3">
+                <label class="bold-text">Quick Presets</label>
+                <p style="font-size: 0.75rem; color: var(--dh-color-text-secondary); margin: 4px 0 12px 0;">
+                  Presets overwrite all settings
+                </p>
+                <div class="preset-group">
+                  <button type="button" class="preset-btn" data-preset="standard">Standard</button>
+                  <button type="button" class="preset-btn" data-preset="minimal">Minimal</button>
+                  <button type="button" class="preset-btn" data-preset="bold">Bold</button>
+                </div>
+              </div>
+
+              <!-- Debug Tools -->
+              <div class="col-md-12">
+                <div class="debug-section">
+                  <h3 class="debug-section__title">Debug Tools</h3>
+                  <textarea id="config-json" class="debug-textarea" placeholder="Config JSON will appear here..."></textarea>
+                  <div id="import-error" class="import-error" style="display: none;"></div>
+                  <div class="debug-actions">
+                    <button type="button" class="p-button p-button-secondary p-button-sm" data-action="view-json">
+                      <i class="pi pi-eye"></i> View JSON
+                    </button>
+                    <button type="button" class="p-button p-button-secondary p-button-sm" data-action="copy-json">
+                      <i class="pi pi-copy"></i> Copy
+                    </button>
+                    <button type="button" class="p-button p-button-secondary p-button-sm" data-action="import-json">
+                      <i class="pi pi-upload"></i> Import
+                    </button>
+                    <button type="button" class="p-button p-button-secondary p-button-sm" data-action="download-json">
+                      <i class="pi pi-download"></i> Download
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <div class="text-end">
+          <button type="button" class="p-button p-button-secondary p-button-text" data-action="reset">Reset to Defaults</button>
+          <button type="button" class="p-button">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Preset Confirmation Modal -->
+  <div id="preset-confirm" class="preset-confirm">
+    <div class="preset-confirm__dialog">
+      <h3 class="preset-confirm__title">Apply Preset?</h3>
+      <p class="preset-confirm__message">This will overwrite all your current settings with the preset values.</p>
+      <div class="preset-confirm__checkbox">
+        <input type="checkbox" id="dont-show-again">
+        <label for="dont-show-again">Don't show this again</label>
+      </div>
+      <div class="preset-confirm__actions">
+        <button type="button" class="p-button p-button-secondary p-button-text" data-action="cancel-preset">Cancel</button>
+        <button type="button" class="p-button" data-action="confirm-preset">Apply Preset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../js/config.js"></script>
+  <script src="js/admin.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Date Banner Prototype - Launcher</title>
+
+  <!-- Design Tokens -->
+  <link rel="stylesheet" href="css/tokens.css">
+
+  <!-- Vendor -->
+  <link rel="stylesheet" href="vendor/primeflex.min.css">
+  <link rel="stylesheet" href="vendor/primeicons/primeicons.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: var(--dh-font-family-base);
+      background-color: var(--dh-color-bg);
+      color: var(--dh-color-text);
+      min-height: 100vh;
+    }
+
+    .launcher {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: var(--dh-space-xl);
+    }
+
+    .launcher__header {
+      text-align: center;
+      margin-bottom: var(--dh-space-xl);
+    }
+
+    .launcher__title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0 0 var(--dh-space-sm) 0;
+      color: var(--dh-color-text);
+    }
+
+    .launcher__subtitle {
+      font-size: 1rem;
+      color: var(--dh-color-text-secondary);
+      margin: 0;
+    }
+
+    .launcher__cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--dh-space-lg);
+      margin-bottom: var(--dh-space-xl);
+    }
+
+    .card {
+      background: var(--dh-color-bg-card);
+      border-radius: var(--dh-radius-lg);
+      box-shadow: var(--dh-shadow-sm);
+      padding: var(--dh-space-lg);
+      text-decoration: none;
+      color: inherit;
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      box-shadow: var(--dh-shadow-lg);
+      transform: translateY(-2px);
+    }
+
+    .card__icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--dh-radius-md);
+      background: var(--dh-color-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--dh-space-md);
+    }
+
+    .card__icon i {
+      font-size: 1.5rem;
+      color: var(--dh-color-primary);
+    }
+
+    .card--circular .card__icon {
+      background: #e8f5e9;
+    }
+
+    .card--circular .card__icon i {
+      color: #2e7d32;
+    }
+
+    .card--admin .card__icon {
+      background: #e3f2fd;
+    }
+
+    .card--admin .card__icon i {
+      color: #1976d2;
+    }
+
+    .card__title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 0 0 var(--dh-space-xs) 0;
+    }
+
+    .card__description {
+      font-size: 0.875rem;
+      color: var(--dh-color-text-secondary);
+      margin: 0 0 var(--dh-space-md) 0;
+      flex: 1;
+    }
+
+    .card__link {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--dh-color-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .info-section {
+      background: var(--dh-color-bg-card);
+      border-radius: var(--dh-radius-lg);
+      padding: var(--dh-space-lg);
+      margin-bottom: var(--dh-space-lg);
+    }
+
+    .info-section__title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0 0 var(--dh-space-md) 0;
+      display: flex;
+      align-items: center;
+      gap: var(--dh-space-sm);
+    }
+
+    .info-section__title i {
+      color: var(--dh-color-primary);
+    }
+
+    .info-section ul {
+      margin: 0;
+      padding-left: var(--dh-space-lg);
+    }
+
+    .info-section li {
+      margin-bottom: var(--dh-space-xs);
+      color: var(--dh-color-text-secondary);
+      font-size: 0.875rem;
+    }
+
+    .info-section li strong {
+      color: var(--dh-color-text);
+    }
+
+    .footer {
+      text-align: center;
+      padding: var(--dh-space-lg);
+      border-top: 1px solid var(--dh-color-border);
+      color: var(--dh-color-text-muted);
+      font-size: 0.8125rem;
+    }
+
+    .footer a {
+      color: var(--dh-color-primary);
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="launcher">
+    <header class="launcher__header">
+      <h1 class="launcher__title">Date Banner Prototype</h1>
+      <p class="launcher__subtitle">Modular implementation for Angular migration</p>
+    </header>
+
+    <div class="launcher__cards">
+      <!-- Circular View Card -->
+      <a href="circular/index.html" class="card card--circular">
+        <div class="card__icon">
+          <i class="pi pi-shopping-cart"></i>
+        </div>
+        <h2 class="card__title">Circular View</h2>
+        <p class="card__description">
+          End-user view showing the date banner with a mock product grid. Test sticky scroll behavior and see how the banner appears to customers.
+        </p>
+        <span class="card__link">
+          Open View <i class="pi pi-arrow-right"></i>
+        </span>
+      </a>
+
+      <!-- Admin Panel Card -->
+      <a href="admin/index.html" class="card card--admin">
+        <div class="card__icon">
+          <i class="pi pi-cog"></i>
+        </div>
+        <h2 class="card__title">Admin Panel</h2>
+        <p class="card__description">
+          Configure banner appearance with 30+ options. Changes sync automatically to the Circular View via localStorage.
+        </p>
+        <span class="card__link">
+          Open Panel <i class="pi pi-arrow-right"></i>
+        </span>
+      </a>
+    </div>
+
+    <div class="info-section">
+      <h3 class="info-section__title">
+        <i class="pi pi-info-circle"></i>
+        Features
+      </h3>
+      <ul>
+        <li><strong>3 Layouts:</strong> Centered, Spread, Stacked</li>
+        <li><strong>Bilingual:</strong> English and Spanish support</li>
+        <li><strong>Validity Pill:</strong> Shows countdown for last 2 days</li>
+        <li><strong>Sticky Scroll:</strong> Optional hide-on-scroll behavior</li>
+        <li><strong>3 Presets:</strong> Standard, Minimal, Bold</li>
+        <li><strong>Debug Tools:</strong> View, copy, import/export JSON config</li>
+        <li><strong>Cross-tab Sync:</strong> Changes in Admin reflect in Circular via storage events</li>
+      </ul>
+    </div>
+
+    <div class="info-section">
+      <h3 class="info-section__title">
+        <i class="pi pi-folder"></i>
+        Project Structure
+      </h3>
+      <ul>
+        <li><strong>index.html</strong> - This launcher page</li>
+        <li><strong>js/config.js</strong> - Shared configuration module</li>
+        <li><strong>css/tokens.css</strong> - Design system tokens</li>
+        <li><strong>vendor/</strong> - Local PrimeFlex and PrimeIcons</li>
+        <li><strong>circular/</strong> - End-user banner view</li>
+        <li><strong>admin/</strong> - Configuration panel</li>
+      </ul>
+    </div>
+
+    <footer class="footer">
+      <p>
+        Date Banner Prototype &bull;
+        <a href="../circular-date-banner/index.html">Original Implementation</a>
+      </p>
+    </footer>
+  </div>
+
+</body>
+</html>

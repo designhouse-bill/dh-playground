@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Circular View - Date Banner Prototype</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Design Tokens -->
+  <link rel="stylesheet" href="../css/tokens.css">
+
+  <!-- Vendor -->
+  <link rel="stylesheet" href="../vendor/primeflex.min.css">
+  <link rel="stylesheet" href="../vendor/primeicons/primeicons.css">
+
+  <!-- Banner Styles -->
+  <link rel="stylesheet" href="css/banner.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: var(--dh-font-family-base);
+      background-color: var(--dh-color-bg);
+      color: var(--dh-color-text);
+    }
+
+    /* Storage Warning (renders outside banner) */
+    .storage-warning {
+      display: none;
+      background: var(--dh-color-warning);
+      color: #000;
+      padding: 8px 16px;
+      text-align: center;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    /* Promotions Container */
+    .promotions-container {
+      max-width: 472px;
+      min-width: 320px;
+      margin: 0 auto;
+      background: var(--dh-color-bg-card);
+      box-shadow: var(--dh-shadow-sm);
+      min-height: 100vh;
+    }
+
+    /* Mock Product Grid (min-height: 200vh for scroll testing) */
+    .promotions-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 8px;
+      min-height: 200vh;
+    }
+
+    .placeholder-card {
+      background: var(--dh-color-bg-elevated);
+      border: 1px dashed var(--dh-color-border-light);
+      border-radius: var(--dh-radius-sm);
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--dh-color-text-muted);
+      font-size: 0.625rem;
+      font-weight: 500;
+    }
+
+    .placeholder-card--2x1 { grid-column: span 2; aspect-ratio: 2 / 1; }
+    .placeholder-card--3x1 { grid-column: span 3; aspect-ratio: 3 / 1; }
+    .placeholder-card--2x2 { grid-column: span 2; grid-row: span 2; aspect-ratio: 1 / 1; }
+
+    /* Back link */
+    .back-link {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: var(--dh-color-bg-card);
+      color: var(--dh-color-text);
+      text-decoration: none;
+      border-radius: var(--dh-radius-md);
+      box-shadow: var(--dh-shadow-md);
+      font-size: 0.875rem;
+      font-weight: 500;
+      z-index: 1000;
+      transition: box-shadow 0.2s ease;
+    }
+
+    .back-link:hover {
+      box-shadow: var(--dh-shadow-lg);
+    }
+
+    /* ARIA Live Region (hidden visually) */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Storage Warning (outside banner for sticky compatibility) -->
+  <div id="storage-warning" class="storage-warning">
+    <i class="pi pi-exclamation-triangle"></i>
+    Settings won't persist (file:// mode or localStorage unavailable)
+  </div>
+
+  <!-- Promotions Container -->
+  <div class="promotions-container">
+
+    <!-- Main Banner -->
+    <div id="main-banner" class="dh-banner dh-banner--centered dh-banner--padding-md">
+      <div class="dh-banner__content">
+        <div class="dh-banner__title">WEEKLY AD</div>
+        <div class="dh-banner__dates">
+          <span class="dh-banner__dates-text">Wed, Jan 1 - Tue, Jan 7, 2026</span>
+          <span class="dh-banner__validity-pill">Valid</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARIA Live Region for countdown announcements -->
+    <div id="banner-live-region" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- Mock Product Grid -->
+    <div class="promotions-grid">
+      <!-- Row 1 -->
+      <div class="placeholder-card">Product 1</div>
+      <div class="placeholder-card">Product 2</div>
+      <div class="placeholder-card">Product 3</div>
+
+      <!-- Row 2-3 -->
+      <div class="placeholder-card placeholder-card--2x2">Featured Product</div>
+      <div class="placeholder-card">Product 4</div>
+      <div class="placeholder-card">Product 5</div>
+
+      <!-- Row 4 -->
+      <div class="placeholder-card placeholder-card--3x1">Banner Ad</div>
+
+      <!-- Row 5 -->
+      <div class="placeholder-card">Product 6</div>
+      <div class="placeholder-card placeholder-card--2x1">Product 7</div>
+
+      <!-- Row 6 -->
+      <div class="placeholder-card">Product 8</div>
+      <div class="placeholder-card">Product 9</div>
+      <div class="placeholder-card">Product 10</div>
+
+      <!-- Row 7 -->
+      <div class="placeholder-card">Product 11</div>
+      <div class="placeholder-card">Product 12</div>
+      <div class="placeholder-card">Product 13</div>
+
+      <!-- Row 8-9 -->
+      <div class="placeholder-card placeholder-card--2x2">Featured Product 2</div>
+      <div class="placeholder-card">Product 14</div>
+      <div class="placeholder-card">Product 15</div>
+
+      <!-- Row 10 -->
+      <div class="placeholder-card placeholder-card--3x1">Banner Ad 2</div>
+
+      <!-- Row 11 -->
+      <div class="placeholder-card">Product 16</div>
+      <div class="placeholder-card placeholder-card--2x1">Product 17</div>
+
+      <!-- Row 12 -->
+      <div class="placeholder-card">Product 18</div>
+      <div class="placeholder-card">Product 19</div>
+      <div class="placeholder-card">Product 20</div>
+
+      <!-- Row 13 -->
+      <div class="placeholder-card placeholder-card--2x1">Product 21</div>
+      <div class="placeholder-card">Product 22</div>
+
+      <!-- Row 14 -->
+      <div class="placeholder-card">Product 23</div>
+      <div class="placeholder-card">Product 24</div>
+      <div class="placeholder-card">Product 25</div>
+
+      <!-- Row 15-16 -->
+      <div class="placeholder-card placeholder-card--2x2">Featured Product 3</div>
+      <div class="placeholder-card">Product 26</div>
+      <div class="placeholder-card">Product 27</div>
+
+      <!-- Row 17 -->
+      <div class="placeholder-card placeholder-card--3x1">Footer Banner</div>
+    </div>
+
+  </div>
+
+  <!-- Back to Launcher Link -->
+  <a href="../index.html" class="back-link">
+    <i class="pi pi-arrow-left"></i>
+    Back to Launcher
+  </a>
+
+  <!-- Scripts -->
+  <script src="../js/config.js"></script>
+  <script src="js/banner.js"></script>
+
+</body>
+</html>

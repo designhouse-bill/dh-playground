@@ -1,0 +1,125 @@
+/**
+ * Design Tokens for Date Banner Prototype
+ * Uses --dh-* prefix for design system compatibility
+ */
+
+:root {
+  /* ==========================================================================
+     Base Typography
+     ========================================================================== */
+  --dh-font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  /* ==========================================================================
+     Banner Spacing
+     ========================================================================== */
+  --banner-padding-sm: 8px 12px;
+  --banner-padding-md: 12px 16px;
+  --banner-padding-lg: 16px 24px;
+
+  /* ==========================================================================
+     Banner Typography - Sizes
+     ========================================================================== */
+  --banner-title-size-sm: 0.75rem;
+  --banner-title-size-md: 0.875rem;
+  --banner-title-size-lg: 1rem;
+
+  --banner-date-size-sm: 0.6875rem;
+  --banner-date-size-md: 0.75rem;
+  --banner-date-size-lg: 0.875rem;
+
+  /* ==========================================================================
+     Banner Typography - Weights
+     ========================================================================== */
+  --banner-weight-normal: 400;
+  --banner-weight-medium: 500;
+  --banner-weight-semibold: 600;
+  --banner-weight-bold: 700;
+  --banner-weight-extrabold: 800;
+  --banner-weight-black: 900;
+
+  /* ==========================================================================
+     Banner Font Families
+     ========================================================================== */
+  --banner-font-opensans: 'Open Sans', system-ui, sans-serif;
+  --banner-font-inter: 'Inter', system-ui, sans-serif;
+  --banner-font-poppins: 'Poppins', system-ui, sans-serif;
+  --banner-font-montserrat: 'Montserrat', system-ui, sans-serif;
+  --banner-font-roboto: 'Roboto', system-ui, sans-serif;
+
+  /* ==========================================================================
+     Banner Default Colors
+     ========================================================================== */
+  --banner-bg: #1a5f2a;
+  --banner-text: #ffffff;
+
+  /* ==========================================================================
+     UI Colors (for admin panel)
+     ========================================================================== */
+  --dh-color-bg: #f3f4f6;
+  --dh-color-bg-card: #ffffff;
+  --dh-color-bg-elevated: #f9fafb;
+  --dh-color-border: #e5e7eb;
+  --dh-color-border-light: #d1d5db;
+  --dh-color-text: #1f2937;
+  --dh-color-text-secondary: #6b7280;
+  --dh-color-text-muted: #9ca3af;
+  --dh-color-primary: #2196F3;
+  --dh-color-primary-hover: #1976D2;
+  --dh-color-success: #22c55e;
+  --dh-color-warning: #f59e0b;
+  --dh-color-error: #ef4444;
+
+  /* ==========================================================================
+     Spacing Scale
+     ========================================================================== */
+  --dh-space-xs: 4px;
+  --dh-space-sm: 8px;
+  --dh-space-md: 16px;
+  --dh-space-lg: 24px;
+  --dh-space-xl: 32px;
+
+  /* ==========================================================================
+     Border Radius
+     ========================================================================== */
+  --dh-radius-sm: 4px;
+  --dh-radius-md: 8px;
+  --dh-radius-lg: 12px;
+  --dh-radius-pill: 9999px;
+
+  /* ==========================================================================
+     Shadows
+     ========================================================================== */
+  --dh-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --dh-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --dh-shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* ==========================================================================
+   Responsive Typography Scaling
+   ========================================================================== */
+
+/* Tablet (640px+) */
+@media (min-width: 640px) {
+  :root {
+    --banner-title-size-sm: 0.875rem;
+    --banner-title-size-md: 1rem;
+    --banner-title-size-lg: 1.125rem;
+
+    --banner-date-size-sm: 0.75rem;
+    --banner-date-size-md: 0.875rem;
+    --banner-date-size-lg: 1rem;
+  }
+}
+
+/* Desktop (1024px+) */
+@media (min-width: 1024px) {
+  :root {
+    --banner-title-size-sm: 1rem;
+    --banner-title-size-md: 1.125rem;
+    --banner-title-size-lg: 1.25rem;
+
+    --banner-date-size-sm: 0.875rem;
+    --banner-date-size-md: 1rem;
+    --banner-date-size-lg: 1.125rem;
+  }
+}

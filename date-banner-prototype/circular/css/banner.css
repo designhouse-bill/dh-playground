@@ -1,0 +1,251 @@
+/**
+ * Date Banner Component Styles
+ * Scoped to .dh-banner to prevent PrimeFlex collisions
+ */
+
+/* ==========================================================================
+   Base Banner Styles
+   ========================================================================== */
+.dh-banner {
+  width: 100%;
+  padding: var(--banner-padding-md);
+  background-color: var(--banner-bg);
+  color: var(--banner-text);
+  box-sizing: border-box;
+  z-index: 100;
+}
+
+.dh-banner *,
+.dh-banner *::before,
+.dh-banner *::after {
+  box-sizing: inherit;
+}
+
+.dh-banner__content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.dh-banner__title {
+  margin: 0;
+  font-family: var(--banner-font-opensans);
+  font-size: var(--banner-title-size-md);
+  font-weight: var(--banner-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.dh-banner__dates {
+  margin: 0;
+  font-family: var(--banner-font-opensans);
+  font-size: var(--banner-date-size-md);
+  font-weight: var(--banner-weight-medium);
+  text-transform: capitalize;
+  line-height: 1.4;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.dh-banner__dates-text {
+  flex-shrink: 0;
+}
+
+.dh-banner__validity-pill {
+  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-size: 0.625rem;
+}
+
+/* ==========================================================================
+   Layout: Centered (Default)
+   ========================================================================== */
+.dh-banner--centered .dh-banner__content {
+  flex-direction: row;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* ==========================================================================
+   Layout: Spread
+   ========================================================================== */
+.dh-banner--spread .dh-banner__content {
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+}
+
+.dh-banner--spread .dh-banner__dates {
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+}
+
+/* ==========================================================================
+   Layout: Stacked
+   ========================================================================== */
+.dh-banner--stacked .dh-banner__content {
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  gap: 0.25rem;
+}
+
+.dh-banner--stacked .dh-banner__dates {
+  justify-content: center;
+}
+
+/* ==========================================================================
+   Padding Variants
+   ========================================================================== */
+.dh-banner--padding-sm {
+  padding: var(--banner-padding-sm);
+}
+
+.dh-banner--padding-md {
+  padding: var(--banner-padding-md);
+}
+
+.dh-banner--padding-lg {
+  padding: var(--banner-padding-lg);
+}
+
+/* ==========================================================================
+   Title Typography Variants
+   ========================================================================== */
+
+/* Font Family */
+.dh-banner__title--font-opensans { font-family: var(--banner-font-opensans); }
+.dh-banner__title--font-inter { font-family: var(--banner-font-inter); }
+.dh-banner__title--font-poppins { font-family: var(--banner-font-poppins); }
+.dh-banner__title--font-montserrat { font-family: var(--banner-font-montserrat); }
+.dh-banner__title--font-roboto { font-family: var(--banner-font-roboto); }
+
+/* Font Size */
+.dh-banner__title--size-sm { font-size: var(--banner-title-size-sm); }
+.dh-banner__title--size-md { font-size: var(--banner-title-size-md); }
+.dh-banner__title--size-lg { font-size: var(--banner-title-size-lg); }
+
+/* Font Weight */
+.dh-banner__title--weight-normal { font-weight: var(--banner-weight-normal); }
+.dh-banner__title--weight-medium { font-weight: var(--banner-weight-medium); }
+.dh-banner__title--weight-semibold { font-weight: var(--banner-weight-semibold); }
+.dh-banner__title--weight-bold { font-weight: var(--banner-weight-bold); }
+.dh-banner__title--weight-extrabold { font-weight: var(--banner-weight-extrabold); }
+.dh-banner__title--weight-black { font-weight: var(--banner-weight-black); }
+
+/* Text Transform */
+.dh-banner__title--uppercase { text-transform: uppercase; }
+.dh-banner__title--capitalize { text-transform: capitalize; }
+.dh-banner__title--none { text-transform: none; }
+
+/* Hidden */
+.dh-banner__title--hidden { display: none; }
+
+/* ==========================================================================
+   Date Typography Variants
+   ========================================================================== */
+
+/* Font Family */
+.dh-banner__dates--font-opensans { font-family: var(--banner-font-opensans); }
+.dh-banner__dates--font-inter { font-family: var(--banner-font-inter); }
+.dh-banner__dates--font-poppins { font-family: var(--banner-font-poppins); }
+.dh-banner__dates--font-montserrat { font-family: var(--banner-font-montserrat); }
+.dh-banner__dates--font-roboto { font-family: var(--banner-font-roboto); }
+
+/* Font Size */
+.dh-banner__dates--size-sm { font-size: var(--banner-date-size-sm); }
+.dh-banner__dates--size-md { font-size: var(--banner-date-size-md); }
+.dh-banner__dates--size-lg { font-size: var(--banner-date-size-lg); }
+
+/* Font Weight */
+.dh-banner__dates--weight-normal { font-weight: var(--banner-weight-normal); }
+.dh-banner__dates--weight-medium { font-weight: var(--banner-weight-medium); }
+.dh-banner__dates--weight-semibold { font-weight: var(--banner-weight-semibold); }
+.dh-banner__dates--weight-bold { font-weight: var(--banner-weight-bold); }
+.dh-banner__dates--weight-extrabold { font-weight: var(--banner-weight-extrabold); }
+.dh-banner__dates--weight-black { font-weight: var(--banner-weight-black); }
+
+/* Text Transform */
+.dh-banner__dates--uppercase { text-transform: uppercase; }
+.dh-banner__dates--capitalize { text-transform: capitalize; }
+.dh-banner__dates--none { text-transform: none; }
+
+/* ==========================================================================
+   Pill Typography Variants
+   ========================================================================== */
+
+/* Font Family */
+.dh-banner__validity-pill--font-opensans { font-family: var(--banner-font-opensans); }
+.dh-banner__validity-pill--font-inter { font-family: var(--banner-font-inter); }
+.dh-banner__validity-pill--font-poppins { font-family: var(--banner-font-poppins); }
+.dh-banner__validity-pill--font-montserrat { font-family: var(--banner-font-montserrat); }
+.dh-banner__validity-pill--font-roboto { font-family: var(--banner-font-roboto); }
+
+/* Font Size */
+.dh-banner__validity-pill--size-sm { font-size: 0.625rem; }
+.dh-banner__validity-pill--size-md { font-size: 0.6875rem; }
+.dh-banner__validity-pill--size-lg { font-size: 0.75rem; }
+
+/* Font Weight */
+.dh-banner__validity-pill--weight-normal { font-weight: var(--banner-weight-normal); }
+.dh-banner__validity-pill--weight-medium { font-weight: var(--banner-weight-medium); }
+.dh-banner__validity-pill--weight-semibold { font-weight: var(--banner-weight-semibold); }
+.dh-banner__validity-pill--weight-bold { font-weight: var(--banner-weight-bold); }
+.dh-banner__validity-pill--weight-extrabold { font-weight: var(--banner-weight-extrabold); }
+.dh-banner__validity-pill--weight-black { font-weight: var(--banner-weight-black); }
+
+/* Text Transform */
+.dh-banner__validity-pill--uppercase { text-transform: uppercase; }
+.dh-banner__validity-pill--capitalize { text-transform: capitalize; }
+.dh-banner__validity-pill--none { text-transform: none; }
+
+/* ==========================================================================
+   Sticky Scroll Behavior
+   ========================================================================== */
+.dh-banner--sticky-enabled {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dh-banner--sticky-active {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.dh-banner--hidden {
+  transform: translateY(-100%);
+  box-shadow: none;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 1, 1),
+              box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
+}
+
+.dh-banner--visible {
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   Reduced Motion
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .dh-banner,
+  .dh-banner *,
+  .dh-banner--sticky-enabled,
+  .dh-banner--hidden {
+    animation: none !important;
+    transition: none !important;
+  }
+}

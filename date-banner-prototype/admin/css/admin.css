@@ -1,0 +1,874 @@
+/**
+ * Admin Panel Styles - PrimeNG Modal Format
+ * Emulates Angular/PrimeNG component styling for prototype
+ */
+
+/* ==========================================================================
+   Base Typography
+   ========================================================================== */
+.bold-text {
+  font-weight: bold;
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.text-end {
+  text-align: end;
+}
+
+/* ==========================================================================
+   Modal Dialog Structure
+   ========================================================================== */
+.modal-dialog {
+  max-width: 900px;
+  margin: 0 auto;
+  background: var(--dh-color-bg-card);
+  border-radius: var(--dh-radius-lg);
+  box-shadow: var(--dh-shadow-lg);
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 24px 12px 24px;
+  border-bottom: 1px solid var(--dh-color-border);
+}
+
+.modal-header .col-md-6:first-child {
+  flex: 1;
+}
+
+.modal-header .col-md-6:last-child {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.modal-content {
+  padding: 0 24px 24px 24px;
+  max-height: 75vh;
+  overflow-y: auto;
+}
+
+.modal-footer {
+  padding: 12px 24px 24px 24px;
+  border-top: 1px solid var(--dh-color-border);
+}
+
+.modal-footer hr {
+  display: none;
+}
+
+.modal-footer .text-end {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+/* ==========================================================================
+   PrimeNG-Style Buttons
+   ========================================================================== */
+.p-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: var(--dh-radius-md);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: none;
+  background: var(--dh-color-primary);
+  color: #fff;
+}
+
+.p-button:hover {
+  background: var(--dh-color-primary-hover);
+}
+
+.p-button-secondary {
+  background: transparent;
+  color: #607d8b;
+  border: 1px solid #607d8b;
+}
+
+.p-button-secondary:hover {
+  background: rgba(96, 125, 139, 0.08);
+}
+
+.p-button-text {
+  background: transparent;
+  border: none;
+  color: #607d8b;
+}
+
+.p-button-text:hover {
+  background: rgba(96, 125, 139, 0.04);
+}
+
+.p-button-secondary.p-button-text {
+  background: transparent;
+  border: none;
+  color: #607d8b;
+}
+
+.p-button-secondary.p-button-text:hover {
+  background: rgba(96, 125, 139, 0.04);
+}
+
+.p-button-danger {
+  background: var(--dh-color-error);
+  color: #fff;
+}
+
+.p-button-danger:hover {
+  background: #dc2626;
+}
+
+.p-button-sm {
+  padding: 6px 12px;
+  font-size: 0.75rem;
+}
+
+/* ==========================================================================
+   PrimeNG-Style Panels
+   ========================================================================== */
+.p-panel {
+  background: var(--dh-color-bg-card);
+  border: 1px solid var(--dh-color-border);
+  border-radius: var(--dh-radius-md);
+  margin-bottom: 16px;
+}
+
+.p-panel-header {
+  padding: 12px 16px;
+  background: var(--dh-color-bg-elevated);
+  border-bottom: 1px solid var(--dh-color-border);
+  border-radius: var(--dh-radius-md) var(--dh-radius-md) 0 0;
+}
+
+.p-panel-header label {
+  font-size: 0.875rem;
+}
+
+.p-panel-content {
+  padding: 16px;
+}
+
+/* ==========================================================================
+   PrimeNG-Style Form Inputs
+   ========================================================================== */
+.p-inputtext {
+  padding: 10px 12px;
+  font-size: 0.875rem;
+  border: 1px solid var(--dh-color-border-light);
+  border-radius: var(--dh-radius-sm);
+  background: var(--dh-color-bg-card);
+  color: var(--dh-color-text);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.p-inputtext:focus {
+  outline: none;
+  border-color: var(--dh-color-primary);
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+.p-inputtext::placeholder {
+  color: var(--dh-color-text-muted);
+}
+
+/* Select dropdown */
+.p-select {
+  padding: 10px 32px 10px 12px;
+  font-size: 0.875rem;
+  border: 1px solid var(--dh-color-border-light);
+  border-radius: var(--dh-radius-sm);
+  background: var(--dh-color-bg-card);
+  color: var(--dh-color-text);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M2 4l4 5 4-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.p-select:focus {
+  outline: none;
+  border-color: var(--dh-color-primary);
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+/* Toggle Switch */
+.p-toggleswitch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  appearance: none;
+  background: var(--dh-color-border-light);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.p-toggleswitch:checked {
+  background: var(--dh-color-primary);
+}
+
+.p-toggleswitch::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
+}
+
+.p-toggleswitch:checked::before {
+  transform: translateX(20px);
+}
+
+/* Checkbox */
+.p-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--dh-color-primary);
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   Color Picker Pattern
+   ========================================================================== */
+.color-picker {
+  width: 40px;
+  height: 40px;
+  padding: 2px;
+  border: 1px solid var(--dh-color-border-light);
+  border-radius: var(--dh-radius-sm);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.color-picker::-webkit-color-swatch-wrapper {
+  padding: 2px;
+}
+
+.color-picker::-webkit-color-swatch {
+  border: none;
+  border-radius: 2px;
+}
+
+/* ==========================================================================
+   Bootstrap Grid Utilities (for PrimeFlex gaps)
+   ========================================================================== */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -8px;
+  margin-right: -8px;
+}
+
+.col-md-6 {
+  flex: 0 0 50%;
+  max-width: 50%;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.col-md-12 {
+  flex: 0 0 100%;
+  max-width: 100%;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+@media (max-width: 768px) {
+  .col-md-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+/* Utility classes */
+.w-100 {
+  width: 100%;
+}
+
+.mt-1 {
+  margin-top: 4px;
+}
+
+.mt-2 {
+  margin-top: 8px;
+}
+
+.mt-3 {
+  margin-top: 16px;
+}
+
+.mb-2 {
+  margin-bottom: 8px;
+}
+
+.mb-3 {
+  margin-bottom: 16px;
+}
+
+.mb-4 {
+  margin-bottom: 24px;
+}
+
+.ms-3 {
+  margin-left: 16px;
+}
+
+.me-2 {
+  margin-right: 8px;
+}
+
+.px-0 {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.gap-2 {
+  gap: 8px;
+}
+
+.gap-3 {
+  gap: 16px;
+}
+
+/* ==========================================================================
+   Page Layout
+   ========================================================================== */
+.admin-page {
+  min-height: 100vh;
+  padding: var(--dh-space-lg);
+  background: var(--dh-color-bg);
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--dh-color-text-secondary);
+  text-decoration: none;
+  font-size: 0.875rem;
+  margin-bottom: var(--dh-space-lg);
+  transition: color 0.2s ease;
+}
+
+.back-link:hover {
+  color: var(--dh-color-text);
+}
+
+/* ==========================================================================
+   Preview Container (Isolated)
+   ========================================================================== */
+.preview-container {
+  font-family: var(--dh-font-family-base);
+  box-sizing: border-box;
+  line-height: 1.5;
+  color: inherit;
+  margin: 0 0 24px 0;
+  padding: 0;
+  background: var(--dh-color-bg);
+  border-radius: var(--dh-radius-md);
+  overflow: hidden;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--dh-shadow-md);
+}
+
+.preview-container *,
+.preview-container *::before,
+.preview-container *::after {
+  box-sizing: inherit;
+}
+
+.preview__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--dh-space-sm) var(--dh-space-md);
+  background: var(--dh-color-bg);
+}
+
+.preview__label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--dh-color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.preview-mode-toggle {
+  display: flex;
+  align-items: center;
+}
+
+.preview-mode-toggle .toggle-group {
+  border-radius: var(--dh-radius-sm);
+}
+
+.preview-mode-toggle .toggle-group__btn {
+  padding: 6px 12px;
+  font-size: 0.75rem;
+}
+
+.preview__banner-wrapper {
+  background: var(--dh-color-bg);
+  padding: 0 var(--dh-space-md) var(--dh-space-md);
+}
+
+.preview__banner {
+  border-radius: var(--dh-radius-sm);
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   Section Divider
+   ========================================================================== */
+.section-divider {
+  border: none;
+  border-top: 1px solid var(--dh-color-border);
+  margin: 24px 0;
+}
+
+/* ==========================================================================
+   Form Field Labels
+   ========================================================================== */
+.field-label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--dh-color-text);
+  margin-bottom: 4px;
+}
+
+.field-label-sm {
+  font-size: 0.75rem;
+  color: var(--dh-color-text-secondary);
+}
+
+/* ==========================================================================
+   Layout Selector (Visual Picker)
+   ========================================================================== */
+.layout-selector {
+  display: flex;
+  gap: var(--dh-space-sm);
+}
+
+.layout-option {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 8px;
+  border: 2px solid var(--dh-color-border);
+  border-radius: var(--dh-radius-md);
+  background: var(--dh-color-bg-card);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.layout-option:hover {
+  border-color: var(--dh-color-text-muted);
+}
+
+.layout-option.active {
+  border-color: var(--dh-color-primary);
+  background: #e3f2fd;
+}
+
+.layout-option__icon {
+  width: 48px;
+  height: 24px;
+  background: var(--dh-color-bg);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 3px 6px;
+}
+
+.layout-option.active .layout-option__icon {
+  background: #bbdefb;
+}
+
+.layout-option__icon-bar {
+  background: var(--dh-color-text-secondary);
+  border-radius: 1px;
+}
+
+.layout-option.active .layout-option__icon-bar {
+  background: var(--dh-color-primary-hover);
+}
+
+/* Centered icon */
+.layout-option[data-layout="centered"] .layout-option__icon {
+  justify-content: center;
+}
+.layout-option[data-layout="centered"] .layout-option__icon-bar:first-child {
+  width: 14px;
+  height: 4px;
+}
+.layout-option[data-layout="centered"] .layout-option__icon-bar:last-child {
+  width: 18px;
+  height: 3px;
+}
+
+/* Spread icon */
+.layout-option[data-layout="spread"] .layout-option__icon {
+  justify-content: space-between;
+}
+.layout-option[data-layout="spread"] .layout-option__icon-bar:first-child {
+  width: 12px;
+  height: 4px;
+}
+.layout-option[data-layout="spread"] .layout-option__icon-bar:last-child {
+  width: 16px;
+  height: 3px;
+}
+
+/* Stacked icon */
+.layout-option[data-layout="stacked"] .layout-option__icon {
+  flex-direction: column;
+  gap: 2px;
+}
+.layout-option[data-layout="stacked"] .layout-option__icon-bar:first-child {
+  width: 18px;
+  height: 4px;
+}
+.layout-option[data-layout="stacked"] .layout-option__icon-bar:last-child {
+  width: 24px;
+  height: 3px;
+}
+
+.layout-option__label {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--dh-color-text);
+}
+
+.layout-option.active .layout-option__label {
+  color: var(--dh-color-primary-hover);
+}
+
+/* ==========================================================================
+   Toggle Group (Language Selector)
+   ========================================================================== */
+.toggle-group {
+  display: inline-flex;
+  border: 1px solid var(--dh-color-border-light);
+  border-radius: var(--dh-radius-md);
+  overflow: hidden;
+}
+
+.toggle-group__btn {
+  padding: 8px 16px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  background: var(--dh-color-bg-card);
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  color: var(--dh-color-text-secondary);
+}
+
+.toggle-group__btn:not(:last-child) {
+  border-right: 1px solid var(--dh-color-border-light);
+}
+
+.toggle-group__btn:hover {
+  background: var(--dh-color-bg-elevated);
+}
+
+.toggle-group__btn.active {
+  background: var(--dh-color-primary);
+  color: #fff;
+}
+
+/* ==========================================================================
+   Preset Buttons
+   ========================================================================== */
+.preset-group {
+  display: flex;
+  gap: var(--dh-space-sm);
+  flex-wrap: wrap;
+}
+
+.preset-btn {
+  padding: 8px 16px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--dh-color-text);
+  background: var(--dh-color-bg-elevated);
+  border: 1px solid var(--dh-color-border);
+  border-radius: var(--dh-radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.preset-btn:hover {
+  background: var(--dh-color-bg);
+  border-color: var(--dh-color-primary);
+}
+
+/* ==========================================================================
+   Debug Tools Section
+   ========================================================================== */
+.debug-section {
+  background: var(--dh-color-bg-elevated);
+  border: 1px solid var(--dh-color-border);
+  border-radius: var(--dh-radius-md);
+  padding: var(--dh-space-md);
+}
+
+.debug-section__title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--dh-color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 var(--dh-space-sm) 0;
+}
+
+.debug-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: var(--dh-space-sm);
+  font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+  font-size: 0.75rem;
+  border: 1px solid var(--dh-color-border-light);
+  border-radius: var(--dh-radius-sm);
+  background: var(--dh-color-bg-card);
+  resize: vertical;
+}
+
+.debug-textarea:focus {
+  outline: none;
+  border-color: var(--dh-color-primary);
+}
+
+.debug-actions {
+  display: flex;
+  gap: var(--dh-space-sm);
+  margin-top: var(--dh-space-sm);
+  flex-wrap: wrap;
+}
+
+.import-error {
+  color: var(--dh-color-error);
+  font-size: 0.75rem;
+  margin-top: var(--dh-space-xs);
+}
+
+/* ==========================================================================
+   Preset Confirmation Modal
+   ========================================================================== */
+.preset-confirm {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+  padding: var(--dh-space-lg);
+}
+
+.preset-confirm.show {
+  display: flex;
+}
+
+.preset-confirm__dialog {
+  background: var(--dh-color-bg-card);
+  border-radius: var(--dh-radius-lg);
+  padding: var(--dh-space-lg);
+  max-width: 400px;
+  width: 100%;
+  box-shadow: var(--dh-shadow-lg);
+}
+
+.preset-confirm__title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--dh-color-text);
+  margin: 0 0 var(--dh-space-sm) 0;
+}
+
+.preset-confirm__message {
+  font-size: 0.875rem;
+  color: var(--dh-color-text-secondary);
+  margin: 0 0 var(--dh-space-md) 0;
+}
+
+.preset-confirm__checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--dh-space-sm);
+  margin-bottom: var(--dh-space-md);
+}
+
+.preset-confirm__checkbox input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--dh-color-primary);
+}
+
+.preset-confirm__checkbox label {
+  font-size: 0.8125rem;
+  color: var(--dh-color-text);
+}
+
+.preset-confirm__actions {
+  display: flex;
+  gap: var(--dh-space-sm);
+  justify-content: flex-end;
+}
+
+/* ==========================================================================
+   Storage Warning
+   ========================================================================== */
+.storage-warning {
+  display: none;
+  background: var(--dh-color-warning);
+  color: #000;
+  padding: 8px 16px;
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   Checkbox Items in Panel
+   ========================================================================== */
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.checkbox-row:last-child {
+  margin-bottom: 0;
+}
+
+.checkbox-row label {
+  font-size: 0.875rem;
+  color: var(--dh-color-text);
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   Radio Group
+   ========================================================================== */
+.radio-group {
+  display: flex;
+  gap: var(--dh-space-md);
+}
+
+.radio-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.radio-item input[type="radio"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--dh-color-primary);
+  cursor: pointer;
+}
+
+.radio-item label {
+  font-size: 0.875rem;
+  color: var(--dh-color-text);
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   Typography Controls
+   ========================================================================== */
+.typography-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .typography-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.typography-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.typography-field label {
+  font-size: 0.6875rem;
+  color: var(--dh-color-text-secondary);
+}
+
+.typography-field select {
+  padding: 6px 24px 6px 8px;
+  font-size: 0.75rem;
+}
+
+/* ==========================================================================
+   Responsive Adjustments
+   ========================================================================== */
+@media (max-width: 768px) {
+  .modal-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .modal-header .col-md-6:last-child {
+    width: 100%;
+  }
+
+  .modal-footer .text-end {
+    flex-direction: column;
+  }
+
+  .modal-footer .text-end .p-button {
+    width: 100%;
+  }
+}

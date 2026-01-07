@@ -1,0 +1,13 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Only run if prototype files are staged
+if git diff --cached --name-only | grep -q "-prototype/"; then
+  echo "Prototype files detected, running validation..."
+
+  # Run token validation (blocks on error)
+  ./scripts/validate-prototype.sh
+
+  # Run reference version check for CHANGED prototypes only (reduces noise)
+  ./scripts/check-reference-versions.sh --changed-only || true
+fi

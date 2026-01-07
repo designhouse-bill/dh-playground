@@ -1,0 +1,79 @@
+name: Validate Prototypes
+
+on:
+  # Run on ALL pull requests (catches --no-verify bypasses)
+  pull_request:
+    branches: [main, master]
+
+  # Run on direct pushes to main (catches force pushes)
+  push:
+    branches: [main, master]
+    paths:
+      - '*-prototype/**'
+      - 'scripts/**'
+      - 'CLAUDE.md'
+      - 'package.json'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Need full history for diff
+
+      - name: Check for relevant changes
+        id: changes
+        run: |
+          # For PRs, compare against base branch
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE=${{ github.event.pull_request.base.sha }}
+            HEAD=${{ github.event.pull_request.head.sha }}
+          else
+            # For pushes, compare against previous commit
+            BASE=${{ github.event.before }}
+            HEAD=${{ github.sha }}
+          fi
+
+          # Check if any relevant files changed
+          CHANGED=$(git diff --name-only $BASE $HEAD | grep -E "(-prototype/|scripts/|CLAUDE\.md|package\.json)" || true)
+
+          if [ -z "$CHANGED" ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "No relevant files changed, skipping validation"
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+            echo "Changed files:"
+            echo "$CHANGED"
+          fi
+
+      - name: Setup Node.js
+        if: steps.changes.outputs.skip != 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check scripts exist
+        if: steps.changes.outputs.skip != 'true'
+        run: |
+          if [ ! -f ./scripts/validate-prototype.sh ]; then
+            echo "ERROR: scripts/validate-prototype.sh not found. Did you delete or rename it?"
+            exit 1
+          fi
+          if [ ! -f ./scripts/check-reference-versions.sh ]; then
+            echo "ERROR: scripts/check-reference-versions.sh not found. Did you delete or rename it?"
+            exit 1
+          fi
+          echo "All required scripts found"
+
+      - name: Validate prototype tokens
+        if: steps.changes.outputs.skip != 'true'
+        run: |
+          chmod +x ./scripts/validate-prototype.sh
+          ./scripts/validate-prototype.sh
+
+      - name: Check reference versions (all prototypes)
+        if: steps.changes.outputs.skip != 'true'
+        run: |
+          chmod +x ./scripts/check-reference-versions.sh
+          ./scripts/check-reference-versions.sh || true  # Warnings don't fail CI

@@ -1,0 +1,14 @@
+{
+  "name": "mydarndest-playground",
+  "version": "1.0.0",
+  "description": "Prototyping and proof-of-concept development repository",
+  "private": true,
+  "scripts": {
+    "validate:prototype": "./scripts/validate-prototype.sh",
+    "validate:refs": "./scripts/check-reference-versions.sh",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "husky": "^8.0.0"
+  }
+}

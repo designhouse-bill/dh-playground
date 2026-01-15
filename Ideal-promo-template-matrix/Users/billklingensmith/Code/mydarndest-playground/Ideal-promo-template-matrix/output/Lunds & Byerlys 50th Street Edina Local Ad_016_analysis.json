@@ -1,0 +1,127 @@
+{
+  "sourceFile": "Lunds & Byerlys 50th Street Edina Local Ad_016.png",
+  "folder": "Lunds & Byerlys 50th Street Edina Local Ad_2026-01-14",
+  "promotions": [
+    {
+      "id": "root_Lunds---Byerlys-50th-Street-Edina-Local-Ad-016",
+      "sourceFile": "Lunds & Byerlys 50th Street Edina Local Ad_016.png",
+      "folder": "Lunds & Byerlys 50th Street Edina Local Ad_2026-01-14",
+      "position": 1,
+      "gridSize": "3x1",
+      "gridColumns": 3,
+      "gridRows": 1,
+      "templateType": "product-on-lifestyle",
+      "backgroundType": "lifestyle-sharp",
+      "backgroundColor": null,
+      "title": "$3.00 OFF",
+      "pricePosition": "bottom-center",
+      "productCount": 1,
+      "products": {
+        "1": {
+          "cx": 50,
+          "cy": 60,
+          "width": 100,
+          "height": 80,
+          "scale": 1,
+          "rotation": 0,
+          "zIndex": 1,
+          "shape": "wide",
+          "description": "L&B Rotisserie Chicken",
+          "brand": "L&B",
+          "productType": "rotisserie chicken",
+          "packaging": "whole",
+          "size": null
+        }
+      },
+      "layoutPattern": "lifestyle-focus",
+      "confidence": 90,
+      "notes": "Full-width rotisserie chicken image with $3 off discount"
+    },
+    {
+      "id": "root_Lunds---Byerlys-50th-Street-Edina-Local-Ad-016",
+      "sourceFile": "Lunds & Byerlys 50th Street Edina Local Ad_016.png",
+      "folder": "Lunds & Byerlys 50th Street Edina Local Ad_2026-01-14",
+      "position": 2,
+      "gridSize": "2x2",
+      "gridColumns": 2,
+      "gridRows": 2,
+      "templateType": "product-on-lifestyle",
+      "backgroundType": "lifestyle-sharp",
+      "backgroundColor": null,
+      "title": "$3.00 OFF",
+      "pricePosition": "bottom-right",
+      "productCount": 2,
+      "products": {
+        "1": {
+          "cx": 35,
+          "cy": 50,
+          "width": 50,
+          "height": 50,
+          "scale": 1,
+          "rotation": 0,
+          "zIndex": 1,
+          "shape": "square",
+          "description": "Hissho Sushi Tray",
+          "brand": "Hissho Sushi",
+          "productType": "sushi",
+          "packaging": "tray"
+        },
+        "2": {
+          "cx": 65,
+          "cy": 50,
+          "width": 50,
+          "height": 50,
+          "scale": 1,
+          "rotation": 0,
+          "zIndex": 2,
+          "shape": "square",
+          "description": "L&B Shakea Smoothie",
+          "brand": "L&B",
+          "productType": "smoothie",
+          "packaging": "cup"
+        }
+      },
+      "layoutPattern": "side-by-side",
+      "confidence": 90,
+      "notes": "Sushi tray and smoothie cup with $3 off discount"
+    },
+    {
+      "id": "root_Lunds---Byerlys-50th-Street-Edina-Local-Ad-016",
+      "sourceFile": "Lunds & Byerlys 50th Street Edina Local Ad_016.png",
+      "folder": "Lunds & Byerlys 50th Street Edina Local Ad_2026-01-14",
+      "position": 3,
+      "gridSize": "3x1",
+      "gridColumns": 3,
+      "gridRows": 1,
+      "templateType": "product-on-solid",
+      "backgroundType": "solid",
+      "backgroundColor": "#2F3C37",
+      "title": "$3.00 OFF",
+      "pricePosition": "bottom-right",
+      "productCount": 1,
+      "products": {
+        "1": {
+          "cx": 50,
+          "cy": 50,
+          "width": 100,
+          "height": 70,
+          "scale": 1,
+          "rotation": 0,
+          "zIndex": 1,
+          "shape": "wide",
+          "description": "L&B Fresh Deli Sandwich",
+          "brand": "L&B",
+          "productType": "deli sandwich",
+          "variant": null,
+          "packaging": null,
+          "size": null
+        }
+      },
+      "layoutPattern": "lifestyle-focus",
+      "confidence": 90,
+      "notes": "Full-width deli sandwich image with $3 off discount"
+    }
+  ],
+  "screenshotNotes": "Mobile viewport with 3-column grid, 3 promotions visible",
+  "totalPromotionsFound": 3
+}

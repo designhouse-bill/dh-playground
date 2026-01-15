@@ -1,0 +1,124 @@
+{
+  "sourceFile": "Lake Mills Market Local Ad_005.png",
+  "folder": "Lake Mills Market Local Ad_2026-01-14",
+  "promotions": [
+    {
+      "id": "root_Lake-Mills-Market-Local-Ad-005",
+      "sourceFile": "Lake Mills Market Local Ad_005.png",
+      "folder": "Lake Mills Market Local Ad_2026-01-14",
+      "position": 1,
+      "gridSize": "2x2",
+      "gridColumns": 2,
+      "gridRows": 2,
+      "templateType": "product-on-solid",
+      "backgroundType": "solid",
+      "backgroundColor": "#00A651",
+      "title": "$5.99 LB",
+      "pricePosition": "bottom-right",
+      "productCount": 1,
+      "products": {
+        "1": {
+          "cx": 50,
+          "cy": 55,
+          "width": 80,
+          "height": 80,
+          "scale": 1,
+          "rotation": 0,
+          "zIndex": 1,
+          "shape": "wide",
+          "description": "Certified Angus Beef Rump Roast",
+          "brand": "Certified Angus Beef",
+          "productType": "beef",
+          "variant": "Rump Roast",
+          "packaging": "whole cut",
+          "size": null
+        }
+      },
+      "layoutPattern": "hero-with-supporting",
+      "confidence": 90,
+      "notes": "Large beef roast image on green background"
+    },
+    {
+      "id": "root_Lake-Mills-Market-Local-Ad-005",
+      "sourceFile": "Lake Mills Market Local Ad_005.png",
+      "folder": "Lake Mills Market Local Ad_2026-01-14",
+      "position": 2,
+      "gridSize": "2x1",
+      "templateType": "product-on-lifestyle",
+      "backgroundType": "lifestyle-sharp",
+      "backgroundColor": null,
+      "title": "Buy 1 Get 1 FREE",
+      "pricePosition": "bottom-center",
+      "productCount": 1,
+      "products": {
+        "1": {
+          "cx": 50,
+          "cy": 60,
+          "width": 100,
+          "height": 70,
+          "scale": 1,
+          "rotation": 0,
+          "zIndex": 1,
+          "shape": "wide",
+          "description": "Panera Bread Creamy Chick & Wild Rice All White Meat Chicken",
+          "brand": "Panera Bread",
+          "productType": "prepared food",
+          "variant": "Creamy Chick & Wild Rice",
+          "packaging": "container",
+          "size": null
+        }
+      },
+      "layoutPattern": "hero-with-supporting",
+      "confidence": 90,
+      "notes": "Panera Bread soup container on lifestyle background"
+    },
+    {
+      "id": "root_Lake-Mills-Market-Local-Ad-005",
+      "sourceFile": "Lake Mills Market Local Ad_005.png",
+      "folder": "Lake Mills Market Local Ad_2026-01-14",
+      "position": 3,
+      "gridSize": "1x1",
+      "templateType": "lifestyle-only",
+      "backgroundType": "lifestyle-sharp",
+      "backgroundColor": null,
+      "title": null,
+      "pricePosition": null,
+      "productCount": 2,
+      "products": {
+        "1": {
+          "cx": 40,
+          "cy": 40,
+          "width": 40,
+          "height": 60,
+          "scale": 1,
+          "rotation": 0,
+          "zIndex": 1,
+          "shape": "tall",
+          "description": "Green seedless grapes on vine",
+          "imageType": "lifestyle",
+          "category": "produce",
+          "setting": null
+        },
+        "2": {
+          "cx": 70,
+          "cy": 50,
+          "width": 60,
+          "height": 50,
+          "scale": 1,
+          "rotation": 0,
+          "zIndex": 2,
+          "shape": "wide",
+          "description": "Purple muscadine grapes on vine",
+          "imageType": "lifestyle",
+          "category": "produce",
+          "setting": null
+        }
+      },
+      "layoutPattern": "scattered",
+      "confidence": 85,
+      "notes": "Assorted grapes on vine - no packaged products"
+    }
+  ],
+  "screenshotNotes": "Mobile viewport with 2-column grid, 3 promotions visible",
+  "totalPromotionsFound": 3
+}

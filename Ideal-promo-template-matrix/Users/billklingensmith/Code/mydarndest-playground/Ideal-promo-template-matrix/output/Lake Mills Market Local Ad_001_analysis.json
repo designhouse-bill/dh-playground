@@ -1,0 +1,56 @@
+{
+  "sourceFile": "Lake Mills Market Local Ad_001.png",
+  "folder": "Lake Mills Market Local Ad_2026-01-14",
+  "promotions": [
+    {
+      "id": "root_Lake-Mills-Market-Local-Ad-001",
+      "sourceFile": "Lake Mills Market Local Ad_001.png",
+      "folder": "Lake Mills Market Local Ad_2026-01-14",
+      "position": 1,
+      "gridSize": "2x1",
+      "gridColumns": 2,
+      "gridRows": 1,
+      "templateType": "product-on-lifestyle",
+      "backgroundType": "lifestyle-sharp",
+      "backgroundColor": null,
+      "title": "HOMETOWN PERKS",
+      "pricePosition": null,
+      "productCount": 0,
+      "products": {},
+      "layoutPattern": "hero-with-supporting",
+      "confidence": 95,
+      "notes": "Hometown Perks promotional banner with lifestyle image"
+    },
+    {
+      "id": "root_Lake-Mills-Market-Local-Ad-001",
+      "sourceFile": "Lake Mills Market Local Ad_001.png",
+      "folder": "Lake Mills Market Local Ad_2026-01-14",
+      "position": 2,
+      "gridSize": "1x1",
+      "templateType": "product-only",
+      "backgroundType": "solid",
+      "backgroundColor": "#FFFFFF",
+      "title": "10 for $5.00",
+      "pricePosition": "bottom-center",
+      "productCount": 1,
+      "products": {
+        "1": {
+          "cx": 50,
+          "cy": 50,
+          "width": 80,
+          "height": 80,
+          "scale": 1,
+          "rotation": 0,
+          "zIndex": 1,
+          "shape": "square",
+          "description": "Yoplait Strawberry Yogurt 6oz cup"
+        }
+      },
+      "layoutPattern": "single-centered",
+      "confidence": 90,
+      "notes": "Single Yoplait yogurt product on white background"
+    }
+  ],
+  "screenshotNotes": "Mobile viewport with 2-column grid, 2 promotions visible",
+  "totalPromotionsFound": 2
+}

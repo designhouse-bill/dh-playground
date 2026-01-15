@@ -1,0 +1,21 @@
+{
+  "name": "ideal-promo-template-matrix",
+  "version": "1.0.0",
+  "description": "Analyze promotional hero images and extract template layout data",
+  "type": "module",
+  "scripts": {
+    "analyze": "node src/analyze-single.js",
+    "batch": "node src/batch-processor.js",
+    "export": "node src/export-csv.js",
+    "consolidate": "node src/consolidate.js",
+    "run": "node src/batch-processor.js",
+    "test": "node src/test-sequence.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "dotenv": "^17.2.3",
+    "glob": "^10.3.10",
+    "p-queue": "^8.0.1",
+    "sharp": "^0.33.5"
+  }
+}

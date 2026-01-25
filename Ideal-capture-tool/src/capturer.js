@@ -8,6 +8,7 @@ import fs from 'fs';
 import { CONFIG } from './config.js';
 import { sanitizeTitle, ensureDir, formatBytes, getDateStamp } from './utils.js';
 import { applyLazyBypass } from './lazy-bypass.js';
+import { stitchImages } from './stitcher.js';
 
 export class SiteCapture {
   constructor(options = {}) {
@@ -56,6 +57,25 @@ export class SiteCapture {
 
       // Scroll and capture screens
       results.screens = await this.scrollAndCapture();
+
+      // Stitch images if enabled
+      if (this.config.stitch && results.screens.length > 1) {
+        const combinedPath = path.join(this.outputDir, 'combined.png');
+        // Remove existing combined.png if present (from previous run)
+        if (fs.existsSync(combinedPath)) {
+          fs.unlinkSync(combinedPath);
+        }
+        const stickyFooter = this.config.stickyFooter || 0;
+        const scale = this.config.deviceScaleFactor || 1;
+        // Calculate overlap based on scrollable area (viewport - footer)
+        const scrollableHeight = this.config.viewport.height - stickyFooter;
+        const overlapPercent = 0.15; // Matches scrollStep = scrollableHeight * 0.85
+
+        results.combined = await stitchImages(results.screens, combinedPath, {
+          overlapPercent,
+          cropBottom: stickyFooter * scale, // Scale CSS px to image px
+        });
+      }
 
       // Save metadata
       const duration = Date.now() - startTime;
@@ -145,7 +165,14 @@ export class SiteCapture {
 
     const screens = [];
     const { width, height } = this.config.viewport;
-    const scrollStep = Math.floor(height * 0.85);
+    const stickyFooter = this.config.stickyFooter || 0;
+    // Scroll step accounts for sticky footer - only the content area scrolls
+    const scrollableHeight = height - stickyFooter;
+    const scrollStep = Math.floor(scrollableHeight * 0.85);
+
+    if (stickyFooter > 0) {
+      console.log(`    Sticky footer: ${stickyFooter}px (scroll step: ${scrollStep}px)`);
+    }
 
     let currentScroll = 0;
     let screenNum = 0;

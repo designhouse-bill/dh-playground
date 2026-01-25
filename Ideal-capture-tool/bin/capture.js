@@ -33,6 +33,9 @@ program
   .option('--max-scrolls <n>', 'Guard against infinite scroll', String(CONFIG.maxScrolls))
   .option('--max-height <px>', 'Guard against endless pages', String(CONFIG.maxHeight))
   .option('--headed', 'Run browser visibly (debugging)', false)
+  .option('--stitch', 'Stitch screenshots into one combined image', false)
+  .option('--no-stitch', 'Disable stitching (default)')
+  .option('--sticky-footer <px>', 'Height of sticky footer to account for during scroll (CSS px)', String(CONFIG.stickyFooter))
   .action(async (url, options) => {
     // Validate URL
     try {
@@ -63,6 +66,8 @@ program
       mode: options.mode,
       outputDir: resolveOutputPath(options.output),
       headed: options.headed,
+      stitch: options.stitch,
+      stickyFooter: parseInt(options.stickyFooter, 10),
     };
 
     // Run capture

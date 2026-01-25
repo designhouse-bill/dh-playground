@@ -4,7 +4,8 @@
   "description": "CLI tool to capture full-page screenshots of lazy-loading websites (ideal.sale circulars)",
   "type": "module",
   "bin": {
-    "capture": "./bin/capture.js"
+    "capture": "./bin/capture.js",
+    "stitch": "./bin/stitch.js"
   },
   "scripts": {
     "validate": "node tests/validation.js",

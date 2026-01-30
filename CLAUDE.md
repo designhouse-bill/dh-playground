@@ -1,5 +1,15 @@
 # CLAUDE.md - mydarndest-playground (Prototype & POC Repository)
 
+## Cross-Repo Context
+**Architecture**: `~/.claude/ideal-architecture/`
+**Role**: Prototyping and POC development - validated prototypes migrate to production
+**Touches**:
+- **ideal-sale-circular**: Primary migration destination
+- **design-system**: Consumes tokens for prototyping
+- **themes**: References theme patterns
+
+---
+
 ## Project Overview
 
 This repository is for **prototyping and proof-of-concept development**. Prototypes built here are validated and then migrated to production repositories.

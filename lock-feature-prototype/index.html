@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Promotion Attribute Locking — Prototype</title>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- PrimeIcons -->
+  <link rel="stylesheet" href="https://unpkg.com/primeicons@6.0.1/primeicons.css">
+
+  <!-- PrimeFlex (Utility Classes) -->
+  <link rel="stylesheet" href="https://unpkg.com/primeflex@3.3.1/primeflex.css">
+
+  <!-- Local Styles (load order matters) -->
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/lock.css">
+  <link rel="stylesheet" href="css/pd-builder.css">
+</head>
+<body>
+
+  <div id="app"></div>
+
+  <!-- Scripts (dependency order: data → state → service → renderers → views → app) -->
+  <script src="mock-data/promotions.js"></script>
+  <script src="js/lock-state.js"></script>
+  <script src="js/lock-service.js"></script>
+  <script src="js/lock-icon.js"></script>
+  <script src="js/inline-edit.js"></script>
+  <script src="js/bottom-menu-editor.js"></script>
+  <script src="js/circular-builder.js"></script>
+  <script src="js/pd-builder.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>

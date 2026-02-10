@@ -1,0 +1,459 @@
+/* ==========================================================================
+   Components — Table, Accordion, Form Fields, Buttons, Badges, Banner
+   ========================================================================== */
+
+/* ── Data Table ────────────────────────────────────────────────────── */
+.data-table {
+  flex: 1;
+  overflow: auto;
+  font-size: var(--dh-font-size-sm);
+}
+
+.data-table table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+/* Header */
+.data-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--dh-grid-header-bg);
+  border-bottom: 2px solid var(--dh-grid-label-stroke);
+  padding: var(--cell-padding-vert) var(--cell-padding-horz);
+  text-align: left;
+  font-weight: 600;
+  font-size: var(--dh-font-size-xs);
+  color: var(--dh-grid-label);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  z-index: 5;
+  user-select: none;
+}
+
+/* Rows */
+.data-table tbody tr {
+  height: var(--dh-grid-row-height);
+  border-bottom: 1px solid var(--dh-grid-label-stroke);
+  transition: background 0.15s ease;
+  cursor: pointer;
+}
+
+.data-table tbody tr:hover {
+  background: var(--dh-grid-hover);
+}
+
+.data-table tbody tr.row--selected {
+  background: var(--dh-grid-selected);
+}
+
+/* Rows default to white — lock state communicated via Lock column icon */
+.data-table tbody tr {
+  background: var(--dh-color-bg);
+}
+
+/* Cells */
+.data-table tbody td {
+  padding: var(--cell-padding-vert) var(--cell-padding-horz);
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Category Row (TreeTable grouping) ─────────────────────────────── */
+.category-row {
+  background: var(--dh-grid-header-bg) !important;
+  cursor: pointer !important;
+}
+
+.category-row td {
+  font-weight: 700;
+  font-size: var(--dh-font-size-sm);
+  padding: var(--dh-space-xs) var(--cell-padding-horz);
+  color: var(--dh-color-text);
+}
+
+.category-row .category-label {
+  display: flex;
+  align-items: center;
+  gap: var(--dh-space-xs);
+}
+
+.category-row .category-chevron {
+  font-size: 0.7rem;
+  transition: transform 0.2s ease;
+  color: var(--dh-color-text-low-contrast);
+}
+
+.category-row .category-chevron--collapsed {
+  transform: rotate(-90deg);
+}
+
+/* ── Column Widths (Circular Builder) ──────────────────────────────── */
+.col-checkbox { width: 42px; text-align: center; }
+.col-drag     { width: 42px; text-align: center; }
+.col-thumb    { width: 42px; text-align: center; }
+.col-title    { width: auto; min-width: 200px; }
+.col-owner    { width: 110px; }
+.col-lock     { width: 40px; text-align: center; }
+.col-size     { width: 80px; }
+.col-dealtype { width: 116px; }
+.col-price    { width: 100px; }
+.col-units    { width: 100px; }
+.col-category { width: 150px; }
+.col-days     { width: 80px; }
+.col-utils    { width: 220px; text-align: right; }
+
+/* ── Thumbnail Placeholder ─────────────────────────────────────────── */
+.thumb-placeholder {
+  width: 28px;
+  height: 28px;
+  background: var(--dh-color-bg-secondary);
+  border: 1px solid var(--dh-border-color);
+  border-radius: var(--dh-radius-sm);
+}
+
+/* ── Drag Handle ───────────────────────────────────────────────────── */
+.drag-handle {
+  color: var(--dh-color-text-x-low-contrast);
+  cursor: grab;
+}
+
+/* ── Checkbox (simple) ─────────────────────────────────────────────── */
+.row-checkbox {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--dh-color-primary);
+}
+
+/* ── Accordion ─────────────────────────────────────────────────────── */
+.accordion {
+  border: none;
+}
+
+.accordion__section {
+  border-bottom: 1px solid var(--dh-border-color);
+}
+
+.accordion__header {
+  display: flex;
+  align-items: center;
+  padding: var(--dh-space-sm) var(--dh-space-md);
+  background: var(--dh-color-bg-secondary);
+  cursor: pointer;
+  user-select: none;
+  gap: var(--dh-space-xs);
+  font-size: var(--dh-font-size-sm);
+  font-weight: 600;
+}
+
+.accordion__header:hover {
+  background: var(--dh-color-bg-pressed);
+}
+
+.accordion__chevron {
+  font-size: 0.65rem;
+  transition: transform 0.2s ease;
+  color: var(--dh-color-text-low-contrast);
+}
+
+.accordion__chevron--collapsed {
+  transform: rotate(-90deg);
+}
+
+.accordion__title {
+  flex: 1;
+}
+
+.accordion__body {
+  padding: var(--dh-space-sm) var(--dh-space-md);
+}
+
+.accordion__body--collapsed {
+  display: none;
+}
+
+/* ── Form Fields ───────────────────────────────────────────────────── */
+.form-group {
+  margin-bottom: var(--dh-space-sm);
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: var(--dh-space-xs);
+  font-size: var(--dh-font-size-xs);
+  font-weight: 600;
+  color: var(--dh-color-text);
+  margin-bottom: var(--dh-space-2xs);
+}
+
+.form-input {
+  width: 100%;
+  padding: var(--dh-space-xs) var(--dh-space-sm);
+  border: 1px solid var(--dh-border-color);
+  border-radius: var(--dh-radius-sm);
+  font-size: var(--dh-font-size-sm);
+  font-family: var(--dh-font-family);
+  color: var(--dh-color-text);
+  background: var(--dh-color-bg);
+  transition: border-color 0.2s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--dh-color-primary);
+  box-shadow: 0 0 0 2px var(--dh-color-primary-light);
+}
+
+.form-input--disabled {
+  background: var(--dh-color-bg-secondary);
+  color: var(--dh-color-text-x-low-contrast);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.form-select {
+  width: 100%;
+  padding: var(--dh-space-xs) var(--dh-space-sm);
+  border: 1px solid var(--dh-border-color);
+  border-radius: var(--dh-radius-sm);
+  font-size: var(--dh-font-size-sm);
+  font-family: var(--dh-font-family);
+  color: var(--dh-color-text);
+  background: var(--dh-color-bg);
+  cursor: pointer;
+}
+
+.form-select--disabled {
+  background: var(--dh-color-bg-secondary);
+  color: var(--dh-color-text-x-low-contrast);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+textarea.form-input {
+  min-height: 60px;
+  resize: vertical;
+}
+
+/* ── Helper Text ───────────────────────────────────────────────────── */
+.form-helper {
+  font-size: var(--dh-font-size-xs);
+  color: var(--dh-color-text-low-contrast);
+  margin-top: var(--dh-space-3xs);
+}
+
+/* ── Buttons ───────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--dh-space-2xs);
+  padding: var(--dh-space-xs) var(--dh-space-sm);
+  border: 1px solid var(--dh-border-color);
+  border-radius: var(--dh-radius-sm);
+  background: var(--dh-color-bg);
+  color: var(--dh-color-text);
+  font-size: var(--dh-font-size-xs);
+  font-family: var(--dh-font-family);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn:hover { background: var(--dh-color-bg-hover); }
+
+.btn--primary {
+  background: var(--dh-color-primary);
+  border-color: var(--dh-color-primary);
+  color: #fff;
+}
+.btn--primary:hover { background: #1976D2; }
+
+.btn--danger {
+  background: var(--lock-color-locked);
+  border-color: var(--lock-color-locked);
+  color: #fff;
+}
+.btn--danger:hover { background: #b71c1c; }
+
+.btn--sm {
+  padding: var(--dh-space-2xs) var(--dh-space-xs);
+  font-size: var(--dh-font-size-xs);
+}
+
+/* ── Badges ────────────────────────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--dh-space-3xs);
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.badge--locked {
+  background: var(--dh-color-danger-lite);
+  color: var(--lock-color-locked);
+}
+
+.badge--constrained {
+  background: var(--lock-color-constrained-bg);
+  color: var(--lock-color-constrained);
+}
+
+/* ── Info Banner ───────────────────────────────────────────────────── */
+.info-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--dh-space-xs);
+  padding: var(--dh-space-xs) var(--dh-space-md);
+  background: var(--lock-banner-bg);
+  border: 1px solid var(--lock-banner-border);
+  border-radius: var(--dh-radius-sm);
+  font-size: var(--dh-font-size-xs);
+  color: var(--lock-banner-text);
+  margin: var(--dh-space-sm) var(--dh-space-md);
+}
+
+.info-banner i {
+  font-size: var(--dh-font-size-md);
+}
+
+/* ── Utility Row Actions ───────────────────────────────────────────── */
+.row-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--dh-space-xs);
+  justify-content: flex-end;
+}
+
+.row-action-btn {
+  background: none;
+  border: none;
+  color: var(--dh-color-text-low-contrast);
+  cursor: pointer;
+  padding: var(--dh-space-2xs);
+  border-radius: var(--dh-radius-sm);
+  font-size: var(--dh-font-size-sm);
+}
+
+.row-action-btn:hover {
+  background: var(--dh-color-bg-hover);
+  color: var(--dh-color-primary);
+}
+
+/* ── Deal Type Badge ───────────────────────────────────────────────── */
+.deal-type-badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: var(--dh-font-size-xs);
+  font-weight: 500;
+  background: var(--dh-color-bg-secondary);
+  color: var(--dh-color-text);
+}
+
+.deal-type-badge--bogo { background: #e8f5e9; color: #2e7d32; }
+.deal-type-badge--numfor { background: #e3f2fd; color: #1565c0; }
+.deal-type-badge--recipe { background: #fce4ec; color: #c62828; }
+.deal-type-badge--fixed { background: var(--dh-color-bg-secondary); color: var(--dh-color-text); }
+
+/* ── Tooltip (simple CSS title fallback) ───────────────────────────── */
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  font-size: 0.7rem;
+  border-radius: var(--dh-radius-sm);
+  white-space: nowrap;
+  z-index: 200;
+  pointer-events: none;
+  margin-bottom: 4px;
+}
+
+/* ── Inline Cell Editing ──────────────────────────────────────────── */
+.cell-editable {
+  cursor: text;
+}
+
+.cell-editable:hover {
+  background: rgba(33, 150, 243, 0.06);
+}
+
+.cell-locked {
+  cursor: not-allowed !important;
+}
+
+.cell-editing {
+  padding: 2px var(--cell-padding-horz) !important;
+  white-space: normal !important;
+  overflow: visible !important;
+}
+
+.cell-edit-input {
+  width: 100%;
+  padding: 2px 4px;
+  border: 1px solid var(--dh-color-primary);
+  border-radius: var(--dh-radius-sm);
+  font-size: var(--dh-font-size-sm);
+  font-family: var(--dh-font-family);
+  color: var(--dh-color-text);
+  background: var(--dh-color-bg);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--dh-color-primary-light);
+}
+
+.cell-edit-input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.cell-edit-input[type="number"]::-webkit-inner-spin-button,
+.cell-edit-input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.cell-edit-hint {
+  font-size: 0.6rem;
+  color: var(--dh-color-primary);
+  font-style: italic;
+  margin-top: 1px;
+  line-height: 1.2;
+}
+
+@keyframes cell-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}
+
+.cell-invalid {
+  animation: cell-shake 0.3s ease;
+}
+
+.cell-invalid .cell-edit-input {
+  border-color: var(--dh-color-danger);
+  box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.2);
+}
+
+/* ── Scrollbar Styling ─────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--dh-color-bg-secondary); }
+::-webkit-scrollbar-thumb { background: #bbb; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #999; }

@@ -1,0 +1,49 @@
+/* ==========================================================================
+   PD Builder — Column width overrides and PD-specific styling
+   ========================================================================== */
+
+/* ── PD Column Widths ──────────────────────────────────────────────── */
+.pd-table .col-checkbox  { width: 42px; }
+.pd-table .col-thumb     { width: 80px; }
+.pd-table .col-title     { width: 250px; }
+.pd-table .col-price     { width: 150px; }
+.pd-table .col-dealtype  { width: 200px; }
+.pd-table .col-category  { width: 200px; }
+.pd-table .col-visibility { width: 80px; text-align: center; }
+.pd-table .col-lock      { width: 60px; text-align: center; }
+.pd-table .col-stacked   { width: 80px; text-align: center; }
+.pd-table .col-edit      { width: 80px; text-align: center; }
+
+/* ── PD Sub-header accent ──────────────────────────────────────────── */
+.sub-header--pd .sub-header__title {
+  color: var(--dh-pd-accent);
+}
+
+/* ── Visibility Toggle ─────────────────────────────────────────────── */
+.visibility-icon {
+  font-size: 0.9rem;
+  color: var(--dh-color-text-low-contrast);
+  cursor: pointer;
+}
+
+.visibility-icon--hidden {
+  color: var(--lock-color-open);
+  opacity: 0.5;
+}
+
+/* ── Edit Button in PD ─────────────────────────────────────────────── */
+.pd-edit-btn {
+  background: none;
+  border: 1px solid var(--dh-border-color);
+  border-radius: var(--dh-radius-sm);
+  padding: 2px 10px;
+  font-size: var(--dh-font-size-xs);
+  font-family: var(--dh-font-family);
+  color: var(--dh-color-primary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pd-edit-btn:hover {
+  background: var(--dh-color-primary-light);
+}

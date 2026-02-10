@@ -1,0 +1,316 @@
+/* ==========================================================================
+   Lock Feature — Icon states, constraint inputs, toolbar, summary panel
+
+   Visual System (shape + fill, avoids red/orange semantic conflicts):
+   ┌──────────────┬──────────────────────────────────────────────────────┐
+   │ Open         │ Gray lock-open icon, no background                  │
+   │ Locked       │ Dark charcoal filled circle + white lock icon       │
+   │ Constrained  │ Dark charcoal filled circle + white lock + blue pip │
+   └──────────────┴──────────────────────────────────────────────────────┘
+   ========================================================================== */
+
+/* ── Lock Icon Base ────────────────────────────────────────────────── */
+.lock-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  font-size: 0.7rem;
+  border-radius: 50%;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+}
+
+/* ── Open — gray icon, no fill ── */
+.lock-icon--open {
+  color: var(--lock-color-open);
+  background: transparent;
+}
+
+.lock-icon--open:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+/* ── Locked — dark filled circle, white icon ── */
+.lock-icon--locked {
+  background: var(--lock-color-locked);
+  color: var(--lock-color-locked-icon);
+}
+
+.lock-icon--locked:hover {
+  background: #333;
+}
+
+/* ── Constrained — dark filled circle, white icon + blue pip ── */
+.lock-icon--constrained {
+  background: var(--lock-color-constrained);
+  color: var(--lock-color-locked-icon);
+}
+
+.lock-icon--constrained:hover {
+  background: #333;
+}
+
+.lock-icon--constrained::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background: var(--lock-color-constrained-pip);
+  border: 1.5px solid var(--dh-color-bg);
+  border-radius: 50%;
+  z-index: 1;
+}
+
+/* ── Read-only (retailer) — no pointer, reduced hover ── */
+.lock-icon--readonly {
+  cursor: default;
+}
+
+.lock-icon--readonly.lock-icon--open:hover {
+  background: transparent;
+}
+
+.lock-icon--readonly.lock-icon--locked:hover {
+  background: var(--lock-color-locked);
+}
+
+.lock-icon--readonly.lock-icon--constrained:hover {
+  background: var(--lock-color-constrained);
+}
+
+/* ── Row-Level Lock Icon (table Lock column) ───────────────────────── */
+.row-lock-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  font-size: 0.75rem;
+  border-radius: 50%;
+  position: relative;
+}
+
+.row-lock-icon.lock-icon--open {
+  color: var(--lock-color-open);
+  background: transparent;
+}
+
+.row-lock-icon.lock-icon--locked {
+  background: var(--lock-color-locked);
+  color: var(--lock-color-locked-icon);
+}
+
+/* Partial locks — outline circle + dark icon + orange pip */
+.row-lock-icon.lock-icon--partial {
+  background: transparent;
+  border: 2px solid var(--lock-color-partial-border);
+  color: var(--lock-color-partial-icon);
+}
+
+.row-lock-icon.lock-icon--partial::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background: var(--lock-color-partial-pip);
+  border: 1.5px solid var(--dh-color-bg);
+  border-radius: 50%;
+  z-index: 1;
+}
+
+/* ── Lock Toolbar (Wholesaler only, in editor panel) ─────────────── */
+.lock-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--dh-space-xs);
+  padding: var(--dh-space-xs) var(--dh-space-md);
+  background: var(--dh-color-bg-secondary);
+  border-bottom: 1px solid var(--dh-border-color);
+}
+
+.lock-toolbar .btn {
+  font-size: 0.7rem;
+}
+
+.lock-toolbar__spacer { flex: 1; }
+
+/* ── Section Lock Badge (accordion header) ─────────────────────────── */
+.section-lock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.6rem;
+  font-weight: 600;
+  background: rgba(65, 64, 66, 0.1);
+  color: var(--lock-color-locked);
+  margin-left: auto;
+}
+
+.section-lock-badge i {
+  font-size: 0.55rem;
+}
+
+.section-lock-badge--retailer {
+  font-size: 0.55rem;
+}
+
+/* ── Constraint Inputs ─────────────────────────────────────────────── */
+.constraint-range {
+  display: flex;
+  align-items: center;
+  gap: var(--dh-space-2xs);
+  margin-top: var(--dh-space-2xs);
+}
+
+.constraint-range__label {
+  font-size: var(--dh-font-size-xs);
+  color: var(--dh-color-primary);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.constraint-range__input {
+  width: 70px;
+  padding: 2px 6px;
+  border: 1px solid var(--dh-color-primary);
+  border-radius: var(--dh-radius-sm);
+  font-size: var(--dh-font-size-xs);
+  font-family: var(--dh-font-family);
+  color: var(--dh-color-text);
+  background: var(--dh-color-bg);
+  text-align: center;
+}
+
+.constraint-range__input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--lock-color-constrained-bg);
+}
+
+.constraint-range__separator {
+  color: var(--dh-color-text-low-contrast);
+  font-size: var(--dh-font-size-xs);
+}
+
+/* Retailer hint for constrained fields */
+.constraint-hint {
+  font-size: var(--dh-font-size-xs);
+  color: var(--dh-color-primary);
+  margin-top: var(--dh-space-2xs);
+  font-style: italic;
+}
+
+/* ── Lock Summary Panel ────────────────────────────────────────────── */
+.lock-summary {
+  background: var(--dh-color-bg);
+  border-bottom: 2px solid var(--dh-border-color);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.lock-summary--hidden {
+  display: none;
+}
+
+.lock-summary__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--dh-space-xs) var(--dh-space-md);
+  background: var(--dh-color-bg-secondary);
+  border-bottom: 1px solid var(--dh-border-color);
+  font-size: var(--dh-font-size-xs);
+  font-weight: 600;
+}
+
+.lock-summary__totals {
+  font-size: var(--dh-font-size-xs);
+  color: var(--dh-color-text-low-contrast);
+  padding: var(--dh-space-2xs) var(--dh-space-md);
+  border-bottom: 1px solid var(--dh-border-color);
+}
+
+.lock-summary__list {
+  list-style: none;
+}
+
+.lock-summary__item {
+  display: flex;
+  align-items: center;
+  gap: var(--dh-space-xs);
+  padding: var(--dh-space-2xs) var(--dh-space-md);
+  border-bottom: 1px solid var(--dh-color-bg-secondary);
+  font-size: var(--dh-font-size-xs);
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+
+.lock-summary__item:hover {
+  background: var(--dh-color-bg-hover);
+}
+
+.lock-summary__item--readonly {
+  cursor: default;
+}
+
+.lock-summary__item--readonly:hover {
+  background: transparent;
+}
+
+.lock-summary__field-name {
+  flex: 1;
+}
+
+.lock-summary__field-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-weight: 600;
+  font-size: 0.65rem;
+  padding: 1px 6px;
+  border-radius: 8px;
+}
+
+.lock-summary__field-state--open {
+  background: var(--dh-color-bg-secondary);
+  color: var(--lock-color-open);
+}
+
+.lock-summary__field-state--locked {
+  background: rgba(65, 64, 66, 0.1);
+  color: var(--lock-color-locked);
+}
+
+.lock-summary__field-state--constrained {
+  background: var(--lock-color-constrained-bg);
+  color: var(--dh-color-primary);
+}
+
+.lock-summary__constraint {
+  font-size: 0.6rem;
+  color: var(--dh-color-primary);
+  white-space: nowrap;
+}
+
+/* ── Disabled Field Overlay (Retailer) ─────────────────────────────── */
+.field-locked-overlay {
+  position: relative;
+}
+
+.field-locked-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--lock-color-disabled-overlay);
+  border-radius: var(--dh-radius-sm);
+  pointer-events: none;
+}

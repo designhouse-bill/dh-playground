@@ -1,0 +1,102 @@
+/* ==========================================================================
+   Design Tokens — Promotion Attribute Locking Prototype
+   Source: ideal-sale-circular/src/styles/_variables.scss + design-system tokens
+   ========================================================================== */
+
+:root {
+  /* ── Typography ── */
+  --dh-font-family: 'Inter', 'Lato', 'Open Sans', sans-serif;
+  --dh-font-size: 1rem;
+  --dh-font-size-xs: 0.75rem;
+  --dh-font-size-sm: 0.8125rem;
+  --dh-font-size-md: 0.875rem;
+  --dh-font-size-lg: 1.125rem;
+
+  /* ── Colors — Brand ── */
+  --dh-color-primary: #2196F3;
+  --dh-color-primary-light: #dfeeff;
+  --dh-color-primary-light-hover: #c0dcfc;
+  --dh-color-text: #171717;
+  --dh-color-text-contrast: #ffffff;
+  --dh-color-text-low-contrast: #4A5358;
+  --dh-color-text-x-low-contrast: #6C7377;
+
+  /* ── Colors — Surfaces ── */
+  --dh-color-bg: #FFFFFF;
+  --dh-color-bg-secondary: #F2F3F3;
+  --dh-color-bg-hover: #F2F3F3;
+  --dh-color-bg-pressed: #E4E5E5;
+  --dh-color-bg-elevated: #FFFFFF;
+
+  /* ── Colors — Admin-Specific ── */
+  --dh-top-bar-bg: #414042;
+  --dh-top-bar-height: 64px;
+  --dh-subheader-bg: #ffffff;
+  --dh-subheader-text: #231f20;
+  --dh-subheader-height: 53px;
+  --dh-sidebar-bg: #232323;
+  --dh-sidebar-collapsed-width: 32px;
+  --dh-sidebar-expanded-width: 352px;
+  --dh-sidebar-content-width: 320px;
+  --dh-sidebar-transition: 0.5s;
+  --dh-admin-bg: #afafaf;
+  --dh-content-bg: #afafaf;
+
+  /* ── Colors — Grid ── */
+  --dh-grid-header-bg: #f3f3f3;
+  --dh-grid-label-stroke: #cbcbcb;
+  --dh-grid-label: #000;
+  --dh-grid-row-height: 45px;
+  --dh-grid-zebra: #e0e0e0;
+  --dh-grid-selected: #eaf6ff;
+  --dh-grid-hover: #c4e4ff;
+
+  /* ── Colors — Status ── */
+  --dh-color-success: #689F38;
+  --dh-color-danger: #D32F2F;
+  --dh-color-danger-lite: #FDE7E6;
+  --dh-color-warning: #FBC02D;
+
+  /* ── Colors — Lock Feature ── */
+  --lock-color-open: #adb5bd;
+  --lock-color-locked: #414042;           /* Dark charcoal — matches top bar */
+  --lock-color-locked-icon: #ffffff;      /* White icon on dark circle */
+  --lock-color-constrained: #414042;      /* Same dark circle as locked */
+  --lock-color-constrained-pip: #2196F3;  /* Blue pip — primary/interactive */
+  --lock-color-partial-border: #414042;     /* Dark gray outline for partial lock icon */
+  --lock-color-partial-icon: #414042;      /* Dark icon inside partial lock outline */
+  --lock-color-partial-pip: #f57c00;       /* Orange pip — ties to "edited/changed" indicator */
+  --lock-color-constrained-bg: rgba(33, 150, 243, 0.08);  /* Blue-tinted bg for constrained badges */
+  --lock-color-disabled-overlay: rgba(0, 0, 0, 0.04);
+  --lock-banner-bg: #e3f2fd;             /* Light blue — matches primary */
+  --lock-banner-border: #bbdefb;
+  --lock-banner-text: #1565c0;
+
+  /* ── Spacing ── */
+  --dh-space-3xs: 0.125rem;
+  --dh-space-2xs: 0.25rem;
+  --dh-space-xs: 0.5rem;
+  --dh-space-sm: 0.75rem;
+  --dh-space-md: 1rem;
+  --dh-space-lg: 1.25rem;
+  --dh-space-xl: 1.5rem;
+  --dh-space-2xl: 2rem;
+
+  /* ── Borders & Radius ── */
+  --dh-radius-sm: 0.25rem;
+  --dh-radius-md: 0.375rem;
+  --dh-border-color: #dee2e6;
+
+  /* ── Shadows ── */
+  --dh-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+  --dh-shadow-md: 0 2px 6px rgba(0, 0, 0, 0.15);
+
+  /* ── Grid Cell Padding (matches production) ── */
+  --cell-padding-horz: 0.5rem;
+  --cell-padding-vert: 0.75rem;
+  --dh-grid-row-padding-horz: 0.85rem;
+  --dh-grid-row-padding-vert: 0.85rem;
+
+  /* ── PD Builder accent ── */
+  --dh-pd-accent: #188cd8;
+}

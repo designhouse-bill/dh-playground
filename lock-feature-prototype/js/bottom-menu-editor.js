@@ -1,6 +1,6 @@
 /* ==========================================================================
-   Bottom Menu Editor — Full editor panel for both Circular Builder & PD Builder
-   Includes lock toolbar, lock summary, accordion form, and role-based visibility
+   Bottom Menu Editor — Multi-column card layout for Circular Builder & PD Builder
+   Includes lock toolbar, lock summary, card-based form, and role-based visibility
    Exposes window.bottomMenuEditor
    ========================================================================== */
 
@@ -8,9 +8,6 @@
   'use strict';
 
   var FIELDS = window.lockState.LOCKABLE_FIELDS;
-  var SECTIONS = window.lockState.SECTIONS;
-  var SECTION_ORDER = window.lockState.SECTION_ORDER;
-
   var summaryVisible = false;
 
   // ── Main Render ────────────────────────────────────────────────────
@@ -24,6 +21,26 @@
 
     var isRetailer = window.lockState.state.currentProfile === 'retailer';
     var html = '';
+
+    // Editor Header
+    html += '<div class="editor-header">';
+    html += '<div class="editor-header__top">';
+    html += '<span class="editor-header__label">EDITOR</span>';
+    html += '<span class="editor-header__subtitle">Edit Single Promotion</span>';
+    html += '</div>';
+    html += '<div class="editor-header__promo-row">';
+    html += '<div class="editor-header__promo-title">' + escapeHtml(promo.title) + '</div>';
+    html += '<div class="editor-header__nav">';
+    html += '<button class="editor-header__nav-btn">&lsaquo; Previous</button>';
+    html += '<button class="editor-header__nav-btn">Next &rsaquo;</button>';
+    html += '</div>';
+    html += '</div>';
+    html += '<div class="editor-header__actions">';
+    html += '<select class="form-select" style="width:auto;font-size:var(--dh-font-size-xs);padding:var(--dh-space-2xs) var(--dh-space-xs)"><option>English</option></select>';
+    html += '<button class="btn btn--sm"><i class="pi pi-eye"></i> Visible</button>';
+    html += '<button class="btn btn--sm" style="color:var(--dh-color-danger)"><i class="pi pi-trash"></i> Delete</button>';
+    html += '</div>';
+    html += '</div>';
 
     // Retailer info banner
     if (isRetailer && window.lockService.hasAnyLocks(promo)) {
@@ -47,38 +64,151 @@
       html += '</div>';
     }
 
-    // Accordion sections
-    html += '<div class="accordion">';
-    SECTION_ORDER.forEach(function (sectionName) {
-      html += renderSection(sectionName, promo, isRetailer);
-    });
+    // 4-Column Card Grid
+    html += '<div class="editor-card-grid">';
+    html += renderColumn1(promo, isRetailer);
+    html += renderColumn2(promo, isRetailer);
+    html += renderColumn3(promo, isRetailer);
+    html += renderColumn4(promo, isRetailer);
     html += '</div>';
 
     container.innerHTML = html;
     bindEvents(container, promo);
   }
 
-  // ── Section Render ─────────────────────────────────────────────────
+  // ── Column 1: Content + Coupon ────────────────────────────────────
 
-  function renderSection(sectionName, promo, isRetailer) {
-    var fieldKeys = SECTIONS[sectionName];
-    if (!fieldKeys) return '';
+  function renderColumn1(promo, isRetailer) {
+    var contentBadge = !isRetailer ? window.lockIcon.renderSectionLockBadge(promo, 'General', isRetailer) : '';
+    var couponBadge = !isRetailer ? window.lockIcon.renderSectionLockBadge(promo, 'Coupon', isRetailer) : '';
 
-    var badge = window.lockIcon.renderSectionLockBadge(promo, sectionName, isRetailer);
+    var html = '<div class="editor-card-col">';
 
-    var html = '<div class="accordion__section" data-section="' + sectionName + '">';
-    html += '<div class="accordion__header" data-accordion-toggle="' + sectionName + '">';
-    html += '<i class="pi pi-chevron-down accordion__chevron"></i>';
-    html += '<span class="accordion__title">' + sectionName + '</span>';
-    html += badge;
-    html += '</div>';
-    html += '<div class="accordion__body" data-accordion-body="' + sectionName + '">';
-
-    fieldKeys.forEach(function (fieldKey) {
-      html += renderField(fieldKey, promo, isRetailer);
-    });
-
+    // Content Card
+    html += '<div class="editor-card">';
+    html += '<div class="editor-card__header">Content ' + contentBadge + '</div>';
+    html += '<div class="editor-card__body">';
+    html += renderField('title', promo, isRetailer);
+    html += renderField('description', promo, isRetailer);
+    html += renderField('dateText', promo, isRetailer);
+    html += renderField('categoryHash', promo, isRetailer);
+    html += renderField('promoSize', promo, isRetailer);
     html += '</div></div>';
+
+    // Coupon Card
+    html += '<div class="editor-card">';
+    html += '<div class="editor-card__header">Coupon ' + couponBadge + '</div>';
+    html += '<div class="editor-card__body">';
+    html += renderField('couponId', promo, isRetailer);
+    html += renderField('deal.couponAmountOff', promo, isRetailer);
+    html += '</div></div>';
+
+    html += '</div>';
+    return html;
+  }
+
+  // ── Column 2: Deal/Offer + Headline + Media/Icons ─────────────────
+
+  function renderColumn2(promo, isRetailer) {
+    var dealBadge = !isRetailer ? window.lockIcon.renderSectionLockBadge(promo, 'Card', isRetailer) : '';
+    var headlineBadge = !isRetailer ? window.lockIcon.renderSectionLockBadge(promo, 'Headline', isRetailer) : '';
+    var mediaBadge = !isRetailer ? window.lockIcon.renderSectionLockBadge(promo, 'Media/Icons', isRetailer) : '';
+
+    var html = '<div class="editor-card-col">';
+
+    // Deal/Offer Card
+    html += '<div class="editor-card">';
+    html += '<div class="editor-card__header">Deal/Offer ' + dealBadge + '</div>';
+    html += '<div class="editor-card__body">';
+    html += renderField('cardStyleHash', promo, isRetailer);
+    html += renderField('deal.type', promo, isRetailer);
+    html += renderField('deal.price', promo, isRetailer);
+    html += renderField('deal.units', promo, isRetailer);
+    html += renderField('upc', promo, isRetailer);
+    html += renderField('bogoDeal', promo, isRetailer);
+    html += renderField('loyaltyDeal.type', promo, isRetailer);
+    html += renderField('loyaltyDeal.price', promo, isRetailer);
+    html += '</div></div>';
+
+    // Headline Card
+    html += '<div class="editor-card">';
+    html += '<div class="editor-card__header">Headline ' + headlineBadge + '</div>';
+    html += '<div class="editor-card__body">';
+    html += renderField('headline', promo, isRetailer);
+    html += '</div></div>';
+
+    // Media/Icons Card
+    html += '<div class="editor-card">';
+    html += '<div class="editor-card__header">Media/Icons ' + mediaBadge + '</div>';
+    html += '<div class="editor-card__body">';
+    html += renderField('icons', promo, isRetailer);
+    html += renderField('mediaSize', promo, isRetailer);
+    html += '</div></div>';
+
+    html += '</div>';
+    return html;
+  }
+
+  // ── Column 3: Date Range + Media + Background ─────────────────────
+
+  function renderColumn3(promo, isRetailer) {
+    var dateBadge = !isRetailer ? window.lockIcon.renderSectionLockBadge(promo, 'Date Range', isRetailer) : '';
+    var bgBadge = !isRetailer ? window.lockIcon.renderSectionLockBadge(promo, 'Background', isRetailer) : '';
+
+    var html = '<div class="editor-card-col">';
+
+    // Date Range Card
+    html += '<div class="editor-card">';
+    html += '<div class="editor-card__header">Date range ' + dateBadge + '</div>';
+    html += '<div class="editor-card__body">';
+    html += renderField('dateRange', promo, isRetailer);
+    html += '</div></div>';
+
+    // Media Card (placeholder)
+    html += '<div class="editor-card">';
+    html += '<div class="editor-card__header">Media</div>';
+    html += '<div class="editor-card__body">';
+    html += '<button class="add-media-btn"><i class="pi pi-image"></i> Change Media</button>';
+    html += '</div></div>';
+
+    // Background Card
+    html += '<div class="editor-card">';
+    html += '<div class="editor-card__header">Background ' + bgBadge + '</div>';
+    html += '<div class="editor-card__body">';
+    html += renderField('background', promo, isRetailer);
+    html += '</div></div>';
+
+    html += '</div>';
+    return html;
+  }
+
+  // ── Column 4: Preview + Hero Image + Background Image ─────────────
+
+  function renderColumn4(promo, isRetailer) {
+    var html = '<div class="editor-card-col">';
+
+    // Preview Card
+    html += '<div class="editor-card">';
+    html += '<div class="editor-card__header">Preview Promotion</div>';
+    html += '<div class="editor-card__body">';
+    html += '<div class="preview-placeholder">IMAGE UNAVAILABLE</div>';
+    html += '</div></div>';
+
+    // Hero Image
+    html += '<div class="editor-card">';
+    html += '<div class="editor-card__header">Hero Image</div>';
+    html += '<div class="editor-card__body">';
+    html += '<button class="add-media-btn"><i class="pi pi-image"></i> Add Media</button>';
+    html += '</div></div>';
+
+    // Background Image
+    html += '<div class="editor-card">';
+    html += '<div class="editor-card__header">Background Image</div>';
+    html += '<div class="editor-card__body">';
+    html += '<button class="add-media-btn"><i class="pi pi-image"></i> Add Media</button>';
+    html += '</div></div>';
+
+    html += '</div>';
     return html;
   }
 
@@ -125,9 +255,11 @@
       });
       html += '</select>';
     } else if (fieldKey === 'dateRange') {
-      html += '<div style="display:flex;gap:var(--dh-space-xs)">';
-      html += '<input type="date" class="form-input' + disabledClass + '" value="' + (promo.validFrom || '') + '"' + disabledAttr + ' style="flex:1">';
-      html += '<input type="date" class="form-input' + disabledClass + '" value="' + (promo.validTo || '') + '"' + disabledAttr + ' style="flex:1">';
+      html += '<div style="display:flex;flex-direction:column;gap:var(--dh-space-xs)">';
+      html += '<div><label class="form-label" style="font-size:0.65rem;color:var(--dh-color-primary);margin-bottom:2px">Starts on</label>';
+      html += '<input type="datetime-local" class="form-input' + disabledClass + '" value="' + (promo.validFrom ? promo.validFrom + 'T12:00' : '') + '"' + disabledAttr + '></div>';
+      html += '<div><label class="form-label" style="font-size:0.65rem;color:var(--dh-color-primary);margin-bottom:2px">Expires</label>';
+      html += '<input type="datetime-local" class="form-input' + disabledClass + '" value="' + (promo.validTo ? promo.validTo + 'T23:59' : '') + '"' + disabledAttr + '></div>';
       html += '</div>';
     } else if (fieldKey === 'background') {
       html += renderBackgroundGroup(promo, isLocked, disabledAttr, disabledClass);
@@ -166,13 +298,57 @@
 
   function renderBackgroundGroup(promo, isLocked, disabledAttr, disabledClass) {
     var bg = promo.background || {};
-    var html = '<div style="display:flex;flex-direction:column;gap:var(--dh-space-2xs)">';
-    html += '<input type="color" class="form-input' + disabledClass + '" value="' + (bg.backgroundColor || '#ffffff') + '"' + disabledAttr + ' style="height:30px;padding:2px">';
-    html += '<input type="text" class="form-input' + disabledClass + '" placeholder="Image URL" value="' + escapeHtml(bg.backgroundImage || '') + '"' + disabledAttr + '>';
-    html += '<div style="display:flex;gap:var(--dh-space-2xs)">';
-    html += '<input type="text" class="form-input' + disabledClass + '" placeholder="Position" value="' + escapeHtml(bg.position || 'center') + '"' + disabledAttr + ' style="flex:1">';
-    html += '<input type="text" class="form-input' + disabledClass + '" placeholder="Size" value="' + escapeHtml(bg.size || 'cover') + '"' + disabledAttr + ' style="flex:1">';
+    var html = '<div style="display:flex;flex-direction:column;gap:var(--dh-space-xs)">';
+
+    // Color picker row
+    html += '<div>';
+    html += '<label class="form-label" style="font-size:0.65rem;margin-bottom:2px">Background Color</label>';
+    html += '<div style="display:flex;gap:var(--dh-space-2xs);align-items:center">';
+    html += '<input type="color" class="form-input' + disabledClass + '" value="' + (bg.backgroundColor || '#ffffff') + '"' + disabledAttr + ' style="height:30px;width:30px;padding:2px;flex-shrink:0">';
+    html += '<input type="text" class="form-input' + disabledClass + '" value="' + (bg.backgroundColor || '#FFFFFF').replace('#', '') + '"' + disabledAttr + ' style="flex:1" placeholder="Hex">';
     html += '</div>';
+    html += '</div>';
+
+    // Background Image
+    html += '<div>';
+    html += '<label class="form-label" style="font-size:0.65rem;margin-bottom:2px">Background Image</label>';
+    html += '<button class="add-media-btn"><i class="pi pi-image"></i> Add Media</button>';
+    html += '</div>';
+
+    // Position & Size row
+    html += '<div style="display:flex;gap:var(--dh-space-xs)">';
+    html += '<div style="flex:1">';
+    html += '<label class="form-label" style="font-size:0.65rem;margin-bottom:2px">Position</label>';
+    html += '<select class="form-select' + (isLocked ? ' form-select--disabled' : '') + '"' + disabledAttr + '>';
+    ['Center Center', 'Top Left', 'Top Center', 'Top Right', 'Center Left', 'Center Right', 'Bottom Left', 'Bottom Center', 'Bottom Right'].forEach(function (p) {
+      var sel = (bg.position || 'center') === p.toLowerCase().replace(' ', ' ') ? ' selected' : '';
+      html += '<option value="' + p + '"' + sel + '>' + p + '</option>';
+    });
+    html += '</select>';
+    html += '</div>';
+    html += '<div style="flex:1">';
+    html += '<label class="form-label" style="font-size:0.65rem;margin-bottom:2px">Size</label>';
+    html += '<select class="form-select' + (isLocked ? ' form-select--disabled' : '') + '"' + disabledAttr + '>';
+    ['Cover', 'Contain', 'Auto'].forEach(function (s) {
+      var sel = (bg.size || 'cover') === s.toLowerCase() ? ' selected' : '';
+      html += '<option value="' + s.toLowerCase() + '"' + sel + '>' + s + '</option>';
+    });
+    html += '</select>';
+    html += '</div>';
+    html += '</div>';
+
+    // Repeat
+    html += '<div>';
+    html += '<label class="form-label" style="font-size:0.65rem;margin-bottom:2px">Repeat</label>';
+    html += '<select class="form-select' + (isLocked ? ' form-select--disabled' : '') + '"' + disabledAttr + '>';
+    ['No Repeat', 'Repeat', 'Repeat X', 'Repeat Y'].forEach(function (r) {
+      var val = r.toLowerCase().replace(' ', '-');
+      var sel = (bg.repeat || 'no-repeat') === val ? ' selected' : '';
+      html += '<option value="' + val + '"' + sel + '>' + r + '</option>';
+    });
+    html += '</select>';
+    html += '</div>';
+
     html += '</div>';
     return html;
   }
@@ -239,19 +415,6 @@
         window.lockService.toggleLockState(promo, fieldKey);
         window.lockState.notifyLockChanged(promo.hash);
         render(container);
-      });
-    });
-
-    // Accordion toggles
-    container.querySelectorAll('[data-accordion-toggle]').forEach(function (el) {
-      el.addEventListener('click', function () {
-        var section = this.getAttribute('data-accordion-toggle');
-        var body = container.querySelector('[data-accordion-body="' + section + '"]');
-        var chevron = this.querySelector('.accordion__chevron');
-        if (body) {
-          body.classList.toggle('accordion__body--collapsed');
-          if (chevron) chevron.classList.toggle('accordion__chevron--collapsed');
-        }
       });
     });
 

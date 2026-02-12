@@ -99,4 +99,28 @@
 
   /* ── PD Builder accent ── */
   --dh-pd-accent: #188cd8;
+
+  /* ── Colors — Logo ── */
+  --dh-logo-red: #e74c3c;
+  --dh-logo-blue: #2196F3;
+
+  /* ── Colors — Category Row (production blue) ── */
+  --dh-category-row-bg: #2196F3;
+  --dh-category-row-text: #ffffff;
+
+  /* ── Colors — Buttons ── */
+  --dh-btn-danger-bg: #D32F2F;
+  --dh-btn-danger-hover: #b71c1c;
+  --dh-btn-outlined-border: #dee2e6;
+
+  /* ── Layout — Toolbar Row ── */
+  --dh-toolbar-height: 44px;
+
+  /* ── Layout — Filter Bar ── */
+  --dh-filter-bar-height: 38px;
+
+  /* ── Editor Card ── */
+  --dh-card-header-bg: #f5f5f5;
+  --dh-card-border: #e0e0e0;
+  --dh-card-radius: 6px;
 }

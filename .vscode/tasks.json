@@ -1,0 +1,22 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "UX-846: Serve Analytics Dashboard (port 8082)",
+      "type": "shell",
+      "command": "git branch --show-current && cd analytics-dashboard-combined && npx serve -p 8082 .",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "UX-846"
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

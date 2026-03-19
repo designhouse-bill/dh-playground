@@ -65,10 +65,17 @@
    ======================================== */
 
 .dist-section {
-  display: flex;
+  display: none; /* hidden until tab activates it */
   flex-direction: column;
   gap: var(--space-5);
-  scroll-margin-top: 60px;
+  max-width: 1200px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.dist-section.active {
+  display: flex;
 }
 
 .section-header {
@@ -76,6 +83,7 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--space-4);
+  margin-top: 16px;
 }
 
 .section-header__left {
@@ -397,36 +405,6 @@
   overflow: hidden;
 }
 
-.demographics-toggle {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-4) var(--space-5);
-  cursor: pointer;
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-primary);
-  list-style: none;
-  user-select: none;
-}
-
-.demographics-toggle::-webkit-details-marker {
-  display: none;
-}
-
-.demographics-toggle .material-symbols-outlined {
-  font-size: 20px;
-  color: var(--color-text-secondary);
-}
-
-.toggle-icon {
-  margin-left: auto;
-  transition: transform var(--transition-fast);
-}
-
-details[open] .toggle-icon {
-  transform: rotate(180deg);
-}
 
 .demographics-content {
   padding: 0 var(--space-5) var(--space-5);
@@ -924,7 +902,7 @@ details[open] .toggle-icon {
   padding: 2px var(--space-2);
   font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
-  background: var(--color-surface-secondary);
+  background: var(--color-gray-100);
   border-radius: var(--radius-full);
 }
 
@@ -992,7 +970,7 @@ details[open] .toggle-icon {
 }
 
 .dist-modal-close:hover {
-  background: var(--color-surface-secondary);
+  background: var(--color-gray-100);
   color: var(--color-text-primary);
 }
 
@@ -1021,7 +999,7 @@ details[open] .toggle-icon {
 }
 
 .dist-btn--primary {
-  background: var(--color-primary);
+  background: var(--color-primary-600);
   color: white;
 }
 
@@ -1030,13 +1008,14 @@ details[open] .toggle-icon {
 }
 
 .dist-btn--secondary {
-  background: var(--color-surface-secondary);
+  background: transparent;
   color: var(--color-text-secondary);
-  border-color: var(--color-border);
+  border-color: transparent;
 }
 
 .dist-btn--secondary:hover {
-  background: var(--color-border);
+  background: transparent;
+  color: var(--color-text-primary);
 }
 
 /* Week List */
@@ -1057,7 +1036,7 @@ details[open] .toggle-icon {
 }
 
 .dist-week-option:hover {
-  background: var(--color-surface-secondary);
+  background: var(--color-gray-100);
 }
 
 .dist-week-option.selected {
@@ -1082,7 +1061,7 @@ details[open] .toggle-icon {
 
 .dist-week-option__check {
   opacity: 0;
-  color: var(--color-primary);
+  color: var(--color-primary-600);
 }
 
 .dist-week-option.selected .dist-week-option__check {
@@ -1096,7 +1075,7 @@ details[open] .toggle-icon {
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
-  background: var(--color-surface-secondary);
+  background: var(--color-gray-100);
   border-radius: var(--radius-md);
   margin-bottom: var(--space-3);
 }
@@ -1131,7 +1110,7 @@ details[open] .toggle-icon {
 }
 
 .dist-tree-row:hover {
-  background: var(--color-surface-secondary);
+  background: var(--color-gray-100);
 }
 
 .dist-tree-row.selected {
@@ -1175,7 +1154,7 @@ details[open] .toggle-icon {
 
 .dist-tree-row__check {
   opacity: 0;
-  color: var(--color-primary);
+  color: var(--color-primary-600);
   flex-shrink: 0;
 }
 

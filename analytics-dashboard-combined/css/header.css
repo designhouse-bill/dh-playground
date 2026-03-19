@@ -7,12 +7,26 @@
 .header {
   border-bottom: 1px solid var(--color-border);
   background-color: var(--color-surface);
+  position: sticky;
+  top: 0;
+  z-index: 21;
+  /* Scroll-hide animation — matches DC2 HeaderSlideService (UX-803) */
+  transition: transform 0.35s ease-in-out, margin-top 0.35s ease-in-out;
+  will-change: transform;
+}
+
+/* Mirrors DC2: translateY slides header off-screen; negative margin-top reclaims
+   the flow space so content fills the gap (no blank strip left behind). */
+.header--scrolled-away {
+  transform: translateY(-100%);
+  margin-top: calc(-1 * var(--header-height, 0px));
+  pointer-events: none;
 }
 
 .topbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   padding: var(--space-3) var(--space-5);
   border-bottom: 1px solid var(--color-border);
   background-color: var(--color-surface);
@@ -168,6 +182,49 @@
 }
 
 .mode-btn:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+/* Distribution Section Tabs — left-aligned in topbar after the dropdown */
+.dist-section-tabs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.dist-tab {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.dist-tab .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.dist-tab:hover {
+  background: var(--color-gray-100);
+  color: var(--color-text-primary);
+}
+
+.dist-tab.active {
+  background: var(--color-primary-50);
+  color: var(--color-primary-600);
+  font-weight: var(--font-weight-semibold);
+}
+
+.dist-tab:focus-visible {
   outline: 2px solid var(--color-primary-500);
   outline-offset: 2px;
 }
@@ -393,6 +450,11 @@
 .add-filter:focus-visible {
   outline: 2px solid var(--color-primary-500);
   outline-offset: 2px;
+}
+
+/* Hide filters in Distribution (no filter concept there) */
+.header--distribution .filter-group {
+  display: none;
 }
 
 /* Dashboard Switcher Dropdown */

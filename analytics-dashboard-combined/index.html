@@ -8,25 +8,25 @@
   <!-- Google Material Symbols -->
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 
-  <!-- Leaflet Map Styles -->
+  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="vendor/leaflet.min.css">
 
-  <!-- CSS Layers (in order) -->
+  <!-- CSS (in dependency order) -->
   <link rel="stylesheet" href="css/design-tokens.css">
   <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/shared-components.css">
   <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/context-bar.css">
+  <link rel="stylesheet" href="css/detail-panel.css">
   <link rel="stylesheet" href="css/engagement.css">
   <link rel="stylesheet" href="css/distribution.css">
 </head>
 <body>
 
   <!-- ============================================================
-       HEADER (inlined — no fetch, works on file:// protocol)
+       HEADER (inlined — no fetch)
        ============================================================ -->
   <header class="header">
 
-    <!-- Top Bar: Branding + Controls -->
     <div class="topbar">
       <div class="topbar__left">
         <div class="brand">
@@ -36,9 +36,11 @@
           <h1 class="title">Analytics Dashboard</h1>
         </div>
         <span class="topbar__separator">|</span>
+
+        <!-- Dashboard Switcher Dropdown -->
         <div class="dashboard-switcher" id="dashboard-switcher">
           <button class="performance-dropdown" id="performance-type-dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="performance-dropdown__text">Engagement</span>
+            <span class="performance-dropdown__text" id="dashboard-switcher-label">Engagement</span>
             <span class="material-symbols-outlined">expand_more</span>
           </button>
           <div class="dashboard-switcher__menu" id="dashboard-menu" role="menu">
@@ -52,40 +54,45 @@
             </button>
           </div>
         </div>
-      </div>
 
-      <div class="view-modes" id="view-modes">
-        <!-- BASE group with sub-tabs (Engagement only) -->
-        <div class="mode-group mode-group--base active" data-mode="base" id="mode-group-base">
-          <button class="mode-btn mode-btn--primary active" data-mode="base" aria-label="Base view">
-            <span class="material-symbols-outlined">view_list</span>
-            BASE
+        <!-- Distribution Section Tabs (left-aligned, shown only when Distribution active) -->
+        <div class="dist-section-tabs" id="dist-section-tabs" style="display:none">
+          <button class="dist-tab active" data-section="section-media">
+            <span class="material-symbols-outlined">campaign</span>
+            Media Buy
           </button>
-          <div class="mode-subtabs" role="tablist">
-            <button class="subtab" data-view="circulars" role="tab" aria-selected="false">Circulars</button>
-            <button class="subtab active" data-view="categories" role="tab" aria-selected="true">Categories</button>
-            <button class="subtab" data-view="promotions" role="tab" aria-selected="false">Promotions</button>
-          </div>
+          <button class="dist-tab" data-section="section-visitation">
+            <span class="material-symbols-outlined">store</span>
+            Store Visitation
+          </button>
+          <button class="dist-tab" data-section="section-traffic">
+            <span class="material-symbols-outlined">trending_up</span>
+            Traffic Share
+          </button>
         </div>
 
-        <!-- GRID standalone (Engagement only) -->
-        <button class="mode-btn mode-btn--outline" data-mode="grid" aria-label="Data grid view" id="mode-btn-grid">
+      </div>
+
+      <!-- View Modes: Engagement only — hidden when Distribution is active -->
+      <div class="view-modes" id="view-modes">
+        <button class="mode-btn mode-btn--primary active" data-mode="base" id="mode-btn-base" aria-label="Base view">
+          <span class="material-symbols-outlined">view_list</span>
+          BASE
+        </button>
+        <button class="mode-btn mode-btn--outline" data-mode="grid" id="mode-btn-grid" aria-label="Data grid view">
           <span class="material-symbols-outlined">table_chart</span>
           GRID
         </button>
-
-        <!-- COMPARE standalone (Engagement only) -->
-        <button class="mode-btn mode-btn--outline" data-mode="compare" aria-label="Comparison view" id="mode-btn-compare">
+        <button class="mode-btn mode-btn--outline" data-mode="compare" id="mode-btn-compare" aria-label="Comparison view">
           <span class="material-symbols-outlined">compare</span>
           COMPARE
         </button>
       </div>
     </div>
 
-    <!-- Context Row: Foundation Context + Filter Chips -->
+    <!-- Context Row -->
     <div class="context-row">
 
-      <!-- Date Range Context Card -->
       <button class="context-card context-card--date" id="date-selector" aria-label="Select date range">
         <div class="card-label">Date Range</div>
         <div class="card-row">
@@ -93,8 +100,8 @@
             <span class="material-symbols-outlined">calendar_month</span>
           </div>
           <div class="card-content">
-            <div class="card-value" id="context-date-value">Week 40</div>
-            <div class="card-sub" id="context-date-sub">Oct 1-7, 2025</div>
+            <div class="card-value" id="context-date-value">Week 47</div>
+            <div class="card-sub" id="context-date-sub">Nov 18–24, 2025</div>
           </div>
           <span class="card-arrow">
             <span class="material-symbols-outlined">expand_more</span>
@@ -102,7 +109,6 @@
         </div>
       </button>
 
-      <!-- Entity Context Card -->
       <button class="context-card" id="entity-selector" aria-label="Select entity">
         <div class="card-label">Entity</div>
         <div class="card-row">
@@ -112,7 +118,7 @@
           <div class="card-content">
             <div class="card-breadcrumb" id="context-entity-breadcrumb">BRAND</div>
             <div class="card-value" id="context-entity-value">Grocery Holdings Corp</div>
-            <div class="card-sub" id="context-entity-sub">50 locations</div>
+            <div class="card-sub" id="context-entity-sub">27 locations</div>
           </div>
           <span class="card-arrow">
             <span class="material-symbols-outlined">expand_more</span>
@@ -120,11 +126,9 @@
         </div>
       </button>
 
-      <!-- Filter Group: Inline Filter Chips -->
       <div class="filter-group">
         <div class="filter-label">Filters</div>
         <div class="filter-chips" id="filter-chips">
-          <!-- Dynamic filter chips will be added here -->
           <button class="add-filter" id="add-filter-btn" aria-label="Add filter">
             <span class="material-symbols-outlined">add</span>
             Add Filter
@@ -137,326 +141,351 @@
   </header>
 
   <!-- ============================================================
-       ENGAGEMENT DASHBOARD
+       HOME / LANDING SCREEN
        ============================================================ -->
-  <main id="engagement-dashboard" class="dashboard-content active">
+  <main id="home-dashboard" class="dashboard-content active">
+    <div class="home-screen">
 
-    <!-- YTD Performance Strip -->
-    <section class="ytd-metrics-section">
-      <div class="ytd-strip">
-        <div class="ytd-metric">
-          <span class="label">
-            YTD Traffic:
-            <button class="info-btn" aria-label="Show definition for YTD Traffic" tabindex="0" data-tooltip-content="%7B%22title%22%3A%22YTD%20Traffic%22%2C%22tooltip%22%3A%22Total%20unique%20visitors%20across%20all%20stores%20viewing%20digital%20circular%20content%20projected%20to%20full%20year%20(52%20weeks)%22%2C%22whyImportant%22%3A%22Monitor%20overall%20audience%20reach%20and%20engagement%20trends%20to%20identify%20seasonal%20patterns%20and%20marketing%20effectiveness%22%7D">
-              <span aria-hidden="true">i</span>
+      <div class="home-hero">
+        <p class="home-eyebrow">Analytics Dashboard</p>
+        <h2 class="home-heading">What would you like to explore?</h2>
+        <p class="home-subheading">Select a dashboard below to get started.</p>
+      </div>
+
+      <div class="home-cards">
+
+        <div class="home-card" data-dashboard="engagement" role="button" tabindex="0" aria-label="Open Engagement dashboard">
+          <div class="home-card__icon home-card__icon--engagement">
+            <span class="material-symbols-outlined">monitoring</span>
+          </div>
+          <div class="home-card__body">
+            <h3 class="home-card__title">Engagement</h3>
+            <p class="home-card__desc">Analyze promotion performance across categories and store locations. Compare items by engagement score, track weekly trends, and explore top-performing circulars side by side.</p>
+          </div>
+          <button class="home-card__cta" tabindex="-1">View Engagement</button>
+        </div>
+
+        <div class="home-card" data-dashboard="distribution" role="button" tabindex="0" aria-label="Open Distribution dashboard">
+          <div class="home-card__icon home-card__icon--distribution">
+            <span class="material-symbols-outlined">campaign</span>
+          </div>
+          <div class="home-card__body">
+            <h3 class="home-card__title">Distribution</h3>
+            <p class="home-card__desc">Measure the reach and impact of your media spend on store visitation and foot traffic share. Review creative performance, competitive positioning, and store-level results week over week.</p>
+          </div>
+          <button class="home-card__cta" tabindex="-1">View Distribution</button>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ============================================================
+       ENGAGEMENT DASHBOARD
+       Three-Column Layout: Left (Categories) | Center (Promotions) | Right (Detail)
+       ============================================================ -->
+  <main id="engagement-dashboard" class="dashboard-content">
+
+    <!-- Three-Column Layout -->
+    <div class="layout layout--promotions" id="promotions-layout">
+
+      <!-- Left Panel: Categories List -->
+      <aside class="panel panel--left" role="navigation" aria-label="Categories">
+        <div class="panel-header">
+          <h2 class="panel-title">Categories</h2>
+          <span class="panel-count" id="category-count" aria-live="polite">8</span>
+        </div>
+        <div class="category-list" id="category-list" role="list">
+          <!-- Populated by JavaScript -->
+        </div>
+      </aside>
+
+      <!-- Center Panel: Promotions Grid -->
+      <section class="panel panel--center" role="main" aria-label="Promotions">
+        <div class="panel-header panel-header--promotions">
+          <div class="panel-header__left">
+            <div class="base-dropdown" id="base-layer-dropdown-wrapper">
+              <button class="base-dropdown__trigger" id="base-layer-dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="base-dropdown__label">BASE</span>
+                <span class="base-dropdown__value">Promotions</span>
+                <span class="material-symbols-outlined">expand_more</span>
+              </button>
+              <div class="base-dropdown__menu" id="base-layer-menu" role="menu">
+                <button class="base-dropdown__item active" role="menuitem">Promotions</button>
+                <button class="base-dropdown__item" role="menuitem">Categories</button>
+                <button class="base-dropdown__item" role="menuitem">Circulars</button>
+              </div>
+            </div>
+            <div class="more-data-toggle-wrapper" id="more-data-toggle-wrapper">
+              <label class="toggle-switch">
+                <input type="checkbox" id="more-data-toggle">
+                <span class="toggle-slider"></span>
+              </label>
+              <span class="toggle-label">More Data</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="card-view-toggle">
+              <span class="toggle-slider"></span>
+            </label>
+            <span class="toggle-label">Card View</span>
+          </div>
+          <div class="panel-header__center">
+            <span class="showing-count">Total Promotions: <span id="promo-showing-count">0</span></span>
+            <div class="topn-selector">
+              <select id="topn-select" class="topn-select" onchange="changeTopN(this.value)">
+                <option value="25" selected>Show 25</option>
+                <option value="50">Show 50</option>
+                <option value="100">Show 100</option>
+                <option value="250">Show 250</option>
+                <option value="all">Show All</option>
+              </select>
+            </div>
+          </div>
+          <div class="panel-header__right">
+            <button class="panel-action-btn" id="promo-export-btn">
+              <span class="material-symbols-outlined">download</span>
+              Export
             </button>
-          </span>
-          <span class="value">2.8M views</span>
-          <span class="trend positive">+12.4% YoY</span>
-        </div>
-        <div class="ytd-metric">
-          <span class="label">
-            Digital Adoption:
-            <button class="info-btn" aria-label="Show definition for Digital Adoption" tabindex="0" data-tooltip-content="%7B%22title%22%3A%22Digital%20Adoption%22%2C%22tooltip%22%3A%22Percentage%20of%20users%20engaging%20with%20digital%20circular%20content%20through%20clicks%20and%20add-to-list%20actions%22%2C%22whyImportant%22%3A%22Understand%20digital%20channel%20effectiveness%20and%20customer%20preference%20for%20online%20vs.%20print%20interactions%22%7D">
-              <span aria-hidden="true">i</span>
+            <button class="panel-action-btn" id="promo-print-btn">
+              <span class="material-symbols-outlined">print</span>
+              Print
             </button>
-          </span>
-          <span class="value">73.2%</span>
-          <span class="trend positive">+8% from 2024</span>
-        </div>
-        <div class="ytd-metric">
-          <span class="label">
-            Print Rate:
-            <button class="info-btn" aria-label="Show definition for Print Rate" tabindex="0" data-tooltip-content="%7B%22title%22%3A%22Print%20Rate%22%2C%22tooltip%22%3A%22Percentage%20of%20users%20who%20printed%20or%20downloaded%20physical%20versions%20of%20promotions%22%2C%22whyImportant%22%3A%22Reveals%20continued%20demand%20for%20traditional%20print%20materials%20and%20helps%20balance%20omnichannel%20strategy%22%7D">
-              <span aria-hidden="true">i</span>
+            <button class="panel-action-btn" id="promo-share-btn">
+              <span class="material-symbols-outlined">share</span>
+              Share
             </button>
-          </span>
-          <span class="value">18.5%</span>
-          <span class="trend negative">-3%</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- KPI Tiles -->
-    <section class="kpi-tiles-section">
-      <div class="container">
-        <div class="dashboard-row-week">
-          <!-- Digital Circular Performance (Week) -->
-          <div class="kpi-tile positive" id="digital-circular-performance-week">
-            <div class="card-head">
-              <div class="card-head-left">
-                <h3>Digital Circular Performance <br>(Week)</h3>
-                <button class="info-btn" aria-label="Show definition for Digital Circular Performance (Week)" tabindex="0" data-tooltip-content="%7B%22title%22%3A%22Digital%20Circular%20Performance%20%3Cbr%3E(Week)%22%2C%22tooltip%22%3A%22Compares%20total%20promotion%20engagement%20this%20week%20against%20last%20week's%20performance%22%2C%22whyImportant%22%3A%22Quickly%20identify%20if%20your%20circular%20is%20trending%20up%20or%20down%2C%20enabling%20early%20course%20corrections%22%7D">
-                  <span aria-hidden="true">i</span>
-                </button>
-              </div>
-              <div class="card-head-right">
-                <button class="detail-btn" onclick="navigateToInquiry('week-performance', 'composite_score', 'desc')">Inquiry →</button>
-              </div>
-            </div>
-            <div class="kpi-content">
-              <div class="big-number-container">
-                <div class="big-number">94%</div>
-                <div class="sub-text">Average of All Promotions</div>
-              </div>
-              <div class="trend positive">+6% vs Week 39</div>
-              <div class="week-day">Week 40 of 52 • Day 5 of 7</div>
-            </div>
-          </div>
-
-          <!-- Traffic (Week) -->
-          <div class="kpi-tile positive" id="traffic-week">
-            <div class="card-head">
-              <div class="card-head-left">
-                <h3>Traffic <br>(Week)</h3>
-                <button class="info-btn" aria-label="Show definition for Traffic (Week)" tabindex="0" data-tooltip-content="%7B%22title%22%3A%22Traffic%20%3Cbr%3E(Week)%22%2C%22tooltip%22%3A%22Total%20unique%20visitors%20across%20all%20stores%20viewing%20digital%20circular%20content%20this%20week%20compared%20to%20last%20week%22%2C%22whyImportant%22%3A%22Monitor%20overall%20audience%20reach%20and%20engagement%20trends%20to%20identify%20seasonal%20patterns%20and%20marketing%20effectiveness%22%7D">
-                  <span aria-hidden="true">i</span>
-                </button>
-              </div>
-              <div class="card-head-right">
-                <button class="detail-btn" onclick="navigateToInquiry('traffic', 'card_in_view', 'desc')">Inquiry →</button>
-              </div>
-            </div>
-            <div class="kpi-content">
-              <div class="big-number-container">
-                <div class="big-number">31,240</div>
-                <div class="sub-text">Total Visitors</div>
-              </div>
-              <div class="trend positive">+9.4% vs Week 39</div>
-              <div class="week-day">Week 40 of 52 • All Stores</div>
-            </div>
-          </div>
-
-          <!-- Share Activity (Week) -->
-          <div class="kpi-tile positive" id="share-activity-week">
-            <div class="card-head">
-              <div class="card-head-left">
-                <h3>Share Activity <br>(Week)</h3>
-                <button class="info-btn" aria-label="Show definition for Share Activity (Week)" tabindex="0" data-tooltip-content="%7B%22title%22%3A%22Share%20Activity%20%3Cbr%3E(Week)%22%2C%22tooltip%22%3A%22Tracks%20how%20often%20customers%20share%20your%20promotions%20socially%2C%20indicating%20brand%20amplification%22%2C%22whyImportant%22%3A%22Understand%20which%20promotions%20generate%20word-of-mouth%20marketing%20beyond%20your%20direct%20reach%22%7D">
-                  <span aria-hidden="true">i</span>
-                </button>
-              </div>
-              <div class="card-head-right">
-                <button class="detail-btn" onclick="navigateToInquiry('sharing', 'card_clicked', 'desc')">Inquiry →</button>
-              </div>
-            </div>
-            <div class="kpi-content">
-              <div class="big-number-container">
-                <div class="big-number">178</div>
-                <div class="sub-text">Total Promotions Shared</div>
-              </div>
-              <div class="trend positive">+18% vs last week</div>
-              <div class="week-day">Social amplification metric</div>
-            </div>
           </div>
         </div>
-      </div>
-    </section>
-
-    <!-- Performance Charts (Day + Interaction Rate) -->
-    <section class="performance-charts-section">
-      <div class="container">
-        <div class="row-container-performance">
-          <div class="card" id="performance-day-chart-container">
-            <div class="card-head">
-              <div class="card-head-left">
-                <h3>Digital Circular Performance (Day)</h3>
-                <button class="info-btn" aria-label="Show definition for Digital Circular Performance" tabindex="0" data-tooltip-content="%7B%22title%22%3A%22Digital%20Circular%20Performance%20%3Cbr%3E(Day)%22%2C%22tooltip%22%3A%22Daily%20trend%20of%20promotion%20engagement%20showing%20performance%20fluctuations%20throughout%20the%20week%22%2C%22whyImportant%22%3A%22Identify%20daily%20patterns%20and%20optimize%20promotion%20timing%20for%20maximum%20engagement%22%7D">
-                  <span aria-hidden="true">i</span>
-                </button>
-              </div>
-              <div class="card-head-right">
-                <button class="detail-btn" onclick="navigateToInquiry('performance', 'composite_score', 'desc')">Inquiry →</button>
-              </div>
-            </div>
-            <div class="card-body">
-              <div id="performance-day-chart" style="width: 100%; height: 300px;"></div>
+        <div class="promotion-grid" id="promotion-grid" role="list" style="display: none;">
+          <!-- Populated by JavaScript -->
+        </div>
+        <div class="promo-data-grid" id="promotion-table">
+          <!-- Populated by JavaScript -->
+        </div>
+        <div class="grid-footer">
+          <div class="grid-footer__left"></div>
+          <div class="grid-footer__center">
+            <div class="grid-pagination" id="grid-pagination">
+              <button class="grid-pagination__btn" id="grid-prev-btn" onclick="prevPage()" disabled>
+                <span class="material-symbols-outlined">chevron_left</span>
+              </button>
+              <span class="grid-pagination__info" id="grid-page-info">Page 1 of 1</span>
+              <button class="grid-pagination__btn" id="grid-next-btn" onclick="nextPage()" disabled>
+                <span class="material-symbols-outlined">chevron_right</span>
+              </button>
             </div>
           </div>
-
-          <div class="card" id="interaction-rate-chart-container">
-            <div class="card-head">
-              <div class="card-head-left">
-                <h3>Interaction Rate</h3>
-                <button class="info-btn" aria-label="Show definition for Interaction Rate" tabindex="0" data-tooltip-content="%7B%22title%22%3A%22Interaction%20Rate%20Funnel%22%2C%22tooltip%22%3A%224-segment%20funnel%20tracking%20user%20engagement%20from%20never%20viewed%20to%20added%20to%20list%2C%20showing%20complete%20interaction%20journey.%22%2C%22whyImportant%22%3A%22Reveals%20where%20users%20drop%20off%20in%20the%20engagement%20process%20and%20identifies%20optimization%20opportunities.%22%7D">
-                  <span aria-hidden="true">i</span>
-                </button>
-              </div>
-              <div class="card-head-right">
-                <button class="detail-btn" onclick="navigateToInquiry('interaction', 'card_clicked', 'desc')">Inquiry →</button>
-              </div>
-            </div>
-            <div class="card-body">
-              <div id="interaction-rate-chart" style="width: 100%; height: 300px;"></div>
-            </div>
+          <div class="grid-footer__right">
+            <span class="grid-range-info" id="grid-range-info">0 of 0</span>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Categories and Promotions -->
-    <section class="categories-promotions-section">
-      <div class="container">
-        <div class="categories-performance-row">
-          <!-- Top Performing Categories -->
-          <div class="card chart-card" id="top-categories-card">
-            <div class="card-head">
-              <div class="card-head-left">
-                <h3>Top Performing Categories</h3>
-                <button class="info-btn" aria-label="Show definition for Top Performing Categories" tabindex="0" data-tooltip-content="%7B%22title%22%3A%22Top%20Performing%20Categories%22%2C%22tooltip%22%3A%22Shows%20which%20product%20categories%20are%20driving%20the%20most%20customer%20engagement%22%2C%22whyImportant%22%3A%22Double%20down%20on%20successful%20categories%20and%20apply%20winning%20strategies%20to%20underperformers%22%7D">
-                  <span aria-hidden="true">i</span>
-                </button>
-              </div>
-              <div class="card-head-right">
-                <button class="detail-btn" onclick="navigateToInquiry('categories', 'composite_score', 'desc')">Inquiry →</button>
-              </div>
-            </div>
-            <div class="card-body">
-              <div class="category-ranking" id="category-ranking">
-                <!-- Populated by EngagementFeature -->
-              </div>
-            </div>
+      <!-- Right Panel: Detail View -->
+      <aside class="panel panel--right panel--collapsed" id="detail-panel" role="complementary" aria-label="Promotion details">
+        <div class="panel-header panel-header--detail">
+          <h2 class="panel-title">Details</h2>
+          <button class="panel-close" onclick="closeDetailPanel()" aria-label="Close details">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <div class="detail-content" id="detail-content">
+          <!-- Populated by JavaScript -->
+        </div>
+        <div class="detail-footer" id="promotion-detail-footer">
+          <button class="detail-action-btn" onclick="viewPromotionCirculars()">
+            <span class="material-symbols-outlined">store</span>
+            View Circulars
+          </button>
+          <button class="detail-action-btn" onclick="viewPromotionCategories()">
+            <span class="material-symbols-outlined">category</span>
+            View Categories
+          </button>
+          <button class="detail-action-btn" onclick="openPromotionInquiry()">
+            <span class="material-symbols-outlined">table_chart</span>
+            Grid Inquiry
+          </button>
+          <button class="detail-action-btn" onclick="compareCurrentPromotion()">
+            <span class="material-symbols-outlined">compare</span>
+            Compare
+          </button>
+        </div>
+      </aside>
+
+    </div>
+
+    <!-- Engagement Modals (scoped inside engagement dashboard) -->
+
+    <!-- Date Range Picker Modal -->
+    <div class="modal-overlay" id="date-picker-modal">
+      <div class="modal">
+        <div class="modal-header">
+          <div class="modal-header-title">
+            <span class="material-symbols-outlined">calendar_month</span>
+            <h3 class="modal-title">Select Date Range</h3>
           </div>
-
-          <!-- Top Performing Promotions -->
-          <div class="card chart-card" id="promotion-performance">
-            <div class="card-head">
-              <div class="card-head-left">
-                <h3>Top Performing Promotions</h3>
-                <button class="info-btn" aria-label="Show definition for Performance" tabindex="0" data-tooltip-content="%7B%22title%22%3A%22Enhanced%20Promotions%20Performance%22%2C%22tooltip%22%3A%22Real-time%20analytics%20showing%20current%20week%20promotion%20effectiveness%20across%20all%20circular%20positions%20and%20deal%20types.%22%2C%22whyImportant%22%3A%22Critical%20for%20understanding%20which%20promotion%20strategies%20drive%20the%20highest%20engagement%20and%20conversion%20rates.%22%7D">
-                  <span aria-hidden="true">i</span>
-                </button>
+          <button class="modal-close" onclick="closeDatePicker()">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="date-picker-tabs">
+            <button class="date-picker-tab active" data-tab="week" onclick="switchDateTab('week')">By Week</button>
+            <button class="date-picker-tab" data-tab="custom" onclick="switchDateTab('custom')">Custom Range</button>
+          </div>
+          <div class="date-tab-content active" id="week-tab-content">
+            <div class="week-search-row">
+              <div class="week-search">
+                <span class="material-symbols-outlined">search</span>
+                <input type="text" id="week-search-input" placeholder="Search weeks..." oninput="filterWeeks(this.value)">
               </div>
-              <div class="card-head-right">
-                <button class="detail-btn" onclick="navigateToInquiry('promotions', 'composite_score', 'desc')">Inquiry →</button>
-              </div>
+              <div id="week-year-selector"></div>
             </div>
-            <div class="promo-controls">
-              <div class="promo-buttons">
-                <button class="score-type-btn active" data-score="composite">Composite</button>
-                <button class="score-type-btn" data-score="percentile">Percentile</button>
+            <div class="week-list" id="week-list"></div>
+          </div>
+          <div class="date-tab-content" id="custom-tab-content">
+            <div class="custom-date-inputs">
+              <div class="date-input-group">
+                <label>Start Date</label>
+                <input type="date" id="custom-start-date" value="2025-11-18">
               </div>
-              <div class="promo-topn-input">
-                <label for="pp-topn">Top</label>
-                <select id="pp-topn" style="background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:4px 8px;font-size:12px">
-                  <option value="10" selected>10</option>
-                  <option value="25">25</option>
-                  <option value="50">50</option>
-                  <option value="100">100</option>
-                </select>
-              </div>
-            </div>
-            <div class="card-body">
-              <div class="promotion-list" id="promotion-list">
-                <!-- Populated by EngagementFeature -->
+              <div class="date-input-group">
+                <label>End Date</label>
+                <input type="date" id="custom-end-date" value="2025-11-24">
               </div>
             </div>
           </div>
         </div>
+        <div class="modal-footer modal-footer--right">
+          <button class="modal-btn modal-btn--secondary" onclick="closeDatePicker()">Cancel</button>
+          <button class="modal-btn modal-btn--primary" onclick="applyDateSelection()">Apply</button>
+        </div>
       </div>
-    </section>
+    </div>
 
-    <!-- Analytics Charts (Size + Deal) -->
-    <section class="analytics-charts-section">
-      <div class="container">
-        <div class="dashboard-row-week">
-          <div class="size-deal">
-            <div class="grid two-up">
-              <!-- Card Size Section -->
-              <div class="size">
-                <h5 class="subsection-header">Card Size</h5>
-                <div class="grid two-col">
-                  <!-- Size Class Mix -->
-                  <div class="card small" id="size-mix-chart-container">
-                    <div class="card-head">
-                      <div class="card-head-left">
-                        <h3>Size Class Mix</h3>
-                        <button class="info-btn" aria-label="Show definition for Size Class Mix" tabindex="0" data-tooltip-content="%7B%22title%22%3A%22Size%20Class%20Mix%22%2C%22tooltip%22%3A%22Distribution%20of%20promotion%20card%20sizes%20showing%20the%20percentage%20breakdown%20across%20all%20sizes%20(1X1%2C%202X1%2C%203X2%2C%20etc.)%22%2C%22whyImportant%22%3A%22Helps%20optimize%20circular%20layout%20by%20understanding%20which%20sizes%20are%20most%20commonly%20used%20and%20their%20effectiveness.%22%7D">
-                          <span aria-hidden="true">i</span>
-                        </button>
-                      </div>
-                      <div class="card-head-right">
-                        <button class="detail-btn" onclick="navigateToInquiry('size', 'card_in_view', 'desc')">Inquiry →</button>
-                      </div>
-                    </div>
-                    <div class="card-body">
-                      <div id="size-mix-chart" style="width: 100%; height: 250px;"></div>
-                    </div>
-                  </div>
-
-                  <!-- Size Performance -->
-                  <div class="card small" id="size-performance-chart-container">
-                    <div class="card-head">
-                      <div class="card-head-left">
-                        <h3>Size Performance</h3>
-                        <button class="info-btn" aria-label="Show definition for Size Performance" tabindex="0" data-tooltip-content="%7B%22title%22%3A%22Size%20Performance%22%2C%22tooltip%22%3A%22Average%20composite%20performance%20scores%20by%20card%20size%2C%20ranked%20from%20highest%20to%20lowest%20performing%20sizes.%22%2C%22whyImportant%22%3A%22Identifies%20which%20card%20sizes%20drive%20the%20best%20engagement%20and%20conversion%20rates%20for%20strategic%20layout%20planning.%22%7D">
-                          <span aria-hidden="true">i</span>
-                        </button>
-                      </div>
-                      <div class="card-head-right">
-                        <button class="detail-btn" onclick="navigateToInquiry('size_performance', 'composite_score', 'desc')">Inquiry →</button>
-                      </div>
-                    </div>
-                    <div class="card-body">
-                      <div id="size-performance-chart" style="width: 100%; height: 250px;"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Deal Type Section -->
-              <div class="deal">
-                <h5 class="subsection-header">Deal Type</h5>
-                <div class="card small" id="deal-type-chart-container">
-                  <div class="card-head">
-                    <div class="card-head-left">
-                      <h3>Deal Type Preference</h3>
-                      <button class="info-btn" aria-label="Show definition for Deal Type Preference" tabindex="0" data-tooltip-content="%7B%22title%22%3A%22Deal%20Type%20Preference%22%2C%22tooltip%22%3A%22Distribution%20of%20deal%20types%20across%20all%20promotions%20showing%20customer%20preference%20patterns%20(Fixed%20Price%2C%20Club%20Price%2C%20BOGO%2C%20etc.)%22%2C%22whyImportant%22%3A%22Reveals%20which%20deal%20structures%20are%20most%20popular%20and%20helps%20optimize%20promotional%20strategy%20mix.%22%7D">
-                        <span aria-hidden="true">i</span>
-                      </button>
-                    </div>
-                    <div class="card-head-right">
-                      <button class="detail-btn" onclick="navigateToInquiry('deal-preference', 'composite_score', 'desc')">Inquiry →</button>
-                    </div>
-                  </div>
-                  <div class="card-body">
-                    <div id="deal-type-chart" style="width: 100%; height: 250px;"></div>
-                  </div>
-                </div>
-              </div>
+    <!-- Entity Selector Modal -->
+    <div class="modal-overlay" id="entity-selector-modal">
+      <div class="modal modal--extra-wide">
+        <div class="modal-header">
+          <div class="modal-header-title">
+            <span class="material-symbols-outlined">store</span>
+            <h3 class="modal-title">Select Entity</h3>
+          </div>
+          <button class="modal-close" onclick="closeEntitySelector()">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <div class="modal-body modal-body--no-padding">
+          <div class="entity-tabs" style="padding: 0 var(--space-6);">
+            <button class="entity-tab active" data-tab="nodes" onclick="switchEntityTab('nodes')">
+              <span class="material-symbols-outlined">account_tree</span>
+              Nodes
+            </button>
+            <button class="entity-tab" data-tab="groups" onclick="switchEntityTab('groups')">
+              <span class="material-symbols-outlined">workspaces</span>
+              Groups
+            </button>
+          </div>
+          <div class="entity-tab-content active" id="nodes-tab-content">
+            <div class="entity-search" style="margin: var(--space-4) var(--space-6);">
+              <span class="material-symbols-outlined">search</span>
+              <input type="text" id="entity-search-input" placeholder="Search entities..." oninput="filterEntities(this.value)">
+            </div>
+            <div class="tree-table-container">
+              <table class="tree-table">
+                <thead>
+                  <tr>
+                    <th class="tree-col-name">Name</th>
+                    <th class="tree-col-type">Type</th>
+                    <th class="tree-col-address">Address</th>
+                    <th class="tree-col-subdomain">Subdomain</th>
+                    <th class="tree-col-path">Path</th>
+                  </tr>
+                </thead>
+                <tbody id="entity-tree-body"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="entity-tab-content" id="groups-tab-content">
+            <div class="entity-search" style="margin: var(--space-4) var(--space-6);">
+              <span class="material-symbols-outlined">search</span>
+              <input type="text" id="group-search-input" placeholder="Search groups..." oninput="filterGroups(this.value)">
+            </div>
+            <div class="group-list" id="group-list" style="padding: 0 var(--space-6);"></div>
+            <div class="group-actions" style="padding: var(--space-4) var(--space-6);">
+              <button class="create-group-btn" onclick="openCreateGroupModal()">
+                <span class="material-symbols-outlined">add</span>
+                Create New Group
+              </button>
             </div>
           </div>
         </div>
+        <div class="modal-footer modal-footer--right">
+          <button class="modal-btn modal-btn--secondary" onclick="closeEntitySelector()">Cancel</button>
+          <button class="modal-btn modal-btn--primary" onclick="applyEntitySelection()">Apply</button>
+        </div>
       </div>
-    </section>
+    </div>
+
+    <!-- Add Filter Modal -->
+    <div class="modal-overlay" id="add-filter-modal">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 class="modal-title">Add Filter</h3>
+          <button class="modal-close" onclick="closeFilterModal()">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="filter-type-select">
+            <label>Filter Type</label>
+            <div class="filter-type-buttons">
+              <button class="filter-type-btn active" data-type="category" onclick="selectFilterType(this)">
+                <span class="material-symbols-outlined">category</span>
+                Category
+              </button>
+              <button class="filter-type-btn" data-type="deal" onclick="selectFilterType(this)">
+                <span class="material-symbols-outlined">local_offer</span>
+                Deal Type
+              </button>
+              <button class="filter-type-btn" data-type="size" onclick="selectFilterType(this)">
+                <span class="material-symbols-outlined">aspect_ratio</span>
+                Card Size
+              </button>
+            </div>
+          </div>
+          <div class="filter-value-select active" id="category-options">
+            <label>Select Category</label>
+            <div class="filter-options" id="category-filter-options"></div>
+          </div>
+          <div class="filter-value-select" id="deal-options">
+            <label>Select Deal Type</label>
+            <div class="filter-options" id="deal-filter-options"></div>
+          </div>
+          <div class="filter-value-select" id="size-options">
+            <label>Select Card Size</label>
+            <div class="filter-options" id="size-filter-options"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="modal-btn modal-btn--secondary" onclick="closeFilterModal()">Cancel</button>
+          <button class="modal-btn modal-btn--primary" onclick="applyFilter()">Add Filter</button>
+        </div>
+      </div>
+    </div>
 
   </main>
 
   <!-- ============================================================
        DISTRIBUTION DASHBOARD
+       (content ported in Step 3)
        ============================================================ -->
   <main id="distribution-dashboard" class="dashboard-content">
-
-    <!-- Section Jump Nav -->
-    <nav class="section-nav" id="section-nav">
-      <a href="#section-media" class="section-nav__link active" data-section="media">
-        <span class="material-symbols-outlined">campaign</span>
-        Media Buy
-      </a>
-      <a href="#section-visitation" class="section-nav__link" data-section="visitation">
-        <span class="material-symbols-outlined">store</span>
-        Store Visitation
-      </a>
-      <a href="#section-traffic" class="section-nav__link" data-section="traffic">
-        <span class="material-symbols-outlined">trending_up</span>
-        Traffic Share
-      </a>
-    </nav>
 
     <!-- ============================================================
          SECTION 1: Media Buy Metrics
          ============================================================ -->
-    <section class="dist-section" id="section-media">
+    <section class="dist-section active" id="section-media">
       <div class="section-header">
         <div class="section-header__left">
           <span class="section-number">1</span>
@@ -467,12 +496,8 @@
         </div>
       </div>
 
-      <!-- KPI Tiles -->
-      <div class="kpi-row" id="media-kpis">
-        <!-- Populated by JS -->
-      </div>
+      <div class="kpi-row" id="media-kpis"></div>
 
-      <!-- Creative Panel -->
       <div class="creative-panel" id="creative-panel">
         <div class="creative-panel__header">
           <h3 class="panel-label">Media Creative</h3>
@@ -481,69 +506,33 @@
             Upload Creative
           </button>
         </div>
-        <div class="creative-variants" id="creative-variants">
-          <!-- Populated by JS -->
-        </div>
+        <div class="creative-variants" id="creative-variants"></div>
       </div>
 
-      <!-- Video Engagement (conditional) -->
       <div class="video-section" id="video-section">
         <div class="video-section__header">
           <h3 class="panel-label">Video Engagement</h3>
           <span class="badge badge--info">YouTube Campaign</span>
         </div>
-        <div class="video-kpis" id="video-kpis">
-          <!-- Populated by JS -->
-        </div>
-        <div class="video-funnel" id="video-funnel-chart" style="height: 200px;">
-          <!-- eCharts funnel -->
-        </div>
+        <div class="video-kpis" id="video-kpis"></div>
+        <div class="video-funnel" id="video-funnel-chart" style="height: 200px;"></div>
       </div>
 
-      <!-- Demographics Panel (collapsible) -->
-      <details class="demographics-panel" id="demographics-panel">
-        <summary class="demographics-toggle">
-          <span class="material-symbols-outlined">people</span>
-          Foot Traffic Demographics
-          <span class="material-symbols-outlined toggle-icon">expand_more</span>
-        </summary>
+      <div class="demographics-panel" id="demographics-panel">
+        <h3 class="panel-label">Foot Traffic Demographics</h3>
         <div class="demographics-content">
           <div class="demo-charts-grid">
-            <div class="demo-chart-card">
-              <h4 class="demo-chart-title">Age Distribution</h4>
-              <div id="chart-demo-age" style="height: 200px;"></div>
-            </div>
-            <div class="demo-chart-card">
-              <h4 class="demo-chart-title">Gender</h4>
-              <div id="chart-demo-gender" style="height: 200px;"></div>
-            </div>
-            <div class="demo-chart-card">
-              <h4 class="demo-chart-title">Household Income</h4>
-              <div id="chart-demo-income" style="height: 200px;"></div>
-            </div>
-            <div class="demo-chart-card">
-              <h4 class="demo-chart-title">Net Worth</h4>
-              <div id="chart-demo-networth" style="height: 200px;"></div>
-            </div>
-            <div class="demo-chart-card">
-              <h4 class="demo-chart-title">Marital Status</h4>
-              <div id="chart-demo-marital" style="height: 200px;"></div>
-            </div>
-            <div class="demo-chart-card">
-              <h4 class="demo-chart-title">Presence of Children</h4>
-              <div id="chart-demo-children" style="height: 200px;"></div>
-            </div>
-            <div class="demo-chart-card">
-              <h4 class="demo-chart-title">Homeowner Status</h4>
-              <div id="chart-demo-homeowner" style="height: 200px;"></div>
-            </div>
-            <div class="demo-chart-card">
-              <h4 class="demo-chart-title">Household Size</h4>
-              <div id="chart-demo-household" style="height: 200px;"></div>
-            </div>
+            <div class="demo-chart-card"><h4 class="demo-chart-title">Age Distribution</h4><div id="chart-demo-age" style="height: 200px;"></div></div>
+            <div class="demo-chart-card"><h4 class="demo-chart-title">Gender</h4><div id="chart-demo-gender" style="height: 200px;"></div></div>
+            <div class="demo-chart-card"><h4 class="demo-chart-title">Household Income</h4><div id="chart-demo-income" style="height: 200px;"></div></div>
+            <div class="demo-chart-card"><h4 class="demo-chart-title">Net Worth</h4><div id="chart-demo-networth" style="height: 200px;"></div></div>
+            <div class="demo-chart-card"><h4 class="demo-chart-title">Marital Status</h4><div id="chart-demo-marital" style="height: 200px;"></div></div>
+            <div class="demo-chart-card"><h4 class="demo-chart-title">Presence of Children</h4><div id="chart-demo-children" style="height: 200px;"></div></div>
+            <div class="demo-chart-card"><h4 class="demo-chart-title">Homeowner Status</h4><div id="chart-demo-homeowner" style="height: 200px;"></div></div>
+            <div class="demo-chart-card"><h4 class="demo-chart-title">Household Size</h4><div id="chart-demo-household" style="height: 200px;"></div></div>
           </div>
         </div>
-      </details>
+      </div>
     </section>
 
     <!-- ============================================================
@@ -560,12 +549,8 @@
         </div>
       </div>
 
-      <!-- KPI Tiles -->
-      <div class="kpi-row" id="visitation-kpis">
-        <!-- Populated by JS -->
-      </div>
+      <div class="kpi-row" id="visitation-kpis"></div>
 
-      <!-- Frequency Trend Chart -->
       <div class="chart-card">
         <div class="chart-card__header">
           <h3 class="panel-label">Visit Frequency Over Time</h3>
@@ -578,19 +563,15 @@
         <div id="chart-frequency" style="height: 300px;"></div>
       </div>
 
-      <!-- Competitive Crossover -->
       <div class="chart-card">
         <div class="chart-card__header">
           <h3 class="panel-label">Competitive Crossover</h3>
           <p class="panel-subtitle">Where media-driven visitors also shop</p>
         </div>
         <div id="chart-crossover" style="height: 280px;"></div>
-        <div class="crossover-detail" id="crossover-detail">
-          <!-- Expandable rows populated by JS -->
-        </div>
+        <div class="crossover-detail" id="crossover-detail"></div>
       </div>
 
-      <!-- Crossover Trend -->
       <div class="chart-card">
         <div class="chart-card__header">
           <h3 class="panel-label">Crossover Trend</h3>
@@ -598,12 +579,9 @@
         <div id="chart-crossover-trend" style="height: 280px;"></div>
       </div>
 
-      <!-- Store Spotlight Cards -->
       <div class="spotlight-section">
         <h3 class="panel-label">Store Spotlight</h3>
-        <div class="spotlight-cards" id="spotlight-cards">
-          <!-- Populated by JS -->
-        </div>
+        <div class="spotlight-cards" id="spotlight-cards"></div>
       </div>
     </section>
 
@@ -627,12 +605,8 @@
         </div>
       </div>
 
-      <!-- KPI Tiles -->
-      <div class="kpi-row" id="traffic-kpis">
-        <!-- Populated by JS -->
-      </div>
+      <div class="kpi-row" id="traffic-kpis"></div>
 
-      <!-- Store Map -->
       <div class="chart-card" id="store-map-card">
         <div class="chart-card__header">
           <h3 class="panel-label">Store Locations by Performance</h3>
@@ -645,7 +619,6 @@
         <div id="store-map" style="height: 400px; border-radius: 8px;"></div>
       </div>
 
-      <!-- Share Trend Chart -->
       <div class="chart-card">
         <div class="chart-card__header">
           <h3 class="panel-label">Traffic Share Over Time</h3>
@@ -657,7 +630,6 @@
         <div id="chart-share-trend" style="height: 300px;"></div>
       </div>
 
-      <!-- Volume Bar Chart -->
       <div class="chart-card">
         <div class="chart-card__header">
           <h3 class="panel-label">Visit Volume by Week</h3>
@@ -669,9 +641,7 @@
         <div id="chart-volume" style="height: 300px;"></div>
       </div>
 
-      <!-- Two-column: Leaderboard + Market Concentration -->
       <div class="traffic-detail-grid">
-        <!-- Store Leaderboard -->
         <div class="chart-card">
           <div class="chart-card__header">
             <h3 class="panel-label">Store Leaderboard</h3>
@@ -680,47 +650,27 @@
               <button class="toggle-btn" data-sort="share">By Share</button>
             </div>
           </div>
-          <div class="leaderboard-table" id="leaderboard-table">
-            <!-- Populated by JS -->
-          </div>
+          <div class="leaderboard-table" id="leaderboard-table"></div>
         </div>
 
-        <!-- Market Concentration Sidebar -->
         <div class="chart-card concentration-sidebar">
           <h3 class="panel-label">Market Concentration</h3>
-          <div class="concentration-stats" id="concentration-stats">
-            <!-- Populated by JS -->
-          </div>
+          <div class="concentration-stats" id="concentration-stats"></div>
           <h4 class="panel-sublabel">Primary Threats</h4>
-          <div class="threat-list" id="threat-list">
-            <!-- Populated by JS -->
-          </div>
+          <div class="threat-list" id="threat-list"></div>
         </div>
       </div>
     </section>
 
+    <!-- Distribution Modals Container -->
+    <div id="modals-container"></div>
+
   </main>
-
-  <!-- Tooltip Overlay (global, shared) -->
-  <div id="tooltip-overlay" class="tooltip-overlay" style="display: none;" role="dialog" aria-modal="true">
-    <div class="tooltip-inner">
-      <div class="tooltip-header">
-        <div class="tooltip-title" id="tooltip-title"></div>
-        <button class="tooltip-close" id="tooltip-close" aria-label="Close tooltip">
-          <span class="material-symbols-outlined">close</span>
-        </button>
-      </div>
-      <div class="tooltip-content" id="tooltip-content"></div>
-      <div class="tooltip-why-important" id="tooltip-why"></div>
-    </div>
-  </div>
-
-  <!-- Modals Container -->
-  <div id="modals-container"></div>
 
   <!-- ============================================================
        SCRIPTS (dependency order)
        ============================================================ -->
+
   <!-- Vendor -->
   <script src="js/vendor/echarts.min.js"></script>
   <script src="js/vendor/leaflet.min.js"></script>
@@ -728,32 +678,34 @@
   <!-- Shared utilities -->
   <script src="js/shared/chart-colors.js"></script>
 
-  <!-- Data modules -->
-  <script src="js/data/engagement-data.js"></script>
+  <!-- Engagement data (promotions first — mock-data.js reads window.promotionRecordsData at load time) -->
+  <script src="js/data/engagement-promotions.js"></script>
+  <script src="js/data/engagement-mock-data.js"></script>
+
+  <!-- Distribution data -->
   <script src="js/data/distribution-entities.js"></script>
   <script src="js/data/distribution-records.js"></script>
   <script src="js/data/distribution-data.js"></script>
 
-  <!-- Components -->
-  <script src="js/components/store-map.js"></script>
-  <script src="js/components/header.js"></script>
+  <!-- Engagement modules (dependency order) -->
+  <script src="js/engagement/cache-manager.js"></script>
+  <script src="js/engagement/data-service.js"></script>
+  <script src="js/engagement/state-manager.js"></script>
+  <script src="js/engagement/shared-core.js"></script>
+  <script src="js/engagement/shared-modals.js"></script>
+  <script src="js/engagement/shared-filters.js"></script>
+  <script src="js/engagement/shared-perf-charts.js"></script>
+  <script src="js/engagement/base-promotions.js"></script>
 
-  <!-- Feature modules -->
-  <script src="js/features/engagement-charts.js"></script>
-  <script src="js/features/engagement.js"></script>
-  <script src="js/features/distribution.js"></script>
-  <script src="js/features/distribution-modals.js"></script>
+  <!-- Distribution modules -->
+  <script src="js/distribution/store-map.js"></script>
+  <script src="js/distribution/distribution.js"></script>
+  <script src="js/distribution/distribution-modals.js"></script>
 
+  <!-- Scroll-aware header hide/reveal (DC2 HeaderSlideService port) -->
+  <script src="js/header-slide.js"></script>
   <!-- Main controller (last) -->
   <script src="js/app.js"></script>
-
-  <!-- Inquiry navigation stub (no separate page in combined prototype) -->
-  <script>
-    function navigateToInquiry(filter, sort, direction) {
-      console.log('Inquiry navigation (stub):', filter, sort, direction);
-      // In production, would navigate to datagrid-inquiry with context
-    }
-  </script>
 
 </body>
 </html>

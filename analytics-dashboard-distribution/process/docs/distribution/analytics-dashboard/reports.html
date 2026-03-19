@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - Analytics Dashboard</title>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="components/context-bar/context-bar.styles.css">
+    <link rel="stylesheet" href="components/context-bar/context-bar-v2.styles.css">
+    <link rel="stylesheet" href="components/context-bar/period-selector.styles.css">
+    <link rel="stylesheet" href="components/context-bar/scope-selector.styles.css">
+    <link rel="stylesheet" href="components/context-bar/simple-context-bar.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
+
+    <!-- CDN Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <!-- Preload critical resources -->
+    <link rel="preload" href="reports/report-builder.js" as="script">
+    <link rel="preload" href="reports/report-templates.js" as="script">
+
+    <style>
+        /* Reports Layout Styles */
+        .reports-container {
+            display: grid;
+            grid-template-columns: 280px 1fr 400px;
+            gap: var(--space-lg);
+            padding: var(--space-lg);
+            min-height: calc(100vh - var(--header-height));
+        }
+
+        .reports-sidebar,
+        .reports-main,
+        .reports-preview {
+            height: fit-content;
+        }
+
+        .quick-reports {
+            margin-bottom: var(--space-lg);
+        }
+
+        .quick-reports h3 {
+            margin-bottom: var(--space-md);
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .quick-reports button {
+            width: 100%;
+            margin-bottom: var(--space-sm);
+            text-align: left;
+            justify-content: flex-start;
+        }
+
+        .report-config {
+            min-height: 300px;
+        }
+
+        .form-group {
+            margin-bottom: var(--space-lg);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: var(--space-sm);
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: var(--space-sm) var(--space-md);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            background-color: var(--card);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(66, 114, 216, 0.1);
+        }
+
+        .report-options {
+            min-height: 200px;
+            padding: var(--space-md);
+            background-color: var(--bg);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+        }
+
+        .text-muted {
+            color: var(--muted);
+            font-style: italic;
+        }
+
+        .report-preview-frame {
+            width: 100%;
+            height: 600px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            background-color: var(--card);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1200px) {
+            .reports-container {
+                grid-template-columns: 260px 1fr 350px;
+                gap: var(--space-md);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .reports-container {
+                grid-template-columns: 1fr;
+                gap: var(--space-md);
+            }
+
+            .reports-sidebar,
+            .reports-main,
+            .reports-preview {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .reports-container {
+                padding: var(--space-md);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Simplified header -->
+    <header class="dashboard-header page-header" id="app-header">
+        <div class="header-container">
+            <div class="header-left">
+                <div class="title-container">
+                    <h1>Analytics Dashboard</h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Navigation -->
+        <nav class="main-nav">
+            <ul class="nav-list">
+                <li><a href="index.html" class="nav-item">Overview</a></li>
+                <li><a href="reports.html" class="nav-item active">Reports</a></li>
+                <li><a href="datagrid-inquiry/datagrid-inquiry.html" class="nav-item">Datagrid Inquiry</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main content -->
+    <main class="dashboard-main main-content">
+        <!-- Context bar container -->
+        <section id="context-bar-container" class="context-bar-v2" role="banner" aria-label="Dashboard Context"></section>
+        <section class="reports-container">
+            <!-- Sidebar for report templates and options -->
+            <aside id="reports-sidebar" class="reports-sidebar">
+                <section class="card">
+                    <header class="card-header">
+                        <h2>Report Builder</h2>
+                    </header>
+                    <div class="card-body">
+                        <nav class="quick-reports">
+                            <h3>Quick Reports</h3>
+                            <button id="simple-chart-btn" class="btn btn-primary">
+                                📊 Simple Chart
+                            </button>
+                            <button id="default-weekly-btn" class="btn btn-secondary">
+                                📈 Default Weekly
+                            </button>
+                        </nav>
+                    </div>
+                </section>
+            </aside>
+
+            <!-- Preview area for report output -->
+            <aside id="reports-preview" class="reports-preview" style="grid-column: span 2;">
+                <section class="card">
+                    <header class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <h2>Report Preview</h2>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button id="export-pdf-btn" class="btn btn-secondary" style="display: none;">
+                                📄 PDF
+                            </button>
+                            <button id="export-excel-btn" class="btn btn-secondary" style="display: none;">
+                                📊 Spreadsheet
+                            </button>
+                        </div>
+                    </header>
+                    <div class="card-body" style="padding: 0;">
+                        <div id="preview" style="min-height: 600px; background: var(--bg);">
+                            <div style="display: flex; align-items: center; justify-content: center; height: 600px; color: var(--muted); flex-direction: column;">
+                                <div style="font-size: 48px; margin-bottom: 1rem;">📊</div>
+                                <div>Click "Weekly Performance" to generate report</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </aside>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script src="mock-data/007-scaled-data.js?v=1.0"></script>
+    <script src="reports/report-templates.js"></script>
+    <script src="reports/report-builder.js"></script>
+
+    <!-- Context State Service -->
+    <script src="services/context-state-service.js"></script>
+
+    <!-- Simple Context Bar -->
+    <script src="components/context-bar/simple-context-bar.js"></script>
+
+    <!-- Report Generators -->
+    <script src="reports/SimpleChartReport.js"></script>
+    <script src="reports/DefaultWeeklyReport.js"></script>
+
+    <!-- Initialize Context Bar and Reports -->
+    <script>
+        let simpleChartReport = null;
+        let defaultWeeklyReport = null;
+        let currentReport = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize URL synchronization
+            if (window.contextStateService) {
+                window.contextStateService.initUrlSync();
+                console.log('🔗 URL synchronization initialized for reports');
+            }
+
+            const contextBarContainer = document.getElementById('context-bar-container');
+            if (contextBarContainer) {
+                // Check if SimpleContextBar is available
+                if (typeof SimpleContextBar !== 'undefined') {
+                    window.contextBar = new SimpleContextBar(contextBarContainer);
+                    console.log('✅ Simple context bar initialized on reports page');
+                } else {
+                    console.error('❌ SimpleContextBar class not available on reports page');
+                    // Try again after a short delay
+                    setTimeout(() => {
+                        if (typeof SimpleContextBar !== 'undefined') {
+                            window.contextBar = new SimpleContextBar(contextBarContainer);
+                            console.log('✅ Simple context bar initialized on reports page (delayed)');
+                        } else {
+                            console.error('❌ SimpleContextBar still not available after delay');
+                        }
+                    }, 100);
+                }
+            } else {
+                console.error('❌ Context bar container not found on reports page');
+            }
+
+            // Initialize both report types
+            if (typeof SimpleChartReport !== 'undefined') {
+                simpleChartReport = new SimpleChartReport('preview');
+                console.log('✅ SimpleChartReport initialized');
+            }
+
+            if (typeof DefaultWeeklyReport !== 'undefined') {
+                defaultWeeklyReport = new DefaultWeeklyReport('preview');
+                console.log('✅ DefaultWeeklyReport initialized');
+            }
+
+            // Auto-load Simple Chart by default
+            setTimeout(() => {
+                if (simpleChartReport) {
+                    generateReport(simpleChartReport);
+                }
+            }, 500);
+
+            // Wire up Simple Chart button
+            const simpleChartBtn = document.getElementById('simple-chart-btn');
+            if (simpleChartBtn) {
+                simpleChartBtn.addEventListener('click', () => {
+                    simpleChartBtn.classList.add('btn-primary');
+                    simpleChartBtn.classList.remove('btn-secondary');
+                    document.getElementById('default-weekly-btn')?.classList.remove('btn-primary');
+                    document.getElementById('default-weekly-btn')?.classList.add('btn-secondary');
+                    generateReport(simpleChartReport);
+                });
+            }
+
+            // Wire up Default Weekly button
+            const defaultWeeklyBtn = document.getElementById('default-weekly-btn');
+            if (defaultWeeklyBtn) {
+                defaultWeeklyBtn.addEventListener('click', () => {
+                    defaultWeeklyBtn.classList.add('btn-primary');
+                    defaultWeeklyBtn.classList.remove('btn-secondary');
+                    document.getElementById('simple-chart-btn')?.classList.remove('btn-primary');
+                    document.getElementById('simple-chart-btn')?.classList.add('btn-secondary');
+                    generateReport(defaultWeeklyReport);
+                });
+            }
+        });
+
+        /**
+         * Generate report with current context
+         */
+        function generateReport(reportInstance) {
+            if (!reportInstance) return;
+
+            currentReport = reportInstance;
+
+            // Get current context
+            const contextState = window.contextBar ? {
+                week: window.contextBar.selectedWeek || 40,
+                scopeLevel: window.contextBar.selectedScope?.level || 'all',
+                scopeValue: window.contextBar.selectedScope?.id || 'all',
+                scopeName: window.contextBar.selectedScope?.name || 'All Stores'
+            } : {
+                week: 40,
+                scopeLevel: 'all',
+                scopeValue: 'all',
+                scopeName: 'All Stores'
+            };
+
+            // Update report context
+            reportInstance.currentWeek = contextState.week;
+            reportInstance.currentScope = {
+                level: contextState.scopeLevel,
+                value: contextState.scopeValue,
+                name: contextState.scopeName
+            };
+
+            // Generate report
+            reportInstance.generateReport();
+
+            // Show export buttons
+            document.getElementById('export-pdf-btn').style.display = 'block';
+            document.getElementById('export-excel-btn').style.display = 'block';
+
+            console.log('📊 Report generated');
+        }
+
+        // Wire up PDF export button (after DOM loaded)
+        document.addEventListener('DOMContentLoaded', function() {
+            const pdfBtn = document.getElementById('export-pdf-btn');
+            if (pdfBtn) {
+                pdfBtn.addEventListener('click', () => {
+                    console.log('📄 Exporting PDF...');
+                    exportReportAsPDF();
+                });
+            }
+
+            // Wire up Excel export button
+            const excelBtn = document.getElementById('export-excel-btn');
+            if (excelBtn) {
+                excelBtn.addEventListener('click', () => {
+                    console.log('📊 Exporting spreadsheet...');
+                    exportReportAsExcel();
+                });
+            }
+        });
+
+        /**
+         * Export report as PDF
+         */
+        function exportReportAsPDF() {
+            const previewElement = document.getElementById('preview');
+            if (!previewElement) return;
+
+            // Use html2canvas + jsPDF
+            if (typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined') {
+                alert('PDF export libraries not loaded');
+                return;
+            }
+
+            html2canvas(previewElement, {
+                scale: 2,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new window.jspdf.jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+
+                const imgWidth = 210; // A4 width in mm
+                const pageHeight = 297; // A4 height in mm
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+
+                const filename = `Weekly_Report_Week${currentReport?.currentWeek || 40}_${new Date().toISOString().split('T')[0]}.pdf`;
+                pdf.save(filename);
+
+                console.log('✅ PDF exported:', filename);
+            }).catch(error => {
+                console.error('❌ PDF export failed:', error);
+                alert('Failed to export PDF: ' + error.message);
+            });
+        }
+
+        /**
+         * Export report data as Excel spreadsheet
+         */
+        function exportReportAsExcel() {
+            if (!currentReport || typeof XLSX === 'undefined') {
+                alert('Excel export not available');
+                return;
+            }
+
+            // Get filtered promotions
+            const promotions = currentReport.filterPromotions(
+                currentReport.currentWeek,
+                currentReport.currentScope
+            );
+
+            if (promotions.length === 0) {
+                alert('No data to export');
+                return;
+            }
+
+            // Format data for Excel
+            const excelData = promotions.map(promo => ({
+                'Week': promo.week,
+                'Store': promo.storeId,
+                'Store Group': promo.storeGroup,
+                'Product': promo.productName,
+                'Category': promo.category,
+                'Views': promo.views,
+                'Clicks': promo.clicks,
+                'CTR': ((promo.clicks / promo.views) * 100).toFixed(2) + '%',
+                'Composite Score': promo.compositeScore.toFixed(1),
+                'Rank': promo.rank
+            }));
+
+            // Create workbook and worksheet
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(excelData);
+
+            // Add worksheet to workbook
+            XLSX.utils.book_append_sheet(wb, ws, 'Weekly Report');
+
+            // Generate filename
+            const filename = `Weekly_Report_Week${currentReport.currentWeek}_${currentReport.currentScope.name}_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+            // Download
+            XLSX.writeFile(wb, filename);
+
+            console.log('✅ Excel exported:', filename);
+        }
+    </script>
+</body>
+</html>

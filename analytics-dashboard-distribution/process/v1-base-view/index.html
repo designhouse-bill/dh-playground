@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics Dashboard - Base View</title>
+
+  <!-- Shared Styles -->
+  <link rel="stylesheet" href="../shared/design-tokens.css">
+  <link rel="stylesheet" href="../shared/base.css">
+  <link rel="stylesheet" href="../shared/context-bar.css">
+  <link rel="stylesheet" href="../shared/detail-panel.css">
+
+  <!-- Version Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <!-- Header -->
+    <header class="header">
+      <div class="header__brand">
+        <div class="header__logo"></div>
+        <span class="header__title">Circular Analytics</span>
+      </div>
+      <div class="header__actions">
+        <button class="btn btn--ghost btn--sm">
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"/>
+          </svg>
+          Export
+        </button>
+        <button class="btn btn--ghost btn--sm">
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"/>
+          </svg>
+          Share
+        </button>
+      </div>
+    </header>
+
+    <!-- Context Bar -->
+    <div class="context-bar">
+      <!-- Foundation Context (Always visible) -->
+      <div class="foundation-context">
+        <div class="foundation-context__left">
+          <!-- Date Selector -->
+          <div class="context-selector">
+            <span class="context-selector__label">Date Range</span>
+            <button class="context-selector__button" id="date-selector">
+              <span class="context-selector__value">Week 47</span>
+              <span class="context-selector__sub">Nov 18-24, 2025</span>
+              <svg class="context-selector__icon" viewBox="0 0 12 12" fill="currentColor">
+                <path d="M3 4.5L6 7.5L9 4.5"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="context-divider"></div>
+
+          <!-- Entity Selector -->
+          <div class="context-selector">
+            <span class="context-selector__label">Entity</span>
+            <button class="context-selector__button" id="entity-selector">
+              <span class="context-selector__value">All Stores</span>
+              <span class="context-selector__sub">67 locations</span>
+              <svg class="context-selector__icon" viewBox="0 0 12 12" fill="currentColor">
+                <path d="M3 4.5L6 7.5L9 4.5"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="foundation-context__right">
+          <button class="btn btn--ghost btn--sm" id="add-filter-btn">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M8 4a.5.5 0 01.5.5v3h3a.5.5 0 010 1h-3v3a.5.5 0 01-1 0v-3h-3a.5.5 0 010-1h3v-3A.5.5 0 018 4z"/>
+            </svg>
+            Add Filter
+          </button>
+        </div>
+      </div>
+
+      <!-- Filter Chips Row (Only when filters active) -->
+      <div class="filter-row filter-row--empty" id="filter-row">
+        <div class="filter-row__chips" id="filter-chips">
+          <!-- Dynamic chips -->
+        </div>
+        <div class="filter-row__actions">
+          <button class="clear-all" id="clear-all">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M4.646 4.646a.5.5 0 01.708 0L8 7.293l2.646-2.647a.5.5 0 01.708.708L8.707 8l2.647 2.646a.5.5 0 01-.708.708L8 8.707l-2.646 2.647a.5.5 0 01-.708-.708L7.293 8 4.646 5.354a.5.5 0 010-.708z"/>
+            </svg>
+            Clear All
+          </button>
+        </div>
+      </div>
+
+      <!-- View Tabs -->
+      <div class="view-tabs">
+        <button class="view-tabs__tab view-tabs__tab--active" data-view="base">
+          <svg class="view-tabs__icon" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6z"/>
+          </svg>
+          Base View
+        </button>
+        <button class="view-tabs__tab" data-view="grid">
+          <svg class="view-tabs__icon" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+            <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5z"/>
+          </svg>
+          Data Grid
+        </button>
+        <div class="view-tabs__spacer"></div>
+        <button class="view-tabs__tab" data-view="compare">
+          <svg class="view-tabs__icon" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8z"/>
+            <path d="M12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z"/>
+          </svg>
+          Compare
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+      <!-- KPI Summary Strip -->
+      <div class="kpi-strip">
+        <div class="kpi-strip__item">
+          <span class="kpi-strip__value" id="kpi-civ">--</span>
+          <span class="kpi-strip__label">Card in View</span>
+        </div>
+        <div class="kpi-strip__divider"></div>
+        <div class="kpi-strip__item">
+          <span class="kpi-strip__value" id="kpi-cc">--</span>
+          <span class="kpi-strip__label">Card Clicked</span>
+        </div>
+        <div class="kpi-strip__divider"></div>
+        <div class="kpi-strip__item">
+          <span class="kpi-strip__value" id="kpi-atl">--</span>
+          <span class="kpi-strip__label">Added to List</span>
+        </div>
+        <div class="kpi-strip__divider"></div>
+        <div class="kpi-strip__item">
+          <span class="kpi-strip__value" id="kpi-ctr">--%</span>
+          <span class="kpi-strip__label">CTR</span>
+        </div>
+        <div class="kpi-strip__item kpi-strip__item--highlight">
+          <span class="kpi-strip__value" id="kpi-score">--</span>
+          <span class="kpi-strip__label">Avg Score</span>
+        </div>
+      </div>
+
+      <!-- Content List (Categories or Promotions) -->
+      <div class="content-list-container">
+        <div class="content-list-header">
+          <h2 class="content-list-title" id="list-title">Categories</h2>
+          <span class="content-list-count" id="list-count">8 categories</span>
+        </div>
+
+        <div class="content-list" id="content-list">
+          <!-- Dynamic content: Category or Promotion rows -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Detail Panel (Right Side) -->
+    <div class="detail-overlay" id="detail-overlay"></div>
+    <aside class="detail-panel" id="detail-panel">
+      <div class="detail-panel__header">
+        <span class="detail-panel__title" id="panel-type">Category Details</span>
+        <button class="detail-panel__close" id="panel-close">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="detail-panel__body" id="panel-body">
+        <!-- Dynamic content -->
+      </div>
+      <div class="detail-panel__footer" id="panel-footer">
+        <!-- Action buttons -->
+      </div>
+    </aside>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../shared/mock-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

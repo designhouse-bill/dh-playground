@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Circular Performance - Analytics Dashboard</title>
+
+  <!-- Shared Styles -->
+  <link rel="stylesheet" href="../shared/design-tokens.css">
+  <link rel="stylesheet" href="../shared/base.css">
+  <link rel="stylesheet" href="../shared/version-nav.css">
+  <link rel="stylesheet" href="../shared/context-system.css">
+
+  <!-- Version Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <!-- Header -->
+    <header class="header">
+      <div class="header__left">
+        <div class="header__brand">
+          <div class="header__logo"></div>
+          <span class="header__title">Circular Analytics</span>
+        </div>
+        <nav class="header__nav">
+          <a href="#" class="header__nav-item header__nav-item--active">Performance</a>
+          <a href="dashboard.html" class="header__nav-item">Dashboard</a>
+          <a href="#" class="header__nav-item">Compare</a>
+        </nav>
+      </div>
+      <div class="header__right">
+        <div class="header__search">
+          <svg class="header__search-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+          </svg>
+          <span>Search...</span>
+        </div>
+        <button class="btn btn--secondary btn--sm">Export</button>
+      </div>
+    </header>
+
+    <!-- Context Bar - Strong typographic hierarchy -->
+    <div class="context-bar">
+      <div class="context-bar__left">
+        <!-- Foundation Context - PROMINENT -->
+        <div class="context-primary" id="date-selector">
+          <span class="context-primary__label">Period</span>
+          <button class="context-primary__value">
+            <span class="context-primary__main">Week 47</span>
+            <span class="context-primary__sub">Nov 18-24, 2025</span>
+            <svg class="context-primary__icon" width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+              <path d="M3 4.5L6 7.5L9 4.5"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="context-divider"></div>
+
+        <div class="context-primary" id="entity-selector">
+          <span class="context-primary__label">Scope</span>
+          <button class="context-primary__value">
+            <span class="context-primary__main">All Stores</span>
+            <span class="context-primary__sub">67 locations</span>
+            <svg class="context-primary__icon" width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+              <path d="M3 4.5L6 7.5L9 4.5"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="context-bar__right">
+        <button class="btn btn--ghost btn--sm" id="add-filter-btn">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M1.5 1.5A.5.5 0 012 1h12a.5.5 0 01.5.5v2a.5.5 0 01-.128.334L10 8.692V13.5a.5.5 0 01-.342.474l-3 1A.5.5 0 016 14.5V8.692L1.628 3.834A.5.5 0 011.5 3.5v-2z"/>
+          </svg>
+          Filters
+        </button>
+      </div>
+    </div>
+
+    <!-- Filter Row - Applied Filters (hidden when empty) -->
+    <div class="filter-row filter-row--empty" id="filter-row">
+      <div class="filter-row__chips" id="filter-chips-container">
+        <!-- Dynamic filter chips appear here -->
+      </div>
+      <div class="filter-row__actions">
+        <button class="clear-filters" id="clear-all-filters">
+          <svg class="clear-filters__icon" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M5.5 5.5A.5.5 0 016 6v6a.5.5 0 01-1 0V6a.5.5 0 01.5-.5zm2.5 0a.5.5 0 01.5.5v6a.5.5 0 01-1 0V6a.5.5 0 01.5-.5zm3 .5a.5.5 0 00-1 0v6a.5.5 0 001 0V6z"/>
+            <path fill-rule="evenodd" d="M14.5 3a1 1 0 01-1 1H13v9a2 2 0 01-2 2H5a2 2 0 01-2-2V4h-.5a1 1 0 01-1-1V2a1 1 0 011-1H6a1 1 0 011-1h2a1 1 0 011 1h3.5a1 1 0 011 1v1zM4.118 4L4 4.059V13a1 1 0 001 1h6a1 1 0 001-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+          </svg>
+          Clear All
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Content - Data Grid Focus -->
+    <main class="main">
+      <div class="main__container">
+        <!-- Page Header with Breadcrumb -->
+        <div class="page-header">
+          <nav class="breadcrumb" id="context-breadcrumb" aria-label="Navigation">
+            <span class="breadcrumb__item">
+              <span class="breadcrumb__current">Circular Performance</span>
+            </span>
+          </nav>
+          <p class="page-header__count" id="page-count">150 promotions</p>
+        </div>
+
+        <!-- Performance Table - PRIMARY VIEW -->
+        <section class="performance-table">
+          <div class="performance-table__header">
+            <div class="performance-table__title-row">
+              <h2 class="performance-table__title" id="table-title">All Promotions</h2>
+              <div class="performance-table__actions">
+                <select class="select" id="sort-select">
+                  <option value="percentile">Sort by Percentile</option>
+                  <option value="score">Sort by Score</option>
+                  <option value="views">Sort by Views</option>
+                  <option value="ctr">Sort by CTR</option>
+                </select>
+                <button class="btn btn--secondary btn--sm">
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M.5 9.9a.5.5 0 01.5.5v2.5a1 1 0 001 1h12a1 1 0 001-1v-2.5a.5.5 0 011 0v2.5a2 2 0 01-2 2H2a2 2 0 01-2-2v-2.5a.5.5 0 01.5-.5z"/>
+                    <path d="M7.646 11.854a.5.5 0 00.708 0l3-3a.5.5 0 00-.708-.708L8.5 10.293V1.5a.5.5 0 00-1 0v8.793L5.354 8.146a.5.5 0 10-.708.708l3 3z"/>
+                  </svg>
+                  Export
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Table -->
+          <div class="performance-table__body">
+            <table class="data-grid">
+              <thead>
+                <tr>
+                  <th class="data-grid__th data-grid__th--rank">Rank</th>
+                  <th class="data-grid__th data-grid__th--name">Promotion</th>
+                  <th class="data-grid__th data-grid__th--category">Category</th>
+                  <th class="data-grid__th data-grid__th--number">CIV</th>
+                  <th class="data-grid__th data-grid__th--number">CC</th>
+                  <th class="data-grid__th data-grid__th--number">ATL</th>
+                  <th class="data-grid__th data-grid__th--number">CTR</th>
+                  <th class="data-grid__th data-grid__th--score">Score</th>
+                  <th class="data-grid__th data-grid__th--percentile">Percentile</th>
+                </tr>
+              </thead>
+              <tbody id="performance-table-body">
+                <!-- Dynamic content -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="performance-table__footer">
+            <div class="pagination">
+              <span class="pagination__info">Showing 1-25 of <span id="total-count">150</span></span>
+              <div class="pagination__controls">
+                <button class="pagination__btn" disabled>Previous</button>
+                <button class="pagination__btn pagination__btn--active">1</button>
+                <button class="pagination__btn">2</button>
+                <button class="pagination__btn">3</button>
+                <button class="pagination__btn">...</button>
+                <button class="pagination__btn">6</button>
+                <button class="pagination__btn">Next</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../shared/version-nav.js"></script>
+  <script src="../shared/mock-data-loader.js"></script>
+  <script src="../shared/context-system.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

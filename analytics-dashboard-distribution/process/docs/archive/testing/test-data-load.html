@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Load Test</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #f5f5f5; }
+        .test { padding: 10px; margin: 10px 0; background: white; border-left: 4px solid #ccc; }
+        .pass { border-color: #4CAF50; }
+        .fail { border-color: #f44336; }
+        h1 { color: #333; }
+        pre { background: #eee; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>📊 Data Load Test</h1>
+    <div id="results"></div>
+
+    <script src="mock-data/007-scaled-data.js?v=1.2"></script>
+    <script>
+        const results = [];
+
+        function test(name, condition, details) {
+            const pass = !!condition;
+            results.push({ name, pass, details });
+            return pass;
+        }
+
+        // Test 1: mockDatabase exists
+        test('mockDatabase exists', window.mockDatabase, typeof window.mockDatabase);
+
+        // Test 2: Store count
+        const storeCount = window.mockDatabase?.store_hierarchy?.all_stores?.total_count;
+        test('Store count = 50', storeCount === 50, `Actual: ${storeCount}`);
+
+        // Test 3: Promotions count
+        const promoCount = window.mockDatabase?.promotions?.length;
+        test('Promotions count = 8500', promoCount === 8500, `Actual: ${promoCount}`);
+
+        // Test 4: YTD metrics exists
+        test('YTD metrics exists', window.mockDatabase?.ytdMetrics, typeof window.mockDatabase?.ytdMetrics);
+
+        // Test 5: YTD traffic value
+        const ytdTraffic = window.mockDatabase?.ytdMetrics?.traffic?.formatted;
+        test('YTD traffic formatted', ytdTraffic, `Value: ${ytdTraffic}`);
+
+        // Test 6: Sample promotion has card_size
+        const samplePromo = window.mockDatabase?.promotions?.[0];
+        test('Promotion has card_size', samplePromo?.card_size, `Value: ${samplePromo?.card_size}`);
+
+        // Test 7: Sample promotion has deal_type
+        test('Promotion has deal_type', samplePromo?.deal_type, `Value: ${samplePromo?.deal_type}`);
+
+        // Display results
+        const resultsDiv = document.getElementById('results');
+        results.forEach(result => {
+            const className = result.pass ? 'test pass' : 'test fail';
+            const status = result.pass ? '✅ PASS' : '❌ FAIL';
+            resultsDiv.innerHTML += `
+                <div class="${className}">
+                    <strong>${status}</strong> ${result.name}
+                    <br><small>${result.details || ''}</small>
+                </div>
+            `;
+        });
+
+        // Show data sample
+        if (window.mockDatabase) {
+            resultsDiv.innerHTML += `
+                <h2>Sample Data</h2>
+                <pre>${JSON.stringify({
+                    storeCount: window.mockDatabase.store_hierarchy?.all_stores?.total_count,
+                    promoCount: window.mockDatabase.promotions?.length,
+                    ytdTraffic: window.mockDatabase.ytdMetrics?.traffic,
+                    samplePromo: window.mockDatabase.promotions?.[0]
+                }, null, 2)}</pre>
+            `;
+        }
+    </script>
+</body>
+</html>

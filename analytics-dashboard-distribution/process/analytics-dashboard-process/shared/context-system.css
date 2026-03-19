@@ -1,0 +1,395 @@
+/**
+ * Context System - Progressive Disclosure Components
+ *
+ * HIERARCHY: All Circulars → Category → Promotion
+ *
+ * This system provides:
+ * 1. Current Context Display - Where am I?
+ * 2. Filter Chips - What filters are applied?
+ * 3. Clear All - Reset to default view
+ * 4. Breadcrumb Navigation - How did I get here?
+ */
+
+/* ==========================================================================
+   CONTEXT INDICATOR - Shows current view level
+   ========================================================================== */
+
+.context-indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+}
+
+.context-indicator__level {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.context-indicator__icon {
+  width: 16px;
+  height: 16px;
+  color: var(--color-primary-500);
+}
+
+.context-indicator__label {
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-normal);
+}
+
+/* ==========================================================================
+   BREADCRUMB - Navigation path
+   ========================================================================== */
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+}
+
+.breadcrumb__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.breadcrumb__link {
+  color: var(--color-primary-600);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.breadcrumb__link:hover {
+  color: var(--color-primary-700);
+  text-decoration: underline;
+}
+
+.breadcrumb__current {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.breadcrumb__separator {
+  color: var(--color-gray-400);
+  font-size: var(--font-size-xs);
+}
+
+/* ==========================================================================
+   FILTER CHIPS - Applied filters with remove action
+   ========================================================================== */
+
+.filter-chips {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2) var(--space-1) var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  background-color: var(--color-primary-50);
+  color: var(--color-primary-700);
+  border: 1px solid var(--color-primary-200);
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+}
+
+.filter-chip:hover {
+  background-color: var(--color-primary-100);
+  border-color: var(--color-primary-300);
+}
+
+.filter-chip__label {
+  color: var(--color-primary-500);
+  font-weight: var(--font-weight-normal);
+}
+
+.filter-chip__value {
+  font-weight: var(--font-weight-semibold);
+}
+
+.filter-chip__remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background-color: transparent;
+  border: none;
+  border-radius: var(--radius-full);
+  color: var(--color-primary-400);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.filter-chip__remove:hover {
+  background-color: var(--color-primary-200);
+  color: var(--color-primary-700);
+}
+
+.filter-chip__remove-icon {
+  width: 12px;
+  height: 12px;
+}
+
+/* Chip Variants */
+.filter-chip--category {
+  background-color: var(--color-success-50);
+  color: var(--color-success-700);
+  border-color: var(--color-success-200);
+}
+
+.filter-chip--category:hover {
+  background-color: var(--color-success-100);
+  border-color: var(--color-success-300);
+}
+
+.filter-chip--category .filter-chip__label {
+  color: var(--color-success-500);
+}
+
+.filter-chip--category .filter-chip__remove {
+  color: var(--color-success-400);
+}
+
+.filter-chip--category .filter-chip__remove:hover {
+  background-color: var(--color-success-200);
+  color: var(--color-success-700);
+}
+
+.filter-chip--date {
+  background-color: var(--color-gray-100);
+  color: var(--color-gray-700);
+  border-color: var(--color-gray-200);
+}
+
+.filter-chip--entity {
+  background-color: #faf5ff;
+  color: #6b21a8;
+  border-color: #e9d5ff;
+}
+
+/* ==========================================================================
+   CLEAR ALL - Reset filters
+   ========================================================================== */
+
+.clear-filters {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-500);
+  background: none;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.clear-filters:hover {
+  color: var(--color-gray-700);
+  background-color: var(--color-gray-100);
+}
+
+.clear-filters__icon {
+  width: 14px;
+  height: 14px;
+}
+
+/* ==========================================================================
+   DRILL ACTIONS - Row actions for drilling down
+   ========================================================================== */
+
+.drill-action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-primary-600);
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  opacity: 0;
+}
+
+tr:hover .drill-action,
+.list-item:hover .drill-action {
+  opacity: 1;
+}
+
+.drill-action:hover {
+  background-color: var(--color-primary-50);
+  border-color: var(--color-primary-200);
+}
+
+.drill-action__icon {
+  width: 12px;
+  height: 12px;
+}
+
+/* ==========================================================================
+   CONTEXT BAR - Foundation context (always visible)
+   ========================================================================== */
+
+.context-bar-foundation {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-3) var(--space-6);
+  background-color: var(--color-white);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.context-bar-foundation__section {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.context-bar-foundation__divider {
+  width: 1px;
+  height: 24px;
+  background-color: var(--color-border);
+}
+
+/* ==========================================================================
+   FILTER ROW - Applied filters (collapsible when empty)
+   ========================================================================== */
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-6);
+  background-color: var(--color-gray-50);
+  border-bottom: 1px solid var(--color-border);
+  min-height: 44px;
+}
+
+.filter-row--empty {
+  display: none;
+}
+
+.filter-row__chips {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.filter-row__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ==========================================================================
+   VIEW CONTEXT - Current view level indicator
+   ========================================================================== */
+
+.view-context {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+  background-color: var(--color-white);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.view-context__icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-600);
+  border-radius: var(--radius-lg);
+}
+
+.view-context__info {
+  flex: 1;
+}
+
+.view-context__title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.view-context__description {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.view-context__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ==========================================================================
+   DARK THEME OVERRIDES (for Command Center)
+   ========================================================================== */
+
+.theme-dark .filter-chip {
+  background-color: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: var(--color-primary-300);
+}
+
+.theme-dark .filter-chip__label {
+  color: var(--color-primary-400);
+}
+
+.theme-dark .filter-chip__remove {
+  color: var(--color-primary-400);
+}
+
+.theme-dark .filter-chip__remove:hover {
+  background-color: rgba(59, 130, 246, 0.3);
+  color: var(--color-primary-200);
+}
+
+.theme-dark .filter-chip--category {
+  background-color: rgba(16, 185, 129, 0.2);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: var(--color-success-300);
+}
+
+.theme-dark .clear-filters {
+  color: var(--color-gray-400);
+}
+
+.theme-dark .clear-filters:hover {
+  color: var(--color-gray-200);
+  background-color: var(--color-gray-700);
+}
+
+.theme-dark .breadcrumb__link {
+  color: var(--color-primary-400);
+}
+
+.theme-dark .breadcrumb__current {
+  color: var(--color-white);
+}
+
+.theme-dark .breadcrumb__separator {
+  color: var(--color-gray-600);
+}

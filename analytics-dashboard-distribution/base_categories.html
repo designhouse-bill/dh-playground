@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics Dashboard - Categories</title>
+
+  <!-- Design Tokens & Base Styles -->
+  <link rel="stylesheet" href="./shared/design-tokens.css">
+  <link rel="stylesheet" href="./shared/base.css">
+
+  <!-- Google Material Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+
+  <!-- Production Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+
+    <!-- ========================================
+         HEADER: Navigation & Context
+         ======================================== -->
+    <header class="header">
+
+      <!-- Top Bar: Branding + Controls -->
+      <div class="topbar">
+        <div class="topbar__left">
+          <div class="brand">
+            <div class="logo">
+              <span class="material-symbols-outlined">analytics</span>
+            </div>
+            <h1 class="title">Analytics Dashboard</h1>
+          </div>
+          <span class="topbar__separator">|</span>
+          <button class="performance-dropdown" id="performance-type-dropdown">
+            <span class="performance-dropdown__text">Engagement</span>
+            <span class="material-symbols-outlined">expand_more</span>
+          </button>
+        </div>
+
+        <div class="view-modes">
+          <!-- BASE mode button -->
+          <a href="base_promotions.html" class="mode-btn mode-btn--primary active" data-mode="base" aria-label="Base view">
+            <span class="material-symbols-outlined">view_list</span>
+            BASE
+          </a>
+
+          <!-- GRID standalone -->
+          <a href="grid-inquiry.html" class="mode-btn mode-btn--outline" data-mode="grid" aria-label="Data grid view">
+            <span class="material-symbols-outlined">table_chart</span>
+            GRID
+          </a>
+
+          <!-- COMPARE standalone -->
+          <a href="compare.html" class="mode-btn mode-btn--outline" data-mode="compare" aria-label="Comparison view">
+            <span class="material-symbols-outlined">compare</span>
+            COMPARE
+          </a>
+        </div>
+      </div>
+
+      <!-- Context Row: Foundation Context + Filter Chips -->
+      <div class="context-row">
+
+        <!-- Date Range Context Card -->
+        <button class="context-card context-card--date" id="date-selector" aria-label="Select date range" onclick="openDatePicker()">
+          <div class="card-label">Date Range</div>
+          <div class="card-row">
+            <div class="card-icon">
+              <span class="material-symbols-outlined">calendar_month</span>
+            </div>
+            <div class="card-content">
+              <div class="card-value">Week 47</div>
+              <div class="card-sub">Nov 18-24, 2025</div>
+            </div>
+            <span class="card-arrow">
+              <span class="material-symbols-outlined">expand_more</span>
+            </span>
+          </div>
+        </button>
+
+        <!-- Entity Context Card -->
+        <button class="context-card" id="entity-selector" aria-label="Select entity" onclick="openEntitySelector()">
+          <div class="card-label">Entity</div>
+          <div class="card-row">
+            <div class="card-icon card-icon--entity">
+              <span class="material-symbols-outlined">corporate_fare</span>
+            </div>
+            <div class="card-content">
+              <div class="card-breadcrumb">BRAND</div>
+              <div class="card-value">Grocery Holdings Corp</div>
+              <div class="card-sub">27 locations</div>
+            </div>
+            <span class="card-arrow">
+              <span class="material-symbols-outlined">expand_more</span>
+            </span>
+          </div>
+        </button>
+
+        <!-- Filter Group: Inline Filter Chips -->
+        <div class="filter-group">
+          <div class="filter-label">Filters</div>
+          <div class="filter-chips" id="filter-chips">
+            <button class="add-filter" id="add-filter-btn" aria-label="Add filter">
+              <span class="material-symbols-outlined">add</span>
+              Add Filter
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </header>
+
+    <!-- ========================================
+         VIEW BY: CATEGORIES - Two-Column Layout
+         Left: Category Data Grid | Right: Category Details
+         ======================================== -->
+    <main class="layout layout--categories" id="categories-layout">
+
+      <!-- Category Data Grid Panel -->
+      <section class="panel panel--category-grid" role="main" aria-label="Categories">
+        <div class="panel-header panel-header--categories">
+          <div class="panel-header__left">
+            <div class="base-dropdown" id="base-layer-dropdown-wrapper">
+              <button class="base-dropdown__trigger" id="base-layer-dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="base-dropdown__label">BASE</span>
+                <span class="base-dropdown__value">Categories</span>
+                <span class="material-symbols-outlined">expand_more</span>
+              </button>
+              <div class="base-dropdown__menu" id="base-layer-menu" role="menu">
+                <a href="base_promotions.html" class="base-dropdown__item" role="menuitem">Promotions</a>
+                <a href="base_categories.html" class="base-dropdown__item active" role="menuitem">Categories</a>
+                <a href="base_circulars.html" class="base-dropdown__item" role="menuitem">Circulars</a>
+              </div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="more-data-toggle">
+              <span class="toggle-slider"></span>
+            </label>
+            <span class="toggle-label">More Data</span>
+          </div>
+          <div class="panel-header__center">
+            <span class="showing-count">Total Categories: <span id="category-showing-count">0</span></span>
+            <div class="topn-selector">
+              <select id="topn-select" class="topn-select" onchange="changeTopN(this.value)">
+                <option value="25" selected>Show 25</option>
+                <option value="50">Show 50</option>
+                <option value="100">Show 100</option>
+                <option value="250">Show 250</option>
+                <option value="all">Show All</option>
+              </select>
+            </div>
+          </div>
+          <div class="panel-header__right">
+            <button class="panel-action-btn" id="panel-export-btn">
+              <span class="material-symbols-outlined">download</span>
+              Export
+            </button>
+            <button class="panel-action-btn" id="panel-print-btn">
+              <span class="material-symbols-outlined">print</span>
+              Print
+            </button>
+            <button class="panel-action-btn" id="panel-share-btn">
+              <span class="material-symbols-outlined">share</span>
+              Share
+            </button>
+          </div>
+        </div>
+        <div class="category-data-grid" id="category-data-grid">
+          <!-- Table with sortable headers populated by JavaScript -->
+        </div>
+        <!-- Pagination -->
+        <div class="grid-footer">
+          <div class="grid-footer__left">
+            <!-- Rows per page now controlled by TopN selector above -->
+          </div>
+          <div class="grid-footer__center">
+            <div class="grid-pagination" id="grid-pagination">
+              <button class="grid-pagination__btn" id="grid-prev-btn" onclick="prevPage()" disabled>
+                <span class="material-symbols-outlined">chevron_left</span>
+              </button>
+              <span class="grid-pagination__info" id="grid-page-info">Page 1 of 1</span>
+              <button class="grid-pagination__btn" id="grid-next-btn" onclick="nextPage()" disabled>
+                <span class="material-symbols-outlined">chevron_right</span>
+              </button>
+            </div>
+          </div>
+          <div class="grid-footer__right">
+            <span class="grid-range-info" id="grid-range-info">0 of 0</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Category Detail Panel -->
+      <aside class="panel panel--right panel--collapsed" id="category-detail-panel" role="complementary" aria-label="Category details">
+        <div class="panel-header">
+          <h2 class="panel-title">Category Details</h2>
+          <button class="panel-close" onclick="closeCategoryDetail()" aria-label="Close details">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <div class="category-detail-content" id="category-detail-content">
+          <!-- Populated by JavaScript -->
+        </div>
+        <div class="detail-footer" id="category-detail-footer">
+          <button class="detail-action-btn" onclick="viewCirculars()">
+            <span class="material-symbols-outlined">store</span>
+            View Circulars
+          </button>
+          <button class="detail-action-btn" onclick="viewCategoryPromotions()">
+            <span class="material-symbols-outlined">local_offer</span>
+            View Promotions
+          </button>
+          <button class="detail-action-btn" onclick="openCategoryInquiry()">
+            <span class="material-symbols-outlined">table_chart</span>
+            Grid Inquiry
+          </button>
+          <button class="detail-action-btn" onclick="compareCategoryAction()">
+            <span class="material-symbols-outlined">compare</span>
+            Compare
+          </button>
+        </div>
+      </aside>
+
+    </main>
+
+  </div>
+
+  <!-- ========================================
+       MODALS
+       ======================================== -->
+
+  <!-- Date Range Picker Modal -->
+  <div class="modal-overlay" id="date-picker-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-header-title">
+          <span class="material-symbols-outlined">calendar_month</span>
+          <h3 class="modal-title">Select Date Range</h3>
+        </div>
+        <button class="modal-close" onclick="closeDatePicker()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="date-picker-tabs">
+          <button class="date-picker-tab active" data-tab="week" onclick="switchDateTab('week')">By Week</button>
+          <button class="date-picker-tab" data-tab="custom" onclick="switchDateTab('custom')">Custom Range</button>
+        </div>
+
+        <div class="date-tab-content active" id="week-tab-content">
+          <div class="week-search-row">
+            <div class="week-search">
+              <span class="material-symbols-outlined">search</span>
+              <input type="text" id="week-search-input" placeholder="Search weeks..." oninput="filterWeeks(this.value)">
+            </div>
+            <div id="week-year-selector"></div>
+          </div>
+          <div class="week-list" id="week-list">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+
+        <div class="date-tab-content" id="custom-tab-content">
+          <div class="custom-date-inputs">
+            <div class="date-input-group">
+              <label>Start Date</label>
+              <input type="date" id="custom-start-date" value="2025-11-18">
+            </div>
+            <div class="date-input-group">
+              <label>End Date</label>
+              <input type="date" id="custom-end-date" value="2025-11-24">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer modal-footer--right">
+        <button class="modal-btn modal-btn--secondary" onclick="closeDatePicker()">Cancel</button>
+        <button class="modal-btn modal-btn--primary" onclick="applyDateSelection()">Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Entity Selector Modal -->
+  <div class="modal-overlay" id="entity-selector-modal">
+    <div class="modal modal--extra-wide">
+      <div class="modal-header">
+        <div class="modal-header-title">
+          <span class="material-symbols-outlined">store</span>
+          <h3 class="modal-title">Select Entity</h3>
+        </div>
+        <button class="modal-close" onclick="closeEntitySelector()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="modal-body modal-body--no-padding">
+        <div class="entity-tabs" style="padding: 0 var(--space-6);">
+          <button class="entity-tab active" data-tab="nodes" onclick="switchEntityTab('nodes')">
+            <span class="material-symbols-outlined">account_tree</span>
+            Nodes
+          </button>
+          <button class="entity-tab" data-tab="groups" onclick="switchEntityTab('groups')">
+            <span class="material-symbols-outlined">workspaces</span>
+            Groups
+          </button>
+        </div>
+
+        <div class="entity-tab-content active" id="nodes-tab-content">
+          <div class="entity-search" style="margin: var(--space-4) var(--space-6);">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" id="entity-search-input" placeholder="Search entities..." oninput="filterEntities(this.value)">
+          </div>
+
+          <div class="tree-table-container">
+            <table class="tree-table">
+              <thead>
+                <tr>
+                  <th class="tree-col-name">Name</th>
+                  <th class="tree-col-type">Type</th>
+                  <th class="tree-col-address">Address</th>
+                  <th class="tree-col-subdomain">Subdomain</th>
+                  <th class="tree-col-path">Path</th>
+                </tr>
+              </thead>
+              <tbody id="entity-tree-body">
+                <!-- Populated by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="entity-tab-content" id="groups-tab-content">
+          <div class="entity-search" style="margin: var(--space-4) var(--space-6);">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" id="group-search-input" placeholder="Search groups..." oninput="filterGroups(this.value)">
+          </div>
+
+          <div class="group-list" id="group-list" style="padding: 0 var(--space-6);">
+            <!-- Populated by JavaScript -->
+          </div>
+
+          <div class="group-actions" style="padding: var(--space-4) var(--space-6);">
+            <button class="create-group-btn" onclick="openCreateGroupModal()">
+              <span class="material-symbols-outlined">add</span>
+              Create New Group
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer modal-footer--right">
+        <button class="modal-btn modal-btn--secondary" onclick="closeEntitySelector()">Cancel</button>
+        <button class="modal-btn modal-btn--primary" onclick="applyEntitySelection()">Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Filter Modal -->
+  <div class="modal-overlay" id="add-filter-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Add Filter</h3>
+        <button class="modal-close" onclick="closeFilterModal()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="filter-type-select">
+          <label>Filter Type</label>
+          <div class="filter-type-buttons">
+            <button class="filter-type-btn active" data-type="category" onclick="selectFilterType(this)">
+              <span class="material-symbols-outlined">category</span>
+              Category
+            </button>
+            <button class="filter-type-btn" data-type="deal" onclick="selectFilterType(this)">
+              <span class="material-symbols-outlined">local_offer</span>
+              Deal Type
+            </button>
+            <button class="filter-type-btn" data-type="size" onclick="selectFilterType(this)">
+              <span class="material-symbols-outlined">aspect_ratio</span>
+              Card Size
+            </button>
+          </div>
+        </div>
+
+        <div class="filter-value-select active" id="category-options">
+          <label>Select Category</label>
+          <div class="filter-options" id="category-filter-options">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+
+        <div class="filter-value-select" id="deal-options">
+          <label>Select Deal Type</label>
+          <div class="filter-options" id="deal-filter-options">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+
+        <div class="filter-value-select" id="size-options">
+          <label>Select Card Size</label>
+          <div class="filter-options" id="size-filter-options">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn modal-btn--secondary" onclick="closeFilterModal()">Cancel</button>
+        <button class="modal-btn modal-btn--primary" onclick="applyFilter()">Add Filter</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="./process/vendor/echarts.min.js"></script>
+  <script src="./shared/promotion-records-data.js"></script>
+  <script src="./shared/mock-data.js"></script>
+  <script src="cache-manager.js"></script>
+  <script src="data-service.js"></script>
+
+  <!-- Shared Modules -->
+  <script src="js/state-manager.js"></script>
+  <script src="js/shared-core.js"></script>
+  <script src="js/shared-modals.js"></script>
+  <script src="js/shared-filters.js"></script>
+  <script src="js/shared-perf-charts.js"></script>
+
+  <!-- Page-Specific -->
+  <script src="js/base-categories.js"></script>
+</body>
+</html>

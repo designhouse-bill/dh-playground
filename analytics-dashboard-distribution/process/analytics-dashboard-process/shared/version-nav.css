@@ -1,0 +1,72 @@
+/**
+ * Version Navigation - Removable Component
+ * This navigation bar can be removed without breaking any version's functionality.
+ * Simply remove the #version-nav element and this CSS file reference.
+ */
+
+.version-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-fixed);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+  padding: 0 var(--space-4);
+  background-color: var(--color-gray-900);
+  color: var(--color-gray-100);
+  font-size: var(--font-size-xs);
+}
+
+.version-nav__title {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-400);
+}
+
+.version-nav__list {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.version-nav__link {
+  display: flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  color: var(--color-gray-400);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  text-decoration: none;
+}
+
+.version-nav__link:hover {
+  color: var(--color-white);
+  background-color: var(--color-gray-800);
+}
+
+.version-nav__link--active {
+  color: var(--color-white);
+  background-color: var(--color-primary-600);
+}
+
+.version-nav__link--active:hover {
+  background-color: var(--color-primary-700);
+}
+
+/* Offset body content when version nav is present */
+body.has-version-nav {
+  padding-top: 40px;
+}
+
+/* Hide version nav in print */
+@media print {
+  .version-nav {
+    display: none;
+  }
+
+  body.has-version-nav {
+    padding-top: 0;
+  }
+}

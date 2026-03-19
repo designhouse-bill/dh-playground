@@ -1,0 +1,21 @@
+/**
+ * Grid Feature Styles
+ * Imports shared layout styles and adds grid-specific styling
+ */
+
+/* Import shared layout styles from main styles.css */
+@import url('../../styles.css');
+
+/* Grid-specific overrides */
+.layout--grid {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 140px); /* Account for header height */
+}
+
+.panel--grid-full {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}

@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>007 Scaled Data Validation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f7fa;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #3498db;
+        }
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .metric:last-child { border-bottom: none; }
+        .metric-label {
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+        .metric-value {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .pass { color: #27ae60; }
+        .fail { color: #e74c3c; }
+        .warn { color: #f39c12; }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .badge.success { background: #d4edda; color: #155724; }
+        .badge.danger { background: #f8d7da; color: #721c24; }
+        .badge.warning { background: #fff3cd; color: #856404; }
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 6px;
+            border: 1px solid #e1e8ed;
+            text-align: center;
+        }
+        .summary-card h3 {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .summary-card .big-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        .summary-card .sub-text {
+            font-size: 12px;
+            color: #95a5a6;
+            margin-top: 5px;
+        }
+        pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 13px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        #run-validation {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        #run-validation:hover { background: #2980b9; }
+        #results { display: none; }
+        #loading {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Scaled Data Validation Suite</h1>
+        <p class="subtitle">Comprehensive validation for 007-scaled-data.js</p>
+
+        <button id="run-validation">▶️ Run Validation Tests</button>
+
+        <div id="loading" style="display:none;">
+            <h2>⏳ Running validation tests...</h2>
+        </div>
+
+        <div id="results"></div>
+    </div>
+
+    <script src="mock-data/007-scaled-data.js"></script>
+    <script>
+        document.getElementById('run-validation').addEventListener('click', runValidation);
+
+        function runValidation() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('run-validation').disabled = true;
+
+            setTimeout(() => {
+                const results = performValidation();
+                displayResults(results);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('results').style.display = 'block';
+            }, 100);
+        }
+
+        function performValidation() {
+            const db = window.mockDatabase;
+            const allPromos = db.promotions;
+            const hierarchy = window.storeHierarchyScaled;
+            const metrics = window.weeklyMetricsScaled;
+
+            const results = {
+                summary: {},
+                dataIntegrity: {},
+                structure: {},
+                performance: {},
+                ui: {},
+                errors: [],
+                warnings: []
+            };
+
+            // TEST 1: Data Integrity
+            const expectedTotal = 8500;
+            results.dataIntegrity.totalPromotions = {
+                expected: expectedTotal,
+                actual: allPromos.length,
+                pass: allPromos.length === expectedTotal
+            };
+
+            const uniqueStores = new Set();
+            allPromos.forEach(p => {
+                if (p.store_codes && p.store_codes[0]) {
+                    uniqueStores.add(p.store_codes[0]);
+                }
+            });
+            results.dataIntegrity.uniqueStores = {
+                expected: 50,
+                actual: uniqueStores.size,
+                pass: uniqueStores.size === 50
+            };
+
+            const uniqueWeeks = new Set(allPromos.map(p => p.week));
+            results.dataIntegrity.weeks = {
+                expected: [36, 37, 38, 39, 40],
+                actual: Array.from(uniqueWeeks).sort((a,b) => a-b),
+                pass: uniqueWeeks.size === 5
+            };
+
+            // Products per store per week
+            const promosPerWeek = {};
+            [36, 37, 38, 39, 40].forEach(week => {
+                promosPerWeek[week] = allPromos.filter(p => p.week === week).length;
+            });
+            results.dataIntegrity.promosPerWeek = promosPerWeek;
+
+            // TEST 2: Structure
+            results.structure.hierarchyStores = {
+                expected: 50,
+                actual: hierarchy.stores.length,
+                pass: hierarchy.stores.length === 50
+            };
+
+            results.structure.hierarchyGroups = {
+                expected: 5,
+                actual: hierarchy.groups.length,
+                pass: hierarchy.groups.length === 5
+            };
+
+            results.structure.metricsWeeks = {
+                expected: 5,
+                actual: Object.keys(metrics.by_week).length,
+                pass: Object.keys(metrics.by_week).length === 5
+            };
+
+            results.structure.metricsStores = {
+                expected: 50,
+                actual: Object.keys(metrics.by_store).length,
+                pass: Object.keys(metrics.by_store).length === 50
+            };
+
+            // TEST 3: UI Compatibility
+            results.ui.contextBarStores = {
+                expected: 50,
+                actual: db.store_hierarchy?.all_stores?.total_count || 0,
+                pass: db.store_hierarchy?.all_stores?.total_count === 50
+            };
+
+            results.ui.contextBarGroups = {
+                expected: 5,
+                actual: db.store_hierarchy?.version_groups?.length || 0,
+                pass: db.store_hierarchy?.version_groups?.length === 5
+            };
+
+            results.ui.currentWeek = {
+                expected: 40,
+                actual: metrics.current_week,
+                pass: metrics.current_week === 40
+            };
+
+            results.ui.availableWeeks = {
+                expected: 5,
+                actual: metrics.available_weeks.length,
+                pass: metrics.available_weeks.length === 5
+            };
+
+            // TEST 4: Performance
+            const jsonSize = JSON.stringify(allPromos).length;
+            const estimatedMB = jsonSize / 1024 / 1024;
+            results.performance.memoryEstimate = {
+                mb: estimatedMB.toFixed(2),
+                pass: estimatedMB < 10
+            };
+
+            // TEST 5: Data Quality
+            const cardIds = new Set(allPromos.map(p => p.card_id));
+            results.dataIntegrity.uniqueCardIds = {
+                total: allPromos.length,
+                unique: cardIds.size,
+                pass: cardIds.size === allPromos.length
+            };
+
+            // Calculate summary
+            const allTests = [
+                ...Object.values(results.dataIntegrity).filter(v => typeof v.pass === 'boolean'),
+                ...Object.values(results.structure).filter(v => typeof v.pass === 'boolean'),
+                ...Object.values(results.ui).filter(v => typeof v.pass === 'boolean'),
+                ...Object.values(results.performance).filter(v => typeof v.pass === 'boolean')
+            ];
+
+            const passCount = allTests.filter(t => t.pass).length;
+            const failCount = allTests.filter(t => !t.pass).length;
+
+            results.summary = {
+                total: allTests.length,
+                passed: passCount,
+                failed: failCount,
+                passRate: Math.round((passCount / allTests.length) * 100)
+            };
+
+            return results;
+        }
+
+        function displayResults(results) {
+            const container = document.getElementById('results');
+            const { summary, dataIntegrity, structure, ui, performance } = results;
+
+            let html = `
+                <div class="summary">
+                    <div class="summary-card">
+                        <h3>Total Tests</h3>
+                        <div class="big-number">${summary.total}</div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Passed</h3>
+                        <div class="big-number pass">✅ ${summary.passed}</div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Failed</h3>
+                        <div class="big-number ${summary.failed > 0 ? 'fail' : 'pass'}">${summary.failed > 0 ? '❌' : '✅'} ${summary.failed}</div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Pass Rate</h3>
+                        <div class="big-number ${summary.passRate === 100 ? 'pass' : summary.passRate >= 80 ? 'warn' : 'fail'}">${summary.passRate}%</div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>📊 Data Integrity</h2>
+                    <div class="metric">
+                        <span class="metric-label">Total Promotions</span>
+                        <span class="metric-value ${dataIntegrity.totalPromotions.pass ? 'pass' : 'fail'}">
+                            ${dataIntegrity.totalPromotions.actual} / ${dataIntegrity.totalPromotions.expected}
+                            ${dataIntegrity.totalPromotions.pass ? '✅' : '❌'}
+                        </span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Unique Stores</span>
+                        <span class="metric-value ${dataIntegrity.uniqueStores.pass ? 'pass' : 'fail'}">
+                            ${dataIntegrity.uniqueStores.actual} / ${dataIntegrity.uniqueStores.expected}
+                            ${dataIntegrity.uniqueStores.pass ? '✅' : '❌'}
+                        </span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Week Range</span>
+                        <span class="metric-value ${dataIntegrity.weeks.pass ? 'pass' : 'fail'}">
+                            [${dataIntegrity.weeks.actual.join(', ')}]
+                            ${dataIntegrity.weeks.pass ? '✅' : '❌'}
+                        </span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Unique Card IDs</span>
+                        <span class="metric-value ${dataIntegrity.uniqueCardIds.pass ? 'pass' : 'fail'}">
+                            ${dataIntegrity.uniqueCardIds.unique} / ${dataIntegrity.uniqueCardIds.total}
+                            ${dataIntegrity.uniqueCardIds.pass ? '✅' : '❌'}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>📋 Promotions Per Week</h2>
+                    <div class="grid">
+                        ${Object.entries(dataIntegrity.promosPerWeek).map(([week, count]) => {
+                            const expected = 1700;
+                            const pass = count === expected;
+                            return `
+                                <div class="metric">
+                                    <span class="metric-label">Week ${week}</span>
+                                    <span class="metric-value ${pass ? 'pass' : 'fail'}">
+                                        ${count} / ${expected} ${pass ? '✅' : '❌'}
+                                    </span>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>🏗️ Structure</h2>
+                    <div class="metric">
+                        <span class="metric-label">Store Hierarchy - Stores</span>
+                        <span class="metric-value ${structure.hierarchyStores.pass ? 'pass' : 'fail'}">
+                            ${structure.hierarchyStores.actual} / ${structure.hierarchyStores.expected}
+                            ${structure.hierarchyStores.pass ? '✅' : '❌'}
+                        </span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Store Hierarchy - Groups</span>
+                        <span class="metric-value ${structure.hierarchyGroups.pass ? 'pass' : 'fail'}">
+                            ${structure.hierarchyGroups.actual} / ${structure.hierarchyGroups.expected}
+                            ${structure.hierarchyGroups.pass ? '✅' : '❌'}
+                        </span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Weekly Metrics - Weeks</span>
+                        <span class="metric-value ${structure.metricsWeeks.pass ? 'pass' : 'fail'}">
+                            ${structure.metricsWeeks.actual} / ${structure.metricsWeeks.expected}
+                            ${structure.metricsWeeks.pass ? '✅' : '❌'}
+                        </span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Weekly Metrics - Stores</span>
+                        <span class="metric-value ${structure.metricsStores.pass ? 'pass' : 'fail'}">
+                            ${structure.metricsStores.actual} / ${structure.metricsStores.expected}
+                            ${structure.metricsStores.pass ? '✅' : '❌'}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>🎨 UI Compatibility</h2>
+                    <div class="metric">
+                        <span class="metric-label">Context Bar - Total Stores</span>
+                        <span class="metric-value ${ui.contextBarStores.pass ? 'pass' : 'fail'}">
+                            ${ui.contextBarStores.actual} / ${ui.contextBarStores.expected}
+                            ${ui.contextBarStores.pass ? '✅' : '❌'}
+                        </span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Context Bar - Groups</span>
+                        <span class="metric-value ${ui.contextBarGroups.pass ? 'pass' : 'fail'}">
+                            ${ui.contextBarGroups.actual} / ${ui.contextBarGroups.expected}
+                            ${ui.contextBarGroups.pass ? '✅' : '❌'}
+                        </span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Current Week</span>
+                        <span class="metric-value ${ui.currentWeek.pass ? 'pass' : 'fail'}">
+                            Week ${ui.currentWeek.actual} / ${ui.currentWeek.expected}
+                            ${ui.currentWeek.pass ? '✅' : '❌'}
+                        </span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Available Weeks</span>
+                        <span class="metric-value ${ui.availableWeeks.pass ? 'pass' : 'fail'}">
+                            ${ui.availableWeeks.actual} / ${ui.availableWeeks.expected}
+                            ${ui.availableWeeks.pass ? '✅' : '❌'}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>⚡ Performance</h2>
+                    <div class="metric">
+                        <span class="metric-label">Estimated Memory Usage</span>
+                        <span class="metric-value ${performance.memoryEstimate.pass ? 'pass' : 'fail'}">
+                            ${performance.memoryEstimate.mb} MB ${performance.memoryEstimate.pass ? '✅' : '❌'}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>🎉 Final Verdict</h2>
+                    <div style="text-align: center; padding: 20px;">
+                        ${summary.passRate === 100
+                            ? '<h2 class="pass">✅ ALL TESTS PASSED - Production Ready!</h2>'
+                            : summary.passRate >= 80
+                            ? '<h2 class="warn">⚠️ Most Tests Passed - Review Warnings</h2>'
+                            : '<h2 class="fail">❌ Validation Failed - Review Errors</h2>'
+                        }
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

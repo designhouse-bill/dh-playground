@@ -1,0 +1,1644 @@
+class DataGridComponent {
+  constructor(container) {
+    this.container = document.getElementById(container);
+    this.data = [];
+    this.filteredData = [];
+    this.currentPage = 1;
+    this.pageSize = 50;
+    this.sortConfig = { field: null, direction: 'asc' };
+    this.filters = { search: '', department: '' };
+    this.selectedItems = new Set();
+    this.isLoading = false;
+    this.error = null;
+
+    // Virtual scrolling properties
+    this.rowHeight = 40; // pixels per row
+    this.viewportHeight = 500; // fixed viewport height
+    this.scrollTop = 0;
+    this.visibleRows = Math.ceil(this.viewportHeight / this.rowHeight);
+    this.bufferRows = 5; // extra rows for smooth scrolling
+    this.totalHeight = 0;
+
+    // Performance optimization properties
+    this.calculatedValues = new Map();
+    this.lastRenderTime = 0;
+    this.scrollRAF = null;
+    this.columns = [
+      { field: 'checkbox', label: '', width: 40, type: 'checkbox', visible: true, required: true },
+      { field: 'card_name', label: 'Name', width: 200, visible: true, required: true },
+      { field: 'department', label: 'Department', width: 100, visible: true },
+      { field: 'card_price', label: 'Price', width: 80, visible: true },
+      { field: 'card_in_view', label: 'Views', width: 80, visible: true },
+      { field: 'card_clicked', label: 'Clicks', width: 80, visible: true },
+      { field: 'ctr', label: 'CTR%', width: 60, calculated: true, visible: true },
+      { field: 'composite_score', label: 'Score', width: 80, visible: true, required: true }
+    ];
+
+    // State persistence
+    this.stateKey = 'datagrid-state';
+    this.defaultState = {
+      columns: this.columns.map(col => ({ field: col.field, visible: col.visible })),
+      sortConfig: { field: null, direction: 'asc' },
+      pageSize: 50,
+      filters: { search: '', department: '' }
+    };
+
+    // Load saved state from localStorage
+    this.loadState();
+  }
+
+  async loadData(data) {
+    try {
+      this._setLoading(true);
+
+      // Validate input data
+      if (!data) {
+        throw new Error('No data provided');
+      }
+
+      if (!Array.isArray(data)) {
+        throw new Error('Data must be an array');
+      }
+
+
+      // Simulate async loading for demonstration
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Validate data structure
+      this._validateDataStructure(data);
+
+      this.data = data;
+      this.filteredData = [...data];
+      this.error = null;
+
+      // Handle empty data gracefully
+      if (data.length === 0) {
+        console.warn('⚠️ No data items found');
+        this._showEmptyState();
+        return;
+      }
+
+      // Pre-calculate values for performance
+      this._precalculateValues();
+
+      this._populateDepartmentFilter();
+      this._populateColumnSettings();
+
+      console.log('✅ Data loaded successfully:', data.length, 'items');
+
+      // Clear any previous errors
+      if (window.ErrorHandler) {
+        window.ErrorHandler.clearErrors();
+      }
+
+    } catch (error) {
+      this.error = 'Failed to load data';
+      console.error('❌ Data loading error:', error);
+
+      // Show user-friendly error with retry option
+      if (window.ErrorHandler) {
+        window.ErrorHandler.handleDataError(error, 'promotion data', () => {
+          this.loadData(data);
+        });
+      } else {
+        // Fallback if error handler not available
+        alert(`Error loading data: ${error.message}`);
+      }
+    } finally {
+      this._setLoading(false);
+    }
+  }
+
+  render() {
+    // Show loading state
+    if (this.isLoading) {
+      this.container.innerHTML = this._renderLoadingState();
+      return;
+    }
+
+    // Show error state
+    if (this.error) {
+      this.container.innerHTML = this._renderErrorState();
+      return;
+    }
+
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    const currentPageData = this.filteredData.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(this.filteredData.length / this.pageSize);
+    const resultCount = `Showing ${this.filteredData.length} of ${this.data.length} items`;
+    const selectionCount = this.selectedItems.size > 0 ? ` | ${this.selectedItems.size} items selected` : '';
+
+    // Update export button state
+    this._updateExportButton();
+    this._updateGenerateReportButton();
+
+    const visibleColumns = this.columns.filter(col => col.visible);
+
+    // Calculate virtual scrolling dimensions
+    this.totalHeight = this.filteredData.length * this.rowHeight;
+    const virtualRange = this._getVisibleRange();
+    const virtualData = this.filteredData.slice(virtualRange.startIndex, virtualRange.endIndex);
+
+    const tableHTML = `
+      <div class="virtual-scroll-viewport" style="height: ${this.viewportHeight}px; overflow-y: auto; will-change: transform;">
+        <div class="virtual-scroll-container" style="height: ${this.totalHeight}px; position: relative;">
+          <!-- Top spacer -->
+          <div class="virtual-spacer-top" style="height: ${virtualRange.topSpacerHeight}px;"></div>
+
+          <!-- Visible rows -->
+          <table class="dashboard-table virtual-table">
+            <thead>
+              <tr>
+                ${visibleColumns.map(column => {
+                  if (column.type === 'checkbox') {
+                    return `
+                      <th style="width: ${column.width}px">
+                        <input type="checkbox" id="select-all-checkbox" ${this._isAllSelected() ? 'checked' : ''}>
+                      </th>
+                    `;
+                  } else {
+                    const sortIndicator = this._getSortIndicator(column.field);
+                    return `
+                      <th style="width: ${column.width}px; cursor: pointer" data-field="${column.field}">
+                        ${column.label} ${sortIndicator}
+                      </th>
+                    `;
+                  }
+                }).join('')}
+              </tr>
+            </thead>
+            <tbody id="virtual-tbody">
+              ${this._renderRowsHTML(virtualData, visibleColumns)}
+            </tbody>
+          </table>
+
+          <!-- Bottom spacer -->
+          <div class="virtual-spacer-bottom" style="height: ${virtualRange.bottomSpacerHeight}px;"></div>
+        </div>
+      </div>
+
+      <div class="pagination-controls">
+        <div class="pagination-left">
+          <button id="prev-btn" ${this.currentPage === 1 ? 'disabled' : ''}>Previous</button>
+          <button id="next-btn" ${this.currentPage === totalPages ? 'disabled' : ''}>Next</button>
+        </div>
+        <div class="pagination-center">
+          <span>Page ${this.currentPage} of ${totalPages} | ${resultCount}${selectionCount}</span>
+        </div>
+        <div class="pagination-right">
+          <label for="page-size-select">Items per page:</label>
+          <select id="page-size-select">
+            <option value="25" ${this.pageSize === 25 ? 'selected' : ''}>25</option>
+            <option value="50" ${this.pageSize === 50 ? 'selected' : ''}>50</option>
+            <option value="100" ${this.pageSize === 100 ? 'selected' : ''}>100</option>
+          </select>
+        </div>
+      </div>
+    `;
+
+    this.container.innerHTML = tableHTML;
+    this._attachEventListeners();
+    this._updateInteractionState();
+    this._setupVirtualScrolling();
+  }
+
+  _calculateCTR(item) {
+    return ((item.card_clicked / item.card_in_view) * 100).toFixed(1);
+  }
+
+  _getColumnValue(item, column) {
+    if (column.calculated && column.field === 'ctr') {
+      return this._calculateCTR(item) + '%';
+    }
+    return item[column.field];
+  }
+
+  nextPage() {
+    const totalPages = Math.ceil(this.filteredData.length / this.pageSize);
+    if (this.currentPage < totalPages) {
+      this.currentPage++;
+      this.render();
+    }
+  }
+
+  previousPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.render();
+    }
+  }
+
+  changePageSize(size) {
+    this.pageSize = parseInt(size);
+    this.currentPage = 1; // Reset to first page
+    this.saveState(); // Auto-save state
+    this.render();
+  }
+
+  async sortData(field) {
+    try {
+      this._setLoading(true);
+
+      // Simulate async sorting for large datasets
+      if (this.filteredData.length > 100) {
+        await new Promise(resolve => setTimeout(resolve, 300));
+      }
+
+      // If same field, toggle direction, otherwise set to ascending
+      if (this.sortConfig.field === field) {
+        this.sortConfig.direction = this.sortConfig.direction === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.sortConfig.field = field;
+        this.sortConfig.direction = 'asc';
+      }
+
+      // Sort the filtered data array
+      this.filteredData.sort((a, b) => {
+        let aValue, bValue;
+
+        // Get values based on field type
+        if (field === 'ctr') {
+          aValue = parseFloat(this._calculateCTR(a));
+          bValue = parseFloat(this._calculateCTR(b));
+        } else if (['card_in_view', 'card_clicked', 'composite_score'].includes(field)) {
+          aValue = parseFloat(a[field]) || 0;
+          bValue = parseFloat(b[field]) || 0;
+        } else {
+          aValue = (a[field] || '').toString().toLowerCase();
+          bValue = (b[field] || '').toString().toLowerCase();
+        }
+
+        // Compare values
+        let comparison = 0;
+        if (aValue > bValue) {
+          comparison = 1;
+        } else if (aValue < bValue) {
+          comparison = -1;
+        }
+
+        // Apply direction
+        return this.sortConfig.direction === 'desc' ? comparison * -1 : comparison;
+      });
+
+      // Reset to first page and re-render
+      this.currentPage = 1;
+      this.saveState(); // Auto-save state
+    } finally {
+      this._setLoading(false);
+    }
+  }
+
+  async filterData() {
+    try {
+      // Validate filters before processing
+      this._validateFilterInput(this.filters.search);
+      this._validateFilterInput(this.filters.department);
+
+      // Validate data exists
+      if (!this.data || !Array.isArray(this.data)) {
+        throw new Error('Invalid data structure for filtering');
+      }
+
+      // Show loading for large datasets
+      if (this.data.length > 500) {
+        this._setLoading(true);
+        await new Promise(resolve => setTimeout(resolve, 200));
+      }
+
+      // Start with all data
+      this.filteredData = this.data.filter(item => {
+        try {
+          // Validate item structure
+          if (!item || typeof item !== 'object') {
+            console.warn('⚠️ Invalid item found during filtering:', item);
+            return false;
+          }
+
+          // Ensure required fields exist
+          if (!item.card_name || !item.department) {
+            console.warn('⚠️ Item missing required fields:', item);
+            return false;
+          }
+
+          // Search filter - check card_name and department
+          const searchTerm = this.filters.search.toLowerCase();
+          const matchesSearch = !searchTerm ||
+            item.card_name.toLowerCase().includes(searchTerm) ||
+            item.department.toLowerCase().includes(searchTerm);
+
+          // Department filter
+          const matchesDepartment = !this.filters.department ||
+            item.department === this.filters.department;
+
+          return matchesSearch && matchesDepartment;
+        } catch (itemError) {
+          console.warn('⚠️ Error filtering item:', itemError, item);
+          return false;
+        }
+      });
+
+      // Reset to first page
+      this.currentPage = 1;
+      this.saveState(); // Auto-save state
+
+      console.log('✅ Filter operation completed:', {
+        totalItems: this.data.length,
+        filteredItems: this.filteredData.length,
+        filters: this.filters
+      });
+
+    } catch (error) {
+      console.error('🚨 Error during filter operation:', error);
+
+      if (window.ErrorHandler) {
+        window.ErrorHandler.handleDataError(error, 'filter operation', () => {
+          // Reset filters and retry
+          this.filters = { search: '', department: '' };
+          this.filterData();
+        });
+      } else {
+        console.error('ErrorHandler not available, showing fallback error');
+        alert('Error filtering data. Please try refreshing the page.');
+      }
+    } finally {
+      if (this.data.length > 500) {
+        this._setLoading(false);
+      } else {
+        this.render();
+      }
+    }
+  }
+
+  _populateDepartmentFilter() {
+    const deptFilter = document.getElementById('dept-filter');
+    if (!deptFilter) return;
+
+    // Extract unique departments from data
+    const departments = [...new Set(this.data.map(item => item.department))]
+      .filter(dept => dept) // Remove any null/undefined values
+      .sort(); // Sort alphabetically
+
+    // Clear existing options except "All Departments"
+    deptFilter.innerHTML = '<option value="">All Departments</option>';
+
+    // Add department options
+    departments.forEach(dept => {
+      const option = document.createElement('option');
+      option.value = dept;
+      option.textContent = dept.charAt(0).toUpperCase() + dept.slice(1); // Capitalize first letter
+      deptFilter.appendChild(option);
+    });
+  }
+
+  clearFilters() {
+    // Reset filter values
+    this.filters.search = '';
+    this.filters.department = '';
+
+    // Reset UI elements
+    const searchBox = document.getElementById('search-box');
+    const deptFilter = document.getElementById('dept-filter');
+
+    if (searchBox) {
+      searchBox.value = '';
+    }
+
+    if (deptFilter) {
+      deptFilter.value = '';
+    }
+
+    // Apply filters (which will show all data)
+    this.filterData();
+    this.saveState(); // Auto-save state
+  }
+
+  toggleSelection(id) {
+    if (this.selectedItems.has(id)) {
+      this.selectedItems.delete(id);
+    } else {
+      this.selectedItems.add(id);
+    }
+    this.render();
+  }
+
+  selectAll() {
+    // Select all items in current filtered data
+    this.filteredData.forEach(item => {
+      this.selectedItems.add(item.card_id);
+    });
+    this.render();
+  }
+
+  clearSelection() {
+    this.selectedItems.clear();
+    this.render();
+  }
+
+  _isAllSelected() {
+    if (this.filteredData.length === 0) return false;
+    return this.filteredData.every(item => this.selectedItems.has(item.card_id));
+  }
+
+  exportToCSV() {
+    try {
+      console.log('📊 Starting CSV export...');
+
+      // Validate data exists
+      if (!this.filteredData || !Array.isArray(this.filteredData)) {
+        throw new Error('No filtered data available for export');
+      }
+
+      // Get items to export - selected items or all filtered data if none selected
+      const itemsToExport = this.selectedItems.size > 0
+        ? this.filteredData.filter(item => {
+            try {
+              return this.selectedItems.has(item.card_id);
+            } catch (filterError) {
+              console.warn('⚠️ Error checking selected item:', filterError, item);
+              return false;
+            }
+          })
+        : this.filteredData;
+
+      // Handle empty data gracefully
+      if (itemsToExport.length === 0) {
+        if (window.ErrorHandler) {
+          window.ErrorHandler.showError(
+            'No data available to export. Please check your filters or selection.',
+            'error-container',
+            { type: 'warning', timeout: 5000 }
+          );
+        } else {
+          alert('No data to export');
+        }
+        return;
+      }
+
+      // Validate columns exist
+      if (!this.columns || !Array.isArray(this.columns)) {
+        throw new Error('Column configuration is invalid');
+      }
+
+      // Create CSV headers (exclude checkbox column and only include visible columns)
+      const dataColumns = this.columns.filter(col => {
+        try {
+          return col && col.type !== 'checkbox' && col.visible;
+        } catch (colError) {
+          console.warn('⚠️ Error processing column:', colError, col);
+          return false;
+        }
+      });
+
+      if (dataColumns.length === 0) {
+        throw new Error('No visible columns available for export');
+      }
+
+      const headers = dataColumns.map(col => col.label || col.field || 'Unknown').join(',');
+
+      // Create CSV rows
+      const rows = itemsToExport.map(item => {
+        try {
+          return dataColumns.map(col => {
+            let value = this._getColumnValue(item, col);
+            // Handle null/undefined values
+            if (value == null) {
+              value = '';
+            }
+            // Handle values that might contain commas or quotes
+            if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
+              value = `"${value.replace(/"/g, '""')}"`;
+            }
+            return value;
+          }).join(',');
+        } catch (rowError) {
+          console.warn('⚠️ Error processing row:', rowError, item);
+          return dataColumns.map(() => '').join(','); // Return empty row on error
+        }
+      });
+
+      // Combine headers and rows
+      const csvContent = [headers, ...rows].join('\n');
+
+      // Generate filename with current date
+      const today = new Date();
+      const dateString = today.getFullYear() +
+                        String(today.getMonth() + 1).padStart(2, '0') +
+                        String(today.getDate()).padStart(2, '0');
+      const filename = `promotions_${dateString}.csv`;
+
+      // Download the file
+      this.downloadCSV(csvContent, filename);
+
+      console.log('✅ CSV export completed successfully:', {
+        itemsExported: itemsToExport.length,
+        columnsExported: dataColumns.length,
+        filename: filename
+      });
+
+      // Show success message
+      if (window.ErrorHandler) {
+        window.ErrorHandler.showError(
+          `Successfully exported ${itemsToExport.length} items to ${filename}`,
+          'error-container',
+          { type: 'success', timeout: 3000 }
+        );
+      }
+
+    } catch (error) {
+      console.error('🚨 Error during CSV export:', error);
+
+      if (window.ErrorHandler) {
+        window.ErrorHandler.handleDataError(error, 'CSV export', () => {
+          this.exportToCSV();
+        });
+      } else {
+        console.error('ErrorHandler not available, showing fallback error');
+        alert('Failed to export data. Please try again.');
+      }
+    }
+  }
+
+  downloadCSV(content, filename) {
+    try {
+      // Validate inputs
+      if (!content || typeof content !== 'string') {
+        throw new Error('Invalid CSV content provided');
+      }
+
+      if (!filename || typeof filename !== 'string') {
+        throw new Error('Invalid filename provided');
+      }
+
+      // Create blob with UTF-8 BOM for Excel compatibility
+      const BOM = '\uFEFF';
+      const blob = new Blob([BOM + content], { type: 'text/csv;charset=utf-8;' });
+
+      // Check browser support
+      if (!window.URL || !window.URL.createObjectURL) {
+        throw new Error('Browser does not support file downloads');
+      }
+
+      // Create download link
+      const link = document.createElement('a');
+      if (link.download === undefined) {
+        throw new Error('Browser does not support HTML5 download attribute');
+      }
+
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', filename);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      console.log('✅ File download initiated:', filename);
+
+    } catch (error) {
+      console.error('🚨 Error downloading CSV file:', error);
+
+      if (window.ErrorHandler) {
+        window.ErrorHandler.logError(error, 'CSV Download');
+        window.ErrorHandler.showError(
+          'Failed to download CSV file. Your browser may not support file downloads.',
+          'error-container',
+          { type: 'error', timeout: 7000 }
+        );
+      } else {
+        alert('Failed to download file. Please try a different browser.');
+      }
+
+      throw error; // Re-throw to allow calling function to handle
+    }
+  }
+
+  generateReport() {
+    try {
+      console.log('📊 Generate Report initiated from Datagrid Inquiry');
+
+      // Validate data exists
+      if (!this.filteredData || !Array.isArray(this.filteredData)) {
+        throw new Error('No filtered data available for report generation');
+      }
+
+      if (!this.data || !Array.isArray(this.data)) {
+        throw new Error('No source data available for report generation');
+      }
+
+      // Get items to include in report - selected items or all filtered data if none selected
+      const itemsToReport = this.selectedItems.size > 0
+        ? this.filteredData.filter(item => {
+            try {
+              return this.selectedItems.has(item.card_id);
+            } catch (filterError) {
+              console.warn('⚠️ Error checking selected item for report:', filterError, item);
+              return false;
+            }
+          })
+        : this.filteredData;
+
+      console.log('📋 Report Data Summary:', {
+        selectedItems: this.selectedItems.size,
+        filteredData: this.filteredData.length,
+        totalData: this.data.length,
+        itemsToReport: itemsToReport.length,
+        currentFilters: this.filters,
+        currentSort: this.sortConfig
+      });
+
+      // Handle empty data gracefully
+      if (itemsToReport.length === 0) {
+        console.warn('⚠️ No data available for report generation');
+
+        if (window.ErrorHandler) {
+          window.ErrorHandler.showError(
+            'No data available for report generation. Please check your filters or selection.',
+            'error-container',
+            {
+              type: 'warning',
+              timeout: 5000,
+              showRetry: true,
+              retryCallback: () => {
+                // Clear filters and try again
+                this.clearFilters();
+                setTimeout(() => this.generateReport(), 500);
+              }
+            }
+          );
+        } else {
+          alert('No data to generate report from');
+        }
+        return;
+      }
+
+      // Validate required objects exist
+      if (!this.filters) {
+        this.filters = { search: '', department: '' };
+      }
+
+      if (!this.sortConfig) {
+        this.sortConfig = { field: '', direction: 'asc' };
+      }
+
+      // Build URL parameters with validation
+      const params = new URLSearchParams();
+
+      try {
+        // Add selected item IDs if any are selected
+        if (this.selectedItems.size > 0) {
+          const selectedIds = Array.from(this.selectedItems);
+          // Validate all IDs are strings/numbers
+          const validIds = selectedIds.filter(id => id != null && id !== '');
+          if (validIds.length > 0) {
+            params.set('selected', validIds.join(','));
+          }
+        }
+
+        // Add active filters with validation
+        if (this.filters.search && typeof this.filters.search === 'string') {
+          // Sanitize search input for URL
+          const sanitizedSearch = this.filters.search.trim().substring(0, 200);
+          if (sanitizedSearch) {
+            params.set('search', sanitizedSearch);
+          }
+        }
+
+        if (this.filters.department && typeof this.filters.department === 'string') {
+          params.set('department', this.filters.department);
+        }
+
+        // Add sort configuration with validation
+        if (this.sortConfig.field && typeof this.sortConfig.field === 'string') {
+          params.set('sortField', this.sortConfig.field);
+          params.set('sortDirection', this.sortConfig.direction || 'asc');
+        }
+
+        // Add page size with validation
+        const validPageSize = Number.isInteger(this.pageSize) && this.pageSize > 0
+          ? this.pageSize : 25;
+        params.set('pageSize', validPageSize.toString());
+
+        // Add data count for context
+        params.set('totalItems', this.filteredData.length.toString());
+        params.set('source', 'datagrid');
+
+        // Pre-select template based on selection
+        if (this.selectedItems.size > 0) {
+          params.set('template', 'custom');
+        } else {
+          params.set('template', 'category');
+        }
+
+      } catch (paramError) {
+        console.warn('⚠️ Error building URL parameters:', paramError);
+        // Continue with basic parameters
+        params.set('source', 'datagrid');
+        params.set('template', 'category');
+      }
+
+      // Validate navigation target
+      const reportsUrl = `../reports.html?${params.toString()}`;
+
+      if (!reportsUrl || typeof reportsUrl !== 'string') {
+        throw new Error('Invalid reports URL generated');
+      }
+
+      console.log('🔗 Datagrid → Reports Navigation:', {
+        selectedTemplate: this.selectedItems.size > 0 ? 'custom' : 'category',
+        paramsString: params.toString(),
+        fullURL: reportsUrl
+      });
+
+      // Navigate with error handling
+      try {
+        window.location.href = reportsUrl;
+      } catch (navError) {
+        throw new Error(`Navigation failed: ${navError.message}`);
+      }
+
+    } catch (error) {
+      console.error('🚨 Error during report generation:', error);
+
+      if (window.ErrorHandler) {
+        window.ErrorHandler.handleNavigationError(error, '../reports.html');
+      } else {
+        console.error('ErrorHandler not available, showing fallback error');
+        alert('Failed to generate report. Please try again or contact support.');
+      }
+    }
+  }
+
+  /**
+   * Validate data structure
+   * @param {Array} data - Data to validate
+   */
+  _validateDataStructure(data) {
+    if (data.length === 0) {
+      return; // Empty data is valid
+    }
+
+    const requiredFields = ['card_id', 'card_name'];
+    const sampleItem = data[0];
+
+    for (const field of requiredFields) {
+      if (!(field in sampleItem)) {
+        throw new Error(`Missing required field: ${field}`);
+      }
+    }
+
+    // Validate data types
+    const invalidItems = data.filter(item =>
+      typeof item.card_id !== 'string' ||
+      typeof item.card_name !== 'string'
+    );
+
+    if (invalidItems.length > 0) {
+      throw new Error(`Invalid data format found in ${invalidItems.length} items`);
+    }
+
+    console.log('✅ Data structure validation passed');
+  }
+
+  /**
+   * Show empty state when no data is available
+   */
+  _showEmptyState() {
+    const emptyStateHTML = `
+      <div class="empty-state" style="text-align: center; padding: 60px 20px; color: var(--muted);">
+        <div style="font-size: 48px; margin-bottom: 16px;">📭</div>
+        <h3 style="margin-bottom: 8px; color: var(--text);">No Data Available</h3>
+        <p style="margin-bottom: 20px;">There are no promotions to display at this time.</p>
+        <button class="btn btn-primary" onclick="window.location.reload()">
+          Refresh Page
+        </button>
+      </div>
+    `;
+
+    this.container.innerHTML = emptyStateHTML;
+  }
+
+  /**
+   * Validate filter input
+   * @param {string} value - Filter value
+   * @param {string} type - Filter type
+   */
+  _validateFilterInput(value, type) {
+    try {
+      if (type === 'search') {
+        // Sanitize search input
+        if (typeof value !== 'string') {
+          throw new Error('Search value must be a string');
+        }
+
+        if (value.length > 100) {
+          throw new Error('Search term too long (max 100 characters)');
+        }
+
+        // Check for potentially harmful patterns
+        const dangerousPatterns = /<script|javascript:|data:|vbscript:/i;
+        if (dangerousPatterns.test(value)) {
+          throw new Error('Invalid characters in search term');
+        }
+      }
+
+      if (type === 'department') {
+        const validDepartments = ['', 'deli', 'bakery', 'produce', 'meat', 'dairy', 'frozen'];
+        if (!validDepartments.includes(value)) {
+          throw new Error(`Invalid department: ${value}`);
+        }
+      }
+
+      return true;
+
+    } catch (error) {
+      if (window.ErrorHandler) {
+        window.ErrorHandler.handleValidationError(`${type}-filter`, error.message);
+      }
+      return false;
+    }
+  }
+
+  _updateExportButton() {
+    const exportBtn = document.getElementById('export-btn');
+    if (exportBtn) {
+      // Enable button if there's data to export
+      exportBtn.disabled = this.filteredData.length === 0;
+
+      // Update button text based on selection
+      if (this.selectedItems.size > 0) {
+        exportBtn.textContent = `Export Selected (${this.selectedItems.size})`;
+      } else {
+        exportBtn.textContent = 'Export All';
+      }
+    }
+  }
+
+  _updateGenerateReportButton() {
+    const reportBtn = document.getElementById('generate-report-btn');
+    if (reportBtn) {
+      // Enable button if there's data to report on
+      reportBtn.disabled = this.filteredData.length === 0;
+
+      // Update button text based on selection
+      if (this.selectedItems.size > 0) {
+        reportBtn.textContent = `Report Selected (${this.selectedItems.size})`;
+      } else {
+        reportBtn.textContent = 'Generate Report';
+      }
+    }
+  }
+
+  _populateColumnSettings() {
+    const checkboxContainer = document.getElementById('column-checkboxes');
+    if (!checkboxContainer) return;
+
+    checkboxContainer.innerHTML = '';
+
+    // Only show toggleable columns (exclude checkbox and required columns)
+    const toggleableColumns = this.columns.filter(col => col.type !== 'checkbox' && !col.required);
+
+    toggleableColumns.forEach(column => {
+      const label = document.createElement('label');
+      label.className = 'column-checkbox-label';
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.checked = column.visible;
+      checkbox.addEventListener('change', (e) => {
+        this._toggleColumn(column.field, e.target.checked);
+      });
+
+      label.appendChild(checkbox);
+      label.appendChild(document.createTextNode(column.label));
+      checkboxContainer.appendChild(label);
+    });
+  }
+
+  _toggleColumnDropdown() {
+    const dropdown = document.getElementById('column-dropdown');
+    if (dropdown) {
+      dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+    }
+  }
+
+  _toggleColumn(field, visible) {
+    const column = this.columns.find(col => col.field === field);
+    if (!column) return;
+
+    // Check minimum visible columns requirement (excluding checkbox)
+    const visibleDataColumns = this.columns.filter(col => col.visible && col.type !== 'checkbox');
+
+    if (!visible && visibleDataColumns.length <= 3) {
+      alert('At least 3 columns must remain visible');
+      // Reset the checkbox
+      const checkbox = document.querySelector(`#column-checkboxes input[type="checkbox"]:nth-child(${this.columns.filter(c => c.type !== 'checkbox' && !c.required).indexOf(column) + 1})`);
+      if (checkbox) checkbox.checked = true;
+      return;
+    }
+
+    column.visible = visible;
+    this.saveState(); // Auto-save state
+    this.render();
+  }
+
+  _saveColumnPreferences() {
+    const preferences = {};
+    this.columns.forEach(col => {
+      if (col.type !== 'checkbox' && !col.required) {
+        preferences[col.field] = col.visible;
+      }
+    });
+    localStorage.setItem('datagrid-column-preferences', JSON.stringify(preferences));
+  }
+
+  _loadColumnPreferences() {
+    try {
+      const saved = localStorage.getItem('datagrid-column-preferences');
+      if (saved) {
+        const preferences = JSON.parse(saved);
+        this.columns.forEach(col => {
+          if (preferences.hasOwnProperty(col.field)) {
+            col.visible = preferences[col.field];
+          }
+        });
+      }
+    } catch (e) {
+      console.warn('Could not load column preferences:', e);
+    }
+  }
+
+  _setLoading(loading) {
+    this.isLoading = loading;
+    this.render();
+  }
+
+  _renderLoadingState() {
+    return `
+      <div class="loading-container">
+        <div class="loading-table">
+          <div class="skeleton skeleton-text" style="height: 40px; margin-bottom: 16px;"></div>
+          <div class="skeleton skeleton-text" style="height: 30px; margin-bottom: 8px;"></div>
+          <div class="skeleton skeleton-text" style="height: 30px; margin-bottom: 8px;"></div>
+          <div class="skeleton skeleton-text" style="height: 30px; margin-bottom: 8px;"></div>
+          <div class="skeleton skeleton-text" style="height: 30px; margin-bottom: 8px;"></div>
+          <div class="skeleton skeleton-text" style="height: 30px; margin-bottom: 8px;"></div>
+        </div>
+      </div>
+    `;
+  }
+
+  _renderErrorState() {
+    return `
+      <div class="error-container">
+        <div class="error-message">
+          <h3>Error Loading Data</h3>
+          <p>${this.error}</p>
+          <button class="btn btn-primary" onclick="location.reload()">Retry</button>
+        </div>
+      </div>
+    `;
+  }
+
+  _updateInteractionState() {
+    const interactive = !this.isLoading;
+
+    // Disable/enable filter controls
+    const searchBox = document.getElementById('search-box');
+    const deptFilter = document.getElementById('dept-filter');
+    const exportBtn = document.getElementById('export-btn');
+    const columnSettingsBtn = document.getElementById('column-settings-btn');
+
+    if (searchBox) searchBox.disabled = !interactive;
+    if (deptFilter) deptFilter.disabled = !interactive;
+    if (exportBtn) exportBtn.disabled = !interactive || this.filteredData.length === 0;
+    if (columnSettingsBtn) columnSettingsBtn.disabled = !interactive;
+
+    // Add/remove loading class to container
+    if (this.container.parentElement) {
+      if (this.isLoading) {
+        this.container.parentElement.classList.add('loading');
+      } else {
+        this.container.parentElement.classList.remove('loading');
+      }
+    }
+  }
+
+  _setupVirtualScrolling() {
+    const range = this._getVisibleRange();
+    console.log('Virtual scrolling setup:', {
+      totalRows: this.filteredData.length,
+      totalHeight: this.totalHeight,
+      visibleRows: this.visibleRows,
+      bufferRows: this.bufferRows,
+      rowHeight: this.rowHeight,
+      initialRange: range
+    });
+  }
+
+  _handleVirtualScroll(event) {
+    const newScrollTop = event.target.scrollTop;
+    // Only re-render if we've scrolled significantly (more than half a row)
+    if (Math.abs(newScrollTop - this.scrollTop) > this.rowHeight / 2) {
+      this.scrollTop = newScrollTop;
+      console.log('Virtual scroll position:', this.scrollTop, 'visible range:', this._getVisibleRange());
+      // Re-render only the visible portion
+      this._renderVirtualRows();
+    }
+  }
+
+  _renderVirtualRows() {
+    const visibleColumns = this.columns.filter(col => col.visible);
+    const virtualRange = this._getVisibleRange();
+    const virtualData = this.filteredData.slice(virtualRange.startIndex, virtualRange.endIndex);
+
+    // Update spacers and table content
+    const topSpacer = document.querySelector('.virtual-spacer-top');
+    const bottomSpacer = document.querySelector('.virtual-spacer-bottom');
+    const tbody = document.querySelector('.virtual-table tbody');
+
+    if (topSpacer) {
+      topSpacer.style.height = `${virtualRange.topSpacerHeight}px`;
+    }
+
+    if (bottomSpacer) {
+      bottomSpacer.style.height = `${virtualRange.bottomSpacerHeight}px`;
+    }
+
+    if (tbody) {
+      tbody.innerHTML = virtualData.map(item => {
+        const isSelected = this.selectedItems.has(item.card_id);
+        return `
+          <tr class="${isSelected ? 'selected-row' : ''}" style="height: ${this.rowHeight}px;">
+            ${visibleColumns.map(column => {
+              if (column.type === 'checkbox') {
+                return `<td class="${column.field}-cell"><input type="checkbox" class="row-checkbox" data-id="${item.card_id}" ${isSelected ? 'checked' : ''}></td>`;
+              } else {
+                return `<td class="${column.field}-cell">${this._getColumnValue(item, column)}</td>`;
+              }
+            }).join('')}
+          </tr>
+        `;
+      }).join('');
+
+      // Re-attach event listeners for new checkboxes
+      this._attachRowCheckboxListeners();
+    }
+  }
+
+  _getVisibleRange() {
+    const startIndex = Math.floor(this.scrollTop / this.rowHeight);
+    const endIndex = Math.min(startIndex + this.visibleRows + this.bufferRows, this.filteredData.length);
+
+    // Calculate spacer heights
+    const topSpacerHeight = startIndex * this.rowHeight;
+    const bottomSpacerHeight = Math.max(0, (this.filteredData.length - endIndex) * this.rowHeight);
+
+    return {
+      startIndex,
+      endIndex,
+      topSpacerHeight,
+      bottomSpacerHeight,
+      visibleCount: endIndex - startIndex
+    };
+  }
+
+  _attachRowCheckboxListeners() {
+    const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+    rowCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', (e) => {
+        const id = e.target.getAttribute('data-id');
+        this.toggleSelection(id);
+      });
+    });
+  }
+
+  _debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+
+  _getSortIndicator(field) {
+    if (this.sortConfig.field === field) {
+      return this.sortConfig.direction === 'asc' ? '▲' : '▼';
+    }
+    return '';
+  }
+
+  _attachEventListeners() {
+    try {
+      console.log('🔧 Attaching event listeners...');
+
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+      const pageSizeSelect = document.getElementById('page-size-select');
+      const headerCells = document.querySelectorAll('th[data-field]');
+      const searchBox = document.getElementById('search-box');
+      const deptFilter = document.getElementById('dept-filter');
+      const clearFiltersBtn = document.getElementById('clear-filters');
+      const exportBtn = document.getElementById('export-btn');
+      const columnSettingsBtn = document.getElementById('column-settings-btn');
+      const resetDefaultsBtn = document.getElementById('reset-defaults-btn');
+      const selectAllCheckbox = document.getElementById('select-all-checkbox');
+      const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+      const virtualViewport = document.querySelector('.virtual-scroll-viewport');
+
+      // Pagination buttons with error handling
+      if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+          try {
+            this.previousPage();
+          } catch (error) {
+            console.error('🚨 Error in previousPage:', error);
+            if (window.ErrorHandler) {
+              window.ErrorHandler.logError(error, 'Previous Page Button');
+            }
+          }
+        });
+      }
+
+      if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+          try {
+            this.nextPage();
+          } catch (error) {
+            console.error('🚨 Error in nextPage:', error);
+            if (window.ErrorHandler) {
+              window.ErrorHandler.logError(error, 'Next Page Button');
+            }
+          }
+        });
+      }
+
+      if (pageSizeSelect) {
+        pageSizeSelect.addEventListener('change', (e) => {
+          try {
+            const value = e.target.value;
+            this._validateFilterInput(value);
+            this.changePageSize(value);
+          } catch (error) {
+            console.error('🚨 Error in changePageSize:', error);
+            if (window.ErrorHandler) {
+              window.ErrorHandler.handleValidationError('page-size-select', 'Invalid page size selected');
+            }
+          }
+        });
+      }
+
+      // Add click handlers to header cells for sorting with error handling
+      headerCells.forEach(th => {
+        try {
+          th.addEventListener('click', () => {
+            try {
+              const field = th.getAttribute('data-field');
+              if (!field) {
+                throw new Error('No data-field attribute found on header cell');
+              }
+              this.sortData(field);
+            } catch (sortError) {
+              console.error('🚨 Error in sortData:', sortError);
+              if (window.ErrorHandler) {
+                window.ErrorHandler.logError(sortError, 'Column Sort');
+              }
+            }
+          });
+        } catch (attachError) {
+          console.warn('⚠️ Could not attach sort listener to header cell:', attachError, th);
+        }
+      });
+
+      // Add search box listener with debounce and validation
+      if (searchBox) {
+        searchBox.addEventListener('input', this._debounce((e) => {
+          try {
+            const searchValue = e.target.value;
+            this._validateFilterInput(searchValue);
+            this.filters.search = searchValue;
+            this.filterData();
+          } catch (error) {
+            console.error('🚨 Error in search filter:', error);
+            if (window.ErrorHandler) {
+              window.ErrorHandler.handleValidationError('search-box', 'Invalid search input');
+            }
+          }
+        }, 300));
+      }
+
+      // Add department filter listener with validation
+      if (deptFilter) {
+        deptFilter.addEventListener('change', (e) => {
+          try {
+            const deptValue = e.target.value;
+            this._validateFilterInput(deptValue);
+            this.filters.department = deptValue;
+            this.filterData();
+          } catch (error) {
+            console.error('🚨 Error in department filter:', error);
+            if (window.ErrorHandler) {
+              window.ErrorHandler.handleValidationError('dept-filter', 'Invalid department filter selected');
+            }
+          }
+        });
+      }
+
+      // Add clear filters button listener
+      if (clearFiltersBtn) {
+        clearFiltersBtn.addEventListener('click', () => {
+          try {
+            this.clearFilters();
+          } catch (error) {
+            console.error('🚨 Error clearing filters:', error);
+            if (window.ErrorHandler) {
+              window.ErrorHandler.logError(error, 'Clear Filters Button');
+            }
+          }
+        });
+      }
+
+      // Add export button listener
+      if (exportBtn) {
+        exportBtn.addEventListener('click', () => {
+          try {
+            this.exportToCSV();
+          } catch (error) {
+            console.error('🚨 Error in export:', error);
+            if (window.ErrorHandler) {
+              window.ErrorHandler.logError(error, 'Export Button');
+            }
+          }
+        });
+      }
+
+      // Add generate report button listener
+      const generateReportBtn = document.getElementById('generate-report-btn');
+      if (generateReportBtn) {
+        generateReportBtn.addEventListener('click', () => {
+          try {
+            this.generateReport();
+          } catch (error) {
+            console.error('🚨 Error generating report:', error);
+            if (window.ErrorHandler) {
+              window.ErrorHandler.logError(error, 'Generate Report Button');
+            }
+          }
+        });
+      }
+
+      // Add column settings button listener
+      if (columnSettingsBtn) {
+        columnSettingsBtn.addEventListener('click', (e) => {
+          try {
+            e.stopPropagation();
+            this._toggleColumnDropdown();
+          } catch (error) {
+            console.error('🚨 Error toggling column dropdown:', error);
+            if (window.ErrorHandler) {
+              window.ErrorHandler.logError(error, 'Column Settings Button');
+            }
+          }
+        });
+      }
+
+      // Add reset defaults button listener
+      if (resetDefaultsBtn) {
+        resetDefaultsBtn.addEventListener('click', () => {
+          try {
+            this.resetToDefaults();
+          } catch (error) {
+            console.error('🚨 Error resetting to defaults:', error);
+            if (window.ErrorHandler) {
+              window.ErrorHandler.logError(error, 'Reset Defaults Button');
+            }
+          }
+        });
+      }
+
+      // Close dropdown when clicking outside with error handling
+      document.addEventListener('click', (e) => {
+        try {
+          const dropdown = document.getElementById('column-dropdown');
+          const settingsBtn = document.getElementById('column-settings-btn');
+          if (dropdown && !dropdown.contains(e.target) && e.target !== settingsBtn) {
+            dropdown.style.display = 'none';
+          }
+        } catch (error) {
+          console.warn('⚠️ Error in dropdown close handler:', error);
+        }
+      });
+
+      console.log('✅ Event listeners attached successfully');
+
+    } catch (error) {
+      console.error('🚨 Critical error attaching event listeners:', error);
+      if (window.ErrorHandler) {
+        window.ErrorHandler.handleDataError(error, 'event listener setup', () => {
+          // Retry attaching listeners
+          setTimeout(() => this._attachEventListeners(), 1000);
+        });
+      }
+    }
+
+    // Virtual scroll event listener
+    if (virtualViewport) {
+      virtualViewport.addEventListener('scroll', this._debounce((e) => {
+        this._handleVirtualScroll(e);
+      }, 10));
+    }
+
+    // Add select all checkbox listener
+    if (selectAllCheckbox) {
+      selectAllCheckbox.addEventListener('change', (e) => {
+        if (e.target.checked) {
+          this.selectAll();
+        } else {
+          this.clearSelection();
+        }
+      });
+    }
+
+    // Add row checkbox listeners
+    rowCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', (e) => {
+        const id = e.target.getAttribute('data-id');
+        this.toggleSelection(id);
+      });
+    });
+  }
+
+  // Performance optimizations
+  _throttleVirtualScroll(event) {
+    if (this.scrollRAF) {
+      return; // Already scheduled
+    }
+
+    this.scrollRAF = requestAnimationFrame(() => {
+      this._handleVirtualScroll(event);
+      this.scrollRAF = null;
+    });
+  }
+
+  _handleVirtualScroll(event) {
+    const now = performance.now();
+    const newScrollTop = event.target.scrollTop;
+
+    // Only re-render if we've scrolled significantly and enough time has passed
+    if (Math.abs(newScrollTop - this.scrollTop) > this.rowHeight / 2 &&
+        now - this.lastRenderTime > 16) { // ~60fps
+
+      this.scrollTop = newScrollTop;
+      this.lastRenderTime = now;
+
+      console.log('Virtual scroll position:', this.scrollTop, 'visible range:', this._getVisibleRange());
+
+      // Re-render only the visible portion
+      this._renderVirtualRows();
+    }
+  }
+
+  _getColumnValue(item, column) {
+    if (column.calculated && column.field === 'ctr') {
+      // Use cached value if available
+      const cacheKey = `${item.card_id}_ctr`;
+      if (this.calculatedValues.has(cacheKey)) {
+        return this.calculatedValues.get(cacheKey) + '%';
+      }
+
+      const ctr = this._calculateCTR(item);
+      this.calculatedValues.set(cacheKey, ctr);
+      return ctr + '%';
+    }
+    return item[column.field];
+  }
+
+  _precalculateValues() {
+    console.log('Pre-calculating values for performance...');
+    const start = performance.now();
+
+    // Use this.data instead of this.filteredData since filteredData might not be set yet
+    this.data.forEach(item => {
+      // Pre-calculate CTR values
+      const cacheKey = `${item.card_id}_ctr`;
+      if (!this.calculatedValues.has(cacheKey)) {
+        const ctr = this._calculateCTR(item);
+        this.calculatedValues.set(cacheKey, ctr);
+      }
+    });
+
+    const end = performance.now();
+    console.log(`Pre-calculation completed in ${(end - start).toFixed(2)}ms`);
+  }
+
+  _renderRowsHTML(virtualData, visibleColumns) {
+    return virtualData.map(item => {
+      const isSelected = this.selectedItems.has(item.card_id);
+      return `
+        <tr class="${isSelected ? 'selected-row' : ''}" style="height: ${this.rowHeight}px;" data-id="${item.card_id}">
+          ${visibleColumns.map(column => {
+            if (column.type === 'checkbox') {
+              return `<td class="${column.field}-cell"><input type="checkbox" class="row-checkbox" data-id="${item.card_id}" ${isSelected ? 'checked' : ''}></td>`;
+            } else {
+              return `<td class="${column.field}-cell">${this._getColumnValue(item, column)}</td>`;
+            }
+          }).join('')}
+        </tr>
+      `;
+    }).join('');
+  }
+
+  _setupVirtualScrolling() {
+    const range = this._getVisibleRange();
+    console.log('Virtual scrolling setup:', {
+      totalRows: this.filteredData.length,
+      totalHeight: this.totalHeight,
+      visibleRows: this.visibleRows,
+      bufferRows: this.bufferRows,
+      rowHeight: this.rowHeight,
+      initialRange: range
+    });
+
+    // Add scroll event listener with requestAnimationFrame throttling
+    const virtualViewport = document.querySelector('.virtual-scroll-viewport');
+    if (virtualViewport) {
+      virtualViewport.addEventListener('scroll', (e) => {
+        this._throttleVirtualScroll(e);
+      });
+    }
+  }
+
+  // State persistence methods
+  saveState() {
+    const state = {
+      columns: this.columns.map(col => ({ field: col.field, visible: col.visible })),
+      sortConfig: { ...this.sortConfig },
+      pageSize: this.pageSize,
+      filters: { ...this.filters }
+    };
+
+    try {
+      localStorage.setItem(this.stateKey, JSON.stringify(state));
+      console.log('💾 Grid state saved:', state);
+    } catch (error) {
+      console.warn('Failed to save grid state:', error);
+    }
+  }
+
+  loadState() {
+    try {
+      const saved = localStorage.getItem(this.stateKey);
+      if (!saved) {
+        console.log('📂 No saved state found, using defaults');
+        return;
+      }
+
+      const state = JSON.parse(saved);
+      console.log('📂 Loading saved state:', state);
+
+      // Restore column visibility
+      if (state.columns) {
+        state.columns.forEach(savedCol => {
+          const column = this.columns.find(col => col.field === savedCol.field);
+          if (column && !column.required) {
+            column.visible = savedCol.visible;
+          }
+        });
+      }
+
+      // Restore sort configuration
+      if (state.sortConfig) {
+        this.sortConfig = { ...state.sortConfig };
+      }
+
+      // Restore page size
+      if (state.pageSize) {
+        this.pageSize = state.pageSize;
+      }
+
+      // Restore filters
+      if (state.filters) {
+        this.filters = { ...this.filters, ...state.filters };
+      }
+
+      // Update UI elements after state is loaded (will be called during initial load)
+      this._updateUIFromState();
+
+    } catch (error) {
+      console.warn('Failed to load grid state:', error);
+      this.resetToDefaults();
+    }
+  }
+
+  _updateUIFromState() {
+    // Update UI elements to match current state
+    const searchBox = document.getElementById('search-box');
+    const deptFilter = document.getElementById('dept-filter');
+    const pageSizeSelect = document.getElementById('page-size-select');
+
+    if (searchBox) searchBox.value = this.filters.search || '';
+    if (deptFilter) deptFilter.value = this.filters.department || '';
+    if (pageSizeSelect) pageSizeSelect.value = this.pageSize;
+  }
+
+  resetToDefaults() {
+    console.log('🔄 Resetting to default state');
+
+    // Reset columns to default visibility
+    this.defaultState.columns.forEach(defaultCol => {
+      const column = this.columns.find(col => col.field === defaultCol.field);
+      if (column) {
+        column.visible = defaultCol.visible;
+      }
+    });
+
+    // Reset sort configuration
+    this.sortConfig = { ...this.defaultState.sortConfig };
+
+    // Reset page size
+    this.pageSize = this.defaultState.pageSize;
+
+    // Reset filters
+    this.filters = { ...this.defaultState.filters };
+
+    // Clear saved state and reset to defaults
+    localStorage.removeItem(this.stateKey);
+    this.currentPage = 1;
+
+    // Update UI elements to match reset state
+    this._updateUIFromState();
+
+    // Re-apply filters and refresh the grid
+    this.filterData();
+    this._populateColumnSettings();
+  }
+
+  // Legacy method for backward compatibility
+  _saveColumnPreferences() {
+    this.saveState();
+  }
+
+  _loadColumnPreferences() {
+    // This is now handled by loadState()
+  }
+}
+
+// Initialize
+const grid = new DataGridComponent('grid-container');
+window.grid = grid; // Make grid available globally for URL parameter handling
+
+// Generate test data for virtual scrolling
+function generateTestData(count = 1000) {
+  const departments = ['deli', 'bakery', 'produce', 'meat', 'dairy', 'frozen'];
+  const testData = [];
+
+  for (let i = 0; i < count; i++) {
+    const dept = departments[i % departments.length];
+    testData.push({
+      card_id: `test_${i.toString().padStart(4, '0')}`,
+      card_name: `Test Item ${i + 1}`,
+      department: dept,
+      card_price: `$${(Math.random() * 20 + 1).toFixed(2)}`,
+      card_in_view: Math.floor(Math.random() * 100) + 1,
+      card_clicked: Math.floor(Math.random() * 50) + 1,
+      share_count: Math.floor(Math.random() * 20),
+      composite_score: Math.floor(Math.random() * 3000) + 1000,
+      percentile: Math.floor(Math.random() * 100) + 1,
+      quartile: ['Q1', 'Q2', 'Q3', 'Q4'][Math.floor(Math.random() * 4)]
+    });
+  }
+
+  return testData;
+}
+
+// Load data on page load - use test data for virtual scrolling or mockPromotions for normal use
+document.addEventListener('DOMContentLoaded', async function() {
+  let dataToLoad;
+
+  // Check URL parameter for test mode
+  const urlParams = new URLSearchParams(window.location.search);
+  const testMode = urlParams.get('test') === 'virtual';
+
+  if (testMode) {
+    // Generate 1000 test rows for virtual scrolling test
+    dataToLoad = generateTestData(1000);
+    console.log('🧪 Virtual scrolling test mode: Generated 1000 test rows');
+  } else if (window.mockPromotions && window.mockPromotions.length > 0) {
+    // Use normal mock data
+    dataToLoad = window.mockPromotions;
+  }
+
+  if (dataToLoad) {
+    await grid.loadData(dataToLoad);
+
+    // Apply initial sort from URL param if exists
+    if (grid.sortBy) {
+      await grid.sortData(grid.sortBy);
+    }
+  }
+});

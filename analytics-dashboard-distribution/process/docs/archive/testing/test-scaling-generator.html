@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scaling Generator Test - 7 Stores</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: #fafafa;
+        }
+        .test-result {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .success { background: #e8f5e8; color: #2e7d32; border-left: 4px solid #4caf50; }
+        .error { background: #ffebee; color: #c62828; border-left: 4px solid #f44336; }
+        .info { background: #e3f2fd; color: #1565c0; border-left: 4px solid #2196f3; }
+        .warning { background: #fff3e0; color: #ef6c00; border-left: 4px solid #ff9800; }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .metric-card {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1976d2;
+        }
+        .metric-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #f5f5f5;
+            font-weight: 600;
+        }
+
+        button {
+            background: #1976d2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1565c0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Scaling Generator Test - 7 Stores</h1>
+        <p>Testing the scaling POC generator functions with 7 stores (original 5 + 2 additional)</p>
+
+        <div class="test-section">
+            <h3>Test Controls</h3>
+            <button onclick="runSingleStoreTest()">Test Single Store Generation</button>
+            <button onclick="runBatchTest()">Test 7-Store Batch Processing</button>
+            <button onclick="runIteratorTest()">Test Iterator Pattern</button>
+            <button onclick="runPerformanceTest()">Run Performance Benchmark</button>
+            <button onclick="clearResults()">Clear Results</button>
+        </div>
+
+        <div id="test-results"></div>
+    </div>
+
+    <script src="mock-data/006-scaling-poc.js"></script>
+    <script>
+        let testResults = [];
+
+        function logResult(type, title, content) {
+            const timestamp = new Date().toLocaleTimeString();
+            testResults.push({
+                timestamp,
+                type,
+                title,
+                content
+            });
+            displayResults();
+        }
+
+        function displayResults() {
+            const container = document.getElementById('test-results');
+            container.innerHTML = testResults.map(result => `
+                <div class="test-result ${result.type}">
+                    <strong>[${result.timestamp}] ${result.title}</strong><br>
+                    ${typeof result.content === 'object' ?
+                        '<pre>' + JSON.stringify(result.content, null, 2) + '</pre>' :
+                        result.content}
+                </div>
+            `).join('');
+        }
+
+        function runSingleStoreTest() {
+            console.log('🏪 Testing single store generation...');
+
+            try {
+                // Test STORE_006 with URBAN_PREMIUM template
+                const storeData = window.ScalingPOC.generateStoreData(
+                    'STORE_006',
+                    window.ScalingPOC.groupTemplates.URBAN_PREMIUM,
+                    { pricing: 0.05, performance: 0.20, metrics: 0.15 },
+                    5 // Store index
+                );
+
+                logResult('success', 'Single Store Test - STORE_006', {
+                    store_id: 'STORE_006',
+                    template: 'URBAN_PREMIUM',
+                    promotions_generated: storeData.length,
+                    sample_promotion: {
+                        card_id: storeData[0].card_id,
+                        card_name: storeData[0].card_name,
+                        card_price: storeData[0].card_price,
+                        department: storeData[0].department,
+                        card_in_view: storeData[0].card_in_view,
+                        card_clicked: storeData[0].card_clicked
+                    },
+                    price_range: {
+                        min: Math.min(...storeData.map(p => parseFloat(p.card_price.slice(1)))).toFixed(2),
+                        max: Math.max(...storeData.map(p => parseFloat(p.card_price.slice(1)))).toFixed(2)
+                    },
+                    total_views: storeData.reduce((sum, p) => sum + p.card_in_view, 0),
+                    total_clicks: storeData.reduce((sum, p) => sum + p.card_clicked, 0)
+                });
+
+            } catch (error) {
+                logResult('error', 'Single Store Test Failed', error.message);
+            }
+        }
+
+        function runBatchTest() {
+            console.log('🏭 Testing 7-store batch processing...');
+
+            try {
+                // Test stores 1-5 (original POC) + stores 6-7 (new)
+                const batch1 = window.ScalingPOC.processBatch(1, 5, 'SUBURBAN_FAMILY', {
+                    chunkSize: 5,
+                    includeMetrics: true,
+                    includeValidation: true
+                });
+
+                const batch2 = window.ScalingPOC.processBatch(6, 7, 'URBAN_PREMIUM', {
+                    chunkSize: 2,
+                    includeMetrics: true,
+                    includeValidation: true
+                });
+
+                // Combine results
+                const combinedPromotions = [...batch1.promotions, ...batch2.promotions];
+                const combinedStores = [...batch1.storeIds, ...batch2.storeIds];
+
+                logResult('success', '7-Store Batch Test Results', {
+                    total_stores: combinedStores.length,
+                    total_promotions: combinedPromotions.length,
+                    stores_processed: combinedStores,
+                    batch1_results: {
+                        stores: batch1.storeIds.length,
+                        promotions: batch1.promotions.length,
+                        template: 'SUBURBAN_FAMILY',
+                        processing_time: batch1.metadata.processing_time_ms + 'ms',
+                        validation: batch1.validation
+                    },
+                    batch2_results: {
+                        stores: batch2.storeIds.length,
+                        promotions: batch2.promotions.length,
+                        template: 'URBAN_PREMIUM',
+                        processing_time: batch2.metadata.processing_time_ms + 'ms',
+                        validation: batch2.validation
+                    },
+                    combined_metrics: {
+                        total_views: combinedPromotions.reduce((sum, p) => sum + p.card_in_view, 0),
+                        total_clicks: combinedPromotions.reduce((sum, p) => sum + p.card_clicked, 0),
+                        avg_ctr: (combinedPromotions.reduce((sum, p) => sum + p.card_clicked, 0) /
+                                 combinedPromotions.reduce((sum, p) => sum + p.card_in_view, 0) * 100).toFixed(2) + '%'
+                    }
+                });
+
+                // Store data globally for other tests
+                window.testData = combinedPromotions;
+
+            } catch (error) {
+                logResult('error', 'Batch Test Failed', error.message);
+            }
+        }
+
+        function runIteratorTest() {
+            console.log('🔄 Testing iterator pattern...');
+
+            try {
+                const chunks = [];
+                const iterator = window.ScalingPOC.storeDataIterator(7, 3, 'TEST_ALPHA');
+
+                for (const chunk of iterator) {
+                    chunks.push({
+                        chunk_number: chunk.chunkNumber,
+                        total_chunks: chunk.totalChunks,
+                        stores_in_chunk: chunk.storesInChunk,
+                        store_ids: chunk.data.map(d => d.storeId),
+                        total_promotions: chunk.data.reduce((sum, d) => sum + d.promotions.length, 0)
+                    });
+                }
+
+                logResult('success', 'Iterator Pattern Test', {
+                    total_chunks_processed: chunks.length,
+                    total_stores: chunks.reduce((sum, c) => sum + c.stores_in_chunk, 0),
+                    total_promotions: chunks.reduce((sum, c) => sum + c.total_promotions, 0),
+                    chunk_details: chunks
+                });
+
+            } catch (error) {
+                logResult('error', 'Iterator Test Failed', error.message);
+            }
+        }
+
+        function runPerformanceTest() {
+            console.log('🚀 Running performance benchmark...');
+
+            try {
+                const benchmark = window.ScalingPOC.ScalingAnalysis.benchmark(7, 3);
+
+                logResult('info', 'Performance Benchmark Results', benchmark);
+
+                // Also run scaling estimates for different store counts
+                const estimates = [5, 10, 25, 50, 100].map(count => ({
+                    store_count: count,
+                    ...window.ScalingPOC.ScalingAnalysis.estimateDatasetSize(count)
+                }));
+
+                logResult('info', 'Dataset Size Estimates', {
+                    estimates: estimates,
+                    scaling_strategies: [5, 25, 50, 100].map(count =>
+                        window.ScalingPOC.ScalingAnalysis.getScalingStrategy(count)
+                    )
+                });
+
+            } catch (error) {
+                logResult('error', 'Performance Test Failed', error.message);
+            }
+        }
+
+        function clearResults() {
+            testResults = [];
+            displayResults();
+        }
+
+        // Auto-run basic tests when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            logResult('info', 'Scaling POC Test Environment Ready', {
+                available_functions: Object.keys(window.ScalingPOC),
+                available_templates: Object.keys(window.ScalingPOC.groupTemplates),
+                base_products: window.ScalingPOC.baseProductTemplates.length
+            });
+        });
+    </script>
+</body>
+</html>

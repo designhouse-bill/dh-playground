@@ -1,0 +1,749 @@
+/**
+ * ContextBarComponent Styles
+ * Dark background context bar with sticky positioning
+ *
+ * Features:
+ * - Sticky positioning below header
+ * - Dark background with high contrast text
+ * - Responsive breadcrumb navigation
+ * - Smooth transitions and hover effects
+ * - Mobile-friendly responsive design
+ * - Accessibility support (focus states)
+ *
+ * @version 1.0.0
+ */
+
+/* ===== CONTEXT BAR CONTAINER ===== */
+.context-bar {
+  position: sticky;
+  top: 0;
+  z-index: 900; /* Below header (1000) but above content */
+
+  background-color: #1a1a1a;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  border-bottom: 1px solid #333;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+  /* Smooth transitions */
+  transition: all 0.3s ease;
+}
+
+.context-bar-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--space-md, 16px) var(--space-lg, 24px);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md, 16px);
+}
+
+/* ===== CONTEXT NAVIGATION SECTION ===== */
+.context-navigation {
+  order: 1;
+}
+
+/* ===== CONTEXT MAIN CONTENT ===== */
+.context-main {
+  order: 2;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-areas: "left center right";
+  gap: var(--space-lg, 24px);
+  align-items: start;
+}
+
+.context-left {
+  grid-area: left;
+}
+
+.context-center {
+  grid-area: center;
+}
+
+.context-right {
+  grid-area: right;
+}
+
+/* ===== CONTEXT SECTIONS ===== */
+.context-section {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: var(--space-md, 16px);
+
+  transition: all 0.2s ease;
+}
+
+.context-section:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Section Headers */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-sm, 12px);
+}
+
+.section-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Section Content */
+.section-content {
+  display: flex;
+  align-items: center;
+  min-height: 32px;
+}
+
+.section-value {
+  font-size: 16px;
+  font-weight: 500;
+  color: #ffffff;
+  line-height: 1.3;
+}
+
+/* ===== MODIFY/CHANGE BUTTONS ===== */
+.modify-btn,
+.change-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs, 6px);
+
+  /* Touch-friendly minimum size */
+  min-height: 44px;
+  min-width: 44px;
+  padding: var(--space-xs, 8px) var(--space-sm, 16px);
+  margin: 0;
+
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+
+  color: #e0e0e0;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  /* Better touch targets */
+  touch-action: manipulation;
+}
+
+.modify-btn:hover,
+.modify-btn:focus,
+.change-btn:hover,
+.change-btn:focus {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  outline: none;
+}
+
+.modify-btn:active,
+.change-btn:active {
+  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.btn-text {
+  line-height: 1;
+}
+
+.btn-icon {
+  font-size: 12px;
+  line-height: 1;
+  opacity: 0.8;
+}
+
+/* Button variants */
+.modify-btn {
+  background: rgba(74, 158, 255, 0.15);
+  border-color: rgba(74, 158, 255, 0.3);
+  color: #4A9EFF;
+}
+
+.modify-btn:hover,
+.modify-btn:focus {
+  background: rgba(74, 158, 255, 0.25);
+  border-color: rgba(74, 158, 255, 0.4);
+  color: #66B0FF;
+}
+
+.change-btn {
+  background: rgba(255, 193, 7, 0.15);
+  border-color: rgba(255, 193, 7, 0.3);
+  color: #FFC107;
+}
+
+.change-btn:hover,
+.change-btn:focus {
+  background: rgba(255, 193, 7, 0.25);
+  border-color: rgba(255, 193, 7, 0.4);
+  color: #FFD54F;
+}
+
+/* ===== BREADCRUMB NAVIGATION ===== */
+.context-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm, 8px);
+  flex-wrap: wrap;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Touch-friendly size */
+  width: 44px;
+  height: 44px;
+  margin-right: var(--space-sm, 8px);
+
+  color: #e0e0e0;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 600;
+
+  transition: all 0.2s ease;
+  touch-action: manipulation;
+}
+
+.back-link:hover,
+.back-link:focus {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateX(-2px);
+  outline: none;
+}
+
+.back-link:active {
+  transform: translateX(-1px) scale(0.95);
+}
+
+.back-arrow {
+  display: block;
+  line-height: 1;
+}
+
+/* Breadcrumb Items */
+.breadcrumb-item {
+  display: inline-flex;
+  align-items: center;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.breadcrumb-item.active .breadcrumb-text {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.breadcrumb-link {
+  color: #b0b0b0;
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+
+  transition: all 0.2s ease;
+}
+
+.breadcrumb-link:hover,
+.breadcrumb-link:focus {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.1);
+  text-decoration: underline;
+  outline: none;
+}
+
+.breadcrumb-text {
+  color: #d0d0d0;
+  padding: 4px 8px;
+}
+
+.breadcrumb-separator {
+  color: #666;
+  margin: 0 var(--space-xs, 4px);
+  font-size: 12px;
+  font-weight: normal;
+}
+
+/* ===== CONTEXT DESCRIPTION ===== */
+.context-description {
+  color: #b8b8b8;
+  font-size: 13px;
+  line-height: 1.4;
+  margin: 0;
+
+  /* Handle long descriptions */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablet and smaller desktop */
+@media (max-width: 1024px) {
+  .context-bar-content {
+    padding: var(--space-md, 16px);
+  }
+
+  .context-main {
+    grid-template-columns: 1fr 1.5fr 1fr;
+    gap: var(--space-md, 16px);
+  }
+
+  .context-breadcrumb {
+    gap: var(--space-xs, 6px);
+  }
+
+  .breadcrumb-item {
+    font-size: 14px; /* Improved readability */
+    line-height: 1.5;
+  }
+
+  .context-description {
+    font-size: 13px; /* Improved readability */
+    line-height: 1.4;
+  }
+
+  .section-value {
+    font-size: 15px; /* Improved readability */
+    line-height: 1.3;
+  }
+
+  .section-label {
+    font-size: 12px; /* Ensure labels remain readable */
+    line-height: 1.4;
+  }
+
+  .context-section {
+    padding: var(--space-sm, 12px);
+  }
+}
+
+/* Mobile landscape - vertical stack */
+@media (max-width: 768px) {
+  .context-bar-content {
+    padding: var(--space-sm, 12px) var(--space-md, 16px);
+    gap: var(--space-sm, 12px);
+  }
+
+  .context-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md, 16px);
+  }
+
+  .context-left,
+  .context-center,
+  .context-right {
+    order: 0;
+  }
+
+  /* Mobile section layout */
+  .context-section {
+    padding: var(--space-sm, 12px);
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-xs, 8px);
+    margin-bottom: var(--space-xs, 8px);
+  }
+
+  .section-value {
+    font-size: 15px; /* Improved readability */
+    line-height: 1.4;
+  }
+
+  .section-label {
+    font-size: 11px; /* Maintain hierarchy while readable */
+    line-height: 1.3;
+  }
+
+  .modify-btn,
+  .change-btn {
+    align-self: flex-end;
+    font-size: 11px;
+    /* Keep minimum touch target */
+    min-height: 44px;
+    min-width: 44px;
+    padding: var(--space-xs, 6px) var(--space-sm, 12px);
+  }
+
+  .context-breadcrumb {
+    flex-wrap: wrap;
+    gap: var(--space-xs, 4px);
+  }
+
+  .back-link {
+    /* Keep minimum touch target */
+    width: 44px;
+    height: 44px;
+    margin-right: var(--space-xs, 6px);
+    font-size: 16px;
+  }
+
+  .breadcrumb-item {
+    font-size: 13px; /* Improved readability */
+    line-height: 1.4;
+  }
+
+  .context-description {
+    font-size: 12px; /* Improved readability */
+    line-height: 1.3;
+    margin-top: var(--space-xs, 4px);
+  }
+}
+
+/* Mobile portrait - compact layout */
+@media (max-width: 480px) {
+  .context-bar {
+    position: relative; /* Not sticky on very small screens */
+  }
+
+  .context-bar-content {
+    padding: var(--space-sm, 10px) var(--space-md, 14px);
+    gap: var(--space-xs, 8px);
+  }
+
+  .context-main {
+    gap: var(--space-sm, 12px);
+  }
+
+  /* Compact sections on mobile */
+  .context-section {
+    padding: var(--space-sm, 10px);
+  }
+
+  .section-header {
+    margin-bottom: var(--space-xs, 6px);
+  }
+
+  .section-label {
+    font-size: 11px; /* Maintain readability */
+    line-height: 1.3;
+  }
+
+  .section-value {
+    font-size: 14px; /* Improved readability */
+    line-height: 1.4;
+  }
+
+  .modify-btn,
+  .change-btn {
+    font-size: 11px; /* Better readability */
+    /* Maintain touch target even on very small screens */
+    min-height: 44px;
+    min-width: 44px;
+    padding: var(--space-xs, 6px) var(--space-sm, 10px);
+    gap: 4px;
+  }
+
+  .btn-icon {
+    font-size: 12px; /* Larger icons for better visibility */
+  }
+
+  .context-breadcrumb {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-xs, 6px);
+  }
+
+  .back-link {
+    align-self: flex-start;
+    margin-right: 0;
+    margin-bottom: var(--space-xs, 4px);
+  }
+
+  /* Stack breadcrumb items on very small screens */
+  .breadcrumb-item {
+    font-size: 12px; /* Improved readability */
+    line-height: 1.4;
+  }
+
+  .breadcrumb-separator {
+    display: none; /* Hide separators on mobile */
+  }
+
+  .breadcrumb-item::after {
+    content: ' ›';
+    color: #666;
+    margin-left: var(--space-xs, 4px);
+  }
+
+  .breadcrumb-item:last-child::after {
+    display: none;
+  }
+
+  .context-description {
+    font-size: 11px; /* Improved readability */
+    line-height: 1.3;
+  }
+}
+
+/* ===== ACCESSIBILITY ENHANCEMENTS ===== */
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .context-bar {
+    background-color: #000000;
+    border-bottom-color: #ffffff;
+  }
+
+  .back-link {
+    border-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .breadcrumb-link {
+    color: #ffffff;
+  }
+
+  .breadcrumb-text,
+  .context-description {
+    color: #ffffff;
+  }
+
+  .breadcrumb-separator {
+    color: #cccccc;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .context-bar,
+  .back-link,
+  .breadcrumb-link {
+    transition: none;
+  }
+
+  .back-link:hover {
+    transform: none;
+  }
+
+  .back-link:active {
+    transform: scale(0.95);
+  }
+}
+
+/* Focus visible support for better keyboard navigation */
+.back-link:focus-visible,
+.breadcrumb-link:focus-visible {
+  outline: 2px solid #4A9EFF;
+  outline-offset: 2px;
+}
+
+/* ===== THEME INTEGRATION ===== */
+
+/* Light mode override (if needed in future) */
+[data-theme="light"] .context-bar {
+  background-color: #f8f9fa;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-bottom-color: #dee2e6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .back-link {
+  color: #495057;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .back-link:hover,
+[data-theme="light"] .back-link:focus {
+  color: #212529;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .breadcrumb-link {
+  color: #6c757d;
+}
+
+[data-theme="light"] .breadcrumb-link:hover,
+[data-theme="light"] .breadcrumb-link:focus {
+  color: #212529;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .breadcrumb-text {
+  color: #495057;
+}
+
+[data-theme="light"] .context-description {
+  color: #6c757d;
+}
+
+[data-theme="light"] .breadcrumb-separator {
+  color: #adb5bd;
+}
+
+/* ===== MOBILE-SPECIFIC ENHANCEMENTS ===== */
+
+/* Handle landscape orientation on mobile */
+@media screen and (max-width: 768px) and (orientation: landscape) and (max-height: 500px) {
+  .context-bar {
+    position: relative; /* Don't stick on landscape mobile */
+  }
+
+  .context-bar-content {
+    padding: var(--space-sm, 8px) var(--space-md, 16px);
+  }
+
+  .context-main {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto;
+    gap: var(--space-sm, 12px);
+  }
+
+  .context-section {
+    padding: var(--space-xs, 8px) var(--space-sm, 12px);
+  }
+
+  .section-value {
+    font-size: 13px;
+  }
+
+  .modify-btn,
+  .change-btn {
+    min-height: 36px;
+    min-width: 36px;
+    font-size: 10px;
+  }
+}
+
+/* Handle notched phones and safe areas */
+@supports (padding: max(0px)) {
+  @media (max-width: 480px) {
+    .context-bar-content {
+      padding-left: max(var(--space-md, 16px), env(safe-area-inset-left));
+      padding-right: max(var(--space-md, 16px), env(safe-area-inset-right));
+    }
+  }
+}
+
+/* Better tap targets and interactions for touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .modify-btn,
+  .change-btn,
+  .back-link {
+    /* Larger tap targets on touch-only devices */
+    min-height: 48px;
+    min-width: 48px;
+  }
+
+  .modify-btn:active,
+  .change-btn:active {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(0.96);
+  }
+
+  .back-link:active {
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: scale(0.96);
+  }
+
+  /* Remove hover states on touch devices */
+  .modify-btn:hover,
+  .change-btn:hover,
+  .back-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: none;
+  }
+
+  .breadcrumb-link:hover {
+    background-color: transparent;
+    text-decoration: none;
+  }
+}
+
+/* Improved focus states for keyboard navigation on mobile */
+@media (max-width: 768px) {
+  .modify-btn:focus-visible,
+  .change-btn:focus-visible {
+    outline: 3px solid #4A9EFF;
+    outline-offset: 3px;
+  }
+
+  .back-link:focus-visible {
+    outline: 3px solid #4A9EFF;
+    outline-offset: 3px;
+  }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  .context-bar {
+    position: static !important;
+    background: #ffffff !important;
+    border-bottom: 1px solid #000000 !important;
+    box-shadow: none !important;
+    color: #000000 !important;
+  }
+
+  .back-link {
+    display: none !important;
+  }
+
+  .breadcrumb-link,
+  .breadcrumb-text,
+  .context-description {
+    color: #000000 !important;
+  }
+}
+
+/* ===== ANIMATION CLASSES ===== */
+
+/* Slide in animation for when context bar appears */
+.context-bar.slide-in {
+  animation: slideInFromTop 0.3s ease-out;
+}
+
+@keyframes slideInFromTop {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Fade out animation for when context bar disappears */
+.context-bar.fade-out {
+  animation: fadeOut 0.2s ease-in forwards;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}

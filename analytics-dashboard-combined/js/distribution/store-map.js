@@ -150,7 +150,12 @@ const StoreMap = (function() {
 
   function invalidateSize() {
     if (map) {
-      setTimeout(() => map.invalidateSize(), 100);
+      // invalidateSize() corrects container dimensions; fitBounds() must follow
+      // so the map re-zooms to the store markers rather than defaulting to world view
+      setTimeout(function() {
+        map.invalidateSize();
+        fitBounds();
+      }, 100);
     }
   }
 

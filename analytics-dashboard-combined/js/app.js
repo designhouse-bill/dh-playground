@@ -90,6 +90,9 @@
                    typeof window.DistributionDashboard.init === 'function') {
           window.DistributionDashboard.init();
         }
+        // Charts in the active section may have rendered before the container
+        // was fully painted — a second resize pass locks in the correct dimensions
+        setTimeout(resizeVisibleCharts, 100);
       }, 50);
     }
 
@@ -126,7 +129,12 @@
       btn.addEventListener('click', function () {
         dropdown.setAttribute('aria-expanded', 'false');
         menu.classList.remove('open');
-        switchDashboard(btn.dataset.dashboard);
+        // Distribution is now a standalone page — navigate instead of SPA-switching
+        if (btn.dataset.dashboard === 'distribution') {
+          window.location.href = 'distribution-media.html';
+        } else {
+          switchDashboard(btn.dataset.dashboard);
+        }
       });
     });
 
@@ -207,6 +215,12 @@
         document.querySelectorAll('.dist-section').forEach(function (s) {
           s.classList.toggle('active', s.id === sectionId);
         });
+        // Resize eCharts — containers were display:none during init so they got 0×0 dimensions
+        setTimeout(resizeVisibleCharts, 0);
+        // Leaflet map needs an explicit size recalculation when its container becomes visible
+        if (sectionId === 'section-traffic' && typeof StoreMap !== 'undefined') {
+          StoreMap.invalidateSize();
+        }
       });
     });
   }
@@ -217,6 +231,11 @@
     document.querySelectorAll('.home-card').forEach(function (card) {
       function activate() {
         var target = card.dataset.dashboard;
+        // Distribution is now a standalone page
+        if (target === 'distribution') {
+          window.location.href = 'distribution-media.html';
+          return;
+        }
         if (target) switchDashboard(target);
       }
       card.addEventListener('click', activate);
@@ -245,6 +264,13 @@
     initContextCards();
     initDistSectionTabs();
     initHomeCards();
+
+    // Hash routing: distribution pages link back as index.html#engagement
+    // so the user lands directly in the Engagement dashboard instead of home
+    if (window.location.hash === '#engagement') {
+      history.replaceState(null, '', window.location.pathname);
+      switchDashboard('engagement');
+    }
   });
 
 })();

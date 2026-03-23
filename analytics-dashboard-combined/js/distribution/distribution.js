@@ -954,4 +954,78 @@
 
   // Expose init for lazy activation by app.js (no auto-init in combined prototype)
   window.initDistribution = init;
+
+  // ── Per-page init (standalone distribution HTML pages) ────────────────────────
+  //
+  // Called by distribution-page-app.js on each section's own HTML file.
+  // Initializes only the context + the specific section, not all three at once.
+
+  function bindPageEvents(section) {
+    // Traffic Share has its own interactive controls
+    if (section === 'traffic') {
+      document.querySelectorAll('#store-view-toggle .toggle-btn').forEach(function (btn) {
+        btn.addEventListener('click', handleViewToggle);
+      });
+      document.querySelectorAll('#leaderboard-sort .toggle-btn').forEach(function (btn) {
+        btn.addEventListener('click', handleLeaderboardSort);
+      });
+    }
+
+    // Re-render this section when modals apply new filters/dates
+    document.addEventListener('distribution:dataRefresh', function () {
+      Object.values(charts).forEach(function (c) { if (c && c.dispose) c.dispose(); });
+      charts = {};
+
+      if (section === 'media') {
+        renderMediaKpis(); renderCreativePanel(); renderVideoKpis();
+        initVideoFunnelChart(); initDemographicCharts();
+      } else if (section === 'visitation') {
+        renderVisitationKpis(); renderCrossoverDetail(); renderSpotlightCards();
+        initFrequencyChart(); initCrossoverChart(); initCrossoverTrendChart();
+      } else if (section === 'traffic') {
+        renderTrafficKpis(); renderMap(); renderLeaderboard('change');
+        renderConcentration(); renderThreats();
+        initShareTrendChart(); initVolumeChart();
+      }
+      updateRetailerLabels();
+      initContext();
+    });
+  }
+
+  window.initDistributionPage = function (section) {
+    try {
+      initContext();
+      cacheElements();
+      bindPageEvents(section);
+      updateRetailerLabels();
+
+      if (section === 'media') {
+        renderMediaKpis();
+        renderCreativePanel();
+        renderVideoKpis();
+        initVideoFunnelChart();
+        initDemographicCharts();
+      } else if (section === 'visitation') {
+        renderVisitationKpis();
+        renderCrossoverDetail();
+        renderSpotlightCards();
+        initFrequencyChart();
+        initCrossoverChart();
+        initCrossoverTrendChart();
+      } else if (section === 'traffic') {
+        renderTrafficKpis();
+        renderMap();
+        renderLeaderboard('change');
+        renderConcentration();
+        renderThreats();
+        initShareTrendChart();
+        initVolumeChart();
+      }
+
+      console.log('Distribution page initialized:', section);
+    } catch (error) {
+      console.error('Failed to initialize distribution page:', error);
+    }
+  };
+
 })();

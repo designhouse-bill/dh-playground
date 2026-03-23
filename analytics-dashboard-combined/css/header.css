@@ -229,6 +229,13 @@
   outline-offset: 2px;
 }
 
+/* When tabs are <a> links instead of <button> elements */
+/* When tabs / switcher items are <a> links instead of <button> elements */
+a.dist-tab,
+a.dashboard-switcher__item {
+  text-decoration: none;
+}
+
 /* Context Row: Foundation Context + Filter Chips */
 .context-row {
   display: flex;

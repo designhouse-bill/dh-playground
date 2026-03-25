@@ -685,18 +685,18 @@ const DashboardCore = (() => {
     let activeMode = 'base';
     let activeView = 'categories';
 
-    if (currentPage === 'base_circulars' || currentPage === 'index') {
+    if (currentPage === 'base_circulars' || currentPage === 'engagement-circulars' || currentPage === 'index') {
       activeMode = 'base';
       activeView = 'circulars';
-    } else if (currentPage === 'base_categories') {
+    } else if (currentPage === 'base_categories' || currentPage === 'engagement-categories') {
       activeMode = 'base';
       activeView = 'categories';
-    } else if (currentPage === 'base_promotions') {
+    } else if (currentPage === 'base_promotions' || currentPage === 'engagement-promotions') {
       activeMode = 'base';
       activeView = 'promotions';
-    } else if (currentPage === 'grid-inquiry') {
+    } else if (currentPage === 'grid-inquiry' || currentPage === 'engagement-grid') {
       activeMode = 'grid';
-    } else if (currentPage === 'compare') {
+    } else if (currentPage === 'compare' || currentPage === 'engagement-compare') {
       activeMode = 'compare';
     }
 

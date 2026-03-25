@@ -96,6 +96,7 @@
     renderCreativePanel();
     renderVideoKpis();
     renderVisitationKpis();
+    renderMaidScore();
     renderCrossoverDetail();
     renderSpotlightCards();
     renderTrafficKpis();
@@ -252,6 +253,77 @@
       kpiTile('1-3 Previous', fmtNumber(latest.visits_one_three_prev)),
       kpiTile('4+ Previous', fmtNumber(latest.visits_four_plus_prev))
     ].join('');
+  }
+
+  function renderMaidScore() {
+    const maid = D.maidScoreMetrics;
+    if (!maid) return;
+
+    const valueEl = document.getElementById('maid-score-value');
+    const trendEl = document.getElementById('maid-score-trend');
+
+    if (valueEl) {
+      valueEl.textContent = fmtNumber(maid.current_total);
+    }
+
+    if (trendEl && maid.change_pct !== 0) {
+      const isUp = maid.change_pct > 0;
+      trendEl.innerHTML = `
+        <span class="kpi-trend ${isUp ? 'kpi-trend--up' : 'kpi-trend--down'}">
+          <span class="material-symbols-outlined">${isUp ? 'trending_up' : 'trending_down'}</span>
+          ${isUp ? '+' : ''}${maid.change_pct}% vs ${maid.previous_quarter}
+        </span>
+      `;
+    }
+
+    // Render mini bar chart
+    const chartEl = document.getElementById('chart-maid-score');
+    if (chartEl && typeof echarts !== 'undefined') {
+      if (charts.maidScore) {
+        charts.maidScore.dispose();
+      }
+      charts.maidScore = echarts.init(chartEl);
+      charts.maidScore.setOption({
+        grid: { top: 10, right: 10, bottom: 30, left: 10 },
+        xAxis: {
+          type: 'category',
+          data: maid.byQuarter.map(q => q.quarter),
+          axisLabel: { fontSize: 11, color: '#6b7280' },
+          axisLine: { show: false },
+          axisTick: { show: false }
+        },
+        yAxis: {
+          type: 'value',
+          show: false
+        },
+        series: [{
+          type: 'bar',
+          data: maid.byQuarter.map((q, i) => ({
+            value: q.total,
+            itemStyle: {
+              color: i === maid.byQuarter.length - 1 ? '#2196F3' : '#cbd5e1',
+              borderRadius: [4, 4, 0, 0]
+            }
+          })),
+          barWidth: '50%',
+          label: {
+            show: true,
+            position: 'top',
+            fontSize: 11,
+            color: '#374151',
+            formatter: function(params) {
+              return (params.value / 1000).toFixed(1) + 'K';
+            }
+          }
+        }],
+        tooltip: {
+          trigger: 'item',
+          formatter: function(params) {
+            return params.name + '<br/>' + fmtNumber(params.value) + ' unique devices';
+          }
+        }
+      });
+    }
   }
 
   function renderCrossoverDetail() {

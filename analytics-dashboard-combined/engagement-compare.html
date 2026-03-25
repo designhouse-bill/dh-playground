@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics Dashboard - Compare</title>
+
+  <!-- Google Material Symbols -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+
+  <!-- CSS (in dependency order) -->
+  <link rel="stylesheet" href="css/design-tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/context-bar.css">
+  <link rel="stylesheet" href="css/detail-panel.css">
+  <link rel="stylesheet" href="css/engagement.css">
+</head>
+<body>
+<div id="engagement-dashboard">
+
+  <!-- ============================================================
+       HEADER
+       ============================================================ -->
+  <header class="header">
+
+    <div class="topbar">
+      <div class="topbar__left">
+        <div class="brand">
+          <div class="logo">
+            <span class="material-symbols-outlined">analytics</span>
+          </div>
+          <h1 class="title">Analytics Dashboard</h1>
+        </div>
+        <span class="topbar__separator">|</span>
+
+        <!-- Dashboard Switcher Dropdown -->
+        <div class="dashboard-switcher" id="dashboard-switcher">
+          <button class="performance-dropdown" id="performance-type-dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="performance-dropdown__text" id="dashboard-switcher-label">Engagement</span>
+            <span class="material-symbols-outlined">expand_more</span>
+          </button>
+          <div class="dashboard-switcher__menu" id="dashboard-menu" role="menu">
+            <button class="dashboard-switcher__item active" data-dashboard="engagement" role="menuitem">
+              <span class="material-symbols-outlined">monitoring</span>
+              Engagement
+            </button>
+            <a class="dashboard-switcher__item" data-href="distribution-media.html" role="menuitem">
+              <span class="material-symbols-outlined">campaign</span>
+              Distribution
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- View Modes -->
+      <div class="view-modes" id="view-modes">
+        <div class="mode-group mode-group--base" data-mode="base">
+          <a href="engagement-promotions.html" class="mode-btn mode-btn--primary" data-mode="base" aria-label="Base view">
+            <span class="material-symbols-outlined">view_list</span>
+            BASE
+          </a>
+          <div class="mode-subtabs" role="tablist" style="display: none;">
+            <a href="engagement-circulars.html" class="subtab" data-view="circulars" role="tab">Circulars</a>
+            <a href="engagement-categories.html" class="subtab" data-view="categories" role="tab">Categories</a>
+            <a href="engagement-promotions.html" class="subtab" data-view="promotions" role="tab">Promotions</a>
+          </div>
+        </div>
+        <a href="engagement-grid.html" class="mode-btn mode-btn--outline" data-mode="grid" aria-label="Data grid view">
+          <span class="material-symbols-outlined">table_chart</span>
+          GRID
+        </a>
+        <a href="engagement-compare.html" class="mode-btn mode-btn--outline active" data-mode="compare" aria-label="Comparison view">
+          <span class="material-symbols-outlined">compare</span>
+          COMPARE
+        </a>
+      </div>
+    </div>
+
+  </header>
+
+  <!-- ============================================================
+       COMPARE VIEW
+       ============================================================ -->
+  <main class="layout layout--compare" id="compare-layout">
+    <section class="panel panel--compare-full" role="main" aria-label="Comparison View">
+      <div class="compare-layer-header">
+        <div class="base-dropdown" id="compare-layer-dropdown-wrapper">
+          <button class="base-dropdown__trigger" id="compare-layer-dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="base-dropdown__label">COMPARE</span>
+            <span class="base-dropdown__value" id="compare-layer-value">Promotions</span>
+            <span class="material-symbols-outlined">expand_more</span>
+          </button>
+          <div class="base-dropdown__menu" id="compare-layer-menu" role="menu">
+            <button class="base-dropdown__item active" data-layer="promotions" role="menuitem" onclick="ComparePage.selectLayer('promotions')">Promotions</button>
+            <button class="base-dropdown__item" data-layer="categories" role="menuitem" onclick="ComparePage.selectLayer('categories')">Categories</button>
+            <button class="base-dropdown__item" data-layer="circulars" role="menuitem" onclick="ComparePage.selectLayer('circulars')">Circulars</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="compare-context-bar">
+        <div class="context-column context-column--a">
+          <span class="context-label">A</span>
+          <div class="context-selectors">
+            <button class="context-btn" data-target="A" data-type="date" onclick="ComparePage.openDatePicker('A')" id="context-a-date">
+              <span class="material-symbols-outlined">calendar_month</span>
+              <span class="btn-text">Select Week</span>
+            </button>
+            <button class="context-btn" data-target="A" data-type="entity" onclick="ComparePage.openEntityPicker('A')" id="context-a-entity">
+              <span class="material-symbols-outlined">corporate_fare</span>
+              <span class="btn-text">Select Entity</span>
+            </button>
+            <div class="compare-filter">
+              <label for="daysFilterA">Days:</label>
+              <select id="daysFilterA" class="days-filter" onchange="ComparePage.setDaysFilter('A', this.value)">
+                <option value="all">All Days</option>
+                <option value="7">7 Days</option>
+                <option value="3">3 Days</option>
+                <option value="1">1 Day</option>
+              </select>
+            </div>
+            <button class="context-btn context-btn--empty" data-target="A" data-type="category" onclick="ComparePage.openCategoryPicker('A')" id="context-a-category" style="display: none;">
+              <span class="material-symbols-outlined">category</span>
+              <span class="btn-text">Select Category</span>
+            </button>
+            <button class="context-btn context-btn--empty" data-target="A" data-type="promotion" onclick="ComparePage.openPromotionPicker('A')" id="context-a-promotion" style="display: none;">
+              <span class="material-symbols-outlined">local_offer</span>
+              <span class="btn-text">Select Promotion</span>
+            </button>
+          </div>
+          <button class="copy-context-btn" onclick="ComparePage.copyAtoB()" title="Copy Context A to B">
+            <span class="material-symbols-outlined">content_copy</span>
+            Copy A to B
+          </button>
+        </div>
+
+        <div class="context-column context-column--b">
+          <span class="context-label">B</span>
+          <div class="compare-prompt" id="panelBPrompt" style="display: none;">
+            <div class="prompt-icon">&#9878;</div>
+            <p class="prompt-title">Select comparison target</p>
+            <p class="prompt-text">Choose a different store group, publication, or time period to compare performance</p>
+          </div>
+          <div class="context-selectors">
+            <button class="context-btn context-btn--empty" data-target="B" data-type="date" onclick="ComparePage.openDatePicker('B')" id="context-b-date">
+              <span class="material-symbols-outlined">calendar_month</span>
+              <span class="btn-text">Select Week</span>
+            </button>
+            <button class="context-btn context-btn--empty" data-target="B" data-type="entity" onclick="ComparePage.openEntityPicker('B')" id="context-b-entity">
+              <span class="material-symbols-outlined">corporate_fare</span>
+              <span class="btn-text">Select Entity</span>
+            </button>
+            <div class="compare-filter">
+              <label for="daysFilterB">Days:</label>
+              <select id="daysFilterB" class="days-filter" onchange="ComparePage.setDaysFilter('B', this.value)">
+                <option value="all">All Days</option>
+                <option value="7">7 Days</option>
+                <option value="3">3 Days</option>
+                <option value="1">1 Day</option>
+              </select>
+            </div>
+            <button class="context-btn context-btn--empty" data-target="B" data-type="category" onclick="ComparePage.openCategoryPicker('B')" id="context-b-category" style="display: none;">
+              <span class="material-symbols-outlined">category</span>
+              <span class="btn-text">Select Category</span>
+            </button>
+            <button class="context-btn context-btn--empty" data-target="B" data-type="promotion" onclick="ComparePage.openPromotionPicker('B')" id="context-b-promotion" style="display: none;">
+              <span class="material-symbols-outlined">local_offer</span>
+              <span class="btn-text">Select Promotion</span>
+            </button>
+          </div>
+          <button class="copy-context-btn" onclick="ComparePage.copyBtoA()" title="Copy Context B to A">
+            <span class="material-symbols-outlined">content_copy</span>
+            Copy B to A
+          </button>
+        </div>
+      </div>
+
+      <div class="compare-results-container" id="compare-results">
+        <div class="compare-grid" id="compare-grid">
+          <div class="compare-empty-state" id="compare-empty-state">
+            <span class="compare-empty-state__icon material-symbols-outlined">compare</span>
+            <h2 class="compare-empty-state__title">Select Contexts to Compare</h2>
+            <p class="compare-empty-state__message">Choose a date and entity for both Context A and Context B to see a side-by-side comparison.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================================
+       MODALS
+       ============================================================ -->
+
+  <!-- Date Range Picker Modal -->
+  <div class="modal-overlay" id="date-picker-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-header-title">
+          <span class="material-symbols-outlined">calendar_month</span>
+          <h3 class="modal-title">Select Date Range</h3>
+        </div>
+        <button class="modal-close" onclick="closeDatePicker()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="date-picker-tabs">
+          <button class="date-picker-tab active" data-tab="week" onclick="switchDateTab('week')">By Week</button>
+          <button class="date-picker-tab" data-tab="custom" onclick="switchDateTab('custom')">Custom Range</button>
+        </div>
+        <div class="date-tab-content active" id="week-tab-content">
+          <div class="week-search-row">
+            <div class="week-search">
+              <span class="material-symbols-outlined">search</span>
+              <input type="text" id="week-search-input" placeholder="Search weeks..." oninput="filterWeeks(this.value)">
+            </div>
+            <div id="week-year-selector"></div>
+          </div>
+          <div class="week-list" id="week-list"></div>
+        </div>
+        <div class="date-tab-content" id="custom-tab-content">
+          <div class="custom-date-inputs">
+            <div class="date-input-group">
+              <label>Start Date</label>
+              <input type="date" id="custom-start-date" value="2025-11-18">
+            </div>
+            <div class="date-input-group">
+              <label>End Date</label>
+              <input type="date" id="custom-end-date" value="2025-11-24">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer modal-footer--right">
+        <button class="modal-btn modal-btn--secondary" onclick="closeDatePicker()">Cancel</button>
+        <button class="modal-btn modal-btn--primary" onclick="applyDateSelection()">Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Entity Selector Modal -->
+  <div class="modal-overlay" id="entity-selector-modal">
+    <div class="modal modal--extra-wide">
+      <div class="modal-header">
+        <div class="modal-header-title">
+          <span class="material-symbols-outlined">store</span>
+          <h3 class="modal-title">Select Entity</h3>
+        </div>
+        <button class="modal-close" onclick="closeEntitySelector()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="modal-body modal-body--no-padding">
+        <div class="entity-tabs" style="padding: 0 var(--space-6);">
+          <button class="entity-tab active" data-tab="nodes" onclick="switchEntityTab('nodes')">
+            <span class="material-symbols-outlined">account_tree</span>
+            Nodes
+          </button>
+          <button class="entity-tab" data-tab="groups" onclick="switchEntityTab('groups')">
+            <span class="material-symbols-outlined">workspaces</span>
+            Groups
+          </button>
+        </div>
+        <div class="entity-tab-content active" id="nodes-tab-content">
+          <div class="entity-search" style="margin: var(--space-4) var(--space-6);">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" id="entity-search-input" placeholder="Search entities..." oninput="filterEntities(this.value)">
+          </div>
+          <div class="tree-table-container">
+            <table class="tree-table">
+              <thead>
+                <tr>
+                  <th class="tree-col-name">Name</th>
+                  <th class="tree-col-type">Type</th>
+                  <th class="tree-col-address">Address</th>
+                  <th class="tree-col-subdomain">Subdomain</th>
+                  <th class="tree-col-path">Path</th>
+                </tr>
+              </thead>
+              <tbody id="entity-tree-body"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="entity-tab-content" id="groups-tab-content">
+          <div class="entity-search" style="margin: var(--space-4) var(--space-6);">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" id="group-search-input" placeholder="Search groups..." oninput="filterGroups(this.value)">
+          </div>
+          <div class="group-list" id="group-list" style="padding: 0 var(--space-6);"></div>
+          <div class="group-actions" style="padding: var(--space-4) var(--space-6);">
+            <button class="create-group-btn" onclick="openCreateGroupModal()">
+              <span class="material-symbols-outlined">add</span>
+              Create New Group
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer modal-footer--right">
+        <button class="modal-btn modal-btn--secondary" onclick="closeEntitySelector()">Cancel</button>
+        <button class="modal-btn modal-btn--primary" onclick="applyEntitySelection()">Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category Picker Modal -->
+  <div class="modal-overlay" id="category-picker-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-header-title">
+          <span class="material-symbols-outlined">category</span>
+          <h3 class="modal-title">Select Category</h3>
+        </div>
+        <button class="modal-close" onclick="ComparePage.closeCategoryPicker()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="category-search" style="margin-bottom: var(--space-4);">
+          <div class="entity-search">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" id="category-search-input" placeholder="Search categories..." oninput="ComparePage.filterCategories(this.value)">
+          </div>
+        </div>
+        <div class="category-list" id="category-list" style="max-height: 400px; overflow-y: auto;"></div>
+      </div>
+      <div class="modal-footer modal-footer--right">
+        <button class="modal-btn modal-btn--secondary" onclick="ComparePage.closeCategoryPicker()">Cancel</button>
+        <button class="modal-btn modal-btn--primary" onclick="ComparePage.applyCategorySelection()">Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Promotion Picker Modal -->
+  <div class="modal-overlay" id="promotion-picker-modal">
+    <div class="modal modal--wide">
+      <div class="modal-header">
+        <div class="modal-header-title">
+          <span class="material-symbols-outlined">local_offer</span>
+          <h3 class="modal-title">Select Promotion</h3>
+        </div>
+        <button class="modal-close" onclick="ComparePage.closePromotionPicker()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="promotion-search" style="margin-bottom: var(--space-4);">
+          <div class="entity-search">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" id="promotion-search-input" placeholder="Search promotions..." oninput="ComparePage.filterPromotions(this.value)">
+          </div>
+        </div>
+        <div class="promotion-list" id="promotion-list" style="max-height: 400px; overflow-y: auto;"></div>
+      </div>
+      <div class="modal-footer modal-footer--right">
+        <button class="modal-btn modal-btn--secondary" onclick="ComparePage.closePromotionPicker()">Cancel</button>
+        <button class="modal-btn modal-btn--primary" onclick="ComparePage.applyPromotionSelection()">Apply</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /#engagement-dashboard -->
+
+  <!-- ============================================================
+       SCRIPTS (dependency order)
+       ============================================================ -->
+  <script src="js/vendor/echarts.min.js"></script>
+  <script src="js/shared/chart-colors.js"></script>
+  <script src="js/data/engagement-promotions.js"></script>
+  <script src="js/data/engagement-mock-data.js"></script>
+  <script src="js/engagement/cache-manager.js"></script>
+  <script src="js/engagement/data-service.js"></script>
+  <script src="js/engagement/state-manager.js"></script>
+  <script src="js/engagement/shared-core.js"></script>
+  <script src="js/engagement/shared-modals.js"></script>
+  <script src="js/engagement/shared-filters.js"></script>
+  <script src="js/engagement/shared-perf-charts.js"></script>
+  <script src="js/engagement/compare.js"></script>
+  <script src="js/header-slide.js"></script>
+  <script src="js/engagement/engagement-page-app.js"></script>
+
+</body>
+</html>

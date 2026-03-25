@@ -41,7 +41,7 @@
             <span class="material-symbols-outlined">expand_more</span>
           </button>
           <div class="dashboard-switcher__menu" id="dashboard-menu" role="menu">
-            <a class="dashboard-switcher__item" data-href="index.html#engagement" role="menuitem">
+            <a class="dashboard-switcher__item" data-href="engagement-promotions.html" role="menuitem">
               <span class="material-symbols-outlined">monitoring</span>
               Engagement
             </a>
@@ -80,7 +80,7 @@
             <span class="material-symbols-outlined">calendar_month</span>
           </div>
           <div class="card-content">
-            <div class="card-value" id="context-date-value">Flight Weeks 3–2</div>
+            <div class="card-value" id="context-date-value">Week 50 – Week 2</div>
             <div class="card-sub" id="context-date-sub">Dec 10, 2025 – Jan 13, 2026</div>
           </div>
           <span class="card-arrow">
@@ -96,9 +96,9 @@
             <span class="material-symbols-outlined">corporate_fare</span>
           </div>
           <div class="card-content">
-            <div class="card-breadcrumb" id="context-entity-breadcrumb">ALL STORES</div>
-            <div class="card-value" id="context-entity-value">Winn-Dixie</div>
-            <div class="card-sub" id="context-entity-sub">20 stores · Florida Pilot</div>
+            <div class="card-breadcrumb" id="context-entity-breadcrumb">BRAND</div>
+            <div class="card-value" id="context-entity-value">Southeastern Grocers</div>
+            <div class="card-sub" id="context-entity-sub">37 stores · Florida Pilot</div>
           </div>
           <span class="card-arrow">
             <span class="material-symbols-outlined">expand_more</span>
@@ -117,7 +117,6 @@
 
       <div class="section-header">
         <div class="section-header__left">
-          <span class="section-number">1</span>
           <div>
             <h2 class="section-title">Media Buy Metrics</h2>
             <p class="section-subtitle">How efficiently are we spending our media budget, and what creative drove it?</p>
@@ -125,38 +124,48 @@
         </div>
       </div>
 
-      <div class="kpi-row" id="media-kpis"></div>
+      <!-- ═══════════════════════════════════════════════
+           LEVEL 1: The Story
+           ═══════════════════════════════════════════════ -->
 
-      <div class="creative-panel" id="creative-panel">
-        <div class="creative-panel__header">
-          <h3 class="panel-label">Media Creative</h3>
-        </div>
-        <div class="creative-variants" id="creative-variants"></div>
-      </div>
+      <!-- Hero KPI: CPV large + nested supporting cards -->
+      <div class="media-hero" id="media-hero"></div>
 
-      <div class="video-section" id="video-section">
-        <div class="video-section__header">
-          <h3 class="panel-label">Video Engagement</h3>
-          <span class="badge badge--info">YouTube Campaign</span>
-        </div>
-        <div class="video-kpis" id="video-kpis"></div>
-        <div class="video-funnel" id="video-funnel-chart" style="height: 200px;"></div>
-      </div>
+      <!-- Performance Ranking divider -->
+      <div class="level-divider">Performance Ranking</div>
 
-      <div class="demographics-panel" id="demographics-panel">
-        <h3 class="panel-label">Foot Traffic Demographics</h3>
-        <div class="demographics-content">
-          <div class="demo-charts-grid">
-            <div class="demo-chart-card"><h4 class="demo-chart-title">Age Distribution</h4><div id="chart-demo-age" style="height: 200px;"></div></div>
-            <div class="demo-chart-card"><h4 class="demo-chart-title">Gender</h4><div id="chart-demo-gender" style="height: 200px;"></div></div>
-            <div class="demo-chart-card"><h4 class="demo-chart-title">Household Income</h4><div id="chart-demo-income" style="height: 200px;"></div></div>
-            <div class="demo-chart-card"><h4 class="demo-chart-title">Net Worth</h4><div id="chart-demo-networth" style="height: 200px;"></div></div>
-            <div class="demo-chart-card"><h4 class="demo-chart-title">Marital Status</h4><div id="chart-demo-marital" style="height: 200px;"></div></div>
-            <div class="demo-chart-card"><h4 class="demo-chart-title">Presence of Children</h4><div id="chart-demo-children" style="height: 200px;"></div></div>
-            <div class="demo-chart-card"><h4 class="demo-chart-title">Homeowner Status</h4><div id="chart-demo-homeowner" style="height: 200px;"></div></div>
-            <div class="demo-chart-card"><h4 class="demo-chart-title">Household Size</h4><div id="chart-demo-household" style="height: 200px;"></div></div>
+      <!-- Creative List: horizontal carousel of variant cards -->
+      <div class="creative-list" id="creative-list"></div>
+
+      <!-- ═══════════════════════════════════════════════
+           LEVEL 2: Detailed Breakdown
+           ═══════════════════════════════════════════════ -->
+      <div class="level-divider">Detailed Breakdown</div>
+
+      <!-- Variant Tree Table (dynamically generated) -->
+      <div id="variant-panels" class="dist-tree-data-grid">
+        <div class="dist-tree-header">
+          <label class="toggle-switch">
+            <input type="checkbox" id="dist-more-data-toggle">
+            <span class="toggle-slider"></span>
+          </label>
+          <span class="toggle-label">More Data</span>
+          <div class="dist-tree-actions">
+            <button class="dist-tree-action-btn" id="dist-export-btn" title="Export">
+              <span class="material-symbols-outlined">download</span> Export
+            </button>
+            <button class="dist-tree-action-btn" id="dist-print-btn" title="Print">
+              <span class="material-symbols-outlined">print</span> Print
+            </button>
+            <button class="dist-tree-action-btn" id="dist-share-btn" title="Share">
+              <span class="material-symbols-outlined">share</span> Share
+            </button>
           </div>
         </div>
+        <table class="dist-tree-table">
+          <thead id="dist-tree-head"></thead>
+          <tbody id="dist-tree-body"></tbody>
+        </table>
       </div>
 
     </section>
@@ -173,13 +182,13 @@
 
   <script src="js/shared/chart-colors.js"></script>
 
-  <script src="js/data/distribution-entities.js"></script>
-  <script src="js/data/distribution-records.js"></script>
-  <script src="js/data/distribution-data.js"></script>
+  <script src="js/data/distribution-entities.js?v=4"></script>
+  <script src="js/data/distribution-records.js?v=4"></script>
+  <script src="js/data/distribution-data.js?v=4"></script>
 
   <script src="js/distribution/store-map.js"></script>
-  <script src="js/distribution/distribution.js"></script>
-  <script src="js/distribution/distribution-modals.js"></script>
+  <script src="js/distribution/distribution.js?v=4"></script>
+  <script src="js/distribution/distribution-modals.js?v=4"></script>
 
   <script src="js/header-slide.js"></script>
   <script src="js/distribution/distribution-page-app.js"></script>

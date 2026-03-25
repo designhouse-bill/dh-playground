@@ -17,6 +17,7 @@ const DistributionModals = (function() {
   let _selectedEntityLevel = 'all';
   let _selectedEntityName = 'All Stores';
   let _expandedNodes = { 'all': true };
+  let _treeView = 'groups'; // 'groups' = show store groups under sub-brands; 'stores' = show stores directly under sub-brands
 
   // ========================================
   // Modal Infrastructure
@@ -62,7 +63,7 @@ const DistributionModals = (function() {
       '<div class="dist-modal-overlay" id="dist-date-modal">' +
         '<div class="dist-modal-content">' +
           '<div class="dist-modal-header">' +
-            '<h3>Select Flight Week</h3>' +
+            '<h3>Select Date Range</h3>' +
             '<button class="dist-modal-close" onclick="DistributionModals.closeDatePicker()">' +
               '<span class="material-symbols-outlined">close</span>' +
             '</button>' +
@@ -103,7 +104,7 @@ const DistributionModals = (function() {
     html += '<div class="dist-week-option' + (_selectedWeekId === 'all' ? ' selected' : '') + '" ' +
       'data-week-id="all" onclick="DistributionModals.selectWeek(\'all\')">' +
       '<div class="dist-week-option__left">' +
-        '<div class="dist-week-option__label">All Flight Weeks</div>' +
+        '<div class="dist-week-option__label">All Weeks</div>' +
         '<div class="dist-week-option__dates">' + weeks[0].start + ' — ' + weeks[weeks.length - 1].end + '</div>' +
       '</div>' +
       '<div class="dist-week-option__check">' +
@@ -139,21 +140,8 @@ const DistributionModals = (function() {
 
     D.setFlightWeek(_selectedWeekId);
 
-    // Update header display
-    if (typeof HeaderComponent !== 'undefined') {
-      if (_selectedWeekId === 'all') {
-        var weeks = D.flightWeeks;
-        HeaderComponent.updateDateDisplay(
-          'Flight Weeks 3-2',
-          'Dec 10, 2025 – Jan 13, 2026'
-        );
-      } else {
-        var week = D.flightWeeks.find(function(w) { return w.id === _selectedWeekId; });
-        if (week) {
-          HeaderComponent.updateDateDisplay(week.label, week.start + ' — ' + week.end);
-        }
-      }
-    }
+    // Update header display — initContext handles this on refresh
+    // No need to call HeaderComponent separately
 
     closeDatePicker();
     dispatchRefresh('dateChange');
@@ -174,10 +162,20 @@ const DistributionModals = (function() {
             '</button>' +
           '</div>' +
           '<div class="dist-modal-body">' +
-            '<div class="dist-entity-search">' +
-              '<span class="material-symbols-outlined">search</span>' +
-              '<input type="text" id="dist-entity-search-input" placeholder="Search stores, brands..." ' +
-                'oninput="DistributionModals.filterEntityTree(this.value)">' +
+            '<div class="dist-entity-toolbar">' +
+              '<div class="dist-entity-search">' +
+                '<span class="material-symbols-outlined">search</span>' +
+                '<input type="text" id="dist-entity-search-input" placeholder="Search stores, brands..." ' +
+                  'oninput="DistributionModals.filterEntityTree(this.value)">' +
+              '</div>' +
+              '<div class="dist-entity-view-toggle">' +
+                '<button class="dist-view-btn active" id="dist-view-groups" onclick="DistributionModals.setTreeView(\'groups\')">' +
+                  '<span class="material-symbols-outlined">folder</span> Groups' +
+                '</button>' +
+                '<button class="dist-view-btn" id="dist-view-stores" onclick="DistributionModals.setTreeView(\'stores\')">' +
+                  '<span class="material-symbols-outlined">store</span> Stores' +
+                '</button>' +
+              '</div>' +
             '</div>' +
             '<div class="dist-entity-tree" id="dist-entity-tree"></div>' +
           '</div>' +
@@ -207,6 +205,17 @@ const DistributionModals = (function() {
     if (modal) modal.classList.remove('active');
   }
 
+  function setTreeView(view) {
+    _treeView = view;
+    // Update toggle button states
+    var groupsBtn = document.getElementById('dist-view-groups');
+    var storesBtn = document.getElementById('dist-view-stores');
+    if (groupsBtn) groupsBtn.classList.toggle('active', view === 'groups');
+    if (storesBtn) storesBtn.classList.toggle('active', view === 'stores');
+    var searchInput = document.getElementById('dist-entity-search-input');
+    renderEntityTree(searchInput ? searchInput.value : '');
+  }
+
   function renderEntityTree(filter) {
     var tree = document.getElementById('dist-entity-tree');
     if (!tree || !E) return;
@@ -214,25 +223,23 @@ const DistributionModals = (function() {
     var html = '';
     var query = (filter || '').toLowerCase().trim();
 
-    // "All Stores" root
+    // Level 1: Brand (All Stores)
     var allSelected = _selectedEntityId === 'all';
     html += treeRow('all', 'all', 'All Stores', E.stores.length + ' stores', 0, allSelected, true);
 
-    // Brands
+    // Level 2: Sub-brands (Winn-Dixie, Harveys)
     E.brands.forEach(function(brand) {
       var brandStores = E.getStoresForEntity(brand.id, 'brand');
       var brandExpanded = !!_expandedNodes[brand.id];
       var brandSelected = _selectedEntityId === brand.id;
 
-      // Filter: show brand if it matches or any child matches
+      // Filter: show sub-brand if it matches or any child matches
       if (query) {
         var brandMatch = brand.name.toLowerCase().includes(query);
         var childMatch = brand.subBrands.some(function(sb) {
           if (sb.name.toLowerCase().includes(query)) return true;
-          var sbStores = E.getStoresForEntity(sb.id, 'sub-brand');
-          return sbStores.some(function(sid) {
-            var store = E.getStoreById(sid);
-            return store && (store.name.toLowerCase().includes(query) || store.city.toLowerCase().includes(query) || store.storeNumber.toString().includes(query));
+          return sb.stores.some(function(store) {
+            return store.name.toLowerCase().includes(query) || store.city.toLowerCase().includes(query) || store.storeNumber.toString().includes(query);
           });
         });
         if (!brandMatch && !childMatch) return;
@@ -242,55 +249,66 @@ const DistributionModals = (function() {
       html += treeRow(brand.id, 'brand', brand.name, brandStores.length + ' stores', 1, brandSelected, brandExpanded);
 
       if (brandExpanded) {
-        // Sub-brands
-        brand.subBrands.forEach(function(sb) {
-          var sbStores = E.getStoresForEntity(sb.id, 'sub-brand');
-          var sbExpanded = !!_expandedNodes[sb.id];
-          var sbSelected = _selectedEntityId === sb.id;
+        if (_treeView === 'groups') {
+          // Groups view: Sub-brand → Store Groups → Stores
+          brand.subBrands.forEach(function(sb) {
+            var sbStores = E.getStoresForEntity(sb.id, 'sub-brand');
+            var sbExpanded = !!_expandedNodes[sb.id];
+            var sbSelected = _selectedEntityId === sb.id;
 
-          if (query) {
-            var sbMatch = sb.name.toLowerCase().includes(query);
-            var sbChildMatch = sbStores.some(function(sid) {
-              var store = E.getStoreById(sid);
-              return store && (store.name.toLowerCase().includes(query) || store.city.toLowerCase().includes(query) || store.storeNumber.toString().includes(query));
-            });
-            if (!sbMatch && !sbChildMatch) return;
-            sbExpanded = true;
-          }
+            if (query) {
+              var sbMatch = sb.name.toLowerCase().includes(query);
+              var sbChildMatch = sb.stores.some(function(store) {
+                return store.name.toLowerCase().includes(query) || store.city.toLowerCase().includes(query) || store.storeNumber.toString().includes(query);
+              });
+              if (!sbMatch && !sbChildMatch) return;
+              sbExpanded = true;
+            }
 
-          html += treeRow(sb.id, 'sub-brand', sb.name, sbStores.length + ' stores', 2, sbSelected, sbExpanded);
+            html += treeRow(sb.id, 'sub-brand', sb.name, sbStores.length + ' stores', 2, sbSelected, sbExpanded);
 
-          if (sbExpanded) {
-            // Stores
-            sbStores.forEach(function(storeId) {
-              var store = E.getStoreById(storeId);
-              if (!store) return;
-
-              if (query) {
-                var storeMatch = store.name.toLowerCase().includes(query) ||
-                  store.city.toLowerCase().includes(query) ||
-                  store.storeNumber.toString().includes(query);
-                if (!storeMatch) return;
-              }
-
-              var storeSelected = _selectedEntityId === store.id;
-              html += '<div class="dist-tree-row dist-tree-row--store' + (storeSelected ? ' selected' : '') + '" ' +
-                'style="padding-left: ' + (3 * 24 + 16) + 'px;" ' +
-                'onclick="DistributionModals.selectEntity(\'' + store.id + '\', \'store\', \'Store ' + store.storeNumber + ' · ' + store.city + '\')">' +
-                '<span class="material-symbols-outlined" style="font-size: 16px; color: var(--color-text-tertiary);">store</span>' +
-                '<div class="dist-tree-row__content">' +
-                  '<span class="dist-tree-row__name">Store ' + store.storeNumber + '</span>' +
-                  '<span class="dist-tree-row__meta">' + store.city + '</span>' +
-                '</div>' +
-                '<div class="dist-tree-row__check"><span class="material-symbols-outlined">check</span></div>' +
-              '</div>';
-            });
-          }
-        });
+            if (sbExpanded) {
+              renderStoreRows(sbStores, 3, query, function(row) { html += row; });
+            }
+          });
+        } else {
+          // Stores view: Sub-brand → Stores directly (no groups)
+          var allBrandStoreIds = E.getStoresForEntity(brand.id, 'brand');
+          renderStoreRows(allBrandStoreIds, 2, query, function(row) { html += row; });
+        }
       }
     });
 
     tree.innerHTML = html;
+  }
+
+  function renderStoreRows(storeIds, depth, query, append) {
+    storeIds.forEach(function(storeId) {
+      var store = E.getStoreById(storeId);
+      if (!store) return;
+
+      if (query) {
+        var storeMatch = store.name.toLowerCase().includes(query) ||
+          store.city.toLowerCase().includes(query) ||
+          store.storeNumber.toString().includes(query);
+        if (!storeMatch) return;
+      }
+
+      var storeSelected = _selectedEntityId === store.id;
+      var paddingLeft = depth * 24 + 16;
+      append(
+        '<div class="dist-tree-row dist-tree-row--store' + (storeSelected ? ' selected' : '') + '" ' +
+          'style="padding-left: ' + paddingLeft + 'px;" ' +
+          'onclick="DistributionModals.selectEntity(\'' + store.id + '\', \'store\', \'Store ' + store.storeNumber + ' · ' + store.city + '\')">' +
+          '<span class="material-symbols-outlined" style="font-size: 16px; color: var(--color-text-tertiary);">store</span>' +
+          '<div class="dist-tree-row__content">' +
+            '<span class="dist-tree-row__name">Store ' + store.storeNumber + ' (' + store.name + ')</span>' +
+            '<span class="dist-tree-row__meta">' + store.city + '</span>' +
+          '</div>' +
+          '<div class="dist-tree-row__check"><span class="material-symbols-outlined">check</span></div>' +
+        '</div>'
+      );
+    });
   }
 
   function treeRow(id, level, name, meta, depth, selected, expanded) {
@@ -334,9 +352,9 @@ const DistributionModals = (function() {
     // Update header display
     if (typeof HeaderComponent !== 'undefined') {
       var storeCount = E ? E.getStoresForEntity(_selectedEntityId, _selectedEntityLevel).length : 0;
-      var levelLabel = _selectedEntityLevel === 'all' ? 'ALL STORES'
-        : _selectedEntityLevel === 'brand' ? 'BRAND'
-        : _selectedEntityLevel === 'sub-brand' ? 'SUB-BRAND'
+      var levelLabel = _selectedEntityLevel === 'all' ? 'BRAND'
+        : _selectedEntityLevel === 'brand' ? 'SUB-BRAND'
+        : _selectedEntityLevel === 'sub-brand' ? 'GROUP'
         : 'STORE';
       var subtext = storeCount + ' store' + (storeCount !== 1 ? 's' : '');
       if (_selectedEntityLevel === 'all') {
@@ -412,6 +430,7 @@ const DistributionModals = (function() {
     selectEntity: selectEntity,
     filterEntityTree: filterEntityTree,
     applyEntitySelection: applyEntitySelection,
+    setTreeView: setTreeView,
 
     openFilterModal: openFilterModal,
     closeFilterModal: closeFilterModal

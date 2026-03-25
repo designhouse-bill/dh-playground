@@ -1190,7 +1190,7 @@
   function openPromotionInquiry() {
     if (state.activePromotion) {
       core.saveState();
-      StateManager.navigateTo('grid-inquiry.html', state, { promotionId: state.activePromotion });
+      StateManager.navigateTo('engagement-grid.html', state, { promotionId: state.activePromotion });
     }
   }
 
@@ -1200,7 +1200,7 @@
   function compareCurrentPromotion() {
     if (state.activePromotion) {
       core.saveState();
-      StateManager.navigateTo('compare.html', state, { promotionId: state.activePromotion });
+      StateManager.navigateTo('engagement-compare.html', state, { promotionId: state.activePromotion });
     }
   }
 
@@ -1226,7 +1226,7 @@
 
     // Save state and navigate
     core.saveState();
-    window.location.href = `compare.html?${params.toString()}`;
+    window.location.href = `engagement-compare.html?${params.toString()}`;
   }
 
   /**

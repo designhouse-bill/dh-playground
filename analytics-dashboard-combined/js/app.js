@@ -72,7 +72,7 @@
       var entityBreadcrumb = document.getElementById('context-entity-breadcrumb');
       var entityValue = document.getElementById('context-entity-value');
       var entitySub = document.getElementById('context-entity-sub');
-      if (dateValue) dateValue.textContent = 'Flight Weeks 3\u20132';
+      if (dateValue) dateValue.textContent = 'Week 50 \u2013 Week 2';
       if (dateSub) dateSub.textContent = 'Dec 10, 2025 \u2013 Jan 13, 2026';
       if (entityBreadcrumb) entityBreadcrumb.textContent = 'ALL STORES';
       if (entityValue) entityValue.textContent = rc.name;
@@ -129,9 +129,11 @@
       btn.addEventListener('click', function () {
         dropdown.setAttribute('aria-expanded', 'false');
         menu.classList.remove('open');
-        // Distribution is now a standalone page — navigate instead of SPA-switching
+        // Both dashboards are now standalone pages
         if (btn.dataset.dashboard === 'distribution') {
           window.location.href = 'distribution-media.html';
+        } else if (btn.dataset.dashboard === 'engagement') {
+          window.location.href = 'engagement-promotions.html';
         } else {
           switchDashboard(btn.dataset.dashboard);
         }
@@ -183,24 +185,6 @@
     }
   }
 
-  // ── Navigation Stubs (no separate pages in combined prototype) ───────────────
-
-  window.navigateToInquiry = function (filter, sort, direction) {
-    console.log('[stub] navigateToInquiry:', filter, sort, direction);
-  };
-  window.viewPromotionCirculars = function () {
-    console.log('[stub] viewPromotionCirculars');
-  };
-  window.viewPromotionCategories = function () {
-    console.log('[stub] viewPromotionCategories');
-  };
-  window.openPromotionInquiry = function () {
-    console.log('[stub] openPromotionInquiry');
-  };
-  window.compareCurrentPromotion = function () {
-    console.log('[stub] compareCurrentPromotion');
-  };
-
   // ── Distribution Section Tabs ─────────────────────────────────────────────────
 
   function initDistSectionTabs() {
@@ -231,9 +215,13 @@
     document.querySelectorAll('.home-card').forEach(function (card) {
       function activate() {
         var target = card.dataset.dashboard;
-        // Distribution is now a standalone page
+        // Both dashboards are standalone pages
         if (target === 'distribution') {
           window.location.href = 'distribution-media.html';
+          return;
+        }
+        if (target === 'engagement') {
+          window.location.href = 'engagement-promotions.html';
           return;
         }
         if (target) switchDashboard(target);
@@ -266,10 +254,10 @@
     initHomeCards();
 
     // Hash routing: distribution pages link back as index.html#engagement
-    // so the user lands directly in the Engagement dashboard instead of home
+    // Redirect to standalone engagement page
     if (window.location.hash === '#engagement') {
-      history.replaceState(null, '', window.location.pathname);
-      switchDashboard('engagement');
+      window.location.href = 'engagement-promotions.html';
+      return;
     }
   });
 

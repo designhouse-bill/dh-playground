@@ -12,15 +12,15 @@ const DistributionData = (function() {
   const Records = DistributionRecords;
 
   // ========================================
-  // Flight Week Definitions
+  // Week Definitions (calendar weeks)
   // ========================================
 
   const flightWeeks = [
-    { id: 'wk3', label: 'Week 3', start: '2025-12-10', end: '2025-12-16' },
-    { id: 'wk4', label: 'Week 4', start: '2025-12-17', end: '2025-12-23' },
-    { id: 'wk5', label: 'Week 5', start: '2025-12-24', end: '2025-12-30' },
-    { id: 'wk1', label: 'Week 1', start: '2025-12-31', end: '2026-01-06' },
-    { id: 'wk2', label: 'Week 2', start: '2026-01-07', end: '2026-01-13' }
+    { id: 'wk50', label: 'Week 50', start: '2025-12-10', end: '2025-12-16' },
+    { id: 'wk51', label: 'Week 51', start: '2025-12-17', end: '2025-12-23' },
+    { id: 'wk52', label: 'Week 52', start: '2025-12-24', end: '2025-12-30' },
+    { id: 'wk1',  label: 'Week 1',  start: '2025-12-31', end: '2026-01-06' },
+    { id: 'wk2',  label: 'Week 2',  start: '2026-01-07', end: '2026-01-13' }
   ];
 
   // ========================================
@@ -28,7 +28,7 @@ const DistributionData = (function() {
   // ========================================
 
   let currentContext = {
-    flightWeek: 'all',              // 'all' | 'wk3' | 'wk4' | 'wk5' | 'wk1' | 'wk2'
+    flightWeek: 'all',              // 'all' | 'wk50' | 'wk51' | 'wk52' | 'wk1' | 'wk2'
     entityId: 'all',
     entityLevel: 'all',             // 'all' | 'brand' | 'sub-brand' | 'store'
     entityName: 'All Stores'
@@ -294,7 +294,7 @@ const DistributionData = (function() {
 
     // Latest week summary
     const latestWeek = currentContext.flightWeek === 'all' ? 'wk2' : currentContext.flightWeek;
-    const firstWeek = currentContext.flightWeek === 'all' ? 'wk3' : currentContext.flightWeek;
+    const firstWeek = currentContext.flightWeek === 'all' ? 'wk50' : currentContext.flightWeek;
 
     const latestRecords = allRecords.filter(r => r.week_id === latestWeek);
     const firstRecords = allRecords.filter(r => r.week_id === firstWeek);

@@ -167,4 +167,60 @@
   --filter-row-height: 44px;
   --detail-panel-width: 400px;
   --max-content-width: 1400px;
+
+  /* ========================================
+     PrimeNG / Aura Tokens (Distribution)
+     Used by distribution pages for production alignment.
+     ======================================== */
+
+  /* Primary */
+  --p-primary-color: #2196F3;
+  --p-primary-color-hover: #1976D2;
+  --p-primary-color-active: #1565C0;
+  --p-primary-color-text: #ffffff;
+  --p-primary-50: #e3f2fd;
+  --p-primary-100: #bbdefb;
+  --p-primary-600: #1e88e5;
+  --p-primary-700: #1976d2;
+
+  /* Surface */
+  --p-surface-ground: #f8f9fa;
+  --p-surface-card: #ffffff;
+  --p-surface-border: #e5e7eb;
+  --p-surface-hover: #f3f4f6;
+  --p-surface-100: #f3f4f6;
+  --p-surface-200: #e5e7eb;
+  --p-surface-50: #f9fafb;
+
+  /* Text */
+  --p-text-color: #1f2937;
+  --p-text-color-secondary: #6b7280;
+  --p-text-color-muted: #9ca3af;
+
+  /* Status */
+  --p-green-500: #22c55e;
+  --p-green-600: #16a34a;
+  --p-red-500: #ef4444;
+  --p-red-600: #dc2626;
+  --p-yellow-500: #eab308;
+  --p-blue-500: #3B82F6;
+
+  /* Spacing (PrimeFlex aligned) */
+  --p-spacing-1: 0.25rem;
+  --p-spacing-2: 0.5rem;
+  --p-spacing-3: 0.75rem;
+  --p-spacing-4: 1rem;
+  --p-spacing-5: 1.25rem;
+  --p-spacing-6: 1.5rem;
+  --p-spacing-8: 2rem;
+
+  /* Border Radius */
+  --p-border-radius: 6px;
+  --p-border-radius-sm: 4px;
+  --p-border-radius-lg: 12px;
+
+  /* Shadows */
+  --p-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --p-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --p-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
 }

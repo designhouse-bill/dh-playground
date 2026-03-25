@@ -373,6 +373,41 @@ const DistributionRecords = (function() {
   };
 
   // ========================================
+  // F. MAID Score Records — Loyalty Retention (Quarterly)
+  // Unique device IDs with 10+ visits per quarter per store
+  // ========================================
+
+  const QUARTERS = ['Q4 2025', 'Q1 2026'];
+  const QUARTER_LABELS = { 'Q4 2025': 'Oct – Dec 2025', 'Q1 2026': 'Jan – Mar 2026' };
+
+  // Base MAID counts per store (Q4 2025), with ~10% growth into Q1 2026
+  const MAID_BASE = {
+    'store-726': 2180, 'store-381': 1640, 'store-336': 2410, 'store-2437': 1520, 'store-2399': 2050,
+    'store-2495': 1780, 'store-508': 2090, 'store-2482': 1690, 'store-2288': 2340, 'store-2434': 1560,
+    'store-2449': 1480, 'store-2474': 1720, 'store-2480': 1630, 'store-518': 1850, 'store-2487': 1940,
+    'store-2490': 1380, 'store-2501': 1270, 'store-2509': 1610, 'store-436': 1190, 'store-711': 1460
+  };
+
+  const maidRecords = [];
+
+  STORE_IDS.forEach(storeId => {
+    const base = MAID_BASE[storeId] || 1500;
+    QUARTERS.forEach((quarter, qIdx) => {
+      // ~10% growth Q4→Q1, with per-store variance
+      const growth = 1 + (qIdx * (0.08 + seedRandom(storeId, quarter, 'maid') * 0.3));
+      const count = Math.round(base * growth);
+
+      maidRecords.push({
+        id: `maid-${storeId.replace('store-', '')}-${quarter.replace(' ', '')}`,
+        store_id: storeId,
+        quarter: quarter,
+        quarter_label: QUARTER_LABELS[quarter],
+        maid_count: count
+      });
+    });
+  });
+
+  // ========================================
   // Public API
   // ========================================
 
@@ -384,12 +419,14 @@ const DistributionRecords = (function() {
     creativeRecords,
     videoEngagement,
     demographics,
+    maidRecords,
     // Expose constants for data module
     STORE_IDS,
     WEEKS,
     WEEK_MULT,
     STORE_PARAMS,
     ALERT_MAP,
-    GROUP_MAP
+    GROUP_MAP,
+    QUARTERS
   };
 })();

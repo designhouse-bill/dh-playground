@@ -384,6 +384,53 @@ const DistributionData = (function() {
   }
 
   // ========================================
+  // Aggregation: MAID Score (Loyalty Retention)
+  // ========================================
+
+  function getMaidRecords(quarter, storeIds) {
+    return Records.maidRecords.filter(r => {
+      const storeMatch = !storeIds || storeIds.includes(r.store_id);
+      const quarterMatch = !quarter || r.quarter === quarter;
+      return storeMatch && quarterMatch;
+    });
+  }
+
+  function getMaidScoreMetrics() {
+    const storeIds = getStoreIds();
+
+    // Get latest quarter (Q1 2026) and previous (Q4 2025)
+    const quarters = Records.QUARTERS;
+    const latestQ = quarters[quarters.length - 1];
+    const prevQ = quarters.length >= 2 ? quarters[quarters.length - 2] : null;
+
+    const latestRecords = getMaidRecords(latestQ, storeIds);
+    const prevRecords = prevQ ? getMaidRecords(prevQ, storeIds) : [];
+
+    const latestTotal = latestRecords.reduce((s, r) => s + r.maid_count, 0);
+    const prevTotal = prevRecords.reduce((s, r) => s + r.maid_count, 0);
+
+    const changePct = prevTotal > 0 ? parseFloat((((latestTotal - prevTotal) / prevTotal) * 100).toFixed(1)) : 0;
+
+    // Per-quarter totals for mini-chart
+    const byQuarter = quarters.map(q => {
+      const recs = getMaidRecords(q, storeIds);
+      return {
+        quarter: q,
+        total: recs.reduce((s, r) => s + r.maid_count, 0)
+      };
+    });
+
+    return {
+      current_total: latestTotal,
+      current_quarter: latestQ,
+      previous_total: prevTotal,
+      previous_quarter: prevQ,
+      change_pct: changePct,
+      byQuarter: byQuarter
+    };
+  }
+
+  // ========================================
   // Store Groups
   // ========================================
 
@@ -464,6 +511,7 @@ const DistributionData = (function() {
     // Section 2: Store Visitation
     get visitationMetrics() { return getVisitationMetrics(); },
     get competitiveCrossover() { return getCompetitiveCrossover(); },
+    get maidScoreMetrics() { return getMaidScoreMetrics(); },
 
     // Section 3: Traffic Share
     get trafficShareMetrics() { return getTrafficShareMetrics(); },

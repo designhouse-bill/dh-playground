@@ -20,54 +20,88 @@ const DistributionRecords = (function() {
   // ========================================
 
   const STORE_IDS = [
-    // South Florida
-    'store-726', 'store-381', 'store-336', 'store-508', 'store-518', 'store-2474', 'store-2501',
-    // Central Florida
-    'store-2288', 'store-2434', 'store-2480', 'store-2487', 'store-2490', 'store-2509', 'store-711',
-    // North Florida
-    'store-2437', 'store-2399', 'store-2495', 'store-2482', 'store-2449', 'store-436'
+    // Winn-Dixie South FL
+    'store-319', 'store-336', 'store-381', 'store-508', 'store-518', 'store-726',
+    // Winn-Dixie Central FL
+    'store-705', 'store-2288', 'store-2415', 'store-2434', 'store-2474', 'store-2480',
+    'store-2487', 'store-2490', 'store-2501', 'store-2509', 'store-2545', 'store-711',
+    // Winn-Dixie North FL
+    'store-86', 'store-195', 'store-560', 'store-2247', 'store-2399', 'store-2437',
+    'store-2449', 'store-2482', 'store-2495', 'store-436',
+    // Harveys FL
+    'store-1671', 'store-1690', 'store-1692', 'store-1694', 'store-1710', 'store-1712', 'store-1716'
   ];
 
-  const WEEKS = ['wk3', 'wk4', 'wk5', 'wk1', 'wk2'];
+  const WEEKS = ['wk50', 'wk51', 'wk52', 'wk1', 'wk2'];
 
-  // Week multipliers for trend: ramp-up through wk5, peak wk1, slight pullback wk2
-  const WEEK_MULT = { wk3: 0.82, wk4: 0.89, wk5: 0.95, wk1: 1.02, wk2: 1.00 };
+  // Week multipliers for trend: ramp-up through wk52, peak wk1, slight pullback wk2
+  const WEEK_MULT = { wk50: 0.82, wk51: 0.89, wk52: 0.95, wk1: 1.02, wk2: 1.00 };
 
   // Store-level base parameters (vary by market size / geography)
   // South FL: larger markets, higher impressions, lower share (more competition)
   // North FL: smaller markets, lower impressions, higher share
   // Central FL: mid-range
+  // Generate base params for any store not explicitly listed
+  function defaultParams(impressions, clicks, budget, visits, share, compVisits, hhi, threat, threatAddr) {
+    return { impressions, clicks, budget, visits, share, compVisits, hhi, threat, threatAddr };
+  }
+
   const STORE_PARAMS = {
-    // South Florida — larger markets, more competition
-    'store-726':  { impressions: 8200, clicks: 74, budget: 520, visits: 338, share: 62, compVisits: 4800, hhi: 3200, threat: 'Publix', threatAddr: '2345 Pine Island Rd, Matlacha, FL 33993' },
-    'store-381':  { impressions: 6100, clicks: 52, budget: 440, visits: 285, share: 58, compVisits: 3200, hhi: 2800, threat: 'Save A Lot', threatAddr: '920 S Main St, Belle Glade, FL 33430' },
-    'store-336':  { impressions: 9400, clicks: 88, budget: 580, visits: 410, share: 42, compVisits: 7800, hhi: 2100, threat: 'Publix', threatAddr: '1250 S Federal Hwy, Hollywood, FL 33020' },
-    'store-508':  { impressions: 8800, clicks: 81, budget: 560, visits: 380, share: 44, compVisits: 6200, hhi: 2400, threat: 'Publix', threatAddr: '4650 S Cleveland Ave, Fort Myers, FL 33907' },
-    'store-518':  { impressions: 7200, clicks: 62, budget: 480, visits: 310, share: 38, compVisits: 7000, hhi: 2200, threat: 'Publix', threatAddr: '5765 Naples Blvd, Naples, FL 34109' },
-    'store-2474': { impressions: 7600, clicks: 66, budget: 490, visits: 325, share: 46, compVisits: 5400, hhi: 2500, threat: 'Publix', threatAddr: '1555 W New Haven Ave, Melbourne, FL 32904' },
-    'store-2501': { impressions: 5800, clicks: 48, budget: 420, visits: 268, share: 43, compVisits: 5100, hhi: 2450, threat: 'Walmart', threatAddr: '1040 Malabar Rd SE, Palm Bay, FL 32907' },
+    // ── Winn-Dixie South FL ──
+    'store-319':  defaultParams(7800, 68, 500, 340, 40, 7200, 2200, 'Publix', '28200 S Dixie Hwy, Homestead, FL 33033'),
+    'store-336':  defaultParams(9400, 88, 580, 410, 42, 7800, 2100, 'Publix', '1250 S Federal Hwy, Hollywood, FL 33020'),
+    'store-381':  defaultParams(6100, 52, 440, 285, 58, 3200, 2800, 'Save A Lot', '920 S Main St, Belle Glade, FL 33430'),
+    'store-508':  defaultParams(8800, 81, 560, 380, 44, 6200, 2400, 'Publix', '4650 S Cleveland Ave, Fort Myers, FL 33907'),
+    'store-518':  defaultParams(7200, 62, 480, 310, 38, 7000, 2200, 'Publix', '5765 Naples Blvd, Naples, FL 34109'),
+    'store-726':  defaultParams(8200, 74, 520, 338, 62, 4800, 3200, 'Publix', '2345 Pine Island Rd, Matlacha, FL 33993'),
 
-    // Central Florida — mid-range
-    'store-2288': { impressions: 9200, clicks: 85, budget: 570, visits: 395, share: 48, compVisits: 6600, hhi: 2350, threat: 'Publix', threatAddr: '7640 W Sand Lake Rd, Orlando, FL 32819' },
-    'store-2434': { impressions: 7000, clicks: 60, budget: 470, visits: 300, share: 45, compVisits: 5500, hhi: 2350, threat: 'Publix', threatAddr: '1570 W Intl Speedway Blvd, Daytona Beach, FL 32114' },
-    'store-2480': { impressions: 7400, clicks: 64, budget: 485, visits: 315, share: 50, compVisits: 4800, hhi: 2700, threat: 'Publix', threatAddr: '3950 US-98 N, Lakeland, FL 33809' },
-    'store-2487': { impressions: 8600, clicks: 78, budget: 550, visits: 365, share: 44, compVisits: 6400, hhi: 2550, threat: 'Publix', threatAddr: '3870 Bee Ridge Rd, Sarasota, FL 34233' },
-    'store-2490': { impressions: 6400, clicks: 54, budget: 450, visits: 282, share: 52, compVisits: 3900, hhi: 2900, threat: 'ALDI', threatAddr: '1900 Tamiami Trail, Port Charlotte, FL 33948' },
-    'store-2509': { impressions: 7800, clicks: 68, budget: 500, visits: 330, share: 47, compVisits: 5600, hhi: 2600, threat: 'Publix', threatAddr: '6255 Cortez Rd W, Bradenton, FL 34210' },
-    'store-711':  { impressions: 7100, clicks: 61, budget: 475, visits: 305, share: 53, compVisits: 4100, hhi: 2850, threat: 'ALDI', threatAddr: '1233 Wendy Ct, Spring Hill, FL 34607' },
+    // ── Winn-Dixie Central FL ──
+    'store-705':  defaultParams(6800, 58, 460, 295, 50, 4500, 2650, 'Publix', '35951 US Hwy 27, Haines City, FL 33844'),
+    'store-2288': defaultParams(9200, 85, 570, 395, 48, 6600, 2350, 'Publix', '7640 W Sand Lake Rd, Orlando, FL 32819'),
+    'store-2415': defaultParams(8400, 76, 540, 360, 46, 6100, 2400, 'Publix', '13521 N Florida Ave, Tampa, FL 33612'),
+    'store-2434': defaultParams(7000, 60, 470, 300, 45, 5500, 2350, 'Publix', '1570 W Intl Speedway Blvd, Daytona Beach, FL 32114'),
+    'store-2474': defaultParams(7600, 66, 490, 325, 46, 5400, 2500, 'Publix', '1555 W New Haven Ave, Melbourne, FL 32904'),
+    'store-2480': defaultParams(7400, 64, 485, 315, 50, 4800, 2700, 'Publix', '3950 US-98 N, Lakeland, FL 33809'),
+    'store-2487': defaultParams(8600, 78, 550, 365, 44, 6400, 2550, 'Publix', '3870 Bee Ridge Rd, Sarasota, FL 34233'),
+    'store-2490': defaultParams(6400, 54, 450, 282, 52, 3900, 2900, 'ALDI', '1900 Tamiami Trail, Port Charlotte, FL 33948'),
+    'store-2501': defaultParams(5800, 48, 420, 268, 43, 5100, 2450, 'Walmart', '1040 Malabar Rd SE, Palm Bay, FL 32907'),
+    'store-2509': defaultParams(7800, 68, 500, 330, 47, 5600, 2600, 'Publix', '6255 Cortez Rd W, Bradenton, FL 34210'),
+    'store-2545': defaultParams(7200, 63, 480, 312, 51, 4600, 2700, 'Publix', '2510 Burnsed Blvd, The Villages, FL 32163'),
+    'store-711':  defaultParams(7100, 61, 475, 305, 53, 4100, 2850, 'ALDI', '1233 Wendy Ct, Spring Hill, FL 34607'),
 
-    // North Florida — smaller markets, higher share
-    'store-2437': { impressions: 6800, clicks: 58, budget: 460, visits: 295, share: 58, compVisits: 3200, hhi: 2900, threat: 'Publix', threatAddr: '3100 SW College Rd, Ocala, FL 34474' },
-    'store-2399': { impressions: 8000, clicks: 72, budget: 530, visits: 350, share: 52, compVisits: 4800, hhi: 2600, threat: 'Publix', threatAddr: '4525 San Juan Ave, Jacksonville, FL 32210' },
-    'store-2495': { impressions: 7500, clicks: 65, budget: 495, visits: 320, share: 55, compVisits: 3800, hhi: 2750, threat: 'Publix', threatAddr: '1700 N Monroe St, Tallahassee, FL 32303' },
-    'store-2482': { impressions: 7200, clicks: 63, budget: 480, visits: 310, share: 54, compVisits: 3900, hhi: 2650, threat: 'Publix', threatAddr: '3720 NW 13th St, Gainesville, FL 32609' },
-    'store-2449': { impressions: 7000, clicks: 60, budget: 470, visits: 300, share: 56, compVisits: 3500, hhi: 2800, threat: 'Walmart', threatAddr: '2601 N Davis Hwy, Pensacola, FL 32503' },
-    'store-436':  { impressions: 5600, clicks: 46, budget: 410, visits: 255, share: 48, compVisits: 4200, hhi: 2700, threat: 'Walmart', threatAddr: '2101 S Hwy 77, Lynn Haven, FL 32444' }
+    // ── Winn-Dixie North FL ──
+    'store-86':   defaultParams(7300, 64, 485, 318, 54, 3900, 2750, 'Publix', '1415 Timberlane Rd, Tallahassee, FL 32312'),
+    'store-195':  defaultParams(8100, 73, 530, 348, 50, 5200, 2500, 'Publix', '11500 Beach Blvd, Jacksonville, FL 32246'),
+    'store-560':  defaultParams(6500, 56, 450, 288, 56, 3300, 2850, 'Publix', '34940 Emerald Coast Pkwy, Destin, FL 32541'),
+    'store-2247': defaultParams(6900, 59, 465, 298, 53, 3700, 2800, 'Publix', '1200 Palm Coast Pkwy NW, Palm Coast, FL 32137'),
+    'store-2399': defaultParams(8000, 72, 530, 350, 52, 4800, 2600, 'Publix', '4525 San Juan Ave, Jacksonville, FL 32210'),
+    'store-2437': defaultParams(6800, 58, 460, 295, 58, 3200, 2900, 'Publix', '3100 SW College Rd, Ocala, FL 34474'),
+    'store-2449': defaultParams(7000, 60, 470, 300, 56, 3500, 2800, 'Walmart', '2601 N Davis Hwy, Pensacola, FL 32503'),
+    'store-2482': defaultParams(7200, 63, 480, 310, 54, 3900, 2650, 'Publix', '3720 NW 13th St, Gainesville, FL 32609'),
+    'store-2495': defaultParams(7500, 65, 495, 320, 55, 3800, 2750, 'Publix', '1700 N Monroe St, Tallahassee, FL 32303'),
+    'store-436':  defaultParams(5600, 46, 410, 255, 48, 4200, 2700, 'Walmart', '2101 S Hwy 77, Lynn Haven, FL 32444'),
+
+    // ── Harveys FL ──
+    'store-1671': defaultParams(5200, 42, 380, 235, 44, 4800, 2600, 'Walmart', '2767 W US Hwy 90, Lake City, FL 32055'),
+    'store-1690': defaultParams(5800, 48, 400, 258, 40, 5200, 2400, 'Publix', '5910 University Blvd W, Jacksonville, FL 32216'),
+    'store-1692': defaultParams(4800, 38, 350, 218, 38, 5600, 2300, 'Walmart', '5250 Moncrief Rd W, Jacksonville, FL 32209'),
+    'store-1694': defaultParams(4600, 36, 340, 210, 36, 5800, 2250, 'Walmart', '100 W 48th St, Jacksonville, FL 32208'),
+    'store-1710': defaultParams(5400, 44, 390, 242, 42, 5000, 2500, 'Publix', '2640 US Hwy 92, Lakeland, FL 33801'),
+    'store-1712': defaultParams(5100, 41, 375, 230, 41, 5100, 2450, 'Publix', '1310 Ariana St W, Lakeland, FL 33803'),
+    'store-1716': defaultParams(5000, 40, 370, 225, 39, 5300, 2350, 'Walmart', '50 S Arlington Rd, Jacksonville, FL 32211')
   };
 
-  // Creative assignment: A/B split
-  const CREATIVE_A_STORES = ['store-726', 'store-381', 'store-336', 'store-2437', 'store-2288', 'store-2399', 'store-2495', 'store-508', 'store-2482', 'store-2434'];
-  const CREATIVE_B_STORES = ['store-436', 'store-711', 'store-518', 'store-2449', 'store-2474', 'store-2480', 'store-2487', 'store-2490', 'store-2501', 'store-2509'];
+  // Creative store assignments — 5 variants across the full entity hierarchy
+  // A: Winn-Dixie South (display GIF — holiday steak hero)
+  // B: Winn-Dixie Central (static JPEG — general circular)
+  // C: Winn-Dixie North (animated GIF — BOGO produce)
+  // D: Harveys all stores (static JPEG — value pack)
+  // E: Winn-Dixie South + Central (video — YouTube pre-roll)
+  const CREATIVE_A_STORES = ['store-319', 'store-336', 'store-381', 'store-508', 'store-518', 'store-726'];
+  const CREATIVE_B_STORES = ['store-705', 'store-2288', 'store-2415', 'store-2434', 'store-2474', 'store-2480', 'store-2487', 'store-2490', 'store-2501', 'store-2509', 'store-2545', 'store-711'];
+  const CREATIVE_C_STORES = ['store-86', 'store-195', 'store-560', 'store-2247', 'store-2399', 'store-2437', 'store-2449', 'store-2482', 'store-2495', 'store-436'];
+  const CREATIVE_D_STORES = ['store-1671', 'store-1690', 'store-1692', 'store-1694', 'store-1710', 'store-1712', 'store-1716'];
+  const CREATIVE_E_STORES = ['store-319', 'store-336', 'store-508', 'store-518', 'store-726', 'store-705', 'store-2288', 'store-2415', 'store-2487', 'store-2509'];
 
   // ========================================
   // Deterministic variance (seeded by store + week)
@@ -116,7 +150,41 @@ const DistributionRecords = (function() {
         gross_visits: grossVisits,
         cost_per_visit: parseFloat((budget / grossVisits).toFixed(2)),
         visits_per_thousand: parseFloat(((grossVisits / impressions) * 1000).toFixed(1)),
-        creative_id: CREATIVE_A_STORES.includes(storeId) ? 'creative-a' : 'creative-b'
+        creative_id: CREATIVE_A_STORES.includes(storeId) ? 'creative-a'
+          : CREATIVE_B_STORES.includes(storeId) ? 'creative-b'
+          : CREATIVE_C_STORES.includes(storeId) ? 'creative-c'
+          : CREATIVE_D_STORES.includes(storeId) ? 'creative-d'
+          : 'creative-b'
+      });
+    });
+  });
+
+  // Additional media records for Creative E (video — runs wk5, wk1, wk2 only)
+  const VIDEO_WEEKS = ['wk52', 'wk1', 'wk2'];
+  CREATIVE_E_STORES.forEach(storeId => {
+    const params = STORE_PARAMS[storeId];
+    if (!params) return;
+    VIDEO_WEEKS.forEach(weekId => {
+      const wm = WEEK_MULT[weekId];
+      // Video has lower impressions but similar budget (YouTube is more expensive per impression)
+      const impressions = vary(Math.round(params.impressions * 0.4 * wm), storeId, weekId, 'vid-impr');
+      const clicks = vary(Math.round(params.clicks * 0.3 * wm), storeId, weekId, 'vid-click');
+      const budget = vary(Math.round(params.budget * 0.3 * wm), storeId, weekId, 'vid-budget');
+      const grossVisits = vary(Math.round(params.visits * 0.25 * wm), storeId, weekId, 'vid-visit');
+
+      mediaRecords.push({
+        id: `media-vid-${storeId.replace('store-', '')}-${weekId}`,
+        store_id: storeId,
+        week_id: weekId,
+        impressions: impressions,
+        clicks: clicks,
+        ctr: parseFloat(((clicks / impressions) * 100).toFixed(2)),
+        cost_per_impression: parseFloat((budget / impressions).toFixed(4)),
+        budget_allocated: budget,
+        gross_visits: grossVisits,
+        cost_per_visit: parseFloat((budget / grossVisits).toFixed(2)),
+        visits_per_thousand: parseFloat(((grossVisits / impressions) * 1000).toFixed(1)),
+        creative_id: 'creative-e'
       });
     });
   });
@@ -163,21 +231,32 @@ const DistributionRecords = (function() {
 
   // Alert assignments from existing data
   const ALERT_MAP = {
+    // Opportunity — strong performers
     'store-726': 'opportunity', 'store-381': 'opportunity', 'store-336': 'opportunity',
     'store-2437': 'opportunity', 'store-2399': 'opportunity', 'store-2495': 'opportunity',
-    'store-508': 'opportunity', 'store-2482': 'opportunity',
-    'store-2288': 'critical', 'store-436': 'critical', 'store-711': 'critical'
+    'store-508': 'opportunity', 'store-2482': 'opportunity', 'store-86': 'opportunity',
+    'store-560': 'opportunity',
+    // Critical — data QA or declining
+    'store-2288': 'critical', 'store-436': 'critical', 'store-711': 'critical',
+    'store-1692': 'critical', 'store-1694': 'critical'
   };
 
-  // Group assignments from existing data
   const GROUP_MAP = {
+    // Green — strong performers
     'store-726': 'green', 'store-381': 'green', 'store-336': 'green',
     'store-2437': 'green', 'store-2399': 'green', 'store-2495': 'green',
-    'store-508': 'green', 'store-2482': 'green',
+    'store-508': 'green', 'store-2482': 'green', 'store-319': 'green',
+    'store-86': 'green', 'store-560': 'green', 'store-195': 'green',
+    // Amber — moderate / watch
     'store-2434': 'amber', 'store-2449': 'amber', 'store-2474': 'amber',
     'store-2480': 'amber', 'store-518': 'amber', 'store-2487': 'amber',
     'store-2490': 'amber', 'store-2501': 'amber', 'store-2509': 'amber',
-    'store-2288': 'red', 'store-436': 'red', 'store-711': 'red'
+    'store-705': 'amber', 'store-2415': 'amber', 'store-2545': 'amber',
+    'store-2247': 'amber', 'store-1671': 'amber', 'store-1710': 'amber',
+    'store-1712': 'amber', 'store-1716': 'amber', 'store-1690': 'amber',
+    // Red — critical / data QA
+    'store-2288': 'red', 'store-436': 'red', 'store-711': 'red',
+    'store-1692': 'red', 'store-1694': 'red'
   };
 
   const trafficRecords = [];
@@ -270,29 +349,88 @@ const DistributionRecords = (function() {
   const creativeRecords = [
     {
       creative_id: 'creative-a',
-      retailer_id: null,  // Set dynamically from DistributionEntities.retailerConfig.id
+      retailer_id: null,
       store_group: CREATIVE_A_STORES,
       creative_type: 'gif',
+      dimensions: '300x250',
+      width: 300,
+      height: 250,
+      target_url: 'https://www.winndixie.com/circular?week=12&promo=steak',
       file_url: null,
       date_range_start: '2025-12-10',
       date_range_end: '2025-12-30',
       uploaded_by: 'tammy.mdi',
       uploaded_at: '2025-12-09T14:30:00Z',
       notes: 'Holiday T-bone steak hero — animated price drop GIF',
-      label: 'Holiday Steak A'
+      label: 'Holiday Steak — South FL'
     },
     {
       creative_id: 'creative-b',
-      retailer_id: null,  // Set dynamically from DistributionEntities.retailerConfig.id
+      retailer_id: null,
       store_group: CREATIVE_B_STORES,
       creative_type: 'jpeg',
+      dimensions: '728x90',
+      width: 728,
+      height: 90,
+      target_url: 'https://www.winndixie.com/circular?week=12',
       file_url: null,
       date_range_start: '2025-12-10',
       date_range_end: '2025-12-30',
       uploaded_by: 'tammy.mdi',
       uploaded_at: '2025-12-09T14:35:00Z',
-      notes: 'Holiday general circular hero — static JPEG',
-      label: 'Holiday General B'
+      notes: 'Holiday general circular hero — leaderboard banner',
+      label: 'Holiday Banner — Central FL'
+    },
+    {
+      creative_id: 'creative-c',
+      retailer_id: null,
+      store_group: CREATIVE_C_STORES,
+      creative_type: 'gif',
+      dimensions: '320x480',
+      width: 320,
+      height: 480,
+      target_url: 'https://www.winndixie.com/circular?week=12&promo=bogo-produce',
+      file_url: null,
+      date_range_start: '2025-12-17',
+      date_range_end: '2026-01-06',
+      uploaded_by: 'tammy.mdi',
+      uploaded_at: '2025-12-16T10:00:00Z',
+      notes: 'BOGO Fresh Produce — tall interstitial animation',
+      label: 'BOGO Produce — North FL'
+    },
+    {
+      creative_id: 'creative-d',
+      retailer_id: null,
+      store_group: CREATIVE_D_STORES,
+      creative_type: 'jpeg',
+      dimensions: '300x250',
+      width: 300,
+      height: 250,
+      target_url: 'https://www.harveyssupermarkets.com/circular?week=12&promo=value',
+      file_url: null,
+      date_range_start: '2025-12-10',
+      date_range_end: '2025-12-30',
+      uploaded_by: 'tammy.mdi',
+      uploaded_at: '2025-12-09T15:00:00Z',
+      notes: 'Harveys Value Pack holiday bundle — medium rectangle',
+      label: 'Value Pack — Harveys'
+    },
+    {
+      creative_id: 'creative-e',
+      retailer_id: null,
+      store_group: CREATIVE_E_STORES,
+      creative_type: 'video',
+      dimensions: '1920x1080',
+      width: 1920,
+      height: 1080,
+      target_url: 'https://www.youtube.com/watch?v=seg-holiday-2025',
+      file_url: null,
+      date_range_start: '2025-12-24',
+      date_range_end: '2026-01-06',
+      uploaded_by: 'adam.seg',
+      uploaded_at: '2025-12-23T09:00:00Z',
+      notes: 'YouTube pre-roll 15s — "Holiday Savings Start Here"',
+      label: 'YouTube Pre-Roll — Holiday'
     }
   ];
 

@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cp '/Users/billklingensmith/Library/CloudStorage/GoogleDrive-bill@designhouse.design/Shared drives/DH-Design/UI-UX-Projects/analytics-dashboard-2025_12_16/js/base-categories.js' /Users/billklingensmith/Code/mydarndest-playground/analytics-dashboard-combined/js/engagement/base-categories.js)",
+      "Bash(cp '/Users/billklingensmith/Library/CloudStorage/GoogleDrive-bill@designhouse.design/Shared drives/DH-Design/UI-UX-Projects/analytics-dashboard-2025_12_16/js/base-circulars.js' /Users/billklingensmith/Code/mydarndest-playground/analytics-dashboard-combined/js/engagement/base-circulars.js)",
+      "Bash(cp '/Users/billklingensmith/Library/CloudStorage/GoogleDrive-bill@designhouse.design/Shared drives/DH-Design/UI-UX-Projects/analytics-dashboard-2025_12_16/js/grid-inquiry.js' /Users/billklingensmith/Code/mydarndest-playground/analytics-dashboard-combined/js/engagement/grid-inquiry.js)",
+      "Bash(cp '/Users/billklingensmith/Library/CloudStorage/GoogleDrive-bill@designhouse.design/Shared drives/DH-Design/UI-UX-Projects/analytics-dashboard-2025_12_16/js/compare.js' /Users/billklingensmith/Code/mydarndest-playground/analytics-dashboard-combined/js/engagement/compare.js)",
+      "Bash(mkdir -p /Users/billklingensmith/Code/mydarndest-playground/analytics-dashboard-combined/assets)",
+      "Bash(cp '/Users/billklingensmith/Library/CloudStorage/GoogleDrive-bill@designhouse.design/Shared drives/DH-Design/UI-UX-Projects/analytics-dashboard-2025_12_16/assets/chart-bar.svg' /Users/billklingensmith/Code/mydarndest-playground/analytics-dashboard-combined/assets/chart-bar.svg)",
+      "Bash(for f:*)",
+      "Bash(do sed:*)",
+      "Bash(done)",
+      "Bash(ls -la /Users/billklingensmith/Code/mydarndest-playground/analytics-dashboard-combined/engagement-*.html)",
+      "Bash(ls -1 engagement-*.html distribution-*.html index.html js/engagement/*.js js/shared/*.js js/data/*.js js/vendor/*.js js/header-slide.js js/app.js assets/chart-bar.svg)"
+    ]
+  }
+}

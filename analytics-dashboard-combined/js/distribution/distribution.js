@@ -10,6 +10,26 @@
   let elements = {};
   let charts = {};
 
+  // ── Tree Table State ──
+  let distTreeState = {
+    expandedCreatives: {},
+    moreDataEnabled: false,
+    sortColumn: 'visits',
+    sortDirection: 'desc'
+  };
+
+  // ── Visitation View State ──
+  let visitationView = 'current';     // 'current' | 'trend'
+  let donutFilterSegment = null;       // null | 'zero_prev' | 'one_three' | 'four_plus'
+  let _trendViewInitialized = false;
+
+  // Helper: parse name and region from label (e.g. "Holiday Steak — South FL")
+  function parseLabel(cr) {
+    const full = cr.label || cr.notes || '';
+    const parts = full.split(' — ');
+    return { name: parts[0] || full, region: parts[1] || '' };
+  }
+
   // ========================================
   // Initialization
   // ========================================
@@ -27,10 +47,10 @@
     }
   }
 
-  // Update context bar with Distribution data (header is inlined — no fetch needed)
+  // Update context bar with Distribution data — reflects current entity selection
   function initContext() {
     const rc = D.retailerConfig;
-    const storeCount = D.entities.stores.length;
+    const ctx = D.context;
 
     const dateValue = document.getElementById('context-date-value');
     const dateSub = document.getElementById('context-date-sub');
@@ -38,21 +58,45 @@
     const entityValue = document.getElementById('context-entity-value');
     const entitySub = document.getElementById('context-entity-sub');
 
-    if (dateValue) dateValue.textContent = 'Flight Weeks 3–2';
-    if (dateSub) dateSub.textContent = 'Dec 10, 2025 – Jan 13, 2026';
-    if (entityBreadcrumb) entityBreadcrumb.textContent = 'ALL STORES';
-    if (entityValue) entityValue.textContent = rc.name;
-    if (entitySub) entitySub.textContent = storeCount + ' stores · ' + rc.pilotLabel;
+    // Date context
+    if (ctx.flightWeek === 'all') {
+      var weeks = D.flightWeeks;
+      var firstWk = weeks[0];
+      var lastWk = weeks[weeks.length - 1];
+      if (dateValue) dateValue.textContent = firstWk.label + ' – ' + lastWk.label;
+      if (dateSub) dateSub.textContent = fmtDateRange(firstWk.start) + ' – ' + fmtDateRange(lastWk.end);
+    } else {
+      var week = D.flightWeeks.find(function(w) { return w.id === ctx.flightWeek; });
+      if (week) {
+        if (dateValue) dateValue.textContent = week.label;
+        if (dateSub) dateSub.textContent = fmtDateRange(week.start) + ' – ' + fmtDateRange(week.end);
+      }
+    }
+
+    // Entity context
+    var entityStoreCount = D.entities.getStoresForEntity(ctx.entityId, ctx.entityLevel).length;
+    var levelLabel = ctx.entityLevel === 'all' ? 'BRAND'
+      : ctx.entityLevel === 'brand' ? 'SUB-BRAND'
+      : ctx.entityLevel === 'sub-brand' ? 'GROUP'
+      : 'STORE';
+    var entityName = ctx.entityLevel === 'all' ? rc.name : ctx.entityName;
+    var entitySubText = entityStoreCount + ' store' + (entityStoreCount !== 1 ? 's' : '');
+    if (ctx.entityLevel === 'all') entitySubText += ' · ' + rc.pilotLabel;
+
+    if (entityBreadcrumb) entityBreadcrumb.textContent = levelLabel;
+    if (entityValue) entityValue.textContent = entityName;
+    if (entitySub) entitySub.textContent = entitySubText;
   }
 
   function cacheElements() {
     elements = {
-      mediaKpis: document.getElementById('media-kpis'),
-      creativeVariants: document.getElementById('creative-variants'),
       videoKpis: document.getElementById('video-kpis'),
-      visitationKpis: document.getElementById('visitation-kpis'),
+      visitationHero: document.getElementById('visitation-hero'),
       crossoverDetail: document.getElementById('crossover-detail'),
       spotlightCards: document.getElementById('spotlight-cards'),
+      donutLegend: document.getElementById('donut-legend'),
+      donutFilterChip: document.getElementById('donut-filter-chip'),
+      crossoverFilterLabel: document.getElementById('crossover-filter-label'),
       trafficKpis: document.getElementById('traffic-kpis'),
       leaderboardTable: document.getElementById('leaderboard-table'),
       concentrationStats: document.getElementById('concentration-stats'),
@@ -120,6 +164,11 @@
     const sign = val >= 0 ? '+' : '';
     return sign + val.toFixed(1) + ' pp';
   }
+  function fmtDateRange(dateStr) {
+    // '2025-12-10' → 'Dec 10, 2025'
+    const d = new Date(dateStr + 'T00:00:00');
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
 
   // ========================================
   // KPI Tile Builder
@@ -147,72 +196,698 @@
   // Section 1: Media Buy Metrics
   // ========================================
 
-  function renderMediaKpis() {
+  function renderMediaHero() {
+    const el = document.getElementById('media-hero');
+    if (!el) return;
+
     const metrics = D.mediaBuyMetrics;
     const m = metrics.summary;
     if (!m) return;
 
     // Calculate trends from weekly data
     const trend = metrics.weeklyTrend;
-    let cpvTrend = '', imprTrend = '', clickTrend = '', ctrTrend = '', vptTrend = '';
+    let cpvTrendCallout = '';
+    let cpvTrendClass = 'media-hero__trend-callout--flat';
+    let imprTrend = null, clickTrend = null, ctrTrend = null, vptTrend = null;
+
     if (trend.length >= 2) {
       const first = trend[0];
       const last = trend[trend.length - 1];
-      const cpvDiff = (last.cost_per_visit - first.cost_per_visit).toFixed(2);
-      cpvTrend = (cpvDiff <= 0 ? '' : '+') + '$' + cpvDiff + ' vs ' + first.week;
-      imprTrend = '+' + (((last.impressions - first.impressions) / first.impressions) * 100).toFixed(1) + '%';
-      clickTrend = '+' + (((last.clicks - first.clicks) / first.clicks) * 100).toFixed(1) + '%';
-      ctrTrend = '+' + (last.ctr - first.ctr).toFixed(2) + ' pp';
-      vptTrend = '+' + (last.visits_per_thousand - first.visits_per_thousand).toFixed(1);
+      const ctx_label = 'vs. Wk ' + first.week.replace('wk', '');
+
+      // CPV trend callout — use summary value for consistency with hero CPV
+      const cpvChange = ((m.cost_per_visit - first.cost_per_visit) / first.cost_per_visit * 100);
+      if (cpvChange < -2) {
+        cpvTrendCallout = `<span class="material-symbols-outlined">arrow_downward</span> CPV down ${Math.abs(cpvChange).toFixed(0)}% over campaign — $${first.cost_per_visit.toFixed(2)} → $${m.cost_per_visit.toFixed(2)}`;
+        cpvTrendClass = 'media-hero__trend-callout--good';
+      } else if (cpvChange > 2) {
+        cpvTrendCallout = `<span class="material-symbols-outlined">arrow_upward</span> CPV up ${cpvChange.toFixed(0)}% over campaign — $${first.cost_per_visit.toFixed(2)} → $${m.cost_per_visit.toFixed(2)}`;
+        cpvTrendClass = 'media-hero__trend-callout--bad';
+      } else {
+        cpvTrendCallout = `<span class="material-symbols-outlined">arrow_forward</span> CPV stable at $${m.cost_per_visit.toFixed(2)} — consistent delivery`;
+        cpvTrendClass = 'media-hero__trend-callout--flat';
+      }
+
+      const pctDelta = (a, b) => b > 0 ? ((a - b) / b) * 100 : 0;
+      imprTrend = { value: pctDelta(last.impressions, first.impressions), label: (pctDelta(last.impressions, first.impressions) >= 0 ? '+' : '') + pctDelta(last.impressions, first.impressions).toFixed(1) + '%', context: ctx_label };
+      clickTrend = { value: pctDelta(last.clicks, first.clicks), label: (pctDelta(last.clicks, first.clicks) >= 0 ? '+' : '') + pctDelta(last.clicks, first.clicks).toFixed(1) + '%', context: ctx_label };
+      const ctrDelta = last.ctr - first.ctr;
+      ctrTrend = { value: ctrDelta, label: (ctrDelta >= 0 ? '+' : '') + ctrDelta.toFixed(2) + ' pp', context: ctx_label };
+      const vptDelta = last.visits_per_thousand - first.visits_per_thousand;
+      vptTrend = { value: vptDelta, label: (vptDelta >= 0 ? '+' : '') + vptDelta.toFixed(1), context: ctx_label };
     }
 
-    elements.mediaKpis.innerHTML = [
-      kpiTile('Cost Per Visit', fmtCurrency(m.cost_per_visit), { primary: true, trend: -1, trendLabel: cpvTrend }),
-      kpiTile('Impressions', fmtNumber(m.impressions), { trend: 1, trendLabel: imprTrend }),
-      kpiTile('Clicks', fmtNumber(m.clicks), { trend: 1, trendLabel: clickTrend }),
-      kpiTile('CTR', fmtPct(m.ctr), { trend: 1, trendLabel: ctrTrend }),
-      kpiTile('Visits / 1,000', m.visits_per_thousand.toFixed(1), { trend: 1, trendLabel: vptTrend }),
-      kpiTile('Budget', fmtCurrency(m.budget))
-    ].join('');
-  }
+    // Context counts for hero cards
+    const ctx = D.context;
+    const storeCount = D.entities.getStoresForEntity(ctx.entityId, ctx.entityLevel).length;
+    const variantCount = D.creativeRecords.filter(cr => cr.metrics !== null).length;
 
-  function renderCreativePanel() {
-    const records = D.creativeRecords;
-    if (!records.length) return;
-
-    const isABTest = records.length >= 2;
-
-    elements.creativeVariants.innerHTML = records.map((cr, i) => {
-      const variantLabel = isABTest ? `Variant ${String.fromCharCode(65 + i)}` : '';
-      const typeIcon = cr.creative_type === 'video' ? 'movie' : (cr.creative_type === 'gif' ? 'gif_box' : 'image');
-
-      return `
-        <div class="creative-card">
-          ${variantLabel ? `<span class="badge badge--variant">${variantLabel}</span>` : ''}
-          <div class="creative-preview">
-            <span class="material-symbols-outlined creative-placeholder-icon">${typeIcon}</span>
-            <span class="creative-type-badge">${cr.creative_type.toUpperCase()}</span>
+    el.innerHTML = `
+      <div class="media-hero__budget">
+        <div class="media-hero__metric-summary">
+          <div class="media-hero__cpv-group">
+            <div class="media-hero__cpv-label">Cost Per Visit</div>
+            <div class="media-hero__cpv">${fmtCurrency(m.cost_per_visit)}</div>
           </div>
-          <div class="creative-info">
-            <div class="creative-label">${cr.label || cr.notes}</div>
-            <div class="creative-meta">
-              <span>${cr.date_range_start} — ${cr.date_range_end}</span>
-              <span>${cr.store_group.length} stores</span>
-            </div>
-            ${cr.metrics ? `
-              <div class="creative-metrics">
-                <span class="creative-metric">${fmtNumber(cr.metrics.impressions)} impr</span>
-                <span class="creative-metric">${fmtPct(cr.metrics.ctr)} CTR</span>
-                <span class="creative-metric">${fmtNumber(cr.metrics.gross_visits)} visits</span>
-              </div>
-            ` : ''}
+          <div class="media-hero__total-budget">
+            <div class="media-hero__cpv-label">Total Budget</div>
+            <div class="media-hero__budget-value">${fmtCurrency(m.budget)}</div>
           </div>
         </div>
-      `;
-    }).join('');
+        ${cpvTrendCallout ? `<div class="media-hero__trend-callout ${cpvTrendClass}">${cpvTrendCallout}</div>` : ''}
+      </div>
+      <div class="media-hero__cards">
+        ${heroCard('Stores', fmtNumber(storeCount))}
+        ${heroCard('Impressions', fmtNumber(m.impressions), imprTrend)}
+        ${heroCard('Clicks', fmtNumber(m.clicks), clickTrend)}
+        ${heroCard('Variants', fmtNumber(variantCount))}
+        ${heroCard('CTR', fmtPct(m.ctr), ctrTrend)}
+        ${heroCard('Visits / 1,000', m.visits_per_thousand.toFixed(1), vptTrend)}
+      </div>
+    `;
   }
 
+  function heroCard(label, value, trendObj) {
+    // trendObj: { value: number, label: string, context: string } or falsy
+    if (!trendObj) {
+      return `
+        <div class="media-hero__card">
+          <div class="kpi-label">${label}</div>
+          <div class="kpi-value">${value}</div>
+        </div>
+      `;
+    }
+    const isPositive = trendObj.value >= 0;
+    const colorClass = isPositive ? 'kpi-trend--up' : 'kpi-trend--down';
+    const icon = isPositive ? 'trending_up' : 'trending_down';
+    return `
+      <div class="media-hero__card">
+        <div class="kpi-label">${label}</div>
+        <div class="kpi-value">${value}</div>
+        <span class="kpi-trend ${colorClass}">
+          <span class="material-symbols-outlined">${icon}</span>
+          ${trendObj.label}
+        </span>
+        ${trendObj.context ? `<span class="kpi-trend-context">${trendObj.context}</span>` : ''}
+      </div>
+    `;
+  }
+
+  function renderCreativeList() {
+    const el = document.getElementById('creative-list');
+    if (!el) return;
+
+    const allRecords = D.creativeRecords;
+    // Filter out creatives with no data at current entity level
+    const records = allRecords.filter(cr => cr.metrics !== null);
+    if (!records.length) {
+      el.innerHTML = '<div class="dist-tree-empty">No variants or analytics data are found for this entity.</div>';
+      return;
+    }
+
+    const isMultiple = records.length >= 2;
+
+    // Sort by visits (best performing first), preserve original index for panel linking
+    const sorted = records.map((cr, idx) => ({ ...cr, _origIndex: allRecords.indexOf(cr) })).sort((a, b) => {
+      const aVisits = a.metrics ? a.metrics.gross_visits : 0;
+      const bVisits = b.metrics ? b.metrics.gross_visits : 0;
+      return bVisits - aVisits;
+    });
+
+    // Helper: parse name and region from label (e.g. "Holiday Steak — South FL")
+    function parseLabel(cr) {
+      const full = cr.label || cr.notes || '';
+      const parts = full.split(' — ');
+      return { name: parts[0] || full, region: parts[1] || '' };
+    }
+
+    if (!isMultiple) {
+      // Single creative: compact inline bar
+      const cr = sorted[0];
+      const typeIcon = cr.creative_type === 'video' ? 'movie' : (cr.creative_type === 'gif' ? 'gif_box' : 'image');
+      el.className = 'creative-list creative-list--inline';
+      el.innerHTML = `
+        <div class="creative-card__thumb">
+          <span class="material-symbols-outlined">${typeIcon}</span>
+        </div>
+        <span class="creative-card__name">${cr.label || cr.notes}</span>
+        <span class="creative-card__dims">${cr.dimensions || ''}</span>
+        <span class="creative-card__meta">${cr.date_range_start} — ${cr.date_range_end} · ${cr.store_group.length} stores</span>
+        ${cr.target_url ? `<a class="creative-card__link" href="${cr.target_url}" target="_blank" title="Open target URL"><span class="material-symbols-outlined" style="font-size:16px;">link</span> Promotion Link</a>` : ''}
+      `;
+    } else {
+      // Multiple creatives: PrimeNG-style carousel with nav buttons + indicators
+      const numVisible = 3;
+      const numScroll = 1;
+      const totalItems = sorted.length;
+      const totalPages = Math.ceil(Math.max(totalItems - numVisible + 1, 1) / numScroll);
+
+      el.className = 'creative-list';
+
+      const cardsHtml = sorted.map((cr, i) => {
+        const typeIcon = cr.creative_type === 'video' ? 'movie' : (cr.creative_type === 'gif' ? 'gif_box' : 'image');
+        const { name, region } = parseLabel(cr);
+
+        return `
+          <div class="p-carousel-item" data-index="${i}">
+            <div class="creative-card" id="creative-card-${i}">
+              <div class="creative-card__top">
+                <span class="creative-card__rank">${i + 1}</span>
+                <div class="creative-card__info">
+                  <div class="creative-card__thumb creative-card__thumb--square">
+                    <span class="material-symbols-outlined">${typeIcon}</span>
+                  </div>
+                  <div class="creative-card__info_text">
+                    <div class="creative-card__name">${name}</div>
+                    <div class="creative-card__region">${region}</div>
+                    <div class="creative-card__date">${cr.date_range_start} — ${cr.date_range_end}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="creative-card__metrics">
+                <div class="creative-metric-tile">
+                  <div class="creative-metric-tile__label">Stores</div>
+                  <div class="creative-metric-tile__value">${cr.store_group.length}</div>
+                </div>
+                <div class="creative-metric-tile">
+                  <div class="creative-metric-tile__label">CTR</div>
+                  <div class="creative-metric-tile__value">${cr.metrics ? fmtPct(cr.metrics.ctr) : '—'}</div>
+                </div>
+                <div class="creative-metric-tile">
+                  <div class="creative-metric-tile__label">Visits</div>
+                  <div class="creative-metric-tile__value">${cr.metrics ? fmtNumber(cr.metrics.gross_visits) : '—'}</div>
+                </div>
+              </div>
+              <div class="creative-card__actions">
+                ${cr.target_url ? `<a class="creative-card__link" href="${cr.target_url}" target="_blank"><span class="material-symbols-outlined" style="font-size:14px;">link</span> Promotion Link</a>` : ''}
+                <button class="creative-card__details-btn" onclick="viewVariantDetails(${cr._origIndex})"><span class="material-symbols-outlined" style="font-size:14px;">visibility</span> View Details</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Indicator dots
+      const dotsHtml = Array.from({ length: totalPages }, (_, i) =>
+        `<li class="p-carousel-indicator${i === 0 ? ' p-carousel-indicator-active' : ''}"><button class="p-carousel-indicator-button" data-page="${i}" aria-label="Page ${i + 1}"></button></li>`
+      ).join('');
+
+      el.innerHTML = `
+        <div class="p-carousel p-component">
+          <div class="p-carousel-content-container">
+            <button class="p-carousel-prev-button" aria-label="Previous" ${totalPages <= 1 ? 'disabled' : ''}>
+              <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+            <div class="p-carousel-viewport">
+              <div class="p-carousel-item-list" style="transform: translateX(0%);">
+                ${cardsHtml}
+              </div>
+            </div>
+            <button class="p-carousel-next-button" aria-label="Next" ${totalPages <= 1 ? 'disabled' : ''}>
+              <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+          </div>
+          <ul class="p-carousel-indicator-list">
+            ${dotsHtml}
+          </ul>
+        </div>
+      `;
+
+      // Wire up carousel JS
+      initCreativeCarousel(el, totalItems, numVisible, numScroll);
+    }
+  }
+
+  // ========================================
+  // Creative Carousel Controller
+  // ========================================
+
+  function initCreativeCarousel(container, totalItems, numVisible, numScroll) {
+    let currentPage = 0;
+    const maxPage = Math.ceil(Math.max(totalItems - numVisible, 0) / numScroll);
+    const itemList = container.querySelector('.p-carousel-item-list');
+    const prevBtn = container.querySelector('.p-carousel-prev-button');
+    const nextBtn = container.querySelector('.p-carousel-next-button');
+    const indicators = container.querySelectorAll('.p-carousel-indicator');
+
+    function goToPage(page) {
+      currentPage = Math.max(0, Math.min(page, maxPage));
+      const offsetIndex = currentPage * numScroll;
+      // Each item is (100% / numVisible) of the viewport, so shift by that unit
+      const pct = (offsetIndex / numVisible) * 100;
+      itemList.style.transform = `translateX(-${pct}%)`;
+      itemList.style.transition = 'transform 300ms ease';
+
+      // Update button states
+      prevBtn.disabled = currentPage === 0;
+      nextBtn.disabled = currentPage >= maxPage;
+
+      // Update indicators
+      indicators.forEach((ind, i) => {
+        ind.classList.toggle('p-carousel-indicator-active', i === currentPage);
+      });
+    }
+
+    prevBtn.addEventListener('click', () => goToPage(currentPage - 1));
+    nextBtn.addEventListener('click', () => goToPage(currentPage + 1));
+
+    // Indicator clicks
+    indicators.forEach(ind => {
+      const btn = ind.querySelector('.p-carousel-indicator-button');
+      btn.addEventListener('click', () => {
+        goToPage(parseInt(btn.dataset.page, 10));
+      });
+    });
+
+    // Initial state
+    goToPage(0);
+  }
+
+  function renderDeliveryTrends() {
+    const el = document.getElementById('trend-cards');
+    if (!el) return;
+
+    const trend = D.mediaBuyMetrics.weeklyTrend;
+    if (!trend.length) return;
+
+    const latest = trend[trend.length - 1];
+
+    el.innerHTML = `
+      <div class="trend-card">
+        <div class="trend-card__header">
+          <span class="trend-card__label">Impressions</span>
+          <span class="trend-card__value">${fmtNumber(latest.impressions)}</span>
+        </div>
+        <div id="sparkline-impressions" style="height: 60px;"></div>
+      </div>
+      <div class="trend-card">
+        <div class="trend-card__header">
+          <span class="trend-card__label">Clicks</span>
+          <span class="trend-card__value">${fmtNumber(latest.clicks)}</span>
+        </div>
+        <div id="sparkline-clicks" style="height: 60px;"></div>
+      </div>
+      <div class="trend-card">
+        <div class="trend-card__header">
+          <span class="trend-card__label">CTR</span>
+          <span class="trend-card__value">${fmtPct(latest.ctr)}</span>
+        </div>
+        <div id="sparkline-ctr" style="height: 60px;"></div>
+      </div>
+      <div class="trend-card">
+        <div class="trend-card__header">
+          <span class="trend-card__label">Cost Per Visit</span>
+          <span class="trend-card__value">${fmtCurrency(latest.cost_per_visit)}</span>
+        </div>
+        <div id="sparkline-cpv" style="height: 60px;"></div>
+      </div>
+    `;
+  }
+
+  function initSparklines() {
+    const trend = D.mediaBuyMetrics.weeklyTrend;
+    if (!trend.length) return;
+
+    const weeks = trend.map(w => D.getWeekLabel(w.week));
+
+    function sparkline(id, data, color) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const chart = echarts.init(el);
+      charts[id] = chart;
+      chart.setOption({
+        grid: { left: 0, right: 0, top: 4, bottom: 0 },
+        xAxis: { type: 'category', data: weeks, show: false },
+        yAxis: { type: 'value', show: false },
+        tooltip: { trigger: 'axis', formatter: '{b}: {c}' },
+        series: [{
+          type: 'line',
+          data: data,
+          smooth: true,
+          symbol: 'circle',
+          symbolSize: 5,
+          lineStyle: { color: color, width: 2 },
+          itemStyle: { color: color },
+          areaStyle: { color: color + '18' }
+        }]
+      });
+    }
+
+    sparkline('sparkline-impressions', trend.map(w => w.impressions), '#3B82F6');
+    sparkline('sparkline-clicks', trend.map(w => w.clicks), '#22c55e');
+    sparkline('sparkline-ctr', trend.map(w => w.ctr), '#6366f1');
+    sparkline('sparkline-cpv', trend.map(w => w.cost_per_visit), '#ef4444');
+  }
+
+  // ========================================
+  // Variant Tree Table — replaces renderVariantPanels()
+  // ========================================
+
+  function renderVariantPanels() { renderVariantTreeTable(); }
+
+  function renderVariantTreeTable() {
+    const wrapper = document.getElementById('variant-panels');
+    const thead = document.getElementById('dist-tree-head');
+    const tbody = document.getElementById('dist-tree-body');
+    if (!wrapper || !thead || !tbody) return;
+
+    const ctx = D.context;
+    const isStoreLevel = ctx.entityLevel === 'store';
+
+    // Get creatives, filter out zero-data ones
+    const allRecords = D.creativeRecords;
+    const records = allRecords.filter(cr => cr.metrics !== null);
+
+    // Empty state
+    if (!records.length) {
+      thead.innerHTML = '';
+      tbody.innerHTML = `<tr><td colspan="12" class="dist-tree-empty">No variants or analytics data are found for this store.</td></tr>`;
+      return;
+    }
+
+    // Sort
+    const sortKey = distTreeState.sortColumn;
+    const sortDir = distTreeState.sortDirection;
+    const sorted = records.slice().sort((a, b) => {
+      const aM = a.metrics || {};
+      const bM = b.metrics || {};
+      let aVal, bVal;
+      switch (sortKey) {
+        case 'ctr':    aVal = aM.ctr || 0;            bVal = bM.ctr || 0;            break;
+        case 'visits': aVal = aM.gross_visits || 0;    bVal = bM.gross_visits || 0;    break;
+        case 'cpv':    aVal = aM.cost_per_visit || 0;  bVal = bM.cost_per_visit || 0;  break;
+        case 'impressions': aVal = aM.impressions || 0; bVal = bM.impressions || 0;     break;
+        case 'clicks': aVal = aM.clicks || 0;          bVal = bM.clicks || 0;          break;
+        case 'budget': aVal = aM.budget || 0;          bVal = bM.budget || 0;          break;
+        case 'stores': aVal = a.store_group.length;    bVal = b.store_group.length;    break;
+        default:       aVal = aM.gross_visits || 0;    bVal = bM.gross_visits || 0;
+      }
+      return sortDir === 'asc' ? aVal - bVal : bVal - aVal;
+    });
+
+    // Render header
+    function sortTh(label, col, cssClass) {
+      const isActive = distTreeState.sortColumn === col;
+      return `<th class="${cssClass} th-sortable ${isActive ? 'th-sort--active' : ''}" data-col="${col}">${label} <span class="material-symbols-outlined th-sort-icon">${getSortIcon(col)}</span></th>`;
+    }
+
+    thead.innerHTML = `<tr>
+      <th class="col-num">#</th>
+      <th class="col-thumb"></th>
+      <th class="col-creative">Creative</th>
+      <th class="col-type">Type</th>
+      ${!isStoreLevel ? sortTh('Stores', 'stores', 'col-stores') : ''}
+      ${sortTh('CTR', 'ctr', 'col-ctr')}
+      ${sortTh('Visits', 'visits', 'col-visits')}
+      ${sortTh('CPV', 'cpv', 'col-cpv')}
+      ${sortTh('Impr', 'impressions', 'col-impressions')}
+      ${sortTh('Clicks', 'clicks', 'col-clicks')}
+      ${sortTh('Budget', 'budget', 'col-budget')}
+      <th class="col-vpt">V/1K</th>
+      <th class="col-link">Link</th>
+    </tr>`;
+
+    // Render rows
+    let rowsHtml = '';
+    sorted.forEach((cr, idx) => {
+      const m = cr.metrics;
+      const { name, region } = parseLabel(cr);
+      const cid = cr.creative_id;
+      const isExpanded = !!distTreeState.expandedCreatives[cid];
+      const isVideo = cr.creative_type === 'video';
+      const typeBadge = `<span class="type-badge type-badge--${cr.creative_type}">${cr.creative_type.toUpperCase()}</span>`;
+      const targetUrl = cr.target_url || '';
+
+      // Parent row
+      const typeIcon = cr.creative_type === 'video' ? 'movie' : (cr.creative_type === 'gif' ? 'gif_box' : 'image');
+
+      rowsHtml += `<tr class="dist-tree-row--parent" data-creative-id="${cid}" onclick="toggleDistTreeRow('${cid}')">
+        <td class="col-num"><span class="row-number">${idx + 1}</span></td>
+        <td class="col-thumb">
+          <div class="tree-thumb">
+            <span class="material-symbols-outlined">${typeIcon}</span>
+          </div>
+        </td>
+        <td class="col-creative tree-indent-0">
+          <div class="tree-name-cell">
+            ${!isStoreLevel ? `<button class="tree-toggle ${isExpanded ? '' : 'collapsed'}" onclick="toggleDistTreeRow('${cid}'); event.stopPropagation();">
+              <span class="material-symbols-outlined">expand_more</span>
+            </button>` : '<span class="tree-toggle-placeholder"></span>'}
+            <div class="creative-name-block">
+              <span class="creative-label">${name}</span>
+              ${region ? `<span class="creative-region">${region}</span>` : ''}
+            </div>
+          </div>
+        </td>
+        <td class="col-type">${typeBadge}</td>
+        ${!isStoreLevel ? `<td class="col-stores">${cr.store_group.length}</td>` : ''}
+        <td class="col-ctr">${m ? fmtPct(m.ctr) : '—'}</td>
+        <td class="col-visits">${m ? fmtNumber(m.gross_visits) : '—'}</td>
+        <td class="col-cpv">${m ? fmtCurrency(m.cost_per_visit) : '—'}</td>
+        <td class="col-impressions">${m ? fmtNumber(m.impressions) : '—'}</td>
+        <td class="col-clicks">${m ? fmtNumber(m.clicks) : '—'}</td>
+        <td class="col-budget">${m ? fmtCurrency(m.budget) : '—'}</td>
+        <td class="col-vpt">${m ? m.visits_per_thousand.toFixed(1) : '—'}</td>
+        <td class="col-link">${targetUrl ? `<a href="${targetUrl}" target="_blank" class="dist-tree-link" title="Target URL" onclick="event.stopPropagation();"><span class="material-symbols-outlined" style="font-size:16px;">open_in_new</span></a>` : ''}</td>
+      </tr>`;
+
+      // Child rows (store level has none)
+      if (!isStoreLevel) {
+        const storeRows = buildStoreRows(cr);
+        storeRows.forEach(s => {
+          // Each store gets a geo-targeted URL (append store param to creative URL)
+          const storeUrl = targetUrl ? targetUrl + (targetUrl.includes('?') ? '&' : '?') + 'store=' + s.id : '';
+          rowsHtml += `<tr class="dist-tree-row--child ${isExpanded ? '' : 'tree-row-hidden'}" data-parent="${cid}">
+            <td class="col-num"></td>
+            <td class="col-thumb"></td>
+            <td class="col-creative tree-indent-1">
+              <div class="tree-name-cell">
+                <span class="tree-toggle-placeholder"></span>
+                <span class="store-name">#${s.id} — ${s.city}</span>
+              </div>
+            </td>
+            <td class="col-type"></td>
+            <td class="col-stores"></td>
+            <td class="col-ctr">${s.ctr}%</td>
+            <td class="col-visits">${fmtNumber(s.visits)}</td>
+            <td class="col-cpv">$${s.cpv}</td>
+            <td class="col-impressions">${fmtNumber(s.impressions)}</td>
+            <td class="col-clicks">${fmtNumber(s.clicks)}</td>
+            <td class="col-budget">${fmtCurrency(s.budget)}</td>
+            <td class="col-vpt">${s.vpt}</td>
+            <td class="col-link">${storeUrl ? `<a href="${storeUrl}" target="_blank" class="dist-tree-link" title="Store #${s.id} landing page" onclick="event.stopPropagation();"><span class="material-symbols-outlined" style="font-size:16px;">open_in_new</span></a>` : ''}</td>
+          </tr>`;
+        });
+
+        // Video funnel detail row
+        if (isVideo) {
+          const v = D.videoEngagement;
+          const totalCols = 13; // max columns (incl thumb)
+          rowsHtml += `<tr class="dist-tree-row--detail ${isExpanded ? '' : 'tree-row-hidden'}" data-parent="${cid}">
+            <td colspan="${totalCols}">
+              <div class="detail-content">
+                <h4 style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--p-text-color); margin: 0 0 var(--p-spacing-3);">Video Funnel</h4>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--p-spacing-3);">
+                  ${kpiTile('Complete Views', fmtNumber(v.video_complete_views))}
+                  ${kpiTile('Completion Rate', v.video_completion_rate.toFixed(1) + '%')}
+                  ${kpiTile('Avg Circular Time', v.avg_circular_time)}
+                  ${kpiTile('Circular Views', fmtNumber(v.circular_views))}
+                </div>
+                <div id="video-funnel-chart-tree" style="height: 0; overflow: hidden;"></div>
+              </div>
+            </td>
+          </tr>`;
+        }
+      }
+    });
+
+    tbody.innerHTML = rowsHtml;
+
+    // Bind More Data toggle
+    const toggle = document.getElementById('dist-more-data-toggle');
+    if (toggle) {
+      toggle.checked = distTreeState.moreDataEnabled;
+      toggle.onchange = function(e) {
+        distTreeState.moreDataEnabled = e.target.checked;
+        wrapper.classList.toggle('more-data-enabled', e.target.checked);
+      };
+      // Apply current state
+      wrapper.classList.toggle('more-data-enabled', distTreeState.moreDataEnabled);
+    }
+
+    // Bind sortable headers
+    thead.querySelectorAll('.th-sortable').forEach(th => {
+      th.onclick = function() {
+        const col = this.dataset.col;
+        if (distTreeState.sortColumn === col) {
+          distTreeState.sortDirection = distTreeState.sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+          distTreeState.sortColumn = col;
+          distTreeState.sortDirection = 'desc';
+        }
+        renderVariantTreeTable();
+      };
+    });
+  }
+
+  function getSortIcon(col) {
+    if (distTreeState.sortColumn !== col) return 'unfold_more';
+    return distTreeState.sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward';
+  }
+
+  function buildStoreRows(cr) {
+    return cr.store_group.map(storeId => {
+      const storeRecords = DistributionRecords.mediaRecords.filter(
+        r => r.store_id === storeId && r.creative_id === cr.creative_id
+      );
+      if (!storeRecords.length) return null;
+      const agg = storeRecords.reduce((acc, r) => {
+        acc.impressions += r.impressions;
+        acc.clicks += r.clicks;
+        acc.budget += r.budget_allocated;
+        acc.visits += r.gross_visits;
+        return acc;
+      }, { impressions: 0, clicks: 0, budget: 0, visits: 0 });
+
+      const store = DistributionEntities.getStoreById(storeId);
+      return {
+        id: storeId.replace('store-', ''),
+        storeId: storeId,
+        city: store ? store.city : '',
+        impressions: agg.impressions,
+        clicks: agg.clicks,
+        ctr: ((agg.clicks / agg.impressions) * 100).toFixed(2),
+        visits: agg.visits,
+        cpv: (agg.budget / agg.visits).toFixed(2),
+        budget: agg.budget,
+        vpt: agg.impressions > 0 ? ((agg.visits / agg.impressions) * 1000).toFixed(1) : '0.0'
+      };
+    }).filter(Boolean);
+  }
+
+  // ========================================
+  // Tree Table Actions (Export, Print, Share)
+  // ========================================
+
+  function initTreeTableActions() {
+    const exportBtn = document.getElementById('dist-export-btn');
+    const printBtn = document.getElementById('dist-print-btn');
+    const shareBtn = document.getElementById('dist-share-btn');
+
+    if (exportBtn) exportBtn.addEventListener('click', exportTreeTableCSV);
+    if (printBtn) printBtn.addEventListener('click', printTreeTable);
+    if (shareBtn) shareBtn.addEventListener('click', shareTreeTable);
+  }
+
+  function exportTreeTableCSV() {
+    const records = D.creativeRecords.filter(cr => cr.metrics !== null);
+    if (!records.length) return;
+
+    const ctx = D.context;
+    const isStoreLevel = ctx.entityLevel === 'store';
+    const rows = [];
+
+    // Header
+    const header = ['#', 'Creative', 'Region', 'Type'];
+    if (!isStoreLevel) header.push('Stores');
+    header.push('CTR', 'Visits', 'CPV', 'Impressions', 'Clicks', 'Budget', 'V/1K', 'Link');
+    rows.push(header.join(','));
+
+    // Parent rows
+    records.forEach((cr, idx) => {
+      const m = cr.metrics;
+      const { name, region } = parseLabel(cr);
+      const row = [idx + 1, `"${name}"`, `"${region}"`, cr.creative_type.toUpperCase()];
+      if (!isStoreLevel) row.push(cr.store_group.length);
+      row.push(
+        m ? fmtPct(m.ctr) : '',
+        m ? m.gross_visits : '',
+        m ? m.cost_per_visit.toFixed(2) : '',
+        m ? m.impressions : '',
+        m ? m.clicks : '',
+        m ? m.budget.toFixed(2) : '',
+        m ? m.visits_per_thousand.toFixed(1) : '',
+        cr.target_url || ''
+      );
+      rows.push(row.join(','));
+
+      // Child store rows
+      if (!isStoreLevel) {
+        const storeRows = buildStoreRows(cr);
+        storeRows.forEach(s => {
+          const storeRow = ['', `"#${s.id} — ${s.city}"`, '', ''];
+          if (!isStoreLevel) storeRow.push('');
+          storeRow.push(s.ctr + '%', s.visits, '$' + s.cpv, s.impressions, s.clicks, '', '', '');
+          rows.push(storeRow.join(','));
+        });
+      }
+    });
+
+    const csv = rows.join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `media-buy-${ctx.entityName.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function printTreeTable() {
+    const table = document.querySelector('.dist-tree-data-grid');
+    if (!table) return;
+
+    // Expand all rows for print
+    const hiddenRows = table.querySelectorAll('.tree-row-hidden');
+    hiddenRows.forEach(r => r.classList.remove('tree-row-hidden'));
+
+    // Show More Data columns
+    table.classList.add('more-data-enabled');
+
+    window.print();
+
+    // Restore state after print
+    setTimeout(() => {
+      table.classList.toggle('more-data-enabled', distTreeState.moreDataEnabled);
+      Object.keys(distTreeState.expandedCreatives).forEach(cid => {
+        if (!distTreeState.expandedCreatives[cid]) {
+          table.querySelectorAll(`[data-parent="${cid}"]`).forEach(r => r.classList.add('tree-row-hidden'));
+        }
+      });
+      // Re-hide rows that weren't expanded
+      D.creativeRecords.forEach(cr => {
+        if (!distTreeState.expandedCreatives[cr.creative_id]) {
+          table.querySelectorAll(`[data-parent="${cr.creative_id}"]`).forEach(r => r.classList.add('tree-row-hidden'));
+        }
+      });
+    }, 500);
+  }
+
+  function shareTreeTable() {
+    const ctx = D.context;
+    const url = window.location.href;
+    const text = `Distribution Media Buy — ${ctx.entityName}`;
+
+    if (navigator.share) {
+      navigator.share({ title: text, url: url }).catch(() => {});
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(url).then(() => {
+        const btn = document.getElementById('dist-share-btn');
+        if (btn) {
+          const original = btn.innerHTML;
+          btn.innerHTML = '<span class="material-symbols-outlined">check</span> Copied!';
+          setTimeout(() => { btn.innerHTML = original; }, 2000);
+        }
+      });
+    }
+  }
+
+  // Keep old function names as aliases for backward compat with shared code
+  function renderMediaKpis() { renderMediaHero(); }
+  function renderCreativePanel() { renderCreativeList(); }
+
   function renderVideoKpis() {
+    if (!elements.videoKpis) return;
     const v = D.videoEngagement;
     elements.videoKpis.innerHTML = [
       kpiTile('Complete Views', fmtNumber(v.video_complete_views)),
@@ -227,59 +902,452 @@
   // ========================================
 
   function renderVisitationKpis() {
+    const el = elements.visitationHero;
+    if (!el) return;
+
     const vm = D.visitationMetrics;
     const latest = vm.summary;
     if (!latest) return;
-    const zeroPct = ((latest.visits_zero_prev / latest.gross_visits) * 100).toFixed(1);
 
-    // Calculate growth from first to last week
+    // Budget = CPV × Gross Visits
+    const totalBudget = latest.cost_per_visit * latest.gross_visits;
+
+    // Trends from weekly data
     const trend = vm.weeklyTrend;
-    const growthPct = trend.length >= 2
-      ? (((trend[trend.length - 1].gross_visits - trend[0].gross_visits) / trend[0].gross_visits) * 100).toFixed(1)
-      : '0.0';
+    let cpvTrendCallout = '';
+    let cpvTrendClass = 'media-hero__trend-callout--flat';
+    let visitsTrend = null, zeroPrevTrend = null, oneThreeTrend = null, fourPlusTrend = null, vptTrend = null;
 
-    elements.visitationKpis.innerHTML = [
-      kpiTile('Cost Per Visit', fmtCurrency(latest.cost_per_visit), { primary: true }),
-      kpiTile('Gross Visits', fmtNumber(latest.gross_visits), { trend: parseFloat(growthPct), trendLabel: '+' + growthPct + '%' }),
-      kpiTile('Visits / 1,000', latest.visits_per_thousand.toFixed(1)),
-      kpiTile('Zero Previous (30d)', fmtNumber(latest.visits_zero_prev), { trend: 1, trendLabel: zeroPct + '%' }),
-      kpiTile('1-3 Previous', fmtNumber(latest.visits_one_three_prev)),
-      kpiTile('4+ Previous', fmtNumber(latest.visits_four_plus_prev))
-    ].join('');
+    if (trend.length >= 2) {
+      const first = trend[0];
+      const last = trend[trend.length - 1];
+      const ctx_label = 'vs. Wk ' + first.week.replace('wk', '');
+
+      // CPV trend callout — use summary (latest) value for consistency with hero CPV
+      const cpvChange = ((latest.cost_per_visit - first.cost_per_visit) / first.cost_per_visit * 100);
+      if (cpvChange < -2) {
+        cpvTrendCallout = `<span class="material-symbols-outlined">arrow_downward</span> CPV down ${Math.abs(cpvChange).toFixed(0)}% over campaign — $${first.cost_per_visit.toFixed(2)} → $${latest.cost_per_visit.toFixed(2)}`;
+        cpvTrendClass = 'media-hero__trend-callout--good';
+      } else if (cpvChange > 2) {
+        cpvTrendCallout = `<span class="material-symbols-outlined">arrow_upward</span> CPV up ${cpvChange.toFixed(0)}% over campaign — $${first.cost_per_visit.toFixed(2)} → $${latest.cost_per_visit.toFixed(2)}`;
+        cpvTrendClass = 'media-hero__trend-callout--bad';
+      } else {
+        cpvTrendCallout = `<span class="material-symbols-outlined">arrow_forward</span> CPV stable at $${latest.cost_per_visit.toFixed(2)} — consistent delivery`;
+        cpvTrendClass = 'media-hero__trend-callout--flat';
+      }
+
+      const pctDelta = (a, b) => b > 0 ? ((a - b) / b) * 100 : 0;
+      const mkTrend = (val, label) => ({ value: val, label: label, context: ctx_label });
+      const signPct = (v) => (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
+      const signVal = (v) => (v >= 0 ? '+' : '') + v.toFixed(1);
+
+      const vd = pctDelta(last.gross_visits, first.gross_visits);
+      visitsTrend = mkTrend(vd, signPct(vd));
+      if (first.visits_zero_prev > 0) { const d = pctDelta(last.visits_zero_prev, first.visits_zero_prev); zeroPrevTrend = mkTrend(d, signPct(d)); }
+      if (first.visits_one_three_prev > 0) { const d = pctDelta(last.visits_one_three_prev, first.visits_one_three_prev); oneThreeTrend = mkTrend(d, signPct(d)); }
+      if (first.visits_four_plus_prev > 0) { const d = pctDelta(last.visits_four_plus_prev, first.visits_four_plus_prev); fourPlusTrend = mkTrend(d, signPct(d)); }
+      if (first.visits_per_thousand > 0) { const d = last.visits_per_thousand - first.visits_per_thousand; vptTrend = mkTrend(d, signVal(d)); }
+    }
+
+    el.innerHTML = `
+      <div class="media-hero__budget">
+        <div class="media-hero__metric-summary">
+          <div class="media-hero__cpv-group">
+            <div class="media-hero__cpv-label">Cost Per Visit</div>
+            <div class="media-hero__cpv">${fmtCurrency(latest.cost_per_visit)}</div>
+          </div>
+          <div class="media-hero__total-budget">
+            <div class="media-hero__cpv-label">Total Budget</div>
+            <div class="media-hero__budget-value">${fmtCurrency(totalBudget)}</div>
+          </div>
+        </div>
+        ${cpvTrendCallout ? `<div class="media-hero__trend-callout ${cpvTrendClass}">${cpvTrendCallout}</div>` : ''}
+      </div>
+      <div class="media-hero__cards">
+        ${heroCard('Gross Visits', fmtNumber(latest.gross_visits), visitsTrend)}
+        ${heroCard('Zero Previous', fmtNumber(latest.visits_zero_prev), zeroPrevTrend)}
+        ${heroCard('1-3 Previous', fmtNumber(latest.visits_one_three_prev), oneThreeTrend)}
+        ${heroCard('Visits / 1,000', latest.visits_per_thousand.toFixed(1), vptTrend)}
+        ${heroCard('4+ Previous', fmtNumber(latest.visits_four_plus_prev), fourPlusTrend)}
+        ${heroCard('New Shoppers', ((latest.visits_zero_prev / latest.gross_visits) * 100).toFixed(1) + '%')}
+      </div>
+    `;
   }
 
-  function renderCrossoverDetail() {
-    elements.crossoverDetail.innerHTML = D.competitiveCrossover.map(comp => {
-      const total = comp.crossover_visits_zero_prev + comp.crossover_visits_one_three + comp.crossover_visits_four_plus;
-      return `
-        <details class="crossover-row">
-          <summary class="crossover-row__summary">
-            <span class="crossover-name">${comp.competitor_name}</span>
-            <span class="crossover-address">${comp.competitor_store_address}</span>
-            <span class="crossover-pct">${comp.crossover_pct}%</span>
-          </summary>
-          <div class="crossover-row__detail">
-            <div class="crossover-buckets">
-              <div class="bucket bucket--zero">
-                <span class="bucket-label">Zero Prev</span>
-                <span class="bucket-value">${fmtNumber(comp.crossover_visits_zero_prev)}</span>
-                <span class="bucket-pct">${((comp.crossover_visits_zero_prev / total) * 100).toFixed(0)}%</span>
-              </div>
-              <div class="bucket bucket--mid">
-                <span class="bucket-label">1-3 Prev</span>
-                <span class="bucket-value">${fmtNumber(comp.crossover_visits_one_three)}</span>
-                <span class="bucket-pct">${((comp.crossover_visits_one_three / total) * 100).toFixed(0)}%</span>
-              </div>
-              <div class="bucket bucket--loyal">
-                <span class="bucket-label">4+ Prev</span>
-                <span class="bucket-value">${fmtNumber(comp.crossover_visits_four_plus)}</span>
-                <span class="bucket-pct">${((comp.crossover_visits_four_plus / total) * 100).toFixed(0)}%</span>
-              </div>
-            </div>
-          </div>
-        </details>
-      `;
+  function renderCrossoverDetail(segmentKey) {
+    if (!elements.crossoverDetail) return;
+    elements.crossoverDetail.innerHTML = D.competitiveCrossover.map(function (comp) {
+      var total = comp.crossover_visits_zero_prev + comp.crossover_visits_one_three + comp.crossover_visits_four_plus;
+
+      // When filtered to a segment, show only that bucket (same structure as unfiltered)
+      if (segmentKey) {
+        var field = SEGMENT_FIELDS[segmentKey];
+        var label = segmentKey === 'zero_prev' ? 'Zero Prev' : segmentKey === 'one_three' ? '1-3 Prev' : '4+ Prev';
+        var bucketClass = segmentKey === 'zero_prev' ? 'bucket--zero' : segmentKey === 'one_three' ? 'bucket--mid' : 'bucket--loyal';
+        var val = comp[field];
+        var pct = total > 0 ? ((val / total) * 100).toFixed(0) : 0;
+        var summaryField = SEGMENT_SUMMARY_FIELDS[segmentKey];
+        var vm = D.visitationMetrics;
+        var segTotal = vm.summary ? vm.summary[summaryField] : 0;
+        var filteredPct = segTotal > 0 ? ((comp[field] / segTotal) * 100).toFixed(1) : '0.0';
+        return '<details class="crossover-row">' +
+          '<summary class="crossover-row__summary">' +
+            '<span class="crossover-name">' + comp.competitor_name + '</span>' +
+            '<span class="crossover-address">' + comp.competitor_store_address + '</span>' +
+            '<span class="crossover-pct">' + filteredPct + '%</span>' +
+          '</summary>' +
+          '<div class="crossover-row__detail">' +
+            '<div class="crossover-buckets">' +
+              '<div class="bucket ' + bucketClass + '">' +
+                '<span class="bucket-label">' + label + '</span>' +
+                '<span class="bucket-value">' + fmtNumber(val) + '</span>' +
+                '<span class="bucket-pct">' + pct + '% of crossover</span>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</details>';
+      }
+
+      // Default: expandable with all 3 buckets
+      return '<details class="crossover-row">' +
+        '<summary class="crossover-row__summary">' +
+          '<span class="crossover-name">' + comp.competitor_name + '</span>' +
+          '<span class="crossover-address">' + comp.competitor_store_address + '</span>' +
+          '<span class="crossover-pct">' + comp.crossover_pct + '%</span>' +
+        '</summary>' +
+        '<div class="crossover-row__detail">' +
+          '<div class="crossover-buckets">' +
+            '<div class="bucket bucket--zero">' +
+              '<span class="bucket-label">Zero Prev</span>' +
+              '<span class="bucket-value">' + fmtNumber(comp.crossover_visits_zero_prev) + '</span>' +
+              '<span class="bucket-pct">' + (total > 0 ? ((comp.crossover_visits_zero_prev / total) * 100).toFixed(0) : 0) + '%</span>' +
+            '</div>' +
+            '<div class="bucket bucket--mid">' +
+              '<span class="bucket-label">1-3 Prev</span>' +
+              '<span class="bucket-value">' + fmtNumber(comp.crossover_visits_one_three) + '</span>' +
+              '<span class="bucket-pct">' + (total > 0 ? ((comp.crossover_visits_one_three / total) * 100).toFixed(0) : 0) + '%</span>' +
+            '</div>' +
+            '<div class="bucket bucket--loyal">' +
+              '<span class="bucket-label">4+ Prev</span>' +
+              '<span class="bucket-value">' + fmtNumber(comp.crossover_visits_four_plus) + '</span>' +
+              '<span class="bucket-pct">' + (total > 0 ? ((comp.crossover_visits_four_plus / total) * 100).toFixed(0) : 0) + '%</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</details>';
     }).join('');
+  }
+
+  // ── Visitation View Toggle ──────────────────────────────────────────────────
+
+  function initViewToggle() {
+    var toggle = document.getElementById('visitation-view-toggle');
+    if (!toggle) return;
+    toggle.querySelectorAll('.view-toggle__btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var view = btn.dataset.view;
+        if (view === visitationView) return;
+        visitationView = view;
+
+        // Toggle active on buttons
+        toggle.querySelectorAll('.view-toggle__btn').forEach(function (b) {
+          b.classList.toggle('active', b.dataset.view === view);
+        });
+
+        // Toggle active on view containers
+        var currentEl = document.getElementById('visitation-current');
+        var trendEl = document.getElementById('visitation-trend');
+        if (currentEl) currentEl.classList.toggle('active', view === 'current');
+        if (trendEl) trendEl.classList.toggle('active', view === 'trend');
+
+        // Lazy-init trend charts on first switch (eCharts needs visible container)
+        if (view === 'trend' && !_trendViewInitialized) {
+          _trendViewInitialized = true;
+          initFrequencyChart();
+          initCrossoverTrendChart();
+        }
+
+        // Resize all visible charts after toggle
+        setTimeout(function () {
+          Object.values(charts).forEach(function (c) { if (c && c.resize) c.resize(); });
+        }, 0);
+      });
+    });
+  }
+
+  // ── Visit Frequency Donut ──────────────────────────────────────────────────
+
+  function initVisitDonut() {
+    var el = document.getElementById('chart-visit-donut');
+    if (!el) return;
+    if (charts.visitDonut) { charts.visitDonut.dispose(); charts.visitDonut = null; }
+
+    var chart = echarts.init(el);
+    charts.visitDonut = chart;
+
+    var vm = D.visitationMetrics;
+    var s = vm.summary;
+    if (!s) return;
+
+    var total = s.gross_visits;
+    var segments = [
+      { name: 'Zero Previous (30d)', value: s.visits_zero_prev, segmentKey: 'zero_prev', color: ChartColors.blue },
+      { name: '1-3 Previous', value: s.visits_one_three_prev, segmentKey: 'one_three', color: ChartColors.amber },
+      { name: '4+ Previous', value: s.visits_four_plus_prev, segmentKey: 'four_plus', color: ChartColors.green }
+    ];
+
+    chart.setOption({
+      tooltip: {
+        trigger: 'item',
+        formatter: function (p) {
+          return '<strong>' + p.name + '</strong><br>' +
+            p.value.toLocaleString() + ' visits (' + p.percent + '%)';
+        }
+      },
+      graphic: [
+        {
+          type: 'text',
+          left: 'center',
+          top: '42%',
+          style: {
+            text: fmtNumber(total),
+            fontSize: 22,
+            fontWeight: 'bold',
+            fill: '#1f2937',
+            textAlign: 'center'
+          }
+        },
+        {
+          type: 'text',
+          left: 'center',
+          top: '54%',
+          style: {
+            text: 'Total Visits',
+            fontSize: 11,
+            fill: '#6b7280',
+            textAlign: 'center'
+          }
+        }
+      ],
+      series: [{
+        type: 'pie',
+        radius: ['48%', '72%'],
+        center: ['50%', '48%'],
+        avoidLabelOverlap: false,
+        selectedMode: 'single',
+        label: { show: false },
+        labelLine: { show: false },
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.2)'
+          }
+        },
+        data: segments.map(function (seg) {
+          return {
+            name: seg.name,
+            value: seg.value,
+            segmentKey: seg.segmentKey,
+            itemStyle: { color: seg.color }
+          };
+        })
+      }]
+    });
+
+    // Click handler for donut↔crossover filtering
+    chart.on('click', function (params) {
+      var segKey = params.data.segmentKey;
+      if (donutFilterSegment === segKey) {
+        clearDonutFilter();
+      } else {
+        applyDonutFilter(segKey, params.name);
+      }
+    });
+
+    // Render HTML legend
+    renderDonutLegend(segments, total);
+  }
+
+  function renderDonutLegend(segments, total) {
+    if (!elements.donutLegend) return;
+    elements.donutLegend.innerHTML = segments.map(function (seg) {
+      var pct = total > 0 ? ((seg.value / total) * 100).toFixed(0) : 0;
+      var activeClass = donutFilterSegment === seg.segmentKey ? ' active' : '';
+      return '<span class="donut-legend__item' + activeClass + '" data-segment="' + seg.segmentKey + '">' +
+        '<span class="donut-legend__dot" style="background: ' + seg.color + ';"></span>' +
+        seg.name +
+        ' <span class="donut-legend__value">' + pct + '%</span>' +
+        '</span>';
+    }).join('');
+
+    // Legend clicks also filter
+    elements.donutLegend.querySelectorAll('.donut-legend__item').forEach(function (item) {
+      item.addEventListener('click', function () {
+        var segKey = item.dataset.segment;
+        if (donutFilterSegment === segKey) {
+          clearDonutFilter();
+        } else {
+          var seg = segments.find(function (s) { return s.segmentKey === segKey; });
+          applyDonutFilter(segKey, seg ? seg.name : '');
+        }
+      });
+    });
+  }
+
+  // ── Donut ↔ Crossover Filter Interaction ──────────────────────────────────
+
+  var SEGMENT_LABELS = {
+    zero_prev: '— New Shoppers',
+    one_three: '— Returning (1-3)',
+    four_plus: '— Loyal (4+)'
+  };
+
+  var SEGMENT_FIELDS = {
+    zero_prev: 'crossover_visits_zero_prev',
+    one_three: 'crossover_visits_one_three',
+    four_plus: 'crossover_visits_four_plus'
+  };
+
+  var SEGMENT_SUMMARY_FIELDS = {
+    zero_prev: 'visits_zero_prev',
+    one_three: 'visits_one_three_prev',
+    four_plus: 'visits_four_plus_prev'
+  };
+
+  function applyDonutFilter(segmentKey, segmentName) {
+    donutFilterSegment = segmentKey;
+
+    // Donut: highlight selected, dim others
+    if (charts.visitDonut) {
+      charts.visitDonut.dispatchAction({ type: 'downplay', seriesIndex: 0 });
+      charts.visitDonut.dispatchAction({ type: 'highlight', seriesIndex: 0, name: segmentName });
+    }
+
+    // Update crossover chart with filtered data
+    updateCrossoverForSegment(segmentKey);
+
+    // Update crossover header label
+    if (elements.crossoverFilterLabel) {
+      elements.crossoverFilterLabel.textContent = SEGMENT_LABELS[segmentKey] || '';
+    }
+
+    // Show filter chip
+    if (elements.donutFilterChip) {
+      elements.donutFilterChip.classList.add('active');
+      var chipLabel = elements.donutFilterChip.querySelector('.donut-filter-chip__label');
+      if (chipLabel) chipLabel.textContent = segmentName;
+    }
+
+    // Update crossover detail for filtered segment
+    renderCrossoverDetail(segmentKey);
+
+    // Update legend active state
+    if (elements.donutLegend) {
+      elements.donutLegend.querySelectorAll('.donut-legend__item').forEach(function (item) {
+        item.classList.toggle('active', item.dataset.segment === segmentKey);
+      });
+    }
+  }
+
+  function clearDonutFilter() {
+    donutFilterSegment = null;
+
+    // Reset donut emphasis
+    if (charts.visitDonut) {
+      charts.visitDonut.dispatchAction({ type: 'downplay', seriesIndex: 0 });
+    }
+
+    // Restore full crossover
+    updateCrossoverForSegment(null);
+
+    // Clear header label
+    if (elements.crossoverFilterLabel) {
+      elements.crossoverFilterLabel.textContent = '';
+    }
+
+    // Hide filter chip
+    if (elements.donutFilterChip) {
+      elements.donutFilterChip.classList.remove('active');
+    }
+
+    // Restore crossover detail
+    renderCrossoverDetail(null);
+
+    // Clear legend active state
+    if (elements.donutLegend) {
+      elements.donutLegend.querySelectorAll('.donut-legend__item').forEach(function (item) {
+        item.classList.remove('active');
+      });
+    }
+  }
+
+  function updateCrossoverForSegment(segmentKey) {
+    if (charts.crossover) { charts.crossover.dispose(); charts.crossover = null; }
+
+    var data = D.competitiveCrossover;
+    var sorted;
+
+    if (!segmentKey) {
+      // Default: total crossover_pct
+      sorted = [...data].sort(function (a, b) { return a.crossover_pct - b.crossover_pct; });
+      initCrossoverChartWithData(sorted, 'crossover_pct');
+    } else {
+      // Filtered: compute segment-specific crossover rate
+      var field = SEGMENT_FIELDS[segmentKey];
+      var summaryField = SEGMENT_SUMMARY_FIELDS[segmentKey];
+      var vm = D.visitationMetrics;
+      var segmentTotal = vm.summary ? vm.summary[summaryField] : 0;
+
+      sorted = [...data].map(function (c) {
+        var filteredPct = segmentTotal > 0
+          ? parseFloat(((c[field] / segmentTotal) * 100).toFixed(1))
+          : 0;
+        return Object.assign({}, c, { filtered_pct: filteredPct });
+      }).sort(function (a, b) { return a.filtered_pct - b.filtered_pct; });
+
+      initCrossoverChartWithData(sorted, 'filtered_pct');
+    }
+  }
+
+  function initCrossoverChartWithData(sortedData, pctField) {
+    var el = document.getElementById('chart-crossover');
+    if (!el) return;
+    var chart = echarts.init(el);
+    charts.crossover = chart;
+
+    var maxVal = Math.max.apply(null, sortedData.map(function (c) { return c[pctField]; }));
+    var chartMax = Math.ceil(maxVal / 10) * 10 || 40;
+
+    chart.setOption({
+      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+      grid: { left: 180, right: 40, top: 10, bottom: 30 },
+      xAxis: { type: 'value', max: chartMax, axisLabel: { formatter: '{value}%' } },
+      yAxis: {
+        type: 'category',
+        data: sortedData.map(function (c) { return c.competitor_name; }),
+        axisLabel: { fontSize: 12 }
+      },
+      series: [{
+        type: 'bar',
+        data: sortedData.map(function (c) {
+          return {
+            value: c[pctField],
+            itemStyle: { color: c.competitor_name === 'Publix' ? ChartColors.red : ChartColors.indigo }
+          };
+        }),
+        barWidth: 20,
+        label: { show: true, position: 'right', formatter: '{c}%', fontSize: 11 }
+      }]
+    });
+  }
+
+  // Bind filter chip close
+  function bindDonutFilterChip() {
+    if (!elements.donutFilterChip) return;
+    elements.donutFilterChip.addEventListener('click', function () {
+      clearDonutFilter();
+    });
   }
 
   function renderSpotlightCards() {
@@ -305,6 +1373,255 @@
         </div>
       `;
     }).join('');
+  }
+
+  // ── Store Performance Table ──────────────────────────────────────────────────
+
+  var storePerfState = {
+    sortColumn: 'visits',
+    sortDirection: 'desc',
+    allRows: [],      // cached sorted data
+    selectedStoreId: null
+  };
+
+  var PERF_GROUP_COLORS = { green: '#10B981', amber: '#F59E0B', red: '#EF4444' };
+
+  function buildStorePerformanceData() {
+    var ctx = D.context;
+    var storeIds = D.entities.getStoresForEntity(ctx.entityId, ctx.entityLevel);
+    var latestWeek = ctx.flightWeek === 'all' ? 'wk2' : ctx.flightWeek;
+
+    var rows = storeIds.map(function (storeId) {
+      var store = D.entities.getStoreById(storeId);
+      var records = D.getVisitRecords(latestWeek, [storeId]);
+      if (!records.length) return null;
+
+      var agg = { gross_visits: 0, visits_zero_prev: 0, visits_one_three_prev: 0, visits_four_plus_prev: 0 };
+      records.forEach(function (r) {
+        agg.gross_visits += r.gross_visits;
+        agg.visits_zero_prev += r.visits_zero_prev;
+        agg.visits_one_three_prev += r.visits_one_three_prev;
+        agg.visits_four_plus_prev += r.visits_four_plus_prev;
+      });
+
+      var cpv = records.length > 0 ? records[0].cost_per_visit : 0;
+      var newPct = agg.gross_visits > 0 ? (agg.visits_zero_prev / agg.gross_visits) * 100 : 0;
+      var group = newPct >= 40 ? 'green' : newPct >= 30 ? 'amber' : 'red';
+
+      return {
+        storeId: storeId,
+        storeNumber: store ? store.storeNumber : storeId.replace('store-', ''),
+        city: store ? store.city : '',
+        visits: agg.gross_visits,
+        new_pct: newPct,
+        cpv: cpv,
+        visits_zero_prev: agg.visits_zero_prev,
+        visits_one_three_prev: agg.visits_one_three_prev,
+        visits_four_plus_prev: agg.visits_four_plus_prev,
+        one_three_pct: agg.gross_visits > 0 ? (agg.visits_one_three_prev / agg.gross_visits) * 100 : 0,
+        four_plus_pct: agg.gross_visits > 0 ? (agg.visits_four_plus_prev / agg.gross_visits) * 100 : 0,
+        vpt: 0,
+        group: group
+      };
+    }).filter(Boolean);
+
+    // Sort
+    var col = storePerfState.sortColumn;
+    var dir = storePerfState.sortDirection === 'asc' ? 1 : -1;
+    rows.sort(function (a, b) { return (a[col] - b[col]) * dir; });
+
+    storePerfState.allRows = rows;
+    return rows;
+  }
+
+  function renderStorePerformanceTable() {
+    var headEl = document.getElementById('store-perf-head');
+    var bodyEl = document.getElementById('store-perf-body');
+    if (!headEl || !bodyEl) return;
+
+    // Render header
+    function sortClass(col) {
+      if (storePerfState.sortColumn !== col) return '';
+      return ' sort-active' + (storePerfState.sortDirection === 'asc' ? ' sort-asc' : '');
+    }
+    headEl.innerHTML = '<tr>' +
+      '<th class="col-num">#</th>' +
+      '<th class="col-status"></th>' +
+      '<th class="col-store">Store</th>' +
+      '<th class="col-city">City</th>' +
+      '<th class="col-visits sortable' + sortClass('visits') + '" data-sort="visits">Visits</th>' +
+      '<th class="col-new sortable' + sortClass('new_pct') + '" data-sort="new_pct">New Shoppers</th>' +
+      '<th class="col-cpv sortable' + sortClass('cpv') + '" data-sort="cpv">CPV</th>' +
+      '<th class="col-one-three">1-3 Prev</th>' +
+      '<th class="col-four-plus">4+ Prev</th>' +
+      '<th class="col-zero-raw">Zero Prev</th>' +
+      '<th class="col-vpt">V/1K</th>' +
+    '</tr>';
+
+    // Build or use cached data
+    var rows = storePerfState.allRows.length > 0 ? storePerfState.allRows : buildStorePerformanceData();
+
+    // Empty state
+    if (rows.length === 0) {
+      bodyEl.innerHTML = '<tr><td colspan="11" class="store-perf-empty">No visitation data available for this selection.</td></tr>';
+      return;
+    }
+
+    // Render all rows (scrollable container handles overflow, virtual scroll in production)
+    bodyEl.innerHTML = rows.map(function (r, i) {
+      var newClass = r.new_pct >= 40 ? 'metric--good' : r.new_pct < 30 ? 'metric--warn' : '';
+      var cpvClass = r.cpv <= 1.50 ? 'metric--good' : r.cpv > 2.00 ? 'metric--warn' : '';
+      var dotColor = PERF_GROUP_COLORS[r.group] || '#9CA3AF';
+      var selectedClass = storePerfState.selectedStoreId === r.storeId ? ' store-row--selected' : '';
+
+      return '<tr class="store-row' + selectedClass + '" data-store-id="' + r.storeId + '">' +
+        '<td class="col-num">' + (i + 1) + '</td>' +
+        '<td class="col-status"><span class="perf-dot" style="background:' + dotColor + ';"></span></td>' +
+        '<td class="col-store">Store ' + r.storeNumber + '</td>' +
+        '<td class="col-city">' + r.city + '</td>' +
+        '<td class="col-visits">' + fmtNumber(r.visits) + '</td>' +
+        '<td class="col-new ' + newClass + '">' + r.new_pct.toFixed(1) + '%</td>' +
+        '<td class="col-cpv ' + cpvClass + '">' + fmtCurrency(r.cpv) + '</td>' +
+        '<td class="col-one-three">' + fmtNumber(r.visits_one_three_prev) + ' (' + r.one_three_pct.toFixed(0) + '%)</td>' +
+        '<td class="col-four-plus">' + fmtNumber(r.visits_four_plus_prev) + ' (' + r.four_plus_pct.toFixed(0) + '%)</td>' +
+        '<td class="col-zero-raw">' + fmtNumber(r.visits_zero_prev) + '</td>' +
+        '<td class="col-vpt">' + (r.vpt > 0 ? r.vpt.toFixed(1) : '—') + '</td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  // ── Row ↔ Map selection ──────────────────────────────────────────────────
+
+  function selectStore(storeId) {
+    var resetBtn = document.getElementById('map-reset-btn');
+
+    // Deselect previous
+    var prev = document.querySelector('.store-row--selected');
+    if (prev) prev.classList.remove('store-row--selected');
+
+    if (storePerfState.selectedStoreId === storeId) {
+      // Toggle off — deselect
+      resetMapView();
+      return;
+    }
+
+    storePerfState.selectedStoreId = storeId;
+
+    // Highlight table row + scroll into view
+    var row = document.querySelector('.store-row[data-store-id="' + storeId + '"]');
+    if (row) {
+      row.classList.add('store-row--selected');
+      row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+
+    // Focus map pin
+    if (typeof StoreMap !== 'undefined') {
+      StoreMap.highlightStore(storeId);
+    }
+
+    // Show reset button
+    if (resetBtn) resetBtn.classList.add('visible');
+  }
+
+  function resetMapView() {
+    storePerfState.selectedStoreId = null;
+    var prev = document.querySelector('.store-row--selected');
+    if (prev) prev.classList.remove('store-row--selected');
+    if (typeof StoreMap !== 'undefined') StoreMap.fitBounds();
+    var resetBtn = document.getElementById('map-reset-btn');
+    if (resetBtn) resetBtn.classList.remove('visible');
+  }
+
+  function bindStorePerformanceActions() {
+    // More Data toggle
+    var toggle = document.getElementById('store-perf-more-toggle');
+    var section = document.getElementById('store-perf-section');
+    if (toggle && section) {
+      toggle.addEventListener('change', function () {
+        section.classList.toggle('more-data-enabled', toggle.checked);
+      });
+    }
+
+    // Sortable headers
+    var head = document.getElementById('store-perf-head');
+    if (head) {
+      head.addEventListener('click', function (e) {
+        var th = e.target.closest('th.sortable');
+        if (!th) return;
+        var col = th.dataset.sort;
+        if (storePerfState.sortColumn === col) {
+          storePerfState.sortDirection = storePerfState.sortDirection === 'desc' ? 'asc' : 'desc';
+        } else {
+          storePerfState.sortColumn = col;
+          storePerfState.sortDirection = col === 'cpv' ? 'asc' : 'desc';
+        }
+        buildStorePerformanceData();
+        renderStorePerformanceTable();
+      });
+    }
+
+    // Row click → focus map pin
+    var body = document.getElementById('store-perf-body');
+    if (body) {
+      body.addEventListener('click', function (e) {
+        var row = e.target.closest('.store-row');
+        if (!row) return;
+        selectStore(row.dataset.storeId);
+      });
+    }
+
+    // Map pin click → highlight table row
+    if (typeof StoreMap !== 'undefined') {
+      StoreMap.onStoreClick(function (storeId) {
+        selectStore(storeId);
+      });
+    }
+
+    // Reset map button
+    var resetBtn = document.getElementById('map-reset-btn');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function () {
+        resetMapView();
+      });
+    }
+  }
+
+  // ── Visitation Store Map ──────────────────────────────────────────────────
+
+  function renderVisitationMap() {
+    if (typeof StoreMap === 'undefined') return;
+    var mapEl = document.getElementById('visitation-store-map');
+    if (!mapEl) return;
+
+    // Init map on the visitation-specific element
+    StoreMap.init('visitation-store-map');
+
+    var ctx = D.context;
+    var storeIds = D.entities.getStoresForEntity(ctx.entityId, ctx.entityLevel);
+    var latestWeek = ctx.flightWeek === 'all' ? 'wk2' : ctx.flightWeek;
+    var stores = D.entities.stores.filter(function (s) { return storeIds.includes(s.id); });
+    var storeData = {};
+
+    // Color by new shopper % performance: ≥40% green, 30-40% amber, <30% red
+    storeIds.forEach(function (storeId) {
+      var records = D.getVisitRecords(latestWeek, [storeId]);
+      if (!records.length) return;
+      var total = 0, zeroPrev = 0;
+      records.forEach(function (r) { total += r.gross_visits; zeroPrev += r.visits_zero_prev; });
+      var newPct = total > 0 ? (zeroPrev / total) * 100 : 0;
+      var group = newPct >= 40 ? 'green' : newPct >= 30 ? 'amber' : 'red';
+      var cpv = records[0].cost_per_visit || 0;
+
+      storeData[storeId] = {
+        group: group,
+        share: parseFloat(newPct.toFixed(1)),
+        change_pp: 0,
+        primary_threat: 'CPV: $' + cpv.toFixed(2)
+      };
+    });
+
+    StoreMap.renderStores(stores, storeData);
+    StoreMap.fitBounds();
   }
 
   // ========================================
@@ -428,7 +1745,9 @@
     if (filterId === 'flight-week') {
       D.setFlightWeek('all');
       var weeks = D.flightWeeks;
-      HeaderComponent.updateDateDisplay('Flight Weeks 3-2', 'Dec 10, 2025 – Jan 13, 2026');
+      var firstWk = weeks[0];
+      var lastWk = weeks[weeks.length - 1];
+      HeaderComponent.updateDateDisplay(firstWk.label + ' – ' + lastWk.label, fmtDateRange(firstWk.start) + ' – ' + fmtDateRange(lastWk.end));
     } else if (filterId === 'entity') {
       D.setEntity('all', 'all', 'All Stores');
       var rc = D.retailerConfig;
@@ -522,32 +1841,8 @@
   }
 
   function initCrossoverChart() {
-    const el = document.getElementById('chart-crossover');
-    if (!el) return;
-    const chart = echarts.init(el);
-    charts.crossover = chart;
-
-    const sorted = [...D.competitiveCrossover].sort((a, b) => a.crossover_pct - b.crossover_pct);
-
-    chart.setOption({
-      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-      grid: { left: 180, right: 40, top: 10, bottom: 30 },
-      xAxis: { type: 'value', max: 40, axisLabel: { formatter: '{value}%' } },
-      yAxis: {
-        type: 'category',
-        data: sorted.map(c => c.competitor_name),
-        axisLabel: { fontSize: 12 }
-      },
-      series: [{
-        type: 'bar',
-        data: sorted.map(c => ({
-          value: c.crossover_pct,
-          itemStyle: { color: c.competitor_name === 'Publix' ? ChartColors.red : ChartColors.indigo }
-        })),
-        barWidth: 20,
-        label: { show: true, position: 'right', formatter: '{c}%', fontSize: 11 }
-      }]
-    });
+    var sorted = [...D.competitiveCrossover].sort(function (a, b) { return a.crossover_pct - b.crossover_pct; });
+    initCrossoverChartWithData(sorted, 'crossover_pct');
   }
 
   function initCrossoverTrendChart() {
@@ -641,6 +1936,38 @@
           fontSize: 12,
           fontWeight: 600
         }
+      }]
+    });
+  }
+
+  function initVideoFunnelInPanel(panelIdx) {
+    const el = document.getElementById('video-funnel-chart-' + panelIdx);
+    if (!el) return;
+    el.style.height = '180px';
+    el.style.overflow = '';
+    const chart = echarts.init(el);
+    charts['video-funnel-' + panelIdx] = chart;
+    const v = D.videoEngagement;
+    chart.setOption({
+      tooltip: { trigger: 'item' },
+      grid: { left: 60, right: 20, top: 10, bottom: 30 },
+      xAxis: {
+        type: 'category',
+        data: ['Impressions', '1st Quartile (4s)', 'Midpoint (8s)', '3rd Quartile (11s)', 'Complete'],
+        axisLabel: { fontSize: 10 }
+      },
+      yAxis: { type: 'value', show: false },
+      series: [{
+        type: 'bar',
+        data: [
+          { value: v.impressions, itemStyle: { color: ChartColors.grayLight } },
+          { value: v.video_first_quartile_views, itemStyle: { color: ChartColors.blueLight } },
+          { value: v.video_midpoint_views, itemStyle: { color: ChartColors.indigo } },
+          { value: v.video_third_quartile_views, itemStyle: { color: ChartColors.indigoDark } },
+          { value: v.video_complete_views, itemStyle: { color: ChartColors.green } }
+        ],
+        barWidth: '50%',
+        label: { show: true, position: 'top', formatter: function(p) { return p.value.toLocaleString(); }, fontSize: 11 }
       }]
     });
   }
@@ -952,6 +2279,150 @@
     updateFilterChips();
   });
 
+  // ========================================
+  // Level 2 Toggle (Progressive Disclosure)
+  // ========================================
+
+  // Track which Level 2 sections have been initialized (charts need visible container)
+  let _level2Initialized = {};
+
+  // ========================================
+  // Store Table Sorting
+  // ========================================
+
+  window.sortStoreTable = function(th) {
+    var table = th.closest('table');
+    if (!table) return;
+    var tbody = table.querySelector('tbody');
+    var rows = Array.from(tbody.querySelectorAll('tr'));
+    var colIdx = Array.from(th.parentNode.children).indexOf(th);
+    var sortKey = th.dataset.sort;
+    var isNumeric = ['impressions', 'clicks', 'ctr', 'visits', 'cpv'].includes(sortKey);
+
+    // Toggle direction
+    var currentDir = th.dataset.dir || 'none';
+    var newDir = currentDir === 'asc' ? 'desc' : 'asc';
+
+    // Clear all sort states in this table
+    th.parentNode.querySelectorAll('th').forEach(function(h) {
+      h.dataset.dir = 'none';
+      h.classList.remove('sort-asc', 'sort-desc');
+    });
+
+    th.dataset.dir = newDir;
+    th.classList.add(newDir === 'asc' ? 'sort-asc' : 'sort-desc');
+
+    rows.sort(function(a, b) {
+      var aCell = a.children[colIdx];
+      var bCell = b.children[colIdx];
+      var aVal, bVal;
+
+      if (isNumeric) {
+        aVal = parseFloat(aCell.dataset.value || aCell.textContent.replace(/[^0-9.\-]/g, '')) || 0;
+        bVal = parseFloat(bCell.dataset.value || bCell.textContent.replace(/[^0-9.\-]/g, '')) || 0;
+      } else {
+        aVal = aCell.textContent.trim().toLowerCase();
+        bVal = bCell.textContent.trim().toLowerCase();
+      }
+
+      if (aVal < bVal) return newDir === 'asc' ? -1 : 1;
+      if (aVal > bVal) return newDir === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    rows.forEach(function(row) { tbody.appendChild(row); });
+  };
+
+  // Toggle tree row expand/collapse
+  window.toggleDistTreeRow = function(creativeId) {
+    distTreeState.expandedCreatives[creativeId] = !distTreeState.expandedCreatives[creativeId];
+    const isExpanded = distTreeState.expandedCreatives[creativeId];
+
+    // Toggle child rows
+    document.querySelectorAll(`[data-parent="${creativeId}"]`).forEach(row => {
+      row.classList.toggle('tree-row-hidden', !isExpanded);
+    });
+
+    // Toggle chevron
+    const parentRow = document.querySelector(`[data-creative-id="${creativeId}"]`);
+    if (parentRow) {
+      const toggle = parentRow.querySelector('.tree-toggle');
+      if (toggle) toggle.classList.toggle('collapsed', !isExpanded);
+    }
+
+    // Lazy-init video funnel chart on first expand
+    if (isExpanded) {
+      const funnelEl = document.getElementById('video-funnel-chart-tree');
+      if (funnelEl && !funnelEl._initialized) {
+        funnelEl._initialized = true;
+        // Video funnel chart init would go here if needed
+      }
+    }
+  };
+
+  // View Details — scrolls to and expands the corresponding tree row
+  window.viewVariantDetails = function(variantIndex) {
+    // Find the creative_id from the original index
+    const records = D.creativeRecords;
+    if (variantIndex >= records.length) return;
+    const cr = records[variantIndex];
+    if (!cr) return;
+    const cid = cr.creative_id;
+
+    // Expand the row
+    if (!distTreeState.expandedCreatives[cid]) {
+      distTreeState.expandedCreatives[cid] = true;
+      document.querySelectorAll(`[data-parent="${cid}"]`).forEach(row => {
+        row.classList.remove('tree-row-hidden');
+      });
+      const parentRow = document.querySelector(`[data-creative-id="${cid}"]`);
+      if (parentRow) {
+        const toggle = parentRow.querySelector('.tree-toggle');
+        if (toggle) toggle.classList.remove('collapsed');
+      }
+    }
+
+    // Scroll into view
+    const parentRow = document.querySelector(`[data-creative-id="${cid}"]`);
+    if (parentRow) {
+      parentRow.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  window.toggleLevel2Section = function(sectionId) {
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+
+    const wasExpanded = section.classList.contains('expanded');
+    section.classList.toggle('expanded');
+
+    // If expanding, initialize charts on first open (they need visible container for sizing)
+    if (!wasExpanded) {
+      setTimeout(function() {
+        if (!_level2Initialized[sectionId]) {
+          _level2Initialized[sectionId] = true;
+
+          if (sectionId === 'trends-section-wrapper') {
+            initSparklines();
+          } else if (sectionId.startsWith('variant-panel-')) {
+            // Check if this variant has a video funnel chart
+            var funnelIdx = sectionId.replace('variant-panel-', '');
+            var funnelEl = document.getElementById('video-funnel-chart-' + funnelIdx);
+            if (funnelEl) {
+              initVideoFunnelInPanel(funnelIdx);
+            }
+          }
+        }
+
+        // Resize any existing eCharts in the section
+        section.querySelectorAll('[_echarts_instance_]').forEach(function(el) {
+          const inst = echarts.getInstanceByDom(el);
+          if (inst) inst.resize();
+        });
+      }, 50);
+    }
+  };
+
   // Expose init for lazy activation by app.js (no auto-init in combined prototype)
   window.initDistribution = init;
 
@@ -977,11 +2448,16 @@
       charts = {};
 
       if (section === 'media') {
-        renderMediaKpis(); renderCreativePanel(); renderVideoKpis();
-        initVideoFunnelChart(); initDemographicCharts();
+        renderMediaHero(); renderCreativeList(); renderDeliveryTrends();
+        renderVariantPanels();
+        _level2Initialized = {}; // Reset so sparklines/funnels re-init on next expand
       } else if (section === 'visitation') {
-        renderVisitationKpis(); renderCrossoverDetail(); renderSpotlightCards();
-        initFrequencyChart(); initCrossoverChart(); initCrossoverTrendChart();
+        donutFilterSegment = null; // reset filter on data change
+        renderVisitationKpis(); renderCrossoverDetail();
+        storePerfState.allRows = []; storePerfState.selectedStoreId = null;
+        buildStorePerformanceData(); renderStorePerformanceTable(); renderVisitationMap();
+        initVisitDonut(); initCrossoverChart();
+        if (_trendViewInitialized) { initFrequencyChart(); initCrossoverTrendChart(); }
       } else if (section === 'traffic') {
         renderTrafficKpis(); renderMap(); renderLeaderboard('change');
         renderConcentration(); renderThreats();
@@ -1000,18 +2476,23 @@
       updateRetailerLabels();
 
       if (section === 'media') {
-        renderMediaKpis();
-        renderCreativePanel();
-        renderVideoKpis();
-        initVideoFunnelChart();
-        initDemographicCharts();
+        renderMediaHero();
+        renderCreativeList();
+        renderDeliveryTrends();
+        renderVariantPanels();
+        initTreeTableActions();
       } else if (section === 'visitation') {
         renderVisitationKpis();
         renderCrossoverDetail();
-        renderSpotlightCards();
-        initFrequencyChart();
+        buildStorePerformanceData();
+        renderStorePerformanceTable();
+        renderVisitationMap();
+        initViewToggle();
+        initVisitDonut();
         initCrossoverChart();
-        initCrossoverTrendChart();
+        bindDonutFilterChip();
+        bindStorePerformanceActions();
+        // Frequency + Crossover Trend charts deferred to trend view toggle
       } else if (section === 'traffic') {
         renderTrafficKpis();
         renderMap();

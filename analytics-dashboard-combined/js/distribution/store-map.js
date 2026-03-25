@@ -10,6 +10,7 @@ const StoreMap = (function() {
 
   let map = null;
   let markersLayer = null;
+  let _onStoreClick = null;
 
   const GROUP_COLORS = {
     green: '#10b981',
@@ -106,8 +107,15 @@ const StoreMap = (function() {
 
       marker.bindPopup(popup, { maxWidth: 240 });
       marker.storeId = store.id;
+      marker.on('click', function () {
+        if (_onStoreClick) _onStoreClick(store.id);
+      });
       markersLayer.addLayer(marker);
     });
+  }
+
+  function onStoreClick(callback) {
+    _onStoreClick = callback;
   }
 
   // ========================================
@@ -167,6 +175,7 @@ const StoreMap = (function() {
     init,
     renderStores,
     highlightStore,
+    onStoreClick,
     fitBounds,
     destroy,
     invalidateSize

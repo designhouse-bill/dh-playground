@@ -158,6 +158,23 @@
           <!-- Populated by JS -->
         </div>
 
+        <!-- MAID Score Panel -->
+        <div class="maid-score-panel" id="maid-score-panel">
+          <div class="maid-score-panel__content">
+            <div class="maid-score-panel__info">
+              <div class="maid-score-panel__header">
+                <span class="material-symbols-outlined" style="font-size: 20px; color: var(--p-primary-color);">devices</span>
+                <h3 class="panel-label">MAID Score</h3>
+                <span class="badge badge--info">Quarterly</span>
+              </div>
+              <p class="maid-score-panel__desc">Unique devices with 10+ visits per quarter</p>
+              <div class="maid-score-panel__value" id="maid-score-value">—</div>
+              <div class="maid-score-panel__trend" id="maid-score-trend"></div>
+            </div>
+            <div class="maid-score-panel__chart" id="chart-maid-score" style="width: 200px; height: 120px;"></div>
+          </div>
+        </div>
+
         <!-- Frequency Trend Chart -->
         <div class="chart-card">
           <div class="chart-card__header">

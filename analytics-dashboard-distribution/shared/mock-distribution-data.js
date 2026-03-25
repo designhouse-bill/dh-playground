@@ -163,6 +163,35 @@ const DistributionMockData = (function() {
   };
 
   // ========================================
+  // MAID Score — Loyalty Retention (Quarterly)
+  // Unique device IDs with 10+ visits per quarter per store
+  // ========================================
+  const maidScoreByQuarter = [
+    {
+      quarter: 'Q4 2025',
+      label: 'Oct – Dec 2025',
+      stores: {
+        '726': 2180, '381': 1640, '336': 2410, '2437': 1520, '2399': 2050,
+        '2495': 1780, '508': 2090, '2482': 1690, '2288': 2340, '2434': 1560,
+        '2449': 1480, '2474': 1720, '2480': 1630, '518': 1850, '2487': 1940,
+        '2490': 1380, '2501': 1270, '2509': 1610, '436': 1190, '711': 1460
+      },
+      total: 34840
+    },
+    {
+      quarter: 'Q1 2026',
+      label: 'Jan – Mar 2026',
+      stores: {
+        '726': 2390, '381': 1810, '336': 2580, '2437': 1680, '2399': 2240,
+        '2495': 1950, '508': 2260, '2482': 1860, '2288': 2510, '2434': 1710,
+        '2449': 1640, '2474': 1890, '2480': 1790, '518': 2010, '2487': 2120,
+        '2490': 1530, '2501': 1420, '2509': 1770, '436': 1310, '711': 1580
+      },
+      total: 38550
+    }
+  ];
+
+  // ========================================
   // Section 2 — Store Visitation
   // ========================================
 
@@ -325,6 +354,7 @@ const DistributionMockData = (function() {
     creativeRecords,
     videoEngagement,
     demographics,
+    maidScoreByQuarter,
     visitationByWeek,
     competitiveCrossover,
     storeTrafficShare,

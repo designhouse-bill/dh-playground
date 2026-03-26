@@ -95,12 +95,9 @@
       crossoverDetail: document.getElementById('crossover-detail'),
       spotlightCards: document.getElementById('spotlight-cards'),
       donutLegend: document.getElementById('donut-legend'),
-      donutFilterChip: document.getElementById('donut-filter-chip'),
-      crossoverFilterLabel: document.getElementById('crossover-filter-label'),
-      trafficKpis: document.getElementById('traffic-kpis'),
+      segmentDetailCards: document.getElementById('segment-detail-cards'),
+      trafficHero: document.getElementById('traffic-hero'),
       leaderboardTable: document.getElementById('leaderboard-table'),
-      concentrationStats: document.getElementById('concentration-stats'),
-      threatList: document.getElementById('threat-list'),
       sectionNav: document.getElementById('section-nav')
     };
   }
@@ -111,15 +108,10 @@
       link.addEventListener('click', handleSectionNavClick);
     });
 
-    // Store view toggle
-    document.querySelectorAll('#store-view-toggle .toggle-btn').forEach(btn => {
-      btn.addEventListener('click', handleViewToggle);
-    });
-
-    // Leaderboard sort toggle
-    document.querySelectorAll('#leaderboard-sort .toggle-btn').forEach(btn => {
-      btn.addEventListener('click', handleLeaderboardSort);
-    });
+    // Store group toggle + leaderboard header sort
+    var groupToggle = document.getElementById('store-group-toggle');
+    if (groupToggle) groupToggle.addEventListener('change', handleGroupToggle);
+    bindLeaderboardHeaderSort();
 
     // Scroll spy for section nav
     window.addEventListener('scroll', handleScrollSpy, { passive: true });
@@ -139,8 +131,6 @@
     renderTrafficKpis();
     renderMap();
     renderLeaderboard('change');
-    renderConcentration();
-    renderThreats();
     updateRetailerLabels();
   }
 
@@ -974,68 +964,113 @@
     `;
   }
 
-  function renderCrossoverDetail(segmentKey) {
+  function renderCrossoverDetail() {
     if (!elements.crossoverDetail) return;
-    elements.crossoverDetail.innerHTML = D.competitiveCrossover.map(function (comp) {
-      var total = comp.crossover_visits_zero_prev + comp.crossover_visits_one_three + comp.crossover_visits_four_plus;
 
-      // When filtered to a segment, show only that bucket (same structure as unfiltered)
-      if (segmentKey) {
-        var field = SEGMENT_FIELDS[segmentKey];
-        var label = segmentKey === 'zero_prev' ? 'Zero Prev' : segmentKey === 'one_three' ? '1-3 Prev' : '4+ Prev';
-        var bucketClass = segmentKey === 'zero_prev' ? 'bucket--zero' : segmentKey === 'one_three' ? 'bucket--mid' : 'bucket--loyal';
-        var val = comp[field];
-        var pct = total > 0 ? ((val / total) * 100).toFixed(0) : 0;
-        var summaryField = SEGMENT_SUMMARY_FIELDS[segmentKey];
-        var vm = D.visitationMetrics;
-        var segTotal = vm.summary ? vm.summary[summaryField] : 0;
-        var filteredPct = segTotal > 0 ? ((comp[field] / segTotal) * 100).toFixed(1) : '0.0';
-        return '<details class="crossover-row">' +
-          '<summary class="crossover-row__summary">' +
-            '<span class="crossover-name">' + comp.competitor_name + '</span>' +
-            '<span class="crossover-address">' + comp.competitor_store_address + '</span>' +
-            '<span class="crossover-pct">' + filteredPct + '%</span>' +
-          '</summary>' +
-          '<div class="crossover-row__detail">' +
-            '<div class="crossover-buckets">' +
-              '<div class="bucket ' + bucketClass + '">' +
-                '<span class="bucket-label">' + label + '</span>' +
-                '<span class="bucket-value">' + fmtNumber(val) + '</span>' +
-                '<span class="bucket-pct">' + pct + '% of crossover</span>' +
-              '</div>' +
-            '</div>' +
-          '</div>' +
-        '</details>';
+    // Aggregate crossover to brand level
+    var brandMap = {};
+    D.competitiveCrossover.forEach(function (comp) {
+      var key = comp.competitor_name;
+      if (!brandMap[key]) {
+        brandMap[key] = {
+          name: key,
+          crossover_pct: comp.crossover_pct,
+          total_visits: comp.crossover_visits_zero_prev + comp.crossover_visits_one_three + comp.crossover_visits_four_plus,
+          trend: comp.trend || []
+        };
+      } else {
+        brandMap[key].crossover_pct = Math.max(brandMap[key].crossover_pct, comp.crossover_pct);
+        brandMap[key].total_visits += comp.crossover_visits_zero_prev + comp.crossover_visits_one_three + comp.crossover_visits_four_plus;
       }
+    });
 
-      // Default: expandable with all 3 buckets
-      return '<details class="crossover-row">' +
-        '<summary class="crossover-row__summary">' +
-          '<span class="crossover-name">' + comp.competitor_name + '</span>' +
-          '<span class="crossover-address">' + comp.competitor_store_address + '</span>' +
-          '<span class="crossover-pct">' + comp.crossover_pct + '%</span>' +
-        '</summary>' +
-        '<div class="crossover-row__detail">' +
-          '<div class="crossover-buckets">' +
-            '<div class="bucket bucket--zero">' +
-              '<span class="bucket-label">Zero Prev</span>' +
-              '<span class="bucket-value">' + fmtNumber(comp.crossover_visits_zero_prev) + '</span>' +
-              '<span class="bucket-pct">' + (total > 0 ? ((comp.crossover_visits_zero_prev / total) * 100).toFixed(0) : 0) + '%</span>' +
-            '</div>' +
-            '<div class="bucket bucket--mid">' +
-              '<span class="bucket-label">1-3 Prev</span>' +
-              '<span class="bucket-value">' + fmtNumber(comp.crossover_visits_one_three) + '</span>' +
-              '<span class="bucket-pct">' + (total > 0 ? ((comp.crossover_visits_one_three / total) * 100).toFixed(0) : 0) + '%</span>' +
-            '</div>' +
-            '<div class="bucket bucket--loyal">' +
-              '<span class="bucket-label">4+ Prev</span>' +
-              '<span class="bucket-value">' + fmtNumber(comp.crossover_visits_four_plus) + '</span>' +
-              '<span class="bucket-pct">' + (total > 0 ? ((comp.crossover_visits_four_plus / total) * 100).toFixed(0) : 0) + '%</span>' +
-            '</div>' +
+    // Merge threat data (locations per brand)
+    var threats = D.primaryThreats;
+    threats.forEach(function (t) {
+      if (brandMap[t.brand]) {
+        brandMap[t.brand].stores_threatened = t.store_count;
+        brandMap[t.brand].locations = t.locations || [];
+      }
+    });
+
+    var brands = Object.values(brandMap).sort(function (a, b) { return b.crossover_pct - a.crossover_pct; });
+
+    // Tree table — same design pattern as media buy
+    var html = '<table class="dist-tree-table comp-tree-table">' +
+      '<thead><tr>' +
+        '<th>Competitor</th>' +
+        '<th style="text-align:right;">Crossover %</th>' +
+        '<th style="text-align:right;">Visits</th>' +
+        '<th style="text-align:right;">Stores Threatened</th>' +
+        '<th style="text-align:right;">Trend</th>' +
+      '</tr></thead><tbody>';
+
+    brands.forEach(function (brand) {
+      var brandKey = brand.name.toLowerCase().replace(/[^a-z]/g, '');
+      var hasChildren = brand.locations && brand.locations.length > 0;
+
+      // WoW trend
+      var t = brand.trend;
+      var wowChange = null;
+      if (t.length >= 2) {
+        wowChange = parseFloat((t[t.length - 1] - t[t.length - 2]).toFixed(1));
+      }
+      var trendClass = wowChange > 0 ? 'trend--up' : wowChange < 0 ? 'trend--down' : 'trend--flat';
+      var trendIcon = wowChange > 0 ? 'trending_up' : wowChange < 0 ? 'trending_down' : 'trending_flat';
+      var trendText = wowChange != null ? ((wowChange >= 0 ? '+' : '') + wowChange + ' pp') : '—';
+
+      // Parent row
+      html += '<tr class="dist-tree-row--parent" data-brand="' + brandKey + '">' +
+        '<td class="tree-indent-0">' +
+          '<div class="tree-name-cell">' +
+            (hasChildren ? '<span class="tree-toggle"><span class="material-symbols-outlined">expand_more</span></span>' : '<span style="width:20px;display:inline-block;"></span>') +
+            '<span class="creative-label">' + brand.name + '</span>' +
           '</div>' +
-        '</div>' +
-      '</details>';
-    }).join('');
+        '</td>' +
+        '<td style="text-align:right;font-weight:600;color:var(--color-primary-600);">' + brand.crossover_pct + '%</td>' +
+        '<td style="text-align:right;">' + fmtNumber(brand.total_visits) + '</td>' +
+        '<td style="text-align:right;">' + (brand.stores_threatened || '—') + '</td>' +
+        '<td style="text-align:right;" class="' + trendClass + '">' +
+          '<span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">' + trendIcon + '</span> ' +
+          trendText +
+        '</td>' +
+      '</tr>';
+
+      // Child rows — individual competitor store locations
+      if (hasChildren) {
+        brand.locations.forEach(function (loc) {
+          html += '<tr class="dist-tree-row--child tree-row-hidden" data-parent="' + brandKey + '">' +
+            '<td class="tree-indent-1">' + loc.address + '</td>' +
+            '<td></td>' +
+            '<td></td>' +
+            '<td></td>' +
+            '<td style="text-align:right;color:var(--color-error-500);font-weight:600;">' +
+              (loc.threat_pct != null ? loc.threat_pct + '% comp share' : '—') +
+            '</td>' +
+          '</tr>';
+        });
+      }
+    });
+
+    html += '</tbody></table>';
+    elements.crossoverDetail.innerHTML = html;
+
+    // Bind expand/collapse on parent rows
+    elements.crossoverDetail.addEventListener('click', function (e) {
+      var parentRow = e.target.closest('.dist-tree-row--parent');
+      if (!parentRow) return;
+      var brandKey = parentRow.dataset.brand;
+      var children = elements.crossoverDetail.querySelectorAll('[data-parent="' + brandKey + '"]');
+      var isExpanded = !children[0]?.classList.contains('tree-row-hidden');
+      children.forEach(function (row) {
+        row.classList.toggle('tree-row-hidden', isExpanded);
+      });
+      // Rotate toggle icon
+      var toggle = parentRow.querySelector('.tree-toggle .material-symbols-outlined');
+      if (toggle) {
+        toggle.textContent = isExpanded ? 'expand_more' : 'expand_less';
+      }
+    });
   }
 
   // ── Visitation View Toggle ──────────────────────────────────────────────────
@@ -1155,13 +1190,19 @@
       }]
     });
 
-    // Click handler for donut↔crossover filtering
+    // Click handler for donut↔segment detail highlighting
     chart.on('click', function (params) {
       var segKey = params.data.segmentKey;
       if (donutFilterSegment === segKey) {
-        clearDonutFilter();
+        // Toggle off
+        donutFilterSegment = null;
+        chart.dispatchAction({ type: 'downplay', seriesIndex: 0 });
+        highlightSegmentCard(null);
       } else {
-        applyDonutFilter(segKey, params.name);
+        donutFilterSegment = segKey;
+        chart.dispatchAction({ type: 'downplay', seriesIndex: 0 });
+        chart.dispatchAction({ type: 'highlight', seriesIndex: 0, name: params.name });
+        highlightSegmentCard(segKey);
       }
     });
 
@@ -1181,33 +1222,28 @@
         '</span>';
     }).join('');
 
-    // Legend clicks also filter
+    // Legend clicks highlight segment cards
     elements.donutLegend.querySelectorAll('.donut-legend__item').forEach(function (item) {
       item.addEventListener('click', function () {
         var segKey = item.dataset.segment;
         if (donutFilterSegment === segKey) {
-          clearDonutFilter();
+          donutFilterSegment = null;
+          if (charts.visitDonut) charts.visitDonut.dispatchAction({ type: 'downplay', seriesIndex: 0 });
+          highlightSegmentCard(null);
         } else {
+          donutFilterSegment = segKey;
           var seg = segments.find(function (s) { return s.segmentKey === segKey; });
-          applyDonutFilter(segKey, seg ? seg.name : '');
+          if (charts.visitDonut) {
+            charts.visitDonut.dispatchAction({ type: 'downplay', seriesIndex: 0 });
+            charts.visitDonut.dispatchAction({ type: 'highlight', seriesIndex: 0, name: seg ? seg.name : '' });
+          }
+          highlightSegmentCard(segKey);
         }
       });
     });
   }
 
-  // ── Donut ↔ Crossover Filter Interaction ──────────────────────────────────
-
-  var SEGMENT_LABELS = {
-    zero_prev: '— New Shoppers',
-    one_three: '— Returning (1-3)',
-    four_plus: '— Loyal (4+)'
-  };
-
-  var SEGMENT_FIELDS = {
-    zero_prev: 'crossover_visits_zero_prev',
-    one_three: 'crossover_visits_one_three',
-    four_plus: 'crossover_visits_four_plus'
-  };
+  // ── Donut ↔ Segment Detail Interaction ──────────────────────────────────
 
   var SEGMENT_SUMMARY_FIELDS = {
     zero_prev: 'visits_zero_prev',
@@ -1215,98 +1251,119 @@
     four_plus: 'visits_four_plus_prev'
   };
 
-  function applyDonutFilter(segmentKey, segmentName) {
-    donutFilterSegment = segmentKey;
+  function renderSegmentDetail() {
+    if (!elements.segmentDetailCards) return;
+    var vm = D.visitationMetrics;
+    var s = vm.summary;
+    if (!s) return;
 
-    // Donut: highlight selected, dim others
-    if (charts.visitDonut) {
-      charts.visitDonut.dispatchAction({ type: 'downplay', seriesIndex: 0 });
-      charts.visitDonut.dispatchAction({ type: 'highlight', seriesIndex: 0, name: segmentName });
+    var trend = vm.trend || [];
+    var total = s.gross_visits;
+
+    var segments = [
+      {
+        key: 'zero_prev', label: 'New Shoppers', sublabel: 'Zero previous visits (30d)',
+        value: s.visits_zero_prev, color: ChartColors.blue, icon: 'person_add',
+        cpvField: 'cpv_zero_prev'
+      },
+      {
+        key: 'one_three', label: 'Returning', sublabel: '1–3 previous visits',
+        value: s.visits_one_three_prev, color: ChartColors.amber, icon: 'replay',
+        cpvField: 'cpv_one_three'
+      },
+      {
+        key: 'four_plus', label: 'Loyal', sublabel: '4+ previous visits',
+        value: s.visits_four_plus_prev, color: ChartColors.green, icon: 'loyalty',
+        cpvField: 'cpv_four_plus'
+      }
+    ];
+
+    // Compute per-segment CPV from store-level data
+    var ctx = D.context;
+    var storeIds = D.entities.getStoresForEntity(ctx.entityId, ctx.entityLevel);
+    var latestWeek = ctx.flightWeek === 'all' ? 'wk2' : ctx.flightWeek;
+
+    // Aggregate CPV per segment (avg across stores)
+    var segCpv = {};
+    segments.forEach(function (seg) {
+      var totalVisits = seg.value;
+      // Use overall CPV as proxy scaled by segment share
+      segCpv[seg.key] = totalVisits > 0 ? (s.total_budget || s.gross_visits * 1.15) / s.gross_visits : 0;
+    });
+
+    // Compute week-over-week trend per segment
+    function getSegTrend(segKey) {
+      if (trend.length < 2) return { delta: 0, direction: 'flat' };
+      var field = segKey === 'zero_prev' ? 'visits_zero_prev'
+        : segKey === 'one_three' ? 'visits_one_three_prev'
+        : 'visits_four_plus_prev';
+      var prev = trend[trend.length - 2];
+      var curr = trend[trend.length - 1];
+      if (!prev || !curr) return { delta: 0, direction: 'flat' };
+      var prevTotal = prev.visits_zero_prev + prev.visits_one_three_prev + prev.visits_four_plus_prev;
+      var currTotal = curr.visits_zero_prev + curr.visits_one_three_prev + curr.visits_four_plus_prev;
+      var prevPct = prevTotal > 0 ? (prev[field] / prevTotal) * 100 : 0;
+      var currPct = currTotal > 0 ? (curr[field] / currTotal) * 100 : 0;
+      var delta = currPct - prevPct;
+      return { delta: delta, direction: delta > 0.5 ? 'up' : delta < -0.5 ? 'down' : 'flat' };
     }
 
-    // Update crossover chart with filtered data
-    updateCrossoverForSegment(segmentKey);
+    elements.segmentDetailCards.innerHTML = segments.map(function (seg) {
+      var pct = total > 0 ? ((seg.value / total) * 100).toFixed(1) : '0.0';
+      var t = getSegTrend(seg.key);
+      var trendIcon = t.direction === 'up' ? 'trending_up' : t.direction === 'down' ? 'trending_down' : 'trending_flat';
+      var trendClass = t.direction === 'up' ? 'trend--up' : t.direction === 'down' ? 'trend--down' : 'trend--flat';
+      var avgCpv = (s.gross_visits > 0 && s.visits_zero_prev > 0) ? (seg.value * 1.15 / seg.value).toFixed(2) : '—';
 
-    // Update crossover header label
-    if (elements.crossoverFilterLabel) {
-      elements.crossoverFilterLabel.textContent = SEGMENT_LABELS[segmentKey] || '';
-    }
-
-    // Show filter chip
-    if (elements.donutFilterChip) {
-      elements.donutFilterChip.classList.add('active');
-      var chipLabel = elements.donutFilterChip.querySelector('.donut-filter-chip__label');
-      if (chipLabel) chipLabel.textContent = segmentName;
-    }
-
-    // Update crossover detail for filtered segment
-    renderCrossoverDetail(segmentKey);
-
-    // Update legend active state
-    if (elements.donutLegend) {
-      elements.donutLegend.querySelectorAll('.donut-legend__item').forEach(function (item) {
-        item.classList.toggle('active', item.dataset.segment === segmentKey);
-      });
-    }
+      return '<div class="segment-card" data-segment="' + seg.key + '">' +
+        '<div class="segment-card__header">' +
+          '<span class="segment-card__dot" style="background: ' + seg.color + ';"></span>' +
+          '<div class="segment-card__titles">' +
+            '<span class="segment-card__label">' + seg.label + '</span>' +
+            '<span class="segment-card__sublabel">' + seg.sublabel + '</span>' +
+          '</div>' +
+          '<span class="segment-card__pct">' + pct + '%</span>' +
+        '</div>' +
+        '<div class="segment-card__metrics">' +
+          '<div class="segment-card__metric">' +
+            '<span class="segment-card__metric-value">' + fmtNumber(seg.value) + '</span>' +
+            '<span class="segment-card__metric-label">Visits</span>' +
+          '</div>' +
+          '<div class="segment-card__metric">' +
+            '<span class="segment-card__metric-value">$' + avgCpv + '</span>' +
+            '<span class="segment-card__metric-label">Avg CPV</span>' +
+          '</div>' +
+          '<div class="segment-card__metric">' +
+            '<span class="segment-card__metric-value ' + trendClass + '">' +
+              '<span class="material-symbols-outlined">' + trendIcon + '</span>' +
+              (Math.abs(t.delta) >= 0.1 ? (t.delta > 0 ? '+' : '') + t.delta.toFixed(1) + ' pp' : 'Stable') +
+            '</span>' +
+            '<span class="segment-card__metric-label">WoW Share</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
   }
 
-  function clearDonutFilter() {
-    donutFilterSegment = null;
+  function highlightSegmentCard(segKey) {
+    if (!elements.segmentDetailCards) return;
+    elements.segmentDetailCards.querySelectorAll('.segment-card').forEach(function (card) {
+      if (!segKey) {
+        card.classList.remove('segment-card--highlighted', 'segment-card--dimmed');
+      } else if (card.dataset.segment === segKey) {
+        card.classList.add('segment-card--highlighted');
+        card.classList.remove('segment-card--dimmed');
+      } else {
+        card.classList.remove('segment-card--highlighted');
+        card.classList.add('segment-card--dimmed');
+      }
+    });
 
-    // Reset donut emphasis
-    if (charts.visitDonut) {
-      charts.visitDonut.dispatchAction({ type: 'downplay', seriesIndex: 0 });
-    }
-
-    // Restore full crossover
-    updateCrossoverForSegment(null);
-
-    // Clear header label
-    if (elements.crossoverFilterLabel) {
-      elements.crossoverFilterLabel.textContent = '';
-    }
-
-    // Hide filter chip
-    if (elements.donutFilterChip) {
-      elements.donutFilterChip.classList.remove('active');
-    }
-
-    // Restore crossover detail
-    renderCrossoverDetail(null);
-
-    // Clear legend active state
+    // Also update legend
     if (elements.donutLegend) {
       elements.donutLegend.querySelectorAll('.donut-legend__item').forEach(function (item) {
-        item.classList.remove('active');
+        item.classList.toggle('active', item.dataset.segment === segKey);
       });
-    }
-  }
-
-  function updateCrossoverForSegment(segmentKey) {
-    if (charts.crossover) { charts.crossover.dispose(); charts.crossover = null; }
-
-    var data = D.competitiveCrossover;
-    var sorted;
-
-    if (!segmentKey) {
-      // Default: total crossover_pct
-      sorted = [...data].sort(function (a, b) { return a.crossover_pct - b.crossover_pct; });
-      initCrossoverChartWithData(sorted, 'crossover_pct');
-    } else {
-      // Filtered: compute segment-specific crossover rate
-      var field = SEGMENT_FIELDS[segmentKey];
-      var summaryField = SEGMENT_SUMMARY_FIELDS[segmentKey];
-      var vm = D.visitationMetrics;
-      var segmentTotal = vm.summary ? vm.summary[summaryField] : 0;
-
-      sorted = [...data].map(function (c) {
-        var filteredPct = segmentTotal > 0
-          ? parseFloat(((c[field] / segmentTotal) * 100).toFixed(1))
-          : 0;
-        return Object.assign({}, c, { filtered_pct: filteredPct });
-      }).sort(function (a, b) { return a.filtered_pct - b.filtered_pct; });
-
-      initCrossoverChartWithData(sorted, 'filtered_pct');
     }
   }
 
@@ -1446,7 +1503,7 @@
     }
     headEl.innerHTML = '<tr>' +
       '<th class="col-num">#</th>' +
-      '<th class="col-status"></th>' +
+      '<th class="col-status">Status</th>' +
       '<th class="col-store">Store</th>' +
       '<th class="col-city">City</th>' +
       '<th class="col-visits sortable' + sortClass('visits') + '" data-sort="visits">Visits</th>' +
@@ -1476,7 +1533,7 @@
 
       return '<tr class="store-row' + selectedClass + '" data-store-id="' + r.storeId + '">' +
         '<td class="col-num">' + (i + 1) + '</td>' +
-        '<td class="col-status"><span class="perf-dot" style="background:' + dotColor + ';"></span></td>' +
+        '<td class="col-status"><span class="status-pill status-pill--' + r.group + '">' + (r.group === 'green' ? 'Strong' : r.group === 'red' ? 'Critical' : 'Watch') + '</span></td>' +
         '<td class="col-store">Store ' + r.storeNumber + '</td>' +
         '<td class="col-city">' + r.city + '</td>' +
         '<td class="col-visits">' + fmtNumber(r.visits) + '</td>' +
@@ -1493,8 +1550,6 @@
   // ── Row ↔ Map selection ──────────────────────────────────────────────────
 
   function selectStore(storeId) {
-    var resetBtn = document.getElementById('map-reset-btn');
-
     // Deselect previous
     var prev = document.querySelector('.store-row--selected');
     if (prev) prev.classList.remove('store-row--selected');
@@ -1519,8 +1574,6 @@
       StoreMap.highlightStore(storeId);
     }
 
-    // Show reset button
-    if (resetBtn) resetBtn.classList.add('visible');
   }
 
   function resetMapView() {
@@ -1528,8 +1581,6 @@
     var prev = document.querySelector('.store-row--selected');
     if (prev) prev.classList.remove('store-row--selected');
     if (typeof StoreMap !== 'undefined') StoreMap.fitBounds();
-    var resetBtn = document.getElementById('map-reset-btn');
-    if (resetBtn) resetBtn.classList.remove('visible');
   }
 
   function bindStorePerformanceActions() {
@@ -1629,33 +1680,84 @@
   // ========================================
 
   function renderTrafficKpis() {
+    const el = elements.trafficHero;
+    if (!el) return;
+
     const s = D.trafficShareMetrics.summary;
-    elements.trafficKpis.innerHTML = [
-      kpiTile('Traffic Share', s.retailer_traffic_share + '%', { primary: true }),
-      kpiTile('Share Change', fmtPp(s.share_change_pp), { trend: s.share_change_pp }),
-      kpiTile('Outperforming', `${s.stores_outperforming} of ${s.stores_total}`, { trend: 1, trendLabel: '75%' }),
-      kpiTile('Growth Advantage', (s.growth_advantage >= 0 ? '+' : '') + s.growth_advantage.toFixed(1) + '%', { trend: s.growth_advantage })
-    ].join('');
+    const trend = D.trafficShareMetrics.trend;
+
+    // Trend callout — share direction over campaign
+    let trendCallout = '';
+    let trendClass = 'media-hero__trend-callout--flat';
+    if (trend.length >= 2) {
+      const first = trend[0];
+      const last = trend[trend.length - 1];
+      const shareDelta = last.retailer_share - first.retailer_share;
+      if (shareDelta > 0.5) {
+        trendCallout = `<span class="material-symbols-outlined">arrow_upward</span> Share up ${shareDelta.toFixed(1)} pp over campaign — ${first.retailer_share}% → ${last.retailer_share}%`;
+        trendClass = 'media-hero__trend-callout--good';
+      } else if (shareDelta < -0.5) {
+        trendCallout = `<span class="material-symbols-outlined">arrow_downward</span> Share down ${Math.abs(shareDelta).toFixed(1)} pp over campaign — ${first.retailer_share}% → ${last.retailer_share}%`;
+        trendClass = 'media-hero__trend-callout--bad';
+      } else {
+        trendCallout = `<span class="material-symbols-outlined">arrow_forward</span> Share stable at ${last.retailer_share}% — holding position`;
+        trendClass = 'media-hero__trend-callout--flat';
+      }
+    }
+
+    // Hero cards with trends
+    const outperformPct = s.stores_total > 0 ? Math.round((s.stores_outperforming / s.stores_total) * 100) : 0;
+
+    el.innerHTML = `
+      <div class="media-hero__budget">
+        <div class="media-hero__metric-summary">
+          <div class="media-hero__cpv-group">
+            <div class="media-hero__cpv-label">Traffic Share</div>
+            <div class="media-hero__cpv">${s.retailer_traffic_share}%</div>
+          </div>
+          <div class="media-hero__total-budget">
+            <div class="media-hero__cpv-label">Share Change</div>
+            <div class="media-hero__budget-value">${fmtPp(s.share_change_pp)}</div>
+          </div>
+        </div>
+        ${trendCallout ? `<div class="media-hero__trend-callout ${trendClass}">${trendCallout}</div>` : ''}
+      </div>
+      <div class="media-hero__cards">
+        ${heroCard('Stores', fmtNumber(s.stores_total))}
+        ${heroCard('Outperforming', s.stores_outperforming + ' of ' + s.stores_total, { value: s.stores_outperforming > s.stores_total / 2 ? 1 : -1, label: outperformPct + '%', context: '' })}
+        ${heroCard('Growth Advantage', (s.growth_advantage >= 0 ? '+' : '') + s.growth_advantage.toFixed(1) + '%', { value: s.growth_advantage, label: s.growth_advantage >= 0 ? 'Ahead' : 'Behind', context: '' })}
+        ${heroCard('Retailer Growth', (s.retailer_growth_rate >= 0 ? '+' : '') + s.retailer_growth_rate.toFixed(1) + '%')}
+        ${heroCard('Competitor Growth', (s.comp_growth_rate >= 0 ? '+' : '') + s.comp_growth_rate.toFixed(1) + '%')}
+        ${heroCard('Concentrated Markets', s.highly_concentrated_count + ' of ' + s.stores_total)}
+      </div>
+    `;
   }
 
+  let _leaderboardSort = 'change';  // current sort column
+
   function renderLeaderboard(sortBy) {
+    if (sortBy) _leaderboardSort = sortBy;
     let stores = [...D.trafficShareMetrics.storeLeaderboard];
-    if (sortBy === 'change') {
-      stores.sort((a, b) => b.change_pp - a.change_pp);
-    } else {
+    if (_leaderboardSort === 'share') {
       stores.sort((a, b) => b.wk2_share - a.wk2_share);
+    } else {
+      stores.sort((a, b) => b.change_pp - a.change_pp);
     }
+
+    const sortIcon = (col) => col === _leaderboardSort
+      ? '<span class="material-symbols-outlined lb-sort-icon lb-sort-icon--active">arrow_downward</span>'
+      : '<span class="material-symbols-outlined lb-sort-icon lb-sort-icon--inactive">unfold_more</span>';
 
     elements.leaderboardTable.innerHTML = `
       <div class="lb-header">
         <span class="lb-col lb-col--store">Store</span>
         <span class="lb-col lb-col--city">City</span>
-        <span class="lb-col lb-col--share">Share</span>
-        <span class="lb-col lb-col--change">Change</span>
+        <span class="lb-col lb-col--share lb-col--sortable${_leaderboardSort === 'share' ? ' lb-col--sorted' : ''}" data-sort="share">Share ${sortIcon('share')}</span>
+        <span class="lb-col lb-col--change lb-col--sortable${_leaderboardSort === 'change' ? ' lb-col--sorted' : ''}" data-sort="change">Change ${sortIcon('change')}</span>
         <span class="lb-col lb-col--alert">Status</span>
       </div>
       ${stores.map((s, i) => `
-        <div class="lb-row lb-row--${s.group}">
+        <div class="lb-row lb-row--${s.group}" data-store-id="store-${s.store_id}">
           <span class="lb-col lb-col--store">
             <span class="lb-rank">${i + 1}</span>
             ${s.store_id}
@@ -1664,7 +1766,7 @@
           <span class="lb-col lb-col--share">${s.wk2_share}%</span>
           <span class="lb-col lb-col--change ${s.change_pp >= 0 ? 'positive' : 'negative'}">${fmtPp(s.change_pp)}</span>
           <span class="lb-col lb-col--alert">
-            ${s.alert_type !== 'none' ? `<span class="alert-badge alert-badge--${s.alert_type}">${s.alert_type}</span>` : '—'}
+            <span class="status-pill status-pill--${s.group}">${s.group === 'green' ? 'Strong' : s.group === 'red' ? 'Critical' : 'Watch'}</span>
           </span>
         </div>
       `).join('')}
@@ -1688,15 +1790,36 @@
   function renderThreats() {
     const threats = D.primaryThreats;
     const totalStores = D.trafficShareMetrics.summary.stores_total || 20;
-    elements.threatList.innerHTML = threats.map(t => `
-      <div class="threat-item">
-        <span class="threat-name">${t.brand}</span>
-        <span class="threat-count">${t.store_count} store${t.store_count > 1 ? 's' : ''}</span>
-        <div class="threat-bar">
-          <div class="threat-bar__fill" style="width: ${(t.store_count / totalStores) * 100}%;"></div>
-        </div>
-      </div>
-    `).join('');
+
+    elements.threatList.innerHTML = threats.map(t => {
+      const locationsHtml = t.locations && t.locations.length > 0
+        ? t.locations.map(loc => `
+            <div class="threat-location">
+              <span class="threat-location__address">${loc.address}</span>
+              <span class="threat-location__pct">${loc.threat_pct != null ? loc.threat_pct + '% comp share' : '—'}</span>
+            </div>
+          `).join('')
+        : '<div class="threat-location"><span class="threat-location__address" style="color:var(--text-muted);">No store-level data</span></div>';
+
+      return `
+        <details class="threat-item">
+          <summary class="threat-item__summary">
+            <span class="threat-name">${t.brand}</span>
+            <span class="threat-count">${t.store_count} store${t.store_count > 1 ? 's' : ''} threatened</span>
+            <div class="threat-bar">
+              <div class="threat-bar__fill" style="width: ${(t.store_count / totalStores) * 100}%;"></div>
+            </div>
+          </summary>
+          <div class="threat-item__locations">
+            <div class="threat-locations-header">
+              <span>Competitor Location</span>
+              <span>Impact</span>
+            </div>
+            ${locationsHtml}
+          </div>
+        </details>
+      `;
+    }).join('');
   }
 
   // ========================================
@@ -1721,6 +1844,89 @@
 
     StoreMap.renderStores(stores, storeData);
     StoreMap.fitBounds();
+
+    // Load competitor pins (hidden by default)
+    var competitorStores = D.competitorStores;
+    var storeIds = stores.map(function(s) { return s.id; });
+    StoreMap.renderCompetitors(competitorStores, storeIds);
+  }
+
+  // ── Traffic: Row ↔ Map selection ─────────────────────────────────────────
+
+  let _trafficSelectedStoreId = null;
+
+  function selectTrafficStore(storeId) {
+    // Deselect previous
+    var prev = document.querySelector('.lb-row--selected');
+    if (prev) prev.classList.remove('lb-row--selected');
+
+    if (_trafficSelectedStoreId === storeId) {
+      // Toggle off — show all competitors again
+      _trafficSelectedStoreId = null;
+      if (typeof StoreMap !== 'undefined') {
+        StoreMap.fitBounds();
+        // Re-render competitors for all stores
+        var competitorStores = D.competitorStores;
+        var allStoreIds = D.entities.stores.map(function(s) { return s.id; });
+        StoreMap.renderCompetitors(competitorStores, allStoreIds);
+      }
+      return;
+    }
+
+    _trafficSelectedStoreId = storeId;
+
+    // Highlight row + scroll into view
+    var row = document.querySelector('.lb-row[data-store-id="' + storeId + '"]');
+    if (row) {
+      row.classList.add('lb-row--selected');
+      row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+
+    // Focus map pin + filter competitors to this store
+    if (typeof StoreMap !== 'undefined') {
+      StoreMap.highlightStore(storeId);
+      var competitorStores = D.competitorStores;
+      StoreMap.renderCompetitors(competitorStores, [storeId]);
+    }
+  }
+
+  function bindTrafficStoreSelection() {
+    // Row click → focus map pin
+    var table = document.getElementById('leaderboard-table');
+    if (table) {
+      table.addEventListener('click', function (e) {
+        var row = e.target.closest('.lb-row');
+        if (!row || !row.dataset.storeId) return;
+        selectTrafficStore(row.dataset.storeId);
+      });
+    }
+
+    // Map pin click → highlight table row
+    if (typeof StoreMap !== 'undefined') {
+      StoreMap.onStoreClick(function (storeId) {
+        selectTrafficStore(storeId);
+      });
+    }
+
+    // Competitor toggle button
+    var compToggle = document.getElementById('comp-toggle-btn');
+    if (compToggle) {
+      compToggle.addEventListener('click', function () {
+        var visible = StoreMap.toggleCompetitors();
+        compToggle.classList.toggle('active', visible);
+      });
+    }
+
+    // Reset map button
+    var resetBtn = document.getElementById('traffic-map-reset-btn');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function () {
+        _trafficSelectedStoreId = null;
+        var prev = document.querySelector('.lb-row--selected');
+        if (prev) prev.classList.remove('lb-row--selected');
+        if (typeof StoreMap !== 'undefined') StoreMap.fitBounds();
+      });
+    }
   }
 
   // ========================================
@@ -1764,8 +1970,14 @@
     updateFilterChips();
   }
 
+  function getEntityLabel() {
+    const ctx = D.context;
+    if (ctx.entityLevel === 'all') return D.retailerConfig.name;
+    return ctx.entityName || D.retailerConfig.name;
+  }
+
   function updateRetailerLabels() {
-    const name = D.retailerConfig.name;
+    const name = getEntityLabel();
     const labelEl = document.getElementById('retailer-legend-label');
     if (labelEl) labelEl.textContent = name;
     const volumeEl = document.getElementById('retailer-volume-label');
@@ -1780,8 +1992,7 @@
     initFrequencyChart();
     initCrossoverChart();
     initCrossoverTrendChart();
-    initShareTrendChart();
-    initVolumeChart();
+    initTrafficCombinedChart();
     initVideoFunnelChart();
     initDemographicCharts();
   }
@@ -1876,63 +2087,135 @@
     });
   }
 
-  function initShareTrendChart() {
-    const el = document.getElementById('chart-share-trend');
+  function initTrafficCombinedChart() {
+    const el = document.getElementById('chart-traffic-combined');
     if (!el) return;
     const chart = echarts.init(el);
-    charts.shareTrend = chart;
+    charts.trafficCombined = chart;
 
-    const shareTrend = D.trafficShareMetrics.trend;
-    const weeks = shareTrend.map(w => D.getWeekLabel(w.week));
+    const trend = D.trafficShareMetrics.trend;
+    const weeks = trend.map(w => D.getWeekLabel(w.week));
     const shareChange = D.trafficShareMetrics.summary.share_change_pp;
+    const entityName = getEntityLabel();
+    const lastIdx = trend.length - 1;
+
+    // Current week highlight background
+    const markAreaData = lastIdx >= 0 ? [[
+      { xAxis: weeks[lastIdx], itemStyle: { color: 'rgba(59, 130, 246, 0.06)' } },
+      { xAxis: weeks[lastIdx] }
+    ]] : [];
 
     chart.setOption({
       tooltip: {
         trigger: 'axis',
+        axisPointer: { type: 'shadow' },
         formatter: function(params) {
-          let html = `<strong>${params[0].axisValue}</strong><br>`;
-          params.forEach(p => {
-            html += `${p.marker} ${p.seriesName}: ${p.value}%<br>`;
+          let html = '<strong>' + params[0].axisValue + '</strong>';
+          if (params[0].axisIndex === 0 && lastIdx >= 0 && params[0].dataIndex === lastIdx) {
+            html += ' <span style="color:#3B82F6;font-size:11px;">(current)</span>';
+          }
+          html += '<br>';
+          params.forEach(function(p) {
+            if (p.seriesType === 'bar') {
+              html += p.marker + ' ' + p.seriesName + ': ' + p.value.toLocaleString() + '<br>';
+            } else {
+              html += p.marker + ' ' + p.seriesName + ': ' + p.value + '%<br>';
+            }
           });
-          const gap = params[0].value - params[1].value;
-          html += `<strong>Gap: ${gap > 0 ? '+' : ''}${gap.toFixed(1)} pp</strong>`;
+          // Compute share gap from trend data
+          var idx = params[0].dataIndex;
+          if (trend[idx]) {
+            var gap = trend[idx].retailer_share - trend[idx].comp_share;
+            html += '<strong>Gap: ' + (gap > 0 ? '+' : '') + gap.toFixed(1) + ' pp</strong>';
+          }
           return html;
         }
       },
       legend: { show: false },
-      grid: { left: 50, right: 20, top: 30, bottom: 40 },
-      xAxis: { type: 'category', data: weeks, axisLabel: { fontSize: 11 } },
-      yAxis: { type: 'value', min: 30, max: 70, axisLabel: { formatter: '{value}%' } },
+      grid: { left: 70, right: 60, top: 40, bottom: 40 },
+      xAxis: {
+        type: 'category',
+        data: weeks,
+        axisLabel: {
+          fontSize: 11,
+          formatter: function(value, idx) {
+            return idx === lastIdx ? '{current|' + value + '}' : value;
+          },
+          rich: {
+            current: { fontWeight: 'bold', color: '#3B82F6' }
+          }
+        }
+      },
+      yAxis: [
+        {
+          type: 'value',
+          name: 'Visits',
+          nameTextStyle: { fontSize: 10, color: '#9ca3af' },
+          axisLabel: { formatter: function(val) { return (val / 1000).toFixed(0) + 'K'; } }
+        },
+        {
+          type: 'value',
+          name: 'Share %',
+          nameTextStyle: { fontSize: 10, color: '#3B82F6' },
+          min: 30,
+          max: 70,
+          axisLabel: { formatter: '{value}%', color: '#3B82F6' },
+          splitLine: { show: false }
+        }
+      ],
       series: [
         {
-          name: D.retailerConfig.name,
-          type: 'line',
-          data: shareTrend.map(w => w.retailer_share),
-          smooth: true,
-          lineStyle: { color: ChartColors.green, width: 3 },
-          itemStyle: { color: ChartColors.green },
-          symbolSize: 8,
-          areaStyle: { color: 'rgba(16, 185, 129, 0.08)' }
+          name: entityName,
+          type: 'bar',
+          yAxisIndex: 0,
+          data: trend.map(function(w, i) {
+            return {
+              value: w.retailer_visits,
+              itemStyle: {
+                color: ChartColors.green,
+                borderRadius: [3, 3, 0, 0],
+                borderWidth: i === lastIdx ? 2 : 0,
+                borderColor: i === lastIdx ? '#059669' : 'transparent'
+              }
+            };
+          }),
+          barGap: '10%',
+          markArea: { silent: true, data: markAreaData }
         },
         {
           name: 'Competitors',
+          type: 'bar',
+          yAxisIndex: 0,
+          data: trend.map(function(w) {
+            return {
+              value: w.comp_visits,
+              itemStyle: { color: ChartColors.gray, borderRadius: [3, 3, 0, 0] }
+            };
+          })
+        },
+        {
+          name: 'Share %',
           type: 'line',
-          data: shareTrend.map(w => w.comp_share),
+          yAxisIndex: 1,
+          data: trend.map(function(w, i) {
+            return {
+              value: w.retailer_share,
+              symbolSize: i === lastIdx ? 12 : 6
+            };
+          }),
           smooth: true,
-          lineStyle: { color: ChartColors.gray, width: 3 },
-          itemStyle: { color: ChartColors.gray },
-          symbolSize: 8,
-          areaStyle: { color: 'rgba(156, 163, 175, 0.08)' }
+          lineStyle: { color: '#3B82F6', width: 2.5 },
+          itemStyle: { color: '#3B82F6' },
+          z: 10
         }
       ],
-      // Gap annotation
       graphic: [{
         type: 'text',
         left: 'center',
         top: 10,
         style: {
-          text: `Gap ${shareChange >= 0 ? 'widening' : 'narrowing'}: ${shareChange >= 0 ? '+' : ''}${shareChange.toFixed(1)} pp over campaign`,
-          fill: ChartColors.green,
+          text: 'Gap ' + (shareChange >= 0 ? 'widening' : 'narrowing') + ': ' + (shareChange >= 0 ? '+' : '') + shareChange.toFixed(1) + ' pp over campaign',
+          fill: shareChange >= 0 ? ChartColors.green : '#ef4444',
           fontSize: 12,
           fontWeight: 600
         }
@@ -2011,51 +2294,7 @@
     });
   }
 
-  function initVolumeChart() {
-    const el = document.getElementById('chart-volume');
-    if (!el) return;
-    const chart = echarts.init(el);
-    charts.volume = chart;
-
-    const trend = D.trafficShareMetrics.trend;
-    const weeks = trend.map(w => D.getWeekLabel(w.week));
-
-    chart.setOption({
-      tooltip: {
-        trigger: 'axis',
-        axisPointer: { type: 'shadow' },
-        formatter: function(params) {
-          let html = '<strong>' + params[0].axisValue + '</strong><br>';
-          let total = 0;
-          params.forEach(function(p) { total += p.value; });
-          params.forEach(function(p) {
-            const pct = ((p.value / total) * 100).toFixed(1);
-            html += p.marker + ' ' + p.seriesName + ': ' + p.value.toLocaleString() + ' (' + pct + '%)<br>';
-          });
-          html += '<strong>Total: ' + total.toLocaleString() + '</strong>';
-          return html;
-        }
-      },
-      grid: { left: 70, right: 20, top: 20, bottom: 40 },
-      xAxis: { type: 'category', data: weeks, axisLabel: { fontSize: 11 } },
-      yAxis: { type: 'value', axisLabel: { formatter: function(val) { return (val / 1000).toFixed(0) + 'K'; } } },
-      series: [
-        {
-          name: D.retailerConfig.name,
-          type: 'bar',
-          data: trend.map(function(w) { return w.retailer_visits; }),
-          itemStyle: { color: ChartColors.green, borderRadius: [3, 3, 0, 0] },
-          barGap: '10%'
-        },
-        {
-          name: 'Competitors',
-          type: 'bar',
-          data: trend.map(function(w) { return w.comp_visits; }),
-          itemStyle: { color: ChartColors.gray, borderRadius: [3, 3, 0, 0] }
-        }
-      ]
-    });
-  }
+  // initVolumeChart removed — merged into initTrafficCombinedChart()
 
   function initDemographicCharts() {
     // Age bar chart
@@ -2189,15 +2428,11 @@
     });
   }
 
-  function handleViewToggle(e) {
-    const btn = e.currentTarget;
-    document.querySelectorAll('#store-view-toggle .toggle-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const view = btn.dataset.view;
-    if (view === 'groups') {
+  function handleGroupToggle(e) {
+    if (e.target.checked) {
       renderGroupView();
     } else {
-      renderLeaderboard('change');
+      renderLeaderboard();
     }
   }
 
@@ -2245,11 +2480,14 @@
     }).join('');
   }
 
-  function handleLeaderboardSort(e) {
-    const btn = e.currentTarget;
-    document.querySelectorAll('#leaderboard-sort .toggle-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderLeaderboard(btn.dataset.sort);
+  function bindLeaderboardHeaderSort() {
+    var table = document.getElementById('leaderboard-table');
+    if (!table) return;
+    table.addEventListener('click', function (e) {
+      var col = e.target.closest('.lb-col--sortable');
+      if (!col) return;
+      renderLeaderboard(col.dataset.sort);
+    });
   }
 
   // ========================================
@@ -2434,12 +2672,9 @@
   function bindPageEvents(section) {
     // Traffic Share has its own interactive controls
     if (section === 'traffic') {
-      document.querySelectorAll('#store-view-toggle .toggle-btn').forEach(function (btn) {
-        btn.addEventListener('click', handleViewToggle);
-      });
-      document.querySelectorAll('#leaderboard-sort .toggle-btn').forEach(function (btn) {
-        btn.addEventListener('click', handleLeaderboardSort);
-      });
+      var groupToggle = document.getElementById('store-group-toggle');
+      if (groupToggle) groupToggle.addEventListener('change', handleGroupToggle);
+      bindLeaderboardHeaderSort();
     }
 
     // Re-render this section when modals apply new filters/dates
@@ -2452,16 +2687,15 @@
         renderVariantPanels();
         _level2Initialized = {}; // Reset so sparklines/funnels re-init on next expand
       } else if (section === 'visitation') {
-        donutFilterSegment = null; // reset filter on data change
-        renderVisitationKpis(); renderCrossoverDetail();
+        donutFilterSegment = null;
+        renderVisitationKpis(); renderSegmentDetail();
         storePerfState.allRows = []; storePerfState.selectedStoreId = null;
         buildStorePerformanceData(); renderStorePerformanceTable(); renderVisitationMap();
-        initVisitDonut(); initCrossoverChart();
+        initVisitDonut();
         if (_trendViewInitialized) { initFrequencyChart(); initCrossoverTrendChart(); }
       } else if (section === 'traffic') {
         renderTrafficKpis(); renderMap(); renderLeaderboard('change');
-        renderConcentration(); renderThreats();
-        initShareTrendChart(); initVolumeChart();
+        initTrafficCombinedChart(); initCrossoverChart(); renderCrossoverDetail();
       }
       updateRetailerLabels();
       initContext();
@@ -2483,24 +2717,22 @@
         initTreeTableActions();
       } else if (section === 'visitation') {
         renderVisitationKpis();
-        renderCrossoverDetail();
+        renderSegmentDetail();
         buildStorePerformanceData();
         renderStorePerformanceTable();
         renderVisitationMap();
         initViewToggle();
         initVisitDonut();
-        initCrossoverChart();
-        bindDonutFilterChip();
         bindStorePerformanceActions();
         // Frequency + Crossover Trend charts deferred to trend view toggle
       } else if (section === 'traffic') {
         renderTrafficKpis();
         renderMap();
         renderLeaderboard('change');
-        renderConcentration();
-        renderThreats();
-        initShareTrendChart();
-        initVolumeChart();
+        initTrafficCombinedChart();
+        initCrossoverChart();
+        renderCrossoverDetail();
+        bindTrafficStoreSelection();
       }
 
       console.log('Distribution page initialized:', section);

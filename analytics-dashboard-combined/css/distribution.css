@@ -1301,6 +1301,13 @@
   flex-shrink: 0;
 }
 
+.legend-line {
+  width: 16px;
+  height: 0;
+  border-top: 2px solid;
+  flex-shrink: 0;
+}
+
 /* ========================================
    Creative Panel
    ======================================== */
@@ -1486,87 +1493,13 @@
    Crossover Detail (expandable rows)
    ======================================== */
 
-.crossover-row {
-  border-top: 1px solid var(--color-gray-100);
+/* Competitive Crossover + Threats Tree Table */
+.comp-tree-table {
+  margin-top: var(--space-2);
 }
 
-.crossover-row:first-child {
-  border-top: none;
-}
-
-.crossover-row__summary {
-  display: grid;
-  grid-template-columns: 1fr 2fr auto;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  cursor: pointer;
-  font-size: var(--font-size-sm);
-  align-items: center;
-  list-style: none;
-}
-
-.crossover-row__summary::-webkit-details-marker {
-  display: none;
-}
-
-.crossover-row__summary:hover {
-  background: var(--color-gray-50);
-}
-
-.crossover-name {
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-primary);
-}
-
-.crossover-address {
-  color: var(--color-text-tertiary);
-  font-size: var(--font-size-xs);
-}
-
-.crossover-pct {
-  font-weight: var(--font-weight-bold);
-  color: var(--color-primary-600);
-}
-
-.crossover-row__detail {
+.crossover-detail {
   padding: 0 var(--space-4) var(--space-4);
-}
-
-.crossover-buckets {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-3);
-}
-
-.bucket {
-  text-align: center;
-  padding: var(--space-3);
-  border-radius: var(--radius-md);
-  background: var(--color-gray-50);
-}
-
-.bucket--zero { border-top: 3px solid var(--chart-blue); }
-.bucket--mid { border-top: 3px solid var(--chart-amber); }
-.bucket--loyal { border-top: 3px solid var(--chart-green); }
-
-.bucket-label {
-  display: block;
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-1);
-}
-
-.bucket-value {
-  display: block;
-  font-size: var(--font-size-md);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
-}
-
-.bucket-pct {
-  display: block;
-  font-size: var(--font-size-xs);
-  color: var(--color-text-tertiary);
 }
 
 /* ========================================
@@ -1813,12 +1746,110 @@
   background: #bbdefb;
 }
 
-/* Crossover filter label */
-#crossover-filter-label {
-  font-weight: var(--font-weight-normal);
-  color: var(--p-primary-color);
-  font-size: var(--font-size-sm);
+/* ── Segment Detail Cards (Visitation) ────────────────────────────────── */
+
+.visitation-segment-card {
+  display: flex;
+  flex-direction: column;
 }
+
+.segment-detail-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.segment-card {
+  border: 1px solid var(--color-gray-100);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  transition: border-color 0.2s, box-shadow 0.2s, opacity 0.2s;
+  cursor: default;
+}
+
+.segment-card:hover {
+  border-color: var(--color-gray-200);
+}
+
+.segment-card--highlighted {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.segment-card--dimmed {
+  opacity: 0.4;
+}
+
+.segment-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.segment-card__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.segment-card__titles {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.segment-card__label {
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+}
+
+.segment-card__sublabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.segment-card__pct {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  flex-shrink: 0;
+}
+
+.segment-card__metrics {
+  display: flex;
+  gap: var(--space-6);
+}
+
+.segment-card__metric {
+  display: flex;
+  flex-direction: column;
+}
+
+.segment-card__metric-value {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.segment-card__metric-value .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.segment-card__metric-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.trend--up { color: var(--color-success-600); }
+.trend--down { color: var(--color-error-500); }
+.trend--flat { color: var(--color-text-secondary); }
 
 /* ========================================
    Store Performance Table
@@ -1831,39 +1862,46 @@
   padding: var(--space-5);
 }
 
+/* Table + Map side-by-side body */
+.store-perf-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
 /* Map wrapper (for positioning reset button) */
 .store-perf-map-wrap {
   position: relative;
-  margin-bottom: var(--space-4);
 }
 
-/* Map: full width inside the panel */
+/* Map inside the panel */
 .store-perf-map {
-  height: 350px;
+  height: 100%;
+  min-height: 380px;
   border-radius: var(--radius-md);
   overflow: hidden;
   border: 1px solid var(--color-gray-100);
 }
 
-/* Reset map button — overlaid on map, hidden at overview zoom */
+/* Reset map button — always visible, overlaid on map */
 .map-reset-btn {
-  display: none;
+  display: inline-flex;
   position: absolute;
-  top: 10px;
-  right: 10px;
+  bottom: 12px;
+  right: 12px;
   z-index: 1000;
   align-items: center;
   gap: 4px;
   padding: 6px 12px;
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
-  color: var(--color-text-primary);
+  color: var(--color-text-secondary);
   background: white;
   border: 1px solid var(--color-gray-200);
   border-radius: var(--radius-md);
   box-shadow: var(--p-shadow-sm);
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background 0.15s, color 0.15s;
 }
 
 .map-reset-btn .material-symbols-outlined {
@@ -1872,10 +1910,54 @@
 
 .map-reset-btn:hover {
   background: var(--color-gray-50);
+  color: var(--color-text-primary);
 }
 
-.map-reset-btn.visible {
+/* Competitor toggle button — inline in header */
+.map-comp-toggle {
   display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 6px 12px;
+  background: #fff;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.map-comp-toggle:hover {
+  background: var(--color-gray-50);
+  color: var(--color-text-primary);
+}
+
+.map-comp-toggle.active {
+  background: var(--color-primary-50);
+  border-color: var(--color-primary-200);
+  color: var(--color-primary-600);
+}
+
+.map-comp-toggle .material-symbols-outlined {
+  font-size: 16px;
+}
+
+/* Competitor map markers */
+.comp-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+.comp-marker__pin {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  transform: rotate(45deg);
 }
 
 /* Legend in header */
@@ -2075,18 +2157,69 @@
 }
 
 /* ========================================
-   Traffic Detail Grid (Leaderboard + Sidebar)
+   Traffic Store Performance Panel
+   ======================================== */
+
+.traffic-perf-panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+.traffic-perf-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-3);
+}
+
+.traffic-perf-header__left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.traffic-perf-header__right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.traffic-perf-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.traffic-perf-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.traffic-perf-table-wrap {
+  max-height: 480px;
+  overflow-y: auto;
+}
+
+.traffic-perf-map-wrap {
+  position: relative;
+}
+
+/* ========================================
+   Traffic Detail Grid (Concentration + Threats)
    ======================================== */
 
 .traffic-detail-grid {
   display: grid;
-  grid-template-columns: 1fr 320px;
+  grid-template-columns: 1fr 1fr;
   gap: var(--space-4);
 }
 
 /* Leaderboard Table */
 .leaderboard-table {
-  max-height: 500px;
+  max-height: 420px;
   overflow-y: auto;
 }
 
@@ -2107,6 +2240,8 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   border-bottom: 2px solid var(--color-border);
+  padding-top: var(--space-3);
+  padding-bottom: var(--space-3);
   position: sticky;
   top: 0;
   background: var(--color-surface);
@@ -2116,8 +2251,16 @@
   border-bottom: 1px solid var(--color-gray-100);
 }
 
+.lb-row {
+  cursor: pointer;
+}
+
 .lb-row:hover {
   background: var(--color-gray-50);
+}
+
+.lb-row--selected {
+  background: #e3f2fd !important;
 }
 
 .lb-row--green { border-left: 3px solid var(--color-success-400); }
@@ -2141,6 +2284,37 @@
 .lb-col--change.positive { color: var(--color-success-600); font-weight: var(--font-weight-semibold); }
 .lb-col--change.negative { color: var(--color-error-500); font-weight: var(--font-weight-semibold); }
 
+/* Sortable column headers */
+.lb-col--sortable {
+  cursor: pointer;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  transition: color 0.15s;
+}
+.lb-col--sortable:hover {
+  color: var(--color-primary);
+}
+.lb-col--sorted {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
+}
+.lb-sort-icon {
+  font-size: 14px;
+  vertical-align: middle;
+}
+.lb-sort-icon--active {
+  color: var(--color-primary);
+}
+.lb-sort-icon--inactive {
+  color: var(--color-gray-300);
+  transition: color 0.15s;
+}
+.lb-col--sortable:hover .lb-sort-icon--inactive {
+  color: var(--color-primary);
+}
+
 .alert-badge {
   display: inline-block;
   padding: 1px 6px;
@@ -2153,6 +2327,20 @@
 .alert-badge--opportunity { background: var(--color-success-50); color: var(--color-success-700); }
 .alert-badge--warning { background: var(--color-warning-50); color: var(--color-warning-600); }
 .alert-badge--critical { background: var(--color-error-50); color: var(--color-error-600); }
+
+/* Status pills — match map legend colors */
+.status-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.status-pill--green { background: #d1fae5; color: #065f46; }
+.status-pill--amber { background: #fef3c7; color: #92400e; }
+.status-pill--red   { background: #fee2e2; color: #991b1b; }
 
 /* Market Concentration Sidebar */
 .concentration-sidebar {
@@ -2178,18 +2366,37 @@
   color: var(--color-text-primary);
 }
 
-/* Threat List */
+/* Threat List — expandable by brand */
 .threat-item {
+  border-top: 1px solid var(--color-gray-100);
+}
+
+.threat-item:first-child {
+  border-top: none;
+}
+
+.threat-item__summary {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: var(--space-2);
-  padding: var(--space-2) 0;
+  padding: var(--space-3) 0;
   align-items: center;
+  cursor: pointer;
+  list-style: none;
+}
+
+.threat-item__summary::-webkit-details-marker {
+  display: none;
+}
+
+.threat-item__summary:hover {
+  background: var(--color-gray-50);
+  border-radius: var(--radius-sm);
 }
 
 .threat-name {
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
 }
 
@@ -2212,6 +2419,48 @@
   background: var(--color-error-400);
   border-radius: var(--radius-full);
   transition: width var(--transition-normal);
+}
+
+.threat-item__locations {
+  padding: 0 0 var(--space-3);
+}
+
+.threat-locations-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: var(--space-1) var(--space-2);
+  margin-bottom: var(--space-1);
+  border-bottom: 1px solid var(--color-gray-100);
+}
+
+.threat-location {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-2) var(--space-2);
+  font-size: var(--font-size-xs);
+  border-radius: var(--radius-sm);
+}
+
+.threat-location:nth-child(odd) {
+  background: var(--color-gray-50);
+}
+
+.threat-location__address {
+  color: var(--color-text-secondary);
+  flex: 1;
+}
+
+.threat-location__pct {
+  color: var(--color-error-500);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+  margin-left: var(--space-3);
 }
 
 /* ========================================
@@ -2690,6 +2939,14 @@
    ======================================== */
 
 @media (max-width: 1024px) {
+  .traffic-perf-body {
+    grid-template-columns: 1fr;
+  }
+
+  .store-perf-body {
+    grid-template-columns: 1fr;
+  }
+
   .traffic-detail-grid {
     grid-template-columns: 1fr;
   }
@@ -2718,14 +2975,6 @@
 
   .video-kpis {
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  .crossover-row__summary {
-    grid-template-columns: 1fr auto;
-  }
-
-  .crossover-address {
-    display: none;
   }
 
   .spotlight-cards {

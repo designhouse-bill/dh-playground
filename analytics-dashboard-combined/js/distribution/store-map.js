@@ -10,7 +10,16 @@ const StoreMap = (function() {
 
   let map = null;
   let markersLayer = null;
+  let competitorLayer = null;
+  let _competitorVisible = false;
   let _onStoreClick = null;
+
+  const COMPETITOR_BRAND_COLORS = {
+    'Publix': '#4a7c59',
+    'Walmart': '#0071ce',
+    'ALDI': '#00205b',
+    'Save A Lot': '#e31837'
+  };
 
   const GROUP_COLORS = {
     green: '#10b981',
@@ -43,8 +52,72 @@ const StoreMap = (function() {
     }).addTo(map);
 
     markersLayer = L.layerGroup().addTo(map);
+    competitorLayer = L.layerGroup(); // not added to map until toggled on
 
     return map;
+  }
+
+  // ========================================
+  // Competitor Store Pins
+  // ========================================
+
+  /**
+   * @param {Array} competitors - COMPETITOR_STORES array from Records
+   * @param {Array} [filterStoreIds] - If provided, only show competitors that threaten these stores
+   */
+  function renderCompetitors(competitors, filterStoreIds) {
+    if (!map || !competitorLayer) return;
+    competitorLayer.clearLayers();
+
+    competitors.forEach(cs => {
+      // Filter to relevant competitors if storeIds provided
+      if (filterStoreIds && filterStoreIds.length > 0) {
+        const relevant = cs.threatens.some(tid => filterStoreIds.includes(tid));
+        if (!relevant) return;
+      }
+
+      const color = COMPETITOR_BRAND_COLORS[cs.brand] || '#6b7280';
+
+      const marker = L.marker([cs.lat, cs.lng], {
+        icon: L.divIcon({
+          className: 'comp-marker',
+          html: '<div class="comp-marker__pin" style="background:' + color + ';"></div>',
+          iconSize: [14, 14],
+          iconAnchor: [7, 7]
+        })
+      });
+
+      marker.bindPopup(
+        '<div style="font-family:system-ui;font-size:13px;line-height:1.5;min-width:160px;">' +
+          '<div style="font-weight:600;font-size:14px;margin-bottom:2px;">' + cs.brand + '</div>' +
+          '<div style="color:#6b7280;font-size:12px;">' + cs.address + '</div>' +
+        '</div>',
+        { maxWidth: 220 }
+      );
+
+      competitorLayer.addLayer(marker);
+    });
+
+    // Re-apply visibility state
+    if (_competitorVisible && !map.hasLayer(competitorLayer)) {
+      map.addLayer(competitorLayer);
+    }
+  }
+
+  function toggleCompetitors(show) {
+    if (!map || !competitorLayer) return;
+    _competitorVisible = typeof show === 'boolean' ? show : !_competitorVisible;
+
+    if (_competitorVisible) {
+      map.addLayer(competitorLayer);
+    } else {
+      map.removeLayer(competitorLayer);
+    }
+    return _competitorVisible;
+  }
+
+  function isCompetitorVisible() {
+    return _competitorVisible;
   }
 
   // ========================================
@@ -149,6 +222,8 @@ const StoreMap = (function() {
       map.remove();
       map = null;
       markersLayer = null;
+      competitorLayer = null;
+      _competitorVisible = false;
     }
   }
 
@@ -174,6 +249,9 @@ const StoreMap = (function() {
   return {
     init,
     renderStores,
+    renderCompetitors,
+    toggleCompetitors,
+    isCompetitorVisible,
     highlightStore,
     onStoreClick,
     fitBounds,

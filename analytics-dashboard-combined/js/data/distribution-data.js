@@ -411,21 +411,55 @@ const DistributionData = (function() {
   function getPrimaryThreats() {
     const storeIds = getStoreIds();
     const latestWeek = currentContext.flightWeek === 'all' ? 'wk2' : currentContext.flightWeek;
+    const competitorStores = Records.COMPETITOR_STORES || [];
 
-    const threatCounts = {};
+    // Build brand → { store_count, locations[] }
+    const brandMap = {};
     storeIds.forEach(storeId => {
       const record = Records.trafficRecords.find(
         r => r.store_id === storeId && r.week_id === latestWeek
       );
-      if (record) {
-        const threat = record.primary_threat;
-        threatCounts[threat] = (threatCounts[threat] || 0) + 1;
+      if (!record) return;
+      const threat = record.primary_threat;
+      if (!brandMap[threat]) brandMap[threat] = { brand: threat, store_count: 0, locations: [] };
+      brandMap[threat].store_count++;
+    });
+
+    // Attach individual competitor store locations per brand
+    competitorStores.forEach(cs => {
+      if (!brandMap[cs.brand]) return;
+      // Check if this competitor store threatens any of the current entity's stores
+      const relevant = cs.threatens.some(tid => storeIds.includes(tid));
+      if (relevant) {
+        // Compute a threat % from the traffic record of the store it threatens
+        let threatPct = null;
+        cs.threatens.forEach(tid => {
+          if (!storeIds.includes(tid)) return;
+          const rec = Records.trafficRecords.find(r => r.store_id === tid && r.week_id === latestWeek);
+          if (rec) {
+            const total = rec.retailer_visits + rec.comp_visits;
+            const compShare = total > 0 ? parseFloat(((rec.comp_visits / total) * 100).toFixed(1)) : 0;
+            if (threatPct === null || compShare > threatPct) threatPct = compShare;
+          }
+        });
+
+        brandMap[cs.brand].locations.push({
+          id: cs.id,
+          address: cs.address,
+          lat: cs.lat,
+          lng: cs.lng,
+          threatens: cs.threatens.filter(tid => storeIds.includes(tid)),
+          threat_pct: threatPct
+        });
       }
     });
 
-    return Object.entries(threatCounts)
-      .map(([brand, count]) => ({ brand, store_count: count }))
-      .sort((a, b) => b.store_count - a.store_count);
+    return Object.values(brandMap)
+      .sort((a, b) => b.store_count - a.store_count)
+      .map(b => ({
+        ...b,
+        locations: b.locations.sort((a, b) => (b.threat_pct || 0) - (a.threat_pct || 0))
+      }));
   }
 
   // ========================================
@@ -478,6 +512,9 @@ const DistributionData = (function() {
 
     // Entity access
     get entities() { return Entities; },
-    get retailerConfig() { return Entities.retailerConfig; }
+    get retailerConfig() { return Entities.retailerConfig; },
+
+    // Competitor store locations
+    get competitorStores() { return Records.COMPETITOR_STORES || []; }
   };
 })();

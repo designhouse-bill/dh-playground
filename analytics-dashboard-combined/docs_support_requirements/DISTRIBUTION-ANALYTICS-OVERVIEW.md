@@ -68,7 +68,7 @@ Knowing that media was delivered is not enough. The business needs to know: **di
 
 **Crossover Trend (Trend View)** — Multi-line chart showing each competitor's crossover percentage over time. Reveals whether competitive overlap is growing or shrinking.
 
-**Store Performance Panel** — A full-width map shows all stores color-coded by new shopper performance (Green = Strong, Amber = Watch, Red = Critical). Below the map, a scrollable sortable table shows per-store metrics: Visits, New Shoppers %, and CPV, with a "More Data" toggle for additional columns.
+**Store Performance Panel** — A two-column layout with a sortable table on the left and an interactive map on the right, showing all stores color-coded by new shopper performance (Green = Strong, Amber = Watch, Red = Critical). The table shows per-store metrics: Visits, New Shoppers %, and CPV, with a "More Data" toggle for additional columns.
 
 **Map-Table Interaction** — Clicking a table row zooms the map to that store and opens its popup. Clicking a map pin highlights the corresponding table row and scrolls it into view. A "Reset" button returns to the overview. This bi-directional selection helps users connect geographic patterns to tabular data.
 
@@ -88,28 +88,27 @@ Visitation data tells you about your own stores. Traffic Share answers the bigge
 
 - Are we gaining or losing traffic share vs. competitors?
 - Which stores are outperforming, and which are at risk?
-- Where is market concentration highest, and who are the primary threats?
+- Which competitor brands and locations threaten our stores?
 - What does the geographic distribution of performance look like?
 
 ### How It Works
 
-**Traffic KPIs** — Four summary tiles: Traffic Share (current %), Share Change (percentage points), Outperforming count (stores gaining share), and Growth Advantage (our growth rate vs. competitor growth rate).
+**Hero KPIs** — Uses the same media-hero layout as Media Buy and Store Visitation for visual consistency. The left column shows Traffic Share % as the hero stat with a trend callout ("Share up/down/stable X pp over campaign"). The right column shows six supporting cards: Stores (count), Outperforming (X of Y with trend), Growth Advantage (+X.X%), Retailer Growth (rate %), Competitor Growth (rate %), and Concentrated Markets (count).
 
-**Store Map** — A full-width map color-codes every store by performance group (Green = strong/gaining share, Amber = watch, Red = critical/losing share). Popups show share %, change, and primary competitor threat.
+**Traffic Share & Volume (Combined Chart)** — A single dual-axis chart replaces what were originally two separate charts. Grouped bars (left Y-axis) show retailer and competitor visit volume per week. A line overlay (right Y-axis) shows retailer share percentage over time. This directly connects volume to share — you can see "visits went up but share went down because competitors grew faster." The chart includes a legend for retailer bars, competitor bars, and the share % line.
 
-**Traffic Share Over Time** — A dual-line chart showing our traffic share vs. combined competitor share over the campaign weeks. An annotation shows whether the gap is widening or narrowing.
+**Store Performance Panel** — A two-column layout with a sortable leaderboard table on the left and an interactive Leaflet map on the right. The panel header is split into two columns: the left side has the title, subtitle, and a "Group by Status" toggle; the right side has a color legend (Strong/Watch/Critical) and a "Competitors" toggle button.
 
-**Visit Volume by Week** — A grouped bar chart comparing absolute visit counts (our stores vs. competitors) by week. This separates the share story (relative) from the volume story (absolute).
+- **Leaderboard Table** — Ranks stores by share change or current share. Each row shows store name, city, current share, change in percentage points, and a color-coded status indicator. Clicking a row zooms the map to that store.
+- **Store Map** — Circle markers color-coded by performance group (Green = strong, Amber = watch, Red = critical). Popups show store name, share %, change, and primary threat. A "Reset" button in the bottom-right returns to the overview.
+- **Competitor Pins** — Toggled via the "Competitors" button in the panel header. Displays competitor store locations as diamond-shaped markers color-coded by brand (Publix = green, Walmart = blue, ALDI = navy, Save A Lot = red). Selecting a store row filters competitor pins to only those threatening that store; deselecting shows all.
+- **Map-Table Interaction** — Bi-directional: clicking a table row zooms the map; clicking a map pin highlights the table row. Same interaction pattern as the Store Visitation panel.
 
-**Store Leaderboard** — A sortable table ranking every store by share change or current share. Each row shows store ID, city, current share, change in percentage points, and alert status (opportunity/critical/warning). Sortable by Change or by Share.
-
-**Market Concentration** — HHI (Herfindahl-Hirschman Index) analysis showing how many stores are in highly concentrated vs. moderately concentrated competitive environments.
-
-**Primary Threats** — Lists competitor brands by how many of our stores they threaten, with a visual bar showing proportion. Subtitle clarifies: "Which competitor locations draw the most traffic near our stores."
+**Competitive Crossover & Threats** — A combined panel with two parts. The top is a horizontal bar chart showing where our visitors also shop (crossover percentage by competitor brand). Below it, an expandable tree table merges crossover data with competitor threat locations. Parent rows show each competitor brand with columns for Crossover %, Visits, Stores Threatened, and Trend arrow. Expanding a parent row reveals child rows listing individual competitor store addresses with their local competition share percentage. This uses the same `dist-tree-table` design pattern from the Media Buy page for visual consistency.
 
 ### Value to End User
 
-Operations and category managers see the competitive landscape at a glance. The leaderboard identifies stores that need attention (critical) and stores with growth opportunity. The concentration analysis helps prioritize where competitive investment will have the most impact.
+Operations and category managers see the competitive landscape at a glance. The leaderboard identifies stores that need attention (critical) and stores with growth opportunity. The combined crossover & threats table connects behavioral data (where our shoppers also go) with geographic threat data (which specific competitor locations are nearby), enabling targeted competitive strategies at the store level.
 
 ---
 

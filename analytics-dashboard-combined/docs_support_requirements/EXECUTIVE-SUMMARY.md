@@ -16,7 +16,7 @@ An interactive donut chart shows the visitor composition (new vs. returning vs. 
 
 ### Traffic Share — "Are we winning the market?"
 
-Measures gross foot traffic share relative to competitors. A store leaderboard ranks locations by share change. A map visualizes geographic performance patterns. Market concentration analysis (HHI) identifies high-competition zones, and a Primary Threats section shows which competitor brands are most active near our stores.
+Measures gross foot traffic share relative to competitors using the same hero KPI layout as the other two sections. A combined dual-axis chart shows visit volume (bars) alongside share percentage (line) in one view. A Store Performance panel pairs a sortable leaderboard with an interactive map — including toggleable competitor store pins color-coded by brand. A Competitive Crossover & Threats tree table combines behavioral crossover data with geographic threat locations in expandable rows.
 
 ## How They Connect
 
@@ -39,7 +39,7 @@ This prototype delivers on the core principle that **media spend should be measu
 | Media Buy: Hero KPIs, creative carousel, tree table with drill-down | Complete |
 | Store Visitation: Donut chart, crossover interaction, Current/Trend toggle | Complete |
 | Store Visitation: Store Performance map + table with bi-directional selection | Complete |
-| Traffic Share: KPIs, map, leaderboard, concentration, threats | Complete |
+| Traffic Share: Hero KPIs, combined chart, store performance (table + map), crossover & threats tree table | Complete |
 | Entity filtering (Brand → Sub-brand → Store Group → Store) | Complete |
 | Date range selection (all weeks or single week) | Complete |
 | Engagement Dashboard (Promotions, Categories, Circulars, Grid, Compare) | Complete |

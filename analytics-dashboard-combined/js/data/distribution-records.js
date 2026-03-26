@@ -528,6 +528,53 @@ const DistributionRecords = (function() {
     WEEK_MULT,
     STORE_PARAMS,
     ALERT_MAP,
-    GROUP_MAP
+    GROUP_MAP,
+
+    // Competitor store locations — derived from STORE_PARAMS threat data
+    // Each has: id, brand, address, lat, lng, and the SEG stores it threatens
+    COMPETITOR_STORES: [
+      // ── Publix ──
+      { id: 'comp-pub-1',  brand: 'Publix', address: '28200 S Dixie Hwy, Homestead, FL 33033',         lat: 25.475, lng: -80.440, threatens: ['store-319'] },
+      { id: 'comp-pub-2',  brand: 'Publix', address: '1250 S Federal Hwy, Hollywood, FL 33020',         lat: 26.010, lng: -80.145, threatens: ['store-336'] },
+      { id: 'comp-pub-3',  brand: 'Publix', address: '4650 S Cleveland Ave, Fort Myers, FL 33907',      lat: 26.598, lng: -81.870, threatens: ['store-508'] },
+      { id: 'comp-pub-4',  brand: 'Publix', address: '5765 Naples Blvd, Naples, FL 34109',              lat: 26.241, lng: -81.760, threatens: ['store-518'] },
+      { id: 'comp-pub-5',  brand: 'Publix', address: '2345 Pine Island Rd, Matlacha, FL 33993',         lat: 26.636, lng: -82.072, threatens: ['store-726'] },
+      { id: 'comp-pub-6',  brand: 'Publix', address: '35951 US Hwy 27, Haines City, FL 33844',          lat: 28.088, lng: -81.617, threatens: ['store-705'] },
+      { id: 'comp-pub-7',  brand: 'Publix', address: '7640 W Sand Lake Rd, Orlando, FL 32819',          lat: 28.449, lng: -81.470, threatens: ['store-2288'] },
+      { id: 'comp-pub-8',  brand: 'Publix', address: '13521 N Florida Ave, Tampa, FL 33612',            lat: 28.060, lng: -82.459, threatens: ['store-2415'] },
+      { id: 'comp-pub-9',  brand: 'Publix', address: '1570 W Intl Speedway Blvd, Daytona Beach, FL 32114', lat: 29.210, lng: -81.065, threatens: ['store-2434'] },
+      { id: 'comp-pub-10', brand: 'Publix', address: '1555 W New Haven Ave, Melbourne, FL 32904',       lat: 28.078, lng: -80.640, threatens: ['store-2474'] },
+      { id: 'comp-pub-11', brand: 'Publix', address: '3950 US-98 N, Lakeland, FL 33809',                lat: 28.080, lng: -81.970, threatens: ['store-2480'] },
+      { id: 'comp-pub-12', brand: 'Publix', address: '3870 Bee Ridge Rd, Sarasota, FL 34233',           lat: 27.302, lng: -82.480, threatens: ['store-2487'] },
+      { id: 'comp-pub-13', brand: 'Publix', address: '6255 Cortez Rd W, Bradenton, FL 34210',           lat: 27.463, lng: -82.600, threatens: ['store-2509'] },
+      { id: 'comp-pub-14', brand: 'Publix', address: '2510 Burnsed Blvd, The Villages, FL 32163',       lat: 28.930, lng: -81.990, threatens: ['store-2545'] },
+      { id: 'comp-pub-15', brand: 'Publix', address: '1415 Timberlane Rd, Tallahassee, FL 32312',       lat: 30.490, lng: -84.310, threatens: ['store-86'] },
+      { id: 'comp-pub-16', brand: 'Publix', address: '11500 Beach Blvd, Jacksonville, FL 32246',        lat: 30.290, lng: -81.528, threatens: ['store-195'] },
+      { id: 'comp-pub-17', brand: 'Publix', address: '34940 Emerald Coast Pkwy, Destin, FL 32541',      lat: 30.393, lng: -86.460, threatens: ['store-560'] },
+      { id: 'comp-pub-18', brand: 'Publix', address: '1200 Palm Coast Pkwy NW, Palm Coast, FL 32137',   lat: 29.565, lng: -81.230, threatens: ['store-2247'] },
+      { id: 'comp-pub-19', brand: 'Publix', address: '4525 San Juan Ave, Jacksonville, FL 32210',       lat: 30.298, lng: -81.733, threatens: ['store-2399'] },
+      { id: 'comp-pub-20', brand: 'Publix', address: '3100 SW College Rd, Ocala, FL 34474',             lat: 29.170, lng: -82.180, threatens: ['store-2437'] },
+      { id: 'comp-pub-21', brand: 'Publix', address: '3720 NW 13th St, Gainesville, FL 32609',          lat: 29.680, lng: -82.340, threatens: ['store-2482'] },
+      { id: 'comp-pub-22', brand: 'Publix', address: '1700 N Monroe St, Tallahassee, FL 32303',         lat: 30.455, lng: -84.275, threatens: ['store-2495'] },
+      { id: 'comp-pub-23', brand: 'Publix', address: '5910 University Blvd W, Jacksonville, FL 32216',  lat: 30.263, lng: -81.590, threatens: ['store-1690'] },
+      { id: 'comp-pub-24', brand: 'Publix', address: '2640 US Hwy 92, Lakeland, FL 33801',              lat: 28.040, lng: -81.950, threatens: ['store-1710'] },
+      { id: 'comp-pub-25', brand: 'Publix', address: '1310 Ariana St W, Lakeland, FL 33803',            lat: 28.030, lng: -81.970, threatens: ['store-1712'] },
+
+      // ── Walmart ──
+      { id: 'comp-wm-1', brand: 'Walmart', address: '2601 N Davis Hwy, Pensacola, FL 32503',           lat: 30.448, lng: -87.230, threatens: ['store-2449'] },
+      { id: 'comp-wm-2', brand: 'Walmart', address: '1040 Malabar Rd SE, Palm Bay, FL 32907',           lat: 28.003, lng: -80.621, threatens: ['store-2501'] },
+      { id: 'comp-wm-3', brand: 'Walmart', address: '2101 S Hwy 77, Lynn Haven, FL 32444',              lat: 30.227, lng: -85.640, threatens: ['store-436'] },
+      { id: 'comp-wm-4', brand: 'Walmart', address: '2767 W US Hwy 90, Lake City, FL 32055',            lat: 30.188, lng: -82.664, threatens: ['store-1671'] },
+      { id: 'comp-wm-5', brand: 'Walmart', address: '5250 Moncrief Rd W, Jacksonville, FL 32209',       lat: 30.365, lng: -81.710, threatens: ['store-1692'] },
+      { id: 'comp-wm-6', brand: 'Walmart', address: '100 W 48th St, Jacksonville, FL 32208',            lat: 30.387, lng: -81.670, threatens: ['store-1694'] },
+      { id: 'comp-wm-7', brand: 'Walmart', address: '50 S Arlington Rd, Jacksonville, FL 32211',        lat: 30.329, lng: -81.600, threatens: ['store-1716'] },
+
+      // ── ALDI ──
+      { id: 'comp-aldi-1', brand: 'ALDI', address: '1900 Tamiami Trail, Port Charlotte, FL 33948',      lat: 26.985, lng: -82.120, threatens: ['store-2490'] },
+      { id: 'comp-aldi-2', brand: 'ALDI', address: '1233 Wendy Ct, Spring Hill, FL 34607',              lat: 28.482, lng: -82.548, threatens: ['store-711'] },
+
+      // ── Save A Lot ──
+      { id: 'comp-sal-1', brand: 'Save A Lot', address: '920 S Main St, Belle Glade, FL 33430',         lat: 26.678, lng: -80.670, threatens: ['store-381'] }
+    ]
   };
 })();

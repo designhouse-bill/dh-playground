@@ -12,7 +12,7 @@ const DistributionModals = (function() {
   const E = typeof DistributionEntities !== 'undefined' ? DistributionEntities : null;
 
   let _initialized = false;
-  let _selectedWeekId = 'all';
+  let _selectedWeekId = 'wk2';
   let _selectedEntityId = 'all';
   let _selectedEntityLevel = 'all';
   let _selectedEntityName = 'All Stores';
@@ -106,6 +106,7 @@ const DistributionModals = (function() {
       '<div class="dist-week-option__left">' +
         '<div class="dist-week-option__label">All Weeks</div>' +
         '<div class="dist-week-option__dates">' + weeks[0].start + ' — ' + weeks[weeks.length - 1].end + '</div>' +
+        '<div class="dist-week-option__sub">Campaign totals · ' + weeks.length + ' weeks</div>' +
       '</div>' +
       '<div class="dist-week-option__check">' +
         '<span class="material-symbols-outlined">check</span>' +

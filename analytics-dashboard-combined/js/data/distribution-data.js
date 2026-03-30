@@ -28,7 +28,7 @@ const DistributionData = (function() {
   // ========================================
 
   let currentContext = {
-    flightWeek: 'all',              // 'all' | 'wk50' | 'wk51' | 'wk52' | 'wk1' | 'wk2'
+    flightWeek: 'wk2',              // 'all' | 'wk50' | 'wk51' | 'wk52' | 'wk1' | 'wk2'
     entityId: 'all',
     entityLevel: 'all',             // 'all' | 'brand' | 'sub-brand' | 'store'
     entityName: 'All Stores'
@@ -134,11 +134,10 @@ const DistributionData = (function() {
     const storeIds = getStoreIds();
     const allRecords = getMediaRecords('all', storeIds);
 
-    // Summary: aggregate all matching records (latest week if context is 'all', else filtered week)
+    // Summary: aggregate all matching records for context week (or all weeks)
     let summaryRecords;
     if (currentContext.flightWeek === 'all') {
-      // Use latest week for summary
-      summaryRecords = allRecords.filter(r => r.week_id === 'wk2');
+      summaryRecords = allRecords;
     } else {
       summaryRecords = allRecords.filter(r => r.week_id === currentContext.flightWeek);
     }
@@ -164,9 +163,10 @@ const DistributionData = (function() {
     return Records.creativeRecords.map(cr => {
       // Filter stores in this creative that match current entity
       const matchingStores = cr.store_group.filter(s => storeIds.includes(s));
-      // Get media records for matching stores
+      // Get media records for matching stores, filtered by current week
       const mediaRecs = Records.mediaRecords.filter(r =>
-        matchingStores.includes(r.store_id) && r.creative_id === cr.creative_id
+        matchingStores.includes(r.store_id) && r.creative_id === cr.creative_id &&
+        (currentContext.flightWeek === 'all' || r.week_id === currentContext.flightWeek)
       );
       const metrics = aggregateMedia(mediaRecs);
 

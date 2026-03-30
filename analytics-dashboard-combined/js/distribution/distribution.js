@@ -73,6 +73,12 @@
       }
     }
 
+    // Multi-week badge
+    const dateCard = document.getElementById('date-selector');
+    if (dateCard) {
+      dateCard.classList.toggle('context-card--multiweek', ctx.flightWeek === 'all');
+    }
+
     // Entity context
     var entityStoreCount = D.entities.getStoresForEntity(ctx.entityId, ctx.entityLevel).length;
     var levelLabel = ctx.entityLevel === 'all' ? 'BRAND'
@@ -727,8 +733,10 @@
 
   function buildStoreRows(cr) {
     return cr.store_group.map(storeId => {
+      const ctx = D.context;
       const storeRecords = DistributionRecords.mediaRecords.filter(
-        r => r.store_id === storeId && r.creative_id === cr.creative_id
+        r => r.store_id === storeId && r.creative_id === cr.creative_id &&
+        (ctx.flightWeek === 'all' || r.week_id === ctx.flightWeek)
       );
       if (!storeRecords.length) return null;
       const agg = storeRecords.reduce((acc, r) => {
@@ -1166,8 +1174,8 @@
       ],
       series: [{
         type: 'pie',
-        radius: ['48%', '72%'],
-        center: ['50%', '48%'],
+        radius: ['52%', '80%'],
+        center: ['50%', '50%'],
         avoidLabelOverlap: false,
         selectedMode: 'single',
         label: { show: false },
@@ -2052,8 +2060,87 @@
   }
 
   function initCrossoverChart() {
-    var sorted = [...D.competitiveCrossover].sort(function (a, b) { return a.crossover_pct - b.crossover_pct; });
-    initCrossoverChartWithData(sorted, 'crossover_pct');
+    var el = document.getElementById('chart-crossover');
+    if (!el) return;
+    if (charts.crossover) { charts.crossover.dispose(); charts.crossover = null; }
+    var chart = echarts.init(el);
+    charts.crossover = chart;
+
+    var crossover = D.competitiveCrossover;
+    var flightWeeks = D.flightWeeks;
+    var weeks = flightWeeks.map(function (w) {
+      var s = new Date(w.start);
+      var e = new Date(w.end);
+      var fmt = function (d) { return (d.getMonth() + 1) + '/' + d.getDate(); };
+      return w.label + '\n' + fmt(s) + '–' + fmt(e);
+    });
+
+    // Deduplicate by competitor name and sort by latest crossover_pct descending
+    var seen = {};
+    var competitors = [];
+    crossover.forEach(function (c) {
+      if (!seen[c.competitor_name]) {
+        seen[c.competitor_name] = true;
+        competitors.push(c);
+      }
+    });
+    competitors.sort(function (a, b) { return b.crossover_pct - a.crossover_pct; });
+
+    var areaColors = ['#E07850', '#A8BF6E', '#2AADDB', '#E85B93', '#9B7FD4'];
+
+    var series = competitors.map(function (comp, i) {
+      return {
+        name: comp.competitor_name,
+        type: 'line',
+        stack: 'crossover',
+        areaStyle: { opacity: 0.85 },
+        smooth: true,
+        symbol: 'none',
+        lineStyle: { width: 1.5, color: areaColors[i % areaColors.length] },
+        itemStyle: { color: areaColors[i % areaColors.length] },
+        emphasis: { focus: 'series', areaStyle: { opacity: 1 } },
+        data: comp.trend
+      };
+    });
+
+    chart.setOption({
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: { type: 'cross', label: { backgroundColor: '#333' } },
+        formatter: function (params) {
+          var html = '<strong>' + params[0].axisValue + '</strong>';
+          params.forEach(function (p) {
+            html += '<br>' + p.marker + ' ' + p.seriesName + ': <strong>' + p.value + '%</strong>';
+          });
+          return html;
+        }
+      },
+      legend: {
+        bottom: 0,
+        itemWidth: 14,
+        itemHeight: 10,
+        textStyle: { fontSize: 12, color: '#4b5563' },
+        data: competitors.map(function (c) { return c.competitor_name; })
+      },
+      grid: { left: 50, right: 24, top: 16, bottom: 60 },
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: weeks,
+        axisLabel: { fontSize: 11, color: '#6b7280' },
+        axisLine: { lineStyle: { color: '#e5e7eb' } },
+        splitLine: {
+          show: true,
+          lineStyle: { color: '#d1d5db', type: 'dashed', width: 1 }
+        }
+      },
+      yAxis: {
+        type: 'value',
+        axisLabel: { formatter: '{value}%', fontSize: 11, color: '#6b7280' },
+        splitLine: { lineStyle: { color: '#f3f4f6' } }
+      },
+      series: series
+    });
   }
 
   function initCrossoverTrendChart() {

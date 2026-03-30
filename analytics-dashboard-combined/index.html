@@ -22,6 +22,24 @@
 </head>
 <body>
 
+  <div class="dh-top-bar">
+    <div class="dh-top-bar__left">
+      <img src="assets/ideal-sale-logo.svg" alt="ideal.sale" class="dh-top-bar__logo">
+      <div class="dh-top-bar__node">
+        <div class="dh-top-bar__node-icon"><span class="material-symbols-outlined">image</span></div>
+        <div class="dh-top-bar__node-info">
+          <span class="dh-top-bar__node-brand">Ideal-Brand</span>
+          <span class="dh-top-bar__node-name">All Stores</span>
+        </div>
+        <button class="dh-top-bar__change-btn">Change <span class="material-symbols-outlined">expand_more</span></button>
+      </div>
+    </div>
+    <div class="dh-top-bar__right">
+      <span class="dh-top-bar__user"><span class="dh-top-bar__user-label">User: </span>Adam Zimmerman</span>
+      <button class="dh-top-bar__logout"><span>Logout</span> <span class="material-symbols-outlined">logout</span></button>
+    </div>
+  </div>
+
   <!-- ============================================================
        HEADER (inlined — no fetch)
        ============================================================ -->
@@ -30,9 +48,6 @@
     <div class="topbar">
       <div class="topbar__left">
         <div class="brand">
-          <div class="logo">
-            <span class="material-symbols-outlined">analytics</span>
-          </div>
           <h1 class="title">Analytics Dashboard</h1>
         </div>
         <span class="topbar__separator">|</span>

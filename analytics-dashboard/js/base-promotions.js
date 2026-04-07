@@ -1195,12 +1195,13 @@
   }
 
   /**
-   * Navigate to compare for current promotion
+   * Navigate to compare for current promotion.
+   * Delegates to quickCompare() so Panel A is pre-populated with the full
+   * current context (week, entity, days filter, category, promotion).
    */
   function compareCurrentPromotion() {
     if (state.activePromotion) {
-      core.saveState();
-      StateManager.navigateTo('compare.html', state, { promotionId: state.activePromotion });
+      quickCompare(state.activePromotion);
     }
   }
 

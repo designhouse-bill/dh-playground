@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Distribution — Traffic Share | Analytics Dashboard</title>
+
+  <!-- Google Material Symbols -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="vendor/leaflet.min.css">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/design-tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/context-bar.css">
+  <link rel="stylesheet" href="css/detail-panel.css">
+  <link rel="stylesheet" href="css/distribution.css?v=7">
+</head>
+<body data-dist-page="traffic">
+
+  <div class="dh-top-bar">
+    <div class="dh-top-bar__left">
+      <img src="assets/ideal-sale-logo.svg" alt="ideal.sale" class="dh-top-bar__logo">
+      <div class="dh-top-bar__node">
+        <div class="dh-top-bar__node-icon"><span class="material-symbols-outlined">image</span></div>
+        <div class="dh-top-bar__node-info">
+          <span class="dh-top-bar__node-brand">Ideal-Brand</span>
+          <span class="dh-top-bar__node-name">All Stores</span>
+        </div>
+        <button class="dh-top-bar__change-btn">Change <span class="material-symbols-outlined">expand_more</span></button>
+      </div>
+    </div>
+    <div class="dh-top-bar__right">
+      <span class="dh-top-bar__user"><span class="dh-top-bar__user-label">User: </span>Adam Zimmerman</span>
+      <button class="dh-top-bar__logout"><span>Logout</span> <span class="material-symbols-outlined">logout</span></button>
+    </div>
+  </div>
+
+  <header class="header header--distribution">
+
+    <div class="topbar">
+      <div class="topbar__left">
+
+        <div class="brand">
+          <h1 class="title">Analytics Dashboard</h1>
+        </div>
+        <span class="topbar__separator">|</span>
+
+        <!-- Dashboard Switcher -->
+        <div class="dashboard-switcher" id="dashboard-switcher">
+          <button class="performance-dropdown" id="performance-type-dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="performance-dropdown__text">Distribution</span>
+            <span class="material-symbols-outlined">expand_more</span>
+          </button>
+          <div class="dashboard-switcher__menu" id="dashboard-menu" role="menu">
+            <a class="dashboard-switcher__item" data-href="engagement-promotions.html" role="menuitem">
+              <span class="material-symbols-outlined">monitoring</span>
+              Engagement
+            </a>
+            <button class="dashboard-switcher__item active" role="menuitem">
+              <span class="material-symbols-outlined">campaign</span>
+              Distribution
+            </button>
+          </div>
+        </div>
+
+        <!-- Distribution Section Tabs -->
+        <div class="dist-section-tabs" id="dist-section-tabs">
+          <a class="dist-tab" href="distribution-media.html">
+            <span class="material-symbols-outlined">campaign</span>
+            Media Buy
+          </a>
+          <a class="dist-tab" href="distribution-visitation.html">
+            <span class="material-symbols-outlined">store</span>
+            Store Visitation
+          </a>
+          <a class="dist-tab active" href="distribution-traffic.html">
+            <span class="material-symbols-outlined">trending_up</span>
+            Traffic Share
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Context Row -->
+    <div class="context-row">
+      <button class="context-card context-card--date" id="date-selector" aria-label="Select date range">
+        <div class="card-label">Date Range</div>
+        <div class="card-row">
+          <div class="card-icon">
+            <span class="material-symbols-outlined">calendar_month</span>
+          </div>
+          <div class="card-content">
+            <div class="card-value" id="context-date-value">Week 2</div>
+            <div class="card-sub" id="context-date-sub">Jan 7 – Jan 13, 2026</div>
+          </div>
+          <span class="card-arrow">
+            <span class="material-symbols-outlined">expand_more</span>
+          </span>
+        </div>
+      </button>
+
+      <button class="context-card" id="entity-selector" aria-label="Select entity">
+        <div class="card-label">Entity</div>
+        <div class="card-row">
+          <div class="card-icon card-icon--entity">
+            <span class="material-symbols-outlined">corporate_fare</span>
+          </div>
+          <div class="card-content">
+            <div class="card-breadcrumb" id="context-entity-breadcrumb">BRAND</div>
+            <div class="card-value" id="context-entity-value">Southeastern Grocers</div>
+            <div class="card-sub" id="context-entity-sub">37 stores · Florida Pilot</div>
+          </div>
+          <span class="card-arrow">
+            <span class="material-symbols-outlined">expand_more</span>
+          </span>
+        </div>
+      </button>
+    </div>
+
+  </header>
+
+  <!-- ============================================================
+       SECTION 3: Traffic Share Shift
+       ============================================================ -->
+  <main>
+    <section class="dist-section active" id="section-traffic">
+
+      <div class="section-header">
+        <div class="section-header__left">
+          <div>
+            <h2 class="section-title">Gross Foot Traffic Share Shift</h2>
+            <p class="section-subtitle">Are we gaining or losing traffic share from competitors over time?</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="media-hero" id="traffic-hero"></div>
+
+      <!-- Competitive Intelligence: Chart + Tree Table -->
+      <div class="chart-card">
+        <div class="chart-card__header">
+          <div>
+            <h3 class="panel-label">Competitive Crossover &amp; Threats</h3>
+            <p class="panel-subtitle">Where our visitors also shop, and which competitor locations threaten our stores</p>
+          </div>
+        </div>
+        <div id="chart-crossover" style="height: 360px;"></div>
+        <div class="crossover-detail" id="crossover-detail"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-card__header">
+          <h3 class="panel-label">Traffic Share & Volume</h3>
+          <div class="chart-legend">
+            <span class="legend-item"><span class="legend-dot" style="background: #10B981;"></span><span id="retailer-legend-label">Retailer</span></span>
+            <span class="legend-item"><span class="legend-dot" style="background: #9CA3AF;"></span>Competitors</span>
+            <span class="legend-item"><span class="legend-line" style="border-color: #3B82F6;"></span>Share %</span>
+          </div>
+        </div>
+        <div id="chart-traffic-combined" style="height: 360px;"></div>
+      </div>
+
+      <!-- Store Performance Panel: Table + Map side-by-side -->
+      <div class="traffic-perf-panel">
+        <div class="traffic-perf-header">
+          <div class="traffic-perf-header__left">
+            <div>
+              <h3 class="panel-label">Store Performance</h3>
+              <p class="panel-subtitle">Traffic share by store — click a row to focus on the map</p>
+            </div>
+            <div class="traffic-perf-controls">
+              <label class="toggle-switch">
+                <input type="checkbox" id="store-group-toggle">
+                <span class="toggle-slider"></span>
+              </label>
+              <span class="toggle-label">Group by Status</span>
+            </div>
+          </div>
+          <div class="traffic-perf-header__right">
+            <div class="chart-legend">
+              <span class="legend-item"><span class="legend-dot" style="background: #10b981;"></span>Strong</span>
+              <span class="legend-item"><span class="legend-dot" style="background: #f59e0b;"></span>Watch</span>
+              <span class="legend-item"><span class="legend-dot" style="background: #ef4444;"></span>Critical</span>
+            </div>
+            <button class="map-comp-toggle" id="comp-toggle-btn" title="Toggle competitor locations">
+              <span class="material-symbols-outlined">storefront</span> Competitors
+            </button>
+          </div>
+        </div>
+        <div class="traffic-perf-body">
+          <div class="traffic-perf-table-wrap">
+            <div class="leaderboard-table" id="leaderboard-table"></div>
+          </div>
+          <div class="traffic-perf-map-wrap">
+            <div id="store-map" style="height: 100%; min-height: 380px; border-radius: 8px;"></div>
+            <button class="map-reset-btn" id="traffic-map-reset-btn" title="Reset map view">
+              <span class="material-symbols-outlined">zoom_out_map</span> Reset
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Distribution modals injected here by distribution-modals.js -->
+    <div id="modals-container"></div>
+  </main>
+
+  <!-- ============================================================
+       SCRIPTS — Distribution only (no engagement modules needed)
+       ============================================================ -->
+  <script src="js/vendor/echarts.min.js"></script>
+  <script src="js/vendor/leaflet.min.js"></script>
+
+  <script src="js/shared/chart-colors.js"></script>
+
+  <script src="js/data/distribution-entities.js?v=7"></script>
+  <script src="js/data/distribution-records.js?v=7"></script>
+  <script src="js/data/distribution-data.js?v=7"></script>
+
+  <script src="js/distribution/store-map.js?v=7"></script>
+  <script src="js/distribution/distribution.js?v=7"></script>
+  <script src="js/distribution/distribution-modals.js?v=7"></script>
+
+  <script src="js/header-slide.js"></script>
+  <script src="js/distribution/distribution-page-app.js?v=7"></script>
+
+</body>
+</html>

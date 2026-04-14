@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "analytics-combined",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "-p", "8082", "--no-clipboard", "--no-etag", "."],
+      "port": 8082
+    }
+  ]
+}

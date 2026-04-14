@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Engagement — Grid Inquiry | Analytics Dashboard</title>
+
+  <!-- Google Material Symbols -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/design-tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/context-bar.css">
+  <link rel="stylesheet" href="css/detail-panel.css">
+  <link rel="stylesheet" href="css/engagement.css">
+</head>
+<body>
+
+<div class="dh-top-bar">
+  <div class="dh-top-bar__left">
+    <img src="assets/ideal-sale-logo.svg" alt="ideal.sale" class="dh-top-bar__logo">
+    <div class="dh-top-bar__node">
+      <div class="dh-top-bar__node-icon"><span class="material-symbols-outlined">image</span></div>
+      <div class="dh-top-bar__node-info">
+        <span class="dh-top-bar__node-brand">Ideal-Brand</span>
+        <span class="dh-top-bar__node-name">All Stores</span>
+      </div>
+      <button class="dh-top-bar__change-btn">Change <span class="material-symbols-outlined">expand_more</span></button>
+    </div>
+  </div>
+  <div class="dh-top-bar__right">
+    <span class="dh-top-bar__user"><span class="dh-top-bar__user-label">User: </span>Adam Zimmerman</span>
+    <button class="dh-top-bar__logout"><span>Logout</span> <span class="material-symbols-outlined">logout</span></button>
+  </div>
+</div>
+
+<div id="engagement-dashboard">
+
+  <!-- ============================================================
+       HEADER
+       ============================================================ -->
+  <header class="header">
+
+    <div class="topbar">
+      <div class="topbar__left">
+
+        <div class="brand">
+          <h1 class="title">Analytics Dashboard</h1>
+        </div>
+        <span class="topbar__separator">|</span>
+
+        <!-- Dashboard Switcher -->
+        <div class="dashboard-switcher" id="dashboard-switcher">
+          <button class="performance-dropdown" id="performance-type-dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="performance-dropdown__text">Engagement</span>
+            <span class="material-symbols-outlined">expand_more</span>
+          </button>
+          <div class="dashboard-switcher__menu" id="dashboard-menu" role="menu">
+            <button class="dashboard-switcher__item active" role="menuitem">
+              <span class="material-symbols-outlined">monitoring</span>
+              Engagement
+            </button>
+            <a class="dashboard-switcher__item" data-href="distribution-media.html" role="menuitem">
+              <span class="material-symbols-outlined">campaign</span>
+              Distribution
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- View Modes -->
+      <div class="view-modes">
+        <div class="mode-group mode-group--base" data-mode="base">
+          <a href="engagement-promotions.html" class="mode-btn mode-btn--primary" data-mode="base" aria-label="Base view">
+            <span class="material-symbols-outlined">view_list</span>
+            BASE
+          </a>
+          <div class="mode-subtabs" role="tablist" style="display: none;">
+            <a href="engagement-circulars.html" class="subtab" data-view="circulars" role="tab">Circulars</a>
+            <a href="engagement-categories.html" class="subtab" data-view="categories" role="tab">Categories</a>
+            <a href="engagement-promotions.html" class="subtab" data-view="promotions" role="tab">Promotions</a>
+          </div>
+        </div>
+        <a href="engagement-grid.html" class="mode-btn mode-btn--outline active" data-mode="grid" aria-label="Data grid view">
+          <span class="material-symbols-outlined">table_chart</span>
+          GRID
+        </a>
+        <a href="engagement-compare.html" class="mode-btn mode-btn--outline" data-mode="compare" aria-label="Comparison view">
+          <span class="material-symbols-outlined">compare</span>
+          COMPARE
+        </a>
+      </div>
+    </div>
+
+    <!-- Context Row -->
+    <div class="context-row">
+
+      <button class="context-card context-card--date" id="date-selector" aria-label="Select date range">
+        <div class="card-label">Date Range</div>
+        <div class="card-row">
+          <div class="card-icon">
+            <span class="material-symbols-outlined">calendar_month</span>
+          </div>
+          <div class="card-content">
+            <div class="card-value" id="context-date-value">Week 47</div>
+            <div class="card-sub" id="context-date-sub">Nov 18–24, 2025</div>
+          </div>
+          <span class="card-arrow">
+            <span class="material-symbols-outlined">expand_more</span>
+          </span>
+        </div>
+      </button>
+
+      <button class="context-card" id="entity-selector" aria-label="Select entity">
+        <div class="card-label">Entity</div>
+        <div class="card-row">
+          <div class="card-icon card-icon--entity">
+            <span class="material-symbols-outlined">corporate_fare</span>
+          </div>
+          <div class="card-content">
+            <div class="card-breadcrumb" id="context-entity-breadcrumb">BRAND</div>
+            <div class="card-value" id="context-entity-value">Grocery Holdings Corp</div>
+            <div class="card-sub" id="context-entity-sub">27 locations</div>
+          </div>
+          <span class="card-arrow">
+            <span class="material-symbols-outlined">expand_more</span>
+          </span>
+        </div>
+      </button>
+
+      <div class="filter-group">
+        <div class="filter-label">Filters</div>
+        <div class="filter-chips" id="filter-chips">
+          <button class="add-filter" id="add-filter-btn" aria-label="Add filter">
+            <span class="material-symbols-outlined">add</span>
+            Add Filter
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </header>
+
+  <!-- ============================================================
+       MAIN CONTENT — Grid Inquiry (Full Width)
+       ============================================================ -->
+  <main class="layout layout--grid" id="grid-layout">
+    <section class="panel panel--grid-full" role="main" aria-label="Data Grid">
+      <div class="grid-controls">
+        <div class="grid-controls__left">
+          <span class="grid-label">GRID</span>
+        </div>
+        <div class="grid-controls__center">
+          <span class="showing-count">Total Promotions: <span id="grid-record-count">0</span></span>
+          <div class="topn-selector">
+            <select id="grid-topn-select" class="topn-select" onchange="changeGridRowsPerPage(this.value)">
+              <option value="25" selected>Show 25</option>
+              <option value="50">Show 50</option>
+              <option value="100">Show 100</option>
+              <option value="250">Show 250</option>
+              <option value="all">Show All</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid-controls__right">
+          <button class="panel-action-btn" id="grid-export-btn" onclick="exportGridToCSV()" aria-label="Export to CSV">
+            <span class="material-symbols-outlined">download</span>
+            Export CSV
+          </button>
+          <div class="grid-columns-toggle">
+            <button class="panel-action-btn" id="grid-columns-btn" aria-label="Toggle column visibility">
+              <span class="material-symbols-outlined">view_column</span>
+              Columns
+              <span class="material-symbols-outlined">expand_more</span>
+            </button>
+            <div class="grid-columns-dropdown" id="grid-columns-dropdown">
+              <div class="grid-columns-dropdown__header">
+                <span>Show/Hide Columns</span>
+                <button class="grid-columns-reset" onclick="resetGridColumns()">Reset</button>
+              </div>
+              <div class="grid-columns-dropdown__list" id="grid-columns-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="grid-table-wrapper" id="grid-table-wrapper">
+        <table class="grid-table" id="grid-data-table">
+          <thead id="grid-table-head"></thead>
+          <tbody id="grid-table-body"></tbody>
+        </table>
+      </div>
+      <div class="grid-footer">
+        <div class="grid-footer__left">
+          <span class="grid-footer__label">View</span>
+          <select class="grid-rows-select" id="grid-rows-select" onchange="changeGridRowsPerPage(this.value)">
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+          <span class="grid-footer__label">rows per page</span>
+        </div>
+        <div class="grid-footer__center">
+          <div class="grid-pagination" id="grid-pagination">
+            <button class="grid-pagination__btn" id="grid-prev-btn" onclick="gridPrevPage()" disabled><span class="material-symbols-outlined">chevron_left</span></button>
+            <span class="grid-pagination__info" id="grid-page-info">Page 1 of 1</span>
+            <button class="grid-pagination__btn" id="grid-next-btn" onclick="gridNextPage()" disabled><span class="material-symbols-outlined">chevron_right</span></button>
+          </div>
+        </div>
+        <div class="grid-footer__right">
+          <span class="grid-footer__range" id="grid-range-info">1-25 of 0</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================================
+       MODALS
+       ============================================================ -->
+
+  <!-- Date Range Picker Modal -->
+  <div class="modal-overlay" id="date-picker-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-header-title">
+          <span class="material-symbols-outlined">calendar_month</span>
+          <h3 class="modal-title">Select Date Range</h3>
+        </div>
+        <button class="modal-close" onclick="closeDatePicker()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="date-picker-tabs">
+          <button class="date-picker-tab active" data-tab="week" onclick="switchDateTab('week')">By Week</button>
+          <button class="date-picker-tab" data-tab="custom" onclick="switchDateTab('custom')">Custom Range</button>
+        </div>
+        <div class="date-tab-content active" id="week-tab-content">
+          <div class="week-search-row">
+            <div class="week-search">
+              <span class="material-symbols-outlined">search</span>
+              <input type="text" id="week-search-input" placeholder="Search weeks..." oninput="filterWeeks(this.value)">
+            </div>
+            <div id="week-year-selector"></div>
+          </div>
+          <div class="week-list" id="week-list"></div>
+        </div>
+        <div class="date-tab-content" id="custom-tab-content">
+          <div class="custom-date-inputs">
+            <div class="date-input-group">
+              <label>Start Date</label>
+              <input type="date" id="custom-start-date" value="2025-11-18">
+            </div>
+            <div class="date-input-group">
+              <label>End Date</label>
+              <input type="date" id="custom-end-date" value="2025-11-24">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer modal-footer--right">
+        <button class="modal-btn modal-btn--secondary" onclick="closeDatePicker()">Cancel</button>
+        <button class="modal-btn modal-btn--primary" onclick="applyDateSelection()">Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Entity Selector Modal -->
+  <div class="modal-overlay" id="entity-selector-modal">
+    <div class="modal modal--extra-wide">
+      <div class="modal-header">
+        <div class="modal-header-title">
+          <span class="material-symbols-outlined">store</span>
+          <h3 class="modal-title">Select Entity</h3>
+        </div>
+        <button class="modal-close" onclick="closeEntitySelector()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="modal-body modal-body--no-padding">
+        <div class="entity-tabs" style="padding: 0 var(--space-6);">
+          <button class="entity-tab active" data-tab="nodes" onclick="switchEntityTab('nodes')">
+            <span class="material-symbols-outlined">account_tree</span>
+            Nodes
+          </button>
+          <button class="entity-tab" data-tab="groups" onclick="switchEntityTab('groups')">
+            <span class="material-symbols-outlined">workspaces</span>
+            Groups
+          </button>
+        </div>
+        <div class="entity-tab-content active" id="nodes-tab-content">
+          <div class="entity-search" style="margin: var(--space-4) var(--space-6);">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" id="entity-search-input" placeholder="Search entities..." oninput="filterEntities(this.value)">
+          </div>
+          <div class="tree-table-container">
+            <table class="tree-table">
+              <thead>
+                <tr>
+                  <th class="tree-col-name">Name</th>
+                  <th class="tree-col-type">Type</th>
+                  <th class="tree-col-address">Address</th>
+                  <th class="tree-col-subdomain">Subdomain</th>
+                  <th class="tree-col-path">Path</th>
+                </tr>
+              </thead>
+              <tbody id="entity-tree-body"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="entity-tab-content" id="groups-tab-content">
+          <div class="entity-search" style="margin: var(--space-4) var(--space-6);">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" id="group-search-input" placeholder="Search groups..." oninput="filterGroups(this.value)">
+          </div>
+          <div class="group-list" id="group-list" style="padding: 0 var(--space-6);"></div>
+          <div class="group-actions" style="padding: var(--space-4) var(--space-6);">
+            <button class="create-group-btn" onclick="openCreateGroupModal()">
+              <span class="material-symbols-outlined">add</span>
+              Create New Group
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer modal-footer--right">
+        <button class="modal-btn modal-btn--secondary" onclick="closeEntitySelector()">Cancel</button>
+        <button class="modal-btn modal-btn--primary" onclick="applyEntitySelection()">Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Filter Modal -->
+  <div class="modal-overlay" id="add-filter-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Add Filter</h3>
+        <button class="modal-close" onclick="closeFilterModal()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="filter-type-select">
+          <label>Filter Type</label>
+          <div class="filter-type-buttons">
+            <button class="filter-type-btn active" data-type="category" onclick="selectFilterType(this)">
+              <span class="material-symbols-outlined">category</span>
+              Category
+            </button>
+            <button class="filter-type-btn" data-type="deal" onclick="selectFilterType(this)">
+              <span class="material-symbols-outlined">local_offer</span>
+              Deal Type
+            </button>
+            <button class="filter-type-btn" data-type="size" onclick="selectFilterType(this)">
+              <span class="material-symbols-outlined">aspect_ratio</span>
+              Card Size
+            </button>
+          </div>
+        </div>
+        <div class="filter-value-select active" id="category-options">
+          <label>Select Category</label>
+          <div class="filter-options" id="category-filter-options"></div>
+        </div>
+        <div class="filter-value-select" id="deal-options">
+          <label>Select Deal Type</label>
+          <div class="filter-options" id="deal-filter-options"></div>
+        </div>
+        <div class="filter-value-select" id="size-options">
+          <label>Select Card Size</label>
+          <div class="filter-options" id="size-filter-options"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn modal-btn--secondary" onclick="closeFilterModal()">Cancel</button>
+        <button class="modal-btn modal-btn--primary" onclick="applyFilter()">Add Filter</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /#engagement-dashboard -->
+
+  <!-- ============================================================
+       SCRIPTS
+       ============================================================ -->
+  <script src="js/vendor/echarts.min.js"></script>
+  <script src="js/shared/chart-colors.js"></script>
+  <script src="js/data/engagement-promotions.js"></script>
+  <script src="js/data/engagement-mock-data.js"></script>
+  <script src="js/engagement/cache-manager.js"></script>
+  <script src="js/engagement/data-service.js"></script>
+  <script src="js/engagement/state-manager.js"></script>
+  <script src="js/engagement/shared-core.js"></script>
+  <script src="js/engagement/shared-modals.js"></script>
+  <script src="js/engagement/shared-filters.js"></script>
+  <script src="js/engagement/shared-perf-charts.js"></script>
+  <script src="js/engagement/grid-inquiry.js"></script>
+  <script src="js/header-slide.js"></script>
+  <script src="js/engagement/engagement-page-app.js"></script>
+
+</body>
+</html>

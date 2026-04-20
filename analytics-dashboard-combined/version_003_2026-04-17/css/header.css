@@ -1,0 +1,653 @@
+/**
+ * Header Component Styles
+ * Extracted from main styles.css for component-based architecture
+ */
+
+/* ISC Top Bar — static replica of dh-top-bar */
+.dh-top-bar {
+  width: 100%;
+  height: 54px;
+  background-color: #414042;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.dh-top-bar__left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.dh-top-bar__logo {
+  height: 42px;
+}
+
+.dh-top-bar__node {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dh-top-bar__node-icon {
+  width: 42px;
+  height: 42px;
+  background: #5a5a5c;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9a9a9c;
+  font-size: 22px;
+}
+
+.dh-top-bar__node-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+
+.dh-top-bar__node-brand {
+  font-size: 12px;
+  color: #ababab;
+}
+
+.dh-top-bar__node-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+}
+
+.dh-top-bar__change-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #ec1c24;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.dh-top-bar__change-btn .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.dh-top-bar__right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dh-top-bar__user {
+  color: white;
+  font-size: 14px;
+}
+
+.dh-top-bar__user-label {
+  color: #ababab;
+  font-style: italic;
+}
+
+.dh-top-bar__logout {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid #666;
+  border-radius: 6px;
+  color: white;
+  padding: 5px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.dh-top-bar__logout:hover {
+  background-color: #212121;
+}
+
+.dh-top-bar__logout .material-symbols-outlined {
+  font-size: 16px;
+  text-decoration: none;
+}
+
+/* Top Bar: Branding + Actions */
+.header {
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  position: sticky;
+  top: 0;
+  z-index: 21;
+  /* Scroll-hide animation — matches DC2 HeaderSlideService (UX-803) */
+  transition: transform 0.35s ease-in-out, margin-top 0.35s ease-in-out;
+  will-change: transform;
+}
+
+/* Mirrors DC2: translateY slides header off-screen; negative margin-top reclaims
+   the flow space so content fills the gap (no blank strip left behind). */
+.header--scrolled-away {
+  transform: translateY(-100%);
+  margin-top: calc(-1 * var(--header-height, 0px));
+  pointer-events: none;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+}
+
+.topbar__left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.topbar__separator {
+  color: var(--color-gray-300);
+  font-size: var(--font-size-lg);
+  font-weight: 300;
+  margin: 0 var(--space-1);
+}
+
+.topbar__actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.header-share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.header-share-btn:hover {
+  color: var(--color-primary-600);
+  border-color: var(--color-primary-600);
+  background: var(--color-primary-50);
+}
+
+.header-share-btn .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.performance-dropdown {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.performance-dropdown:hover {
+  color: var(--color-primary-600);
+}
+
+.performance-dropdown .material-symbols-outlined {
+  font-size: 20px;
+  color: var(--color-text-secondary);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+/* View Modes */
+.view-modes {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-2);
+}
+
+.mode-group {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.mode-group--base .mode-btn--primary {
+  border-radius: 0;
+  border: none;
+  background-color: white;
+}
+
+.mode-group--base.active .mode-btn--primary,
+.mode-group--base .mode-btn--primary.active {
+  background-color: #2563EB;
+  color: white;
+}
+
+.mode-subtabs {
+  display: flex;
+  align-items: center;
+  border-left: 1px solid var(--color-gray-200);
+}
+
+.subtab {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.subtab:hover {
+  color: var(--color-text-primary);
+}
+
+.subtab.active {
+  color: #2563EB;
+  font-weight: var(--font-weight-semibold);
+}
+
+.mode-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.mode-btn .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.mode-btn--outline {
+  background: white;
+  border: 1px solid var(--color-gray-200);
+}
+
+.mode-btn--outline:hover {
+  background-color: var(--color-gray-50);
+  border-color: var(--color-gray-300);
+}
+
+.mode-btn--outline.active {
+  background-color: var(--color-gray-900);
+  color: white;
+  border-color: var(--color-gray-900);
+}
+
+.mode-btn:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+/* Distribution Section Tabs — left-aligned in topbar after the dropdown */
+.dist-section-tabs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.dist-tab {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.dist-tab .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.dist-tab:hover {
+  background: var(--color-gray-100);
+  color: var(--color-text-primary);
+}
+
+.dist-tab.active {
+  background: var(--color-primary-50);
+  color: var(--color-primary-600);
+  font-weight: var(--font-weight-semibold);
+}
+
+.dist-tab:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+/* When tabs are <a> links instead of <button> elements */
+/* When tabs / switcher items are <a> links instead of <button> elements */
+a.dist-tab,
+a.dashboard-switcher__item {
+  text-decoration: none;
+}
+
+/* Context Row: Foundation Context + Filter Chips */
+.context-row {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  background: linear-gradient(180deg, var(--color-gray-50), var(--color-surface));
+}
+
+/* Context Cards (Date & Entity) */
+.context-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background-color: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  width: 30%;
+  min-width: 220px;
+  flex-shrink: 0;
+  text-align: left;
+}
+
+.context-card:hover {
+  border-color: var(--color-primary-400);
+  box-shadow: var(--shadow-md);
+}
+
+.context-card:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+  border-color: var(--color-primary-500);
+}
+
+.card-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.card-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.card-icon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-600);
+  border-radius: var(--radius-lg);
+  flex-shrink: 0;
+}
+
+.card-icon--entity {
+  background-color: var(--color-success-100);
+  color: var(--color-success-600);
+}
+
+.card-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-breadcrumb {
+  font-size: 10px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-tertiary);
+  letter-spacing: 0.03em;
+  margin-bottom: 2px;
+}
+
+.card-value {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  line-height: 1.2;
+  margin-bottom: 2px;
+}
+
+.card-sub {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.card-arrow {
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
+}
+
+/* Filter Group */
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background-color: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  flex: 1;
+  min-width: 240px;
+}
+
+.filter-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.filter-chips {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+/* Filter Chip Styles */
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+}
+
+.filter-chip button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  padding: 0;
+}
+
+.filter-chip--category {
+  background-color: var(--color-primary-50);
+  border: 1px solid var(--color-gray-100);
+  color: var(--color-gray-700);
+}
+
+.filter-chip--category button {
+  background-color: var(--color-gray-100);
+  color: var(--color-gray-700);
+}
+
+.filter-chip--category button:hover {
+  background-color: var(--color-primary-300);
+}
+
+.filter-chip--deal {
+  background-color: var(--color-success-50);
+  border: 1px solid var(--color-success-200);
+  color: var(--color-success-700);
+}
+
+.filter-chip--deal button {
+  background-color: var(--color-success-200);
+  color: var(--color-success-700);
+}
+
+.filter-chip--deal button:hover {
+  background-color: var(--color-success-300);
+}
+
+.filter-chip--size {
+  background-color: var(--color-warning-50);
+  border: 1px solid var(--color-warning-200);
+  color: var(--color-warning-700);
+}
+
+.filter-chip--size button {
+  background-color: var(--color-warning-200);
+  color: var(--color-warning-700);
+}
+
+.filter-chip--size button:hover {
+  background-color: var(--color-warning-300);
+}
+
+/* Add Filter Button */
+.add-filter {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-primary-600);
+  background-color: transparent;
+  border: 2px dashed var(--color-primary-300);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.add-filter:hover {
+  background-color: var(--color-primary-50);
+  border-style: solid;
+}
+
+.add-filter:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+/* Hide filters in Distribution (no filter concept there) */
+.header--distribution .filter-group {
+  display: none;
+}
+
+/* Dashboard Switcher Dropdown */
+.dashboard-switcher {
+  position: relative;
+}
+
+.dashboard-switcher__menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 0;
+  min-width: 200px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+  padding: var(--space-1);
+}
+
+.dashboard-switcher__menu.open {
+  display: block;
+}
+
+.dashboard-switcher__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: left;
+}
+
+.dashboard-switcher__item:hover {
+  background-color: var(--color-gray-50);
+  color: var(--color-text-primary);
+}
+
+.dashboard-switcher__item.active {
+  background-color: var(--color-primary-50);
+  color: var(--color-primary-600);
+  font-weight: var(--font-weight-semibold);
+}
+
+.dashboard-switcher__item .material-symbols-outlined {
+  font-size: 20px;
+}

@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/distribution.css">
+  <link rel="stylesheet" href="css/distribution.css?v=8">
 </head>
 <body data-dist-page="media">
 
@@ -149,8 +149,21 @@
       <!-- Compact Hero: 4 KPI cards (Budget, Impressions, CTR, CPV) -->
       <div class="media-hero media-hero--compact" id="media-hero"></div>
 
+      <!-- Narrative slot (phase 2, gated by FEATURES.narrative) -->
+      <div class="insight-banner" data-narrative-section="media" hidden></div>
+
       <!-- Performance Ranking divider -->
       <div class="level-divider">Performance Ranking</div>
+
+      <!-- Creative Coverage Key: shows how many creatives are displayed per entity -->
+      <details class="creative-coverage-key" id="creative-coverage-key">
+        <summary class="creative-coverage-key__summary">
+          <span class="material-symbols-outlined" style="font-size:16px;vertical-align:-3px;margin-right:4px;">key</span>
+          Creative Coverage by Entity
+          <span class="creative-coverage-key__hint">— how many creatives show for each entity this week</span>
+        </summary>
+        <div class="creative-coverage-key__body" id="creative-coverage-key-body"></div>
+      </details>
 
       <!-- Creative List: horizontal carousel of variant cards -->
       <div class="creative-list" id="creative-list"></div>
@@ -198,6 +211,8 @@
   <script src="js/vendor/echarts.min.js"></script>
   <script src="js/vendor/leaflet.min.js"></script>
 
+  <script src="js/shared/app-config.js"></script>
+  <script src="js/shared/narrative-engine.js"></script>
   <script src="js/shared/chart-colors.js"></script>
 
   <script src="js/data/distribution-entities.js?v=4"></script>

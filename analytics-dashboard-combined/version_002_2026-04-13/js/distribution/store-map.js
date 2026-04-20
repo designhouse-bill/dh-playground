@@ -66,7 +66,7 @@ const StoreMap = (function() {
     }).setView([28.5, -82.5], 7);
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://carto.com/">CartoDB</a> | Google Maps in production',
+      attribution: '&copy; <a href="https://carto.com/">CartoDB</a>',
       subdomains: 'abcd',
       maxZoom: 19
     }).addTo(map);
@@ -338,7 +338,7 @@ const StoreMap = (function() {
     markersLayer.eachLayer(marker => {
       if (marker.storeId === storeId) {
         var ll = marker.getLatLng();
-        map.setView(ll, 12, { animate: true });
+        if (!opts.skipZoom) map.setView(ll, 12, { animate: true });
         marker.openPopup();
         // Show proximity rings if on traffic page
         if (opts.showRings !== false) {

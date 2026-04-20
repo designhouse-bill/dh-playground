@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Distribution — Store Visitation | Analytics Dashboard</title>
+
+  <!-- Google Material Symbols -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="vendor/leaflet.min.css">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/design-tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/context-bar.css">
+  <link rel="stylesheet" href="css/detail-panel.css">
+  <link rel="stylesheet" href="css/distribution.css?v=11">
+</head>
+<body data-dist-page="visitation">
+
+  <div class="dh-top-bar">
+    <div class="dh-top-bar__left">
+      <img src="assets/ideal-sale-logo.svg" alt="ideal.sale" class="dh-top-bar__logo">
+      <div class="dh-top-bar__node">
+        <div class="dh-top-bar__node-icon"><span class="material-symbols-outlined">image</span></div>
+        <div class="dh-top-bar__node-info">
+          <span class="dh-top-bar__node-brand">Ideal-Brand</span>
+          <span class="dh-top-bar__node-name">All Stores</span>
+        </div>
+        <button class="dh-top-bar__change-btn">Change <span class="material-symbols-outlined">expand_more</span></button>
+      </div>
+    </div>
+    <div class="dh-top-bar__right">
+      <span class="dh-top-bar__user"><span class="dh-top-bar__user-label">User: </span>Adam Zimmerman</span>
+      <button class="dh-top-bar__logout"><span>Logout</span> <span class="material-symbols-outlined">logout</span></button>
+    </div>
+  </div>
+
+  <header class="header header--distribution">
+
+    <div class="topbar">
+      <div class="topbar__left">
+
+        <div class="brand">
+          <h1 class="title">Analytics Dashboard</h1>
+        </div>
+        <span class="topbar__separator">|</span>
+
+        <!-- Dashboard Switcher -->
+        <div class="dashboard-switcher" id="dashboard-switcher">
+          <button class="performance-dropdown" id="performance-type-dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="performance-dropdown__text">Distribution</span>
+            <span class="material-symbols-outlined">expand_more</span>
+          </button>
+          <div class="dashboard-switcher__menu" id="dashboard-menu" role="menu">
+            <a class="dashboard-switcher__item" data-href="engagement-promotions.html" role="menuitem">
+              <span class="material-symbols-outlined">monitoring</span>
+              Engagement
+            </a>
+            <button class="dashboard-switcher__item active" role="menuitem">
+              <span class="material-symbols-outlined">campaign</span>
+              Distribution
+            </button>
+          </div>
+        </div>
+
+        <!-- Distribution Section Tabs -->
+        <div class="dist-section-tabs" id="dist-section-tabs">
+          <a class="dist-tab active" href="distribution-visitation.html">
+            <span class="material-symbols-outlined">store</span>
+            Store Visitation
+          </a>
+          <a class="dist-tab" href="distribution-media.html">
+            <span class="material-symbols-outlined">campaign</span>
+            Media Buy
+          </a>
+          <a class="dist-tab" href="distribution-traffic.html">
+            <span class="material-symbols-outlined">trending_up</span>
+            Traffic Share
+          </a>
+        </div>
+
+      </div>
+
+      <div class="topbar__actions">
+        <button class="header-share-btn" id="header-share-btn">
+          <span class="material-symbols-outlined">share</span>
+          Share
+        </button>
+      </div>
+    </div>
+
+    <!-- Context Row -->
+    <div class="context-row">
+      <button class="context-card context-card--date" id="date-selector" aria-label="Select date range">
+        <div class="card-label">Date Range</div>
+        <div class="card-row">
+          <div class="card-icon">
+            <span class="material-symbols-outlined">calendar_month</span>
+          </div>
+          <div class="card-content">
+            <div class="card-value" id="context-date-value">Week 2</div>
+            <div class="card-sub" id="context-date-sub">Jan 7 – Jan 13, 2026</div>
+          </div>
+          <span class="card-arrow">
+            <span class="material-symbols-outlined">expand_more</span>
+          </span>
+        </div>
+      </button>
+
+      <button class="context-card" id="entity-selector" aria-label="Select entity">
+        <div class="card-label">Entity</div>
+        <div class="card-row">
+          <div class="card-icon card-icon--entity">
+            <span class="material-symbols-outlined">corporate_fare</span>
+          </div>
+          <div class="card-content">
+            <div class="card-breadcrumb" id="context-entity-breadcrumb">BRAND</div>
+            <div class="card-value" id="context-entity-value">Southeastern Grocers</div>
+            <div class="card-sub" id="context-entity-sub">37 stores · Florida Pilot</div>
+          </div>
+          <span class="card-arrow">
+            <span class="material-symbols-outlined">expand_more</span>
+          </span>
+        </div>
+      </button>
+    </div>
+
+  </header>
+
+  <!-- ============================================================
+       Store Visitation — "Are our media campaigns driving store visits?"
+       ============================================================ -->
+  <main>
+    <section class="dist-section active" id="section-visitation">
+
+      <!-- Hero stat: narrative left + single hero metric right, light blue accent -->
+      <div class="hero-stat">
+        <div class="narrative-header">
+          <h1 class="narrative-header__title">Store Visitation</h1>
+          <div class="narrative-header__text">
+            <h2 class="narrative-header__question">Are our media campaigns driving store visits?</h2>
+            <p class="narrative-header__subtitle">Visitors attributed to paid media exposure</p>
+          </div>
+        </div>
+        <div class="stat-strip" id="visitation-stat-strip">
+          <!-- Populated by JS: Gross Visits (composition pills hidden via CSS nth-child) -->
+        </div>
+      </div>
+
+      <!-- Narrative slot (phase 2, gated by FEATURES.narrative) -->
+      <div class="insight-banner" data-narrative-section="visitation" hidden></div>
+
+      <!-- View Toggle: Current (snapshot) vs Trend (over time) -->
+      <div class="tabset">
+      <div class="tabset__tabs perf-subtabs" id="visitation-view-toggle">
+        <button class="perf-subtab active" data-view="current">
+          <span class="material-symbols-outlined">donut_large</span> Current Composition
+        </button>
+        <button class="perf-subtab" data-view="trend">
+          <span class="material-symbols-outlined">trending_up</span> Trend Over Time
+        </button>
+      </div>
+      <div class="tabset__body">
+
+      <!-- ═══ Current View (snapshot) — donut + segment cards ═══ -->
+      <div class="visitation-view visitation-view--current active" id="visitation-current">
+        <div class="chart-card visitation-current-panel">
+          <div class="visitation-composition-row">
+            <div class="visitation-donut-card">
+              <div class="chart-card__header">
+                <h3 class="panel-label">Visit Frequency</h3>
+              </div>
+              <div id="chart-visit-donut" style="height: 320px;"></div>
+            </div>
+            <div class="visitation-segment-card">
+              <div class="chart-card__header">
+                <div>
+                  <h3 class="panel-label">Segment Breakdown</h3>
+                  <p class="panel-subtitle">Click a donut segment to highlight — volume and trend per shopper type</p>
+                </div>
+              </div>
+              <div class="segment-detail-cards" id="segment-detail-cards"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ Trend View (over time) — stacked bars with duration presets ═══ -->
+      <div class="visitation-view visitation-view--trend" id="visitation-trend">
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <h3 class="panel-label">Visit Frequency Over Time</h3>
+            <div class="chart-card__header-right">
+              <div class="duration-presets" id="duration-presets">
+                <button class="duration-preset active" data-duration="1w">1 Week</button>
+                <button class="duration-preset" data-duration="1m">4 Week <span class="duration-preset__sub">(Month)</span></button>
+                <button class="duration-preset" data-duration="1q">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
+                <button class="duration-preset" data-duration="1y">1 Year</button>
+              </div>
+              <div class="year-granularity" id="year-granularity" style="display:none;">
+                <button class="year-gran-btn active" data-gran="quarter">by quarter</button>
+                <button class="year-gran-btn" data-gran="month">by month</button>
+              </div>
+              <div class="chart-legend" id="frequency-legend">
+                <span class="legend-item"><span class="legend-dot" style="background: #4272D8;"></span>New Shoppers</span>
+                <span class="legend-item"><span class="legend-dot" style="background: #F59E0B;"></span>Returning</span>
+                <span class="legend-item"><span class="legend-dot" style="background: #10B981;"></span>Loyal</span>
+              </div>
+            </div>
+          </div>
+          <div id="chart-frequency" style="height: 300px;"></div>
+        </div>
+      </div>
+
+      </div><!-- /.tabset__body -->
+      </div><!-- /.tabset (Current/Trend) -->
+
+      <!-- Performance/Demographics tab pattern removed Apr 17 (plan item 2).
+           Each panel now lives as its own full-width row below Visit Frequency,
+           consistent with the narrative-header + stat-strip shell Bill wants
+           throughout the distribution page. Tabs remain INSIDE Performance
+           (item 3: Store/Creative/Day) and INSIDE Demographics (item 7: time
+           trend views), but not at this level. -->
+
+      <!-- ═══ Row 1: Store Performance ═══ -->
+      <section class="section-row section-row--performance">
+        <header class="section-panel-header">
+          <h2 class="section-panel-header__title">Store Performance</h2>
+          <p class="section-panel-header__question">Which stores are driving the most visits?</p>
+          <p class="section-panel-header__subtitle">Per-store visitation from media-attributed shoppers</p>
+        </header>
+        <div class="store-perf-section" id="store-perf-section">
+          <!-- Plan item 3 (Apr 17): By Store / By Creative / By Day tab set.
+               Map removed — Bill committed to Max "store performance no map."
+               Charts + data grid tell the story; distance not central here.
+               Code for map kept in v2 as breadcrumb (revive if user testing
+               shows geography matters). -->
+          <div class="perf-tabs" id="perf-tabs">
+            <button class="perf-tab active" data-perf-tab="store">
+              <span class="material-symbols-outlined">store</span> By Store
+            </button>
+            <button class="perf-tab" data-perf-tab="creative">
+              <span class="material-symbols-outlined">image</span> By Creative
+            </button>
+            <button class="perf-tab" data-perf-tab="day">
+              <span class="material-symbols-outlined">calendar_view_week</span> By Day
+            </button>
+          </div>
+
+          <!-- ─── By Store tab ─── -->
+          <div class="perf-tab-pane active" data-perf-pane="store">
+            <div class="store-perf-header store-perf-header--left">
+              <div class="store-perf-actions">
+                <div class="view-toggle view-toggle--compact" id="perf-view-toggle">
+                  <button class="view-toggle__btn active" data-perf-view="bar">Bar View</button>
+                  <button class="view-toggle__btn" data-perf-view="data">Data View</button>
+                </div>
+                <span class="store-perf-more-data" id="store-perf-more-wrap" style="display:none;">
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="store-perf-more-toggle">
+                    <span class="toggle-slider"></span>
+                  </label>
+                  <span class="toggle-label">More Data</span>
+                </span>
+              </div>
+              <div>
+                <p class="panel-subtitle">Horizontal bars — one row per store, sorted by visits descending.</p>
+              </div>
+            </div>
+            <div class="store-perf-body store-perf-body--full">
+              <div class="store-perf-table-wrap store-perf-table-wrap--full">
+                <div class="store-perf-bar-view active" id="store-perf-bar-view"></div>
+                <div class="store-perf-data-view" id="store-perf-data-view">
+                  <table class="store-perf-table">
+                    <thead id="store-perf-head"></thead>
+                    <tbody id="store-perf-body"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ─── By Creative tab ─── -->
+          <div class="perf-tab-pane" data-perf-pane="creative">
+            <div class="store-perf-header">
+              <div>
+                <p class="panel-subtitle">Performance by campaign — pick a campaign to see its store-level bars. Count scales with duration (1w ≈ 6, 4w ≈ 20).</p>
+              </div>
+              <div class="store-perf-actions">
+                <select class="perf-creative-select" id="perf-creative-select">
+                  <option value="holiday-banner">Holiday Banner</option>
+                  <option value="bogo-produce">BOGO Produce</option>
+                  <option value="holiday-steak">Holiday Steak</option>
+                  <option value="value-pack">Value Pack</option>
+                  <option value="youtube-pre-roll">YouTube Pre-Roll</option>
+                </select>
+              </div>
+            </div>
+            <div class="perf-creative-body">
+              <div id="perf-creative-bars" style="min-height:320px;"></div>
+            </div>
+          </div>
+
+          <!-- ─── By Day tab ─── -->
+          <div class="perf-tab-pane" data-perf-pane="day">
+            <div class="store-perf-header">
+              <div>
+                <p class="panel-subtitle">Average visits per day-of-week across the selected duration. Trend toggle shows pattern drift over time.</p>
+              </div>
+            </div>
+            <div class="perf-day-body">
+              <div id="perf-day-bars" style="height:360px;"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Row 2: Demographics ═══ -->
+      <section class="section-row section-row--demographics">
+        <header class="section-panel-header">
+          <h2 class="section-panel-header__title">Demographics</h2>
+          <p class="section-panel-header__question">Who are our attributed shoppers?</p>
+          <p class="section-panel-header__subtitle">Demographic profile of <span id="demo-visitor-count">10,822</span> visitors — <span id="demo-entity-name">Southeastern Grocers</span>, <span id="demo-date-range">Week 2 (Jan 7–13, 2026)</span></p>
+        </header>
+        <div class="demographics-section">
+          <!-- Mirrors the Visitation tabset (Current Composition / Trend Over
+               Time). Duration presets sit on the right of the tab bar and are
+               hidden in Current view (no time axis to bucket). -->
+          <div class="tabset demo-tabset">
+            <div class="demo-tabset__header">
+              <div class="tabset__tabs perf-subtabs" id="demo-view-toggle">
+                <button class="perf-subtab active" data-demo-view="current">
+                  <span class="material-symbols-outlined">donut_large</span> Current Composition
+                </button>
+                <button class="perf-subtab" data-demo-view="trend">
+                  <span class="material-symbols-outlined">trending_up</span> Trend Over Time
+                </button>
+              </div>
+              <div class="duration-presets demo-tabset__presets" id="demo-duration-presets">
+                <button class="duration-preset" data-duration="1w">1 Week</button>
+                <button class="duration-preset active" data-duration="4w">4 Week <span class="duration-preset__sub">(Month)</span></button>
+                <button class="duration-preset" data-duration="13w">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
+                <button class="duration-preset" data-duration="1y">1 Year</button>
+              </div>
+            </div>
+            <div class="tabset__body">
+          <div class="demo-charts-grid">
+            <div class="demo-chart-card"><h4 class="demo-chart-title">Age Distribution</h4><div id="chart-demo-age-v" style="height: 200px;"></div></div>
+            <div class="demo-chart-card"><h4 class="demo-chart-title">Gender</h4><div id="chart-demo-gender-v" style="height: 200px;"></div></div>
+            <div class="demo-chart-card"><h4 class="demo-chart-title">Household Income</h4><div id="chart-demo-income-v" style="height: 200px;"></div></div>
+            <div class="demo-chart-card"><h4 class="demo-chart-title">Presence of Children</h4><div id="chart-demo-children-v" style="height: 200px;"></div></div>
+            <div class="demo-chart-card"><h4 class="demo-chart-title">Household Size</h4><div id="chart-demo-hhsize-v" style="height: 200px;"></div></div>
+            <div class="demo-chart-card"><h4 class="demo-chart-title">Homeowner Status</h4><div id="chart-demo-homeowner-v" style="height: 200px;"></div></div>
+            <div class="demo-chart-card"><h4 class="demo-chart-title">Net Worth</h4><div id="chart-demo-networth-v" style="height: 200px;"></div></div>
+            <div class="demo-chart-card"><h4 class="demo-chart-title">Marital Status</h4><div id="chart-demo-marital-v" style="height: 200px;"></div></div>
+          </div>
+            </div><!-- /.tabset__body -->
+          </div><!-- /.tabset.demo-tabset -->
+        </div>
+      </section>
+
+    </section>
+
+    <!-- Distribution modals injected here by distribution-modals.js -->
+    <div id="modals-container"></div>
+  </main>
+
+  <!-- ============================================================
+       SCRIPTS — Distribution only (no engagement modules needed)
+       ============================================================ -->
+  <script src="js/vendor/echarts.min.js"></script>
+  <script src="js/vendor/leaflet.min.js"></script>
+
+  <script src="js/shared/app-config.js"></script>
+  <script src="js/shared/narrative-engine.js"></script>
+  <script src="js/shared/chart-colors.js"></script>
+
+  <script src="js/data/distribution-entities.js?v=11"></script>
+  <script src="js/data/distribution-records.js?v=11"></script>
+  <script src="js/data/distribution-data.js?v=11"></script>
+
+  <script src="js/distribution/store-map.js?v=11"></script>
+  <script src="js/distribution/distribution.js?v=11"></script>
+  <script src="js/distribution/distribution-modals.js?v=11"></script>
+
+  <script src="js/header-slide.js"></script>
+  <script src="js/distribution/distribution-page-app.js"></script>
+
+</body>
+</html>

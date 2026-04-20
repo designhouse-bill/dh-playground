@@ -1555,11 +1555,7 @@
     var prev = document.querySelector('.store-row--selected');
     if (prev) prev.classList.remove('store-row--selected');
 
-    if (storePerfState.selectedStoreId === storeId) {
-      // Toggle off — deselect
-      resetMapView();
-      return;
-    }
+    var isSameStore = storePerfState.selectedStoreId === storeId;
 
     storePerfState.selectedStoreId = storeId;
 
@@ -1570,9 +1566,9 @@
       row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     }
 
-    // Focus map pin + show ring legend
+    // Focus map pin + show ring legend. Re-click on same pin re-opens overlay without moving map.
     if (typeof StoreMap !== 'undefined') {
-      StoreMap.highlightStore(storeId);
+      StoreMap.highlightStore(storeId, { skipZoom: isSameStore });
     }
     var ringLegend = document.getElementById('map-ring-legend');
     if (ringLegend) ringLegend.style.display = '';
@@ -2335,14 +2331,143 @@
     initDemographicCharts();
   }
 
+  // Synthetic extended trend data — generated once, sliced per duration preset.
+  // Seeded from real 5-week averages to keep baseline magnitudes realistic.
+  var _freqTrendCache = null;
+  function buildFrequencyTrendData() {
+    if (_freqTrendCache) return _freqTrendCache;
+    var real = D.visitationMetrics.weeklyTrend;
+    // Baseline averages from real data
+    var n = real.length || 1;
+    var avgZero = real.reduce(function(s,w){ return s + (w.visits_zero_prev || 0); }, 0) / n;
+    var avgOneThree = real.reduce(function(s,w){ return s + (w.visits_one_three_prev || 0); }, 0) / n;
+    var avgFourPlus = real.reduce(function(s,w){ return s + (w.visits_four_plus_prev || 0); }, 0) / n;
+
+    // Seeded pseudo-random for deterministic variance
+    function seedRand(seed) {
+      var x = Math.sin(seed) * 10000;
+      return x - Math.floor(x);
+    }
+    function vary(base, seed) {
+      return Math.round(base * (0.82 + seedRand(seed) * 0.36));
+    }
+
+    // 52 weeks (oldest first), last entry = most recent
+    var weeks52 = [];
+    for (var i = 0; i < 52; i++) {
+      var growth = 1 + (i / 52) * 0.12; // slight upward trend
+      weeks52.push({
+        idx: i,
+        label: 'Wk ' + (i - 51 + 52), // labels 1..52
+        zero: vary(avgZero * growth, i * 7 + 1),
+        oneThree: vary(avgOneThree * growth, i * 7 + 2),
+        fourPlus: vary(avgFourPlus * growth, i * 7 + 3)
+      });
+    }
+    // Overwrite the last 5 weeks with real data so the current-week tail matches known values
+    for (var r = 0; r < Math.min(real.length, 5); r++) {
+      var dst = weeks52[52 - real.length + r];
+      if (!dst) continue;
+      dst.zero = real[r].visits_zero_prev || dst.zero;
+      dst.oneThree = real[r].visits_one_three_prev || dst.oneThree;
+      dst.fourPlus = real[r].visits_four_plus_prev || dst.fourPlus;
+      dst.label = D.getWeekLabel(real[r].week);
+    }
+
+    // 7 daily bars — split the final week's totals across days
+    var lastWk = weeks52[51];
+    var dayLabels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    var dayWeights = [0.12, 0.13, 0.14, 0.14, 0.16, 0.18, 0.13];
+    var days7 = dayLabels.map(function(lbl, i) {
+      return {
+        label: lbl,
+        zero: Math.round(lastWk.zero * dayWeights[i]),
+        oneThree: Math.round(lastWk.oneThree * dayWeights[i]),
+        fourPlus: Math.round(lastWk.fourPlus * dayWeights[i])
+      };
+    });
+
+    // 12 monthly bars — aggregate weeks in groups of ~4.33
+    // Labels: last bar = current month (Jan '26), count backwards 11 months.
+    var monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var endDate = new Date();
+    var monthLabels = [];
+    for (var i = 11; i >= 0; i--) {
+      var d = new Date(endDate.getFullYear(), endDate.getMonth() - i, 1);
+      var yr = String(d.getFullYear()).slice(-2);
+      monthLabels.push(monthNames[d.getMonth()] + " '" + yr);
+    }
+    var months12 = [];
+    for (var m = 0; m < 12; m++) {
+      var startW = Math.round(m * 52 / 12);
+      var endW = Math.round((m + 1) * 52 / 12);
+      var acc = { zero: 0, oneThree: 0, fourPlus: 0 };
+      for (var w = startW; w < endW; w++) {
+        acc.zero += weeks52[w].zero;
+        acc.oneThree += weeks52[w].oneThree;
+        acc.fourPlus += weeks52[w].fourPlus;
+      }
+      months12.push({ label: monthLabels[m], zero: acc.zero, oneThree: acc.oneThree, fourPlus: acc.fourPlus });
+    }
+
+    _freqTrendCache = { weeks52: weeks52, days7: days7, months12: months12 };
+    return _freqTrendCache;
+  }
+
+  function getFrequencyBuckets(preset, yearGran) {
+    var cache = buildFrequencyTrendData();
+    switch (preset) {
+      case '1w': return cache.days7;
+      case '1m': return cache.weeks52.slice(-4);
+      case '1q': return cache.weeks52.slice(-13);
+      case '1y':
+        if (yearGran === 'month') return cache.months12;  // 12 monthly bars
+        return buildYearByQuarter(cache.weeks52);          // default: 4 quarterly bars
+      default:   return cache.months12;
+    }
+  }
+
+  function buildYearByQuarter(weeks52) {
+    var quarters = [];
+    var qLabels = ['Q1', 'Q2', 'Q3', 'Q4'];
+    for (var q = 0; q < 4; q++) {
+      var startW = q * 13;
+      var acc = { zero: 0, oneThree: 0, fourPlus: 0 };
+      for (var w = startW; w < startW + 13; w++) {
+        acc.zero += weeks52[w].zero;
+        acc.oneThree += weeks52[w].oneThree;
+        acc.fourPlus += weeks52[w].fourPlus;
+      }
+      quarters.push({ label: qLabels[q], zero: acc.zero, oneThree: acc.oneThree, fourPlus: acc.fourPlus });
+    }
+    return quarters;
+  }
+
+  function getActiveDurationPreset() {
+    var active = document.querySelector('#duration-presets .duration-preset.active');
+    return (active && active.dataset.duration) || '1y';
+  }
+
+  function getActiveYearGranularity() {
+    var active = document.querySelector('#year-granularity .year-gran-btn.active');
+    return (active && active.dataset.gran) || 'quarter';
+  }
+
   function initFrequencyChart() {
     const el = document.getElementById('chart-frequency');
     if (!el) return;
+    if (charts.frequency) { charts.frequency.dispose(); charts.frequency = null; }
     const chart = echarts.init(el);
     charts.frequency = chart;
 
-    const visitTrend = D.visitationMetrics.weeklyTrend;
-    const weeks = visitTrend.map(w => D.getWeekLabel(w.week));
+    var preset = getActiveDurationPreset();
+    var yearGran = getActiveYearGranularity();
+    var buckets = getFrequencyBuckets(preset, yearGran);
+    var labels = buckets.map(function(b) { return b.label; });
+
+    // Show/hide year granularity sub-toggle based on active preset
+    var gran = document.getElementById('year-granularity');
+    if (gran) gran.style.display = preset === '1y' ? '' : 'none';
 
     chart.setOption({
       tooltip: {
@@ -2353,7 +2478,7 @@
           params.forEach(p => total += p.value);
           let html = `<strong>${params[0].axisValue}</strong><br>`;
           params.forEach(p => {
-            const pct = ((p.value / total) * 100).toFixed(1);
+            const pct = total ? ((p.value / total) * 100).toFixed(1) : '0.0';
             html += `${p.marker} ${p.seriesName}: ${p.value.toLocaleString()} (${pct}%)<br>`;
           });
           html += `<strong>Total: ${total.toLocaleString()}</strong>`;
@@ -2361,28 +2486,28 @@
         }
       },
       grid: { left: 60, right: 20, top: 20, bottom: 40 },
-      xAxis: { type: 'category', data: weeks, axisLabel: { fontSize: 11 } },
+      xAxis: { type: 'category', data: labels, axisLabel: { fontSize: 11, rotate: labels.length > 14 ? 45 : 0 } },
       yAxis: { type: 'value', axisLabel: { formatter: '{value}' } },
       series: [
         {
           name: 'Zero Previous (30d)',
           type: 'bar',
           stack: 'visits',
-          data: visitTrend.map(w => w.visits_zero_prev),
+          data: buckets.map(function(b) { return b.zero; }),
           itemStyle: { color: ChartColors.blue }
         },
         {
           name: '1-3 Previous',
           type: 'bar',
           stack: 'visits',
-          data: visitTrend.map(w => w.visits_one_three_prev),
+          data: buckets.map(function(b) { return b.oneThree; }),
           itemStyle: { color: ChartColors.amber }
         },
         {
           name: '4+ Previous',
           type: 'bar',
           stack: 'visits',
-          data: visitTrend.map(w => w.visits_four_plus_prev),
+          data: buckets.map(function(b) { return b.fourPlus; }),
           itemStyle: { color: ChartColors.green }
         }
       ]
@@ -3245,7 +3370,7 @@
       charts = {};
 
       if (section === 'media') {
-        renderMediaHero(); renderCreativeList(); renderDeliveryTrends();
+        renderMediaHero(); renderCreativeList(); renderCreativeCoverageKey(); renderDeliveryTrends();
         renderVariantPanels();
         _level2Initialized = {}; // Reset so sparklines/funnels re-init on next expand
       } else if (section === 'visitation') {
@@ -3274,6 +3399,7 @@
       if (section === 'media') {
         renderMediaHero();
         renderCreativeList();
+        renderCreativeCoverageKey();
         renderDeliveryTrends();
         renderVariantPanels();
         initTreeTableActions();
@@ -3318,7 +3444,9 @@
      Phase 2: Performance / Demographics sub-tab toggle
      ============================================================ */
   function initPerfSubtabs() {
-    var tabs = document.querySelectorAll('.perf-subtab');
+    var container = document.getElementById('perf-subtabs');
+    if (!container) return;
+    var tabs = container.querySelectorAll('.perf-subtab');
     tabs.forEach(function(tab) {
       tab.addEventListener('click', function() {
         tabs.forEach(function(t) { t.classList.remove('active'); });
@@ -3440,9 +3568,20 @@
       btn.addEventListener('click', function() {
         presets.forEach(function(b) { b.classList.remove('active'); });
         btn.classList.add('active');
-        console.log('Duration preset:', btn.dataset.duration);
+        initFrequencyChart();
       });
     });
+    // 1-Year sub-granularity (by week | by quarter)
+    var gran = document.getElementById('year-granularity');
+    if (gran) {
+      gran.querySelectorAll('.year-gran-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          gran.querySelectorAll('.year-gran-btn').forEach(function(b) { b.classList.remove('active'); });
+          btn.classList.add('active');
+          initFrequencyChart();
+        });
+      });
+    }
   }
 
   /* ============================================================
@@ -3626,6 +3765,8 @@
      Phase 2: Demographics charts (stub with mock data)
      ============================================================ */
   function initDemographics() {
+    var TOTAL = 10822;
+    var fmt = function(n) { return n.toLocaleString(); };
     var charts = [
       { id: 'chart-demo-age-v', cats: ['18-24', '25-34', '35-44', '45-54', '55-64', '65-74', '75+'], vals: [8, 18, 22, 20, 16, 10, 6] },
       { id: 'chart-demo-gender-v', cats: ['Female', 'Male', 'Unknown'], vals: [52, 44, 4] },
@@ -3640,14 +3781,106 @@
       var el = document.getElementById(c.id);
       if (!el) return;
       var chart = echarts.init(el);
+      var cats = c.cats.slice().reverse();
+      var vals = c.vals.slice().reverse();
+      var counts = vals.map(function(v) { return Math.round(TOTAL * v / 100); });
+      var maxVal = Math.max.apply(null, vals);
       chart.setOption({
-        grid: { left: 80, right: 20, top: 10, bottom: 30 },
-        xAxis: { type: 'value', show: false },
-        yAxis: { type: 'category', data: c.cats.slice().reverse(), axisLabel: { fontSize: 11 } },
-        series: [{ type: 'bar', data: c.vals.slice().reverse(), itemStyle: { color: '#4272D8', borderRadius: [0, 3, 3, 0] }, barMaxWidth: 20 }],
-        tooltip: { trigger: 'axis' }
+        grid: { left: 90, right: 90, top: 10, bottom: 10, containLabel: false },
+        xAxis: { type: 'value', show: false, max: Math.ceil(maxVal * 1.15) },
+        yAxis: {
+          type: 'category',
+          data: cats,
+          axisLabel: { fontSize: 11, color: '#374151' },
+          axisLine: { show: false },
+          axisTick: { show: false }
+        },
+        series: [{
+          type: 'bar',
+          data: vals,
+          itemStyle: { color: '#4272D8', borderRadius: [0, 3, 3, 0] },
+          barMaxWidth: 20,
+          label: {
+            show: true,
+            position: 'right',
+            fontSize: 11,
+            color: '#374151',
+            formatter: function(p) {
+              return '{pct|' + p.value + '%} {count|· ' + fmt(counts[p.dataIndex]) + '}';
+            },
+            rich: {
+              pct: { fontWeight: 600, color: '#111827', fontSize: 11 },
+              count: { color: '#6b7280', fontSize: 10 }
+            }
+          }
+        }],
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { type: 'shadow' },
+          formatter: function(params) {
+            var p = params[0];
+            return p.name + '<br/><b>' + p.value + '%</b> · ' + fmt(counts[p.dataIndex]) + ' of ' + fmt(TOTAL) + ' visitors';
+          }
+        }
       });
     });
+  }
+
+  /* ============================================================
+     Creative Coverage Key — shows creative counts per entity
+     ============================================================ */
+  function computeEntityCreativeCoverage() {
+    if (typeof DistributionEntities === 'undefined') return null;
+    var snap = D.context;
+    var results = { all: null, brands: [], subBrands: [], stores: [] };
+
+    function countFor(id, level, name) {
+      D.setEntity(id, level, name);
+      var records = D.creativeRecords.filter(function (cr) { return cr.metrics !== null; });
+      return { id: id, level: level, name: name, count: records.length };
+    }
+
+    results.all = countFor('all', 'all', 'All Stores');
+    DistributionEntities.brands.forEach(function (b) {
+      results.brands.push(countFor(b.id, 'brand', b.name));
+    });
+    DistributionEntities.subBrands.forEach(function (sb) {
+      var brand = DistributionEntities.getBrandById(sb.brandId);
+      var name = (brand ? brand.name + ' — ' : '') + sb.name;
+      results.subBrands.push(countFor(sb.id, 'sub-brand', name));
+    });
+    DistributionEntities.stores.forEach(function (s) {
+      results.stores.push(countFor(s.id, 'store', '#' + s.storeNumber + ' ' + s.name));
+    });
+
+    // Restore original context
+    D.setEntity(snap.entityId, snap.entityLevel, snap.entityName);
+    return results;
+  }
+
+  function renderCreativeCoverageKey() {
+    var body = document.getElementById('creative-coverage-key-body');
+    if (!body) return;
+    var data = computeEntityCreativeCoverage();
+    if (!data) { body.innerHTML = ''; return; }
+
+    function groupHtml(title, rows) {
+      if (!rows.length) return '';
+      var items = rows.map(function (r) {
+        var cls = r.count === 0 ? 'cck-item cck-item--empty' : 'cck-item';
+        return '<div class="' + cls + '"><span class="cck-name">' + r.name + '</span><span class="cck-count">' + r.count + '</span></div>';
+      }).join('');
+      return '<div class="cck-group"><div class="cck-group-title">' + title + '</div><div class="cck-group-items">' + items + '</div></div>';
+    }
+
+    var html = '';
+    html += '<div class="cck-group"><div class="cck-group-title">Overall</div><div class="cck-group-items">' +
+      '<div class="cck-item cck-item--all"><span class="cck-name">' + data.all.name + '</span><span class="cck-count">' + data.all.count + '</span></div>' +
+      '</div></div>';
+    html += groupHtml('Brand', data.brands);
+    html += groupHtml('Sub-brand', data.subBrands);
+    html += groupHtml('Store', data.stores);
+    body.innerHTML = html;
   }
 
 })();

@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/distribution.css?v=7">
+  <link rel="stylesheet" href="css/distribution.css?v=8">
 </head>
 <body data-dist-page="traffic">
 
@@ -149,6 +149,9 @@
         <!-- Populated by JS: Share %, Change pp, Outperforming count -->
       </div>
 
+      <!-- Narrative slot (phase 2, gated by FEATURES.narrative) -->
+      <div class="insight-banner" data-narrative-section="traffic" hidden></div>
+
       <!-- Competitive Crossover: 5 + All Other -->
       <div class="chart-card">
         <div class="chart-card__header">
@@ -188,9 +191,11 @@
             <select class="comp-brand-filter" id="comp-brand-filter" style="display:none;">
               <option value="all">All Competitors</option>
             </select>
-            <button class="map-comp-toggle" id="comp-toggle-btn" title="Toggle competitor overlay">
-              <span class="material-symbols-outlined">storefront</span> <span id="comp-toggle-label">Competitors</span>
-            </button>
+            <!-- Overlay toggle (.map-comp-toggle) removed per Apr 17 clarification.
+                 The Our Stores | Competitors binary above is the primary view selector;
+                 overlaying the contrasting layer on top was confusing. Shape still
+                 distinguishes (circle = ours, diamond = competitor) when competitor
+                 filter dropdown focuses a single competitor. -->
           </div>
         </div>
         <div class="traffic-perf-body">
@@ -267,6 +272,8 @@
   <script src="js/vendor/echarts.min.js"></script>
   <script src="js/vendor/leaflet.min.js"></script>
 
+  <script src="js/shared/app-config.js"></script>
+  <script src="js/shared/narrative-engine.js"></script>
   <script src="js/shared/chart-colors.js"></script>
 
   <script src="js/data/distribution-entities.js?v=7"></script>

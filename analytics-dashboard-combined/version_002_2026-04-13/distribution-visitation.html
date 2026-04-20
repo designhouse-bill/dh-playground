@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/distribution.css">
+  <link rel="stylesheet" href="css/distribution.css?v=8">
 </head>
 <body data-dist-page="visitation">
 
@@ -149,8 +149,12 @@
         <!-- Populated by JS: Gross Visits, New %, Returning %, Loyal % -->
       </div>
 
+      <!-- Narrative slot (phase 2, gated by FEATURES.narrative) -->
+      <div class="insight-banner" data-narrative-section="visitation" hidden></div>
+
       <!-- View Toggle: Current (snapshot) vs Trend (over time) -->
-      <div class="perf-subtabs" id="visitation-view-toggle">
+      <div class="tabset">
+      <div class="tabset__tabs perf-subtabs" id="visitation-view-toggle">
         <button class="perf-subtab active" data-view="current">
           <span class="material-symbols-outlined">donut_large</span> Current Composition
         </button>
@@ -158,6 +162,7 @@
           <span class="material-symbols-outlined">trending_up</span> Trend Over Time
         </button>
       </div>
+      <div class="tabset__body">
 
       <!-- ═══ Current View (snapshot) — donut + segment cards ═══ -->
       <div class="visitation-view visitation-view--current active" id="visitation-current">
@@ -190,9 +195,13 @@
             <div class="chart-card__header-right">
               <div class="duration-presets" id="duration-presets">
                 <button class="duration-preset active" data-duration="1w">1 Week</button>
-                <button class="duration-preset" data-duration="1m">1 Month</button>
-                <button class="duration-preset" data-duration="1q">1 Quarter</button>
+                <button class="duration-preset" data-duration="1m">4 Week <span class="duration-preset__sub">(Month)</span></button>
+                <button class="duration-preset" data-duration="1q">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
                 <button class="duration-preset" data-duration="1y">1 Year</button>
+              </div>
+              <div class="year-granularity" id="year-granularity" style="display:none;">
+                <button class="year-gran-btn active" data-gran="quarter">by quarter</button>
+                <button class="year-gran-btn" data-gran="month">by month</button>
               </div>
               <div class="chart-legend" id="frequency-legend">
                 <span class="legend-item"><span class="legend-dot" style="background: #4272D8;"></span>New Shoppers</span>
@@ -205,8 +214,12 @@
         </div>
       </div>
 
+      </div><!-- /.tabset__body -->
+      </div><!-- /.tabset (Current/Trend) -->
+
       <!-- Sub-tabs: Performance / Demographics -->
-      <div class="perf-subtabs" id="perf-subtabs">
+      <div class="tabset">
+      <div class="tabset__tabs perf-subtabs" id="perf-subtabs">
         <button class="perf-subtab active" data-subtab="performance">
           <span class="material-symbols-outlined">bar_chart</span> Performance
         </button>
@@ -214,6 +227,7 @@
           <span class="material-symbols-outlined">group</span> Demographics
         </button>
       </div>
+      <div class="tabset__body">
 
       <!-- ═══ Performance sub-tab ═══ -->
       <div class="perf-subtab-content perf-subtab-content--performance active" id="perf-performance">
@@ -287,6 +301,9 @@
         </div>
       </div>
 
+      </div><!-- /.tabset__body -->
+      </div><!-- /.tabset (Performance/Demographics) -->
+
     </section>
 
     <!-- Distribution modals injected here by distribution-modals.js -->
@@ -299,15 +316,17 @@
   <script src="js/vendor/echarts.min.js"></script>
   <script src="js/vendor/leaflet.min.js"></script>
 
+  <script src="js/shared/app-config.js"></script>
+  <script src="js/shared/narrative-engine.js"></script>
   <script src="js/shared/chart-colors.js"></script>
 
   <script src="js/data/distribution-entities.js?v=5"></script>
   <script src="js/data/distribution-records.js?v=5"></script>
   <script src="js/data/distribution-data.js?v=5"></script>
 
-  <script src="js/distribution/store-map.js?v=5"></script>
-  <script src="js/distribution/distribution.js?v=5"></script>
-  <script src="js/distribution/distribution-modals.js?v=5"></script>
+  <script src="js/distribution/store-map.js?v=6"></script>
+  <script src="js/distribution/distribution.js?v=6"></script>
+  <script src="js/distribution/distribution-modals.js?v=6"></script>
 
   <script src="js/header-slide.js"></script>
   <script src="js/distribution/distribution-page-app.js"></script>

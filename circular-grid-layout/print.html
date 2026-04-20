@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Circular Print — UX-864</title>
+  <link rel="stylesheet" href="./styles/cards.css">
+  <link rel="stylesheet" href="./styles/print.css">
+  <style>
+    /* Inline minimal screen shell so print.html is viewable without app.css */
+    body { margin: 0; font-family: system-ui, -apple-system, sans-serif; background: #ccc; }
+    #preview { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 16px; }
+    .print-page { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+  </style>
+</head>
+<body>
+  <main id="preview"></main>
+
+  <script type="module">
+    import { paginateDocument, maxSpanForColumns } from './src/layout.js';
+    import { renderPages } from './src/render.js';
+    import { staterBros, generatePromos as sbPromos } from './src/sample-data-staterbros.js';
+    import { winnDixie, generatePromos as wdPromos } from './src/sample-data-winndixie.js';
+
+    const params = new URLSearchParams(location.search);
+    const fixture = params.get('fixture') ?? 'stater-bros';
+    const N = parseInt(params.get('cols') ?? '4', 10);
+    const R = parseInt(params.get('rows') ?? '4', 10);
+    const gridMode = params.get('grid') ?? 'strict';
+    const variant = params.get('variant') ?? 'auto';
+
+    const FIXTURES = {
+      'stater-bros': { ad: staterBros, gen: sbPromos },
+      'winn-dixie': { ad: winnDixie, gen: wdPromos },
+    };
+    const { ad, gen } = FIXTURES[fixture];
+    const categories = ad.categories;
+    const promos = gen(categories);
+    window.__categoryIdByIndex = categories.map((c) => c.id);
+
+    const { pages } = paginateDocument({
+      categories,
+      N,
+      R,
+      maxSpan: maxSpanForColumns(N),
+      packTight: true,
+    });
+
+    renderPages(pages, document.getElementById('preview'), { N, R, gridMode, promos, categories, variant });
+  </script>
+</body>
+</html>

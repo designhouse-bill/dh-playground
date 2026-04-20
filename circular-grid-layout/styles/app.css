@@ -1,0 +1,260 @@
+/* Screen-only chrome. Print styles live in print.css. */
+
+:root {
+  --ctrl-width: 340px;
+  --page-bg: #e5e7eb;
+  --page-shadow: 0 1px 3px rgba(0, 0, 0, .15), 0 4px 12px rgba(0, 0, 0, .08);
+  --ink: #111827;
+  --muted: #6b7280;
+  --accent: #2563eb;
+  --warn: #b45309;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color: var(--ink);
+  background: var(--page-bg);
+}
+
+#app {
+  display: grid;
+  grid-template-columns: var(--ctrl-width) 1fr;
+  min-height: 100vh;
+}
+
+#controls {
+  background: #fff;
+  border-right: 1px solid #d1d5db;
+  padding: 16px;
+  overflow-y: auto;
+  max-height: 100vh;
+  position: sticky;
+  top: 0;
+}
+
+#controls h1 {
+  font-size: 18px;
+  margin: 0 0 2px;
+}
+
+#controls .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0 0 14px;
+}
+
+fieldset {
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 10px 12px 12px;
+  margin: 0 0 12px;
+}
+
+legend {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+  padding: 0 4px;
+}
+
+fieldset label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+fieldset label.inline {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+fieldset label span {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+
+fieldset select,
+fieldset input[type="number"] {
+  width: 100%;
+  padding: 5px 7px;
+  font-size: 13px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background: #fff;
+}
+
+button {
+  padding: 7px 12px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
+
+#metrics {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+#metrics .warn {
+  color: var(--warn);
+  margin-top: 6px;
+}
+
+.readout {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.readout th,
+.readout td {
+  padding: 3px 4px;
+  text-align: left;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.readout th {
+  color: var(--muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 9px;
+  letter-spacing: .05em;
+}
+
+.readout td.rows {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.readout td.warn {
+  color: var(--warn);
+  font-style: italic;
+}
+
+.hint {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 10px;
+}
+
+/* Preview pane */
+
+#preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 24px;
+  overflow: auto;
+}
+
+/* On-screen page simulation — actual print sizes applied via print.css @media print. */
+
+.print-page {
+  width: 7.5in;
+  min-height: 10.5in;
+  background: #fff;
+  box-shadow: var(--page-shadow);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125in;
+  transform-origin: top center;
+}
+
+/* Scale down preview on narrower screens */
+@media (max-width: 1400px) {
+  .print-page {
+    transform: scale(0.85);
+    margin-bottom: -1.5in;
+  }
+}
+
+.category-title {
+  height: 0.4in;
+  flex-shrink: 0;
+  background: transparent;
+  color: #111827;
+  border-top: 1px solid #111827;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 0.25in 0;
+  font-size: 14pt;
+  font-weight: 700;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+}
+
+.promo-row {
+  flex: 1 1 0;
+  min-height: 1.8in;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  gap: 0.125in;
+  padding: 0 0.125in;
+}
+
+/* Mosaic fallback — CSS columns column-major. Preserved as reference only. */
+.print-page.mosaic .promo-row {
+  display: block;
+  column-count: var(--cols);
+  column-gap: 0.125in;
+}
+
+.promo-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.promo-image {
+  flex: 1 1 auto;
+  background: linear-gradient(135deg, #ddd6fe, #a5b4fc);
+  border-radius: 2px;
+  min-height: 1in;
+}
+
+.promo-body {
+  font-size: 10pt;
+}
+
+.promo-title {
+  font-weight: 600;
+  font-size: 10pt;
+  line-height: 1.2;
+}
+
+.promo-price {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 12pt;
+}
+
+.page-footer {
+  margin-top: auto;
+  padding: 4px 0.25in;
+  font-size: 9pt;
+  color: var(--muted);
+  text-align: center;
+  border-top: 1px dashed #e5e7eb;
+}

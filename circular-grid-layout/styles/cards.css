@@ -1,0 +1,296 @@
+/* Card replicas — vanilla HTML/CSS parity with DS components.
+ * Sources:
+ *   design-system/lib/print/print-deal-card/print-deal-card.component.{html,scss}
+ *   design-system/lib/print/print-coupon-card/print-coupon-card.component.{html,scss}
+ *   design-system/lib/cards/deal-card/deal-card.component.{html,scss}
+ * Keep in sync manually; not a 1:1 bundle.
+ *
+ * Token approximations (real tokens live in design-system/tokens):
+ *   --color-brand:           brand red/blue (hero title + headline bg)
+ *   --color-brand-contrast:  white on brand bg
+ *   --color-bg-secondary:    coupon bar bg (light grey)
+ *   --color-coupon:          coupon title pill bg (yellow-ish)
+ *   --color-coupon-contrast: dark text on coupon bg
+ *   --color-text:            body text
+ *   --color-text-low:        muted (date, original strike-through)
+ */
+
+:root {
+  --color-brand: #c8102e;
+  --color-brand-contrast: #ffffff;
+  --color-bg-secondary: #f3f4f6;
+  --color-coupon: #fde68a;
+  --color-coupon-contrast: #78350f;
+  --color-text: #111827;
+  --color-text-low: #9ca3af;
+  --color-image-bg: #e5e7eb;
+  --font-stack: "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ─────────────────────────────────────────────────────────── */
+/* DS: dh-print-deal-card                                       */
+/* 10pt base, floated 48pt image, title in brand color, inline  */
+/* headline pill, price + icons row, optional description.      */
+/* ─────────────────────────────────────────────────────────── */
+
+.dh-print-deal-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4pt;
+  height: 100%;
+  font-family: var(--font-stack);
+  font-size: 10pt;
+  line-height: 1.25;
+  color: var(--color-text);
+  break-inside: avoid;
+  contain: content;
+  min-width: 0;
+  padding: 0;
+}
+
+/* Hero image: inset from card top + sides, adapts vertically.
+ * Coupon bar below stays flush to card edges via coupon-text padding: 0. */
+.dh-print-deal-card .print-deal-card-image {
+  flex: 1 1 auto;
+  width: auto;
+  margin: 0;
+  min-height: 60pt;
+  max-height: 2.75in;
+  object-fit: cover;
+  border: 1pt solid silver;
+  border-radius: 0;
+  background: var(--color-image-bg);
+  overflow: hidden;
+}
+
+.dh-print-deal-card .print-deal-card-text {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4pt;
+  padding: 6pt;
+}
+
+.dh-print-deal-card .print-deal-card-title {
+  margin: 0;
+  color: var(--color-brand);
+  font-weight: bold;
+  font-size: 10pt;
+  line-height: 1.2;
+}
+
+.dh-print-deal-card .print-deal-card-headline {
+  display: inline-flex;
+  width: fit-content;
+  font-size: 8pt;
+  line-height: 1.25;
+  font-weight: bold;
+  padding: 3pt;
+  background: var(--color-brand);
+  color: var(--color-brand-contrast);
+  border-radius: 3pt;
+}
+
+.dh-print-deal-card .print-deal-card-price-and-icons {
+  display: flex;
+  gap: 3pt;
+  align-items: center;
+}
+
+.dh-print-deal-card .icon-container {
+  display: flex;
+  gap: 3pt;
+}
+
+.dh-print-deal-card .icon {
+  height: 18pt;
+  width: auto;
+}
+
+.dh-print-deal-card .print-deal-card-price-container {
+  display: flex;
+  gap: 3pt;
+  font-variant-numeric: proportional-nums lining-nums;
+}
+
+.dh-print-deal-card .print-deal-card-price {
+  font-weight: bold;
+  font-size: 12pt;
+}
+
+.dh-print-deal-card .print-deal-card-price.original {
+  color: var(--color-text-low);
+  text-decoration: line-through;
+  font-weight: normal;
+}
+
+.dh-print-deal-card .description {
+  font-size: 8pt;
+  line-height: 1.25;
+  hyphens: auto;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.dh-print-deal-card .metadata {
+  color: var(--color-text-low);
+  font-size: 8pt;
+  display: flex;
+  gap: 6pt;
+  flex-wrap: wrap;
+}
+
+/* ─────────────────────────────────────────────────────────── */
+/* DS: dh-print-coupon-card                                     */
+/* Extends print-deal-card + coupon bar section + QR group.     */
+/* ─────────────────────────────────────────────────────────── */
+
+.dh-print-coupon-card {
+  /* inherits print-deal-card base via shared markup structure */
+}
+
+.dh-print-coupon-card .coupon-text {
+  font-size: 8pt;
+  line-height: 1.25;
+}
+
+.dh-print-coupon-card .coupon-bar {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-secondary);
+  padding: 4pt;
+  border-radius: 2pt;
+  gap: 4pt;
+}
+
+.dh-print-coupon-card .coupon-bar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4pt;
+}
+
+.dh-print-coupon-card .coupon-bar-title {
+  display: flex;
+  align-items: center;
+  gap: 4pt;
+  font-size: 8pt;
+  font-weight: bold;
+  background: var(--color-coupon);
+  color: var(--color-coupon-contrast);
+  padding: 2pt 4pt;
+  border-radius: 2pt;
+  min-width: 64pt;
+  line-height: 1.25;
+}
+
+.dh-print-coupon-card .coupon-bar-title::before {
+  content: "✂";
+  font-size: 10pt;
+}
+
+.dh-print-coupon-card .coupon-bar-discount {
+  font-size: 10pt;
+  font-weight: bold;
+}
+
+/* ─────────────────────────────────────────────────────────── */
+/* DS: dh-deal-card (web/screen)                                */
+/* Container-query driven, hero media + overlaid price tag.     */
+/* Highly simplified replica — real component projects content. */
+/* ─────────────────────────────────────────────────────────── */
+
+.dh-deal-card {
+  position: relative;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  font-family: var(--font-stack);
+  border-radius: 6pt;
+  overflow: hidden;
+  container-type: size;
+  aspect-ratio: 3 / 4;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .08);
+  color: var(--color-text);
+  min-width: 0;
+}
+
+.dh-deal-card .hero {
+  position: relative;
+  grid-row: 1 / span 2;
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, #ddd6fe, #a5b4fc);
+  overflow: hidden;
+}
+
+.dh-deal-card .hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, .3), transparent 60%);
+}
+
+.dh-deal-card .headline-pill {
+  position: absolute;
+  top: 8pt;
+  left: 8pt;
+  background: var(--color-brand);
+  color: var(--color-brand-contrast);
+  padding: 2pt 6pt;
+  border-radius: 3pt;
+  font-size: 8pt;
+  font-weight: bold;
+  z-index: 2;
+}
+
+.dh-deal-card .price-tag {
+  position: absolute;
+  bottom: 8pt;
+  right: 8pt;
+  background: var(--color-brand);
+  color: var(--color-brand-contrast);
+  padding: 6pt 10pt;
+  border-radius: 4pt;
+  font-weight: bold;
+  font-size: 14pt;
+  z-index: 2;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, .15);
+}
+
+.dh-deal-card .title-overlay {
+  position: absolute;
+  bottom: 8pt;
+  left: 8pt;
+  right: 60pt;
+  color: #ffffff;
+  font-size: 10pt;
+  font-weight: bold;
+  line-height: 1.2;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .4);
+  z-index: 2;
+}
+
+.dh-deal-card .icon-overlay {
+  position: absolute;
+  top: 8pt;
+  right: 8pt;
+  display: flex;
+  flex-direction: column;
+  gap: 4pt;
+  z-index: 2;
+}
+
+.dh-deal-card .icon-chip {
+  width: 20pt;
+  height: 20pt;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10pt;
+}
+
+/* Span adjustments: image adapts via flex-grow, so no per-span sizing
+ * is needed. Larger spans simply get wider cells and a taller image. */

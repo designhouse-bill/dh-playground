@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Circular Grid Layout — UX-864 POC</title>
+  <link rel="stylesheet" href="./styles/app.css">
+  <link rel="stylesheet" href="./styles/cards.css">
+  <link rel="stylesheet" href="./styles/print.css" media="print">
+</head>
+<body>
+  <div id="app">
+    <aside id="controls">
+      <h1>Circular Grid Layout</h1>
+      <p class="subtitle">UX-864 algorithm proof · absorption + pagination</p>
+
+      <fieldset>
+        <legend>Ad fixture</legend>
+        <label>
+          <span>Retailer</span>
+          <select id="fixture">
+            <option value="stater-bros">Stater Bros</option>
+            <option value="winn-dixie">Winn Dixie</option>
+          </select>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Layout</legend>
+        <label>
+          <span>Columns (N)</span>
+          <select id="cols">
+            <option value="3">3</option>
+            <option value="4" selected>4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+          </select>
+        </label>
+        <label>
+          <span>Rows per page (R)</span>
+          <select id="rows-per-page">
+            <option value="3">3</option>
+            <option value="4" selected>4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+          </select>
+        </label>
+        <label>
+          <span>Emphasis on cat[0]</span>
+          <select id="emphasis-override">
+            <option value="default" selected>Fixture default</option>
+            <option value="0">0 — none</option>
+            <option value="1">1 — light</option>
+            <option value="2">2 — heavy</option>
+          </select>
+        </label>
+        <label class="inline">
+          <input type="checkbox" id="pack-tight" checked>
+          <span>Pack tight (absorption on)</span>
+        </label>
+        <label>
+          <span>Grid mode</span>
+          <select id="grid-mode">
+            <option value="strict" selected>Strict (row-major)</option>
+            <option value="mosaic">Mosaic (column-major, fallback)</option>
+          </select>
+        </label>
+        <label>
+          <span>Card variant</span>
+          <select id="card-variant">
+            <option value="auto" selected>Auto (print-deal + coupon for coupon cats)</option>
+            <option value="web">Web (dh-deal-card)</option>
+            <option value="print-deal">Print deal (dh-print-deal-card)</option>
+            <option value="print-coupon">Print coupon (dh-print-coupon-card)</option>
+          </select>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Metrics</legend>
+        <div id="metrics"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Per-category layout</legend>
+        <table class="readout">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>P</th>
+              <th>req E</th>
+              <th>E</th>
+              <th>Rows</th>
+            </tr>
+          </thead>
+          <tbody id="category-readout"></tbody>
+        </table>
+      </fieldset>
+
+      <fieldset>
+        <legend>Actions</legend>
+        <button type="button" onclick="window.print()">Print preview (Cmd+P)</button>
+      </fieldset>
+
+      <p class="hint">Open DevTools console — plan §7 test cases run on load.</p>
+    </aside>
+
+    <main id="preview"></main>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

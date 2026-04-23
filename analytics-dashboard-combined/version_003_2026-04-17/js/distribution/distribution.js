@@ -92,6 +92,32 @@
     if (entityBreadcrumb) entityBreadcrumb.textContent = levelLabel;
     if (entityValue) entityValue.textContent = entityName;
     if (entitySub) entitySub.textContent = entitySubText;
+
+    // Build date string for section subtitles
+    var dateStr;
+    if (ctx.flightWeek === 'all') {
+      var weeks = D.flightWeeks;
+      dateStr = weeks[0].label + ' – ' + weeks[weeks.length - 1].label
+        + ' (' + fmtDateRange(weeks[0].start) + ' – ' + fmtDateRange(weeks[weeks.length - 1].end) + ')';
+    } else {
+      var wk = D.flightWeeks.find(function(w) { return w.id === ctx.flightWeek; });
+      dateStr = wk ? wk.label + ' (' + fmtDateRange(wk.start) + ' – ' + fmtDateRange(wk.end) + ')' : '';
+    }
+    updateSectionSubtitles(entityName, dateStr);
+  }
+
+  function updateSectionSubtitles(entityName, dateStr) {
+    ['visitation', 'perf', 'traffic', 'media'].forEach(function(key) {
+      var eEl = document.getElementById('subtitle-entity-' + key);
+      var dEl = document.getElementById('subtitle-date-' + key);
+      if (eEl) eEl.textContent = entityName;
+      if (dEl) dEl.textContent = dateStr;
+    });
+    // Demographics spans (already in HTML)
+    var demoEntity = document.getElementById('demo-entity-name');
+    var demoDate   = document.getElementById('demo-date-range');
+    if (demoEntity) demoEntity.textContent = entityName;
+    if (demoDate)   demoDate.textContent   = dateStr;
   }
 
   function cacheElements() {
@@ -193,96 +219,36 @@
   // ========================================
 
   function renderMediaHero() {
-    const el = document.getElementById('media-hero');
+    const el = document.getElementById('media-stat-strip');
     if (!el) return;
 
     const metrics = D.mediaBuyMetrics;
     const m = metrics.summary;
     if (!m) return;
 
-    // Calculate trends from weekly data
+    // D7 proposed: CTR as hero (replaces Impressions). Real data from m.ctr.
     const trend = metrics.weeklyTrend;
-    let cpvTrendCallout = '';
-    let cpvTrendClass = 'media-hero__trend-callout--flat';
-    let imprTrend = null, clickTrend = null, ctrTrend = null, vptTrend = null;
-
+    let trendHtml = '';
     if (trend.length >= 2) {
       const first = trend[0];
       const last = trend[trend.length - 1];
-      const ctx_label = 'vs. Wk ' + first.week.replace('wk', '');
-
-      // CPV trend callout — use summary value for consistency with hero CPV
-      const cpvChange = ((m.cost_per_visit - first.cost_per_visit) / first.cost_per_visit * 100);
-      if (cpvChange < -2) {
-        cpvTrendCallout = `<span class="material-symbols-outlined">arrow_downward</span> CPV down ${Math.abs(cpvChange).toFixed(0)}% over campaign — $${first.cost_per_visit.toFixed(2)} → $${m.cost_per_visit.toFixed(2)}`;
-        cpvTrendClass = 'media-hero__trend-callout--good';
-      } else if (cpvChange > 2) {
-        cpvTrendCallout = `<span class="material-symbols-outlined">arrow_upward</span> CPV up ${cpvChange.toFixed(0)}% over campaign — $${first.cost_per_visit.toFixed(2)} → $${m.cost_per_visit.toFixed(2)}`;
-        cpvTrendClass = 'media-hero__trend-callout--bad';
-      } else {
-        cpvTrendCallout = `<span class="material-symbols-outlined">arrow_forward</span> CPV stable at $${m.cost_per_visit.toFixed(2)} — consistent delivery`;
-        cpvTrendClass = 'media-hero__trend-callout--flat';
-      }
-
-      const pctDelta = (a, b) => b > 0 ? ((a - b) / b) * 100 : 0;
-      imprTrend = { value: pctDelta(last.impressions, first.impressions), label: (pctDelta(last.impressions, first.impressions) >= 0 ? '+' : '') + pctDelta(last.impressions, first.impressions).toFixed(1) + '%', context: ctx_label };
-      clickTrend = { value: pctDelta(last.clicks, first.clicks), label: (pctDelta(last.clicks, first.clicks) >= 0 ? '+' : '') + pctDelta(last.clicks, first.clicks).toFixed(1) + '%', context: ctx_label };
-      const ctrDelta = last.ctr - first.ctr;
-      ctrTrend = { value: ctrDelta, label: (ctrDelta >= 0 ? '+' : '') + ctrDelta.toFixed(2) + ' pp', context: ctx_label };
-      const vptDelta = last.visits_per_thousand - first.visits_per_thousand;
-      vptTrend = { value: vptDelta, label: (vptDelta >= 0 ? '+' : '') + vptDelta.toFixed(1), context: ctx_label };
+      const firstCtr = first.impressions > 0 ? (first.clicks / first.impressions) * 100 : 0;
+      const lastCtr = last.impressions > 0 ? (last.clicks / last.impressions) * 100 : 0;
+      const delta = lastCtr - firstCtr;
+      const cls = delta > 0 ? 'up' : delta < 0 ? 'down' : 'flat';
+      const icon = delta > 0 ? 'trending_up' : delta < 0 ? 'trending_down' : 'trending_flat';
+      trendHtml = `<span class="stat-strip__trend stat-strip__trend--${cls}"><span class="material-symbols-outlined">${icon}</span>${delta >= 0 ? '+' : ''}${delta.toFixed(2)}pp</span>`;
     }
-
-    // Context counts for hero cards
-    const ctx = D.context;
-    const storeCount = D.entities.getStoresForEntity(ctx.entityId, ctx.entityLevel).length;
-    const variantCount = D.creativeRecords.filter(cr => cr.metrics !== null).length;
 
     el.innerHTML = `
-      <div class="media-hero__budget">
-        <div class="media-hero__metric-summary">
-          <div class="media-hero__cpv-group">
-            <div class="media-hero__cpv-label">Cost Per Visit</div>
-            <div class="media-hero__cpv">${fmtCurrency(m.cost_per_visit)}</div>
-          </div>
-          <div class="media-hero__total-budget">
-            <div class="media-hero__cpv-label">Total Budget</div>
-            <div class="media-hero__budget-value">${fmtCurrency(m.budget)}</div>
+      <div class="stat-strip__cards">
+        <div class="stat-strip__item">
+          <span class="stat-strip__label">CTR <span class="stat-strip__proposed-badge">PROPOSED</span></span>
+          <div class="stat-strip__value-row">
+            <span class="stat-strip__value">${m.ctr}%</span>
+            ${trendHtml}
           </div>
         </div>
-        ${cpvTrendCallout ? `<div class="media-hero__trend-callout ${cpvTrendClass}">${cpvTrendCallout}</div>` : ''}
-      </div>
-      <div class="media-hero__cards">
-        ${heroCard('Budget', fmtCurrency(m.budget))}
-        ${heroCard('Impressions', fmtNumber(m.impressions), imprTrend)}
-        ${heroCard('CTR', fmtPct(m.ctr), ctrTrend)}
-        ${heroCard('CPV', fmtCurrency(m.cost_per_visit))}
-      </div>
-    `;
-  }
-
-  function heroCard(label, value, trendObj) {
-    // trendObj: { value: number, label: string, context: string } or falsy
-    if (!trendObj) {
-      return `
-        <div class="media-hero__card">
-          <div class="kpi-label">${label}</div>
-          <div class="kpi-value">${value}</div>
-        </div>
-      `;
-    }
-    const isPositive = trendObj.value >= 0;
-    const colorClass = isPositive ? 'kpi-trend--up' : 'kpi-trend--down';
-    const icon = isPositive ? 'trending_up' : 'trending_down';
-    return `
-      <div class="media-hero__card">
-        <div class="kpi-label">${label}</div>
-        <div class="kpi-value">${value}</div>
-        <span class="kpi-trend ${colorClass}">
-          <span class="material-symbols-outlined">${icon}</span>
-          ${trendObj.label}
-        </span>
-        ${trendObj.context ? `<span class="kpi-trend-context">${trendObj.context}</span>` : ''}
       </div>
     `;
   }
@@ -348,6 +314,7 @@
           <div class="p-carousel-item" data-index="${i}">
             <div class="creative-card" id="creative-card-${i}">
               <div class="creative-card__top">
+                <div class="creative-card__top-left">
                 <span class="creative-card__rank">${i + 1}</span>
                 <div class="creative-card__info">
                   <div class="creative-card__thumb creative-card__thumb--square">
@@ -359,8 +326,8 @@
                     <div class="creative-card__date">${cr.date_range_start} — ${cr.date_range_end}</div>
                   </div>
                 </div>
-              </div>
-              <div class="creative-card__metrics">
+                </div>
+                <div class="creative-card__metrics">
                 <div class="creative-metric-tile">
                   <div class="creative-metric-tile__label">Stores</div>
                   <div class="creative-metric-tile__value">${cr.store_group.length}</div>
@@ -374,6 +341,8 @@
                   <div class="creative-metric-tile__value">${cr.metrics ? fmtNumber(cr.metrics.gross_visits) : '—'}</div>
                 </div>
               </div>
+              </div>
+              
               <div class="creative-card__actions">
                 ${cr.target_url ? `<a class="creative-card__link" href="${cr.target_url}" target="_blank"><span class="material-symbols-outlined" style="font-size:14px;">link</span> Promotion Link</a>` : ''}
                 <button class="creative-card__details-btn" onclick="viewVariantDetails(${cr._origIndex})"><span class="material-symbols-outlined" style="font-size:14px;">visibility</span> View Details</button>
@@ -900,7 +869,6 @@
   // ========================================
 
   function renderVisitationKpis() {
-    // Phase 2: Render stat strip instead of hero
     const el = document.getElementById('visitation-stat-strip');
     if (!el) return;
 
@@ -909,42 +877,55 @@
     if (!latest) return;
 
     const total = latest.gross_visits;
-    const newPct = total > 0 ? ((latest.visits_zero_prev / total) * 100).toFixed(1) : '0.0';
-    const retPct = total > 0 ? ((latest.visits_one_three_prev / total) * 100).toFixed(1) : '0.0';
-    const loyPct = total > 0 ? ((latest.visits_four_plus_prev / total) * 100).toFixed(1) : '0.0';
 
-    // Trend from weekly data
+    // D7 proposed: New Shopper % as hero (replaces Gross Visits). Real data.
+    const newShopperPct = total > 0 ? ((latest.visits_zero_prev / total) * 100).toFixed(1) : '0.0';
+
     let trendHtml = '';
     const trend = vm.weeklyTrend;
     if (trend.length >= 2) {
       const first = trend[0];
       const last = trend[trend.length - 1];
-      const delta = first.gross_visits > 0 ? ((last.gross_visits - first.gross_visits) / first.gross_visits * 100) : 0;
+      const firstPct = first.gross_visits > 0 ? (first.visits_zero_prev / first.gross_visits) * 100 : 0;
+      const lastPct = last.gross_visits > 0 ? (last.visits_zero_prev / last.gross_visits) * 100 : 0;
+      const delta = lastPct - firstPct;
       const cls = delta > 0 ? 'up' : delta < 0 ? 'down' : 'flat';
       const icon = delta > 0 ? 'trending_up' : delta < 0 ? 'trending_down' : 'trending_flat';
-      trendHtml = `<span class="stat-strip__trend stat-strip__trend--${cls}"><span class="material-symbols-outlined">${icon}</span>${delta >= 0 ? '+' : ''}${delta.toFixed(1)}%</span>`;
+      trendHtml = `<span class="stat-strip__trend stat-strip__trend--${cls}"><span class="material-symbols-outlined">${icon}</span>${delta >= 0 ? '+' : ''}${delta.toFixed(1)}pp</span>`;
     }
 
     el.innerHTML = `
       <div class="stat-strip__cards">
         <div class="stat-strip__item">
-          <span class="stat-strip__label">Gross Visits</span>
+          <span class="stat-strip__label">New Shopper % <span class="stat-strip__proposed-badge">PROPOSED</span></span>
           <div class="stat-strip__value-row">
-            <span class="stat-strip__value">${fmtNumber(total)}</span>
+            <span class="stat-strip__value">${newShopperPct}%</span>
             ${trendHtml}
           </div>
         </div>
+      </div>
+    `;
+  }
+
+  function renderStorePerfHero() {
+    const el = document.getElementById('store-perf-stat-strip');
+    if (!el) return;
+
+    const vm = D.visitationMetrics;
+    const latest = vm.summary;
+    if (!latest) return;
+
+    const ctx = D.context;
+    const storeCount = Math.max(1, D.entities.getStoresForEntity(ctx.entityId, ctx.entityLevel).length);
+    const visitsPerStore = Math.round(latest.gross_visits / storeCount);
+
+    el.innerHTML = `
+      <div class="stat-strip__cards">
         <div class="stat-strip__item">
-          <span class="stat-strip__label">New</span>
-          <div class="stat-strip__value-row"><span class="stat-strip__value">${newPct}%</span></div>
-        </div>
-        <div class="stat-strip__item">
-          <span class="stat-strip__label">Returning</span>
-          <div class="stat-strip__value-row"><span class="stat-strip__value">${retPct}%</span></div>
-        </div>
-        <div class="stat-strip__item">
-          <span class="stat-strip__label">Loyal</span>
-          <div class="stat-strip__value-row"><span class="stat-strip__value">${loyPct}%</span></div>
+          <span class="stat-strip__label">Visits / Store <span class="stat-strip__proposed-badge">PROPOSED</span></span>
+          <div class="stat-strip__value-row">
+            <span class="stat-strip__value">${fmtNumber(visitsPerStore)}</span>
+          </div>
         </div>
       </div>
     `;
@@ -2553,6 +2534,11 @@
 // [0-4] = top 5 competitor colors, [5] = all-other gray, [6] = our brand blue.
 var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '#9ca3af', '#4272D8'];
 
+    var stackLabel = {
+      show: true, position: 'inside', fontSize: 10, color: '#fff', fontWeight: 'bold',
+      formatter: function (p) { return p.value >= 6 ? p.value.toFixed(1) + '%' : ''; }
+    };
+
     // Build series: top 5 named + All Other (if any) + Our Brand Only (remainder to 100%)
     var namedSeries = top5.map(function (comp, i) {
       return {
@@ -2561,6 +2547,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         stack: 'crossover',
         barWidth: '60%',
         itemStyle: { color: CROSSOVER_COLORS[i] },
+        label: stackLabel,
         emphasis: { focus: 'series' },
         data: comp.trend
       };
@@ -2581,6 +2568,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       stack: 'crossover',
       barWidth: '60%',
       itemStyle: { color: CROSSOVER_COLORS[6] },
+      label: stackLabel,
       emphasis: { focus: 'series' },
       data: ourBrandTrend
     });
@@ -2597,6 +2585,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         stack: 'crossover',
         barWidth: '60%',
         itemStyle: { color: CROSSOVER_COLORS[5] },
+        label: stackLabel,
         emphasis: { focus: 'series' },
         data: allOtherTrend
       });
@@ -2619,11 +2608,8 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         }
       },
       legend: {
-        bottom: 0,
-        itemWidth: 14,
-        itemHeight: 10,
-        itemGap: 18,
-        textStyle: { fontSize: 12, color: '#4b5563' },
+        bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, itemGap: 20,
+        textStyle: { fontSize: 12, color: '#6b7280' },
         data: legendNames
       },
       grid: { left: 50, right: 24, top: 16, bottom: 60 },
@@ -2656,8 +2642,8 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       tooltip: { trigger: 'axis' },
       legend: {
         data: D.competitiveCrossover.map(c => c.competitor_name),
-        bottom: 0,
-        textStyle: { fontSize: 11 }
+        bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, itemGap: 20,
+        textStyle: { fontSize: 12, color: '#6b7280' }
       },
       grid: { left: 50, right: 20, top: 20, bottom: 50 },
       xAxis: { type: 'category', data: weeks, axisLabel: { fontSize: 11 } },
@@ -2706,9 +2692,8 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       tooltip: { trigger: 'axis' },
       legend: {
         data: D.competitiveCrossover.map(function(c) { return c.competitor_name; }),
-        bottom: 0,
-        itemGap: 18,
-        textStyle: { fontSize: 11 }
+        bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, itemGap: 20,
+        textStyle: { fontSize: 12, color: '#6b7280' }
       },
       grid: { left: 50, right: 20, top: 20, bottom: 50 },
       xAxis: { type: 'category', data: slicedWeeks, axisLabel: { fontSize: 11 } },
@@ -3383,12 +3368,12 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       charts = {};
 
       if (section === 'media') {
-        renderMediaHero(); renderCreativeList(); renderCreativeCoverageKey(); renderDeliveryTrends();
+        renderMediaHero(); renderCreativeList(); renderDeliveryTrends();
         renderVariantPanels();
         _level2Initialized = {}; // Reset so sparklines/funnels re-init on next expand
       } else if (section === 'visitation') {
         donutFilterSegment = null;
-        renderVisitationKpis(); renderSegmentDetail();
+        renderVisitationKpis(); renderStorePerfHero(); renderSegmentDetail();
         storePerfState.allRows = []; storePerfState.selectedStoreId = null;
         buildStorePerformanceData(); renderStorePerformanceTable(); renderVisitationMap();
         initVisitDonut();
@@ -3412,12 +3397,12 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       if (section === 'media') {
         renderMediaHero();
         renderCreativeList();
-        renderCreativeCoverageKey();
         renderDeliveryTrends();
         renderVariantPanels();
         initTreeTableActions();
       } else if (section === 'visitation') {
         renderVisitationKpis();
+        renderStorePerfHero();
         renderSegmentDetail();
         buildStorePerformanceData();
         renderStorePerformanceTable();
@@ -3505,146 +3490,936 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
 
   /* ============================================================
      Plan item 3 (Apr 17): By Store / By Creative / By Day tabs
+     + Overview tab (all three combined)
      ============================================================ */
   var _perfCreativeChart = null;
   var _perfDayChart = null;
+  var _perfDowChart = null;
+  var _perfHeatmapChart = null;
+  var _perfOverviewCreativeChart = null;
+  var _perfOverviewStoreChart = null;
+  var _perfOverviewDowChart = null;
+  var _activePerfCreative = 'all';
+
+  // Creative definitions — mirrors distribution-records.js
+  var CREATIVE_DEFS = [
+    {
+      key: 'creative-b', label: 'Holiday Banner', region: 'Central FL',
+      type: 'jpeg', typeIcon: 'image', dims: '728×90', w: 728, h: 90,
+      accent: '#1565C0',
+      dateStart: 'Dec 10, 2025', dateEnd: 'Dec 30, 2025', numDays: 21,
+      stores: [
+        { num: 705, city: 'Haines City' }, { num: 2288, city: 'Orlando' },
+        { num: 2415, city: 'Tampa' },       { num: 2434, city: 'Daytona Beach' },
+        { num: 2474, city: 'Melbourne' },   { num: 2480, city: 'Lakeland' },
+        { num: 2487, city: 'Sarasota' },    { num: 2490, city: 'Port Charlotte' },
+        { num: 2501, city: 'Palm Bay' },    { num: 2509, city: 'Bradenton' },
+        { num: 2545, city: 'The Villages' },{ num: 711,  city: 'Spring Hill' }
+      ],
+      dowVisits: [1480, 1320, 1510, 1750, 2040, 2380, 2210],
+      todPattern: 'display'
+    },
+    {
+      key: 'creative-a', label: 'Holiday Steak', region: 'South FL',
+      type: 'gif', typeIcon: 'gif_box', dims: '300×250', w: 300, h: 250,
+      accent: '#c62828',
+      dateStart: 'Dec 10, 2025', dateEnd: 'Dec 30, 2025', numDays: 21,
+      stores: [
+        { num: 319, city: 'Homestead' },  { num: 336, city: 'Hollywood' },
+        { num: 381, city: 'Belle Glade' },{ num: 508, city: 'Fort Myers' },
+        { num: 518, city: 'Naples' },     { num: 726, city: 'St James City' }
+      ],
+      dowVisits: [280, 250, 310, 420, 590, 740, 680],
+      todPattern: 'food'
+    },
+    {
+      key: 'creative-c', label: 'BOGO Produce', region: 'North FL',
+      type: 'gif', typeIcon: 'gif_box', dims: '320×480', w: 320, h: 480,
+      accent: '#2e7d32',
+      dateStart: 'Dec 17, 2025', dateEnd: 'Jan 6, 2026', numDays: 21,
+      stores: [
+        { num: 86,   city: 'Tallahassee' },     { num: 195,  city: 'Jacksonville Bch' },
+        { num: 560,  city: 'Gainesville' },      { num: 2247, city: 'Panama City' },
+        { num: 2399, city: 'Pensacola' },        { num: 2437, city: 'Ocala' },
+        { num: 2449, city: 'Deltona' },          { num: 2482, city: 'St. Augustine' },
+        { num: 2495, city: 'Lake City' },        { num: 436,  city: 'Jacksonville' }
+      ],
+      dowVisits: [920, 860, 940, 1010, 1280, 1540, 1420],
+      todPattern: 'fresh'
+    },
+    {
+      key: 'creative-d', label: 'Value Pack', region: 'Harveys',
+      type: 'jpeg', typeIcon: 'image', dims: '300×250', w: 300, h: 250,
+      accent: '#6a1b9a',
+      dateStart: 'Dec 10, 2025', dateEnd: 'Dec 30, 2025', numDays: 21,
+      stores: [
+        { num: 1671, city: 'Waycross' },  { num: 1690, city: 'Douglas' },
+        { num: 1692, city: 'Valdosta' },  { num: 1694, city: 'Tifton' },
+        { num: 1710, city: 'Fitzgerald' },{ num: 1712, city: 'Bainbridge' },
+        { num: 1716, city: 'Albany' }
+      ],
+      dowVisits: [310, 350, 400, 440, 520, 680, 590],
+      todPattern: 'display'
+    },
+    {
+      key: 'creative-e', label: 'YouTube Pre-Roll', region: 'Holiday',
+      type: 'video', typeIcon: 'movie', dims: '1920×1080', w: 1920, h: 1080,
+      accent: '#bf360c',
+      dateStart: 'Dec 24, 2025', dateEnd: 'Jan 6, 2026', numDays: 14,
+      stores: [
+        { num: 319,  city: 'Homestead' },    { num: 336,  city: 'Hollywood' },
+        { num: 508,  city: 'Fort Myers' },   { num: 518,  city: 'Naples' },
+        { num: 726,  city: 'St James City' },{ num: 705,  city: 'Haines City' },
+        { num: 2288, city: 'Orlando' },      { num: 2415, city: 'Tampa' },
+        { num: 2487, city: 'Sarasota' },     { num: 2509, city: 'Bradenton' }
+      ],
+      // Dec 24–Jan 6 = 14 days. Dec 24 = Wed. Each weekday appears exactly twice.
+      dowVisits: [760, 680, 780, 920, 1240, 1780, 1960],
+      todPattern: 'video'
+    }
+  ];
+
+  // Time-of-day intensity 0–100 per pattern
+  // Rows: Morning 6–11am | Afternoon 11am–4pm | Evening 4–9pm | Night 9pm–2am
+  // Cols: Mon … Sun
+  var TOD_PATTERNS = {
+    display: [
+      [42, 38, 44, 52, 61, 68, 63],
+      [78, 72, 80, 88, 94, 95, 91],
+      [65, 60, 68, 76, 85, 90, 86],
+      [12, 10, 13, 16, 22, 28, 25]
+    ],
+    food: [
+      [35, 30, 38, 48, 62, 80, 74],
+      [72, 66, 74, 82, 91, 97, 93],
+      [58, 52, 62, 72, 84, 88, 82],
+      [8,   7,  9, 12, 16, 20, 18]
+    ],
+    fresh: [
+      [55, 50, 58, 65, 72, 88, 82],
+      [80, 74, 82, 88, 92, 96, 94],
+      [48, 44, 50, 58, 68, 74, 70],
+      [6,   5,  7,  9, 12, 15, 13]
+    ],
+    video: [
+      [28, 24, 30, 36, 42, 52, 58],
+      [54, 48, 56, 66, 78, 84, 82],
+      [82, 76, 84, 90, 96, 98, 97],
+      [38, 32, 40, 46, 55, 62, 68]
+    ]
+  };
+
+  function _creativeStoreRows(def) {
+    var basePerWeek = def.dowVisits.reduce(function(s, v) { return s + v; }, 0);
+    var weeks = def.numDays / 7;
+    return def.stores.map(function(s, i) {
+      var seed = (s.num * 17 + i * 31) % 100;
+      var mult = 0.55 + (seed / 100) * 0.90;
+      return { name: '#' + s.num + ' ' + s.city, visits: Math.round(basePerWeek * mult * weeks / def.stores.length) };
+    }).sort(function(a, b) { return b.visits - a.visits; });
+  }
 
   function initPerfTabs() {
     var tabs = document.getElementById('perf-tabs');
     if (!tabs) return;
+    var creativeTabInited = false;
     tabs.querySelectorAll('.perf-tab').forEach(function(btn) {
       btn.addEventListener('click', function() {
         var target = btn.dataset.perfTab;
         tabs.querySelectorAll('.perf-tab').forEach(function(b) { b.classList.toggle('active', b === btn); });
-        document.querySelectorAll('.perf-tab-pane').forEach(function(p) {
+        document.querySelectorAll('[data-perf-pane]').forEach(function(p) {
           p.classList.toggle('active', p.dataset.perfPane === target);
         });
-        if (target === 'creative') renderPerfCreative();
+        if (target === 'creative') {
+          if (!creativeTabInited) { initPerfCreativeChips(); creativeTabInited = true; }
+          else { _rechartCreative(); }
+        }
         if (target === 'day') renderPerfDay();
+        if (target === 'overview') renderPerfOverview();
       });
     });
+    // Overview is default — render on load
+    renderPerfOverview();
+  }
 
-    var select = document.getElementById('perf-creative-select');
-    if (select) {
-      select.addEventListener('change', function() { renderPerfCreative(); });
+  // ─── Overview tab ────────────────────────────────────────────────────────
+
+  function renderPerfOverview() {
+    _renderOverviewCreativeChart();
+    _renderOverviewStoreChart();
+    _renderOverviewDowChart();
+  }
+
+  function _renderOverviewCreativeChart() {
+    var el = document.getElementById('perf-overview-creative');
+    if (!el) return;
+    if (!_perfOverviewCreativeChart) _perfOverviewCreativeChart = echarts.init(el);
+    var cats = CREATIVE_DEFS.map(function(d) { return d.label; }).reverse();
+    var vals = CREATIVE_DEFS.map(function(d) {
+      return _creativeStoreRows(d).reduce(function(s, r) { return s + r.visits; }, 0);
+    }).reverse();
+    var maxVal = Math.max.apply(null, vals);
+    var colors = CREATIVE_DEFS.map(function(d) { return d.accent; }).reverse();
+    _perfOverviewCreativeChart.setOption({
+      grid: { left: 10, right: 60, top: 6, bottom: 6, containLabel: true },
+      xAxis: { type: 'value', show: false, max: Math.ceil(maxVal * 1.18) },
+      yAxis: { type: 'category', data: cats, axisLabel: { fontSize: 11, color: '#374151' }, axisLine: { show: false }, axisTick: { show: false } },
+      series: [{ type: 'bar', data: vals.map(function(v, i) { return { value: v, itemStyle: { color: colors[i], borderRadius: [0, 4, 4, 0] } }; }),
+        barMaxWidth: 18,
+        label: { show: true, position: 'right', fontSize: 10, color: '#111827', fontWeight: 600, formatter: function(p) { return p.value.toLocaleString(); } }
+      }],
+      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: function(p) { return p[0].name + '<br/><b>' + p[0].value.toLocaleString() + '</b> total visits'; } }
+    }, true);
+  }
+
+  function _renderOverviewStoreChart() {
+    var el = document.getElementById('perf-overview-stores');
+    if (!el) return;
+    // Aggregate visits across all creatives per store
+    var storeMap = {};
+    CREATIVE_DEFS.forEach(function(def) {
+      _creativeStoreRows(def).forEach(function(r) {
+        storeMap[r.name] = (storeMap[r.name] || 0) + r.visits;
+      });
+    });
+    var rows = Object.keys(storeMap).map(function(k) { return { name: k, visits: storeMap[k] }; })
+      .sort(function(a, b) { return b.visits - a.visits; }).slice(0, 10);
+    var palette = ['#4272D8','#f59e0b','#10b981','#8b5cf6','#ef4444','#0ea5e9','#f97316','#14b8a6','#a855f7','#6b7280'];
+    var data = rows.map(function(r, i) { return { name: r.name, value: r.visits, itemStyle: { color: palette[i % palette.length] } }; });
+    var total = rows.reduce(function(s, r) { return s + r.visits; }, 0);
+
+    // Split container: donut canvas (top) + HTML legend grid (bottom)
+    if (!el.querySelector('.ov-donut-chart')) {
+      el.innerHTML = '<div class="ov-donut-chart"></div><div class="ov-donut-legend"></div>';
+      if (_perfOverviewStoreChart) { _perfOverviewStoreChart.dispose(); _perfOverviewStoreChart = null; }
+    }
+    var chartEl = el.querySelector('.ov-donut-chart');
+    var legendEl = el.querySelector('.ov-donut-legend');
+    if (!_perfOverviewStoreChart) _perfOverviewStoreChart = echarts.init(chartEl);
+
+    _perfOverviewStoreChart.setOption({
+      tooltip: { trigger: 'item', formatter: function(p) { return p.name + '<br/><b>' + p.value.toLocaleString() + '</b> visits · ' + p.percent + '%'; } },
+      series: [{
+        type: 'pie', radius: ['58%', '88%'], center: ['50%', '50%'], avoidLabelOverlap: true,
+        itemStyle: { borderColor: '#fff', borderWidth: 2 },
+        label: { show: false }, labelLine: { show: false },
+        data: data
+      }],
+      graphic: [
+        { type: 'text', left: 'center', top: '44%', style: { text: total.toLocaleString(), textAlign: 'center', textVerticalAlign: 'middle', fill: '#111827', fontSize: 22, fontWeight: 700 }, z: 10 },
+        { type: 'text', left: 'center', top: '56%', style: { text: 'Top ' + rows.length + (rows.length === 1 ? ' store' : ' stores'), textAlign: 'center', textVerticalAlign: 'middle', fill: '#6b7280', fontSize: 11 }, z: 10 }
+      ]
+    }, true);
+
+    legendEl.innerHTML = rows.map(function(r, i) {
+      return '<div class="ov-donut-legend__item"><span class="ov-donut-legend__swatch" style="background:' + palette[i % palette.length] + '"></span><span class="ov-donut-legend__name" title="' + r.name + '">' + r.name + '</span></div>';
+    }).join('');
+  }
+
+  function _renderOverviewDowChart() {
+    var el = document.getElementById('perf-overview-dow');
+    if (!el) return;
+    if (!_perfOverviewDowChart) _perfOverviewDowChart = echarts.init(el);
+    var days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    var totals = [0, 0, 0, 0, 0, 0, 0];
+    CREATIVE_DEFS.forEach(function(def) {
+      def.dowVisits.forEach(function(v, i) { totals[i] += v; });
+    });
+    var maxVal = Math.max.apply(null, totals);
+    _perfOverviewDowChart.setOption({
+      grid: { left: 8, right: 8, top: 20, bottom: 28 },
+      xAxis: { type: 'category', data: days, axisLabel: { fontSize: 11, color: '#374151' }, axisLine: { lineStyle: { color: '#e5e7eb' } }, axisTick: { show: false } },
+      yAxis: { type: 'value', max: Math.ceil(maxVal * 1.2), axisLabel: { formatter: function(v) { return v >= 1000 ? (v/1000).toFixed(0)+'k' : v; }, color: '#9ca3af', fontSize: 9 }, splitLine: { lineStyle: { color: '#f3f4f6' } } },
+      series: [{ type: 'bar', data: totals, barMaxWidth: 40,
+        itemStyle: { color: '#6b7280', borderRadius: [4, 4, 0, 0] },
+        label: { show: true, position: 'top', fontSize: 9, color: '#6b7280', formatter: function(p) { return p.value >= 1000 ? (p.value/1000).toFixed(1)+'k' : p.value; } }
+      }],
+      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: function(p) { return p[0].name + '<br/><b>' + p[0].value.toLocaleString() + '</b> visits'; } }
+    }, true);
+  }
+
+  // ─── By Creative tab ─────────────────────────────────────────────────────
+
+  function initPerfCreativeChips() {
+    var chips = document.getElementById('creative-chips');
+    if (!chips) return;
+    // Pick busiest creative = highest total visits across its stores
+    var busiestKey = null, busiestVisits = -1;
+    CREATIVE_DEFS.forEach(function(def) {
+      var total = _creativeStoreRows(def).reduce(function(s, r) { return s + r.visits; }, 0);
+      if (total > busiestVisits) { busiestVisits = total; busiestKey = def.key; }
+    });
+    var allActive = _activePerfCreative === 'all' ? ' creative-chip--active' : '';
+    var allChip = '<button class="creative-chip' + allActive + '" data-creative-key="all">' +
+      '<div class="creative-chip__header">' +
+        '<span class="material-symbols-outlined creative-chip__icon">apps</span>' +
+      '</div>' +
+      '<span class="creative-chip__name">All Creatives</span>' +
+      '<span class="creative-chip__meta">' + CREATIVE_DEFS.length + ' creatives \u00b7 35\u00a0stores</span>' +
+    '</button>';
+    chips.innerHTML = allChip + CREATIVE_DEFS.map(function(def) {
+      var active = def.key === _activePerfCreative ? ' creative-chip--active' : '';
+      var busyFlag = def.key === busiestKey ? '<span class="creative-chip__flag">Busiest</span>' : '';
+      return '<button class="creative-chip' + active + '" data-creative-key="' + def.key + '">' +
+        '<div class="creative-chip__header">' +
+          '<span class="material-symbols-outlined creative-chip__icon">' + def.typeIcon + '</span>' +
+          busyFlag +
+        '</div>' +
+        '<span class="creative-chip__name">' + def.label + '</span>' +
+        '<span class="creative-chip__meta">' + def.type.toUpperCase() + ' \u00b7 ' + def.dims + ' \u00b7 ' + def.stores.length + '\u00a0stores</span>' +
+      '</button>';
+    }).join('');
+    chips.querySelectorAll('.creative-chip').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        _activePerfCreative = btn.dataset.creativeKey;
+        chips.querySelectorAll('.creative-chip').forEach(function(b) { b.classList.toggle('creative-chip--active', b === btn); });
+        _rechartCreative();
+      });
+    });
+    _rechartCreative();
+  }
+
+  function _updateCreativeLabels() {
+    var isAll = _activePerfCreative === 'all';
+    var def = isAll ? null : CREATIVE_DEFS.find(function(d) { return d.key === _activePerfCreative; });
+    var nameSpan = (def)
+      ? ' <span class="section-label__date">' + def.label + '</span>'
+      : '';
+    var suffix = isAll ? ' \u2014 All Creatives' : '';
+    [
+      { id: 'creative-stores-label',  base: 'Visits by Store' },
+      { id: 'creative-dow-label',     base: 'Day of Week Pattern' },
+      { id: 'creative-heatmap-label', base: 'Visit Intensity \u2014 Time of Day \u00d7 Day of Week' }
+    ].forEach(function(l) {
+      var el = document.getElementById(l.id);
+      if (el) el.innerHTML = l.base + suffix + nameSpan;
+    });
+  }
+
+  function _rechartCreative() {
+    _updateCreativeLabels();
+    if (_activePerfCreative === 'all') {
+      _renderCreativeHeaderAll();
+      _renderCreativeStoresAll();
+      _renderCreativeDowAll();
+      _renderCreativeHeatmapAll();
+    } else {
+      var def = CREATIVE_DEFS.find(function(d) { return d.key === _activePerfCreative; });
+      if (!def) return;
+      _renderCreativeHeader(def);
+      _renderCreativeStores(def);
+      _renderCreativeDow(def);
+      _renderCreativeHeatmap(def);
     }
   }
 
-  // Per-creative mock data: each campaign has a store breakdown.
-  // Data shape mirrors xlsx tab "NEG by creative" — campaign-level rows
-  // with impressions/clicks/conversions. Here we collapse to visits per
-  // store for chart purposes.
-  function creativeStoreBreakdown(creativeKey) {
-    var stores = [
-      '#336 Hollywood, FL', '#2487 Sarasota, FL', '#2288 Orlando, FL',
-      '#726 St James City, FL', '#319 Homestead, FL', '#195 Jacksonville, FL',
-      '#2474 Melbourne, FL', '#381 Belle Glade, FL', '#508 Fort Myers, FL',
-      '#518 Naples, FL'
-    ];
-    // Deterministic per creative: each campaign has its own store performance
-    // profile (seed varies the skew).
-    var seeds = {
-      'holiday-banner':    { mult: 1.10, skew: 0.3 },
-      'bogo-produce':      { mult: 0.95, skew: 0.7 },
-      'holiday-steak':     { mult: 0.82, skew: 0.2 },
-      'value-pack':        { mult: 1.05, skew: 0.5 },
-      'youtube-pre-roll':  { mult: 0.65, skew: 0.8 }
-    };
-    var s = seeds[creativeKey] || { mult: 1, skew: 0.5 };
-    var base = [462, 412, 384, 383, 377, 373, 367, 340, 315, 298];
-    return stores.map(function(name, i) {
-      var v = Math.round(base[i] * s.mult * (1 + Math.sin(i * 1.3 + s.skew * 3.14) * 0.18));
-      return { name: name, visits: Math.max(0, v) };
-    }).sort(function(a, b) { return b.visits - a.visits; });
+  function _renderCreativeHeaderAll() {
+    var el = document.getElementById('creative-detail-header');
+    if (!el) return;
+    var total = _allCreativesTotalVisits();
+    var storeCount = _allCreativesStoreTotals().length;
+    el.innerHTML =
+      '<div class="creative-dh__body" style="padding-left:0;">' +
+        '<div class="creative-dh__name">All Creatives <span class="creative-dh__region-label">\u2014 Combined</span></div>' +
+        '<div class="creative-dh__stats">' +
+          '<div class="creative-dh__stat"><span class="creative-dh__stat-val">' + CREATIVE_DEFS.length + '</span><span class="creative-dh__stat-lbl">Creatives in flight</span></div>' +
+          '<div class="creative-dh__stat"><span class="creative-dh__stat-val">' + storeCount + ' stores</span><span class="creative-dh__stat-lbl">Reached</span></div>' +
+          '<div class="creative-dh__stat creative-dh__stat--hero"><span class="creative-dh__stat-val">' + total.toLocaleString() + '</span><span class="creative-dh__stat-lbl">Total Visits</span></div>' +
+        '</div>' +
+      '</div>';
   }
 
-  function renderPerfCreative() {
+  function _renderCreativeStoresAll() {
+    var rows = _allCreativesStoreTotals();
     var container = document.getElementById('perf-creative-bars');
     if (!container) return;
-    var select = document.getElementById('perf-creative-select');
-    var key = select ? select.value : 'holiday-banner';
-    var rows = creativeStoreBreakdown(key);
+    var chartH = Math.max(200, rows.length * 28 + 20);
+    container.style.height = chartH + 'px';
     if (!_perfCreativeChart) _perfCreativeChart = echarts.init(container);
+    else _perfCreativeChart.resize({ height: chartH });
     var cats = rows.map(function(r) { return r.name; }).reverse();
     var vals = rows.map(function(r) { return r.visits; }).reverse();
     var maxVal = Math.max.apply(null, vals);
     _perfCreativeChart.setOption({
-      grid: { left: 10, right: 60, top: 10, bottom: 10, containLabel: true },
-      xAxis: { type: 'value', show: false, max: Math.ceil(maxVal * 1.15) },
-      yAxis: {
-        type: 'category', data: cats,
-        axisLabel: { fontSize: 11, color: '#374151' },
-        axisLine: { show: false }, axisTick: { show: false }
-      },
-      series: [{
-        type: 'bar',
-        data: vals,
-        itemStyle: { color: '#4272D8', borderRadius: [0, 4, 4, 0] },
-        barMaxWidth: 22,
-        label: {
-          show: true, position: 'right', fontSize: 11, color: '#111827',
-          fontWeight: 600,
-          formatter: function(p) { return p.value.toLocaleString(); }
-        }
+      grid: { left: 10, right: 65, top: 8, bottom: 8, containLabel: true },
+      xAxis: { type: 'value', show: false, max: Math.ceil(maxVal * 1.18) },
+      yAxis: { type: 'category', data: cats, axisLabel: { fontSize: 11, color: '#374151' }, axisLine: { show: false }, axisTick: { show: false } },
+      series: [{ type: 'bar', data: vals, itemStyle: { color: '#6b7280', borderRadius: [0, 4, 4, 0] }, barMaxWidth: 20,
+        label: { show: true, position: 'right', fontSize: 11, color: '#111827', fontWeight: 600, formatter: function(p) { return p.value.toLocaleString(); } }
       }],
-      tooltip: {
-        trigger: 'axis', axisPointer: { type: 'shadow' },
-        formatter: function(params) {
-          return params[0].name + '<br/><b>' + params[0].value.toLocaleString() + '</b> visits';
-        }
-      }
+      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: function(p) { return p[0].name + '<br/><b>' + p[0].value.toLocaleString() + '</b> visits'; } }
     }, true);
   }
 
-  function dayOfWeekAverages() {
-    // Mock: Mon–Sun avg visits per day-of-week. Saturday/Sunday slightly
-    // higher reflecting typical grocery shopper patterns.
-    return [
-      { day: 'Mon', visits: 1420 },
-      { day: 'Tue', visits: 1280 },
-      { day: 'Wed', visits: 1350 },
-      { day: 'Thu', visits: 1510 },
-      { day: 'Fri', visits: 1790 },
-      { day: 'Sat', visits: 2110 },
-      { day: 'Sun', visits: 1960 }
-    ];
+  function _renderCreativeDowAll() {
+    _buildVisitTypeToggles('dow-type-toggles-creative', 'creative');
+    var container = document.getElementById('perf-creative-dow');
+    if (!container) return;
+    if (!_perfDowChart) _perfDowChart = echarts.init(container);
+    var split = _dowTypeData(_allCreativesDoW());
+    var series = _dowStackedSeries(split, -1);
+    _perfDowChart.setOption({
+      legend: { show: false },
+      grid: { left: 40, right: 12, top: 10, bottom: 28 },
+      xAxis: { type: 'category', data: DAY_NAMES, axisLabel: { fontSize: 11, color: '#374151' }, axisLine: { lineStyle: { color: '#e5e7eb' } }, axisTick: { show: false } },
+      yAxis: { type: 'value', max: series._yMax, axisLabel: { formatter: function(v) { return v >= 1000 ? (v/1000).toFixed(1)+'k' : v; }, color: '#9ca3af', fontSize: 10 }, splitLine: { lineStyle: { color: '#f3f4f6' } } },
+      series: series,
+      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: _dowTooltipFormatter }
+    }, true);
+  }
+
+  function _renderCreativeHeatmapAll() {
+    var container = document.getElementById('perf-creative-heatmap');
+    if (!container) return;
+    if (!_perfHeatmapChart) _perfHeatmapChart = echarts.init(container);
+    var pattern = _allCreativesTodPattern();
+    var days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    var slots = ['Morning\n6\u201311am', 'Afternoon\n11am\u20134pm', 'Evening\n4\u20139pm', 'Night\n9pm\u20132am'];
+    var data = []; var minV = 100, maxV = 0;
+    for (var row = 0; row < 4; row++) {
+      for (var col = 0; col < 7; col++) {
+        var v = pattern[row][col];
+        data.push([col, row, v]);
+        if (v < minV) minV = v;
+        if (v > maxV) maxV = v;
+      }
+    }
+    _perfHeatmapChart.setOption({
+      grid: { left: 86, right: 16, top: 10, bottom: 28 },
+      xAxis: { type: 'category', data: days, axisLabel: { fontSize: 11, color: '#374151' }, axisLine: { show: false }, axisTick: { show: false } },
+      yAxis: { type: 'category', data: slots, axisLabel: { fontSize: 10, color: '#374151', lineHeight: 14, align: 'right' }, axisLine: { show: false }, axisTick: { show: false } },
+      visualMap: { min: minV, max: maxV, show: false, inRange: { color: ['#e5e7eb', '#1f2937'] } },
+      series: [{ type: 'heatmap', data: data, label: { show: false }, itemStyle: { borderWidth: 2, borderColor: '#fff', borderRadius: 3 } }],
+      tooltip: { formatter: function(p) { return days[p.data[0]] + ' \u00b7 ' + slots[p.data[1]].replace('\n', ' ') + '<br/>Intensity: <b>' + p.data[2] + '</b>'; } }
+    }, true);
+  }
+
+  function _renderCreativeHeader(def) {
+    var el = document.getElementById('creative-detail-header');
+    if (!el) return;
+    var rows = _creativeStoreRows(def);
+    var totalVisits = rows.reduce(function(s, r) { return s + r.visits; }, 0);
+    // Scale preview box: max 220×120, preserve aspect ratio
+    var MAX_W = 220, MAX_H = 120;
+    var ratio = def.w / def.h;
+    var pW, pH;
+    if (ratio > MAX_W / MAX_H) { pW = MAX_W; pH = Math.max(Math.round(MAX_W / ratio), 32); }
+    else { pH = MAX_H; pW = Math.round(MAX_H * ratio); }
+    var isHorizontal = ratio > 3;
+    var formatLabel = ratio > 3 ? 'Leaderboard' : ratio > 1.5 ? 'Landscape' : ratio < 0.8 ? 'Interstitial' : 'Rectangle';
+    var horizClass = isHorizontal ? ' creative-ad-preview--horizontal' : '';
+    el.innerHTML =
+      '<div class="creative-ad-preview' + horizClass + '" style="width:' + pW + 'px;height:' + pH + 'px;">' +
+        '<div class="creative-ad-preview__inner" style="background:' + def.accent + ';">' +
+          '<span class="material-symbols-outlined creative-ad-preview__icon">' + def.typeIcon + '</span>' +
+          '<span class="creative-ad-preview__name">' + def.label + '</span>' +
+          '<span class="creative-ad-preview__format">' + formatLabel + ' · ' + def.dims + '</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="creative-dh__body">' +
+        '<div class="creative-dh__name">' + def.label + ' <span class="creative-dh__region-label">— ' + def.region + '</span></div>' +
+        '<div class="creative-dh__badges">' +
+          '<span class="creative-dh__badge creative-dh__badge--type">' + def.type.toUpperCase() + '</span>' +
+          '<span class="creative-dh__badge creative-dh__badge--dims">' + def.dims + '</span>' +
+        '</div>' +
+        '<div class="creative-dh__stats">' +
+          '<div class="creative-dh__stat"><span class="creative-dh__stat-val">' + def.dateStart + '\u00a0–\u00a0' + def.dateEnd + '</span><span class="creative-dh__stat-lbl">Flight window</span></div>' +
+          '<div class="creative-dh__stat"><span class="creative-dh__stat-val">' + def.numDays + ' days</span><span class="creative-dh__stat-lbl">Duration</span></div>' +
+          '<div class="creative-dh__stat"><span class="creative-dh__stat-val">' + def.stores.length + ' stores</span><span class="creative-dh__stat-lbl">Reached</span></div>' +
+          '<div class="creative-dh__stat creative-dh__stat--hero"><span class="creative-dh__stat-val">' + totalVisits.toLocaleString() + '</span><span class="creative-dh__stat-lbl">Total Visits</span></div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function _renderCreativeStores(def) {
+    var container = document.getElementById('perf-creative-bars');
+    if (!container) return;
+    var rows = _creativeStoreRows(def);
+    var chartH = Math.max(200, rows.length * 28 + 20);
+    container.style.height = chartH + 'px';
+    if (!_perfCreativeChart) _perfCreativeChart = echarts.init(container);
+    else _perfCreativeChart.resize({ height: chartH });
+    var cats = rows.map(function(r) { return r.name; }).reverse();
+    var vals = rows.map(function(r) { return r.visits; }).reverse();
+    var maxVal = Math.max.apply(null, vals);
+    _perfCreativeChart.setOption({
+      grid: { left: 10, right: 65, top: 8, bottom: 8, containLabel: true },
+      xAxis: { type: 'value', show: false, max: Math.ceil(maxVal * 1.18) },
+      yAxis: { type: 'category', data: cats, axisLabel: { fontSize: 11, color: '#374151' }, axisLine: { show: false }, axisTick: { show: false } },
+      series: [{ type: 'bar', data: vals, itemStyle: { color: '#6b7280', borderRadius: [0, 4, 4, 0] }, barMaxWidth: 20,
+        label: { show: true, position: 'right', fontSize: 11, color: '#111827', fontWeight: 600, formatter: function(p) { return p.value.toLocaleString(); } }
+      }],
+      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: function(p) { return p[0].name + '<br/><b>' + p[0].value.toLocaleString() + '</b> visits'; } }
+    }, true);
+  }
+
+  function _renderCreativeDow(def) {
+    _buildVisitTypeToggles('dow-type-toggles-creative', 'creative');
+    var container = document.getElementById('perf-creative-dow');
+    if (!container) return;
+    if (!_perfDowChart) _perfDowChart = echarts.init(container);
+    var split = _dowTypeData(def.dowVisits);
+    var series = _dowStackedSeries(split, -1);
+    _perfDowChart.setOption({
+      legend: { show: false },
+      grid: { left: 40, right: 12, top: 10, bottom: 28 },
+      xAxis: { type: 'category', data: DAY_NAMES, axisLabel: { fontSize: 11, color: '#374151' }, axisLine: { lineStyle: { color: '#e5e7eb' } }, axisTick: { show: false } },
+      yAxis: { type: 'value', max: series._yMax, axisLabel: { formatter: function(v) { return v >= 1000 ? (v/1000).toFixed(1)+'k' : v; }, color: '#9ca3af', fontSize: 10 }, splitLine: { lineStyle: { color: '#f3f4f6' } } },
+      series: series,
+      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: _dowTooltipFormatter }
+    }, true);
+  }
+
+  function _renderCreativeHeatmap(def) {
+    var container = document.getElementById('perf-creative-heatmap');
+    if (!container) return;
+    if (!_perfHeatmapChart) _perfHeatmapChart = echarts.init(container);
+    var pattern = TOD_PATTERNS[def.todPattern] || TOD_PATTERNS.display;
+    var days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    var slots = ['Morning\n6–11am', 'Afternoon\n11am–4pm', 'Evening\n4–9pm', 'Night\n9pm–2am'];
+    var data = [];
+    var minV = 100, maxV = 0;
+    for (var row = 0; row < 4; row++) {
+      for (var col = 0; col < 7; col++) {
+        var v = pattern[row][col];
+        data.push([col, row, v]);
+        if (v < minV) minV = v;
+        if (v > maxV) maxV = v;
+      }
+    }
+    _perfHeatmapChart.setOption({
+      grid: { left: 86, right: 16, top: 10, bottom: 28 },
+      xAxis: { type: 'category', data: days, axisLabel: { fontSize: 11, color: '#374151' }, axisLine: { show: false }, axisTick: { show: false } },
+      yAxis: { type: 'category', data: slots, axisLabel: { fontSize: 10, color: '#374151', lineHeight: 14, align: 'right' }, axisLine: { show: false }, axisTick: { show: false } },
+      visualMap: { min: minV, max: maxV, show: false, inRange: { color: ['#e5e7eb', '#1f2937'] } },
+      series: [{ type: 'heatmap', data: data, label: { show: false },
+        itemStyle: { borderWidth: 2, borderColor: '#fff', borderRadius: 3 }
+      }],
+      tooltip: { formatter: function(p) {
+        return days[p.data[0]] + ' · ' + slots[p.data[1]].replace('\n', ' ') + '<br/>Intensity: <b>' + p.data[2] + '</b>';
+      }}
+    }, true);
+  }
+
+  function renderPerfCreative() {
+    // Legacy entry point kept for compat — routes to new implementation
+    _rechartCreative();
+  }
+
+  var _perfDayStoresChart = null;
+  var _perfDayHeatmapChart = null;
+  var _activeDayFilter = 'all'; // 'all' | 0..6 (Mon=0 … Sun=6)
+
+  var DAY_CHIPS = [
+    { key: 'all', label: 'All Days', icon: 'calendar_month', sub: 'Combined' },
+    { key: 0, label: 'Monday',    icon: 'calendar_today', sub: 'Mon' },
+    { key: 1, label: 'Tuesday',   icon: 'calendar_today', sub: 'Tue' },
+    { key: 2, label: 'Wednesday', icon: 'calendar_today', sub: 'Wed' },
+    { key: 3, label: 'Thursday',  icon: 'calendar_today', sub: 'Thu' },
+    { key: 4, label: 'Friday',    icon: 'calendar_today', sub: 'Fri' },
+    { key: 5, label: 'Saturday',  icon: 'weekend', sub: 'Sat · Peak' },
+    { key: 6, label: 'Sunday',    icon: 'weekend', sub: 'Sun · Peak' }
+  ];
+
+  function _dayChipFullDate(dayKey) {
+    // Returns "Jan 7, 2026" for the given day index (Mon=0) within the active week
+    var ctx = D.context;
+    var week = D.flightWeeks.find(function(w) { return w.id === ctx.flightWeek; });
+    if (!week) return '';
+    // week.start is the Monday of that week (YYYY-MM-DD)
+    var parts = week.start.split('-');
+    var base = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+    base.setDate(base.getDate() + dayKey);
+    return base.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  function initPerfDayChips() {
+    var chips = document.getElementById('day-chips');
+    if (!chips) return;
+    var dowTotals = _allCreativesDoW();
+    var busiestDay = dowTotals.reduce(function(best, v, i) { return v > best.v ? { i: i, v: v } : best; }, { i: -1, v: -1 }).i;
+    chips.innerHTML = DAY_CHIPS.map(function(d) {
+      var isWeekend = d.key === 5 || d.key === 6;
+      var active = d.key === _activeDayFilter ? ' creative-chip--active' : '';
+      var fullDate = (typeof d.key === 'number') ? _dayChipFullDate(d.key) : '';
+      var dateSpan = fullDate ? '<span class="creative-chip__date">' + fullDate + '</span>' : '';
+      var busyFlag = d.key === busiestDay ? '<span class="creative-chip__flag">Busiest</span>' : '';
+      return '<button class="creative-chip' + active + '" data-day-key="' + d.key + '">' +
+        '<div class="creative-chip__header">' +
+          '<span class="material-symbols-outlined creative-chip__icon">' + d.icon + '</span>' +
+          busyFlag +
+        '</div>' +
+        '<span class="creative-chip__name">' + d.label + '</span>' +
+        dateSpan +
+      '</button>';
+    }).join('');
+    chips.querySelectorAll('.creative-chip').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var raw = btn.dataset.dayKey;
+        _activeDayFilter = raw === 'all' ? 'all' : parseInt(raw, 10);
+        chips.querySelectorAll('.creative-chip').forEach(function(b) {
+          b.classList.toggle('creative-chip--active', b === btn);
+        });
+        _rechartDay();
+      });
+    });
   }
 
   function renderPerfDay() {
+    initPerfDayChips();
+    _rechartDay();
+  }
+
+  function _updateDayLabels() {
+    var isAll = _activeDayFilter === 'all';
+    var dateStr = '';
+    if (!isAll) {
+      var d = _dayChipFullDate(_activeDayFilter);
+      var shortDay = DAY_NAMES[_activeDayFilter].slice(0, 3);
+      dateStr = shortDay + ', ' + d;
+    }
+    var dateSpan = dateStr
+      ? ' <span class="section-label__date">' + dateStr + '</span>'
+      : '';
+    var labels = [
+      { id: 'day-stores-label',  base: 'Visits by Store \u2014 All Creatives' },
+      { id: 'day-dow-label',     base: 'Day of Week Pattern \u2014 All Creatives' },
+      { id: 'day-heatmap-label', base: 'Visit Intensity \u2014 Time of Day \u00d7 Day of Week \u2014 All Creatives' }
+    ];
+    labels.forEach(function(l) {
+      var el = document.getElementById(l.id);
+      if (el) el.innerHTML = l.base + dateSpan;
+    });
+  }
+
+  function _rechartDay() {
+    _updateDayLabels();
+    _renderDayHeader();
+    _renderDayStores();
+    _renderDayDow();
+    _renderDayHeatmap();
+  }
+
+  function _allCreativesTotalVisits() {
+    return CREATIVE_DEFS.reduce(function(s, def) {
+      return s + _creativeStoreRows(def).reduce(function(ss, r) { return ss + r.visits; }, 0);
+    }, 0);
+  }
+
+  function _allCreativesStoreTotals() {
+    var storeMap = {};
+    CREATIVE_DEFS.forEach(function(def) {
+      _creativeStoreRows(def).forEach(function(r) {
+        storeMap[r.name] = (storeMap[r.name] || 0) + r.visits;
+      });
+    });
+    return Object.keys(storeMap)
+      .map(function(k) { return { name: k, visits: storeMap[k] }; })
+      .sort(function(a, b) { return b.visits - a.visits; });
+  }
+
+  function _allCreativesDoW() {
+    var totals = [0, 0, 0, 0, 0, 0, 0];
+    CREATIVE_DEFS.forEach(function(def) {
+      def.dowVisits.forEach(function(v, i) { totals[i] += v; });
+    });
+    return totals;
+  }
+
+  function _allCreativesTodPattern() {
+    // Average the TOD matrices across all creatives
+    var sum = [[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0]];
+    CREATIVE_DEFS.forEach(function(def) {
+      var p = TOD_PATTERNS[def.todPattern] || TOD_PATTERNS.display;
+      for (var r = 0; r < 4; r++) {
+        for (var c = 0; c < 7; c++) { sum[r][c] += p[r][c]; }
+      }
+    });
+    var n = CREATIVE_DEFS.length;
+    return sum.map(function(row) { return row.map(function(v) { return Math.round(v / n); }); });
+  }
+
+  var DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+  // Universal visitor-type taxonomy — matches ChartColors + donut segment mapping
+  // New Shoppers = blue (#4272D8), Returning = amber (#F59E0B), Loyal = green (#10B981)
+  var VISIT_TYPES = [
+    { key: 'loyal',        label: 'Loyal',        color: '#10b981' },
+    { key: 'returning',    label: 'Returning',    color: '#f59e0b' },
+    { key: 'newShoppers',  label: 'New Shoppers', color: '#4272D8' }
+  ];
+
+  // Per-day split ratios [newShoppers%, returning%, loyal%]
+  // Weekends skew toward new/returning; weekdays toward loyal/routine
+  var DOW_TYPE_RATIOS = [
+    [0.24, 0.44, 0.32], // Mon
+    [0.22, 0.43, 0.35], // Tue
+    [0.23, 0.44, 0.33], // Wed
+    [0.25, 0.44, 0.31], // Thu
+    [0.27, 0.45, 0.28], // Fri
+    [0.35, 0.46, 0.19], // Sat — peak new shoppers
+    [0.33, 0.46, 0.21]  // Sun
+  ];
+
+  // Shared toggle state across both DoW charts
+  var _activeVisitTypes = { newShoppers: true, returning: true, loyal: true };
+
+  function _dowTypeData(dowTotals) {
+    return {
+      loyal:       dowTotals.map(function(v, i) { return Math.round(v * DOW_TYPE_RATIOS[i][2]); }),
+      returning:   dowTotals.map(function(v, i) { return Math.round(v * DOW_TYPE_RATIOS[i][1]); }),
+      newShoppers: dowTotals.map(function(v, i) { return Math.round(v * DOW_TYPE_RATIOS[i][0]); })
+    };
+  }
+
+  function _buildVisitTypeToggles(containerId, chartId) {
+    var el = document.getElementById(containerId);
+    if (!el || el.children.length) return; // already built
+    el.innerHTML = VISIT_TYPES.map(function(t) {
+      var isActive = _activeVisitTypes[t.key];
+      return '<button class="vt-toggle' + (isActive ? ' vt-toggle--active' : '') + '" ' +
+        'data-type-key="' + t.key + '" style="--vt-color:' + t.color + ';">' +
+        '<span class="vt-toggle__dot"></span>' + t.label + '</button>';
+    }).join('');
+    el.querySelectorAll('.vt-toggle').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var key = btn.dataset.typeKey;
+        _activeVisitTypes[key] = !_activeVisitTypes[key];
+        // Sync visual state across both toggle bars
+        document.querySelectorAll('.vt-toggle[data-type-key="' + key + '"]').forEach(function(b) {
+          b.classList.toggle('vt-toggle--active', _activeVisitTypes[key]);
+        });
+        if (chartId === 'creative') {
+          var def = CREATIVE_DEFS.find(function(d) { return d.key === _activePerfCreative; });
+          if (def) _renderCreativeDow(def);
+        } else {
+          _renderDayDow();
+        }
+      });
+    });
+  }
+
+  function _dowStackedSeries(split, activeIdx) {
+    var dayCount = split.loyal.length;
+
+    // Full totals — computed from ALL types regardless of toggle state
+    // Outline bar and y-axis max always reflect the true total
+    var fullTotals = [];
+    for (var i = 0; i < dayCount; i++) {
+      fullTotals.push(VISIT_TYPES.reduce(function(s, t) {
+        return s + split[t.key][i];
+      }, 0));
+    }
+
+    var activeSeries = VISIT_TYPES.map(function(t) {
+      if (!_activeVisitTypes[t.key]) return null;
+      return {
+        name: t.label,
+        type: 'bar',
+        stack: 'visitors',
+        barWidth: 28,
+        data: split[t.key].map(function(v, i) {
+          var fade = (activeIdx >= 0 && activeIdx !== i) ? 0.22 : 1;
+          return { value: v, itemStyle: { color: t.color, opacity: fade } };
+        })
+      };
+    }).filter(Boolean);
+
+    // Outline bar uses FULL totals — never shrinks when types are toggled off
+    // Gap between stacked top and outline = the hidden segment(s)
+    var outlineSeries = {
+      name: '__total__',
+      type: 'bar',
+      barGap: '-100%',
+      barWidth: 28,
+      data: fullTotals.map(function(v, i) {
+        var fade = (activeIdx >= 0 && activeIdx !== i) ? 0.22 : 1;
+        return {
+          value: v,
+          itemStyle: { color: 'transparent', borderColor: 'rgba(55,65,81,' + fade + ')', borderWidth: 1.5 },
+          label: {
+            show: true,
+            position: 'top',
+            color: activeIdx >= 0 && activeIdx !== i ? 'transparent' : '#374151',
+            fontSize: 10,
+            fontWeight: 600,
+            formatter: function(p) { return p.value >= 1000 ? (p.value / 1000).toFixed(1) + 'k' : p.value; }
+          }
+        };
+      })
+    };
+
+    var series = activeSeries.concat([outlineSeries]);
+    series._yMax = Math.ceil(Math.max.apply(null, fullTotals) * 1.15);
+    return series;
+  }
+
+  function _dowTooltipFormatter(params) {
+    var day = params[0].name;
+    var totalParam = params.find(function(p) { return p.seriesName === '__total__'; });
+    var dataParams = params.filter(function(p) { return p.seriesName !== '__total__'; });
+    var fullTotal = totalParam ? totalParam.value : dataParams.reduce(function(s, p) { return s + p.value; }, 0);
+    if (dataParams.length === 0) {
+      return day + '<br/><hr style="margin:4px 0;border-color:#e5e7eb;">Total: <b>' + fullTotal.toLocaleString() + '</b>';
+    }
+    var lines = dataParams.map(function(p) {
+      return '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:' +
+        p.color + ';margin-right:4px;vertical-align:middle;"></span>' +
+        p.seriesName + ': <b>' + p.value.toLocaleString() + '</b>';
+    });
+    return day + '<br/>' + lines.join('<br/>') + '<br/><hr style="margin:4px 0;border-color:#e5e7eb;">Total: <b>' + fullTotal.toLocaleString() + '</b>';
+  }
+
+  function _dayVisits(storeTotal, dayIdx) {
+    // Fraction of total visits attributable to this day
+    var dow = _allCreativesDoW();
+    var dowSum = dow.reduce(function(s, v) { return s + v; }, 0);
+    return Math.round(storeTotal * (dow[dayIdx] / dowSum));
+  }
+
+  function _renderDayHeader() {
+    var el = document.getElementById('day-detail-header');
+    if (!el) return;
+    var isAll = _activeDayFilter === 'all';
+    var dayIdx = isAll ? null : _activeDayFilter;
+    var totalStores = (function() {
+      var ids = {};
+      CREATIVE_DEFS.forEach(function(def) { def.stores.forEach(function(s) { ids[s.num] = 1; }); });
+      return Object.keys(ids).length;
+    })();
+    var allVisits = _allCreativesTotalVisits();
+    var dow = _allCreativesDoW();
+    var dowSum = dow.reduce(function(s, v) { return s + v; }, 0);
+    var shownVisits = isAll ? allVisits : Math.round(allVisits * (dow[dayIdx] / dowSum));
+    var titleLong = (function() {
+      function longDate(idx) {
+        var ctx = D.context;
+        var week = D.flightWeeks.find(function(w) { return w.id === ctx.flightWeek; });
+        if (!week) return '';
+        var parts = week.start.split('-');
+        var base = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+        base.setDate(base.getDate() + idx);
+        return base.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+      }
+      var fullDayName = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+      if (isAll) {
+        var start = longDate(0);
+        var end = longDate(6);
+        return 'All Days — ' + (start && end ? start + ' – ' + end : 'Mon – Sun');
+      }
+      var full = longDate(dayIdx);
+      return fullDayName[dayIdx] + (full ? ' — ' + full : '');
+    })();
+    var subtitleDay = isAll ? 'Combined across Mon – Sun' : 'Filtered to ' + DAY_NAMES[dayIdx] + ' only';
+    el.innerHTML =
+      '<div class="creative-dh__body" style="flex:1;">' +
+        '<div class="creative-dh__name">' + titleLong + '</div>' +
+        '<div class="creative-dh__badges">' +
+          CREATIVE_DEFS.map(function(d) {
+            return '<span class="creative-dh__badge" style="background:' + d.accent + '22;border-color:' + d.accent + ';color:' + d.accent + ';">' + d.label + '</span>';
+          }).join('') +
+        '</div>' +
+        '<div class="creative-dh__stats">' +
+          '<div class="creative-dh__stat"><span class="creative-dh__stat-val">' + CREATIVE_DEFS.length + ' creatives</span><span class="creative-dh__stat-lbl">In flight</span></div>' +
+          '<div class="creative-dh__stat"><span class="creative-dh__stat-val">' + totalStores + ' stores</span><span class="creative-dh__stat-lbl">Reached</span></div>' +
+          '<div class="creative-dh__stat"><span class="creative-dh__stat-val">' + subtitleDay + '</span><span class="creative-dh__stat-lbl">Scope</span></div>' +
+          '<div class="creative-dh__stat creative-dh__stat--hero"><span class="creative-dh__stat-val">' + shownVisits.toLocaleString() + '</span><span class="creative-dh__stat-lbl">Visits</span></div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function _renderDayStores() {
+    var container = document.getElementById('perf-day-stores');
+    if (!container) return;
+    var allRows = _allCreativesStoreTotals();
+    var isAll = _activeDayFilter === 'all';
+    var rows = isAll ? allRows : allRows.map(function(r) {
+      return { name: r.name, visits: _dayVisits(r.visits, _activeDayFilter) };
+    });
+    var chartH = Math.max(200, rows.length * 28 + 20);
+    container.style.height = chartH + 'px';
+    if (!_perfDayStoresChart) _perfDayStoresChart = echarts.init(container);
+    else _perfDayStoresChart.resize({ height: chartH });
+    var cats = rows.map(function(r) { return r.name; }).reverse();
+    var vals = rows.map(function(r) { return r.visits; }).reverse();
+    var maxVal = Math.max.apply(null, vals);
+    var barColor = '#6b7280'; // gray — neutral aggregate (all creatives)
+    _perfDayStoresChart.setOption({
+      grid: { left: 10, right: 65, top: 8, bottom: 8, containLabel: true },
+      xAxis: { type: 'value', show: false, max: Math.ceil(maxVal * 1.18) },
+      yAxis: { type: 'category', data: cats, axisLabel: { fontSize: 11, color: '#374151' }, axisLine: { show: false }, axisTick: { show: false } },
+      series: [{ type: 'bar', data: vals, itemStyle: { color: barColor, borderRadius: [0, 4, 4, 0] }, barMaxWidth: 20,
+        label: { show: true, position: 'right', fontSize: 11, color: '#111827', fontWeight: 600, formatter: function(p) { return p.value.toLocaleString(); } }
+      }],
+      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: function(p) { return p[0].name + '<br/><b>' + p[0].value.toLocaleString() + '</b> visits'; } }
+    }, true);
+  }
+
+  function _renderDayDow() {
+    _buildVisitTypeToggles('dow-type-toggles-day', 'day');
     var container = document.getElementById('perf-day-bars');
     if (!container) return;
-    var rows = dayOfWeekAverages();
     if (!_perfDayChart) _perfDayChart = echarts.init(container);
-    var maxVal = Math.max.apply(null, rows.map(function(r) { return r.visits; }));
+    var totals = _allCreativesDoW();
+    var split = _dowTypeData(totals);
+    var activeIdx = _activeDayFilter === 'all' ? -1 : _activeDayFilter;
+    var series = _dowStackedSeries(split, activeIdx);
     _perfDayChart.setOption({
-      grid: { left: 50, right: 40, top: 30, bottom: 40, containLabel: true },
-      xAxis: {
-        type: 'category', data: rows.map(function(r) { return r.day; }),
-        axisLabel: { fontSize: 12, color: '#374151' }
-      },
-      yAxis: {
-        type: 'value', max: Math.ceil(maxVal * 1.15),
-        axisLabel: { formatter: function(v) { return v.toLocaleString(); }, color: '#9ca3af', fontSize: 10 },
-        splitLine: { lineStyle: { color: '#f3f4f6' } }
-      },
-      series: [{
-        type: 'bar',
-        data: rows.map(function(r) { return r.visits; }),
-        itemStyle: { color: '#4272D8', borderRadius: [4, 4, 0, 0] },
-        barMaxWidth: 60,
-        label: {
-          show: true, position: 'top', fontSize: 11, color: '#111827',
-          fontWeight: 600,
-          formatter: function(p) { return p.value.toLocaleString(); }
-        }
-      }],
-      tooltip: {
-        trigger: 'axis', axisPointer: { type: 'shadow' },
-        formatter: function(params) {
-          return params[0].name + '<br/>Avg <b>' + params[0].value.toLocaleString() + '</b> visits per ' + params[0].name;
+      legend: { show: false },
+      grid: { left: 40, right: 12, top: 10, bottom: 28 },
+      xAxis: { type: 'category', data: DAY_NAMES, axisLabel: { fontSize: 11, color: '#374151' }, axisLine: { lineStyle: { color: '#e5e7eb' } }, axisTick: { show: false } },
+      yAxis: { type: 'value', max: series._yMax, axisLabel: { formatter: function(v) { return v >= 1000 ? (v/1000).toFixed(1)+'k' : v; }, color: '#9ca3af', fontSize: 10 }, splitLine: { lineStyle: { color: '#f3f4f6' } } },
+      series: series,
+      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: _dowTooltipFormatter }
+    }, true);
+  }
+
+  function _renderDayHeatmap() {
+    var container = document.getElementById('perf-day-heatmap');
+    if (!container) return;
+    if (!_perfDayHeatmapChart) _perfDayHeatmapChart = echarts.init(container);
+    var isAll = _activeDayFilter === 'all';
+    var pattern = _allCreativesTodPattern();
+    var slots = ['Morning\n6–11am', 'Afternoon\n11am–4pm', 'Evening\n4–9pm', 'Night\n9pm–2am'];
+
+    if (!isAll) {
+      // Single-day view: show time-of-day as a 4-bar vertical chart
+      var dayIdx = _activeDayFilter;
+      var todVals = pattern.map(function(row) { return row[dayIdx]; });
+      var maxV = Math.max.apply(null, todVals);
+      _perfDayHeatmapChart.setOption({
+        grid: { left: 86, right: 20, top: 14, bottom: 28 },
+        xAxis: { type: 'category', data: slots.map(function(s) { return s.replace('\n', ' '); }), axisLabel: { fontSize: 10, color: '#374151', interval: 0, rotate: 0 }, axisLine: { lineStyle: { color: '#e5e7eb' } }, axisTick: { show: false } },
+        yAxis: { type: 'value', max: Math.ceil(maxV * 1.2), axisLabel: { color: '#9ca3af', fontSize: 10 }, splitLine: { lineStyle: { color: '#f3f4f6' } } },
+        series: [{ type: 'bar', data: todVals,
+          itemStyle: { color: function(p) {
+            var colors = ['#d1d5db', '#9ca3af', '#6b7280', '#374151'];
+            return colors[p.dataIndex] || '#4272D8';
+          }, borderRadius: [4, 4, 0, 0] },
+          barMaxWidth: 60,
+          label: { show: true, position: 'top', fontSize: 11, color: '#374151', fontWeight: 600, formatter: function(p) { return p.value; } }
+        }],
+        tooltip: { formatter: function(p) { return p[0].name + '<br/>Intensity: <b>' + p[0].value + '</b>'; } }
+      }, true);
+    } else {
+      // All days: full heatmap grid
+      var data = []; var minV2 = 100, maxV2 = 0;
+      for (var row = 0; row < 4; row++) {
+        for (var col = 0; col < 7; col++) {
+          var v = pattern[row][col];
+          data.push([col, row, v]);
+          if (v < minV2) minV2 = v; if (v > maxV2) maxV2 = v;
         }
       }
-    }, true);
+      _perfDayHeatmapChart.setOption({
+        grid: { left: 86, right: 16, top: 10, bottom: 28 },
+        xAxis: { type: 'category', data: DAY_NAMES, axisLabel: { fontSize: 11, color: '#374151' }, axisLine: { show: false }, axisTick: { show: false } },
+        yAxis: { type: 'category', data: slots, axisLabel: { fontSize: 10, color: '#374151', lineHeight: 14, align: 'right' }, axisLine: { show: false }, axisTick: { show: false } },
+        visualMap: { min: minV2, max: maxV2, show: false, inRange: { color: ['#e5e7eb', '#1f2937'] } },
+        series: [{ type: 'heatmap', data: data, label: { show: false }, itemStyle: { borderWidth: 2, borderColor: '#fff', borderRadius: 3 } }],
+        tooltip: { formatter: function(p) { return DAY_NAMES[p.data[0]] + ' · ' + slots[p.data[1]].replace('\n', ' ') + '<br/>Intensity: <b>' + p.data[2] + '</b>'; } }
+      }, true);
+    }
   }
 
   function renderStorePerformanceBarView() {
@@ -3687,7 +4462,10 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
           ' data-seg-count="' + fmtNumber(count) + '"' +
           ' data-seg-pct="' + pct.toFixed(1) + '"' +
           ' data-seg-pct-max="' + maxPctOf(count) + '"' +
-          ' data-seg-total="' + fmtNumber(total) + '"></div>';
+          ' data-seg-total="' + fmtNumber(total) + '"' +
+          ' data-seg-new="' + fmtNumber(newV) + '"' +
+          ' data-seg-ret="' + fmtNumber(retV) + '"' +
+          ' data-seg-loy="' + fmtNumber(loyV) + '"></div>';
       };
       return '<div class="bar-row" data-store-id="' + store.storeId + '">' +
         '<div class="bar-row__num">' + (i + 1) + '</div>' +
@@ -3716,10 +4494,20 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     el.addEventListener('mousemove', function(e) {
       var t = e.target;
       if (!t.classList || !t.classList.contains('bar-row__fill')) { tip.classList.remove('bar-seg-tooltip--show'); return; }
+      var pip = function(color) {
+        return '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:' + color + ';margin-right:5px;flex-shrink:0;vertical-align:middle;"></span>';
+      };
+      var SEG_TYPE_MAP = {
+        'bar-row__fill--new':       { color: '#4272D8', label: 'New Shopper Visits' },
+        'bar-row__fill--returning': { color: '#f59e0b', label: 'Returning Visits' },
+        'bar-row__fill--loyal':     { color: '#10b981', label: 'Loyal Shopper Visits' }
+      };
+      var segKey = Object.keys(SEG_TYPE_MAP).find(function(cls) { return t.classList.contains(cls); });
+      var typeInfo = segKey ? SEG_TYPE_MAP[segKey] : { color: '#6b7280', label: 'Visits' };
       tip.innerHTML =
         '<div class="bar-seg-tooltip__store">' + t.dataset.segStore + '</div>' +
         '<div class="bar-seg-tooltip__name">' + t.dataset.segName + '</div>' +
-        '<div class="bar-seg-tooltip__row"><span>Visits</span><b>' + t.dataset.segCount + '</b></div>' +
+        '<div class="bar-seg-tooltip__row bar-seg-tooltip__row--visit"><span>' + pip(typeInfo.color) + typeInfo.label + '</span><b>' + t.dataset.segCount + '</b></div>' +
         '<div class="bar-seg-tooltip__row"><span>Of store total</span><b>' + t.dataset.segPct + '%</b></div>' +
         '<div class="bar-seg-tooltip__row"><span>Of max store</span><b>' + t.dataset.segPctMax + '%</b></div>' +
         '<div class="bar-seg-tooltip__row bar-seg-tooltip__row--muted"><span>Store total</span><b>' + t.dataset.segTotal + '</b></div>';
@@ -3757,6 +4545,17 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
   /* ============================================================
      Phase 2: Duration presets for Trend view
      ============================================================ */
+  function _updateFrequencySubtitle() {
+    var lbl = document.getElementById('freq-bucket-label');
+    if (!lbl) return;
+    var active = document.querySelector('#duration-presets .duration-preset.active');
+    var dur = active ? active.dataset.duration : '1w';
+    var gran = document.querySelector('#year-granularity .year-gran-btn.active');
+    var granKey = gran ? gran.dataset.gran : 'quarter';
+    var map = { '1w': 'day', '1m': 'week', '1q': 'week', '1y': granKey === 'month' ? 'month' : 'quarter' };
+    lbl.textContent = map[dur] || 'bucket';
+  }
+
   function initDurationPresets() {
     var container = document.getElementById('duration-presets');
     if (!container) return;
@@ -3766,6 +4565,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         presets.forEach(function(b) { b.classList.remove('active'); });
         btn.classList.add('active');
         initFrequencyChart();
+        _updateFrequencySubtitle();
       });
     });
     // 1-Year sub-granularity (by week | by quarter)
@@ -3776,9 +4576,11 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
           gran.querySelectorAll('.year-gran-btn').forEach(function(b) { b.classList.remove('active'); });
           btn.classList.add('active');
           initFrequencyChart();
+          _updateFrequencySubtitle();
         });
       });
     }
+    _updateFrequencySubtitle();
   }
 
   /* ============================================================
@@ -3844,12 +4646,18 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     var useArea = weekCount > 4;
     var chartType = useArea ? 'line' : 'bar';
 
+    var stackLabel = useArea ? { show: false } : {
+      show: true, position: 'inside', fontSize: 10, color: '#fff', fontWeight: 'bold',
+      formatter: function (p) { return p.value >= 6 ? p.value.toFixed(1) + '%' : ''; }
+    };
+
     var namedSeries = top5.map(function (comp, i) {
       var s = {
         name: comp.competitor_name,
         type: chartType,
         stack: 'crossover',
         itemStyle: { color: CROSSOVER_COLORS[i] },
+        label: stackLabel,
         emphasis: { focus: 'series' },
         data: comp.trend.slice(sliceStart)
       };
@@ -3878,6 +4686,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       type: chartType,
       stack: 'crossover',
       itemStyle: { color: CROSSOVER_COLORS[6] },
+      label: stackLabel,
       emphasis: { focus: 'series' },
       data: ourBrandTrend
     };
@@ -3904,6 +4713,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         type: chartType,
         stack: 'crossover',
         itemStyle: { color: CROSSOVER_COLORS[5] },
+        label: stackLabel,
         emphasis: { focus: 'series' },
         data: allOtherTrend
       };
@@ -3936,11 +4746,8 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         }
       },
       legend: {
-        bottom: 0,
-        itemWidth: 14,
-        itemHeight: 10,
-        itemGap: 18,
-        textStyle: { fontSize: 12, color: '#4b5563' },
+        bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, itemGap: 20,
+        textStyle: { fontSize: 12, color: '#6b7280' },
         data: legendNames
       },
       grid: { left: 50, right: 24, top: 16, bottom: 60 },
@@ -4083,7 +4890,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         itemStyle: { color: DEMO_PALETTE[i % DEMO_PALETTE.length] },
         data: bucketData.map(function(row) { return row[i]; }),
         label: buckets.length <= 4 ? {
-          show: true, position: 'inside', fontSize: 10, color: '#fff',
+          show: true, position: 'inside', fontSize: 10, color: '#fff', fontWeight: 'bold',
           formatter: function(p) { return p.value >= 6 ? p.value + '%' : ''; }
         } : { show: false }
       };
@@ -4092,7 +4899,8 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       grid: { left: 40, right: 10, top: 30, bottom: 40, containLabel: true },
       legend: {
         data: c.cats, bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8,
-        textStyle: { fontSize: 10, color: '#6b7280' }
+        itemGap: 20,
+        textStyle: { fontSize: 12, color: '#6b7280' }
       },
       xAxis: {
         type: 'category', data: buckets,
@@ -4171,63 +4979,6 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     }).filter(Boolean);
     renderDemographicsAll();
     initDemographicsControls();
-  }
-
-  /* ============================================================
-     Creative Coverage Key — shows creative counts per entity
-     ============================================================ */
-  function computeEntityCreativeCoverage() {
-    if (typeof DistributionEntities === 'undefined') return null;
-    var snap = D.context;
-    var results = { all: null, brands: [], subBrands: [], stores: [] };
-
-    function countFor(id, level, name) {
-      D.setEntity(id, level, name);
-      var records = D.creativeRecords.filter(function (cr) { return cr.metrics !== null; });
-      return { id: id, level: level, name: name, count: records.length };
-    }
-
-    results.all = countFor('all', 'all', 'All Stores');
-    DistributionEntities.brands.forEach(function (b) {
-      results.brands.push(countFor(b.id, 'brand', b.name));
-    });
-    DistributionEntities.subBrands.forEach(function (sb) {
-      var brand = DistributionEntities.getBrandById(sb.brandId);
-      var name = (brand ? brand.name + ' — ' : '') + sb.name;
-      results.subBrands.push(countFor(sb.id, 'sub-brand', name));
-    });
-    DistributionEntities.stores.forEach(function (s) {
-      results.stores.push(countFor(s.id, 'store', '#' + s.storeNumber + ' ' + s.name));
-    });
-
-    // Restore original context
-    D.setEntity(snap.entityId, snap.entityLevel, snap.entityName);
-    return results;
-  }
-
-  function renderCreativeCoverageKey() {
-    var body = document.getElementById('creative-coverage-key-body');
-    if (!body) return;
-    var data = computeEntityCreativeCoverage();
-    if (!data) { body.innerHTML = ''; return; }
-
-    function groupHtml(title, rows) {
-      if (!rows.length) return '';
-      var items = rows.map(function (r) {
-        var cls = r.count === 0 ? 'cck-item cck-item--empty' : 'cck-item';
-        return '<div class="' + cls + '"><span class="cck-name">' + r.name + '</span><span class="cck-count">' + r.count + '</span></div>';
-      }).join('');
-      return '<div class="cck-group"><div class="cck-group-title">' + title + '</div><div class="cck-group-items">' + items + '</div></div>';
-    }
-
-    var html = '';
-    html += '<div class="cck-group"><div class="cck-group-title">Overall</div><div class="cck-group-items">' +
-      '<div class="cck-item cck-item--all"><span class="cck-name">' + data.all.name + '</span><span class="cck-count">' + data.all.count + '</span></div>' +
-      '</div></div>';
-    html += groupHtml('Brand', data.brands);
-    html += groupHtml('Sub-brand', data.subBrands);
-    html += groupHtml('Store', data.stores);
-    body.innerHTML = html;
   }
 
 })();

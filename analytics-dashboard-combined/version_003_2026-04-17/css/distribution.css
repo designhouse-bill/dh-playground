@@ -209,164 +209,10 @@
    Media Hero KPI (PrimeNG tokens)
    ======================================== */
 
-/* --- Media Hero: 2-column Figma layout --- */
-.media-hero {
-  background: #e3f2fd;
-  border-radius: var(--p-border-radius-lg);
-  padding: 16px 24px;
-  display: flex;
-  gap: 24px;
-  align-items: center;
-  container-type: inline-size;
-  container-name: media-hero;
-}
-
-/* Left column: CPV + Budget + trend callout */
-.media-hero__budget {
-  flex: 0 1 25cqi;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.media-hero__metric-summary {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  justify-content: space-between;
-}
-
-.media-hero__cpv-group {
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-}
-
-.media-hero__cpv-label {
-  font-size: 11px;
-  font-weight: var(--font-weight-semibold);
-  color: #1e88e5;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  line-height: 16.5px;
-}
-
-.media-hero__cpv {
-  font-size: 48px;
-  font-weight: 900;
-  color: #000;
-  line-height: 48px;
-}
-
-.media-hero__total-budget {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 0;
-}
-
-.media-hero__budget-value {
-  font-size: 18px;
-  font-weight: var(--font-weight-bold);
-  color: var(--p-text-color);
-  line-height: 21.6px;
-}
-
-.media-hero__trend-callout {
-  display: flex;
-  align-items: center;
-  gap: var(--p-spacing-2);
-  font-size: 12px;
-  font-weight: var(--font-weight-medium);
-  color: var(--p-text-color-secondary);
-  padding: 0;
-  background: none;
-  border: none;
-  opacity: 0.85;
-}
-
-.media-hero__trend-callout .material-symbols-outlined {
-  font-size: 18px;
-}
-
-.media-hero__trend-callout--good .material-symbols-outlined {
-  color: var(--p-green-600);
-}
-
-.media-hero__trend-callout--bad .material-symbols-outlined {
-  color: var(--p-red-500);
-}
-
-.media-hero__trend-callout--flat .material-symbols-outlined {
-  color: #f59e0b;
-}
-
-/* Right column: 6 metric cards in 3×2 grid */
-.media-hero__cards {
-  flex: 1;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
-
-@media (max-width: 768px) {
-  .media-hero {
-    flex-direction: column;
-  }
-  .media-hero__cards {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-.media-hero__card {
-  background: var(--p-surface-card);
-  border: 1px solid var(--p-surface-border);
-  border-radius: var(--p-border-radius);
-  padding: 12px 17px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-.media-hero__card .kpi-label {
-  font-size: 10px;
-  font-weight: var(--font-weight-semibold);
-  color: var(--p-text-color-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  line-height: 15px;
-}
-
-.media-hero__card .kpi-value {
-  font-size: 18px;
-  font-weight: var(--font-weight-bold);
-  color: var(--p-text-color);
-  line-height: 21.6px;
-}
-
-.media-hero__card .kpi-trend {
-  font-size: 10px;
-  font-weight: var(--font-weight-medium);
-  line-height: 15px;
-}
-.media-hero__card .kpi-trend .material-symbols-outlined {
-  font-size: 13px;
-}
-.media-hero__card .kpi-trend--up {
-  color: var(--p-green-600);
-}
-.media-hero__card .kpi-trend--down {
-  color: var(--p-red-500);
-}
-.kpi-trend-context {
-  display: block;
-  font-size: 9px;
-  color: var(--p-text-color-muted);
-  font-weight: normal;
-  line-height: 1.2;
-  margin-top: 2px;
-}
+/* Media Hero — legacy 2-column Figma layout removed per plan item 25
+   (Apr 17). Media Buy now uses the unified .hero-stat pattern like
+   Visitation and Traffic Share. If a richer KPI layout is needed
+   later, revive from git history rather than reintroducing here. */
 
 /* ========================================
    Creative List (PrimeNG tokens)
@@ -464,7 +310,7 @@
 }
 
 .p-carousel-indicator-active .p-carousel-indicator-button {
-  background: var(--p-primary-color);
+  background: var(--section-color, var(--p-primary-color));
 }
 
 /* Single-creative compact inline bar */
@@ -502,9 +348,17 @@
 
 .creative-card__top {
   display: flex;
-  align-items: flex-start;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
   gap: 8px;
   padding: 8px;
+}
+
+.creative-card__top-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
 }
 
 .creative-card__rank {
@@ -514,7 +368,7 @@
   width: 24px;
   height: 24px;
   border-radius: 12px;
-  background: #2196F3;
+  background: var(--section-color, #2196F3);
   font-size: 11px;
   font-weight: var(--font-weight-bold);
   color: #fff;
@@ -536,7 +390,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 1px;
+  gap: 4px;
   align-self: stretch;
 }
 
@@ -558,19 +412,20 @@
 }
 
 .creative-card__thumb--square {
-  width: 100px;
-  height: 56px;
+  width: 320px;
+  min-height: 96px;
+  max-height: 192px;
 }
 
 .creative-card__name {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: var(--font-weight-bold);
   color: var(--p-text-color);
   line-height: 19.5px;
 }
 
 .creative-card__region {
-  font-size: 12px;
+  font-size: 16px;
   font-weight: var(--font-weight-bold);
   color: #4a5158;
   line-height: 19.5px;
@@ -593,14 +448,19 @@
 
 /* --- Metric tiles row inside creative card --- */
 .creative-card__metrics {
+  flex: 1;
+  min-width: 320px;
+  max-width: 420px;
   display: flex;
+  justify-content: center;
+  align-items: center;
   gap: 8px;
-  padding: 8px;
+  padding: 4px 8px;
   text-align: center;
 }
 
 .creative-metric-tile {
-  flex: 1;
+  flex: 0 1 160px;
   background: #f9fafb;
   border: 1px solid var(--p-surface-border);
   border-radius: 4px;
@@ -622,7 +482,7 @@
 }
 
 .creative-metric-tile__value {
-  font-size: 13px;
+  font-size: 18px;
   font-weight: var(--font-weight-bold);
   color: var(--p-text-color);
   line-height: 19.5px;
@@ -979,16 +839,17 @@
 
 /* Row number */
 .dist-tree-table .row-number {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  line-height: 20px;
-  text-align: center;
-  font-size: 0.7rem;
-  font-weight: var(--font-weight-semibold);
-  color: var(--p-text-color-muted);
-  background: var(--p-surface-100, #f3f4f6);
-  border-radius: var(--p-border-radius-sm);
+    display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  background: var(--section-color, #2196F3);
+  font-size: 11px;
+  font-weight: var(--font-weight-bold);
+  color: #fff;
+  flex-shrink: 0;
 }
 
 /* ── Parent rows ── */
@@ -1368,8 +1229,8 @@
 }
 
 .panel-label {
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
   color: var(--color-text-primary);
   margin: 0;
 }
@@ -1390,9 +1251,9 @@
 /* Chart Legend */
 .chart-legend {
   display: flex;
-  gap: var(--space-4);
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
+  gap: 20px;
+  font-size: 12px;
+  color: #6b7280;
 }
 
 .legend-item {
@@ -2362,7 +2223,7 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--space-6);
-  margin-bottom: var(--space-4);
+  margin: var(--space-4) 0;
 }
 
 /* Variant: actions live on the left, subtitle continues left-aligned next
@@ -2423,8 +2284,18 @@
   padding: 2px 0;
 }
 .bar-seg-tooltip__row b { color: #fff; font-weight: 600; }
-.bar-seg-tooltip__row--muted { border-top: 1px solid rgba(255,255,255,0.12); margin-top: 4px; padding-top: 4px; color: #9ca3af; }
+.bar-seg-tooltip__row--visit { font-size: 14px; }
+.bar-seg-tooltip__row--muted { border-top: 1px solid rgba(255,255,255,0.12); padding-top: 4px; color: #9ca3af; }
 .bar-seg-tooltip__row--muted b { color: #d1d5db; font-weight: 500; }
+.bar-seg-tooltip__types { display: flex; flex-direction: column; gap: 3px; margin-bottom: 2px; }
+.bar-seg-tooltip__type-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  font-size: 12px;
+}
+.bar-seg-tooltip__type-row span { flex: 1; color: #d1d5db; }
+.bar-seg-tooltip__type-row b { color: #fff; font-weight: 600; min-width: 36px; text-align: right; }
 
 .store-perf-table {
   width: 100%;
@@ -3446,7 +3317,7 @@
 @media print {
   body { background: white; }
   .header, .context-row, .section-header, .level-divider,
-  .media-hero, .creative-list, .p-carousel,
+  .hero-stat, .creative-list, .p-carousel,
   .dist-tree-header, .dist-tree-actions { display: none !important; }
 
   .dist-tree-data-grid {
@@ -3510,7 +3381,6 @@
 }
 
 .stat-strip {
-  background: #e3f2fd;
   border-radius: 10px;
   padding: var(--space-3) var(--space-3);
   display: flex;
@@ -3552,6 +3422,22 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.stat-strip__proposed-badge {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted, #9ca3af);
+  background: var(--color-gray-100, #f3f4f6);
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 3px;
+  padding: 1px 4px;
+  text-transform: uppercase;
+  line-height: 1.4;
 }
 
 .stat-strip__value-row {
@@ -3580,9 +3466,12 @@
   font-size: 28px;
 }
 
-.stat-strip__trend--up { color: var(--color-success); }
-.stat-strip__trend--down { color: var(--color-danger); }
-.stat-strip__trend--flat { color: var(--color-text-secondary); }
+/* Only the arrow icon carries the directional color;
+   the number text stays neutral so the hero metric reads as one unit. */
+.stat-strip__trend { color: var(--color-text-secondary); }
+.stat-strip__trend--up .material-symbols-outlined { color: var(--color-success, #22c55e); }
+.stat-strip__trend--down .material-symbols-outlined { color: var(--color-danger, #ef4444); }
+.stat-strip__trend--flat .material-symbols-outlined { color: #374151; }
 
 .stat-strip__separator {
   display: none;
@@ -3621,11 +3510,11 @@
 .hero-stat {
   background: #e3f2fd;
   border-radius: 12px;
-  padding: var(--space-4) var(--space-5);
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-5);
   display: flex;
   align-items: center;
   gap: var(--space-5);
-  margin-bottom: var(--space-4);
+  margin-top: var(--space-2);
   flex-wrap: wrap;
 }
 
@@ -3633,13 +3522,19 @@
    Demographics). hero-stat is reserved for the page header. No blue
    shell, no metric strip; just title + question + subtitle stacked. */
 .section-panel-header {
-  padding: var(--space-3) 0 var(--space-2);
-  margin: 0 0 var(--space-3);
-  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-3) var(--space-2) var(--space-2);
+  margin: var(--space-2) 0 0;
+  border-top: 1px solid var(--color-border-subtle, #eef0f2);
+}
+.section-panel-header--with-stat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
 }
 .section-panel-header__title {
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 900;
   color: var(--color-text-primary);
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -3668,18 +3563,69 @@
 }
 
 .hero-stat > .stat-strip {
-  background: #ffffff;
   flex: 0 1 auto;
-  padding: var(--space-3) var(--space-4);
-  margin: 0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+
 }
 
-.hero-stat > .stat-strip .stat-strip__item {
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  padding: 0 var(--space-2);
+/* ============================================================
+   R4 (Item 19b): Per-section accent colors
+   Driven by body[data-dist-page]. Controls:
+     - .dist-tab active/hover state in header
+     - .hero-stat banner background
+     - stat-strip accent border + hero value color
+   Do NOT touch chart colors — these are header/hero only.
+   ============================================================ */
+
+body[data-dist-page="visitation"] {
+  --section-color:       var(--section-visitation);
+  --section-color-light: var(--section-visitation-light);
+}
+body[data-dist-page="media"] {
+  --section-color:       var(--section-media);
+  --section-color-light: var(--section-media-light);
+}
+body[data-dist-page="traffic"] {
+  --section-color:       var(--section-traffic);
+  --section-color-light: var(--section-traffic-light);
+}
+
+/* Active tab pill: section color */
+body[data-dist-page] .dist-tab.active {
+  background: var(--section-color-light) !important;
+  color: var(--section-color) !important;
+}
+
+/* Hover: neutral gray — section color only for the committed active state */
+body[data-dist-page] .dist-tab:hover:not(.active) {
+  background: var(--color-gray-100);
+  color: var(--color-text-primary);
+}
+
+/* Focus ring */
+body[data-dist-page] .dist-tab:focus-visible {
+  outline-color: var(--section-color);
+}
+
+/* hero-stat banner: section color tint */
+body[data-dist-page] .hero-stat {
+  background: var(--section-color-light);
+}
+
+/* Stat-strip: accent border uses section color; value stays black
+   (section color on numbers conflicts with red = negative convention) */
+body[data-dist-page] .hero-stat .stat-strip {
+  --stat-strip-accent: var(--section-color);
+}
+
+/* perf-tab active: section color underline + text */
+body[data-dist-page] .perf-tab.active {
+  color: var(--section-color);
+  border-bottom-color: var(--section-color);
+}
+
+/* Section title: section color */
+body[data-dist-page] .narrative-header__title {
+  color: var(--section-color);
 }
 
 /* ============================================================
@@ -3689,7 +3635,7 @@
 
 .section-row {
   display: block;
-  padding: var(--space-6) 0;
+  padding: var(--space-2) 0;
   border-top: 1px solid var(--color-border-subtle, #eef0f2);
 }
 
@@ -3823,7 +3769,7 @@
   border: 1px solid var(--color-border);
   border-radius: 10px;
   background: var(--color-surface);
-  margin: var(--space-5) 0;
+  margin: var(--space-2) 0 0;
   overflow: hidden;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
 }
@@ -3909,7 +3855,7 @@
   display: flex;
   gap: 4px;
   border-bottom: 1px solid var(--color-border-subtle, #e5e7eb);
-  margin-bottom: var(--space-4);
+  margin-bottom: 0;
 }
 
 .perf-tab {
@@ -3920,7 +3866,7 @@
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--color-text-secondary, #6b7280);
   cursor: pointer;
@@ -4122,7 +4068,7 @@
    ============================================================ */
 
 .demographics-section {
-  padding: var(--space-4) var(--space-6);
+  padding: 0 0 var(--space-4);
 }
 
 .demo-narrative-header {
@@ -4197,17 +4143,427 @@
 }
 
 /* ============================================================
-   Phase 2: Compact hero for Media Buy (4 cards)
+   Store Performance — Overview tab
    ============================================================ */
 
-.media-hero--compact {
-  padding: var(--space-3) var(--space-6);
+.perf-overview-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: var(--space-4);
+  padding: var(--space-4) 0;
 }
 
-.media-hero--compact .media-hero__cards {
-  grid-template-columns: repeat(4, 1fr);
+.perf-overview-grid .perf-overview-panel:nth-child(2) {
+  grid-row: 1 / 3;
 }
 
-.media-hero--compact .media-hero__budget {
-  display: none;
+.perf-overview-panel {
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: var(--radius-md, 6px);
+  padding: var(--space-4);
+  min-height: 160px;
+}
+
+.perf-overview-panel__label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-secondary, #6b7280);
+  margin-bottom: var(--space-3);
+}
+
+.ov-donut-host {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-3);
+  height: 100%;
+}
+.ov-donut-chart {
+  flex: 0 0 auto;
+  height: 300px;
+  width: 100%;
+}
+.ov-donut-legend {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px 12px;
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
+  padding-top: var(--space-2);
+}
+.ov-donut-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #374151;
+  min-width: 0;
+}
+.ov-donut-legend__swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.ov-donut-legend__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ============================================================
+   By Creative tab — chip selector
+   ============================================================ */
+
+.creative-chips {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: var(--space-2);
+  padding: var(--space-3) 0 var(--space-4);
+}
+
+.creative-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface, #fff);
+  border: 1.5px solid var(--color-border, #e5e7eb);
+  border-radius: var(--radius-md, 6px);
+  cursor: pointer;
+  min-width: 0;
+  text-align: left;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.creative-chip:hover {
+  border-color: var(--color-primary, #2196F3);
+  box-shadow: 0 0 0 3px rgba(33,150,243,0.12);
+}
+.creative-chip--active {
+  border-color: var(--color-primary, #2196F3);
+  background: rgba(33,150,243,0.05);
+}
+.creative-chip__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 6px;
+}
+.creative-chip__icon {
+  font-size: 18px;
+  color: var(--color-text-secondary, #6b7280);
+}
+.creative-chip--active .creative-chip__icon {
+  color: var(--color-primary, #2196F3);
+}
+.creative-chip__flag {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-primary, #2196F3);
+  background: rgba(33,150,243,0.12);
+  padding: 2px 6px;
+  border-radius: 10px;
+  line-height: 1;
+}
+.creative-chip__name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-primary, #1f2937);
+  line-height: 1.2;
+}
+.creative-chip__meta {
+  font-size: 10px;
+  color: var(--color-text-muted, #9ca3af);
+  margin-top: 2px;
+}
+.creative-chip__date {
+  font-size: 10px;
+  color: var(--color-text-muted, #9ca3af);
+  margin-top: 1px;
+  line-height: 1.2;
+}
+.section-label__date {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--p-primary-color, #2196F3);
+  margin-left: 8px;
+}
+
+/* ============================================================
+   By Creative tab — detail header
+   ============================================================ */
+
+.creative-detail-header {
+  display: flex;
+  gap: var(--space-5);
+  align-items: flex-start;
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: var(--radius-md, 6px);
+  padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-4);
+}
+
+/* Ad format preview placeholder */
+.creative-ad-preview {
+  flex-shrink: 0;
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.creative-ad-preview__inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px;
+  box-sizing: border-box;
+  /* Diagonal stripe pattern to signal placeholder */
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 8px,
+    rgba(255,255,255,0.15) 8px,
+    rgba(255,255,255,0.15) 16px
+  );
+}
+
+.creative-ad-preview__icon {
+  font-size: 24px;
+  color: rgba(255,255,255,0.9);
+  line-height: 1;
+}
+
+.creative-ad-preview__name {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.95);
+  text-align: center;
+  line-height: 1.3;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.creative-ad-preview__format {
+  font-size: 9px;
+  color: rgba(255,255,255,0.7);
+  text-align: center;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* For very short aspect ratios (leaderboards) — horizontal layout */
+.creative-ad-preview--horizontal .creative-ad-preview__inner {
+  flex-direction: row;
+  justify-content: flex-start;
+  padding: 4px 10px;
+  gap: 10px;
+}
+.creative-ad-preview--horizontal .creative-ad-preview__icon { font-size: 18px; }
+.creative-ad-preview--horizontal .creative-ad-preview__name { font-size: 10px; }
+.creative-ad-preview--horizontal .creative-ad-preview__format { display: none; }
+
+/* Info block beside the preview */
+.creative-dh__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.creative-dh__name {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-text-primary, #1f2937);
+  line-height: 1.2;
+}
+.creative-dh__region-label {
+  font-weight: 400;
+  color: var(--color-text-secondary, #6b7280);
+  font-size: 15px;
+}
+
+.creative-dh__badges {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+.creative-dh__badge {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 3px;
+  border: 1px solid;
+}
+.creative-dh__badge--type {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+.creative-dh__badge--dims {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+  color: #374151;
+}
+
+.creative-dh__stats {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-top: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border, #e5e7eb);
+}
+.creative-dh__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.creative-dh__stat-val {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary, #1f2937);
+  line-height: 1.2;
+}
+.creative-dh__stat-lbl {
+  font-size: 10px;
+  color: var(--color-text-secondary, #6b7280);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.creative-dh__stat--hero .creative-dh__stat-val {
+  font-size: 20px;
+  color: var(--color-primary, #2196F3);
+}
+
+/* ============================================================
+   By Creative tab — 2-col body + heatmap
+   ============================================================ */
+
+.creative-detail-cols {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.creative-detail-col {
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: var(--radius-md, 6px);
+  padding: var(--space-4);
+}
+
+.creative-detail-col__label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-secondary, #6b7280);
+  margin-bottom: var(--space-3);
+}
+
+.creative-detail-col__sublabel {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--color-text-muted, #9ca3af);
+}
+
+.creative-heatmap-section {
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: var(--radius-md, 6px);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+/* Responsive: wrap preview above info when container is narrow */
+.creative-detail-header { flex-wrap: wrap; }
+.creative-ad-preview { flex-shrink: 0; }
+.creative-dh__body { flex: 1 1 220px; min-width: 0; }
+.creative-dh__stats { flex-wrap: wrap; gap: var(--space-3) var(--space-5); }
+
+/* By Store tab — cap height on both bar and table views so long store lists scroll */
+#store-perf-bar-view.active {
+  max-height: 500px;
+  overflow-y: auto;
+}
+.store-perf-table-wrap {
+  max-height: 650px;
+}
+
+/* By Creative / By Day — scrollable store bar containers */
+.bar-scroll-wrap {
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Visitor-type toggle chips for DoW charts */
+.visitor-type-toggles {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.vt-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px 3px 7px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 20px;
+  background: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, opacity 0.15s;
+  line-height: 1.4;
+}
+.vt-toggle:hover {
+  border-color: #d1d5db;
+  color: #6b7280;
+}
+.vt-toggle__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #d1d5db;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+/* Active: dark text + colored dot — no colored text or border */
+.vt-toggle--active {
+  border-color: #d1d5db;
+  color: #374151;
+}
+.vt-toggle--active .vt-toggle__dot {
+  background: var(--vt-color, #6b7280);
+}
+/* Inactive: visually dimmed */
+.vt-toggle:not(.vt-toggle--active) {
+  opacity: 0.55;
 }

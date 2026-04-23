@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/distribution.css?v=11">
+  <link rel="stylesheet" href="css/distribution.css?v=22">
 </head>
 <body data-dist-page="media">
 
@@ -137,33 +137,25 @@
   <main>
     <section class="dist-section active" id="section-media">
 
-      <!-- Narrative header -->
-      <div class="narrative-header">
-        <h1 class="narrative-header__title">Media Buy</h1>
-        <div class="narrative-header__text">
-          <h2 class="narrative-header__question">How efficiently is our ad spend being delivered?</h2>
-          <p class="narrative-header__subtitle">Campaign delivery, creative performance, and budget metrics</p>
+      <!-- Hero stat: narrative left + single hero metric right, matches Visitation pattern -->
+      <div class="hero-stat">
+        <div class="narrative-header">
+          <h1 class="narrative-header__title">Media Buy</h1>
+          <div class="narrative-header__text">
+            <h2 class="narrative-header__question">How efficiently is our ad spend being delivered?</h2>
+            <p class="narrative-header__subtitle">Campaign delivery, creative performance, and budget metrics<br><em><span id="subtitle-entity-media">Southeastern Grocers</span>, <span id="subtitle-date-media">Week 2 (Jan 7, 2026 – Jan 13, 2026)</span></em></p>
+          </div>
+        </div>
+        <div class="stat-strip" id="media-stat-strip">
+          <!-- Populated by JS: single hero metric (Impressions) + delta -->
         </div>
       </div>
-
-      <!-- Compact Hero: 4 KPI cards (Budget, Impressions, CTR, CPV) -->
-      <div class="media-hero media-hero--compact" id="media-hero"></div>
 
       <!-- Narrative slot (phase 2, gated by FEATURES.narrative) -->
       <div class="insight-banner" data-narrative-section="media" hidden></div>
 
       <!-- Performance Ranking divider -->
       <div class="level-divider">Performance Ranking</div>
-
-      <!-- Creative Coverage Key: shows how many creatives are displayed per entity -->
-      <details class="creative-coverage-key" id="creative-coverage-key">
-        <summary class="creative-coverage-key__summary">
-          <span class="material-symbols-outlined" style="font-size:16px;vertical-align:-3px;margin-right:4px;">key</span>
-          Creative Coverage by Entity
-          <span class="creative-coverage-key__hint">— how many creatives show for each entity this week</span>
-        </summary>
-        <div class="creative-coverage-key__body" id="creative-coverage-key-body"></div>
-      </details>
 
       <!-- Creative List: horizontal carousel of variant cards -->
       <div class="creative-list" id="creative-list"></div>
@@ -220,7 +212,7 @@
   <script src="js/data/distribution-data.js?v=11"></script>
 
   <script src="js/distribution/store-map.js"></script>
-  <script src="js/distribution/distribution.js?v=11"></script>
+  <script src="js/distribution/distribution.js?v=38"></script>
   <script src="js/distribution/distribution-modals.js?v=11"></script>
 
   <script src="js/header-slide.js"></script>

@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/distribution.css?v=11">
+  <link rel="stylesheet" href="css/distribution.css?v=22">
 </head>
 <body data-dist-page="traffic">
 
@@ -137,16 +137,18 @@
   <main>
     <section class="dist-section active" id="section-traffic">
 
-      <!-- Narrative header + Insight strip -->
-      <div class="narrative-header">
-        <h1 class="narrative-header__title">Traffic Share</h1>
-        <div class="narrative-header__text">
-          <h2 class="narrative-header__question">How does our foot traffic compare to competitors?</h2>
-          <p class="narrative-header__subtitle">All foot traffic from placer.ai panel, regardless of media exposure</p>
+      <!-- Hero stat: narrative left + single hero metric right, matches Visitation pattern -->
+      <div class="hero-stat">
+        <div class="narrative-header">
+          <h1 class="narrative-header__title">Traffic Share</h1>
+          <div class="narrative-header__text">
+            <h2 class="narrative-header__question">How does our foot traffic compare to competitors?</h2>
+            <p class="narrative-header__subtitle">All foot traffic from placer.ai panel, regardless of media exposure<br><em><span id="subtitle-entity-traffic">Southeastern Grocers</span>, <span id="subtitle-date-traffic">Week 2 (Jan 7, 2026 – Jan 13, 2026)</span></em></p>
+          </div>
         </div>
-      </div>
-      <div class="stat-strip" id="traffic-insight-strip">
-        <!-- Populated by JS: Share %, Change pp, Outperforming count -->
+        <div class="stat-strip" id="traffic-insight-strip">
+          <!-- Populated by JS: Share %, Change pp, Outperforming count -->
+        </div>
       </div>
 
       <!-- Narrative slot (phase 2, gated by FEATURES.narrative) -->
@@ -281,7 +283,7 @@
   <script src="js/data/distribution-data.js?v=11"></script>
 
   <script src="js/distribution/store-map.js?v=11"></script>
-  <script src="js/distribution/distribution.js?v=11"></script>
+  <script src="js/distribution/distribution.js?v=38"></script>
   <script src="js/distribution/distribution-modals.js?v=11"></script>
 
   <script src="js/header-slide.js"></script>

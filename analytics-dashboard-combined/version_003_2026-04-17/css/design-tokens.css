@@ -4,7 +4,7 @@
  */
 
 /* Google Font - Inter */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 :root {
   /* ========================================
@@ -223,4 +223,12 @@
   --p-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --p-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
   --p-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+
+  /* Section accent colors (R4 / Item 19b) */
+  --section-visitation:       #b72b34;
+  --section-visitation-light: #fbe9ea;
+  --section-media:            #6b7302;
+  --section-media-light:      #f4f7e0;
+  --section-traffic:          #1b7f88;
+  --section-traffic-light:    #e4f4f5;
 }

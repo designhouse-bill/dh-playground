@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/distribution.css?v=11">
+  <link rel="stylesheet" href="css/distribution.css?v=22">
 </head>
 <body data-dist-page="visitation">
 
@@ -143,7 +143,7 @@
           <h1 class="narrative-header__title">Store Visitation</h1>
           <div class="narrative-header__text">
             <h2 class="narrative-header__question">Are our media campaigns driving store visits?</h2>
-            <p class="narrative-header__subtitle">Visitors attributed to paid media exposure</p>
+            <p class="narrative-header__subtitle">Visitors attributed to paid media exposure<br><em><span id="subtitle-entity-visitation">Southeastern Grocers</span>, <span id="subtitle-date-visitation">Week 2 (Jan 7, 2026 – Jan 13, 2026)</span></em></p>
           </div>
         </div>
         <div class="stat-strip" id="visitation-stat-strip">
@@ -193,7 +193,10 @@
       <div class="visitation-view visitation-view--trend" id="visitation-trend">
         <div class="chart-card">
           <div class="chart-card__header">
-            <h3 class="panel-label">Visit Frequency Over Time</h3>
+            <div>
+              <h3 class="panel-label">Visit Frequency Over Time</h3>
+              <p class="panel-subtitle" id="frequency-subtitle">Each bar = total attributed visits across all <span id="freq-store-count">35</span> stores for that <span id="freq-bucket-label">day</span>, stacked by shopper type.</p>
+            </div>
             <div class="chart-card__header-right">
               <div class="duration-presets" id="duration-presets">
                 <button class="duration-preset active" data-duration="1w">1 Week</button>
@@ -228,10 +231,13 @@
 
       <!-- ═══ Row 1: Store Performance ═══ -->
       <section class="section-row section-row--performance">
-        <header class="section-panel-header">
-          <h2 class="section-panel-header__title">Store Performance</h2>
-          <p class="section-panel-header__question">Which stores are driving the most visits?</p>
-          <p class="section-panel-header__subtitle">Per-store visitation from media-attributed shoppers</p>
+        <header class="section-panel-header section-panel-header--with-stat">
+          <div>
+            <h2 class="section-panel-header__title">Store Performance</h2>
+            <p class="section-panel-header__question">Which stores are driving the most visits?</p>
+            <p class="section-panel-header__subtitle">Per-store visitation from media-attributed shoppers<br><em><span id="subtitle-entity-perf">Southeastern Grocers</span>, <span id="subtitle-date-perf">Week 2 (Jan 7, 2026 – Jan 13, 2026)</span></em></p>
+          </div>
+          <div class="stat-strip" id="store-perf-stat-strip"></div>
         </header>
         <div class="store-perf-section" id="store-perf-section">
           <!-- Plan item 3 (Apr 17): By Store / By Creative / By Day tab set.
@@ -240,7 +246,10 @@
                Code for map kept in v2 as breadcrumb (revive if user testing
                shows geography matters). -->
           <div class="perf-tabs" id="perf-tabs">
-            <button class="perf-tab active" data-perf-tab="store">
+            <button class="perf-tab active" data-perf-tab="overview">
+              <span class="material-symbols-outlined">dashboard</span> Overview
+            </button>
+            <button class="perf-tab" data-perf-tab="store">
               <span class="material-symbols-outlined">store</span> By Store
             </button>
             <button class="perf-tab" data-perf-tab="creative">
@@ -251,8 +260,26 @@
             </button>
           </div>
 
+          <!-- ─── Overview tab (default) ─── -->
+          <div class="perf-tab-pane active" data-perf-pane="overview">
+            <div class="perf-overview-grid">
+              <div class="perf-overview-panel">
+                <div class="perf-overview-panel__label">By Creative — Total Visits</div>
+                <div id="perf-overview-creative" style="height:160px;"></div>
+              </div>
+              <div class="perf-overview-panel">
+                <div class="perf-overview-panel__label">By Store — Top Stores</div>
+                <div id="perf-overview-stores" class="ov-donut-host"></div>
+              </div>
+              <div class="perf-overview-panel">
+                <div class="perf-overview-panel__label">Day of Week — All Creatives</div>
+                <div id="perf-overview-dow" style="height:160px;"></div>
+              </div>
+            </div>
+          </div>
+
           <!-- ─── By Store tab ─── -->
-          <div class="perf-tab-pane active" data-perf-pane="store">
+          <div class="perf-tab-pane" data-perf-pane="store">
             <div class="store-perf-header store-perf-header--left">
               <div class="store-perf-actions">
                 <div class="view-toggle view-toggle--compact" id="perf-view-toggle">
@@ -286,34 +313,51 @@
 
           <!-- ─── By Creative tab ─── -->
           <div class="perf-tab-pane" data-perf-pane="creative">
-            <div class="store-perf-header">
-              <div>
-                <p class="panel-subtitle">Performance by campaign — pick a campaign to see its store-level bars. Count scales with duration (1w ≈ 6, 4w ≈ 20).</p>
+            <!-- Visual chip selector — one per creative -->
+            <div class="creative-chips" id="creative-chips"></div>
+            <!-- Selected creative header: thumb + meta + stat strip -->
+            <div class="creative-detail-header" id="creative-detail-header"></div>
+            <!-- 2-col: store breakdown (left) + day-of-week (right) -->
+            <div class="creative-detail-cols">
+              <div class="creative-detail-col creative-detail-col--stores">
+                <div class="creative-detail-col__label" id="creative-stores-label">Visits by Store</div>
+                <div class="bar-scroll-wrap"><div id="perf-creative-bars"></div></div>
               </div>
-              <div class="store-perf-actions">
-                <select class="perf-creative-select" id="perf-creative-select">
-                  <option value="holiday-banner">Holiday Banner</option>
-                  <option value="bogo-produce">BOGO Produce</option>
-                  <option value="holiday-steak">Holiday Steak</option>
-                  <option value="value-pack">Value Pack</option>
-                  <option value="youtube-pre-roll">YouTube Pre-Roll</option>
-                </select>
+              <div class="creative-detail-col creative-detail-col--dow">
+                <div class="creative-detail-col__label" id="creative-dow-label">Day of Week Pattern</div>
+                <div id="dow-type-toggles-creative" class="visitor-type-toggles"></div>
+                <div id="perf-creative-dow" style="height:260px;"></div>
               </div>
             </div>
-            <div class="perf-creative-body">
-              <div id="perf-creative-bars" style="min-height:320px;"></div>
+            <!-- Time-of-day × day-of-week heatmap -->
+            <div class="creative-heatmap-section">
+              <div class="creative-detail-col__label" id="creative-heatmap-label">Visit Intensity &mdash; Time of Day &times; Day of Week</div>
+              <div id="perf-creative-heatmap" style="height:190px;"></div>
             </div>
           </div>
 
           <!-- ─── By Day tab ─── -->
           <div class="perf-tab-pane" data-perf-pane="day">
-            <div class="store-perf-header">
-              <div>
-                <p class="panel-subtitle">Average visits per day-of-week across the selected duration. Trend toggle shows pattern drift over time.</p>
+            <!-- Day chip selector -->
+            <div class="creative-chips" id="day-chips"></div>
+            <!-- Summary / selected-day header -->
+            <div class="creative-detail-header" id="day-detail-header"></div>
+            <!-- 2-col: store breakdown (left) + day of week (right) -->
+            <div class="creative-detail-cols">
+              <div class="creative-detail-col creative-detail-col--stores">
+                <div class="creative-detail-col__label" id="day-stores-label">Visits by Store — All Creatives</div>
+                <div class="bar-scroll-wrap"><div id="perf-day-stores"></div></div>
+              </div>
+              <div class="creative-detail-col creative-detail-col--dow">
+                <div class="creative-detail-col__label" id="day-dow-label">Day of Week Pattern — All Creatives</div>
+                <div id="dow-type-toggles-day" class="visitor-type-toggles"></div>
+                <div id="perf-day-bars" style="height:260px;"></div>
               </div>
             </div>
-            <div class="perf-day-body">
-              <div id="perf-day-bars" style="height:360px;"></div>
+            <!-- Time-of-day × day-of-week heatmap, averaged across all creatives -->
+            <div class="creative-heatmap-section">
+              <div class="creative-detail-col__label" id="day-heatmap-label">Visit Intensity — Time of Day &times; Day of Week &mdash; All Creatives</div>
+              <div id="perf-day-heatmap" style="height:190px;"></div>
             </div>
           </div>
         </div>
@@ -324,7 +368,7 @@
         <header class="section-panel-header">
           <h2 class="section-panel-header__title">Demographics</h2>
           <p class="section-panel-header__question">Who are our attributed shoppers?</p>
-          <p class="section-panel-header__subtitle">Demographic profile of <span id="demo-visitor-count">10,822</span> visitors — <span id="demo-entity-name">Southeastern Grocers</span>, <span id="demo-date-range">Week 2 (Jan 7–13, 2026)</span></p>
+          <p class="section-panel-header__subtitle">Demographic profile of <span id="demo-visitor-count">10,822</span> visitors<br><em><span id="demo-entity-name">Southeastern Grocers</span>, <span id="demo-date-range">Week 2 (Jan 7–13, 2026)</span></em></p>
         </header>
         <div class="demographics-section">
           <!-- Mirrors the Visitation tabset (Current Composition / Trend Over
@@ -384,7 +428,7 @@
   <script src="js/data/distribution-data.js?v=11"></script>
 
   <script src="js/distribution/store-map.js?v=11"></script>
-  <script src="js/distribution/distribution.js?v=11"></script>
+  <script src="js/distribution/distribution.js?v=38"></script>
   <script src="js/distribution/distribution-modals.js?v=11"></script>
 
   <script src="js/header-slide.js"></script>

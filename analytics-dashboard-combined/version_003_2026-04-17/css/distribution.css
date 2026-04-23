@@ -2001,14 +2001,20 @@
   border: 1px solid rgba(255,255,255,0.6);
 }
 
-/* ═══ 1v1 Comparison Panel ═══ */
+/* ═══ 1v1 Comparison Panel — map overlay ═══ */
 .compare-panel {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1010;
   background: var(--color-bg-card, #ffffff);
   border: 1px solid var(--color-border);
-  border-radius: 10px;
-  margin: 0 var(--space-6);
-  box-shadow: var(--shadow-md);
+  border-radius: 10px 10px 0 0;
+  box-shadow: 0 -4px 16px rgba(0,0,0,0.12);
   overflow: hidden;
+  max-height: 60%;
+  overflow-y: auto;
 }
 
 .compare-panel__header {
@@ -2462,37 +2468,34 @@
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  padding: var(--space-4);
+  overflow: hidden;
 }
 
 .traffic-perf-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-3);
+  padding: var(--space-4) var(--space-4) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .traffic-perf-header__left {
-  display: flex;
-  align-items: center;
-  gap: var(--space-6);
-  flex: 1;
-  min-width: 0;
+display: flex;
+    align-items: flex-start;
+    gap: var(--space-1);
+    flex: 1;
+    min-width: 0;
+    justify-content: flex-start;
+    flex-direction: column;
 }
 
-.traffic-perf-header__center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
 
 .traffic-perf-header__right {
   display: flex;
   align-items: center;
   gap: var(--space-4);
-  flex: 1;
-  min-width: 0;
+  flex: 0;
+  min-width: 200px;
   justify-content: flex-end;
 }
 
@@ -2505,16 +2508,20 @@
 .traffic-perf-body {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-4);
+  align-items: stretch;
 }
 
 .traffic-perf-table-wrap {
-  max-height: 480px;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  height: 560px;
+  overflow: hidden;
+  border-right: 1px solid var(--color-border);
 }
 
 .traffic-perf-map-wrap {
   position: relative;
+  min-height: 560px;
 }
 
 /* ========================================
@@ -2529,14 +2536,15 @@
 
 /* Leaderboard Table */
 .leaderboard-table {
-  max-height: 420px;
+  flex: 1;
   overflow-y: auto;
+  min-height: 0;
 }
 
 .lb-header,
 .lb-row {
   display: grid;
-  grid-template-columns: 80px 1fr 70px 90px 90px;
+  grid-template-columns: 28px 1fr 130px 64px;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
   align-items: center;
@@ -2544,6 +2552,10 @@
 }
 
 .lb-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--color-surface);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-secondary);
   font-size: var(--font-size-xs);
@@ -2599,11 +2611,64 @@
   flex-shrink: 0;
 }
 
-/* Competitor view: 3-column grid with wider store name */
-.leaderboard-table--competitors .lb-header,
-.leaderboard-table--competitors .lb-row {
-  grid-template-columns: 1.6fr 1fr 80px;
+/* Tree table: expand button */
+.lb-col--expand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+.lb-expand-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  transition: color 0.15s, background 0.15s;
+}
+.lb-expand-btn:hover {
+  color: var(--color-primary);
+  background: var(--color-gray-100);
+}
+.lb-expand-btn .material-symbols-outlined {
+  font-size: 16px;
+  transition: transform 0.2s;
+}
+.lb-expand-btn[aria-expanded="true"] .material-symbols-outlined {
+  transform: rotate(90deg);
+}
+
+/* Child rows */
+.lb-children {
+  display: none;
+}
+.lb-children.open {
+  display: block;
+}
+
+.lb-row--child {
+  background: var(--color-gray-50);
+  border-bottom: 1px solid var(--color-gray-100);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+}
+.lb-row--child:hover {
+  background: #f0f4ff;
+}
+.lb-row--child .lb-col--store {
+  padding-left: var(--space-2);
+  color: var(--color-text-secondary);
+}
+
+/* Parent with no children: no pointer on expand col */
+.lb-row--leaf {
+  cursor: pointer;
+}
+
+.lb-col--city { text-align: left; }
 
 .lb-col--change.positive { color: var(--color-success-600); font-weight: var(--font-weight-semibold); }
 .lb-col--change.negative { color: var(--color-error-500); font-weight: var(--font-weight-semibold); }

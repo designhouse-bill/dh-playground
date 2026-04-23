@@ -1424,8 +1424,7 @@
   var storePerfState = {
     sortColumn: 'visits',
     sortDirection: 'desc',
-    allRows: [],      // cached sorted data
-    selectedStoreId: null
+    allRows: []
   };
 
   var PERF_GROUP_COLORS = { green: '#10B981', amber: '#F59E0B', red: '#EF4444' };
@@ -1532,42 +1531,6 @@
     }).join('');
   }
 
-  // ── Row ↔ Map selection ──────────────────────────────────────────────────
-
-  function selectStore(storeId) {
-    // Deselect previous
-    var prev = document.querySelector('.store-row--selected');
-    if (prev) prev.classList.remove('store-row--selected');
-
-    var isSameStore = storePerfState.selectedStoreId === storeId;
-
-    storePerfState.selectedStoreId = storeId;
-
-    // Highlight table row + scroll into view
-    var row = document.querySelector('.store-row[data-store-id="' + storeId + '"]');
-    if (row) {
-      row.classList.add('store-row--selected');
-      row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-    }
-
-    // Focus map pin + show ring legend. Re-click on same pin re-opens overlay without moving map.
-    if (typeof StoreMap !== 'undefined') {
-      StoreMap.highlightStore(storeId, { skipZoom: isSameStore });
-    }
-    var ringLegend = document.getElementById('map-ring-legend');
-    if (ringLegend) ringLegend.style.display = '';
-
-  }
-
-  function resetMapView() {
-    storePerfState.selectedStoreId = null;
-    var prev = document.querySelector('.store-row--selected');
-    if (prev) prev.classList.remove('store-row--selected');
-    if (typeof StoreMap !== 'undefined') StoreMap.fitBounds();
-    var ringLegend = document.getElementById('map-ring-legend');
-    if (ringLegend) ringLegend.style.display = 'none';
-  }
-
   function bindStorePerformanceActions() {
     // More Data toggle
     var toggle = document.getElementById('store-perf-more-toggle');
@@ -1596,76 +1559,18 @@
       });
     }
 
-    // Row click → focus map pin
+    // Row click → highlight selected row
     var body = document.getElementById('store-perf-body');
     if (body) {
       body.addEventListener('click', function (e) {
         var row = e.target.closest('.store-row');
         if (!row) return;
-        selectStore(row.dataset.storeId);
+        var prev = document.querySelector('.store-row--selected');
+        if (prev) prev.classList.remove('store-row--selected');
+        row.classList.add('store-row--selected');
+        row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
       });
     }
-
-    // Map pin click → highlight table row
-    if (typeof StoreMap !== 'undefined') {
-      StoreMap.onStoreClick(function (storeId) {
-        selectStore(storeId);
-      });
-    }
-
-    // Reset map button
-    var resetBtn = document.getElementById('map-reset-btn');
-    if (resetBtn) {
-      resetBtn.addEventListener('click', function () {
-        resetMapView();
-      });
-    }
-  }
-
-  // ── Visitation Store Map ──────────────────────────────────────────────────
-
-  function renderVisitationMap() {
-    if (typeof StoreMap === 'undefined') return;
-    var mapEl = document.getElementById('visitation-store-map');
-    if (!mapEl) return;
-
-    // Init map on the visitation-specific element
-    StoreMap.init('visitation-store-map');
-
-    var ctx = D.context;
-    var storeIds = D.entities.getStoresForEntity(ctx.entityId, ctx.entityLevel);
-    var latestWeek = ctx.flightWeek === 'all' ? 'wk2' : ctx.flightWeek;
-    var stores = D.entities.stores.filter(function (s) { return storeIds.includes(s.id); });
-    var storeData = {};
-
-    // Build store data with donut percentages for map popup
-    storeIds.forEach(function (storeId) {
-      var records = D.getVisitRecords(latestWeek, [storeId]);
-      if (!records.length) return;
-      var total = 0, zeroPrev = 0, oneThree = 0, fourPlus = 0;
-      records.forEach(function (r) {
-        total += r.gross_visits;
-        zeroPrev += r.visits_zero_prev;
-        oneThree += r.visits_one_three_prev;
-        fourPlus += r.visits_four_plus_prev;
-      });
-      var newPct = total > 0 ? (zeroPrev / total) * 100 : 0;
-      var retPct = total > 0 ? (oneThree / total) * 100 : 0;
-      var loyPct = total > 0 ? (fourPlus / total) * 100 : 0;
-
-      storeData[storeId] = {
-        share: parseFloat(newPct.toFixed(1)),
-        change_pp: 0,
-        primary_threat: '—',
-        new_pct: newPct,
-        ret_pct: retPct,
-        loy_pct: loyPct,
-        visits: total
-      };
-    });
-
-    StoreMap.renderStores(stores, storeData);
-    StoreMap.fitBounds();
   }
 
   // ========================================
@@ -1723,36 +1628,91 @@
 
   let _leaderboardSort = 'change';  // current sort column
 
+  // Brand pip colors matching crossover chart
+  var LEADERBOARD_BRAND_COLORS = {
+    'Publix': '#E07850',
+    'Walmart': '#A8BF6E',
+    'ALDI': '#2AADDB',
+    'Other Retailers': '#9CA3AF',
+    'Save A Lot': '#9B7FD4'
+  };
+
   function renderLeaderboard(sortBy) {
     if (sortBy) _leaderboardSort = sortBy;
-    let stores = [...D.trafficShareMetrics.storeLeaderboard];
+    var stores = [].concat(D.trafficShareMetrics.storeLeaderboard);
     if (_leaderboardSort === 'share') {
-      stores.sort((a, b) => b.wk2_share - a.wk2_share);
+      stores.sort(function(a, b) { return b.wk2_share - a.wk2_share; });
     } else {
-      stores.sort((a, b) => b.change_pp - a.change_pp);
+      stores.sort(function(a, b) { return b.change_pp - a.change_pp; });
     }
 
-    const sortIcon = (col) => col === _leaderboardSort
-      ? '<span class="material-symbols-outlined lb-sort-icon lb-sort-icon--active">arrow_downward</span>'
-      : '<span class="material-symbols-outlined lb-sort-icon lb-sort-icon--inactive">unfold_more</span>';
+    // Build store → top 5 competitors: nearest 10 by distance, then ranked by crossover share desc
+    var storeCompMap = {};
+    var validComps = D.competitorStores.filter(function(cs) { return cs.lat && cs.lng; });
+    D.entities.stores.forEach(function(store) {
+      if (!store.lat || !store.lng) return;
+      var withDist = validComps.map(function(cs) {
+        return { cs: cs, dist: haversineDistance(store.lat, store.lng, cs.lat, cs.lng) };
+      });
+      withDist.sort(function(a, b) { return a.dist - b.dist; });
+      // Take nearest 10 for geographic relevance, then rank by crossover share
+      storeCompMap[store.id] = withDist.slice(0, 10)
+        .map(function(x) { return x.cs; })
+        .sort(function(a, b) { return (b.wk2_share || 0) - (a.wk2_share || 0) ; })
+        .slice(0, 5);
+    });
 
-    elements.leaderboardTable.innerHTML = `
-      <div class="lb-header">
-        <span class="lb-col lb-col--store">Store</span>
-        <span class="lb-col lb-col--city">City</span>
-        <span class="lb-col lb-col--share lb-col--sortable${_leaderboardSort === 'share' ? ' lb-col--sorted' : ''}" data-sort="share">Share ${sortIcon('share')}</span>
-      </div>
-      ${stores.map((s, i) => `
-        <div class="lb-row" data-store-id="store-${s.store_id}">
-          <span class="lb-col lb-col--store">
-            <span class="lb-rank">${i + 1}</span>
-            ${s.store_id}
-          </span>
-          <span class="lb-col lb-col--city">${s.city}</span>
-          <span class="lb-col lb-col--share">${s.wk2_share}%</span>
-        </div>
-      `).join('')}
-    `;
+    var sortIcon = function(col) {
+      return col === _leaderboardSort
+        ? '<span class="material-symbols-outlined lb-sort-icon lb-sort-icon--active">arrow_downward</span>'
+        : '<span class="material-symbols-outlined lb-sort-icon lb-sort-icon--inactive">unfold_more</span>';
+    };
+
+    var html = '<div class="lb-header">' +
+      '<span class="lb-col lb-col--expand"></span>' +
+      '<span class="lb-col lb-col--store">Store</span>' +
+      '<span class="lb-col lb-col--city">City</span>' +
+      '<span class="lb-col lb-col--share lb-col--sortable' + (_leaderboardSort === 'share' ? ' lb-col--sorted' : '') + '" data-sort="share">Share ' + sortIcon('share') + '</span>' +
+    '</div>';
+
+    stores.forEach(function(s, i) {
+      var storeId = 'store-' + s.store_id;
+      var competitors = storeCompMap[storeId] || [];
+      var hasChildren = competitors.length > 0;
+
+      html += '<div class="lb-row lb-row--parent' + (hasChildren ? '' : ' lb-row--leaf') + '" data-store-id="' + storeId + '">' +
+        '<span class="lb-col lb-col--expand">' +
+          (hasChildren
+            ? '<button class="lb-expand-btn" aria-expanded="false" title="Show competitors"><span class="material-symbols-outlined">chevron_right</span></button>'
+            : '') +
+        '</span>' +
+        '<span class="lb-col lb-col--store">' +
+          '<span class="lb-rank">' + (i + 1) + '</span>' +
+          s.store_id +
+        '</span>' +
+        '<span class="lb-col lb-col--city">' + s.city + '</span>' +
+        '<span class="lb-col lb-col--share">' + s.wk2_share + '%</span>' +
+      '</div>';
+
+      if (hasChildren) {
+        html += '<div class="lb-children" id="lb-children-' + storeId + '">';
+        competitors.forEach(function(cs) {
+          var pipColor = LEADERBOARD_BRAND_COLORS[cs.brand] || '#9CA3AF';
+          html += '<div class="lb-row lb-row--child" data-comp-id="' + cs.id + '" data-parent-store-id="' + storeId + '">' +
+            '<span class="lb-col lb-col--expand"></span>' +
+            '<span class="lb-col lb-col--store">' +
+              '<span class="lb-comp-pip" style="background:' + pipColor + ';"></span>' +
+              (cs.storeName || cs.brand) +
+            '</span>' +
+            '<span class="lb-col lb-col--city">' + cs.city + '</span>' +
+            '<span class="lb-col lb-col--share">' + cs.wk2_share + '%</span>' +
+          '</div>';
+        });
+        html += '</div>';
+      }
+    });
+
+    elements.leaderboardTable.innerHTML = html;
   }
 
   function renderConcentration() {
@@ -1847,7 +1807,6 @@
     });
     StoreMap.setCompetitorRanking(rankedNames.slice(0, 5));
 
-    // Load competitor pins (hidden by default)
     var competitorStores = D.competitorStores;
     var storeIds = stores.map(function(s) { return s.id; });
     StoreMap.renderCompetitors(competitorStores, storeIds);
@@ -1858,72 +1817,96 @@
   let _trafficSelectedStoreId = null;
 
   function selectTrafficStore(storeId) {
-    // Deselect previous
-    var prev = document.querySelector('.lb-row--selected');
-    if (prev) prev.classList.remove('lb-row--selected');
-
-    if (_trafficSelectedStoreId === storeId) {
-      // Toggle off — show all competitors again
-      _trafficSelectedStoreId = null;
-      if (typeof StoreMap !== 'undefined') {
-        StoreMap.fitBounds();
-        // Re-render competitors for all stores
-        var competitorStores = D.competitorStores;
-        var allStoreIds = D.entities.stores.map(function(s) { return s.id; });
-        StoreMap.renderCompetitors(competitorStores, allStoreIds);
-      }
-      return;
-    }
+    // Clear all row selections
+    document.querySelectorAll('.lb-row--parent').forEach(function(r) { r.classList.remove('lb-row--selected'); });
+    document.querySelectorAll('.lb-row--child').forEach(function(r) { r.classList.remove('lb-row--selected'); });
 
     _trafficSelectedStoreId = storeId;
+    hideComparePanel();
 
     // Highlight row + scroll into view
-    var row = document.querySelector('.lb-row[data-store-id="' + storeId + '"]');
+    var row = document.querySelector('.lb-row--parent[data-store-id="' + storeId + '"]');
     if (row) {
       row.classList.add('lb-row--selected');
       row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     }
 
-    // Focus map pin + filter competitors to this store
+    // Zoom to store, show rings, open popup
     if (typeof StoreMap !== 'undefined') {
       StoreMap.highlightStore(storeId);
-      var competitorStores = D.competitorStores;
-      StoreMap.renderCompetitors(competitorStores, [storeId]);
     }
+
+    // Show ring legend
+    var legend = document.getElementById('ring-legend');
+    if (legend) legend.style.display = 'flex';
   }
 
   function bindTrafficStoreSelection() {
-    // Row click → focus map pin
     var table = document.getElementById('leaderboard-table');
     if (table) {
       table.addEventListener('click', function (e) {
-        var row = e.target.closest('.lb-row');
-        if (!row || !row.dataset.storeId) return;
-        selectTrafficStore(row.dataset.storeId);
+        // Expand/collapse button
+        var expandBtn = e.target.closest('.lb-expand-btn');
+        if (expandBtn) {
+          e.stopPropagation();
+          var parentRow = expandBtn.closest('.lb-row--parent');
+          var sid = parentRow ? parentRow.dataset.storeId : null;
+          if (!sid) return;
+          var children = document.getElementById('lb-children-' + sid);
+          if (!children) return;
+          var isOpen = children.classList.contains('open');
+          children.classList.toggle('open', !isOpen);
+          expandBtn.setAttribute('aria-expanded', String(!isOpen));
+          return;
+        }
+
+        // Child competitor row → show parent with rings + competitor in view
+        var childRow = e.target.closest('.lb-row--child');
+        if (childRow) {
+          var compId = childRow.dataset.compId;
+          var parentStoreId = childRow.dataset.parentStoreId;
+          // Highlight parent row + selected child
+          document.querySelectorAll('.lb-row--parent').forEach(function(r) { r.classList.remove('lb-row--selected'); });
+          document.querySelectorAll('.lb-row--child').forEach(function(r) { r.classList.remove('lb-row--selected'); });
+          var parentRow2 = document.querySelector('.lb-row--parent[data-store-id="' + parentStoreId + '"]');
+          if (parentRow2) parentRow2.classList.add('lb-row--selected');
+          childRow.classList.add('lb-row--selected');
+          _trafficSelectedStoreId = parentStoreId;
+          // Fit map to show parent (with rings) + competitor, open competitor popup
+          if (typeof StoreMap !== 'undefined') {
+            StoreMap.showParentAndCompetitor(parentStoreId, compId);
+            var legend = document.getElementById('ring-legend');
+            if (legend) legend.style.display = 'flex';
+          }
+          return;
+        }
+
+        // Parent store row → focus map pin
+        var parentRow3 = e.target.closest('.lb-row--parent');
+        if (!parentRow3 || !parentRow3.dataset.storeId) return;
+        selectTrafficStore(parentRow3.dataset.storeId);
       });
     }
 
-    // Map pin click → highlight table row
+    // Map store pin click → select row
     if (typeof StoreMap !== 'undefined') {
       StoreMap.onStoreClick(function (storeId) {
         selectTrafficStore(storeId);
       });
     }
 
-    // Competitor toggle button
-    var compToggle = document.getElementById('comp-toggle-btn');
-    if (compToggle) {
-      compToggle.addEventListener('click', function () {
-        var visible = StoreMap.toggleCompetitors();
-        compToggle.classList.toggle('active', visible);
-      });
-    }
-
-    // Competitor click → show comparison panel
+    // Map competitor Compare button → toggle compare panel
     if (typeof StoreMap !== 'undefined') {
       StoreMap.onCompetitorClick(function (compData) {
-        if (_trafficSelectedStoreId) {
+        var panel = document.getElementById('compare-panel');
+        var isOpen = panel && panel.style.display !== 'none';
+        var sameComp = panel && panel.dataset.compId === compData.id;
+        if (isOpen && sameComp) {
+          hideComparePanel();
+        } else {
           showComparePanel(_trafficSelectedStoreId, compData);
+          if (panel) panel.dataset.compId = compData.id;
+          // No pan needed — marker is already centered (user clicked it)
         }
       });
     }
@@ -1933,9 +1916,10 @@
     if (resetBtn) {
       resetBtn.addEventListener('click', function () {
         _trafficSelectedStoreId = null;
-        var prev = document.querySelector('.lb-row--selected');
-        if (prev) prev.classList.remove('lb-row--selected');
+        document.querySelectorAll('.lb-row--selected').forEach(function(r) { r.classList.remove('lb-row--selected'); });
         hideComparePanel();
+        var legend = document.getElementById('ring-legend');
+        if (legend) legend.style.display = 'none';
         if (typeof StoreMap !== 'undefined') StoreMap.fitBounds();
       });
     }
@@ -1947,197 +1931,6 @@
     }
   }
 
-  // ── Store View Toggle: Our Stores ↔ Competitors ──────────────────────────
-
-  var _storeViewMode = 'ours'; // 'ours' | 'competitors'
-  var _compBrandFilter = 'all';
-
-  function initStoreViewPresets() {
-    var presets = document.getElementById('store-view-presets');
-    var filter = document.getElementById('comp-brand-filter');
-    var compToggle = document.getElementById('comp-toggle-btn');
-    var toggleLabel = document.getElementById('comp-toggle-label');
-    if (!presets) return;
-
-    // Populate brand filter from competitor data
-    if (filter) {
-      var brands = [];
-      D.competitorStores.forEach(function(cs) {
-        if (brands.indexOf(cs.brand) === -1) brands.push(cs.brand);
-      });
-      brands.forEach(function(b) {
-        var opt = document.createElement('option');
-        opt.value = b;
-        opt.textContent = b;
-        filter.appendChild(opt);
-      });
-      filter.addEventListener('change', function() {
-        _compBrandFilter = filter.value;
-        renderCompetitorView();
-      });
-    }
-
-    presets.querySelectorAll('.duration-preset').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        presets.querySelectorAll('.duration-preset').forEach(function(b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-        _storeViewMode = btn.dataset.storeView;
-        _trafficSelectedStoreId = null;
-        hideComparePanel();
-
-        // Re-query DOM elements (may have been replaced by clone)
-        var liveToggle = document.getElementById('comp-toggle-btn');
-        var liveLabel = document.getElementById('comp-toggle-label');
-
-        if (_storeViewMode === 'competitors') {
-          filter.style.display = '';
-          if (liveLabel) liveLabel.textContent = 'Our Stores';
-          if (liveToggle) {
-            liveToggle.classList.remove('active');
-            StoreMap.toggleCompetitors(false);
-          }
-          renderCompetitorView();
-        } else {
-          filter.style.display = 'none';
-          if (liveLabel) liveLabel.textContent = 'Competitors';
-          if (liveToggle) {
-            liveToggle.classList.remove('active');
-            StoreMap.toggleCompetitors(false);
-          }
-          renderOurStoresView();
-        }
-      });
-    });
-
-    // Override the competitor toggle to be context-aware
-    if (compToggle) {
-      // Remove old handler by replacing node
-      var newToggle = compToggle.cloneNode(true);
-      compToggle.parentNode.replaceChild(newToggle, compToggle);
-      newToggle.addEventListener('click', function() {
-        if (_storeViewMode === 'ours') {
-          var visible = StoreMap.toggleCompetitors();
-          newToggle.classList.toggle('active', visible);
-        } else {
-          // In competitor mode, toggle our stores as overlay
-          var visible = StoreMap.toggleCompetitors();
-          newToggle.classList.toggle('active', visible);
-        }
-      });
-    }
-  }
-
-  function renderOurStoresView() {
-    var subtitle = document.getElementById('traffic-perf-subtitle');
-    if (subtitle) subtitle.textContent = 'Traffic share by store — click a row to focus on the map';
-    var table = document.getElementById('leaderboard-table');
-    if (table) table.classList.remove('leaderboard-table--competitors');
-    renderMap();
-    renderLeaderboard(_leaderboardSort);
-  }
-
-  function renderCompetitorView() {
-    var subtitle = document.getElementById('traffic-perf-subtitle');
-    var competitors = D.competitorStores;
-    var filtered = _compBrandFilter === 'all'
-      ? competitors
-      : competitors.filter(function(cs) { return cs.brand === _compBrandFilter; });
-
-    // Sort by share descending
-    filtered.sort(function(a, b) { return (b.wk2_share || 0) - (a.wk2_share || 0); });
-
-    if (subtitle) {
-      subtitle.textContent = _compBrandFilter === 'all'
-        ? 'All competitor stores — click a row to focus on the map'
-        : _compBrandFilter + ' stores — click a row to focus on the map';
-    }
-
-    // Render competitor leaderboard
-    var table = document.getElementById('leaderboard-table');
-    if (!table) return;
-    table.classList.add('leaderboard-table--competitors');
-
-    // Use same hardcoded brand→color mapping as crossover chart and store-map
-    var brandColorMap = {
-      'Publix': '#E07850',
-      'Walmart': '#A8BF6E',
-      'ALDI': '#2AADDB',
-      'Other Retailers': '#9CA3AF',
-      'Save A Lot': '#9B7FD4'
-    };
-
-    table.innerHTML =
-      '<div class="lb-header">' +
-        '<span class="lb-col lb-col--store">Store</span>' +
-        '<span class="lb-col lb-col--city">City</span>' +
-        '<span class="lb-col lb-col--share">Share</span>' +
-      '</div>' +
-      filtered.map(function(cs, i) {
-        var pipColor = brandColorMap[cs.brand] || '#9CA3AF';
-        var pip = '<span class="lb-comp-pip" style="background:' + pipColor + ';"></span>';
-        return '<div class="lb-row" data-comp-id="' + cs.id + '">' +
-          '<span class="lb-col lb-col--store">' +
-            '<span class="lb-rank">' + (i + 1) + '</span>' +
-            pip + ' ' + (cs.storeName || cs.brand) +
-          '</span>' +
-          '<span class="lb-col lb-col--city">' + (cs.city || '') + '</span>' +
-          '<span class="lb-col lb-col--share">' + (cs.wk2_share || 0) + '%</span>' +
-        '</div>';
-      }).join('');
-
-    // Render competitor pins as primary on map
-    renderCompetitorMap(filtered, brandColorMap);
-
-    // Bind row clicks
-    table.querySelectorAll('.lb-row[data-comp-id]').forEach(function(row) {
-      row.addEventListener('click', function() {
-        var prev = document.querySelector('.lb-row--selected');
-        if (prev) prev.classList.remove('lb-row--selected');
-        row.classList.add('lb-row--selected');
-        var compId = row.dataset.compId;
-        var cs = filtered.find(function(c) { return c.id === compId; });
-        if (cs && typeof StoreMap !== 'undefined') {
-          StoreMap.highlightStore(compId);
-        }
-      });
-    });
-  }
-
-  function renderCompetitorMap(competitors, brandColorMap) {
-    if (typeof StoreMap === 'undefined') return;
-    var mapEl = document.getElementById('store-map');
-    if (!mapEl) return;
-
-    // Clear and re-init
-    StoreMap.destroy();
-    StoreMap.init('store-map');
-
-    // We'll use renderStores with a fake store array + storeData
-    var fakeStores = competitors.map(function(cs) {
-      return { id: cs.id, name: cs.storeName || cs.brand, storeNumber: '', lat: cs.lat, lng: cs.lng, city: cs.city };
-    });
-    var storeData = {};
-    competitors.forEach(function(cs) {
-      storeData[cs.id] = {
-        share: cs.wk2_share,
-        change_pp: 0,
-        primary_threat: '—',
-        new_pct: 33, ret_pct: 33, loy_pct: 34,
-        visits: Math.round(cs.wk2_share * 50) // mock visits
-      };
-    });
-    StoreMap.renderStores(fakeStores, storeData);
-    StoreMap.fitBounds();
-
-    // Load our stores as overlay (hidden by default)
-    var ourStores = D.entities.stores;
-    var ourStoreIds = ourStores.map(function(s) { return s.id; });
-    // Use renderCompetitors for our stores as overlay (repurposed)
-    var ourAsOverlay = ourStores.filter(function(s) { return s.lat && s.lng; }).map(function(s) {
-      return { id: s.id, brand: 'Southeastern Grocers', address: s.city || '', lat: s.lat, lng: s.lng, threatens: [] };
-    });
-    StoreMap.renderCompetitors(ourAsOverlay, []);
-  }
 
   // ── 1v1 Store vs Competitor Comparison Panel ───────────────────────────────
 
@@ -2145,14 +1938,6 @@
     var panel = document.getElementById('compare-panel');
     var body = document.getElementById('compare-panel-body');
     if (!panel || !body) return;
-
-    // Get our store info
-    var store = D.entities.stores.find(function (s) { return s.id === storeId; });
-    if (!store) return;
-
-    // Get store performance data
-    var leaderboard = D.trafficShareMetrics.storeLeaderboard;
-    var storePerf = leaderboard.find(function (s) { return ('store-' + s.store_id) === storeId; });
 
     // Get crossover data for this competitor brand
     var crossover = D.competitiveCrossover;
@@ -2164,53 +1949,77 @@
     var fourPlus = compCrossover ? compCrossover.crossover_visits_four_plus : 0;
     var totalFreq = zeroPrev + oneThree + fourPlus || 1;
 
-    // Compute distance between store and competitor (Haversine, approximate)
-    var distMiles = haversineDistance(store.lat, store.lng, compData.lat, compData.lng);
+    // Get our store info (may be null when no store is selected)
+    var store = storeId ? D.entities.stores.find(function (s) { return s.id === storeId; }) : null;
+    var leaderboard = D.trafficShareMetrics.storeLeaderboard;
+    var storePerf = storeId ? leaderboard.find(function (s) { return ('store-' + s.store_id) === storeId; }) : null;
 
-    // Store metrics
-    var storeShare = storePerf ? storePerf.wk2_share + '%' : '—';
-    var storeChange = storePerf ? ((storePerf.change_pp >= 0 ? '+' : '') + storePerf.change_pp + ' pp') : '—';
-    var storeVisits = storePerf ? storePerf.total_visits.toLocaleString() : '—';
-
-    body.innerHTML =
-      '<div class="compare-panel__row">' +
-        '<div class="compare-panel__col">' +
-          '<div class="compare-panel__name" style="color:#4272D8;">' +
-            '<span class="material-symbols-outlined" style="font-size:16px;vertical-align:-3px;margin-right:4px;">store</span>' +
-            store.name + ' (#' + store.storeNumber + ')' +
-          '</div>' +
-          '<div class="compare-panel__sub">' + store.city + '</div>' +
-          '<div class="compare-panel__stat"><span class="compare-panel__stat-label">Share</span><span class="compare-panel__stat-value">' + storeShare + '</span></div>' +
-          '<div class="compare-panel__stat"><span class="compare-panel__stat-label">Change</span><span class="compare-panel__stat-value">' + storeChange + '</span></div>' +
-          '<div class="compare-panel__stat"><span class="compare-panel__stat-label">Total Visits</span><span class="compare-panel__stat-value">' + storeVisits + '</span></div>' +
+    var compCol =
+      '<div class="compare-panel__col">' +
+        '<div class="compare-panel__name" style="color:#6b7280;">' +
+          '<span class="material-symbols-outlined" style="font-size:16px;vertical-align:-3px;margin-right:4px;">storefront</span>' +
+          compData.brand +
         '</div>' +
-        '<div class="compare-panel__vs">VS</div>' +
-        '<div class="compare-panel__col">' +
-          '<div class="compare-panel__name" style="color:#6b7280;">' +
-            '<span class="material-symbols-outlined" style="font-size:16px;vertical-align:-3px;margin-right:4px;">storefront</span>' +
-            compData.brand +
-          '</div>' +
-          '<div class="compare-panel__sub">' + compData.address + '</div>' +
-          '<div class="compare-panel__stat"><span class="compare-panel__stat-label">Distance</span><span class="compare-panel__stat-value">' + distMiles.toFixed(1) + ' mi</span></div>' +
-          '<div class="compare-panel__stat"><span class="compare-panel__stat-label">Crossover Rate</span><span class="compare-panel__stat-value">' + crossoverPct + '%</span></div>' +
-          '<div class="compare-panel__stat"><span class="compare-panel__stat-label">Trend</span><span class="compare-panel__stat-value">' + (compCrossover ? trendArrow(compCrossover.trend) : '—') + '</span></div>' +
-        '</div>' +
-      '</div>' +
-      '<div class="compare-panel__crossover">' +
-        '<div class="compare-panel__crossover-pct">' + crossoverPct + '%</div>' +
-        '<div class="compare-panel__crossover-label">of our visitors also shop at ' + compData.brand + '</div>' +
-      '</div>' +
-      '<div style="margin-top:var(--space-3);">' +
-        '<div style="font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-bottom:6px;">Crossover Visit Frequency</div>' +
-        '<div class="compare-panel__freq-bars">' +
-          buildFreqBar('New (0 prev)', zeroPrev, totalFreq, '#4272D8') +
-          buildFreqBar('Returning (1-3)', oneThree, totalFreq, '#F59E0B') +
-          buildFreqBar('Loyal (4+)', fourPlus, totalFreq, '#10B981') +
-        '</div>' +
+        '<div class="compare-panel__sub">' + compData.address + '</div>' +
+        (store ? '<div class="compare-panel__stat"><span class="compare-panel__stat-label">Distance</span><span class="compare-panel__stat-value">' + haversineDistance(store.lat, store.lng, compData.lat, compData.lng).toFixed(1) + ' mi</span></div>' : '') +
+        '<div class="compare-panel__stat"><span class="compare-panel__stat-label">Crossover Rate</span><span class="compare-panel__stat-value">' + crossoverPct + '%</span></div>' +
+        '<div class="compare-panel__stat"><span class="compare-panel__stat-label">Trend</span><span class="compare-panel__stat-value">' + (compCrossover ? trendArrow(compCrossover.trend) : '—') + '</span></div>' +
       '</div>';
 
+    if (store) {
+      var storeShare = storePerf ? storePerf.wk2_share + '%' : '—';
+      var storeChange = storePerf ? ((storePerf.change_pp >= 0 ? '+' : '') + storePerf.change_pp + ' pp') : '—';
+      var storeVisits = storePerf && storePerf.total_visits != null ? storePerf.total_visits.toLocaleString() : '—';
+
+      body.innerHTML =
+        '<div class="compare-panel__row">' +
+          '<div class="compare-panel__col">' +
+            '<div class="compare-panel__name" style="color:#4272D8;">' +
+              '<span class="material-symbols-outlined" style="font-size:16px;vertical-align:-3px;margin-right:4px;">store</span>' +
+              store.name + ' (#' + store.storeNumber + ')' +
+            '</div>' +
+            '<div class="compare-panel__sub">' + store.city + '</div>' +
+            '<div class="compare-panel__stat"><span class="compare-panel__stat-label">Share</span><span class="compare-panel__stat-value">' + storeShare + '</span></div>' +
+            '<div class="compare-panel__stat"><span class="compare-panel__stat-label">Change</span><span class="compare-panel__stat-value">' + storeChange + '</span></div>' +
+            '<div class="compare-panel__stat"><span class="compare-panel__stat-label">Total Visits</span><span class="compare-panel__stat-value">' + storeVisits + '</span></div>' +
+          '</div>' +
+          '<div class="compare-panel__vs">VS</div>' +
+          compCol +
+        '</div>' +
+        '<div class="compare-panel__crossover">' +
+          '<div class="compare-panel__crossover-pct">' + crossoverPct + '%</div>' +
+          '<div class="compare-panel__crossover-label">of our visitors also shop at ' + compData.brand + '</div>' +
+        '</div>' +
+        '<div style="margin-top:var(--space-3);">' +
+          '<div style="font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-bottom:6px;">Crossover Visit Frequency</div>' +
+          '<div class="compare-panel__freq-bars">' +
+            buildFreqBar('New (0 prev)', zeroPrev, totalFreq, '#4272D8') +
+            buildFreqBar('Returning (1-3)', oneThree, totalFreq, '#F59E0B') +
+            buildFreqBar('Loyal (4+)', fourPlus, totalFreq, '#10B981') +
+          '</div>' +
+        '</div>';
+    } else {
+      // No our-store selected — competitor-only view
+      body.innerHTML =
+        '<div class="compare-panel__row">' +
+          compCol +
+        '</div>' +
+        '<div class="compare-panel__crossover">' +
+          '<div class="compare-panel__crossover-pct">' + crossoverPct + '%</div>' +
+          '<div class="compare-panel__crossover-label">of our visitors also shop at ' + compData.brand + '</div>' +
+        '</div>' +
+        '<div style="margin-top:var(--space-3);">' +
+          '<div style="font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-bottom:6px;">Crossover Visit Frequency</div>' +
+          '<div class="compare-panel__freq-bars">' +
+            buildFreqBar('New (0 prev)', zeroPrev, totalFreq, '#4272D8') +
+            buildFreqBar('Returning (1-3)', oneThree, totalFreq, '#F59E0B') +
+            buildFreqBar('Loyal (4+)', fourPlus, totalFreq, '#10B981') +
+          '</div>' +
+          '<div style="margin-top:var(--space-2);font-size:11px;color:var(--color-text-secondary);">Select a store from the leaderboard to compare side-by-side</div>' +
+        '</div>';
+    }
+
     panel.style.display = '';
-    panel.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
 
   function hideComparePanel() {
@@ -3374,8 +3183,8 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       } else if (section === 'visitation') {
         donutFilterSegment = null;
         renderVisitationKpis(); renderStorePerfHero(); renderSegmentDetail();
-        storePerfState.allRows = []; storePerfState.selectedStoreId = null;
-        buildStorePerformanceData(); renderStorePerformanceTable(); renderVisitationMap();
+        storePerfState.allRows = [];
+        buildStorePerformanceData(); renderStorePerformanceTable();
         initVisitDonut();
         if (_trendViewInitialized) { initFrequencyChart(); initCrossoverTrendChart(); }
       } else if (section === 'traffic') {
@@ -3407,7 +3216,6 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         buildStorePerformanceData();
         renderStorePerformanceTable();
         renderStorePerformanceBarView();
-        renderVisitationMap();
         initViewToggle();
         initVisitDonut();
         bindStorePerformanceActions();
@@ -3430,7 +3238,6 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         initCrossoverTrendPresets();
         updateCrossoverTrendPeriod(4);
         bindTrafficStoreSelection();
-        initStoreViewPresets();
       }
 
       console.log('Distribution page initialized:', section);

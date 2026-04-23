@@ -16,6 +16,7 @@ const StoreMap = (function() {
   let _competitorVisible = false;
   let _onStoreClick = null;
   let _onCompetitorClick = null;
+  let _pendingTimeout = null; // tracks pending post-animation popup so we can cancel on new nav
 
   // Crossover chart colors — top 5 competitors get colored pips matching chart segments
   const CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#9CA3AF', '#9B7FD4'];
@@ -71,8 +72,9 @@ const StoreMap = (function() {
       maxZoom: 19
     }).addTo(map);
 
+    competitorLayer = L.layerGroup().addTo(map);
     markersLayer = L.layerGroup().addTo(map);
-    competitorLayer = L.layerGroup(); // not added to map until toggled on
+    _competitorVisible = true;
 
     return map;
   }
@@ -114,20 +116,45 @@ const StoreMap = (function() {
       marker.competitorId = cs.id;
       marker.competitorBrand = cs.brand;
       marker.competitorData = cs;
-      marker.on('click', function () {
-        if (_onCompetitorClick) _onCompetitorClick(cs);
-      });
+
+      // Parse "Street, City, ST Zip" → three display lines
+      var addrParts = cs.address.split(', ');
+      var addrStreet = addrParts[0] || cs.address;
+      var addrCity = addrParts[1] || '';
+      var addrStateZip = addrParts[2] || '';
+      var addrSZParts = addrStateZip.split(' ');
+      var addrCityState = addrCity + (addrSZParts[0] ? ', ' + addrSZParts[0] : '');
+      var addrZip = addrSZParts[1] || '';
+
+      var shareHtml = cs.wk2_share != null
+        ? '<div style="font-weight:700;font-size:13px;margin:4px 0 6px;">Share: ' + cs.wk2_share + '%</div>'
+        : '';
 
       marker.bindPopup(
-        '<div style="font-family:system-ui;font-size:13px;line-height:1.5;min-width:160px;">' +
+        '<div style="font-family:system-ui;font-size:13px;line-height:1.6;min-width:180px;">' +
           '<div style="font-weight:600;font-size:14px;margin-bottom:2px;">' +
             (pipColor ? '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:' + pipColor + ';margin-right:6px;vertical-align:middle;"></span>' : '') +
             cs.brand +
           '</div>' +
-          '<div style="color:#6b7280;font-size:12px;">' + cs.address + '</div>' +
+          shareHtml +
+          '<div style="color:#6b7280;font-size:12px;line-height:1.5;">' +
+            addrStreet + '<br>' +
+            addrCityState + '<br>' +
+            addrZip +
+          '</div>' +
+          '<button class="comp-popup-compare-btn" data-comp-id="' + cs.id + '" style="margin-top:10px;width:100%;padding:6px 0;border:1px solid #d1d5db;border-radius:6px;background:#fff;font-size:13px;font-weight:500;cursor:pointer;">Compare</button>' +
         '</div>',
-        { maxWidth: 220 }
+        { maxWidth: 240, autoPan: false }
       );
+
+      marker.on('popupopen', function () {
+        var btn = document.querySelector('.comp-popup-compare-btn[data-comp-id="' + cs.id + '"]');
+        if (btn) {
+          btn.addEventListener('click', function () {
+            if (_onCompetitorClick) _onCompetitorClick(cs);
+          });
+        }
+      });
 
       competitorLayer.addLayer(marker);
     });
@@ -259,7 +286,7 @@ const StoreMap = (function() {
         </div>
       `;
 
-      marker.bindPopup(popup, { maxWidth: 280 });
+      marker.bindPopup(popup, { maxWidth: 280, autoPan: false });
       marker.storeId = store.id;
       marker.on('click', function () {
         if (_onStoreClick) _onStoreClick(store.id);
@@ -331,21 +358,69 @@ const StoreMap = (function() {
   // Highlight / Fit
   // ========================================
 
-  function highlightStore(storeId, opts) {
-    if (!map || !markersLayer) return;
-    opts = opts || {};
+  // Cancel any pending post-animation callback and schedule a new one.
+  // Uses setTimeout (400ms) rather than moveend — more reliable when map is already
+  // at the target position (moveend won't fire if nothing moves).
+  function _scheduleAfterMove(fn) {
+    if (_pendingTimeout !== null) {
+      clearTimeout(_pendingTimeout);
+      _pendingTimeout = null;
+    }
+    if (!fn) return;
+    _pendingTimeout = setTimeout(function() {
+      _pendingTimeout = null;
+      fn();
+    }, 400);
+  }
 
-    markersLayer.eachLayer(marker => {
+  // Zoom to a store marker, draw proximity rings, open store popup after animation.
+  function highlightStore(storeId) {
+    if (!map || !markersLayer) return;
+    markersLayer.eachLayer(function(marker) {
       if (marker.storeId === storeId) {
         var ll = marker.getLatLng();
-        if (!opts.skipZoom) map.setView(ll, 12, { animate: true });
-        marker.openPopup();
-        // Show proximity rings if on traffic page
-        if (opts.showRings !== false) {
-          showProximityRings(ll.lat, ll.lng);
-        }
+        showProximityRings(ll.lat, ll.lng);
+        map.setView(ll, 12, { animate: true });
+        _scheduleAfterMove(function() { marker.openPopup(); });
       }
     });
+  }
+
+  // Zoom to a competitor marker and open its popup after animation.
+  function highlightCompetitor(compId) {
+    if (!map || !competitorLayer) return;
+    competitorLayer.eachLayer(function(marker) {
+      if (marker.competitorId === compId) {
+        var ll = marker.getLatLng();
+        map.setView(ll, 12, { animate: true });
+        _scheduleAfterMove(function() { marker.openPopup(); });
+      }
+    });
+  }
+
+  // Navigate to competitor marker and open its popup; draw proximity rings at parent store.
+  // Rings stay at parent location for context — competitor popup is the primary interaction.
+  function showParentAndCompetitor(parentStoreId, compId) {
+    if (!map || !markersLayer || !competitorLayer) return;
+    var parentMarker = null;
+    var compMarker = null;
+
+    markersLayer.eachLayer(function(m) { if (m.storeId === parentStoreId) parentMarker = m; });
+    competitorLayer.eachLayer(function(m) { if (m.competitorId === compId) compMarker = m; });
+
+    if (!parentMarker) return;
+
+    // Draw rings at parent store to show catchment context (may be off-screen if competitor is far)
+    showProximityRings(parentMarker.getLatLng().lat, parentMarker.getLatLng().lng);
+    map.closePopup();
+
+    if (compMarker) {
+      map.setView(compMarker.getLatLng(), 12, { animate: true });
+      _scheduleAfterMove(function() { compMarker.openPopup(); });
+    } else {
+      // Fallback: navigate to parent if no competitor marker
+      map.setView(parentMarker.getLatLng(), 12, { animate: true });
+    }
   }
 
   function fitBounds() {
@@ -402,6 +477,8 @@ const StoreMap = (function() {
     clearProximityRings,
     toggleProximity,
     highlightStore,
+    highlightCompetitor,
+    showParentAndCompetitor,
     onStoreClick,
     onCompetitorClick,
     fitBounds,

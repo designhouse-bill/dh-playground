@@ -22,6 +22,7 @@
   let visitationView = 'current';     // 'current' | 'trend'
   let donutFilterSegment = null;       // null | 'zero_prev' | 'one_three' | 'four_plus'
   let _trendViewInitialized = false;
+  let creativeSortKey = 'visits';      // 'visits' | 'ctr' | 'spend' | 'stores'
 
   // Helper: parse name and region from label (e.g. "Holiday Steak — South FL")
   function parseLabel(cr) {
@@ -267,12 +268,17 @@
 
     const isMultiple = records.length >= 2;
 
-    // Sort by visits (best performing first), preserve original index for panel linking
-    const sorted = records.map((cr, idx) => ({ ...cr, _origIndex: allRecords.indexOf(cr) })).sort((a, b) => {
-      const aVisits = a.metrics ? a.metrics.gross_visits : 0;
-      const bVisits = b.metrics ? b.metrics.gross_visits : 0;
-      return bVisits - aVisits;
-    });
+    // User-controlled sort. Default 'visits' descending.
+    const SORT_ACCESSORS = {
+      visits: cr => cr.metrics ? cr.metrics.gross_visits : 0,
+      ctr:    cr => cr.metrics ? cr.metrics.ctr          : 0,
+      spend:  cr => cr.metrics ? cr.metrics.spend        : 0,
+      stores: cr => cr.store_group ? cr.store_group.length : 0
+    };
+    const accessor = SORT_ACCESSORS[creativeSortKey] || SORT_ACCESSORS.visits;
+    const sorted = records
+      .map(cr => ({ ...cr, _origIndex: allRecords.indexOf(cr) }))
+      .sort((a, b) => accessor(b) - accessor(a));
 
     // Helper: parse name and region from label (e.g. "Holiday Steak — South FL")
     function parseLabel(cr) {
@@ -358,12 +364,38 @@
         `;
       }).join('');
 
-      // Indicator dots
-      const dotsHtml = Array.from({ length: totalPages }, (_, i) =>
-        `<li class="p-carousel-indicator${i === 0 ? ' p-carousel-indicator-active' : ''}"><button class="p-carousel-indicator-button" data-page="${i}" aria-label="Page ${i + 1}"></button></li>`
-      ).join('');
+      // Page-counter row (replaces the long indicator-dot list when there are
+      // many pages). Dot list still rendered for ≤ 6 pages — feels more
+      // discoverable for small counts.
+      const useDots = totalPages > 1 && totalPages <= 6;
+      const indicatorHtml = useDots
+        ? `<ul class="p-carousel-indicator-list">${
+            Array.from({ length: totalPages }, (_, i) =>
+              `<li class="p-carousel-indicator${i === 0 ? ' p-carousel-indicator-active' : ''}"><button class="p-carousel-indicator-button" data-page="${i}" aria-label="Page ${i + 1}"></button></li>`
+            ).join('')
+          }</ul>`
+        : (totalPages > 1
+            ? `<div class="p-carousel-page-counter" aria-live="polite"><span class="p-carousel-page-counter__current">1</span> / ${totalPages}</div>`
+            : '');
+
+      // Sort dropdown — only shown when there's more than one creative.
+      const sortHtml = totalItems > 1
+        ? `<div class="creative-list__toolbar">
+             <label class="creative-sort">
+               <span class="creative-sort__label">Sort by</span>
+               <select class="creative-sort__select" id="creative-sort-select">
+                 <option value="visits" ${creativeSortKey === 'visits' ? 'selected' : ''}>Visits</option>
+                 <option value="ctr"    ${creativeSortKey === 'ctr'    ? 'selected' : ''}>CTR</option>
+                 <option value="spend"  ${creativeSortKey === 'spend'  ? 'selected' : ''}>Spend</option>
+                 <option value="stores" ${creativeSortKey === 'stores' ? 'selected' : ''}>Stores</option>
+               </select>
+             </label>
+             <span class="creative-list__total">${totalItems} creative${totalItems === 1 ? '' : 's'}</span>
+           </div>`
+        : '';
 
       el.innerHTML = `
+        ${sortHtml}
         <div class="p-carousel p-component">
           <div class="p-carousel-content-container">
             <button class="p-carousel-prev-button" aria-label="Previous" ${totalPages <= 1 ? 'disabled' : ''}>
@@ -378,11 +410,18 @@
               <span class="material-symbols-outlined">chevron_right</span>
             </button>
           </div>
-          <ul class="p-carousel-indicator-list">
-            ${dotsHtml}
-          </ul>
+          ${indicatorHtml}
         </div>
       `;
+
+      // Wire sort change → re-render
+      const sortSel = el.querySelector('#creative-sort-select');
+      if (sortSel) {
+        sortSel.addEventListener('change', e => {
+          creativeSortKey = e.target.value;
+          renderCreativeList();
+        });
+      }
 
       // Wire up carousel JS
       initCreativeCarousel(el, totalItems, numVisible, numScroll);
@@ -400,6 +439,7 @@
     const prevBtn = container.querySelector('.p-carousel-prev-button');
     const nextBtn = container.querySelector('.p-carousel-next-button');
     const indicators = container.querySelectorAll('.p-carousel-indicator');
+    const counterEl = container.querySelector('.p-carousel-page-counter__current');
     const singleItem = totalItems === 1;
 
     function goToPage(page) {
@@ -423,10 +463,13 @@
       prevBtn.disabled = currentPage === 0;
       nextBtn.disabled = currentPage >= maxPage;
 
-      // Update indicators
+      // Update indicators (when dot mode is in use)
       indicators.forEach((ind, i) => {
         ind.classList.toggle('p-carousel-indicator-active', i === currentPage);
       });
+
+      // Update page counter (when counter mode is in use)
+      if (counterEl) counterEl.textContent = (currentPage + 1).toString();
     }
 
     prevBtn.addEventListener('click', () => goToPage(currentPage - 1));
@@ -1656,6 +1699,7 @@
   }
 
   let _leaderboardSort = 'change';  // current sort column
+  let _leaderboardView = 'ours';    // 'ours' | 'competitors'
 
   // Brand pip colors matching crossover chart
   var LEADERBOARD_BRAND_COLORS = {
@@ -1668,6 +1712,35 @@
 
   function renderLeaderboard(sortBy) {
     if (sortBy) _leaderboardSort = sortBy;
+
+    // Competitors view: flat list of competitor stores sorted by share.
+    if (_leaderboardView === 'competitors') {
+      var comps = [].concat(D.competitorStores).sort(function(a, b) {
+        return (b.wk2_share || 0) - (a.wk2_share || 0);
+      });
+      var compHtml = '<div class="lb-header">' +
+        '<span class="lb-col lb-col--expand"></span>' +
+        '<span class="lb-col lb-col--store">Competitor</span>' +
+        '<span class="lb-col lb-col--city">City</span>' +
+        '<span class="lb-col lb-col--share">Share</span>' +
+      '</div>';
+      comps.forEach(function(cs, i) {
+        var pipColor = LEADERBOARD_BRAND_COLORS[cs.brand] || '#9CA3AF';
+        compHtml += '<div class="lb-row lb-row--leaf" data-comp-id="' + cs.id + '">' +
+          '<span class="lb-col lb-col--expand"></span>' +
+          '<span class="lb-col lb-col--store">' +
+            '<span class="lb-rank">' + (i + 1) + '</span>' +
+            '<span class="lb-comp-pip" style="background:' + pipColor + ';"></span>' +
+            (cs.storeName || cs.brand) +
+          '</span>' +
+          '<span class="lb-col lb-col--city">' + (cs.city || '') + '</span>' +
+          '<span class="lb-col lb-col--share">' + (cs.wk2_share != null ? cs.wk2_share + '%' : '—') + '</span>' +
+        '</div>';
+      });
+      elements.leaderboardTable.innerHTML = compHtml;
+      return;
+    }
+
     var stores = [].concat(D.trafficShareMetrics.storeLeaderboard);
     if (_leaderboardSort === 'share') {
       stores.sort(function(a, b) { return b.wk2_share - a.wk2_share; });
@@ -2782,6 +2855,24 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     });
   }
 
+  // ── Store Performance: Our Stores / Competitors toggle ─────────────────────
+  function initLeaderboardViewToggle() {
+    var toggle = document.getElementById('leaderboard-view-toggle');
+    if (!toggle) return;
+    var btns = toggle.querySelectorAll('[data-leaderboard-view]');
+    btns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var view = btn.dataset.leaderboardView;
+        if (view === _leaderboardView) return;
+        _leaderboardView = view;
+        btns.forEach(function (b) {
+          b.classList.toggle('active', b.dataset.leaderboardView === view);
+        });
+        renderLeaderboard();
+      });
+    });
+  }
+
   function updateTrafficCombinedChart() {
     var chart = charts.trafficCombined;
     if (!chart) return;
@@ -3261,6 +3352,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         initCrossoverChart();
         renderCrossoverDetail();
         initTrafficChartToggle();
+        initLeaderboardViewToggle();
         initCrossoverPeriodPresets();
         updateCrossoverChartPeriod(4);
         initCrossoverTrendChart();

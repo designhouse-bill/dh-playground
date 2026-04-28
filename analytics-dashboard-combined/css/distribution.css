@@ -294,6 +294,58 @@
   padding: 0;
 }
 
+/* Compact page counter — replaces the indicator dot list when there are
+   too many pages for dots to be useful (>6 pages). */
+.p-carousel-page-counter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--p-text-color-secondary, #6b7280);
+  letter-spacing: 0.04em;
+  padding: 6px 0;
+}
+.p-carousel-page-counter__current {
+  color: var(--p-text-color, #1f2937);
+  margin-right: 2px;
+}
+
+/* Sort dropdown + total label sitting above the carousel. */
+.creative-list__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 12px 8px;
+}
+.creative-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--p-text-color-secondary, #6b7280);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.creative-sort__select {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--p-text-color, #1f2937);
+  background: var(--p-surface-card, #ffffff);
+  border: 1px solid var(--p-surface-border, #e5e7eb);
+  border-radius: 6px;
+  padding: 4px 24px 4px 8px;
+  cursor: pointer;
+  text-transform: none;
+  letter-spacing: normal;
+}
+.creative-list__total {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--p-text-color-secondary, #6b7280);
+}
+
 .p-carousel-indicator-button {
   width: 10px;
   height: 10px;

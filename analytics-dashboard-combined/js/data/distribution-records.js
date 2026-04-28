@@ -288,8 +288,13 @@ const DistributionRecords = (function() {
         var realSpend       = reporting ? _parseMoney(reporting.Spend) : 0;
         var realVisits      = reporting ? _parseNum(reporting.Conversions) : 0;
 
-        var activeWeeks = _activeWeeksForCampaign(campaign);
-        var denom = (activeWeeks && activeWeeks.length) || WEEKS.length;
+        // Demo alignment: distribute every campaign's cumulative totals across
+        // the full dataset (55 weeks) so non-SEG brands populate every week,
+        // matching SEG's always-on coverage. Prevents blank screens when Adam
+        // jumps brand → brand on a week outside the campaign's actual flight.
+        // Per-week numbers shrink relative to the real flight, but stay non-zero
+        // and visually consistent across the full Wk50/2025 → Wk52/2026 range.
+        var denom = WEEKS.length;
 
         var imp = reporting ? Math.round(realImpressions / denom) : (5500 + (seed % 4500));
         var clk = reporting ? Math.round(realClicks      / denom) : Math.max(20, Math.round(imp * 0.0075));
@@ -322,7 +327,7 @@ const DistributionRecords = (function() {
             p.real_pulse_creative_ids = creativeIds;
           }
         }
-        if (activeWeeks) p.active_weeks = activeWeeks;
+        // active_weeks intentionally not stamped — see denom comment above.
         STORE_PARAMS[s.id] = p;
         STORE_IDS.push(s.id);
       });

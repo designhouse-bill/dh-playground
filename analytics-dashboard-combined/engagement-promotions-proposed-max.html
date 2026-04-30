@@ -167,6 +167,15 @@
     /* View toggle (Original / Proposed / Proposed (Max)) — pick up Engagement primary */
     .view-version-toggle__btn--active { background: var(--section-sessions, #2196F3) !important; color: #fff !important; }
 
+    /* MVP scope strip — surfaces Phase 1 metric set locked at Apr 29 Max meeting (T7) */
+    .ep-mvp-strip { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; padding: 8px 16px; background: #fff7ed; border-left: 3px solid #f59e0b; border-radius: 6px; margin: 0 var(--space-5) var(--space-3); font-size: 11px; color: var(--color-text, #1f2937); }
+    .ep-mvp-strip__badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; background: #f59e0b; color: #fff; border-radius: 4px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; font-size: 10px; }
+    .ep-mvp-strip__text { color: var(--color-text-secondary, #6b7280); }
+    .ep-mvp-strip__text strong { color: var(--color-text, #1f2937); }
+
+    /* T6 (Apr 29 Max meeting): run-stats line beneath date selector — "ran at X stores · Y days" */
+    .card-run-stats { display: block; font-size: 10px; color: var(--color-text-secondary, #6b7280); margin-top: 2px; font-weight: 500; }
+
     /* Max KPI tile strip — Overview snapshot (his sketch). Tiles are buttons that jump to the metric tab. */
     .ep-kpi-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; padding: var(--space-4) 0; }
     .ep-kpi-tile { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 14px 16px; border: 1px solid var(--color-border, #e5e7eb); border-radius: 8px; background: #fff; cursor: pointer; text-align: left; transition: background .15s ease, border-color .15s ease, box-shadow .15s ease; }
@@ -901,6 +910,7 @@
           <div class="card-content">
             <div class="card-value" id="context-date-value">Week 47</div>
             <div class="card-sub" id="context-date-sub">Nov 18–24, 2025</div>
+            <span class="card-run-stats" id="context-date-run-stats"></span>
           </div>
           <span class="card-arrow"><span class="material-symbols-outlined">expand_more</span></span>
         </div>
@@ -947,6 +957,13 @@
     <!-- ============================================================
          perf-tabs strip (Anchor 1)
          ============================================================ -->
+    <!-- T7 — MVP Phase 1 scope strip (Apr 29 Max meeting). Phase 2 deferred metrics flagged below. -->
+    <div class="ep-mvp-strip">
+      <span class="ep-mvp-strip__badge"><span class="material-symbols-outlined" style="font-size:13px;">flag</span> MVP Phase 1</span>
+      <span class="ep-mvp-strip__text"><strong>Locked:</strong> Sessions · Total Users · Avg Session Duration · Card Engagement Events (Add to List / Card Click / Card View / Share) · Events per Session · breakdowns by week + by store</span>
+      <span class="ep-mvp-strip__text" style="margin-left:auto;"><strong>Phase 2:</strong> entry-point / source-medium (origin data deferred until reliable)</span>
+    </div>
+
     <!-- MAX IA — tabs are METRICS, sub-tabs are DIMENSIONS.
          Underline-tab style ported from Distribution (.perf-tab from distribution.css):
          icon + label, transparent background, blue underline on active. -->
@@ -1247,7 +1264,8 @@
       </button>
     </div>
     <div class="ep-detail-sidebar__body" id="ep-detail-sidebar-body"></div>
-    <div class="ep-detail-sidebar__footer">
+    <!-- T2 (Apr 29 Max meeting): hidden until routing targets are resolved (filter-view vs. circular-view ambiguity) -->
+    <div class="ep-detail-sidebar__footer" hidden>
       <button class="ep-detail-sidebar__btn">
         <span class="material-symbols-outlined">table_chart</span>
         Grid Inquiry
@@ -1614,7 +1632,7 @@
             '</tr></thead><tbody>' + rowsHtml + '</tbody></table>' +
           '<a class="ep-data-grid-link" href="engagement-grid.html" target="_blank" rel="noopener">' +
             '<span class="material-symbols-outlined" style="font-size:14px;">open_in_new</span>' +
-            'Open full data grid (Original) — preview panel + cross-metric columns' +
+            'Open full data grid (Original) — preview panel + add columns (T10: Promotional + Grid consolidation pending)' +
           '</a>';
       }
 
@@ -2691,6 +2709,27 @@
         items: dayItems,
         globalSecondary: globalSecondary
       });
+    })();
+
+    // T6 (Apr 29 Max meeting): populate run-stats line under date selector.
+    // Shows "ran at X stores · Y days" so context bar reflects actual circular run extent.
+    // Wire to week-select event when live data lands — for now derives from current state.
+    (function populateRunStats() {
+      const runStatsEl = document.getElementById('context-date-run-stats');
+      if (!runStatsEl) return;
+      let storeCount = 27;  // from entity state (Grocery Holdings Corp, 27 locations)
+      let daysRun = 7;      // default week run
+      // Pull from DashboardCore state if available
+      if (typeof window.DashboardCore !== 'undefined' && typeof window.DashboardCore.getState === 'function') {
+        const st = window.DashboardCore.getState();
+        if (st && st.selectedWeekId && typeof MockData !== 'undefined') {
+          const wk = (MockData.weeks || []).find(w => w.id === st.selectedWeekId);
+          if (wk && wk.daysRun) daysRun = wk.daysRun;
+        }
+        if (st && st.currentEntity) storeCount = st.currentEntity.storeCount || storeCount;
+      }
+      const daysLabel = daysRun === 1 ? 'day' : 'days';
+      runStatsEl.textContent = 'Ran at ' + storeCount + ' stores · ' + daysRun + ' ' + daysLabel;
     })();
   })();
   </script>

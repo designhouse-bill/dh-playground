@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Distribution — Store Visitation | Analytics Dashboard</title>
+  <title>Distribution — Observed Store Visits attributed to paid media | Analytics Dashboard</title>
 
   <!-- Google Material Symbols -->
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/distribution.css?v=27">
+  <link rel="stylesheet" href="css/distribution.css?v=30">
 </head>
 <body data-dist-page="visitation">
 
@@ -71,7 +71,7 @@
         <div class="dist-section-tabs" id="dist-section-tabs">
           <a class="dist-tab active" href="distribution-visitation.html">
             <span class="material-symbols-outlined">store</span>
-            Store Visitation
+            Observed Store Visits
           </a>
           <a class="dist-tab" href="distribution-media.html">
             <span class="material-symbols-outlined">campaign</span>
@@ -140,7 +140,7 @@
       <!-- Hero stat: narrative left + single hero metric right, light blue accent -->
       <div class="hero-stat">
         <div class="narrative-header">
-          <h1 class="narrative-header__title">Store Visitation</h1>
+          <h1 class="narrative-header__title">Observed Store Visits attributed to paid media</h1>
           <div class="narrative-header__text">
             <h2 class="narrative-header__question">Are our media campaigns driving store visits?</h2>
             <p class="narrative-header__subtitle">Visitors attributed to paid media exposure<br><em><span id="subtitle-entity-visitation">Ideal Media Lab</span>, <span id="subtitle-date-visitation">Week 2 (Jan 7, 2026 – Jan 13, 2026)</span></em></p>
@@ -262,6 +262,20 @@
 
           <!-- ─── Overview tab (default) ─── -->
           <div class="perf-tab-pane active" data-perf-pane="overview">
+            <!-- Apr 28 plan #4: jump button to Media Buy. Bill @06:31:
+                 "maybe we should definitely have a jump button for here into
+                 the media buy or something." Crossover acknowledged but avoid
+                 duplication — this surface stays the standalone visitation
+                 story; CTR/conv/VCR/spend live on Media Buy. -->
+            <div class="perf-overview-jump-row">
+              <a class="perf-overview-jump" href="distribution-media.html">
+                <span class="perf-overview-jump__label">Looking for CTR · Conversions · VCR · Spend?</span>
+                <span class="perf-overview-jump__action">
+                  Jump to Media Buy
+                  <span class="material-symbols-outlined">arrow_forward</span>
+                </span>
+              </a>
+            </div>
             <div class="perf-overview-grid">
               <div class="perf-overview-panel">
                 <div class="perf-overview-panel__label">By Creative — Total Visits</div>
@@ -285,6 +299,15 @@
                 <div class="view-toggle view-toggle--compact" id="perf-view-toggle">
                   <button class="view-toggle__btn active" data-perf-view="bar">Bar View</button>
                   <button class="view-toggle__btn" data-perf-view="data">Data View</button>
+                  <!-- Apr 28 plan #3: per-store Trend Over Time -->
+                  <button class="view-toggle__btn" data-perf-view="trend">Trend Over Time</button>
+                </div>
+                <!-- Duration presets only meaningful in Trend view -->
+                <div class="duration-presets duration-presets--compact" id="perf-store-duration-presets" hidden>
+                  <button class="duration-preset" data-duration="1w">1 Week</button>
+                  <button class="duration-preset active" data-duration="4w">4 Week <span class="duration-preset__sub">(Month)</span></button>
+                  <button class="duration-preset" data-duration="13w">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
+                  <button class="duration-preset" data-duration="1y">1 Year</button>
                 </div>
                 <span class="store-perf-more-data" id="store-perf-more-wrap" style="display:none;">
                   <label class="toggle-switch">
@@ -295,7 +318,7 @@
                 </span>
               </div>
               <div>
-                <p class="panel-subtitle">Horizontal bars — one row per store, sorted by visits descending.</p>
+                <p class="panel-subtitle" id="perf-store-subtitle">Horizontal bars — one row per store, sorted by visits descending.</p>
               </div>
             </div>
             <div class="store-perf-body store-perf-body--full">
@@ -306,6 +329,10 @@
                     <thead id="store-perf-head"></thead>
                     <tbody id="store-perf-body"></tbody>
                   </table>
+                </div>
+                <!-- Apr 28 plan #3: trend chart — one line per store across time buckets -->
+                <div class="store-perf-trend-view" id="store-perf-trend-view" hidden>
+                  <div id="store-perf-trend-chart" style="height:420px;"></div>
                 </div>
               </div>
             </div>
@@ -386,16 +413,31 @@
               </div>
             </div>
             <div class="tabset__body">
-          <div class="demo-charts-grid">
-            <div class="demo-chart-card"><h4 class="demo-chart-title">Age Distribution</h4><div id="chart-demo-age-v" style="height: 200px;"></div></div>
-            <div class="demo-chart-card"><h4 class="demo-chart-title">Gender</h4><div id="chart-demo-gender-v" style="height: 200px;"></div></div>
-            <div class="demo-chart-card"><h4 class="demo-chart-title">Household Income</h4><div id="chart-demo-income-v" style="height: 200px;"></div></div>
-            <div class="demo-chart-card"><h4 class="demo-chart-title">Presence of Children</h4><div id="chart-demo-children-v" style="height: 200px;"></div></div>
-            <div class="demo-chart-card"><h4 class="demo-chart-title">Household Size</h4><div id="chart-demo-hhsize-v" style="height: 200px;"></div></div>
-            <div class="demo-chart-card"><h4 class="demo-chart-title">Homeowner Status</h4><div id="chart-demo-homeowner-v" style="height: 200px;"></div></div>
-            <div class="demo-chart-card"><h4 class="demo-chart-title">Net Worth</h4><div id="chart-demo-networth-v" style="height: 200px;"></div></div>
-            <div class="demo-chart-card"><h4 class="demo-chart-title">Marital Status</h4><div id="chart-demo-marital-v" style="height: 200px;"></div></div>
-          </div>
+              <!-- Card-strip toggle (Apr 28 plan #2): mirrors Store Performance > By Creative.
+                   "All Demographics" default = show 8-card grid; pick a single card =
+                   single full-width chart. Saves vertical space; one story at a time. -->
+              <div class="creative-chips demo-chips" id="demo-chips" role="tablist" aria-label="Demographic dimension"></div>
+
+              <!-- Single-category view (hidden when "All" selected) -->
+              <div class="demo-single-view" id="demo-single-view" hidden>
+                <div class="demo-single-view__header">
+                  <h4 class="demo-single-view__title" id="demo-single-title">Age Distribution</h4>
+                  <p class="demo-single-view__sub" id="demo-single-sub">Share of visitors by age bracket</p>
+                </div>
+                <div id="chart-demo-single" style="height:340px;"></div>
+              </div>
+
+              <!-- All-Demographics grid view (default) -->
+              <div class="demo-charts-grid" id="demo-charts-grid">
+                <div class="demo-chart-card"><h4 class="demo-chart-title">Age Distribution</h4><div id="chart-demo-age-v" style="height: 200px;"></div></div>
+                <div class="demo-chart-card"><h4 class="demo-chart-title">Gender</h4><div id="chart-demo-gender-v" style="height: 200px;"></div></div>
+                <div class="demo-chart-card"><h4 class="demo-chart-title">Household Income</h4><div id="chart-demo-income-v" style="height: 200px;"></div></div>
+                <div class="demo-chart-card"><h4 class="demo-chart-title">Presence of Children</h4><div id="chart-demo-children-v" style="height: 200px;"></div></div>
+                <div class="demo-chart-card"><h4 class="demo-chart-title">Household Size</h4><div id="chart-demo-hhsize-v" style="height: 200px;"></div></div>
+                <div class="demo-chart-card"><h4 class="demo-chart-title">Homeowner Status</h4><div id="chart-demo-homeowner-v" style="height: 200px;"></div></div>
+                <div class="demo-chart-card"><h4 class="demo-chart-title">Net Worth</h4><div id="chart-demo-networth-v" style="height: 200px;"></div></div>
+                <div class="demo-chart-card"><h4 class="demo-chart-title">Marital Status</h4><div id="chart-demo-marital-v" style="height: 200px;"></div></div>
+              </div>
             </div><!-- /.tabset__body -->
           </div><!-- /.tabset.demo-tabset -->
         </div>
@@ -422,7 +464,7 @@
   <script src="js/data/distribution-records.js?v=21"></script>
   <script src="js/data/distribution-data.js?v=17"></script>
 
-  <script src="js/distribution/distribution.js?v=60"></script>
+  <script src="js/distribution/distribution.js?v=62"></script>
   <script src="js/distribution/distribution-modals.js?v=13"></script>
 
   <script src="js/header-slide.js"></script>

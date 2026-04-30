@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/distribution.css?v=27">
+  <link rel="stylesheet" href="css/distribution.css?v=28">
 </head>
 <body data-dist-page="media">
 
@@ -71,7 +71,7 @@
         <div class="dist-section-tabs" id="dist-section-tabs">
           <a class="dist-tab" href="distribution-visitation.html">
             <span class="material-symbols-outlined">store</span>
-            Store Visitation
+            Observed Store Visits
           </a>
           <a class="dist-tab active" href="distribution-media.html">
             <span class="material-symbols-outlined">campaign</span>
@@ -193,6 +193,43 @@
         </div>
       </div>
 
+      <!-- ═══════════════════════════════════════════════
+           LEVEL 3: Media-attributed Visits (Apr 28 plan #1)
+           Split per Max ask: Store Visitation surface stays;
+           media-attributed slice lives here next to spend/CTR/conv.
+           Aggregation: by store × week × campaign group (NOT by
+           creative — visit data isn't creative-attributed).
+           ═══════════════════════════════════════════════ -->
+      <div class="level-divider">Media-attributed Visits</div>
+
+      <section class="media-visits-section">
+        <header class="section-panel-header">
+          <h2 class="section-panel-header__title">Visits attributed to media spend</h2>
+          <p class="section-panel-header__question">Which media drove store visits this week?</p>
+          <p class="section-panel-header__subtitle">Visits joined to media buy by store × week. Creative-level visits not available in source data — see Observed Store Visits tab for crossover detail.</p>
+        </header>
+
+        <div class="media-visits-stats" id="media-visits-stats">
+          <!-- Populated by JS: total visits, visits-per-$, top-driving campaign -->
+        </div>
+
+        <div class="media-visits-grid">
+          <div class="media-visits-panel">
+            <div class="media-visits-panel__label">Visits by Store — joined to spend</div>
+            <div id="media-visits-by-store" style="height:280px;"></div>
+          </div>
+          <div class="media-visits-panel">
+            <div class="media-visits-panel__label">Visits by Week — current campaign window</div>
+            <div id="media-visits-by-week" style="height:280px;"></div>
+          </div>
+        </div>
+
+        <p class="media-visits-footnote">
+          <span class="material-symbols-outlined">info</span>
+          Source: panel-tracking visit data joined to Pulse spend on store + week. No creative attribution at this layer — for competitive crossover and frequency-bucket detail, see <a href="distribution-visitation.html">Observed Store Visits</a>.
+        </p>
+      </section>
+
     </section>
 
     <!-- Distribution modals injected here by distribution-modals.js -->
@@ -215,7 +252,7 @@
   <script src="js/data/distribution-data.js?v=17"></script>
 
   <script src="js/distribution/store-map.js"></script>
-  <script src="js/distribution/distribution.js?v=60"></script>
+  <script src="js/distribution/distribution.js?v=61"></script>
   <script src="js/distribution/distribution-modals.js?v=13"></script>
 
   <script src="js/header-slide.js"></script>

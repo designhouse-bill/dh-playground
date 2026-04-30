@@ -4538,6 +4538,88 @@ body[data-dist-page] .narrative-header__title {
 .creative-chip--active .creative-chip__icon {
   color: var(--color-primary, #2196F3);
 }
+/* Apr 28 plan #6: creative imagery on chips. Slot for real artwork via
+   def.imageUrl; falls back to colored initial tile (accent + label initials)
+   so the chip strip reads as creative-aware even without artwork wired. */
+.creative-chip__thumb {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  background: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+}
+.creative-chip__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.creative-chip__thumb .material-symbols-outlined {
+  color: #fff;
+  font-size: 20px;
+}
+.creative-chip__thumb-initials {
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.creative-chip__thumb--all {
+  background: linear-gradient(135deg, #475569 0%, #64748b 100%);
+}
+
+/* Apr 28 plan #4: Overview → Media Buy jump button. Lives at the top of
+   the Overview pane in Store Performance. Acknowledges the crossover
+   between visitation and media-buy metrics without duplicating either. */
+.perf-overview-jump-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+.perf-overview-jump {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 12px 8px 14px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  text-decoration: none;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+.perf-overview-jump:hover {
+  background: #f1f5f9;
+  border-color: var(--color-primary, #2196F3);
+  color: var(--color-primary, #2196F3);
+}
+.perf-overview-jump__label {
+  color: #6b7280;
+}
+.perf-overview-jump:hover .perf-overview-jump__label {
+  color: inherit;
+}
+.perf-overview-jump__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 700;
+  color: var(--color-primary, #2196F3);
+  letter-spacing: 0.02em;
+}
+.perf-overview-jump__action .material-symbols-outlined {
+  font-size: 16px;
+  transition: transform 0.15s ease;
+}
+.perf-overview-jump:hover .perf-overview-jump__action .material-symbols-outlined {
+  transform: translateX(2px);
+}
 .creative-chip__flag {
   font-size: 9px;
   font-weight: 700;
@@ -4841,4 +4923,157 @@ body[data-dist-page] .narrative-header__title {
 /* Inactive: visually dimmed */
 .vt-toggle:not(.vt-toggle--active) {
   opacity: 0.55;
+}
+
+/* ============================================================
+   Demographics card-strip toggle (Apr 28 plan #2)
+   Mirrors Store Performance > By Creative chip strip. "All
+   Demographics" first, then 8 categories. Selecting a chip swaps
+   the body between an 8-card grid and a single full-width chart.
+   ============================================================ */
+.demo-chips {
+  /* Override creative-chips grid auto-fill so all 9 chips fit one row
+     comfortably on desktop, scroll on smaller widths. */
+  grid-template-columns: repeat(9, minmax(110px, 1fr));
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+}
+@media (max-width: 1180px) {
+  .demo-chips {
+    grid-template-columns: repeat(9, minmax(110px, max-content));
+  }
+}
+
+.demo-single-view {
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: var(--radius-md, 6px);
+  padding: var(--space-4) var(--space-5);
+}
+.demo-single-view__header {
+  margin-bottom: var(--space-3);
+}
+.demo-single-view__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary, #1f2937);
+  margin: 0 0 4px 0;
+}
+.demo-single-view__sub {
+  font-size: 13px;
+  color: var(--color-text-secondary, #6b7280);
+  margin: 0;
+}
+
+/* ============================================================
+   Per-store Trend Over Time (Apr 28 plan #3)
+   Lives inside Store Performance > By Store, behind the third
+   "Trend Over Time" view-toggle button.
+   ============================================================ */
+.store-perf-trend-view {
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: var(--radius-md, 6px);
+  padding: var(--space-3) var(--space-4);
+}
+.duration-presets--compact {
+  display: inline-flex;
+  gap: 4px;
+  margin-left: var(--space-3);
+}
+.duration-presets--compact .duration-preset {
+  padding: 4px 10px;
+  font-size: 11px;
+}
+
+/* ============================================================
+   Media-attributed Visits panel (Apr 28 plan #1)
+   Lives at the bottom of Media Buy. Visit data is store × week,
+   not creative-attributed; grid is store-bars + week-trend.
+   ============================================================ */
+.media-visits-section {
+  margin-top: var(--space-4);
+  padding: var(--space-5);
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: var(--radius-md, 6px);
+}
+
+.media-visits-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+  margin: var(--space-4) 0;
+  padding: var(--space-4);
+  background: rgba(66, 114, 216, 0.04);
+  border-radius: var(--radius-sm, 4px);
+}
+@media (max-width: 900px) {
+  .media-visits-stats { grid-template-columns: repeat(2, 1fr); }
+}
+.media-visits-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.media-visits-stat__value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-text-primary, #1f2937);
+  line-height: 1.1;
+}
+.media-visits-stat__value--text {
+  font-size: 14px;
+  font-weight: 600;
+}
+.media-visits-stat__label {
+  font-size: 11px;
+  color: var(--color-text-secondary, #6b7280);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.media-visits-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin-top: var(--space-3);
+}
+@media (max-width: 900px) {
+  .media-visits-grid { grid-template-columns: 1fr; }
+}
+.media-visits-panel {
+  background: #fff;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: var(--radius-sm, 4px);
+  padding: var(--space-3) var(--space-4);
+}
+.media-visits-panel__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-secondary, #6b7280);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: var(--space-2);
+}
+.media-visits-footnote {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: var(--space-4);
+  padding: var(--space-3);
+  background: rgba(255, 193, 7, 0.06);
+  border-left: 3px solid #f59e0b;
+  border-radius: 0 var(--radius-sm, 4px) var(--radius-sm, 4px) 0;
+  font-size: 12px;
+  color: var(--color-text-secondary, #6b7280);
+}
+.media-visits-footnote .material-symbols-outlined {
+  font-size: 16px;
+  color: #f59e0b;
+  flex-shrink: 0;
+}
+.media-visits-footnote a {
+  color: var(--color-primary, #2196F3);
+  text-decoration: underline;
 }

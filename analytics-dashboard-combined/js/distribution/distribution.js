@@ -3329,6 +3329,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         renderDeliveryTrends();
         renderVariantPanels();
         initTreeTableActions();
+        renderMediaAttributedVisits();
       } else if (section === 'visitation') {
         renderVisitationKpis();
         renderStorePerfHero();
@@ -3398,6 +3399,10 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
   /* ============================================================
      Phase 2: Bar View / Data View toggle
      ============================================================ */
+  // Apr 28 plan #3: per-store trend chart state
+  var _perfStoreTrendChart = null;
+  var _perfStoreTrendDuration = '4w';
+
   function initPerfViewToggle() {
     var toggle = document.getElementById('perf-view-toggle');
     if (!toggle) return;
@@ -3408,12 +3413,93 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         var view = btn.dataset.perfView;
         var barEl = document.getElementById('store-perf-bar-view');
         var dataEl = document.getElementById('store-perf-data-view');
+        var trendEl = document.getElementById('store-perf-trend-view');
         var moreWrap = document.getElementById('store-perf-more-wrap');
+        var presetWrap = document.getElementById('perf-store-duration-presets');
+        var subtitle = document.getElementById('perf-store-subtitle');
         if (barEl) barEl.classList.toggle('active', view === 'bar');
         if (dataEl) dataEl.classList.toggle('active', view === 'data');
+        if (trendEl) trendEl.hidden = (view !== 'trend');
         if (moreWrap) moreWrap.style.display = view === 'data' ? '' : 'none';
+        if (presetWrap) presetWrap.hidden = (view !== 'trend');
+        if (subtitle) {
+          subtitle.textContent =
+            view === 'bar'   ? 'Horizontal bars — one row per store, sorted by visits descending.' :
+            view === 'data'  ? 'Sortable table — visits, share, delta vs prior period.' :
+            view === 'trend' ? 'Trend over time — one line per store across the selected duration. Click a legend chip to isolate.' :
+            '';
+        }
+        if (view === 'trend') renderPerfStoreTrend();
       });
     });
+    // Duration preset wiring (Trend view only)
+    var presets = document.getElementById('perf-store-duration-presets');
+    if (presets) {
+      presets.querySelectorAll('.duration-preset').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          presets.querySelectorAll('.duration-preset').forEach(function(b) { b.classList.remove('active'); });
+          btn.classList.add('active');
+          _perfStoreTrendDuration = btn.dataset.duration;
+          renderPerfStoreTrend();
+        });
+      });
+    }
+  }
+
+  // Apr 28 plan #3: per-store trend over time. Reuses bucketLabelsFor() so the
+  // axis matches Visitation/Demographics tabs. Mock series jitter so each store
+  // reads as a plausible drift, deterministic via sin so it doesn't reshuffle.
+  function renderPerfStoreTrend() {
+    var host = document.getElementById('store-perf-trend-chart');
+    if (!host) return;
+    if (!_perfStoreTrendChart) _perfStoreTrendChart = echarts.init(host);
+    var buckets = bucketLabelsFor(_perfStoreTrendDuration);
+    // Pull store list from currently-rendered bar view; fall back to STORES global if present.
+    var stores = (typeof STORES !== 'undefined' && Array.isArray(STORES))
+      ? STORES.slice(0, 8).map(function(s) { return { name: s.name || s.id || ('Store ' + s.id), base: s.visits || s.total_visits || 1000 }; })
+      : [
+        { name: '#705 Haines City',   base: 5650 },
+        { name: '#2487 Sarasota',     base: 4889 },
+        { name: '#2288 Orlando',      base: 4608 },
+        { name: '#726 St James City', base: 4185 },
+        { name: '#481 Jacksonville',  base: 3580 },
+        { name: '#436 Tampa',         base: 2146 },
+        { name: '#123 Jacksonville',  base: 1394 },
+        { name: '#711 Orlando',       base: 932 }
+      ];
+    var palette = ['#4272D8', '#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '#C48AA9', '#7A9A99'];
+    var series = stores.map(function(s, i) {
+      var data = buckets.map(function(_, b) {
+        var jitter = Math.sin((b + 1) * 0.6 + i * 1.1) * 0.18;
+        return Math.max(0, Math.round(s.base * (1 + jitter)));
+      });
+      return {
+        name: s.name, type: 'line', smooth: true, symbolSize: 6,
+        lineStyle: { width: 2 }, itemStyle: { color: palette[i % palette.length] }, data: data
+      };
+    });
+    _perfStoreTrendChart.setOption({
+      grid: { left: 60, right: 20, top: 30, bottom: 70, containLabel: true },
+      legend: {
+        data: stores.map(function(s) { return s.name; }), bottom: 0, type: 'scroll',
+        icon: 'circle', itemWidth: 10, itemHeight: 10, itemGap: 16,
+        textStyle: { fontSize: 11, color: '#6b7280' }
+      },
+      xAxis: {
+        type: 'category', data: buckets,
+        axisLabel: { fontSize: 11, color: '#6b7280' },
+        axisLine: { lineStyle: { color: '#e5e7eb' } },
+        boundaryGap: false
+      },
+      yAxis: {
+        type: 'value',
+        axisLabel: { fontSize: 11, color: '#6b7280', formatter: function(v) { return v >= 1000 ? (v/1000).toFixed(1) + 'k' : v; } },
+        splitLine: { lineStyle: { color: '#f3f4f6' } }
+      },
+      series: series,
+      tooltip: { trigger: 'axis', axisPointer: { type: 'line' } }
+    }, true);
+    setTimeout(function() { _perfStoreTrendChart.resize(); }, 50);
   }
 
   /* ============================================================
@@ -3670,7 +3756,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     var allActive = _activePerfCreative === 'all' ? ' creative-chip--active' : '';
     var allChip = '<button class="creative-chip' + allActive + '" data-creative-key="all">' +
       '<div class="creative-chip__header">' +
-        '<span class="material-symbols-outlined creative-chip__icon">apps</span>' +
+        '<div class="creative-chip__thumb creative-chip__thumb--all"><span class="material-symbols-outlined">apps</span></div>' +
       '</div>' +
       '<span class="creative-chip__name">All Creatives</span>' +
       '<span class="creative-chip__meta">' + CREATIVE_DEFS.length + ' creatives \u00b7 35\u00a0stores</span>' +
@@ -3678,9 +3764,20 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     chips.innerHTML = allChip + CREATIVE_DEFS.map(function(def) {
       var active = def.key === _activePerfCreative ? ' creative-chip--active' : '';
       var busyFlag = def.key === busiestKey ? '<span class="creative-chip__flag">Busiest</span>' : '';
+      // Apr 28 plan #6: creative imagery on chips. Thumb uses creative.accent
+      // as background + initials (or video icon for video type) as a placeholder
+      // until real creative artwork is wired through (def.imageUrl when present).
+      var initials = def.label.split(/\s+/).map(function(w) { return w[0]; }).join('').slice(0, 2).toUpperCase();
+      var hasImg = !!def.imageUrl;
+      var thumbInner = hasImg
+        ? '<img src="' + def.imageUrl + '" alt="' + def.label + '">'
+        : (def.type === 'video'
+            ? '<span class="material-symbols-outlined">play_arrow</span>'
+            : '<span class="creative-chip__thumb-initials">' + initials + '</span>');
+      var thumbStyle = hasImg ? '' : ' style="background:' + (def.accent || '#475569') + ';"';
       return '<button class="creative-chip' + active + '" data-creative-key="' + def.key + '">' +
         '<div class="creative-chip__header">' +
-          '<span class="material-symbols-outlined creative-chip__icon">' + def.typeIcon + '</span>' +
+          '<div class="creative-chip__thumb"' + thumbStyle + '>' + thumbInner + '</div>' +
           busyFlag +
         '</div>' +
         '<span class="creative-chip__name">' + def.label + '</span>' +
@@ -4571,10 +4668,25 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
   var DEMO_VIEW = 'current'; // 'current' | 'trend'
   var DEMO_DURATION = '4w';  // '1w' | '4w' | '13w' | '1y'
   var DEMO_CHARTS = null;
+  var DEMO_SINGLE_CHART = null;     // ECharts instance for single-category view
+  var DEMO_ACTIVE_KEY = 'all';      // 'all' | 'age' | 'gender' | 'income' | ...
   var DEMO_TOTAL = 10822;
 
   // Segment palette — reuses warm/muted aesthetic (plan item 9).
   var DEMO_PALETTE = ['#4272D8', '#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '#C48AA9', '#7A9A99'];
+
+  // Card-strip metadata (Apr 28 plan #2). Order matches the 8-card grid; "All"
+  // is prepended in renderDemoChips() so the data shape stays grid-friendly.
+  var DEMO_CATEGORIES = [
+    { key: 'age',       id: 'chart-demo-age-v',       label: 'Age',                icon: 'cake',                 sub: 'Share of visitors by age bracket' },
+    { key: 'gender',    id: 'chart-demo-gender-v',    label: 'Gender',             icon: 'wc',                   sub: 'Female / Male / Unknown' },
+    { key: 'income',    id: 'chart-demo-income-v',    label: 'Household Income',   icon: 'payments',             sub: 'Estimated annual HH income' },
+    { key: 'children',  id: 'chart-demo-children-v',  label: 'Presence of Children', icon: 'child_care',         sub: 'HH with children present' },
+    { key: 'hhsize',    id: 'chart-demo-hhsize-v',    label: 'Household Size',     icon: 'group',                sub: 'Members per household' },
+    { key: 'homeowner', id: 'chart-demo-homeowner-v', label: 'Homeowner Status',   icon: 'home',                 sub: 'Owner / Renter / Unknown' },
+    { key: 'networth',  id: 'chart-demo-networth-v',  label: 'Net Worth',          icon: 'account_balance',      sub: 'Estimated total net worth' },
+    { key: 'marital',   id: 'chart-demo-marital-v',   label: 'Marital Status',     icon: 'favorite',             sub: 'Married / Single / Unknown' }
+  ];
 
   function demoCharts() {
     return [
@@ -4587,6 +4699,115 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       { id: 'chart-demo-networth-v', cats: ['<$50K', '$50-100K', '$100-250K', '$250-500K', '$500K+'], vals: [20, 25, 28, 17, 10] },
       { id: 'chart-demo-marital-v', cats: ['Married', 'Single', 'Unknown'], vals: [48, 44, 8] }
     ];
+  }
+
+  function findDemoConfig(key) {
+    var cat = DEMO_CATEGORIES.find(function(c) { return c.key === key; });
+    if (!cat) return null;
+    return DEMO_CHARTS && DEMO_CHARTS.find(function(c) { return c.id === cat.id; });
+  }
+
+  function renderDemoChips() {
+    var host = document.getElementById('demo-chips');
+    if (!host) return;
+    var chips = [{ key: 'all', label: 'All Demographics', icon: 'dashboard', sub: '8 categories · combined view' }]
+      .concat(DEMO_CATEGORIES.map(function(c) {
+        var cfg = DEMO_CHARTS && DEMO_CHARTS.find(function(cc) { return cc.id === c.id; });
+        var sub = cfg ? (cfg.cats.length + ' buckets') : '';
+        return { key: c.key, label: c.label, icon: c.icon, sub: sub };
+      }));
+    host.innerHTML = chips.map(function(ch) {
+      var active = (ch.key === DEMO_ACTIVE_KEY) ? ' creative-chip--active' : '';
+      return ''
+        + '<button class="creative-chip demo-chip' + active + '" role="tab" aria-selected="' + (active ? 'true' : 'false') + '" data-demo-key="' + ch.key + '">'
+        +   '<div class="creative-chip__header">'
+        +     '<span class="material-symbols-outlined creative-chip__icon">' + ch.icon + '</span>'
+        +   '</div>'
+        +   '<div class="creative-chip__name">' + ch.label + '</div>'
+        +   '<div class="creative-chip__meta">' + ch.sub + '</div>'
+        + '</button>';
+    }).join('');
+    host.querySelectorAll('[data-demo-key]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        DEMO_ACTIVE_KEY = btn.dataset.demoKey;
+        renderDemoChips();
+        renderDemographicsAll();
+      });
+    });
+  }
+
+  function renderDemoSingleCurrent(c) {
+    if (!DEMO_SINGLE_CHART) return;
+    var cats = c.cats.slice().reverse();
+    var vals = c.vals.slice().reverse();
+    var counts = vals.map(function(v) { return Math.round(DEMO_TOTAL * v / 100); });
+    var fmt = function(n) { return n.toLocaleString(); };
+    var maxVal = Math.max.apply(null, vals);
+    DEMO_SINGLE_CHART.setOption({
+      grid: { left: 130, right: 130, top: 20, bottom: 20, containLabel: false },
+      xAxis: { type: 'value', show: false, max: Math.ceil(maxVal * 1.15) },
+      yAxis: {
+        type: 'category', data: cats,
+        axisLabel: { fontSize: 13, color: '#374151' },
+        axisLine: { show: false }, axisTick: { show: false }
+      },
+      series: [{
+        type: 'bar',
+        data: vals.map(function(v, i) {
+          return { value: v, itemStyle: { color: DEMO_PALETTE[(vals.length - 1 - i) % DEMO_PALETTE.length], borderRadius: [0, 4, 4, 0] } };
+        }),
+        barMaxWidth: 28,
+        label: {
+          show: true, position: 'right', fontSize: 13, color: '#374151',
+          formatter: function(p) { return '{pct|' + p.value + '%} {count|· ' + fmt(counts[p.dataIndex]) + '}'; },
+          rich: {
+            pct: { fontWeight: 600, color: '#111827', fontSize: 13 },
+            count: { color: '#6b7280', fontSize: 11 }
+          }
+        }
+      }],
+      tooltip: {
+        trigger: 'axis', axisPointer: { type: 'shadow' },
+        formatter: function(params) {
+          var p = params[0];
+          return p.name + '<br/><b>' + p.value + '%</b> · ' + fmt(counts[p.dataIndex]) + ' of ' + fmt(DEMO_TOTAL) + ' visitors';
+        }
+      }
+    }, true);
+  }
+
+  function renderDemoSingleTrend(c) {
+    if (!DEMO_SINGLE_CHART) return;
+    var buckets = bucketLabelsFor(DEMO_DURATION);
+    var bucketData = generateTrendData(c.cats, c.vals, buckets.length);
+    var barCap = buckets.length <= 4 ? 140 : buckets.length <= 7 ? 90 : 50;
+    var series = c.cats.map(function(cat, i) {
+      return {
+        name: cat, type: 'bar', stack: 'total', barMaxWidth: barCap,
+        itemStyle: { color: DEMO_PALETTE[i % DEMO_PALETTE.length] },
+        data: bucketData.map(function(row) { return row[i]; }),
+        label: buckets.length <= 4 ? {
+          show: true, position: 'inside', fontSize: 11, color: '#fff', fontWeight: 'bold',
+          formatter: function(p) { return p.value >= 6 ? p.value + '%' : ''; }
+        } : { show: false }
+      };
+    });
+    DEMO_SINGLE_CHART.setOption({
+      grid: { left: 50, right: 20, top: 30, bottom: 60, containLabel: true },
+      legend: { data: c.cats, bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, itemGap: 20, textStyle: { fontSize: 12, color: '#6b7280' } },
+      xAxis: { type: 'category', data: buckets, axisLabel: { fontSize: 11, color: '#6b7280' }, axisLine: { show: false }, axisTick: { show: false } },
+      yAxis: { type: 'value', max: 100, min: 0, axisLabel: { formatter: '{value}%', fontSize: 11, color: '#9ca3af' }, splitLine: { lineStyle: { color: '#f3f4f6' } } },
+      series: series,
+      tooltip: {
+        trigger: 'axis', axisPointer: { type: 'shadow' },
+        formatter: function(params) {
+          var lines = params.map(function(p) {
+            return '<span style="display:inline-block;margin-right:4px;border-radius:10px;width:8px;height:8px;background:' + p.color + '"></span>' + p.seriesName + ': <b>' + p.value + '%</b>';
+          });
+          return params[0].axisValueLabel + '<br/>' + lines.join('<br/>');
+        }
+      }
+    }, true);
   }
 
   function bucketLabelsFor(duration) {
@@ -4721,20 +4942,45 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
 
   function renderDemographicsAll() {
     if (!DEMO_CHARTS) return;
-    // Toggle layout class: Trend = 1 column (stacked bars need width);
-    // Current = 2 columns (horizontal bars read fine compact).
-    var grid = document.querySelector('.demo-charts-grid');
+    var grid = document.getElementById('demo-charts-grid');
+    var single = document.getElementById('demo-single-view');
     var tabset = document.querySelector('.demo-tabset');
+    var showAll = (DEMO_ACTIVE_KEY === 'all');
+
+    // Visibility swap: All = grid view; single key = full-width chart.
+    if (grid) grid.hidden = !showAll;
+    if (single) single.hidden = showAll;
+
+    // Toggle layout class on grid: Trend = 1 column (stacked bars need width);
+    // Current = 2 columns (horizontal bars read fine compact).
     if (grid) grid.classList.toggle('demo-charts-grid--trend', DEMO_VIEW === 'trend');
     if (tabset) tabset.classList.toggle('demo-tabset--current', DEMO_VIEW === 'current');
-    DEMO_CHARTS.forEach(function(c) {
-      if (DEMO_VIEW === 'current') renderCurrentChart(c);
-      else renderTrendChart(c);
-    });
-    // Charts need a resize kick after container width changes.
-    setTimeout(function() {
-      DEMO_CHARTS.forEach(function(c) { if (c.instance) c.instance.resize(); });
-    }, 50);
+
+    if (showAll) {
+      DEMO_CHARTS.forEach(function(c) {
+        if (DEMO_VIEW === 'current') renderCurrentChart(c);
+        else renderTrendChart(c);
+      });
+      setTimeout(function() {
+        DEMO_CHARTS.forEach(function(c) { if (c.instance) c.instance.resize(); });
+      }, 50);
+    } else {
+      // Single-category render
+      var cat = DEMO_CATEGORIES.find(function(c) { return c.key === DEMO_ACTIVE_KEY; });
+      var cfg = findDemoConfig(DEMO_ACTIVE_KEY);
+      if (!cat || !cfg) return;
+      var titleEl = document.getElementById('demo-single-title');
+      var subEl = document.getElementById('demo-single-sub');
+      if (titleEl) titleEl.textContent = cat.label;
+      if (subEl) subEl.textContent = cat.sub;
+      var host = document.getElementById('chart-demo-single');
+      if (host && !DEMO_SINGLE_CHART) {
+        DEMO_SINGLE_CHART = echarts.init(host);
+      }
+      if (DEMO_VIEW === 'current') renderDemoSingleCurrent(cfg);
+      else renderDemoSingleTrend(cfg);
+      setTimeout(function() { if (DEMO_SINGLE_CHART) DEMO_SINGLE_CHART.resize(); }, 50);
+    }
   }
 
   function initDemographicsControls() {
@@ -4771,8 +5017,103 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       c.instance = echarts.init(el);
       return c;
     }).filter(Boolean);
+    renderDemoChips();
     renderDemographicsAll();
     initDemographicsControls();
+  }
+
+  /* ============================================================
+     Apr 28 plan #1: Media Buy — Media-attributed Visits panel
+     Visit data is store × week × campaign-group level (NOT
+     creative-attributed). Lives next to spend/CTR/conv on the
+     Media Buy surface; Store Visitation surface keeps its
+     standalone treatment.
+     ============================================================ */
+  function renderMediaAttributedVisits() {
+    var statsHost = document.getElementById('media-visits-stats');
+    var byStoreEl = document.getElementById('media-visits-by-store');
+    var byWeekEl  = document.getElementById('media-visits-by-week');
+    if (!statsHost && !byStoreEl && !byWeekEl) return; // not on this page
+
+    // Mock totals — replaces with Pulse-joined panel data when ingest lands.
+    var mockTotal = 18420;
+    var mockSpend = 12850;
+    var visitsPerDollar = (mockTotal / mockSpend).toFixed(2);
+    var topCampaign = 'Holiday Banner — South FL';
+
+    if (statsHost) {
+      statsHost.innerHTML = ''
+        + '<div class="media-visits-stat"><span class="media-visits-stat__value">' + mockTotal.toLocaleString() + '</span><span class="media-visits-stat__label">Attributed visits (wk 2)</span></div>'
+        + '<div class="media-visits-stat"><span class="media-visits-stat__value">$' + mockSpend.toLocaleString() + '</span><span class="media-visits-stat__label">Spend joined</span></div>'
+        + '<div class="media-visits-stat"><span class="media-visits-stat__value">' + visitsPerDollar + '</span><span class="media-visits-stat__label">Visits per $1 spent</span></div>'
+        + '<div class="media-visits-stat"><span class="media-visits-stat__value media-visits-stat__value--text">' + topCampaign + '</span><span class="media-visits-stat__label">Top driving campaign</span></div>';
+    }
+
+    // Visits by store — joined to spend
+    if (byStoreEl) {
+      var stores = [
+        { name: '#705 Haines City',   visits: 3520, spend: 2120 },
+        { name: '#2487 Sarasota',     visits: 3010, spend: 1980 },
+        { name: '#2288 Orlando',      visits: 2840, spend: 1860 },
+        { name: '#726 St James City', visits: 2570, spend: 1740 },
+        { name: '#481 Jacksonville',  visits: 2200, spend: 1540 },
+        { name: '#436 Tampa',         visits: 1320, spend: 1190 },
+        { name: '#123 Jacksonville',  visits: 860,  spend: 920  },
+        { name: '#711 Orlando',       visits: 580,  spend: 700  }
+      ];
+      var ch = echarts.init(byStoreEl);
+      ch.setOption({
+        grid: { left: 130, right: 80, top: 10, bottom: 30, containLabel: false },
+        xAxis: { type: 'value', show: false },
+        yAxis: {
+          type: 'category', data: stores.map(function(s) { return s.name; }).reverse(),
+          axisLabel: { fontSize: 11, color: '#374151' }, axisLine: { show: false }, axisTick: { show: false }
+        },
+        series: [{
+          type: 'bar', barMaxWidth: 18,
+          data: stores.slice().reverse().map(function(s) {
+            return { value: s.visits, itemStyle: { color: '#4272D8', borderRadius: [0, 3, 3, 0] }, _spend: s.spend };
+          }),
+          label: {
+            show: true, position: 'right', fontSize: 11, color: '#374151',
+            formatter: function(p) { return p.value.toLocaleString() + ' · $' + p.data._spend.toLocaleString(); }
+          }
+        }],
+        tooltip: {
+          trigger: 'axis', axisPointer: { type: 'shadow' },
+          formatter: function(params) {
+            var p = params[0];
+            return p.name + '<br/><b>' + p.value.toLocaleString() + '</b> visits<br/>$' + p.data._spend.toLocaleString() + ' spend';
+          }
+        }
+      });
+    }
+
+    // Visits by week — current campaign window
+    if (byWeekEl) {
+      var weeks = ['Wk 51', 'Wk 52', 'Wk 1', 'Wk 2'];
+      var visits = [14200, 16800, 17350, 18420];
+      var spend = [11900, 12300, 12700, 12850];
+      var ch2 = echarts.init(byWeekEl);
+      ch2.setOption({
+        grid: { left: 50, right: 60, top: 30, bottom: 40, containLabel: true },
+        legend: { data: ['Visits', 'Spend ($)'], bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { fontSize: 11, color: '#6b7280' } },
+        xAxis: { type: 'category', data: weeks, axisLabel: { fontSize: 11, color: '#6b7280' }, axisLine: { lineStyle: { color: '#e5e7eb' } } },
+        yAxis: [
+          { type: 'value', position: 'left', name: 'Visits', nameTextStyle: { fontSize: 10, color: '#9ca3af' },
+            axisLabel: { fontSize: 10, color: '#6b7280', formatter: function(v) { return (v/1000).toFixed(0) + 'k'; } },
+            splitLine: { lineStyle: { color: '#f3f4f6' } } },
+          { type: 'value', position: 'right', name: 'Spend ($)', nameTextStyle: { fontSize: 10, color: '#9ca3af' },
+            axisLabel: { fontSize: 10, color: '#6b7280', formatter: function(v) { return '$' + (v/1000).toFixed(0) + 'k'; } },
+            splitLine: { show: false } }
+        ],
+        series: [
+          { name: 'Visits', type: 'bar', barMaxWidth: 36, itemStyle: { color: '#4272D8', borderRadius: [3, 3, 0, 0] }, data: visits },
+          { name: 'Spend ($)', type: 'line', smooth: true, yAxisIndex: 1, lineStyle: { width: 2, color: '#E07850' }, itemStyle: { color: '#E07850' }, symbolSize: 6, data: spend }
+        ],
+        tooltip: { trigger: 'axis' }
+      });
+    }
   }
 
 })();

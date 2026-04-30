@@ -87,7 +87,7 @@
     .perf-tab__value { font-size: 22px; font-weight: 700; color: var(--color-text, #1f2937); line-height: 1.1; }
 
     /* Sub-tab strip (dimensions inside each metric pane) */
-    .ep-sub-tabs { display: flex; gap: 8px; padding: var(--space-3) var(--space-6) 0; flex-wrap: wrap; }
+    .ep-sub-tabs { display: flex; gap: 8px; padding: 0 var(--space-6); flex-wrap: wrap; }
     .ep-sub-tab { padding: 8px 16px; border: 1px solid var(--color-border, #e5e7eb); border-radius: 6px; background: #fff; font-size: 13px; font-weight: 500; color: var(--color-text, #1f2937); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
     .ep-sub-tab:hover { background: #f3f4f6; }
     .ep-sub-tab--active { background: #d1f0e0; border-color: #86d2a8; }
@@ -142,6 +142,10 @@
     .perf-tab-pane .hero-stat .stat-strip { flex: 0 1 auto; padding: 0; }
     .perf-tab-pane .hero-stat .stat-strip__item { border-left: 4px solid var(--section-color); }
     .perf-tab-pane .hero-stat .stat-strip__value { color: var(--section-color); }
+    /* T8 — persistent 2-line score-context summary beneath each metric value (Max 2026-04-29 meeting). Replaces hover tooltip pattern. */
+    .stat-strip__context { margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(0,0,0,0.08); font-size: 11px; color: var(--color-text-secondary, #6b7280); line-height: 1.35; }
+    .stat-strip__context-line { display: block; }
+    .stat-strip__context-line strong { color: var(--color-text, #1f2937); font-weight: 600; }
 
     /* perf-tab active reflects target pane's section color */
     #ep-perf-tabs .perf-tab[data-ep-tab="overview"].active   { color: var(--section-overview);   border-bottom-color: var(--section-overview); }
@@ -928,8 +932,10 @@
   <main class="engagement-proposed" id="engagement-proposed">
 
     <header class="section-panel-header">
-      <h2 class="section-panel-header__title">Engagement</h2>
-      <p class="section-panel-header__question">How is the active circular performing across stores, days, and promotions?</p>
+      <div class="section-panel-header-left">
+        <h2 class="section-panel-header__title">Engagement</h2>
+        <p class="section-panel-header__question">How is the active circular performing across stores, days, and promotions?</p>
+      </div>
       <p class="section-panel-header__subtitle">
         <span class="ep-cohort-note" id="ep-cohort-note">
           <span class="material-symbols-outlined">info</span>
@@ -1063,7 +1069,7 @@
           </div>
           <p class="narrative-header__subtitle">Total sessions on circular pages this week<br><em>Brand · Week 47 (Nov 18–24, 2025)</em></p>
         </div>
-        <div class="stat-strip"><div class="stat-strip__cards"><div class="stat-strip__item"><div class="stat-strip__label">Sessions</div><div class="stat-strip__value" style="font-size:24px;font-weight:800;">78,542</div></div></div></div>
+        <div class="stat-strip"><div class="stat-strip__cards"><div class="stat-strip__item"><div class="stat-strip__label">Sessions</div><div class="stat-strip__value" style="font-size:24px;font-weight:800;">78,542</div><div class="stat-strip__context"><span class="stat-strip__context-line">Among <strong>Brand · Week 47 · 75 promotions</strong></span><span class="stat-strip__context-line">Scored vs <strong>27 stores · 7 days · Card / Stores / Days</strong> universal</span></div></div></div></div>
       </div>
       <div class="ep-sub-tabs" role="tablist" aria-label="Sessions cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Sessions by Store</button>
@@ -1111,7 +1117,7 @@
           </div>
           <p class="narrative-header__subtitle">Unique visitors across the active circular<br><em>Brand · Week 47 · New / Returning / Engaged split</em></p>
         </div>
-        <div class="stat-strip"><div class="stat-strip__cards"><div class="stat-strip__item"><div class="stat-strip__label">Total Users</div><div class="stat-strip__value" style="font-size:24px;font-weight:800;">54,011</div></div></div></div>
+        <div class="stat-strip"><div class="stat-strip__cards"><div class="stat-strip__item"><div class="stat-strip__label">Total Users</div><div class="stat-strip__value" style="font-size:24px;font-weight:800;">54,011</div><div class="stat-strip__context"><span class="stat-strip__context-line">Among <strong>Brand · Week 47 · 75 promotions</strong></span><span class="stat-strip__context-line">Scored vs <strong>27 stores · 7 days · Card / Stores / Days</strong> universal</span></div></div></div></div>
       </div>
       <div class="ep-sub-tabs" role="tablist" aria-label="Users cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Users by Store</button>
@@ -1153,7 +1159,7 @@
           </div>
           <p class="narrative-header__subtitle">Average seconds per session<br><em>Brand · Week 47 · GA → BigQuery session-duration field</em></p>
         </div>
-        <div class="stat-strip"><div class="stat-strip__cards"><div class="stat-strip__item"><div class="stat-strip__label">Avg Session</div><div class="stat-strip__value" style="font-size:24px;font-weight:800;">368<span style="font-size:14px;font-weight:600;color:#6b7280;"> sec</span></div></div></div></div>
+        <div class="stat-strip"><div class="stat-strip__cards"><div class="stat-strip__item"><div class="stat-strip__label">Avg Session</div><div class="stat-strip__value" style="font-size:24px;font-weight:800;">368<span style="font-size:14px;font-weight:600;color:#6b7280;"> sec</span></div><div class="stat-strip__context"><span class="stat-strip__context-line">Among <strong>Brand · Week 47 · 75 promotions</strong></span><span class="stat-strip__context-line">Scored vs <strong>27 stores · 7 days · Card / Stores / Days</strong> universal</span></div></div></div></div>
       </div>
       <div class="ep-sub-tabs" role="tablist" aria-label="Duration cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Duration by Store</button>
@@ -1195,7 +1201,7 @@
           </div>
           <p class="narrative-header__subtitle">Adds + Clicks + share / save / print roll-up<br><em>Brand · Week 47 · single intent metric</em></p>
         </div>
-        <div class="stat-strip"><div class="stat-strip__cards"><div class="stat-strip__item"><div class="stat-strip__label">Card Events</div><div class="stat-strip__value" style="font-size:24px;font-weight:800;">271,298</div></div></div></div>
+        <div class="stat-strip"><div class="stat-strip__cards"><div class="stat-strip__item"><div class="stat-strip__label">Card Events</div><div class="stat-strip__value" style="font-size:24px;font-weight:800;">271,298</div><div class="stat-strip__context"><span class="stat-strip__context-line">Among <strong>Brand · Week 47 · 75 promotions</strong></span><span class="stat-strip__context-line">Scored vs <strong>27 stores · 7 days · Card / Stores / Days</strong> universal</span></div></div></div></div>
       </div>
       <div class="ep-sub-tabs" role="tablist" aria-label="Card Events cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Card Events by Store</button>
@@ -1282,6 +1288,26 @@
       cardevents: 'Card Engagement Events — 271,298 this week · Adds + Clicks + share/save/print'
     };
 
+    // Persist sub-tab choice across metric tabs (Bill 2026-04-30 — Sessions/Time Trend → Users keeps Time Trend)
+    let currentSubTab = 'store';
+    function applySubTab(pane, key) {
+      const subTabs = pane.querySelectorAll('.ep-sub-tab');
+      const subPanes = pane.querySelectorAll('.ep-sub-pane');
+      let matched = false;
+      subTabs.forEach(t => {
+        const on = t.dataset.epSub === key;
+        if (on) matched = true;
+        t.classList.toggle('ep-sub-tab--active', on);
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      subPanes.forEach(sp => sp.classList.toggle('ep-sub-pane--active', sp.dataset.epSubPane === key));
+      // Fallback if requested sub-tab doesn't exist on this pane (e.g. Overview)
+      if (!matched && subTabs.length) {
+        subTabs[0].classList.add('ep-sub-tab--active');
+        subTabs[0].setAttribute('aria-selected', 'true');
+        subPanes[0] && subPanes[0].classList.add('ep-sub-pane--active');
+      }
+    }
     function activateTab(target) {
       tabs.forEach(t => {
         const on = t.dataset.epTab === target;
@@ -1289,6 +1315,8 @@
         t.setAttribute('aria-selected', on ? 'true' : 'false');
       });
       panes.forEach(p => p.classList.toggle('active', p.dataset.epPane === target));
+      const targetPane = document.querySelector('[data-ep-pane="' + target + '"]');
+      if (targetPane) applySubTab(targetPane, currentSubTab);
       cohortNote.innerHTML = '<span class="material-symbols-outlined">info</span>' + (cohortLabels[target] || '');
     }
     tabs.forEach(tab => tab.addEventListener('click', () => activateTab(tab.dataset.epTab)));
@@ -1304,16 +1332,10 @@
     // ─── Sub-tab switching (per metric pane) ─────────────────────────────
     document.querySelectorAll('.engagement-proposed .perf-tab-pane').forEach(pane => {
       const subTabs = pane.querySelectorAll('.ep-sub-tab:not(.ep-sub-tab--data)');
-      const subPanes = pane.querySelectorAll('.ep-sub-pane');
       subTabs.forEach(st => {
         st.addEventListener('click', () => {
-          const key = st.dataset.epSub;
-          subTabs.forEach(t => {
-            const on = t === st;
-            t.classList.toggle('ep-sub-tab--active', on);
-            t.setAttribute('aria-selected', on ? 'true' : 'false');
-          });
-          subPanes.forEach(sp => sp.classList.toggle('ep-sub-pane--active', sp.dataset.epSubPane === key));
+          currentSubTab = st.dataset.epSub;
+          applySubTab(pane, currentSubTab);
         });
       });
     });
@@ -1481,18 +1503,18 @@
 
     // ─── Avg Session Duration — store / day / trend (single-bar variant) ─
     renderStackedList('ep-duration-by-store', [
-      { rank: 1, name: '#336 Hollywood, FL',    sub: 'Avg 412 sec', sec: 412 },
-      { rank: 2, name: '#508 Fort Myers, FL',   sub: 'Avg 398 sec', sec: 398 },
-      { rank: 3, name: '#195 Jacksonville, FL', sub: 'Avg 384 sec', sec: 384 },
-      { rank: 4, name: '#2415 Tampa, FL',       sub: 'Avg 372 sec', sec: 372 },
-      { rank: 5, name: '#2487 Sarasota, FL',    sub: 'Avg 365 sec', sec: 365 },
-      { rank: 6, name: '#2288 Orlando, FL',     sub: 'Avg 358 sec', sec: 358 },
-      { rank: 7, name: '#2247 Palm Coast, FL',  sub: 'Avg 348 sec', sec: 348 },
-      { rank: 8, name: '#2545 The Villages, FL',sub: 'Avg 342 sec', sec: 342 },
-      { rank: 9, name: '#319 Homestead, FL',    sub: 'Avg 332 sec', sec: 332 }
+      { rank: 1, name: '#336 Hollywood, FL',    sub: 'Avg 412 ses', ses: 412 },
+      { rank: 2, name: '#508 Fort Myers, FL',   sub: 'Avg 398 ses', ses: 398 },
+      { rank: 3, name: '#195 Jacksonville, FL', sub: 'Avg 384 ses', ses: 384 },
+      { rank: 4, name: '#2415 Tampa, FL',       sub: 'Avg 372 ses', ses: 372 },
+      { rank: 5, name: '#2487 Sarasota, FL',    sub: 'Avg 365 ses', ses: 365 },
+      { rank: 6, name: '#2288 Orlando, FL',     sub: 'Avg 358 ses', ses: 358 },
+      { rank: 7, name: '#2247 Palm Coast, FL',  sub: 'Avg 348 ses', ses: 348 },
+      { rank: 8, name: '#2545 The Villages, FL',sub: 'Avg 342 ses', ses: 342 },
+      { rank: 9, name: '#319 Homestead, FL',    sub: 'Avg 332 ses', ses: 332 }
     ], [
-      { key: 'sec', cls: 'v', label: 'Avg Session (sec)' }
-    ], v => v + ' sec');
+      { key: 'ses', cls: 'v', label: 'Avg Session (ses)' }
+    ], v => v + ' ses');
     renderDoWColumns('ep-duration-by-day', [
       { d: 'MON', n: 320 }, { d: 'TUE', n: 340 }, { d: 'WED', n: 355 },
       { d: 'THU', n: 372 }, { d: 'FRI', n: 410 }, { d: 'SAT', n: 405 }, { d: 'SUN', n: 350 }
@@ -1515,9 +1537,9 @@
       { rank: 8, name: '#2545 The Villages, FL',sub: '11,090 total', adds: 3700, clicks: 5350, other: 2040 },
       { rank: 9, name: '#319 Homestead, FL',    sub: '10,720 total', adds: 3580, clicks: 5180, other: 1960 }
     ], [
-      { key: 'adds',   cls: 'a', label: 'Adds' },
-      { key: 'clicks', cls: 'c', label: 'Clicks' },
-      { key: 'other',  cls: 'v', label: 'Share / Save / Print' }
+      { key: 'adds',   cls: 'a', label: 'Add to List' },
+      { key: 'clicks', cls: 'c', label: 'Card Click' },
+      { key: 'other',  cls: 'v', label: 'Card View / Share' }
     ]);
     renderDoWColumns('ep-cardevents-by-day', [
       { d: 'MON', n: 32500 }, { d: 'TUE', n: 35000 }, { d: 'WED', n: 37500 },
@@ -1673,20 +1695,8 @@
         const allSubPanes = pane.querySelectorAll('.ep-sub-pane');
         if (dataBtn) {
           dataBtn.addEventListener('click', () => {
-            allSubTabs.forEach(t => {
-              const on = t === dataBtn;
-              t.classList.toggle('ep-sub-tab--active', on);
-              t.setAttribute('aria-selected', on ? 'true' : 'false');
-            });
-            allSubPanes.forEach(sp => sp.classList.toggle('ep-sub-pane--active', sp.dataset.epSubPane === 'data'));
-          });
-          // Also: existing non-data sub-tabs need to deactivate the data button when clicked
-          allSubTabs.forEach(st => {
-            if (st === dataBtn) return;
-            st.addEventListener('click', () => {
-              dataBtn.classList.remove('ep-sub-tab--active');
-              dataBtn.setAttribute('aria-selected', 'false');
-            });
+            currentSubTab = 'data';
+            applySubTab(pane, 'data');
           });
         }
 

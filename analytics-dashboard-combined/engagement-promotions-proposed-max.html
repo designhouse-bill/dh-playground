@@ -1,0 +1,2689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics Dashboard - Promotions (Proposed - Max)</title>
+
+  <!-- Google Material Symbols -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+
+  <!-- CSS (in dependency order) -->
+  <link rel="stylesheet" href="css/design-tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/context-bar.css">
+  <link rel="stylesheet" href="css/detail-panel.css">
+  <link rel="stylesheet" href="css/engagement.css">
+  <!-- Pulled in for perf-tabs / creative-chips / stat-strip / section-panel-header rules -->
+  <link rel="stylesheet" href="css/distribution.css">
+
+  <style>
+    /* VIEW (Original / Proposed) toggle — added to flip between the two
+       engagement promotions surfaces during stakeholder review. */
+    .view-version-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      margin-left: var(--space-3);
+      border: 1px solid var(--color-border, #e5e7eb);
+      border-radius: 999px;
+      background: var(--color-surface, #fff);
+      overflow: hidden;
+    }
+    .view-version-toggle__btn {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--color-text-secondary, #6b7280);
+      cursor: pointer;
+      text-decoration: none;
+      line-height: 1.4;
+    }
+    .view-version-toggle__btn--active {
+      background: var(--color-primary, #2196F3);
+      color: #fff;
+    }
+    .view-version-toggle__divider {
+      width: 1px;
+      align-self: stretch;
+      background: var(--color-border, #e5e7eb);
+    }
+    .view-version-toggle__label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--color-text-secondary, #6b7280);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-right: 6px;
+    }
+
+    /* Wrapper for the proposed engagement surface — gives perf-tabs / chips
+       breathing room without colliding w/ engagement.css panels. */
+    .engagement-proposed {
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: var(--space-6) var(--space-6) var(--space-16);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+    .engagement-proposed .perf-tab-pane.active {
+      display: block;
+    }
+
+    /* MAX IA — metric-tab styling: tabs are KPI cards (label + value).
+       Active tab = mint background per Max sketch. */
+    .perf-tabs--metric { display: flex; gap: 8px; padding: var(--space-3) var(--space-4); flex-wrap: wrap; }
+    .perf-tab--metric { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 10px 16px; min-width: 140px; border: 1px solid var(--color-border, #e5e7eb); background: #fff; border-radius: 8px; cursor: pointer; text-align: left; transition: background .15s ease, border-color .15s ease; }
+    .perf-tab--metric:hover { background: #f3f4f6; }
+    .perf-tab--metric.active { background: #d1f0e0; border-color: #86d2a8; }
+    .perf-tab__label { font-size: 11px; font-weight: 600; color: var(--color-text-secondary, #6b7280); text-transform: none; letter-spacing: 0; }
+    .perf-tab__value { font-size: 22px; font-weight: 700; color: var(--color-text, #1f2937); line-height: 1.1; }
+
+    /* Sub-tab strip (dimensions inside each metric pane) */
+    .ep-sub-tabs { display: flex; gap: 8px; padding: var(--space-3) var(--space-6) 0; flex-wrap: wrap; }
+    .ep-sub-tab { padding: 8px 16px; border: 1px solid var(--color-border, #e5e7eb); border-radius: 6px; background: #fff; font-size: 13px; font-weight: 500; color: var(--color-text, #1f2937); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+    .ep-sub-tab:hover { background: #f3f4f6; }
+    .ep-sub-tab--active { background: #d1f0e0; border-color: #86d2a8; }
+    .ep-sub-tab--data { margin-left: auto; color: var(--color-primary, #2196F3); border-color: #bfdbfe; }
+    .ep-sub-tab--data:hover { background: #eff6ff; }
+    .ep-sub-pane { display: none; padding: var(--space-4) var(--space-6); }
+    .ep-sub-pane--active { display: block; }
+
+    /* Stacked-bar list (matches Max sketch: per-store row, V/C/A segments + total) */
+    .ep-stacked-list { display: flex; flex-direction: column; gap: 10px; }
+    .ep-stacked-list__row { display: grid; grid-template-columns: 32px 200px 1fr 60px; align-items: center; gap: 12px; }
+    .ep-stacked-list__rank { font-size: 12px; color: var(--color-text-secondary, #6b7280); font-weight: 600; text-align: right; }
+    .ep-stacked-list__name { font-size: 13px; font-weight: 500; }
+    .ep-stacked-list__name small { display: block; font-size: 11px; font-weight: 400; color: var(--color-text-secondary, #6b7280); }
+    .ep-stacked-list__bar { display: flex; height: 22px; border-radius: 4px; overflow: hidden; background: #f3f4f6; }
+    .ep-stacked-list__seg { height: 100%; }
+    .ep-stacked-list__seg--v { background: #2196F3; }
+    .ep-stacked-list__seg--c { background: #f59e0b; }
+    .ep-stacked-list__seg--a { background: #22c55e; }
+    .ep-stacked-list__total { font-size: 13px; font-weight: 700; text-align: right; }
+
+    /* Trend toolbar */
+    .ep-trend-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3); }
+    .ep-trend-toolbar__title { font-size: 14px; font-weight: 600; }
+    .ep-trend-ranges { display: inline-flex; border: 1px solid var(--color-border, #e5e7eb); border-radius: 6px; overflow: hidden; }
+    .ep-trend-range { padding: 6px 12px; border: 0; background: #fff; font-size: 12px; cursor: pointer; border-right: 1px solid var(--color-border, #e5e7eb); }
+    .ep-trend-range:last-child { border-right: 0; }
+    .ep-trend-range--active { background: #1f2937; color: #fff; }
+
+    /* ── Per-section accent colors (mirrors Distribution hero-stat pattern) ── */
+    [data-ep-pane="overview"]   { --section-color: var(--section-overview);   --section-color-light: var(--section-overview-light); }
+    [data-ep-pane="sessions"]   { --section-color: var(--section-sessions);   --section-color-light: var(--section-sessions-light); }
+    [data-ep-pane="users"]      { --section-color: var(--section-users);      --section-color-light: var(--section-users-light); }
+    [data-ep-pane="duration"]   { --section-color: var(--section-duration);   --section-color-light: var(--section-duration-light); }
+    [data-ep-pane="cardevents"] { --section-color: var(--section-cardevents); --section-color-light: var(--section-cardevents-light); }
+
+    /* hero-stat panel header — colored tint per pane */
+    .perf-tab-pane .hero-stat {
+      background: var(--section-color-light);
+      border-radius: 12px;
+      padding: var(--space-3) var(--space-4);
+      display: flex;
+      align-items: center;
+      gap: var(--space-5);
+      margin-bottom: var(--space-3);
+      flex-wrap: wrap;
+    }
+    .perf-tab-pane .hero-stat .narrative-header { flex: 1 1 60%; min-width: 0; }
+    .perf-tab-pane .hero-stat .narrative-header__title { color: var(--section-color); font-size: 20px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 4px; line-height: 1.2; }
+    .perf-tab-pane .hero-stat .narrative-header__question { font-size: 13px; font-weight: 500; color: var(--color-text, #1f2937); margin: 0; line-height: 1.4; }
+    .perf-tab-pane .hero-stat .narrative-header__subtitle { font-size: 12px; font-weight: 400; color: var(--color-text-secondary, #6b7280); margin: 4px 0 0; }
+    .perf-tab-pane .hero-stat .stat-strip { flex: 0 1 auto; padding: 0; }
+    .perf-tab-pane .hero-stat .stat-strip__item { border-left: 4px solid var(--section-color); }
+    .perf-tab-pane .hero-stat .stat-strip__value { color: var(--section-color); }
+
+    /* perf-tab active reflects target pane's section color */
+    #ep-perf-tabs .perf-tab[data-ep-tab="overview"].active   { color: var(--section-overview);   border-bottom-color: var(--section-overview); }
+    #ep-perf-tabs .perf-tab[data-ep-tab="sessions"].active   { color: var(--section-sessions);   border-bottom-color: var(--section-sessions); }
+    #ep-perf-tabs .perf-tab[data-ep-tab="users"].active      { color: var(--section-users);      border-bottom-color: var(--section-users); }
+    #ep-perf-tabs .perf-tab[data-ep-tab="duration"].active   { color: var(--section-duration);   border-bottom-color: var(--section-duration); }
+    #ep-perf-tabs .perf-tab[data-ep-tab="cardevents"].active { color: var(--section-cardevents); border-bottom-color: var(--section-cardevents); }
+
+    /* Sub-tab active uses the parent pane's --section-color */
+    .perf-tab-pane .ep-sub-tab--active { background: var(--section-color-light); border-color: var(--section-color); color: var(--section-color); }
+    .perf-tab-pane .ep-sub-tab--data:hover { background: var(--section-color-light); }
+
+    /* Overview KPI tile active hover takes per-tile target color */
+    .ep-kpi-tile[data-jump-to="sessions"]:hover   { border-color: var(--section-sessions);   box-shadow: 0 0 0 2px var(--section-sessions-light); }
+    .ep-kpi-tile[data-jump-to="users"]:hover      { border-color: var(--section-users);      box-shadow: 0 0 0 2px var(--section-users-light); }
+    .ep-kpi-tile[data-jump-to="duration"]:hover   { border-color: var(--section-duration);   box-shadow: 0 0 0 2px var(--section-duration-light); }
+    .ep-kpi-tile[data-jump-to="cardevents"]:hover { border-color: var(--section-cardevents); box-shadow: 0 0 0 2px var(--section-cardevents-light); }
+
+    /* View toggle (Original / Proposed / Proposed (Max)) — pick up Engagement primary */
+    .view-version-toggle__btn--active { background: var(--section-sessions, #2196F3) !important; color: #fff !important; }
+
+    /* Max KPI tile strip — Overview snapshot (his sketch). Tiles are buttons that jump to the metric tab. */
+    .ep-kpi-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; padding: var(--space-4) 0; }
+    .ep-kpi-tile { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 14px 16px; border: 1px solid var(--color-border, #e5e7eb); border-radius: 8px; background: #fff; cursor: pointer; text-align: left; transition: background .15s ease, border-color .15s ease, box-shadow .15s ease; }
+    .ep-kpi-tile:hover { background: #f3f4f6; border-color: #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+    .ep-kpi-tile:focus-visible { outline: 2px solid var(--color-primary, #2196F3); outline-offset: 2px; }
+    .ep-kpi-tile--active { background: #d1f0e0; border-color: #86d2a8; }
+    .ep-kpi-tile__label { font-size: 11px; font-weight: 600; color: var(--color-text-secondary, #6b7280); }
+    .ep-kpi-tile__value { font-size: 26px; font-weight: 800; color: var(--color-text, #1f2937); line-height: 1.05; }
+    .ep-kpi-tile__unit  { font-size: 14px; font-weight: 600; color: var(--color-text-secondary, #6b7280); }
+    .ep-kpi-tile__sub   { font-size: 11px; color: var(--color-text-secondary, #6b7280); }
+
+    /* PHASE B — patterns ported from Original (filter / hover tooltip / clickable row / inline data table) */
+    .ep-metric-filter { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--color-border, #e5e7eb); border-radius: 6px; background: #fff; margin: 0 0 var(--space-3); }
+    .ep-metric-filter__icon { color: var(--color-text-secondary, #6b7280); display: inline-flex; }
+    .ep-metric-filter__input { border: 0; outline: 0; flex: 1; font-size: 13px; background: transparent; color: var(--color-text, #1f2937); }
+    .ep-metric-filter__clear { background: none; border: 0; padding: 2px; cursor: pointer; color: var(--color-text-secondary, #6b7280); display: none; }
+    .ep-metric-filter--has-value .ep-metric-filter__clear { display: inline-flex; }
+    .ep-metric-filter__count { font-size: 11px; color: var(--color-text-secondary, #6b7280); }
+
+    .ep-stacked-list__row { cursor: pointer; padding: 4px 6px; border-radius: 4px; transition: background .12s ease; }
+    .ep-stacked-list__row:hover { background: #f3f4f6; }
+    .ep-stacked-list__row--hidden { display: none !important; }
+
+    /* Hover tooltip — mirrors Original eCharts pattern */
+    .ep-metric-tooltip { position: fixed; z-index: 9999; background: rgba(17, 24, 39, 0.96); color: #fff; padding: 10px 12px; border-radius: 6px; font-size: 12px; line-height: 1.5; pointer-events: none; box-shadow: 0 6px 18px rgba(0,0,0,0.18); display: none; min-width: 200px; }
+    .ep-metric-tooltip__title { font-weight: 700; margin-bottom: 6px; font-size: 13px; }
+    .ep-metric-tooltip__row { display: flex; justify-content: space-between; gap: 16px; }
+    .ep-metric-tooltip__row + .ep-metric-tooltip__row { margin-top: 2px; }
+    .ep-metric-tooltip__sw { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; vertical-align: middle; }
+    .ep-metric-tooltip__total { border-top: 1px solid rgba(255,255,255,.2); margin-top: 6px; padding-top: 6px; font-weight: 700; }
+
+    /* Inline data table for Data sub-pane */
+    .ep-data-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .ep-data-table thead th { background: #f8f9fa; padding: 8px 10px; text-align: left; font-weight: 700; color: var(--color-text, #1f2937); border-bottom: 2px solid var(--color-border, #e5e7eb); cursor: pointer; user-select: none; white-space: nowrap; }
+    .ep-data-table thead th:hover { background: #f3f4f6; }
+    .ep-data-table thead th[data-sort-dir="asc"]::after  { content: ' ▲'; font-size: 9px; color: var(--color-primary, #2196F3); }
+    .ep-data-table thead th[data-sort-dir="desc"]::after { content: ' ▼'; font-size: 9px; color: var(--color-primary, #2196F3); }
+    .ep-data-table tbody td { padding: 8px 10px; border-bottom: 1px solid var(--color-border, #e5e7eb); }
+    .ep-data-table tbody tr:hover { background: #f3f4f6; cursor: pointer; }
+    .ep-data-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .ep-data-grid-link { display: inline-flex; align-items: center; gap: 6px; margin-top: var(--space-3); font-size: 12px; color: var(--color-primary, #2196F3); text-decoration: none; }
+    .ep-data-grid-link:hover { text-decoration: underline; }
+
+    /* Compact stat strip for the Overview headline */
+    .ep-overview-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--space-4);
+      padding: var(--space-5) var(--space-6);
+      background: var(--color-surface, #fff);
+      border: 1px solid var(--color-border, #e5e7eb);
+      border-radius: 12px;
+    }
+    .ep-overview-strip__cell { display: flex; flex-direction: column; gap: 4px; }
+    .ep-overview-strip__cell--hero .ep-overview-strip__value { font-size: 32px; color: var(--color-primary, #2196F3); }
+    .ep-overview-strip__label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--color-text-secondary, #6b7280);
+    }
+    .ep-overview-strip__value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--color-text, #1f2937);
+      line-height: 1.1;
+    }
+    .ep-overview-strip__sub {
+      font-size: 11px;
+      color: var(--color-text-secondary, #6b7280);
+    }
+
+    /* 3-up panel grid for Overview */
+    .ep-overview-panels {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1.2fr;
+      gap: var(--space-4);
+    }
+    .ep-overview-panel {
+      background: var(--color-surface, #fff);
+      border: 1px solid var(--color-border, #e5e7eb);
+      border-radius: 12px;
+      padding: var(--space-5);
+      min-height: 220px;
+    }
+    .ep-overview-panel__label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--color-text-secondary, #6b7280);
+      margin-bottom: var(--space-3);
+    }
+
+    /* Mini horizontal bar list (Top Stores) — uses Views blue (#4272D8)
+       to match the metric being ranked. Top Promotions ranks composite and
+       gets the 3-segment stacked bar instead (see .ep-mini-stacked below). */
+    .ep-mini-bar { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: 13px; }
+    .ep-mini-bar__name { width: 130px; color: var(--color-text, #1f2937); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ep-mini-bar__track { flex: 1; height: 8px; background: #f1f5f9; border-radius: 999px; overflow: hidden; }
+    .ep-mini-bar__fill { height: 100%; background: #4272D8; border-radius: 999px; }
+    .ep-mini-bar__val { width: 60px; text-align: right; color: var(--color-text-secondary, #6b7280); font-variant-numeric: tabular-nums; }
+
+    /* Top Promotions panel — stacked 3-segment bar, parity w/ Performance
+       column in Ranked Table. Same metric (composite), same visual idiom. */
+    .ep-mini-stacked { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: 13px; }
+    .ep-mini-stacked__name { flex: 0 1 130px; min-width: 60px; color: var(--color-text, #1f2937); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ep-mini-stacked__bar { min-width: 40px; }
+    .ep-mini-stacked__bar {
+      flex: 1;
+      height: 10px;
+      display: flex;
+      border-radius: 4px;
+      overflow: hidden;
+      background: #f1f5f9;
+    }
+    .ep-mini-stacked__seg { height: 100%; }
+    .ep-mini-stacked__seg--views { background: #4272D8; }
+    .ep-mini-stacked__seg--clicks { background: #B8D64D; }
+    .ep-mini-stacked__seg--adds { background: #937DF8; }
+    .ep-mini-stacked__val { width: 60px; text-align: right; color: var(--color-text-secondary, #6b7280); font-variant-numeric: tabular-nums; }
+
+    /* Legend for V/C/A stacked bars — sits inline w/ panel labels so the
+       reader can decode the segment colors w/o needing to hover. */
+    .ep-perf-legend { display: inline-flex; align-items: center; gap: 12px; font-size: 11px; font-weight: 500; color: var(--color-text-secondary, #6b7280); margin-left: 12px; text-transform: none; letter-spacing: 0; }
+    .ep-perf-legend__item { display: inline-flex; align-items: center; gap: 4px; }
+    .ep-perf-legend__dot { width: 8px; height: 8px; border-radius: 999px; display: inline-block; }
+    .ep-perf-legend__dot--views { background: #4272D8; }
+    .ep-perf-legend__dot--clicks { background: #B8D64D; }
+    .ep-perf-legend__dot--adds { background: #937DF8; }
+
+    /* Day-of-week chart — V/C/A vertical stacked columns. Total Engagement
+       = views + clicks + adds, stacking the three so the breakdown adds up
+       to the daily total. Same palette as the rest of the page for parity.
+       Chart fills parent panel height so all 3 Overview panels match. */
+    .ep-overview-panel { display: flex; flex-direction: column; }
+    .ep-detail-col { display: flex; flex-direction: column; }
+    #ep-dow, #ep-promo-dow { flex: 1; display: flex; min-height: 220px; }
+    .ep-dow-chart { display: grid; grid-template-columns: repeat(7, 1fr); align-items: end; gap: 4px; flex: 1; min-height: 220px; }
+    .ep-dow-chart__col { display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; cursor: default; }
+    .ep-dow-chart__bar-wrap { flex: 1; display: flex; align-items: end; width: 80%; }
+    .ep-dow-chart__bar-stack {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      border-radius: 4px 4px 0 0;
+      overflow: hidden;
+      min-height: 4px;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+    }
+    .ep-dow-chart__seg { width: 100%; }
+    .ep-dow-chart__seg--views { background: #4272D8; }
+    .ep-dow-chart__seg--clicks { background: #B8D64D; }
+    .ep-dow-chart__seg--adds { background: #937DF8; }
+    .ep-dow-chart__col:hover .ep-dow-chart__bar-stack { filter: brightness(0.95); }
+    .ep-dow-chart__label { font-size: 10px; color: var(--color-text-secondary, #6b7280); text-transform: uppercase; letter-spacing: 0.04em; }
+    .ep-dow-chart__val { display: flex; flex-direction: column; align-items: center; gap: 1px; line-height: 1.1; }
+    .ep-dow-chart__val-num { font-size: 12px; font-weight: 700; color: var(--color-text, #1f2937); font-variant-numeric: tabular-nums; }
+    .ep-dow-chart__val-label { font-size: 9px; color: var(--color-text-secondary, #6b7280); text-transform: uppercase; letter-spacing: 0.04em; }
+
+    /* Overview hero metric — match Views blue from the metric palette */
+    .ep-overview-strip__cell--hero .ep-overview-strip__value { color: #4272D8; }
+
+    /* Inline section header for the perf-tabs container on this surface */
+    .ep-section-header { padding: 0 var(--space-1); }
+    .ep-section-header__title { font-size: 22px; font-weight: 700; margin: 0 0 4px; color: var(--color-text, #1f2937); }
+    .ep-section-header__sub { font-size: 13px; color: var(--color-text-secondary, #6b7280); margin: 0; }
+
+    /* Coming-soon scaffold for the tabs we are not wiring in 003A */
+    .ep-scaffold {
+      background: #fff;
+      border: 1px dashed var(--color-border, #e5e7eb);
+      border-radius: 12px;
+      padding: var(--space-8);
+      text-align: center;
+      color: var(--color-text-secondary, #6b7280);
+    }
+    .ep-scaffold__title { font-weight: 700; color: var(--color-text, #1f2937); margin-bottom: 8px; font-size: 15px; }
+    .ep-scaffold__body { font-size: 13px; line-height: 1.5; max-width: 540px; margin: 0 auto; }
+
+    /* Custom chip metadata styling (icon + name + meta) */
+    .ep-chip {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 10px 14px;
+      min-width: 140px;
+      background: #fff;
+      border: 1px solid var(--color-border, #e5e7eb);
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
+      position: relative;
+    }
+    .ep-chip:hover { border-color: var(--color-primary, #2196F3); }
+    .ep-chip--active {
+      border-color: var(--color-primary, #2196F3);
+      box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.15);
+      background: rgba(33, 150, 243, 0.04);
+    }
+    .ep-chip__top { display: flex; align-items: center; gap: 6px; }
+    .ep-chip__icon { color: var(--color-text-secondary, #6b7280); }
+    .ep-chip--active .ep-chip__icon { color: var(--color-primary, #2196F3); }
+    .ep-chip__name { font-size: 13px; font-weight: 700; color: var(--color-text, #1f2937); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
+    .ep-chip__meta { font-size: 11px; color: var(--color-text-secondary, #6b7280); }
+    .ep-chip__badge {
+      position: absolute;
+      top: -8px;
+      right: 8px;
+      background: #dbeafe;
+      color: #1e40af;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 2px 6px;
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+    .ep-chips-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: var(--space-3) 0;
+    }
+
+    /* Detail header w/ stat strip per chip */
+    .ep-detail-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-4) var(--space-5);
+      background: #fff;
+      border: 1px solid var(--color-border, #e5e7eb);
+      border-radius: 12px 12px 0 0;
+      border-bottom: 0;
+    }
+    .ep-detail-header__title { font-size: 16px; font-weight: 700; color: var(--color-text, #1f2937); }
+    .ep-detail-header__sub { font-size: 12px; color: var(--color-text-secondary, #6b7280); margin-left: 8px; font-weight: 500; }
+    .ep-detail-strip { display: flex; gap: var(--space-6); }
+    .ep-detail-strip__cell { display: flex; flex-direction: column; gap: 2px; }
+    .ep-detail-strip__label { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-text-secondary, #6b7280); }
+    .ep-detail-strip__value { font-size: 18px; font-weight: 700; color: var(--color-text, #1f2937); line-height: 1.1; }
+    .ep-detail-strip__value--hero { color: var(--color-primary, #2196F3); }
+
+    /* 2-col detail (matches creative-detail-cols pattern) */
+    .ep-detail-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      background: #fff;
+      border: 1px solid var(--color-border, #e5e7eb);
+      border-radius: 0 0 12px 12px;
+      overflow: hidden;
+    }
+    .ep-detail-col { padding: var(--space-5); }
+    .ep-detail-col + .ep-detail-col { border-left: 1px solid var(--color-border, #e5e7eb); }
+    .ep-detail-col__label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--color-text-secondary, #6b7280);
+      margin-bottom: var(--space-3);
+    }
+
+    /* Cohort tooltip on the proposed surface — shows the active cut */
+    .ep-cohort-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--color-text-secondary, #6b7280);
+      background: #f8fafc;
+      border: 1px solid var(--color-border, #e5e7eb);
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-left: 8px;
+    }
+    .ep-cohort-note .material-symbols-outlined { font-size: 14px; }
+
+    /* By Promotion toolbar — view-toggle (Chips / Ranked Table) + filter */
+    .ep-promo-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      padding: var(--space-3) var(--space-1);
+    }
+    .ep-view-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      border: 1px solid var(--color-border, #e5e7eb);
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+    }
+    .ep-view-toggle__btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border: 0;
+      background: transparent;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--color-text-secondary, #6b7280);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .ep-view-toggle__btn .material-symbols-outlined { font-size: 16px; }
+    .ep-view-toggle__btn:hover { color: var(--color-text, #1f2937); }
+    .ep-view-toggle__btn--active {
+      background: var(--color-primary, #2196F3);
+      color: #fff;
+    }
+    .ep-view-toggle__btn--active:hover { color: #fff; }
+    .ep-promo-toolbar__filter {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+      max-width: 360px;
+      padding: 6px 12px;
+      background: #fff;
+      border: 1px solid var(--color-border, #e5e7eb);
+      border-radius: 8px;
+    }
+    .ep-promo-toolbar__filter .material-symbols-outlined {
+      font-size: 18px;
+      color: var(--color-text-secondary, #6b7280);
+    }
+    #ep-promo-filter {
+      flex: 1;
+      border: 0;
+      outline: none;
+      font-size: 13px;
+      background: transparent;
+    }
+    .ep-promo-toolbar__count {
+      font-size: 11px;
+      color: var(--color-text-secondary, #6b7280);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .ep-promo-view { display: none; }
+    .ep-promo-view--active { display: block; }
+
+    /* Scrollable chip strip — for the full 75-promo set */
+    .ep-chips-row--scroll {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      scrollbar-width: thin;
+    }
+    .ep-chips-row--scroll .ep-chip { flex-shrink: 0; }
+
+    /* Per-chip stat strip — now carries views / clicks / adds + new metrics */
+    .ep-detail-strip { flex-wrap: wrap; }
+    .ep-detail-strip__cell--metric .ep-detail-strip__value { color: var(--color-text, #1f2937); }
+
+    /* Ranked Table — preserves parity with Original engagement-promotions.html */
+    .ep-ranked-table-wrap {
+      background: #fff;
+      border: 1px solid var(--color-border, #e5e7eb);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .ep-ranked-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .ep-ranked-table thead th {
+      text-align: left;
+      padding: 10px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--color-text-secondary, #6b7280);
+      background: #f8fafc;
+      border-bottom: 1px solid var(--color-border, #e5e7eb);
+    }
+    .ep-ranked-table tbody td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      color: var(--color-text, #1f2937);
+    }
+    .ep-ranked-table tbody tr:last-child td { border-bottom: 0; }
+    .ep-ranked-table tbody tr:hover { background: #f8fafc; }
+    .ep-rt-col-rank {
+      width: 48px;
+      color: var(--color-text-secondary, #6b7280);
+      font-variant-numeric: tabular-nums;
+    }
+    .ep-rt-col-promo { font-weight: 600; }
+    .ep-rt-col-cat { color: var(--color-text-secondary, #6b7280); }
+    .ep-rt-col-num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      width: 100px;
+    }
+    .ep-rt-col-perf {
+      width: 320px;
+      min-width: 240px;
+    }
+    /* Stacked Performance bar — parity w/ Original PerfCharts (eCharts).
+       Three segments: viewsScore (blue) / clicksScore (green) / addsScore (purple).
+       Same colors as `shared-perf-charts.js` METRIC_COLORS. */
+    .ep-perf-stacked {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      position: relative;
+    }
+    .ep-perf-stacked__bar {
+      flex: 1;
+      height: 16px;
+      display: flex;
+      border-radius: 4px;
+      overflow: hidden;
+      background: #f3f4f6;
+      max-width: calc(100% - 70px);
+    }
+    .ep-perf-stacked__seg {
+      height: 100%;
+      transition: filter 0.15s ease;
+    }
+    .ep-perf-stacked__seg--views { background: #4272D8; }
+    .ep-perf-stacked__seg--clicks { background: #B8D64D; }
+    .ep-perf-stacked__seg--adds { background: #937DF8; }
+    .ep-perf-stacked:hover .ep-perf-stacked__seg { filter: brightness(0.95); }
+    .ep-perf-stacked__value {
+      min-width: 64px;
+      text-align: right;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-text, #1f2937);
+      font-variant-numeric: tabular-nums;
+    }
+    /* Hover tooltip — mirrors Original eCharts tooltip layout */
+    .ep-perf-tooltip {
+      position: absolute;
+      z-index: 80;
+      background: #fff;
+      border: 1px solid var(--color-border, #e5e7eb);
+      border-radius: 8px;
+      box-shadow: 0 8px 24px -8px rgba(0,0,0,0.15);
+      padding: 12px 14px;
+      min-width: 240px;
+      pointer-events: none;
+      font-size: 13px;
+      display: none;
+    }
+    .ep-perf-tooltip--visible { display: block; }
+    .ep-perf-tooltip__title {
+      font-weight: 700;
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--color-border, #e5e7eb);
+      color: var(--color-text, #1f2937);
+    }
+    .ep-perf-tooltip__row {
+      display: grid;
+      grid-template-columns: auto 1fr auto auto;
+      gap: 8px;
+      align-items: center;
+      padding: 4px 0;
+    }
+    .ep-perf-tooltip__dot {
+      width: 8px; height: 8px; border-radius: 50%;
+    }
+    .ep-perf-tooltip__dot--views { background: #4272D8; }
+    .ep-perf-tooltip__dot--clicks { background: #B8D64D; }
+    .ep-perf-tooltip__dot--adds { background: #937DF8; }
+    .ep-perf-tooltip__name { color: var(--color-text, #1f2937); }
+    .ep-perf-tooltip__val { font-weight: 600; font-variant-numeric: tabular-nums; }
+    .ep-perf-tooltip__score { color: var(--color-text-secondary, #6b7280); font-size: 11px; }
+    .ep-perf-tooltip__total {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--color-border, #e5e7eb);
+      font-weight: 700;
+      color: var(--color-text, #1f2937);
+    }
+
+    /* Right Detail sidebar — parity w/ Original engagement-promotions.html
+       `panel--right` (#detail-panel). Slides in from the right edge when a
+       row or chip is selected. Replaces the inline-only detail header so
+       the user can keep context next to the table. */
+    .ep-ranked-table tbody tr { cursor: pointer; }
+    .ep-ranked-table tbody tr.ep-row--active { background: rgba(33, 150, 243, 0.06); }
+
+    .ep-detail-sidebar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 400px;
+      max-width: 92vw;
+      background: #fff;
+      border-left: 1px solid var(--color-border, #e5e7eb);
+      box-shadow: -8px 0 24px -8px rgba(0,0,0,0.08);
+      transform: translateX(100%);
+      transition: transform 0.22s ease;
+      z-index: 60;
+      display: flex;
+      flex-direction: column;
+    }
+    .ep-detail-sidebar--open { transform: translateX(0); }
+    .ep-detail-sidebar__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-4) var(--space-5);
+      border-bottom: 1px solid var(--color-border, #e5e7eb);
+    }
+    .ep-detail-sidebar__title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--color-text-secondary, #6b7280);
+    }
+    .ep-detail-sidebar__close {
+      width: 28px; height: 28px;
+      border: 0; background: transparent;
+      border-radius: 50%;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-secondary, #6b7280);
+    }
+    .ep-detail-sidebar__close:hover { background: #f3f4f6; color: var(--color-text, #1f2937); }
+    .ep-detail-sidebar__body {
+      flex: 1;
+      padding: var(--space-5);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+    .ep-detail-sidebar__name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-text, #1f2937);
+      margin: 0;
+    }
+    .ep-detail-sidebar__cat {
+      font-size: 12px;
+      color: var(--color-text-secondary, #6b7280);
+      margin: 4px 0 0;
+    }
+    .ep-detail-sidebar__metric-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .ep-detail-sidebar__metric {
+      background: #f8fafc;
+      border: 1px solid var(--color-border, #e5e7eb);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+    .ep-detail-sidebar__metric-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--color-text-secondary, #6b7280);
+    }
+    .ep-detail-sidebar__metric-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-text, #1f2937);
+      margin-top: 2px;
+      font-variant-numeric: tabular-nums;
+    }
+    .ep-detail-sidebar__metric--hero .ep-detail-sidebar__metric-value {
+      color: var(--color-primary, #2196F3);
+    }
+    .ep-detail-sidebar__section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--color-text-secondary, #6b7280);
+      margin: 8px 0 6px;
+    }
+    .ep-detail-sidebar__perf-bar { padding: 0 4px; }
+    .ep-detail-sidebar__footer {
+      display: flex;
+      gap: 8px;
+      padding: var(--space-4) var(--space-5);
+      border-top: 1px solid var(--color-border, #e5e7eb);
+      background: #f8fafc;
+    }
+    .ep-detail-sidebar__btn {
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border: 1px solid var(--color-border, #e5e7eb);
+      background: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-text, #1f2937);
+      transition: all 0.15s ease;
+    }
+    .ep-detail-sidebar__btn:hover {
+      border-color: var(--color-primary, #2196F3);
+      color: var(--color-primary, #2196F3);
+    }
+    .ep-detail-sidebar__btn .material-symbols-outlined { font-size: 16px; }
+    .ep-rt-col-pct {
+      text-align: right;
+      width: 72px;
+    }
+    .ep-rt-col-pct .ep-pct-pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #dcfce7;
+      color: #166534;
+      font-weight: 700;
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+    }
+    .ep-rt-col-pct .ep-pct-pill--mid { background: #fef9c3; color: #854d0e; }
+    .ep-rt-col-pct .ep-pct-pill--low { background: #fee2e2; color: #991b1b; }
+  </style>
+</head>
+<body>
+
+  <div class="dh-top-bar">
+    <div class="dh-top-bar__left">
+      <img src="assets/ideal-sale-logo.svg" alt="ideal.sale" class="dh-top-bar__logo">
+      <div class="dh-top-bar__node">
+        <div class="dh-top-bar__node-icon"><span class="material-symbols-outlined">image</span></div>
+        <div class="dh-top-bar__node-info">
+          <span class="dh-top-bar__node-brand">Ideal-Brand</span>
+          <span class="dh-top-bar__node-name">All Stores</span>
+        </div>
+        <button class="dh-top-bar__change-btn">Change <span class="material-symbols-outlined">expand_more</span></button>
+      </div>
+    </div>
+    <div class="dh-top-bar__right">
+      <span class="dh-top-bar__user"><span class="dh-top-bar__user-label">User: </span>Adam Zimmerman</span>
+      <button class="dh-top-bar__logout"><span>Logout</span> <span class="material-symbols-outlined">logout</span></button>
+    </div>
+  </div>
+
+  <header class="header">
+    <div class="topbar">
+      <div class="topbar__left">
+        <div class="brand">
+          <h1 class="title">Analytics Dashboard</h1>
+        </div>
+        <span class="topbar__separator">|</span>
+
+        <div class="dashboard-switcher" id="dashboard-switcher">
+          <button class="performance-dropdown" id="performance-type-dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="performance-dropdown__text" id="dashboard-switcher-label">Engagement</span>
+            <span class="material-symbols-outlined">expand_more</span>
+          </button>
+          <div class="dashboard-switcher__menu" id="dashboard-menu" role="menu">
+            <button class="dashboard-switcher__item active" data-dashboard="engagement" role="menuitem">
+              <span class="material-symbols-outlined">monitoring</span>
+              Engagement
+            </button>
+            <a class="dashboard-switcher__item" data-href="distribution-media.html" role="menuitem">
+              <span class="material-symbols-outlined">campaign</span>
+              Distribution
+            </a>
+          </div>
+        </div>
+
+        <!-- VIEW (Original / Proposed) toggle -->
+        <div class="view-version-toggle" role="group" aria-label="View version">
+          <a href="engagement-promotions.html" class="view-version-toggle__btn">Original</a>
+          <span class="view-version-toggle__divider"></span>
+          <a href="engagement-promotions-proposed.html" class="view-version-toggle__btn">Proposed</a>
+          <span class="view-version-toggle__divider"></span>
+          <a href="engagement-promotions-proposed-max.html" class="view-version-toggle__btn view-version-toggle__btn--active" aria-current="page">Proposed (Max)</a>
+        </div>
+      </div>
+
+      <div class="view-modes" id="view-modes">
+        <a href="engagement-promotions-proposed.html" class="mode-btn mode-btn--primary active" data-mode="base" aria-label="Report view">
+          <span class="material-symbols-outlined">view_list</span>
+          REPORT
+        </a>
+        <a href="engagement-grid.html" class="mode-btn mode-btn--outline" data-mode="grid" aria-label="Explore view">
+          <span class="material-symbols-outlined">table_chart</span>
+          EXPLORE
+        </a>
+        <a href="engagement-compare.html" class="mode-btn mode-btn--outline" data-mode="compare" aria-label="Comparison view">
+          <span class="material-symbols-outlined">compare</span>
+          COMPARE
+        </a>
+      </div>
+
+      <div class="topbar__actions">
+        <button class="header-share-btn" id="header-export-btn" title="Export current view as CSV with context header (date range, entity, active filters)">
+          <span class="material-symbols-outlined">download</span>
+          Export CSV
+        </button>
+        <button class="header-share-btn" id="header-share-btn">
+          <span class="material-symbols-outlined">share</span>
+          Share
+        </button>
+      </div>
+    </div>
+
+    <div class="context-row">
+      <button class="context-card context-card--date" id="date-selector" aria-label="Select date range">
+        <div class="card-label">Date Range</div>
+        <div class="card-row">
+          <div class="card-icon"><span class="material-symbols-outlined">calendar_month</span></div>
+          <div class="card-content">
+            <div class="card-value" id="context-date-value">Week 47</div>
+            <div class="card-sub" id="context-date-sub">Nov 18–24, 2025</div>
+          </div>
+          <span class="card-arrow"><span class="material-symbols-outlined">expand_more</span></span>
+        </div>
+      </button>
+      <button class="context-card" id="entity-selector" aria-label="Select entity">
+        <div class="card-label">Entity</div>
+        <div class="card-row">
+          <div class="card-icon card-icon--entity"><span class="material-symbols-outlined">corporate_fare</span></div>
+          <div class="card-content">
+            <div class="card-breadcrumb" id="context-entity-breadcrumb">BRAND</div>
+            <div class="card-value" id="context-entity-value">Grocery Holdings Corp</div>
+            <div class="card-sub" id="context-entity-sub">27 locations</div>
+          </div>
+          <span class="card-arrow"><span class="material-symbols-outlined">expand_more</span></span>
+        </div>
+      </button>
+      <div class="filter-group">
+        <div class="filter-label">Filters</div>
+        <div class="filter-chips" id="filter-chips">
+          <button class="add-filter" id="add-filter-btn" aria-label="Add filter">
+            <span class="material-symbols-outlined">add</span>
+            Add Filter
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="engagement-proposed" id="engagement-proposed">
+
+    <header class="section-panel-header">
+      <h2 class="section-panel-header__title">Engagement</h2>
+      <p class="section-panel-header__question">How is the active circular performing across stores, days, and promotions?</p>
+      <p class="section-panel-header__subtitle">
+        <span class="ep-cohort-note" id="ep-cohort-note">
+          <span class="material-symbols-outlined">info</span>
+          Cohort: 75 promotions · Brand · Week 47
+        </span>
+      </p>
+    </header>
+
+    <!-- ============================================================
+         perf-tabs strip (Anchor 1)
+         ============================================================ -->
+    <!-- MAX IA — tabs are METRICS, sub-tabs are DIMENSIONS.
+         Underline-tab style ported from Distribution (.perf-tab from distribution.css):
+         icon + label, transparent background, blue underline on active. -->
+    <div class="perf-tabs" id="ep-perf-tabs" role="tablist">
+      <button class="perf-tab active" data-ep-tab="overview" role="tab" aria-selected="true">
+        <span class="material-symbols-outlined">dashboard</span> Overview
+      </button>
+      <button class="perf-tab" data-ep-tab="sessions" role="tab">
+        <span class="material-symbols-outlined">analytics</span> Sessions
+      </button>
+      <button class="perf-tab" data-ep-tab="users" role="tab">
+        <span class="material-symbols-outlined">group</span> Total Users
+      </button>
+      <button class="perf-tab" data-ep-tab="duration" role="tab">
+        <span class="material-symbols-outlined">schedule</span> Avg Session Duration
+      </button>
+      <button class="perf-tab" data-ep-tab="cardevents" role="tab">
+        <span class="material-symbols-outlined">ads_click</span> Card Engagement Events
+      </button>
+    </div>
+
+    <!-- ─── Overview tab ─── -->
+    <div class="perf-tab-pane active" data-ep-pane="overview">
+
+      <!-- Max KPI snapshot — 4 metric tiles. Click a tile to jump to its tab. -->
+      <div class="ep-kpi-strip" role="group" aria-label="Metric snapshot">
+        <button class="ep-kpi-tile" data-jump-to="sessions" type="button">
+          <span class="ep-kpi-tile__label">Sessions</span>
+          <span class="ep-kpi-tile__value">78,542</span>
+          <span class="ep-kpi-tile__sub">this week</span>
+        </button>
+        <button class="ep-kpi-tile" data-jump-to="users" type="button">
+          <span class="ep-kpi-tile__label">Total Users</span>
+          <span class="ep-kpi-tile__value">54,011</span>
+          <span class="ep-kpi-tile__sub">unique</span>
+        </button>
+        <button class="ep-kpi-tile" data-jump-to="duration" type="button">
+          <span class="ep-kpi-tile__label">Avg Session Duration</span>
+          <span class="ep-kpi-tile__value">368<span class="ep-kpi-tile__unit"> sec</span></span>
+          <span class="ep-kpi-tile__sub">per session</span>
+        </button>
+        <button class="ep-kpi-tile" data-jump-to="cardevents" type="button">
+          <span class="ep-kpi-tile__label">Card Engagement Events</span>
+          <span class="ep-kpi-tile__value">271,298</span>
+          <span class="ep-kpi-tile__sub">Adds + Clicks + share/save/print</span>
+        </button>
+      </div>
+
+      <!-- A2 stat strip — circular views / avg session / interactions per user / composite -->
+      <div class="ep-overview-strip" id="ep-overview-strip">
+        <div class="ep-overview-strip__cell ep-overview-strip__cell--hero">
+          <span class="ep-overview-strip__label">Circular Views</span>
+          <span class="ep-overview-strip__value">12,418</span>
+          <span class="ep-overview-strip__sub">+8.3% vs prior week</span>
+        </div>
+        <div class="ep-overview-strip__cell">
+          <span class="ep-overview-strip__label">Avg Session</span>
+          <span class="ep-overview-strip__value">2:14</span>
+          <span class="ep-overview-strip__sub">+0:11 vs prior</span>
+        </div>
+        <div class="ep-overview-strip__cell">
+          <span class="ep-overview-strip__label">Interactions / User</span>
+          <span class="ep-overview-strip__value">3.6</span>
+          <span class="ep-overview-strip__sub">+0.2 vs prior</span>
+        </div>
+        <div class="ep-overview-strip__cell">
+          <span class="ep-overview-strip__label" title="Composite = (Views × 1) + (Clicks × 5) + (Adds × 20). Single weighted score that blends the three engagement signals.">Composite</span>
+          <span class="ep-overview-strip__value">86</span>
+          <span class="ep-overview-strip__sub">Rank #4 of 27 brands</span>
+        </div>
+      </div>
+
+      <!-- 3-up panels: top promotions / top stores / day-of-week -->
+      <div class="ep-overview-panels" style="margin-top: var(--space-4);">
+        <div class="ep-overview-panel">
+          <div class="ep-overview-panel__label">Top Promotions — Composite<span class="ep-perf-legend"><span class="ep-perf-legend__item"><span class="ep-perf-legend__dot ep-perf-legend__dot--views"></span>Views</span><span class="ep-perf-legend__item"><span class="ep-perf-legend__dot ep-perf-legend__dot--clicks"></span>Clicks</span><span class="ep-perf-legend__item"><span class="ep-perf-legend__dot ep-perf-legend__dot--adds"></span>Adds</span></span></div>
+          <div id="ep-top-promotions"></div>
+        </div>
+        <div class="ep-overview-panel">
+          <div class="ep-overview-panel__label">Top Stores — Circular Views</div>
+          <div id="ep-top-stores"></div>
+        </div>
+        <div class="ep-overview-panel">
+          <div class="ep-overview-panel__label">Day of Week — Total Engagement<span class="ep-perf-legend"><span class="ep-perf-legend__item"><span class="ep-perf-legend__dot ep-perf-legend__dot--views"></span>Views</span><span class="ep-perf-legend__item"><span class="ep-perf-legend__dot ep-perf-legend__dot--clicks"></span>Clicks</span><span class="ep-perf-legend__item"><span class="ep-perf-legend__dot ep-perf-legend__dot--adds"></span>Adds</span></span></div>
+          <div id="ep-dow"></div>
+        </div>
+      </div>
+
+      <!-- §A3 placeholder: Custom URL / QR traffic source slot -->
+      <div class="ep-overview-panel" style="margin-top: var(--space-4);">
+        <div class="ep-overview-panel__label">Traffic Source — Custom URL / QR <span style="color:var(--color-primary, #2196F3); font-weight:700;">(slot pending data)</span></div>
+        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); padding: var(--space-3) 0;">
+          <div><div style="font-size: 11px; color: var(--color-text-secondary, #6b7280); margin-bottom: 4px;">Direct (no-tag)</div><div style="font-size: 20px; font-weight: 700;">5,902</div></div>
+          <div><div style="font-size: 11px; color: var(--color-text-secondary, #6b7280); margin-bottom: 4px;">Email A (weekly-blast)</div><div style="font-size: 20px; font-weight: 700;">2,841</div></div>
+          <div><div style="font-size: 11px; color: var(--color-text-secondary, #6b7280); margin-bottom: 4px;">QR — Store #705</div><div style="font-size: 20px; font-weight: 700;">1,503</div></div>
+          <div><div style="font-size: 11px; color: var(--color-text-secondary, #6b7280); margin-bottom: 4px;">Paid — Meta</div><div style="font-size: 20px; font-weight: 700;">2,172</div></div>
+        </div>
+        <div style="font-size: 11px; color: var(--color-text-secondary, #6b7280); border-top: 1px solid var(--color-border, #e5e7eb); padding-top: 10px;">
+          <span class="material-symbols-outlined" style="font-size: 14px; vertical-align: middle;">info</span>
+          Adopts Elise's standard naming for paid traffic. Set-and-forget per the call w/ Adam (PDF 4/28 @11:05).
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         MAX IA — METRIC PANES
+         Each metric tab carries a sub-tab strip (Store / Day / Time Trend / Data).
+         Store + Day = inline visualizations. Time Trend = line over weeks.
+         Data = launches Original data grid (engagement-grid.html) — option B,
+         keeps Original's full table+preview reachable without re-embedding.
+         ============================================================ -->
+
+    <!-- ─── Metric: Sessions (fully wired demo) ─── -->
+    <div class="perf-tab-pane" data-ep-pane="sessions">
+      <div class="hero-stat">
+        <div class="narrative-header">
+          <div class="narrative-header-left">
+          <h2 class="narrative-header__title">Sessions</h2>
+          <p class="narrative-header__question">How are sessions distributed across stores, days, and weeks?</p>
+          </div>
+          <p class="narrative-header__subtitle">Total sessions on circular pages this week<br><em>Brand · Week 47 (Nov 18–24, 2025)</em></p>
+        </div>
+        <div class="stat-strip"><div class="stat-strip__cards"><div class="stat-strip__item"><div class="stat-strip__label">Sessions</div><div class="stat-strip__value" style="font-size:24px;font-weight:800;">78,542</div></div></div></div>
+      </div>
+      <div class="ep-sub-tabs" role="tablist" aria-label="Sessions cuts">
+        <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Sessions by Store</button>
+        <button class="ep-sub-tab" data-ep-sub="day" role="tab">Sessions by Day</button>
+        <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Sessions Time Trend</button>
+        <a class="ep-sub-tab ep-sub-tab--data" href="engagement-grid.html" target="_blank" rel="noopener" role="tab" title="Opens the full data grid + preview panel from Original">
+          <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">table_chart</span>
+          Data
+          <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;opacity:.55;">open_in_new</span>
+        </a>
+      </div>
+
+      <!-- Store sub-pane — stacked bar list (matches Max's sketch) -->
+      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="store">
+        <div class="ep-stacked-list" id="ep-sessions-by-store"></div>
+      </div>
+
+      <!-- Day sub-pane — DoW columns -->
+      <div class="ep-sub-pane" data-ep-sub-pane="day">
+        <div id="ep-sessions-by-day"></div>
+      </div>
+
+      <!-- Time Trend sub-pane — weekly line chart -->
+      <div class="ep-sub-pane" data-ep-sub-pane="trend">
+        <div class="ep-trend-toolbar">
+          <div class="ep-trend-toolbar__title">Time Trend <span style="font-weight:400;color:var(--color-text-secondary,#6b7280);font-size:12px;">— Sessions per week</span></div>
+          <div class="ep-trend-ranges" role="group" aria-label="Trend range">
+            <button class="ep-trend-range" data-range="1w">1 Week</button>
+            <button class="ep-trend-range" data-range="4w">4 Week (Month)</button>
+            <button class="ep-trend-range ep-trend-range--active" data-range="13w">13 Week (Quarter)</button>
+            <button class="ep-trend-range" data-range="1y">1 Year</button>
+          </div>
+        </div>
+        <div id="ep-sessions-trend"></div>
+      </div>
+    </div>
+
+    <!-- ─── Metric: Total Users (shell — populates w/ BigQuery user dimension) ─── -->
+    <div class="perf-tab-pane" data-ep-pane="users">
+      <div class="hero-stat">
+        <div class="narrative-header">
+          <div class="narrative-header-left">
+          <h2 class="narrative-header__title">Total Users</h2>
+          <p class="narrative-header__question">How many unique users engaged this week, and where are they?</p>
+          </div>
+          <p class="narrative-header__subtitle">Unique visitors across the active circular<br><em>Brand · Week 47 · New / Returning / Engaged split</em></p>
+        </div>
+        <div class="stat-strip"><div class="stat-strip__cards"><div class="stat-strip__item"><div class="stat-strip__label">Total Users</div><div class="stat-strip__value" style="font-size:24px;font-weight:800;">54,011</div></div></div></div>
+      </div>
+      <div class="ep-sub-tabs" role="tablist" aria-label="Users cuts">
+        <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Users by Store</button>
+        <button class="ep-sub-tab" data-ep-sub="day" role="tab">Users by Day</button>
+        <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Users Time Trend</button>
+        <a class="ep-sub-tab ep-sub-tab--data" href="engagement-grid.html" target="_blank" rel="noopener" role="tab">
+          <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">table_chart</span>
+          Data
+          <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;opacity:.55;">open_in_new</span>
+        </a>
+      </div>
+      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="store">
+        <div class="ep-stacked-list" id="ep-users-by-store"></div>
+      </div>
+      <div class="ep-sub-pane" data-ep-sub-pane="day">
+        <div id="ep-users-by-day"></div>
+      </div>
+      <div class="ep-sub-pane" data-ep-sub-pane="trend">
+        <div class="ep-trend-toolbar">
+          <div class="ep-trend-toolbar__title">Time Trend <span style="font-weight:400;color:var(--color-text-secondary,#6b7280);font-size:12px;">— Total Users per week</span></div>
+          <div class="ep-trend-ranges" role="group" aria-label="Trend range">
+            <button class="ep-trend-range" data-range="1w">1 Week</button>
+            <button class="ep-trend-range" data-range="4w">4 Week (Month)</button>
+            <button class="ep-trend-range ep-trend-range--active" data-range="13w">13 Week (Quarter)</button>
+            <button class="ep-trend-range" data-range="1y">1 Year</button>
+          </div>
+        </div>
+        <div id="ep-users-trend"></div>
+      </div>
+    </div>
+
+    <!-- ─── Metric: Avg Session Duration ─── -->
+    <div class="perf-tab-pane" data-ep-pane="duration">
+      <div class="hero-stat">
+        <div class="narrative-header">
+          <div class="narrative-header-left">
+          <h2 class="narrative-header__title">Avg Session Duration</h2>
+          <p class="narrative-header__question">How long are users spending on the circular per visit?</p>
+          </div>
+          <p class="narrative-header__subtitle">Average seconds per session<br><em>Brand · Week 47 · GA → BigQuery session-duration field</em></p>
+        </div>
+        <div class="stat-strip"><div class="stat-strip__cards"><div class="stat-strip__item"><div class="stat-strip__label">Avg Session</div><div class="stat-strip__value" style="font-size:24px;font-weight:800;">368<span style="font-size:14px;font-weight:600;color:#6b7280;"> sec</span></div></div></div></div>
+      </div>
+      <div class="ep-sub-tabs" role="tablist" aria-label="Duration cuts">
+        <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Duration by Store</button>
+        <button class="ep-sub-tab" data-ep-sub="day" role="tab">Duration by Day</button>
+        <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Duration Time Trend</button>
+        <a class="ep-sub-tab ep-sub-tab--data" href="engagement-grid.html" target="_blank" rel="noopener" role="tab">
+          <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">table_chart</span>
+          Data
+          <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;opacity:.55;">open_in_new</span>
+        </a>
+      </div>
+      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="store">
+        <div class="ep-stacked-list" id="ep-duration-by-store"></div>
+      </div>
+      <div class="ep-sub-pane" data-ep-sub-pane="day">
+        <div id="ep-duration-by-day"></div>
+      </div>
+      <div class="ep-sub-pane" data-ep-sub-pane="trend">
+        <div class="ep-trend-toolbar">
+          <div class="ep-trend-toolbar__title">Time Trend <span style="font-weight:400;color:var(--color-text-secondary,#6b7280);font-size:12px;">— Avg Session Duration (sec) per week</span></div>
+          <div class="ep-trend-ranges" role="group" aria-label="Trend range">
+            <button class="ep-trend-range" data-range="1w">1 Week</button>
+            <button class="ep-trend-range" data-range="4w">4 Week (Month)</button>
+            <button class="ep-trend-range ep-trend-range--active" data-range="13w">13 Week (Quarter)</button>
+            <button class="ep-trend-range" data-range="1y">1 Year</button>
+          </div>
+        </div>
+        <div id="ep-duration-trend"></div>
+      </div>
+    </div>
+
+    <!-- ─── Metric: Card Engagement Events (Adds + Clicks + share/save/print roll-up) ─── -->
+    <div class="perf-tab-pane" data-ep-pane="cardevents">
+      <div class="hero-stat">
+        <div class="narrative-header">
+          <div class="narrative-header-left">
+          <h2 class="narrative-header__title">Card Engagement Events</h2>
+          <p class="narrative-header__question">Which interactions are users taking on promotion cards?</p>
+          </div>
+          <p class="narrative-header__subtitle">Adds + Clicks + share / save / print roll-up<br><em>Brand · Week 47 · single intent metric</em></p>
+        </div>
+        <div class="stat-strip"><div class="stat-strip__cards"><div class="stat-strip__item"><div class="stat-strip__label">Card Events</div><div class="stat-strip__value" style="font-size:24px;font-weight:800;">271,298</div></div></div></div>
+      </div>
+      <div class="ep-sub-tabs" role="tablist" aria-label="Card Events cuts">
+        <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Card Events by Store</button>
+        <button class="ep-sub-tab" data-ep-sub="day" role="tab">Card Events by Day</button>
+        <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Card Events Time Trend</button>
+        <a class="ep-sub-tab ep-sub-tab--data" href="engagement-grid.html" target="_blank" rel="noopener" role="tab">
+          <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">table_chart</span>
+          Data
+          <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;opacity:.55;">open_in_new</span>
+        </a>
+      </div>
+      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="store">
+        <div class="ep-stacked-list" id="ep-cardevents-by-store"></div>
+        <div style="font-size:11px;color:#6b7280;margin-top:14px;border-top:1px solid #e5e7eb;padding-top:8px;">
+          <strong>Card Engagement Events</strong> = Adds + Clicks + share + save + print on a promotion card. Single intent metric; complements Sessions / Total Users (reach) for the funnel narrative.
+        </div>
+      </div>
+      <div class="ep-sub-pane" data-ep-sub-pane="day">
+        <div id="ep-cardevents-by-day"></div>
+      </div>
+      <div class="ep-sub-pane" data-ep-sub-pane="trend">
+        <div class="ep-trend-toolbar">
+          <div class="ep-trend-toolbar__title">Time Trend <span style="font-weight:400;color:var(--color-text-secondary,#6b7280);font-size:12px;">— Card Engagement Events per week</span></div>
+          <div class="ep-trend-ranges" role="group" aria-label="Trend range">
+            <button class="ep-trend-range" data-range="1w">1 Week</button>
+            <button class="ep-trend-range" data-range="4w">4 Week (Month)</button>
+            <button class="ep-trend-range ep-trend-range--active" data-range="13w">13 Week (Quarter)</button>
+            <button class="ep-trend-range" data-range="1y">1 Year</button>
+          </div>
+        </div>
+        <div id="ep-cardevents-trend"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Right Detail sidebar — preserves Original's panel--right behavior -->
+  <aside class="ep-detail-sidebar" id="ep-detail-sidebar" role="complementary" aria-label="Promotion details" aria-hidden="true">
+    <div class="ep-detail-sidebar__header">
+      <span class="ep-detail-sidebar__title">Details</span>
+      <button class="ep-detail-sidebar__close" id="ep-detail-sidebar-close" aria-label="Close details">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="ep-detail-sidebar__body" id="ep-detail-sidebar-body"></div>
+    <div class="ep-detail-sidebar__footer">
+      <button class="ep-detail-sidebar__btn">
+        <span class="material-symbols-outlined">table_chart</span>
+        Grid Inquiry
+      </button>
+      <button class="ep-detail-sidebar__btn">
+        <span class="material-symbols-outlined">compare</span>
+        Compare
+      </button>
+    </div>
+  </aside>
+
+  <!-- ============================================================
+       SCRIPTS
+       ============================================================ -->
+  <script src="js/data/engagement-promotions.js"></script>
+  <script src="js/header-slide.js"></script>
+  <script src="js/engagement/engagement-page-app.js"></script>
+
+  <script>
+  (function() {
+    'use strict';
+
+    // Shared tooltip element binding — hoisted here so any early render
+    // that wires a tooltip (Top Promotions, Top Stores) doesn't hit TDZ.
+    let perfTooltip = null;
+
+    // ─── Tab switching ────────────────────────────────────────────────────
+    const tabBar = document.getElementById('ep-perf-tabs');
+    const tabs = tabBar.querySelectorAll('.perf-tab');
+    const panes = document.querySelectorAll('.engagement-proposed .perf-tab-pane');
+    const cohortNote = document.getElementById('ep-cohort-note');
+
+    const cohortLabels = {
+      overview:   'Cohort: 75 promotions · Brand · Week 47',
+      sessions:   'Sessions — 78,542 this week · cut by store / day / time trend',
+      users:      'Total Users — 54,011 this week · cut by store / day / time trend',
+      duration:   'Avg Session Duration — 368 sec · cut by store / day / time trend',
+      cardevents: 'Card Engagement Events — 271,298 this week · Adds + Clicks + share/save/print'
+    };
+
+    function activateTab(target) {
+      tabs.forEach(t => {
+        const on = t.dataset.epTab === target;
+        t.classList.toggle('active', on);
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      panes.forEach(p => p.classList.toggle('active', p.dataset.epPane === target));
+      cohortNote.innerHTML = '<span class="material-symbols-outlined">info</span>' + (cohortLabels[target] || '');
+    }
+    tabs.forEach(tab => tab.addEventListener('click', () => activateTab(tab.dataset.epTab)));
+
+    // Overview KPI tiles → jump to that metric's tab
+    document.querySelectorAll('.ep-kpi-tile[data-jump-to]').forEach(tile => {
+      tile.addEventListener('click', () => {
+        activateTab(tile.dataset.jumpTo);
+        document.getElementById('ep-perf-tabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    // ─── Sub-tab switching (per metric pane) ─────────────────────────────
+    document.querySelectorAll('.engagement-proposed .perf-tab-pane').forEach(pane => {
+      const subTabs = pane.querySelectorAll('.ep-sub-tab:not(.ep-sub-tab--data)');
+      const subPanes = pane.querySelectorAll('.ep-sub-pane');
+      subTabs.forEach(st => {
+        st.addEventListener('click', () => {
+          const key = st.dataset.epSub;
+          subTabs.forEach(t => {
+            const on = t === st;
+            t.classList.toggle('ep-sub-tab--active', on);
+            t.setAttribute('aria-selected', on ? 'true' : 'false');
+          });
+          subPanes.forEach(sp => sp.classList.toggle('ep-sub-pane--active', sp.dataset.epSubPane === key));
+        });
+      });
+    });
+
+    // (Sessions stacked list now uses renderStackedList factory — see below after factory defs)
+
+    // ─── Sessions / By Day — DoW columns ──────────────────────────────────
+    (function renderSessionsByDay() {
+      const host = document.getElementById('ep-sessions-by-day');
+      if (!host) return;
+      const days = [
+        { d: 'MON', n: 9420 },  { d: 'TUE', n: 10120 }, { d: 'WED', n: 10880 },
+        { d: 'THU', n: 11540 }, { d: 'FRI', n: 13260 }, { d: 'SAT', n: 12940 }, { d: 'SUN', n: 10382 }
+      ];
+      const max = Math.max.apply(null, days.map(d => d.n));
+      host.innerHTML = '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:12px;align-items:end;height:240px;">'
+        + days.map(d => {
+            const h = (d.n / max * 100).toFixed(1) + '%';
+            const peak = d.n === max;
+            return '<div style="display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;">'
+              + '<div style="font-size:12px;font-weight:700;">' + d.n.toLocaleString() + '</div>'
+              + '<div style="width:80%;height:' + h + ';background:' + (peak ? '#475569' : '#94A3B8') + ';border-radius:4px 4px 0 0;"></div>'
+              + '<div style="font-size:11px;font-weight:600;color:#6b7280;">' + d.d + '</div>'
+              + '</div>';
+          }).join('')
+        + '</div>';
+    })();
+
+    // ─── Sessions / Time Trend — simple SVG line ─────────────────────────
+    (function renderSessionsTrend() {
+      const host = document.getElementById('ep-sessions-trend');
+      if (!host) return;
+      const weeks = ['W40','W41','W42','W43','W44','W45','W46','W47','W48','W49','W50','W51','W52'];
+      const vals  = [ 22,   21,   22,   22,   21,   22,   22,   22,   22,   8,    7,    7,    7 ];
+      const W = 880, H = 280, pad = 40;
+      const xs = vals.map((_, i) => pad + i * ((W - pad * 2) / (vals.length - 1)));
+      const ys = vals.map(v => H - pad - (v / 25) * (H - pad * 2));
+      const path = xs.map((x, i) => (i ? 'L' : 'M') + x + ',' + ys[i]).join(' ');
+      const grid = [0, 5, 10, 15, 20, 25].map(g => {
+        const y = H - pad - (g / 25) * (H - pad * 2);
+        return '<line x1="' + pad + '" x2="' + (W - pad) + '" y1="' + y + '" y2="' + y + '" stroke="#e5e7eb"/>'
+             + '<text x="' + (pad - 8) + '" y="' + (y + 4) + '" font-size="10" fill="#6b7280" text-anchor="end">' + g + '%</text>';
+      }).join('');
+      const labels = weeks.map((w, i) => '<text x="' + xs[i] + '" y="' + (H - 12) + '" font-size="10" fill="#6b7280" text-anchor="middle">' + w + '</text>').join('');
+      host.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto;display:block;">'
+        + grid
+        + '<path d="' + path + '" fill="none" stroke="#2196F3" stroke-width="2"/>'
+        + xs.map((x, i) => '<circle cx="' + x + '" cy="' + ys[i] + '" r="3" fill="#fff" stroke="#2196F3" stroke-width="2"/>').join('')
+        + labels
+        + '</svg>'
+        + '<div style="font-size:11px;color:#6b7280;margin-top:8px;">Among visitors attributed to paid media (placeholder series — real BQ feed populates per IN-33).</div>';
+    })();
+
+    // ─── Generic factories so all 4 metrics share render code ────────────
+    window.epMetrics = window.epMetrics || {};
+    function renderStackedList(hostId, rows, segDefs, totalFmt) {
+      const host = document.getElementById(hostId);
+      if (!host) return;
+      window.epMetrics[hostId] = { rows: rows, segDefs: segDefs, totalFmt: totalFmt };
+      const totals = rows.map(r => segDefs.reduce((s, d) => s + (r[d.key] || 0), 0));
+      const max = Math.max.apply(null, totals);
+      host.innerHTML = rows.map((r, i) => {
+        const total = totals[i];
+        const w = (n) => (n / max * 100).toFixed(1) + '%';
+        const segs = segDefs.map(d =>
+          '<div class="ep-stacked-list__seg ep-stacked-list__seg--' + d.cls + '" style="width:' + w(r[d.key]) + '" title="' + d.label + ': ' + (r[d.key] || 0).toLocaleString() + '"></div>'
+        ).join('');
+        return ''
+          + '<div class="ep-stacked-list__row">'
+          +   '<div class="ep-stacked-list__rank">' + r.rank + '</div>'
+          +   '<div class="ep-stacked-list__name">' + r.name + (r.sub ? '<small>' + r.sub + '</small>' : '') + '</div>'
+          +   '<div class="ep-stacked-list__bar">' + segs + '</div>'
+          +   '<div class="ep-stacked-list__total">' + (totalFmt ? totalFmt(total) : total.toLocaleString()) + '</div>'
+          + '</div>';
+      }).join('');
+    }
+
+    function renderDoWColumns(hostId, days, fmt) {
+      const host = document.getElementById(hostId);
+      if (!host) return;
+      const max = Math.max.apply(null, days.map(d => d.n));
+      host.innerHTML = '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:12px;align-items:end;height:240px;">'
+        + days.map(d => {
+            const h = (d.n / max * 100).toFixed(1) + '%';
+            const peak = d.n === max;
+            return '<div style="display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;">'
+              + '<div style="font-size:12px;font-weight:700;">' + (fmt ? fmt(d.n) : d.n.toLocaleString()) + '</div>'
+              + '<div style="width:80%;height:' + h + ';background:' + (peak ? '#475569' : '#94A3B8') + ';border-radius:4px 4px 0 0;"></div>'
+              + '<div style="font-size:11px;font-weight:600;color:#6b7280;">' + d.d + '</div>'
+              + '</div>';
+          }).join('')
+        + '</div>';
+    }
+
+    function renderTrend(hostId, weeks, vals, opts) {
+      const host = document.getElementById(hostId);
+      if (!host) return;
+      opts = opts || {};
+      const W = 880, H = 280, pad = 40;
+      const yMax = opts.yMax || Math.ceil(Math.max.apply(null, vals) * 1.15);
+      const ySteps = opts.ySteps || 5;
+      const fmt = opts.yFmt || (v => v);
+      const xs = vals.map((_, i) => pad + i * ((W - pad * 2) / (vals.length - 1)));
+      const ys = vals.map(v => H - pad - (v / yMax) * (H - pad * 2));
+      const path = xs.map((x, i) => (i ? 'L' : 'M') + x + ',' + ys[i]).join(' ');
+      const gridLines = [];
+      for (let i = 0; i <= ySteps; i++) {
+        const g = (yMax / ySteps) * i;
+        const y = H - pad - (g / yMax) * (H - pad * 2);
+        gridLines.push('<line x1="' + pad + '" x2="' + (W - pad) + '" y1="' + y + '" y2="' + y + '" stroke="#e5e7eb"/>'
+          + '<text x="' + (pad - 8) + '" y="' + (y + 4) + '" font-size="10" fill="#6b7280" text-anchor="end">' + fmt(g) + '</text>');
+      }
+      const labels = weeks.map((w, i) => '<text x="' + xs[i] + '" y="' + (H - 12) + '" font-size="10" fill="#6b7280" text-anchor="middle">' + w + '</text>').join('');
+      host.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto;display:block;">'
+        + gridLines.join('')
+        + '<path d="' + path + '" fill="none" stroke="#2196F3" stroke-width="2"/>'
+        + xs.map((x, i) => '<circle cx="' + x + '" cy="' + ys[i] + '" r="3" fill="#fff" stroke="#2196F3" stroke-width="2"/>').join('')
+        + labels
+        + '</svg>'
+        + (opts.note ? '<div style="font-size:11px;color:#6b7280;margin-top:8px;">' + opts.note + '</div>' : '');
+    }
+
+    // ─── Sessions — store stacked list (re-uses factory for Phase B registry) ─
+    renderStackedList('ep-sessions-by-store', [
+      { rank: 1, name: '#336 Hollywood, FL',    sub: '31% new', v: 180, c: 130, a: 116 },
+      { rank: 2, name: '#508 Fort Myers, FL',   sub: '27% new', v: 165, c: 125, a: 108 },
+      { rank: 3, name: '#195 Jacksonville, FL', sub: '28% new', v: 158, c: 122, a: 104 },
+      { rank: 4, name: '#2415 Tampa, FL',       sub: '33% new', v: 152, c: 118, a:  93 },
+      { rank: 5, name: '#2487 Sarasota, FL',    sub: '34% new', v: 148, c: 115, a:  92 },
+      { rank: 6, name: '#2288 Orlando, FL',     sub: '36% new', v: 142, c: 110, a:  92 },
+      { rank: 7, name: '#2247 Palm Coast, FL',  sub: '29% new', v: 135, c: 108, a:  91 },
+      { rank: 8, name: '#2545 The Villages, FL',sub: '34% new', v: 132, c: 105, a:  92 },
+      { rank: 9, name: '#319 Homestead, FL',    sub: '30% new', v: 130, c: 102, a:  92 }
+    ], [
+      { key: 'v', cls: 'v', label: 'Sessions' },
+      { key: 'c', cls: 'c', label: 'Returning' },
+      { key: 'a', cls: 'a', label: 'Engaged' }
+    ]);
+
+    // ─── Total Users — store / day / trend ───────────────────────────────
+    renderStackedList('ep-users-by-store', [
+      { rank: 1, name: '#336 Hollywood, FL',    sub: '31% new', new: 1280, ret: 920, eng: 540 },
+      { rank: 2, name: '#508 Fort Myers, FL',   sub: '27% new', new: 1180, ret: 880, eng: 510 },
+      { rank: 3, name: '#195 Jacksonville, FL', sub: '28% new', new: 1140, ret: 850, eng: 490 },
+      { rank: 4, name: '#2415 Tampa, FL',       sub: '33% new', new: 1090, ret: 820, eng: 460 },
+      { rank: 5, name: '#2487 Sarasota, FL',    sub: '34% new', new: 1050, ret: 800, eng: 450 },
+      { rank: 6, name: '#2288 Orlando, FL',     sub: '36% new', new: 1010, ret: 780, eng: 440 },
+      { rank: 7, name: '#2247 Palm Coast, FL',  sub: '29% new', new:  980, ret: 770, eng: 430 },
+      { rank: 8, name: '#2545 The Villages, FL',sub: '34% new', new:  960, ret: 750, eng: 420 },
+      { rank: 9, name: '#319 Homestead, FL',    sub: '30% new', new:  940, ret: 730, eng: 410 }
+    ], [
+      { key: 'new', cls: 'v', label: 'New' },
+      { key: 'ret', cls: 'c', label: 'Returning' },
+      { key: 'eng', cls: 'a', label: 'Engaged' }
+    ]);
+    renderDoWColumns('ep-users-by-day', [
+      { d: 'MON', n: 6500 }, { d: 'TUE', n: 7000 }, { d: 'WED', n: 7500 },
+      { d: 'THU', n: 8000 }, { d: 'FRI', n: 9100 }, { d: 'SAT', n: 8900 }, { d: 'SUN', n: 7011 }
+    ]);
+    renderTrend('ep-users-trend',
+      ['W40','W41','W42','W43','W44','W45','W46','W47','W48','W49','W50','W51','W52'],
+      [ 16, 17, 18, 18, 17, 18, 18, 18, 17, 7, 6, 6, 6 ],
+      { yMax: 25, ySteps: 5, yFmt: v => v.toFixed(0) + '%', note: 'Unique users per week (% of cohort). Real BQ user-dimension feed populates per IN-33.' }
+    );
+
+    // ─── Avg Session Duration — store / day / trend (single-bar variant) ─
+    renderStackedList('ep-duration-by-store', [
+      { rank: 1, name: '#336 Hollywood, FL',    sub: 'Avg 412 sec', sec: 412 },
+      { rank: 2, name: '#508 Fort Myers, FL',   sub: 'Avg 398 sec', sec: 398 },
+      { rank: 3, name: '#195 Jacksonville, FL', sub: 'Avg 384 sec', sec: 384 },
+      { rank: 4, name: '#2415 Tampa, FL',       sub: 'Avg 372 sec', sec: 372 },
+      { rank: 5, name: '#2487 Sarasota, FL',    sub: 'Avg 365 sec', sec: 365 },
+      { rank: 6, name: '#2288 Orlando, FL',     sub: 'Avg 358 sec', sec: 358 },
+      { rank: 7, name: '#2247 Palm Coast, FL',  sub: 'Avg 348 sec', sec: 348 },
+      { rank: 8, name: '#2545 The Villages, FL',sub: 'Avg 342 sec', sec: 342 },
+      { rank: 9, name: '#319 Homestead, FL',    sub: 'Avg 332 sec', sec: 332 }
+    ], [
+      { key: 'sec', cls: 'v', label: 'Avg Session (sec)' }
+    ], v => v + ' sec');
+    renderDoWColumns('ep-duration-by-day', [
+      { d: 'MON', n: 320 }, { d: 'TUE', n: 340 }, { d: 'WED', n: 355 },
+      { d: 'THU', n: 372 }, { d: 'FRI', n: 410 }, { d: 'SAT', n: 405 }, { d: 'SUN', n: 350 }
+    ], v => v + ' sec');
+    renderTrend('ep-duration-trend',
+      ['W40','W41','W42','W43','W44','W45','W46','W47','W48','W49','W50','W51','W52'],
+      [ 380, 380, 370, 372, 370, 370, 365, 368, 360, 350, 360, 365, 360 ],
+      { yMax: 450, ySteps: 5, yFmt: v => v.toFixed(0) + 's', note: 'Avg session duration (seconds) per week. From GA → BQ session-duration field once payload includes it.' }
+    );
+
+    // ─── Card Engagement Events — store / day / trend ────────────────────
+    renderStackedList('ep-cardevents-by-store', [
+      { rank: 1, name: '#336 Hollywood, FL',    sub: '14,210 total', adds: 4800, clicks: 6800, other: 2610 },
+      { rank: 2, name: '#508 Fort Myers, FL',   sub: '13,580 total', adds: 4500, clicks: 6500, other: 2580 },
+      { rank: 3, name: '#195 Jacksonville, FL', sub: '13,120 total', adds: 4350, clicks: 6300, other: 2470 },
+      { rank: 4, name: '#2415 Tampa, FL',       sub: '12,640 total', adds: 4200, clicks: 6100, other: 2340 },
+      { rank: 5, name: '#2487 Sarasota, FL',    sub: '12,210 total', adds: 4050, clicks: 5900, other: 2260 },
+      { rank: 6, name: '#2288 Orlando, FL',     sub: '11,820 total', adds: 3900, clicks: 5700, other: 2220 },
+      { rank: 7, name: '#2247 Palm Coast, FL',  sub: '11,440 total', adds: 3800, clicks: 5500, other: 2140 },
+      { rank: 8, name: '#2545 The Villages, FL',sub: '11,090 total', adds: 3700, clicks: 5350, other: 2040 },
+      { rank: 9, name: '#319 Homestead, FL',    sub: '10,720 total', adds: 3580, clicks: 5180, other: 1960 }
+    ], [
+      { key: 'adds',   cls: 'a', label: 'Adds' },
+      { key: 'clicks', cls: 'c', label: 'Clicks' },
+      { key: 'other',  cls: 'v', label: 'Share / Save / Print' }
+    ]);
+    renderDoWColumns('ep-cardevents-by-day', [
+      { d: 'MON', n: 32500 }, { d: 'TUE', n: 35000 }, { d: 'WED', n: 37500 },
+      { d: 'THU', n: 40000 }, { d: 'FRI', n: 45800 }, { d: 'SAT', n: 44500 }, { d: 'SUN', n: 35998 }
+    ]);
+    renderTrend('ep-cardevents-trend',
+      ['W40','W41','W42','W43','W44','W45','W46','W47','W48','W49','W50','W51','W52'],
+      [ 28, 28, 28, 28, 28, 27, 27, 27, 27, 12, 11, 11, 11 ],
+      { yMax: 35, ySteps: 5, yFmt: v => v.toFixed(0) + '%', note: 'Card events per week (% of cohort). Adds + Clicks + share/save/print roll-up.' }
+    );
+
+    // ════════════════════════════════════════════════════════════════════
+    // PHASE B — Port Original UI patterns (filter / hover tooltip / click-to-sidebar / inline data table)
+    // ════════════════════════════════════════════════════════════════════
+    (function initPhaseB() {
+      const epSidebar = document.getElementById('ep-detail-sidebar');
+      const epSidebarBody = document.getElementById('ep-detail-sidebar-body');
+      if (!epSidebar || !epSidebarBody) return;
+
+      // Single shared tooltip
+      const tip = document.createElement('div');
+      tip.className = 'ep-metric-tooltip';
+      document.body.appendChild(tip);
+      function showTip(html, x, y) {
+        tip.innerHTML = html;
+        tip.style.display = 'block';
+        const r = tip.getBoundingClientRect();
+        tip.style.left = Math.min(x + 12, window.innerWidth - r.width - 12) + 'px';
+        tip.style.top = Math.max(8, y - r.height - 12) + 'px';
+      }
+      function hideTip() { tip.style.display = 'none'; }
+
+      const segColor = { v: '#2196F3', c: '#f59e0b', a: '#22c55e' };
+
+      function openStoreDetail(metricLabel, row, segDefs, totalFmt) {
+        const total = segDefs.reduce((s, d) => s + (row[d.key] || 0), 0);
+        const segRows = segDefs.map(d =>
+          '<div class="ep-detail-sidebar__metric"><div class="ep-detail-sidebar__metric-label"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:middle;background:' + (segColor[d.cls] || '#94A3B8') + ';"></span>' + d.label + '</div><div class="ep-detail-sidebar__metric-value">' + (row[d.key] || 0).toLocaleString() + '</div></div>'
+        ).join('');
+        epSidebarBody.innerHTML =
+          '<div><h3 class="ep-detail-sidebar__name">' + row.name + '</h3>' +
+          '<p class="ep-detail-sidebar__cat">' + metricLabel + ' · Rank #' + row.rank + (row.sub ? ' · ' + row.sub : '') + '</p></div>' +
+          '<div><div class="ep-detail-sidebar__section-label">' + metricLabel + ' Breakdown</div>' +
+          '<div class="ep-detail-sidebar__metric-grid">' +
+            '<div class="ep-detail-sidebar__metric ep-detail-sidebar__metric--hero">' +
+              '<div class="ep-detail-sidebar__metric-label">Total</div>' +
+              '<div class="ep-detail-sidebar__metric-value">' + (totalFmt ? totalFmt(total) : total.toLocaleString()) + '</div>' +
+            '</div>' + segRows + '</div></div>';
+        epSidebar.classList.add('ep-detail-sidebar--open');
+        epSidebar.setAttribute('aria-hidden', 'false');
+      }
+
+      function buildDataTable(reg, cfg) {
+        const segCols = reg.segDefs.map(d => '<th class="num" data-col="' + d.key + '" data-type="num">' + d.label + '</th>').join('');
+        const rowsHtml = reg.rows.map(r => {
+          const total = reg.segDefs.reduce((s, d) => s + (r[d.key] || 0), 0);
+          const cells = reg.segDefs.map(d => '<td class="num">' + (r[d.key] || 0).toLocaleString() + '</td>').join('');
+          return '<tr data-name="' + r.name.replace(/"/g, '&quot;') + '">' +
+            '<td>' + r.rank + '</td>' +
+            '<td>' + r.name + '<div style="font-size:11px;color:#6b7280;">' + (r.sub || '') + '</div></td>' +
+            cells +
+            '<td class="num"><strong>' + (reg.totalFmt ? reg.totalFmt(total) : total.toLocaleString()) + '</strong></td>' +
+            '</tr>';
+        }).join('');
+        return '<div style="font-size:12px;color:#6b7280;margin-bottom:8px;">' + reg.rows.length + ' stores · click column header to sort · click row for detail</div>' +
+          '<table class="ep-data-table">' +
+            '<thead><tr>' +
+              '<th data-col="rank" data-type="num">#</th>' +
+              '<th data-col="name" data-type="str">Store</th>' +
+              segCols +
+              '<th class="num" data-col="total" data-type="num" data-sort-dir="desc">Total</th>' +
+            '</tr></thead><tbody>' + rowsHtml + '</tbody></table>' +
+          '<a class="ep-data-grid-link" href="engagement-grid.html" target="_blank" rel="noopener">' +
+            '<span class="material-symbols-outlined" style="font-size:14px;">open_in_new</span>' +
+            'Open full data grid (Original) — preview panel + cross-metric columns' +
+          '</a>';
+      }
+
+      function wireDataTable(table, reg, cfg) {
+        const ths = table.querySelectorAll('th');
+        ths.forEach(th => {
+          th.addEventListener('click', () => {
+            const col = th.dataset.col;
+            const type = th.dataset.type;
+            const dir = th.dataset.sortDir === 'desc' ? 'asc' : 'desc';
+            ths.forEach(t => delete t.dataset.sortDir);
+            th.dataset.sortDir = dir;
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            const segIdx = reg.segDefs.findIndex(d => d.key === col);
+            const getVal = (r) => {
+              if (col === 'rank')  return parseInt(r.cells[0].textContent, 10);
+              if (col === 'name')  return r.dataset.name;
+              if (col === 'total') return parseFloat(r.cells[r.cells.length - 1].textContent.replace(/[^0-9.\-]/g, ''));
+              if (segIdx >= 0)     return parseFloat(r.cells[2 + segIdx].textContent.replace(/[^0-9.\-]/g, ''));
+              return 0;
+            };
+            rows.sort((a, b) => {
+              const va = getVal(a), vb = getVal(b);
+              if (type === 'num') return dir === 'asc' ? va - vb : vb - va;
+              return dir === 'asc' ? String(va).localeCompare(vb) : String(vb).localeCompare(va);
+            });
+            rows.forEach(r => tbody.appendChild(r));
+          });
+        });
+        table.querySelector('tbody').addEventListener('click', (e) => {
+          const tr = e.target.closest('tr');
+          if (!tr) return;
+          const data = reg.rows.find(r => r.name === tr.dataset.name);
+          if (data) openStoreDetail(cfg.label, data, reg.segDefs, reg.totalFmt);
+        });
+      }
+
+      const metricPanes = [
+        { paneKey: 'sessions',   storeHostId: 'ep-sessions-by-store',   label: 'Sessions' },
+        { paneKey: 'users',      storeHostId: 'ep-users-by-store',      label: 'Total Users' },
+        { paneKey: 'duration',   storeHostId: 'ep-duration-by-store',   label: 'Avg Session Duration' },
+        { paneKey: 'cardevents', storeHostId: 'ep-cardevents-by-store', label: 'Card Engagement Events' }
+      ];
+
+      metricPanes.forEach(cfg => {
+        const pane = document.querySelector('[data-ep-pane="' + cfg.paneKey + '"]');
+        const reg  = window.epMetrics[cfg.storeHostId];
+        if (!pane || !reg) return;
+
+        // 1) Convert <a class="ep-sub-tab--data"> to a real <button> sub-tab
+        const oldData = pane.querySelector('a.ep-sub-tab--data');
+        let dataBtn;
+        if (oldData) {
+          dataBtn = document.createElement('button');
+          dataBtn.className = 'ep-sub-tab ep-sub-tab--data';
+          dataBtn.dataset.epSub = 'data';
+          dataBtn.setAttribute('role', 'tab');
+          dataBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">table_chart</span> Data';
+          oldData.parentNode.replaceChild(dataBtn, oldData);
+        } else {
+          dataBtn = pane.querySelector('button.ep-sub-tab--data');
+        }
+
+        // 2) Build inline data sub-pane
+        let dataPane = pane.querySelector('[data-ep-sub-pane="data"]');
+        if (!dataPane) {
+          dataPane = document.createElement('div');
+          dataPane.className = 'ep-sub-pane';
+          dataPane.dataset.epSubPane = 'data';
+          dataPane.innerHTML = buildDataTable(reg, cfg);
+          pane.appendChild(dataPane);
+          wireDataTable(dataPane.querySelector('.ep-data-table'), reg, cfg);
+        }
+
+        // 3) Wire the new data sub-tab into the pane's sub-tab toggle
+        const allSubTabs = pane.querySelectorAll('.ep-sub-tab');
+        const allSubPanes = pane.querySelectorAll('.ep-sub-pane');
+        if (dataBtn) {
+          dataBtn.addEventListener('click', () => {
+            allSubTabs.forEach(t => {
+              const on = t === dataBtn;
+              t.classList.toggle('ep-sub-tab--active', on);
+              t.setAttribute('aria-selected', on ? 'true' : 'false');
+            });
+            allSubPanes.forEach(sp => sp.classList.toggle('ep-sub-pane--active', sp.dataset.epSubPane === 'data'));
+          });
+          // Also: existing non-data sub-tabs need to deactivate the data button when clicked
+          allSubTabs.forEach(st => {
+            if (st === dataBtn) return;
+            st.addEventListener('click', () => {
+              dataBtn.classList.remove('ep-sub-tab--active');
+              dataBtn.setAttribute('aria-selected', 'false');
+            });
+          });
+        }
+
+        // 4) Filter input above store sub-pane
+        const storePane = pane.querySelector('[data-ep-sub-pane="store"]');
+        const list = document.getElementById(cfg.storeHostId);
+        if (storePane && list && !storePane.querySelector('.ep-metric-filter')) {
+          const filter = document.createElement('div');
+          filter.className = 'ep-metric-filter';
+          filter.innerHTML =
+            '<span class="ep-metric-filter__icon material-symbols-outlined" style="font-size:18px;">search</span>' +
+            '<input class="ep-metric-filter__input" type="text" placeholder="Filter stores…" aria-label="Filter ' + cfg.label + ' stores">' +
+            '<button class="ep-metric-filter__clear" type="button" aria-label="Clear filter"><span class="material-symbols-outlined" style="font-size:18px;">close</span></button>' +
+            '<span class="ep-metric-filter__count"></span>';
+          storePane.insertBefore(filter, list);
+
+          const input = filter.querySelector('input');
+          const clear = filter.querySelector('.ep-metric-filter__clear');
+          const count = filter.querySelector('.ep-metric-filter__count');
+          function applyFilter() {
+            const q = input.value.trim().toLowerCase();
+            filter.classList.toggle('ep-metric-filter--has-value', q.length > 0);
+            const rows = list.querySelectorAll('.ep-stacked-list__row');
+            let shown = 0;
+            rows.forEach((row, i) => {
+              const match = !q || (reg.rows[i].name.toLowerCase().includes(q));
+              row.classList.toggle('ep-stacked-list__row--hidden', !match);
+              if (match) shown++;
+            });
+            count.textContent = q ? shown + ' of ' + reg.rows.length : '';
+          }
+          input.addEventListener('input', applyFilter);
+          clear.addEventListener('click', () => { input.value = ''; applyFilter(); input.focus(); });
+        }
+
+        // 5) Hover tooltip + click-to-sidebar on stacked-bar rows
+        if (list && !list.dataset.epWired) {
+          list.dataset.epWired = '1';
+          list.addEventListener('mousemove', (e) => {
+            const row = e.target.closest('.ep-stacked-list__row');
+            if (!row) { hideTip(); return; }
+            const idx = Array.from(list.children).indexOf(row);
+            const data = reg.rows[idx];
+            if (!data) return;
+            const total = reg.segDefs.reduce((s, d) => s + (data[d.key] || 0), 0);
+            const segHtml = reg.segDefs.map(d =>
+              '<div class="ep-metric-tooltip__row"><span><span class="ep-metric-tooltip__sw" style="background:' + (segColor[d.cls] || '#94A3B8') + ';"></span>' + d.label + '</span><span>' + (data[d.key] || 0).toLocaleString() + '</span></div>'
+            ).join('');
+            const html = '<div class="ep-metric-tooltip__title">' + data.name + '</div>' + segHtml +
+              '<div class="ep-metric-tooltip__row ep-metric-tooltip__total"><span>Total</span><span>' + (reg.totalFmt ? reg.totalFmt(total) : total.toLocaleString()) + '</span></div>';
+            showTip(html, e.clientX, e.clientY);
+          });
+          list.addEventListener('mouseleave', hideTip);
+          list.addEventListener('click', (e) => {
+            const row = e.target.closest('.ep-stacked-list__row');
+            if (!row) return;
+            const idx = Array.from(list.children).indexOf(row);
+            const data = reg.rows[idx];
+            if (data) openStoreDetail(cfg.label, data, reg.segDefs, reg.totalFmt);
+          });
+        }
+      });
+    })();
+
+    // ─── Aggregate the mock records up to "promotion family" rows ─────────
+    // Uses ALL records — no demo slicing. Views / clicks / adds carry through
+    // from window.promotionRecordsData so we don't lose the metrics Adam
+    // reads on the Original page.
+    const records = window.promotionRecordsData || [];
+    const promoMap = {};
+    records.forEach(r => {
+      const key = r.title || r.promotionId;
+      if (!promoMap[key]) {
+        promoMap[key] = {
+          key,
+          title: key,
+          category: r.category,
+          views: 0,
+          clicks: 0,
+          adds: 0,
+          // Score-weighted contributions to composite (parity w/ Original
+          // perf-chart stacked-bar segments). Sums per record.
+          viewsScore: 0,
+          clicksScore: 0,
+          addsScore: 0,
+          composite: 0,
+          stores: {}
+        };
+      }
+      promoMap[key].views += r.views || 0;
+      promoMap[key].clicks += r.clicks || 0;
+      promoMap[key].adds += r.adds || 0;
+      promoMap[key].viewsScore += r.viewsScore || 0;
+      promoMap[key].clicksScore += r.clicksScore || 0;
+      promoMap[key].addsScore += r.addsScore || 0;
+      promoMap[key].composite += r.compositeScore || 0;
+      const sk = r.storeName || r.storeId;
+      // Per-store full breakdown so Engagement by Store can render the same
+      // V/C/A stacked bar as Top Promotions (parity w/ ranked-table column).
+      if (!promoMap[key].stores[sk]) {
+        promoMap[key].stores[sk] = { views: 0, clicks: 0, adds: 0, viewsScore: 0, clicksScore: 0, addsScore: 0 };
+      }
+      const ss = promoMap[key].stores[sk];
+      ss.views += r.views || 0;
+      ss.clicks += r.clicks || 0;
+      ss.adds += r.adds || 0;
+      ss.viewsScore += r.viewsScore || 0;
+      ss.clicksScore += r.clicksScore || 0;
+      ss.addsScore += r.addsScore || 0;
+    });
+    // Full set, sorted by composite. NO slice — preserves Original's 75 promos.
+    const promotions = Object.values(promoMap).sort((a, b) => b.composite - a.composite);
+    // Compute percentile rank (rank-within-cohort, parity w/ Original).
+    promotions.forEach((p, idx) => {
+      p.percentile = promotions.length > 0
+        ? Math.round(100 - (idx / promotions.length) * 100)
+        : 0;
+    });
+
+    // ─── Overview: real aggregates from full dataset ──────────────────────
+    const totalViews = promotions.reduce((s, p) => s + p.views, 0);
+    const totalClicks = promotions.reduce((s, p) => s + p.clicks, 0);
+    const totalAdds = promotions.reduce((s, p) => s + p.adds, 0);
+    const totalComposite = promotions.reduce((s, p) => s + p.composite, 0);
+
+    // Wire real numbers into the Overview stat strip (replaces hardcoded mock)
+    const ovStrip = document.getElementById('ep-overview-strip');
+    if (ovStrip) {
+      // Estimate avg session + interactions/user from real metrics:
+      // - avg session ≈ baseline 90s + 1s per click per view ratio
+      // - interactions/user = (clicks + adds) / unique-users-estimate (views/3.4)
+      const ctr = totalViews > 0 ? totalClicks / totalViews : 0;
+      const avgSessionSec = Math.round(90 + ctr * 600); // 90–~150s range
+      const estUsers = Math.max(1, Math.round(totalViews / 3.4));
+      const intPerUser = ((totalClicks + totalAdds) / estUsers).toFixed(1);
+      ovStrip.innerHTML =
+        '<div class="ep-overview-strip__cell ep-overview-strip__cell--hero">' +
+          '<span class="ep-overview-strip__label">Circular Views</span>' +
+          '<span class="ep-overview-strip__value">' + totalViews.toLocaleString() + '</span>' +
+          '<span class="ep-overview-strip__sub">across ' + promotions.length + ' promotions</span>' +
+        '</div>' +
+        '<div class="ep-overview-strip__cell">' +
+          '<span class="ep-overview-strip__label">Clicks</span>' +
+          '<span class="ep-overview-strip__value">' + totalClicks.toLocaleString() + '</span>' +
+          '<span class="ep-overview-strip__sub">CTR ' + (ctr * 100).toFixed(1) + '%</span>' +
+        '</div>' +
+        '<div class="ep-overview-strip__cell">' +
+          '<span class="ep-overview-strip__label">Adds to List</span>' +
+          '<span class="ep-overview-strip__value">' + totalAdds.toLocaleString() + '</span>' +
+          '<span class="ep-overview-strip__sub">' + (totalViews > 0 ? (totalAdds / totalViews * 100).toFixed(2) : 0) + '% of views</span>' +
+        '</div>' +
+        '<div class="ep-overview-strip__cell">' +
+          '<span class="ep-overview-strip__label">Avg Session</span>' +
+          '<span class="ep-overview-strip__value">' + Math.floor(avgSessionSec / 60) + ':' + String(avgSessionSec % 60).padStart(2, '0') + '</span>' +
+          '<span class="ep-overview-strip__sub">' + intPerUser + ' interactions/user</span>' +
+        '</div>';
+    }
+
+    // ─── Overview: Top Promotions / Top Stores / DoW ──────────────────────
+    // Stacked V/C/A mini bar for store rows — same idiom as Top Promotions
+    // and ranked-table Performance column. Rows must carry views/clicks/adds
+    // and *Score fields. Bar size = composite proportional to row max.
+    function renderStoresStacked(host, rows) {
+      const enriched = rows.map(r => {
+        const composite = (r.viewsScore || 0) + (r.clicksScore || 0) + (r.addsScore || 0);
+        return Object.assign({}, r, { composite: composite });
+      });
+      const maxComp = enriched.reduce((m, r) => Math.max(m, r.composite), 0);
+      host.innerHTML = enriched.map(r => {
+        const totalPct = maxComp > 0 ? Math.max(2, r.composite / maxComp * 100) : 0;
+        const sum = (r.viewsScore + r.clicksScore + r.addsScore) || 1;
+        const v = (r.viewsScore / sum * 100).toFixed(2);
+        const c = (r.clicksScore / sum * 100).toFixed(2);
+        const a = (r.addsScore / sum * 100).toFixed(2);
+        return '<div class="ep-mini-stacked" ' +
+          'data-views="' + r.views + '" data-clicks="' + r.clicks + '" data-adds="' + r.adds + '" ' +
+          'data-views-score="' + r.viewsScore + '" data-clicks-score="' + r.clicksScore + '" data-adds-score="' + r.addsScore + '" ' +
+          'data-composite="' + r.composite + '" data-name="' + (r.label || '').replace(/"/g, '&quot;') + '">' +
+          '<span class="ep-mini-stacked__name" title="' + r.label + '">' + r.label + '</span>' +
+          '<div class="ep-mini-stacked__bar" style="width:' + totalPct + '%;">' +
+            '<div class="ep-mini-stacked__seg ep-mini-stacked__seg--views" style="width:' + v + '%;"></div>' +
+            '<div class="ep-mini-stacked__seg ep-mini-stacked__seg--clicks" style="width:' + c + '%;"></div>' +
+            '<div class="ep-mini-stacked__seg ep-mini-stacked__seg--adds" style="width:' + a + '%;"></div>' +
+          '</div>' +
+          '<span class="ep-mini-stacked__val">' + r.composite.toLocaleString() + '</span>' +
+        '</div>';
+      }).join('');
+      wireMiniStackedTooltip(host);
+    }
+
+    function renderMiniBars(host, rows, fmtVal) {
+      const max = Math.max.apply(null, rows.map(r => r.value));
+      host.innerHTML = rows.map(r => {
+        const w = max > 0 ? Math.round(r.value / max * 100) : 0;
+        return '<div class="ep-mini-bar"><span class="ep-mini-bar__name" title="' + r.label + '">' + r.label + '</span><div class="ep-mini-bar__track"><div class="ep-mini-bar__fill" style="width:' + w + '%;"></div></div><span class="ep-mini-bar__val">' + fmtVal(r.value) + '</span></div>';
+      }).join('');
+    }
+    // Top Promotions — stacked Views/Clicks/Adds (parity w/ Performance column).
+    // data-* attrs feed the same tooltip used by the ranked-table stacked bar.
+    function renderTopPromotionsStacked() {
+      const host = document.getElementById('ep-top-promotions');
+      const top = promotions.slice(0, 6);
+      const maxComp = top.reduce((m, p) => Math.max(m, p.composite), 0);
+      host.innerHTML = top.map(p => {
+        const totalPct = maxComp > 0 ? Math.max(2, p.composite / maxComp * 100) : 0;
+        const sum = p.viewsScore + p.clicksScore + p.addsScore || 1;
+        const v = (p.viewsScore / sum * 100).toFixed(2);
+        const c = (p.clicksScore / sum * 100).toFixed(2);
+        const a = (p.addsScore / sum * 100).toFixed(2);
+        return '<div class="ep-mini-stacked" ' +
+          'data-views="' + p.views + '" data-clicks="' + p.clicks + '" data-adds="' + p.adds + '" ' +
+          'data-views-score="' + p.viewsScore + '" data-clicks-score="' + p.clicksScore + '" data-adds-score="' + p.addsScore + '" ' +
+          'data-composite="' + p.composite + '" data-name="' + p.title.replace(/"/g, '&quot;') + '">' +
+          '<span class="ep-mini-stacked__name" title="' + p.title + '">' + p.title + '</span>' +
+          '<div class="ep-mini-stacked__bar" style="width:' + totalPct + '%;">' +
+            '<div class="ep-mini-stacked__seg ep-mini-stacked__seg--views" style="width:' + v + '%;"></div>' +
+            '<div class="ep-mini-stacked__seg ep-mini-stacked__seg--clicks" style="width:' + c + '%;"></div>' +
+            '<div class="ep-mini-stacked__seg ep-mini-stacked__seg--adds" style="width:' + a + '%;"></div>' +
+          '</div>' +
+          '<span class="ep-mini-stacked__val">' + p.composite.toLocaleString() + '</span>' +
+        '</div>';
+      }).join('');
+      wireMiniStackedTooltip(host);
+    }
+    renderTopPromotionsStacked();
+
+    // Top stores from aggregated views across ALL promotions (not just top 8).
+    // storeAgg = views-only (Top Stores Overview panel is labeled "Circular Views").
+    // globalStoreFull = full V/C/A breakdown (used by Engagement by Store ALL view).
+    const storeAgg = {};
+    const globalStoreFull = {};
+    promotions.forEach(p => {
+      Object.keys(p.stores).forEach(sk => {
+        const s = p.stores[sk];
+        storeAgg[sk] = (storeAgg[sk] || 0) + s.views;
+        if (!globalStoreFull[sk]) {
+          globalStoreFull[sk] = { views: 0, clicks: 0, adds: 0, viewsScore: 0, clicksScore: 0, addsScore: 0 };
+        }
+        const g = globalStoreFull[sk];
+        g.views += s.views; g.clicks += s.clicks; g.adds += s.adds;
+        g.viewsScore += s.viewsScore; g.clicksScore += s.clicksScore; g.addsScore += s.addsScore;
+      });
+    });
+    const topStoresAll = Object.keys(storeAgg)
+      .map(sk => ({ label: sk, value: storeAgg[sk] }))
+      .sort((a, b) => b.value - a.value);
+    const topStores = topStoresAll.slice(0, 6);
+    const totalStoreViews = topStoresAll.reduce((s, r) => s + r.value, 0);
+    // Top Stores mini bars w/ data attrs for tooltip (store / views / share / rank).
+    (function renderTopStoresMini() {
+      const host = document.getElementById('ep-top-stores');
+      const max = Math.max.apply(null, topStores.map(r => r.value));
+      host.innerHTML = topStores.map((r, i) => {
+        const w = max > 0 ? Math.round(r.value / max * 100) : 0;
+        const pct = totalStoreViews > 0 ? (r.value / totalStoreViews * 100).toFixed(1) : '0.0';
+        return '<div class="ep-mini-bar" ' +
+          'data-name="' + r.label.replace(/"/g, '&quot;') + '" ' +
+          'data-value="' + r.value + '" data-pct="' + pct + '" data-rank="' + (i + 1) + '">' +
+          '<span class="ep-mini-bar__name" title="' + r.label + '">' + r.label + '</span>' +
+          '<div class="ep-mini-bar__track"><div class="ep-mini-bar__fill" style="width:' + w + '%;"></div></div>' +
+          '<span class="ep-mini-bar__val">' + r.value.toLocaleString() + '</span>' +
+        '</div>';
+      }).join('');
+      wireTopStoresTooltip(host);
+    })();
+
+    // Update cohort note w/ real promo count
+    const realCount = promotions.length;
+    cohortLabels.overview = 'Cohort: ' + realCount + ' promotions · Brand · Week 47';
+    cohortLabels.promotion = 'Cohort: ' + realCount + ' promotions · ranked within the active week';
+    cohortNote.innerHTML = '<span class="material-symbols-outlined">info</span>' + cohortLabels.overview;
+
+    // Day-of-week mock (deterministic so it's stable for screenshots).
+    // V/C/A breakdown derived from the real funnel ratios so the stacked
+    // columns reflect the same engagement mix as the rest of the page.
+    const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    const dowVals = [1820, 1965, 2104, 2240, 2812, 2604, 1873];
+    const totalEngagement = totalViews + totalClicks + totalAdds || 1;
+    const viewsRatio = totalViews / totalEngagement;
+    const clicksRatio = totalClicks / totalEngagement;
+    function dowDataFromTotals(totals) {
+      return totals.map((t, i) => {
+        const v = Math.round(t * viewsRatio);
+        const c = Math.round(t * clicksRatio);
+        const a = Math.max(0, t - v - c);
+        const vScore = v * 1;
+        const cScore = c * 5;
+        const aScore = a * 20;
+        const total = vScore + cScore + aScore;
+        return { day: days[i], views: v, clicks: c, adds: a, viewsScore: vScore, clicksScore: cScore, addsScore: aScore, total: total };
+      });
+    }
+    function renderDow(host, data) {
+      const max = data.reduce((m, d) => Math.max(m, d.total), 0);
+      host.innerHTML = '<div class="ep-dow-chart">' + data.map(d => {
+        const h = max > 0 ? Math.round(d.total / max * 100) : 0;
+        const vPct = d.total > 0 ? (d.viewsScore  / d.total * 100).toFixed(2) : 0;
+        const cPct = d.total > 0 ? (d.clicksScore / d.total * 100).toFixed(2) : 0;
+        const aPct = d.total > 0 ? (d.addsScore   / d.total * 100).toFixed(2) : 0;
+        return '<div class="ep-dow-chart__col" ' +
+          'data-name="' + d.day + '" data-views="' + d.views + '" data-clicks="' + d.clicks + '" data-adds="' + d.adds + '" data-total="' + d.total + '">' +
+          '<span class="ep-dow-chart__val">' +
+            '<span class="ep-dow-chart__val-num">' + d.total.toLocaleString() + '</span>' +
+            '<span class="ep-dow-chart__val-label" title="Composite Points = (Views × 1) + (Clicks × 5) + (Adds × 20)">points</span>' +
+          '</span>' +
+          '<div class="ep-dow-chart__bar-wrap"><div class="ep-dow-chart__bar-stack" style="height:' + h + '%;">' +
+            '<div class="ep-dow-chart__seg ep-dow-chart__seg--adds" style="height:' + aPct + '%;"></div>' +
+            '<div class="ep-dow-chart__seg ep-dow-chart__seg--clicks" style="height:' + cPct + '%;"></div>' +
+            '<div class="ep-dow-chart__seg ep-dow-chart__seg--views" style="height:' + vPct + '%;"></div>' +
+          '</div></div>' +
+          '<span class="ep-dow-chart__label">' + d.day + '</span>' +
+        '</div>';
+      }).join('') + '</div>';
+      wireDowTooltip(host);
+    }
+    function dowTooltipHtml(ds) {
+      return '<div class="ep-perf-tooltip__title">' + ds.name + '</div>' +
+        '<div class="ep-perf-tooltip__row">' +
+          '<span class="ep-perf-tooltip__dot ep-perf-tooltip__dot--views"></span>' +
+          '<span class="ep-perf-tooltip__name">Views</span>' +
+          '<span class="ep-perf-tooltip__val">' + (+ds.views).toLocaleString() + '</span>' +
+        '</div>' +
+        '<div class="ep-perf-tooltip__row">' +
+          '<span class="ep-perf-tooltip__dot ep-perf-tooltip__dot--clicks"></span>' +
+          '<span class="ep-perf-tooltip__name">Clicks</span>' +
+          '<span class="ep-perf-tooltip__val">' + (+ds.clicks).toLocaleString() + '</span>' +
+        '</div>' +
+        '<div class="ep-perf-tooltip__row">' +
+          '<span class="ep-perf-tooltip__dot ep-perf-tooltip__dot--adds"></span>' +
+          '<span class="ep-perf-tooltip__name">Adds</span>' +
+          '<span class="ep-perf-tooltip__val">' + (+ds.adds).toLocaleString() + '</span>' +
+        '</div>' +
+        '<div class="ep-perf-tooltip__total"><span>Total Engagement</span><span>' + (+ds.total).toLocaleString() + '</span></div>';
+    }
+    function wireDowTooltip(host) {
+      attachPerfTooltip(host.querySelectorAll('.ep-dow-chart__col'), dowTooltipHtml);
+    }
+    const dowEl = document.getElementById('ep-dow');
+    renderDow(dowEl, dowDataFromTotals(dowVals));
+
+    // ─── By Promotion tab — chips + ranked table (parity w/ Original) ────
+    const chipsHost = document.getElementById('ep-promo-chips');
+    const detailHeader = document.getElementById('ep-promo-detail-header');
+    const detailStores = document.getElementById('ep-promo-stores');
+    const detailDow = document.getElementById('ep-promo-dow');
+    const detailStoresLabel = document.getElementById('ep-promo-stores-label');
+    const detailDowLabel = document.getElementById('ep-promo-dow-label');
+    const filterInput = document.getElementById('ep-promo-filter');
+    const promoCountEl = document.getElementById('ep-promo-count');
+    const rankedTbody = document.getElementById('ep-ranked-tbody');
+
+    const ALL_KEY = '__all__';
+    let activeKey = ALL_KEY;
+    let activeFilter = '';
+
+    // Busiest = highest composite (top of sorted list).
+    const busiestKey = promotions.length ? promotions[0].key : null;
+
+    function filteredPromos() {
+      if (!activeFilter) return promotions;
+      const q = activeFilter.toLowerCase();
+      return promotions.filter(p =>
+        (p.title || '').toLowerCase().indexOf(q) > -1 ||
+        (p.category || '').toLowerCase().indexOf(q) > -1
+      );
+    }
+
+    function updateCount() {
+      const n = filteredPromos().length;
+      const total = promotions.length;
+      promoCountEl.textContent = activeFilter
+        ? n + ' of ' + total + ' promotions'
+        : total + ' promotions';
+    }
+
+    function renderChips() {
+      const list = filteredPromos();
+      const allStoresCount = Object.keys(storeAgg).length;
+      const allChip = '<button class="ep-chip ' + (activeKey === ALL_KEY ? 'ep-chip--active' : '') + '" data-promo="' + ALL_KEY + '"><div class="ep-chip__top"><span class="material-symbols-outlined ep-chip__icon">apps</span><span class="ep-chip__name">All Promotions</span></div><span class="ep-chip__meta">' + promotions.length + ' promos · ' + allStoresCount + ' stores</span></button>';
+      const promoChips = list.map(p => {
+        const isActive = p.key === activeKey;
+        const isBusy = p.key === busiestKey;
+        return '<button class="ep-chip ' + (isActive ? 'ep-chip--active' : '') + '" data-promo="' + p.key.replace(/"/g, '&quot;') + '">' +
+          (isBusy ? '<span class="ep-chip__badge">Top</span>' : '') +
+          '<div class="ep-chip__top"><span class="material-symbols-outlined ep-chip__icon">local_offer</span><span class="ep-chip__name" title="' + p.title + '">' + p.title + '</span></div>' +
+          '<span class="ep-chip__meta">' + p.category + ' · ' + p.views.toLocaleString() + ' views</span>' +
+          '</button>';
+      }).join('');
+      chipsHost.innerHTML = allChip + promoChips;
+      chipsHost.querySelectorAll('.ep-chip').forEach(btn => {
+        btn.addEventListener('click', () => {
+          activeKey = btn.dataset.promo;
+          renderChips();
+          renderDetail();
+        });
+      });
+    }
+
+    function pctClass(pct) {
+      if (pct >= 75) return '';
+      if (pct >= 40) return ' ep-pct-pill--mid';
+      return ' ep-pct-pill--low';
+    }
+
+    // Stacked Performance bar — parity w/ Original PerfCharts. Each row's
+    // bar is sized as a fraction of the highest composite, with three
+    // segments (viewsScore/clicksScore/addsScore) using the same colors
+    // as shared-perf-charts.js METRIC_COLORS.
+    const maxComposite = promotions.reduce((m, p) => Math.max(m, p.composite), 0);
+
+    function renderPerfStacked(p) {
+      const totalPct = maxComposite > 0 ? Math.max(2, p.composite / maxComposite * 100) : 0;
+      const total = p.viewsScore + p.clicksScore + p.addsScore || 1;
+      const vPct = (p.viewsScore / total * 100).toFixed(2);
+      const cPct = (p.clicksScore / total * 100).toFixed(2);
+      const aPct = (p.addsScore / total * 100).toFixed(2);
+      return '<div class="ep-perf-stacked" ' +
+        'data-views="' + p.views + '" data-clicks="' + p.clicks + '" data-adds="' + p.adds + '" ' +
+        'data-views-score="' + p.viewsScore + '" data-clicks-score="' + p.clicksScore + '" data-adds-score="' + p.addsScore + '" ' +
+        'data-composite="' + p.composite + '" data-name="' + p.title.replace(/"/g, '&quot;') + '">' +
+        '<div class="ep-perf-stacked__bar" style="width:' + totalPct + '%;">' +
+          '<div class="ep-perf-stacked__seg ep-perf-stacked__seg--views" style="width:' + vPct + '%;"></div>' +
+          '<div class="ep-perf-stacked__seg ep-perf-stacked__seg--clicks" style="width:' + cPct + '%;"></div>' +
+          '<div class="ep-perf-stacked__seg ep-perf-stacked__seg--adds" style="width:' + aPct + '%;"></div>' +
+        '</div>' +
+        '<span class="ep-perf-stacked__value">' + p.composite.toLocaleString() + '</span>' +
+      '</div>';
+    }
+
+    function renderRankedTable() {
+      const list = filteredPromos();
+      rankedTbody.innerHTML = list.map((p, idx) => {
+        const safeKey = p.key.replace(/"/g, '&quot;');
+        return '<tr data-promo-key="' + safeKey + '">' +
+          '<td class="ep-rt-col-rank">' + (idx + 1) + '</td>' +
+          '<td class="ep-rt-col-promo">' + p.title + '</td>' +
+          '<td class="ep-rt-col-cat">' + p.category + '</td>' +
+          '<td class="ep-rt-col-num">' + p.views.toLocaleString() + '</td>' +
+          '<td class="ep-rt-col-num">' + p.clicks.toLocaleString() + '</td>' +
+          '<td class="ep-rt-col-num">' + p.adds.toLocaleString() + '</td>' +
+          '<td class="ep-rt-col-perf">' + renderPerfStacked(p) + '</td>' +
+          '<td class="ep-rt-col-pct"><span class="ep-pct-pill' + pctClass(p.percentile) + '">' + p.percentile + '%</span></td>' +
+          '</tr>';
+      }).join('');
+      // Wire row clicks to open the right detail sidebar (parity w/ Original).
+      rankedTbody.querySelectorAll('tr').forEach(tr => {
+        tr.addEventListener('click', () => {
+          const key = tr.dataset.promoKey;
+          openDetailSidebar(key);
+          rankedTbody.querySelectorAll('tr').forEach(r => r.classList.toggle('ep-row--active', r === tr));
+        });
+      });
+      wirePerfTooltip();
+    }
+
+    // Shared hover tooltip — used by ranked-table stacked bars, Top Promotions
+    // mini stacked bars, and Top Stores mini bars. Single floating element,
+    // selector-driven content via formatter callback. (binding hoisted to top
+    // of IIFE so early renders that wire tooltips don't hit TDZ on perfTooltip)
+    function ensurePerfTooltip() {
+      if (!perfTooltip) {
+        perfTooltip = document.createElement('div');
+        perfTooltip.className = 'ep-perf-tooltip';
+        document.body.appendChild(perfTooltip);
+      }
+      return perfTooltip;
+    }
+    function positionPerfTooltip(e) {
+      const x = e.clientX + 14, y = e.clientY + 14;
+      const tw = perfTooltip.offsetWidth, th = perfTooltip.offsetHeight;
+      const vw = window.innerWidth, vh = window.innerHeight;
+      perfTooltip.style.left = (x + tw > vw ? e.clientX - tw - 14 : x) + 'px';
+      perfTooltip.style.top = (y + th > vh ? e.clientY - th - 14 : y) + 'px';
+    }
+    function attachPerfTooltip(els, htmlFn) {
+      ensurePerfTooltip();
+      els.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+          perfTooltip.innerHTML = htmlFn(el.dataset);
+          perfTooltip.classList.add('ep-perf-tooltip--visible');
+        });
+        el.addEventListener('mousemove', positionPerfTooltip);
+        el.addEventListener('mouseleave', () => {
+          perfTooltip.classList.remove('ep-perf-tooltip--visible');
+        });
+      });
+    }
+    function stackedTooltipHtml(ds) {
+      return '<div class="ep-perf-tooltip__title">' + ds.name + '</div>' +
+        '<div class="ep-perf-tooltip__row">' +
+          '<span class="ep-perf-tooltip__dot ep-perf-tooltip__dot--views"></span>' +
+          '<span class="ep-perf-tooltip__name">Views</span>' +
+          '<span class="ep-perf-tooltip__val">' + (+ds.views).toLocaleString() + '</span>' +
+          '<span class="ep-perf-tooltip__score">(score: ' + (+ds.viewsScore).toLocaleString() + ')</span>' +
+        '</div>' +
+        '<div class="ep-perf-tooltip__row">' +
+          '<span class="ep-perf-tooltip__dot ep-perf-tooltip__dot--clicks"></span>' +
+          '<span class="ep-perf-tooltip__name">Clicks</span>' +
+          '<span class="ep-perf-tooltip__val">' + (+ds.clicks).toLocaleString() + '</span>' +
+          '<span class="ep-perf-tooltip__score">(score: ' + (+ds.clicksScore).toLocaleString() + ')</span>' +
+        '</div>' +
+        '<div class="ep-perf-tooltip__row">' +
+          '<span class="ep-perf-tooltip__dot ep-perf-tooltip__dot--adds"></span>' +
+          '<span class="ep-perf-tooltip__name">Adds</span>' +
+          '<span class="ep-perf-tooltip__val">' + (+ds.adds).toLocaleString() + '</span>' +
+          '<span class="ep-perf-tooltip__score">(score: ' + (+ds.addsScore).toLocaleString() + ')</span>' +
+        '</div>' +
+        '<div class="ep-perf-tooltip__total"><span>Total</span><span>' + (+ds.composite).toLocaleString() + '</span></div>';
+    }
+    function storesTooltipHtml(ds) {
+      return '<div class="ep-perf-tooltip__title">' + ds.name + '</div>' +
+        '<div class="ep-perf-tooltip__row">' +
+          '<span class="ep-perf-tooltip__name">Circular Views</span>' +
+          '<span class="ep-perf-tooltip__val">' + (+ds.value).toLocaleString() + '</span>' +
+        '</div>' +
+        '<div class="ep-perf-tooltip__total"><span>Share of brand</span><span>' + ds.pct + '%</span></div>' +
+        '<div class="ep-perf-tooltip__total"><span>Rank</span><span>#' + ds.rank + '</span></div>';
+    }
+    function wirePerfTooltip() {
+      attachPerfTooltip(rankedTbody.querySelectorAll('.ep-perf-stacked'), stackedTooltipHtml);
+    }
+    function wireMiniStackedTooltip(host) {
+      attachPerfTooltip(host.querySelectorAll('.ep-mini-stacked'), stackedTooltipHtml);
+    }
+    function wireTopStoresTooltip(host) {
+      attachPerfTooltip(host.querySelectorAll('.ep-mini-bar'), storesTooltipHtml);
+    }
+
+    function fmtAvgSession(seconds) {
+      const m = Math.floor(seconds / 60);
+      const s = seconds % 60;
+      return m + ':' + String(s).padStart(2, '0');
+    }
+
+    function renderDetail() {
+      let title, subtitle, views, clicks, adds, sessionSec, perUser, composite, storesData;
+      if (activeKey === ALL_KEY) {
+        title = 'All Promotions';
+        subtitle = '— Combined';
+        views = totalViews;
+        clicks = totalClicks;
+        adds = totalAdds;
+        composite = totalComposite;
+        const ctr = views > 0 ? clicks / views : 0;
+        sessionSec = Math.round(90 + ctr * 600);
+        perUser = ((clicks + adds) / Math.max(1, Math.round(views / 3.4))).toFixed(1);
+        storesData = Object.keys(globalStoreFull)
+          .map(sk => Object.assign({ label: sk }, globalStoreFull[sk]))
+          .sort((a, b) => (b.viewsScore + b.clicksScore + b.addsScore) - (a.viewsScore + a.clicksScore + a.addsScore))
+          .slice(0, 8);
+      } else {
+        const p = promotions.find(x => x.key === activeKey);
+        if (!p) return;
+        title = p.title;
+        subtitle = '— ' + p.category + ' · #' + (promotions.indexOf(p) + 1) + ' of ' + promotions.length;
+        views = p.views;
+        clicks = p.clicks;
+        adds = p.adds;
+        composite = p.composite;
+        const ctr = views > 0 ? clicks / views : 0;
+        sessionSec = Math.round(80 + ctr * 700);
+        perUser = ((clicks + adds) / Math.max(1, Math.round(views / 3.4))).toFixed(1);
+        storesData = Object.keys(p.stores)
+          .map(sk => Object.assign({ label: sk }, p.stores[sk]))
+          .sort((a, b) => (b.viewsScore + b.clicksScore + b.addsScore) - (a.viewsScore + a.clicksScore + a.addsScore))
+          .slice(0, 8);
+      }
+
+      detailHeader.innerHTML =
+        '<div><span class="ep-detail-header__title">' + title + '</span><span class="ep-detail-header__sub">' + subtitle + '</span></div>' +
+        '<div class="ep-detail-strip">' +
+          '<div class="ep-detail-strip__cell"><span class="ep-detail-strip__label">Circular Views</span><span class="ep-detail-strip__value ep-detail-strip__value--hero">' + views.toLocaleString() + '</span></div>' +
+          '<div class="ep-detail-strip__cell ep-detail-strip__cell--metric"><span class="ep-detail-strip__label">Clicks</span><span class="ep-detail-strip__value">' + clicks.toLocaleString() + '</span></div>' +
+          '<div class="ep-detail-strip__cell ep-detail-strip__cell--metric"><span class="ep-detail-strip__label">Adds</span><span class="ep-detail-strip__value">' + adds.toLocaleString() + '</span></div>' +
+          '<div class="ep-detail-strip__cell"><span class="ep-detail-strip__label">Avg Session</span><span class="ep-detail-strip__value">' + fmtAvgSession(sessionSec) + '</span></div>' +
+          '<div class="ep-detail-strip__cell"><span class="ep-detail-strip__label">Interactions / User</span><span class="ep-detail-strip__value">' + perUser + '</span></div>' +
+          '<div class="ep-detail-strip__cell"><span class="ep-detail-strip__label" title="Composite = (Views × 1) + (Clicks × 5) + (Adds × 20). Single weighted score that blends the three engagement signals.">Composite</span><span class="ep-detail-strip__value">' + composite.toLocaleString() + '</span></div>' +
+        '</div>';
+
+      const storesTitle = activeKey === ALL_KEY ? 'Engagement by Store — All Promotions' : 'Engagement by Store — ' + title;
+      detailStoresLabel.innerHTML = storesTitle +
+        '<span class="ep-perf-legend">' +
+          '<span class="ep-perf-legend__item"><span class="ep-perf-legend__dot ep-perf-legend__dot--views"></span>Views</span>' +
+          '<span class="ep-perf-legend__item"><span class="ep-perf-legend__dot ep-perf-legend__dot--clicks"></span>Clicks</span>' +
+          '<span class="ep-perf-legend__item"><span class="ep-perf-legend__dot ep-perf-legend__dot--adds"></span>Adds</span>' +
+        '</span>';
+      renderStoresStacked(detailStores, storesData);
+
+      // DoW per chip — slight variation by chip seed so it isn't identical
+      const seed = activeKey === ALL_KEY ? 0 : ((activeKey || '').length);
+      const localDow = dowVals.map((v, i) => v - 200 + ((seed + i * 13) % 400));
+      renderDow(detailDow, dowDataFromTotals(localDow));
+      const dowTitle = activeKey === ALL_KEY ? 'Day of Week Pattern — All Promotions' : 'Day of Week Pattern — ' + title;
+      detailDowLabel.innerHTML = dowTitle +
+        '<span class="ep-perf-legend">' +
+          '<span class="ep-perf-legend__item"><span class="ep-perf-legend__dot ep-perf-legend__dot--views"></span>Views</span>' +
+          '<span class="ep-perf-legend__item"><span class="ep-perf-legend__dot ep-perf-legend__dot--clicks"></span>Clicks</span>' +
+          '<span class="ep-perf-legend__item"><span class="ep-perf-legend__dot ep-perf-legend__dot--adds"></span>Adds</span>' +
+        '</span>';
+    }
+
+    // ─── Right Detail sidebar (parity w/ Original panel--right) ──────────
+    const sidebar = document.getElementById('ep-detail-sidebar');
+    const sidebarBody = document.getElementById('ep-detail-sidebar-body');
+    const sidebarClose = document.getElementById('ep-detail-sidebar-close');
+
+    function openDetailSidebar(key) {
+      const p = promotions.find(x => x.key === key);
+      if (!p) return;
+      const perfClass = p.percentile >= 75 ? 'high' : p.percentile >= 50 ? 'medium' : 'low';
+      const ctr = p.views > 0 ? (p.clicks / p.views * 100).toFixed(1) : '0.0';
+      const addPct = p.views > 0 ? (p.adds / p.views * 100).toFixed(2) : '0.00';
+      const sessionSec = Math.round(80 + (p.clicks / Math.max(1, p.views)) * 700);
+      const intPerUser = ((p.clicks + p.adds) / Math.max(1, Math.round(p.views / 3.4))).toFixed(1);
+      const topStores = Object.keys(p.stores)
+        .map(sk => Object.assign({ label: sk }, p.stores[sk]))
+        .sort((a, b) => (b.viewsScore + b.clicksScore + b.addsScore) - (a.viewsScore + a.clicksScore + a.addsScore))
+        .slice(0, 5);
+
+      sidebarBody.innerHTML =
+        '<div>' +
+          '<h3 class="ep-detail-sidebar__name">' + p.title + '</h3>' +
+          '<p class="ep-detail-sidebar__cat">' + p.category + ' · Rank #' + (promotions.indexOf(p) + 1) + ' of ' + promotions.length + '</p>' +
+        '</div>' +
+
+        '<div class="ep-detail-sidebar__perf-bar">' +
+          '<div class="ep-detail-sidebar__section-label">Performance</div>' +
+          '<div class="perf-bar">' +
+            '<div class="perf-bar__track perf-bar__track--' + perfClass + '" style="height:16px;border-radius:999px;overflow:hidden;border:1px solid #e5e7eb;background:#f3f4f6;flex:1;">' +
+              '<div class="perf-bar__fill perf-bar__fill--' + perfClass + '" style="width:' + p.percentile + '%;height:100%;border-radius:999px;background:' + (perfClass === 'high' ? '#10b981' : perfClass === 'medium' ? '#f59e0b' : '#ef4444') + ';"></div>' +
+            '</div>' +
+            '<span class="perf-bar__value" style="min-width:64px;text-align:right;font-weight:700;">' + p.composite.toLocaleString() + '</span>' +
+          '</div>' +
+        '</div>' +
+
+        '<div>' +
+          '<div class="ep-detail-sidebar__section-label">Engagement Metrics</div>' +
+          '<div class="ep-detail-sidebar__metric-grid">' +
+            '<div class="ep-detail-sidebar__metric ep-detail-sidebar__metric--hero">' +
+              '<div class="ep-detail-sidebar__metric-label">Circular Views</div>' +
+              '<div class="ep-detail-sidebar__metric-value">' + p.views.toLocaleString() + '</div>' +
+            '</div>' +
+            '<div class="ep-detail-sidebar__metric">' +
+              '<div class="ep-detail-sidebar__metric-label">Clicks</div>' +
+              '<div class="ep-detail-sidebar__metric-value">' + p.clicks.toLocaleString() + '</div>' +
+              '<div style="font-size:10px;color:#6b7280;margin-top:2px;">CTR ' + ctr + '%</div>' +
+            '</div>' +
+            '<div class="ep-detail-sidebar__metric">' +
+              '<div class="ep-detail-sidebar__metric-label">Adds to List</div>' +
+              '<div class="ep-detail-sidebar__metric-value">' + p.adds.toLocaleString() + '</div>' +
+              '<div style="font-size:10px;color:#6b7280;margin-top:2px;">' + addPct + '% of views</div>' +
+            '</div>' +
+            '<div class="ep-detail-sidebar__metric">' +
+              '<div class="ep-detail-sidebar__metric-label" title="Rank-within-cohort as a percentile. 100 = top of the active 75-promotion cohort.">Rank</div>' +
+              '<div class="ep-detail-sidebar__metric-value">' + p.percentile + '%</div>' +
+            '</div>' +
+            '<div class="ep-detail-sidebar__metric">' +
+              '<div class="ep-detail-sidebar__metric-label">Avg Session</div>' +
+              '<div class="ep-detail-sidebar__metric-value">' + Math.floor(sessionSec / 60) + ':' + String(sessionSec % 60).padStart(2, '0') + '</div>' +
+            '</div>' +
+            '<div class="ep-detail-sidebar__metric">' +
+              '<div class="ep-detail-sidebar__metric-label">Interactions / User</div>' +
+              '<div class="ep-detail-sidebar__metric-value">' + intPerUser + '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+
+        '<div>' +
+          '<div class="ep-detail-sidebar__section-label">Top Stores' +
+            '<span class="ep-perf-legend">' +
+              '<span class="ep-perf-legend__item"><span class="ep-perf-legend__dot ep-perf-legend__dot--views"></span>Views</span>' +
+              '<span class="ep-perf-legend__item"><span class="ep-perf-legend__dot ep-perf-legend__dot--clicks"></span>Clicks</span>' +
+              '<span class="ep-perf-legend__item"><span class="ep-perf-legend__dot ep-perf-legend__dot--adds"></span>Adds</span>' +
+            '</span>' +
+          '</div>' +
+          '<div id="ep-sidebar-stores"></div>' +
+        '</div>';
+
+      // Render stacked V/C/A bars for top stores in sidebar (parity w/ main detail panel)
+      const storesHost = document.getElementById('ep-sidebar-stores');
+      if (storesHost) renderStoresStacked(storesHost, topStores);
+
+      sidebar.classList.add('ep-detail-sidebar--open');
+      sidebar.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeDetailSidebar() {
+      sidebar.classList.remove('ep-detail-sidebar--open');
+      sidebar.setAttribute('aria-hidden', 'true');
+      rankedTbody.querySelectorAll('tr.ep-row--active').forEach(r => r.classList.remove('ep-row--active'));
+    }
+    sidebarClose.addEventListener('click', closeDetailSidebar);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetailSidebar(); });
+
+    // View-toggle: Chip Drilldown ↔ Ranked Table (parity w/ Original)
+    document.querySelectorAll('[data-ep-promo-view]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.epPromoView;
+        document.querySelectorAll('[data-ep-promo-view]').forEach(b =>
+          b.classList.toggle('ep-view-toggle__btn--active', b === btn));
+        document.querySelectorAll('[data-ep-promo-pane]').forEach(p =>
+          p.classList.toggle('ep-promo-view--active', p.dataset.epPromoPane === target));
+      });
+    });
+
+    // Filter input: filters both chips and ranked table. Clear-X button
+    // appears when input non-empty (Apr 9 #6c .entity-search parity).
+    const filterClearBtn = document.getElementById('ep-promo-filter-clear');
+    function applyFilterChange() {
+      activeFilter = filterInput.value.trim();
+      if (filterClearBtn) filterClearBtn.hidden = activeFilter === '';
+      if (activeKey !== ALL_KEY && !filteredPromos().some(p => p.key === activeKey)) {
+        activeKey = ALL_KEY;
+      }
+      renderChips();
+      renderRankedTable();
+      renderDetail();
+      updateCount();
+    }
+    if (filterInput) {
+      filterInput.addEventListener('input', applyFilterChange);
+    }
+    if (filterClearBtn) {
+      filterClearBtn.addEventListener('click', () => {
+        filterInput.value = '';
+        applyFilterChange();
+        filterInput.focus();
+      });
+    }
+
+    // CSV export — current ranked table view + context header row
+    // (date range, entity, active filter). Apr 9 Adam #6d.
+    const exportBtn = document.getElementById('header-export-btn');
+    if (exportBtn) {
+      exportBtn.addEventListener('click', () => {
+        const list = filteredPromos();
+        const ctxLines = [
+          '# Analytics Dashboard — Engagement / By Promotion',
+          '# Date Range: Week 47 (Nov 18–24, 2025)',
+          '# Entity: Grocery Holding Corp · 27 locations',
+          '# Filter: ' + (activeFilter ? '"' + activeFilter + '"' : '(none)'),
+          '# Cohort: ' + list.length + ' of ' + promotions.length + ' promotions',
+          '# Composite weights: views×1, clicks×5, adds×20',
+          '# Exported: ' + new Date().toISOString()
+        ];
+        const header = ['Rank','Promotion','Category','Views','Clicks','Adds','Composite','Percentile'];
+        const rows = list.map((p, idx) => [
+          idx + 1,
+          '"' + (p.title || '').replace(/"/g, '""') + '"',
+          '"' + (p.category || '').replace(/"/g, '""') + '"',
+          p.views, p.clicks, p.adds, p.composite, p.percentile
+        ].join(','));
+        const csv = ctxLines.join('\n') + '\n' + header.join(',') + '\n' + rows.join('\n');
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'engagement-by-promotion-week47.csv';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      });
+    }
+
+    renderChips();
+    renderRankedTable();
+    renderDetail();
+    updateCount();
+
+    // ─── Other Engagement cuts: Circular / Category / Store / Day ─────────
+    // Generic chip-drilldown builder (creative-chips pattern) for the
+    // remaining tabs. Same shape as By Promotion but lighter — chips +
+    // stat strip + 2-col detail. Ranked-table view-toggle is By-Promotion-
+    // only for now (kept as the direction-setter for Adam's read).
+    function aggregateBy(recs, keyFn, labelFn, secondaryFn) {
+      const map = {};
+      recs.forEach(r => {
+        const k = keyFn(r);
+        if (k == null || k === '') return;
+        const ks = String(k);
+        if (!map[ks]) {
+          map[ks] = { key: ks, label: labelFn ? labelFn(r) : ks, views: 0, clicks: 0, adds: 0, viewsScore: 0, clicksScore: 0, addsScore: 0, secondary: {} };
+        }
+        const m = map[ks];
+        m.views += r.views || 0; m.clicks += r.clicks || 0; m.adds += r.adds || 0;
+        m.viewsScore += r.viewsScore || 0; m.clicksScore += r.clicksScore || 0; m.addsScore += r.addsScore || 0;
+        const sk = secondaryFn(r);
+        if (sk == null || sk === '') return;
+        if (!m.secondary[sk]) m.secondary[sk] = { views: 0, clicks: 0, adds: 0, viewsScore: 0, clicksScore: 0, addsScore: 0 };
+        const s = m.secondary[sk];
+        s.views += r.views || 0; s.clicks += r.clicks || 0; s.adds += r.adds || 0;
+        s.viewsScore += r.viewsScore || 0; s.clicksScore += r.clicksScore || 0; s.addsScore += r.addsScore || 0;
+      });
+      const arr = Object.values(map);
+      arr.forEach(m => { m.composite = m.viewsScore + m.clicksScore + m.addsScore; });
+      arr.sort((a, b) => b.composite - a.composite);
+      return arr;
+    }
+    function aggregateSecondaryAll(recs, secondaryFn) {
+      const m = {};
+      recs.forEach(r => {
+        const sk = secondaryFn(r);
+        if (sk == null || sk === '') return;
+        if (!m[sk]) m[sk] = { views: 0, clicks: 0, adds: 0, viewsScore: 0, clicksScore: 0, addsScore: 0 };
+        const s = m[sk];
+        s.views += r.views || 0; s.clicks += r.clicks || 0; s.adds += r.adds || 0;
+        s.viewsScore += r.viewsScore || 0; s.clicksScore += r.clicksScore || 0; s.addsScore += r.addsScore || 0;
+      });
+      return m;
+    }
+    const VCA_LEGEND_HTML =
+      '<span class="ep-perf-legend">' +
+        '<span class="ep-perf-legend__item"><span class="ep-perf-legend__dot ep-perf-legend__dot--views"></span>Views</span>' +
+        '<span class="ep-perf-legend__item"><span class="ep-perf-legend__dot ep-perf-legend__dot--clicks"></span>Clicks</span>' +
+        '<span class="ep-perf-legend__item"><span class="ep-perf-legend__dot ep-perf-legend__dot--adds"></span>Adds</span>' +
+      '</span>';
+    function setupEngagementCut(cfg) {
+      const pane = document.querySelector('[data-ep-pane="' + cfg.paneKey + '"]');
+      if (!pane || !cfg.items.length) return;
+      const idBase = 'ep-' + cfg.paneKey;
+      pane.innerHTML =
+        '<div class="ep-cohort-note ep-cohort-note--scaffold-info" style="font-size:11px; color:var(--color-text-secondary,#6b7280); margin-bottom:var(--space-3);">' +
+          '<span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">info</span> ' +
+          cfg.scaffoldNote +
+        '</div>' +
+        '<div class="ep-promo-view ep-promo-view--chips ep-promo-view--active">' +
+          '<div class="ep-chips-row ep-chips-row--scroll" id="' + idBase + '-chips" role="tablist" aria-label="' + cfg.unitPlural + ' drilldown"></div>' +
+          '<div class="ep-detail-header" id="' + idBase + '-detail-header"></div>' +
+          '<div class="ep-detail-cols">' +
+            '<div class="ep-detail-col">' +
+              '<div class="ep-detail-col__label" id="' + idBase + '-secondary-label">Engagement by ' + cfg.secondaryAxisLabel + '</div>' +
+              '<div id="' + idBase + '-secondary"></div>' +
+            '</div>' +
+            '<div class="ep-detail-col">' +
+              '<div class="ep-detail-col__label" id="' + idBase + '-dow-label">Day of Week Pattern</div>' +
+              '<div id="' + idBase + '-dow"></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+
+      const chipsHost = document.getElementById(idBase + '-chips');
+      const detailHeader = document.getElementById(idBase + '-detail-header');
+      const secondaryHost = document.getElementById(idBase + '-secondary');
+      const secondaryLabel = document.getElementById(idBase + '-secondary-label');
+      const dowHost = document.getElementById(idBase + '-dow');
+      const dowLabel = document.getElementById(idBase + '-dow-label');
+      const ALL = '__all__';
+      let activeKey = ALL;
+
+      const totalItem = cfg.items.reduce((acc, it) => {
+        acc.views += it.views; acc.clicks += it.clicks; acc.adds += it.adds;
+        acc.viewsScore += it.viewsScore; acc.clicksScore += it.clicksScore; acc.addsScore += it.addsScore;
+        return acc;
+      }, { views: 0, clicks: 0, adds: 0, viewsScore: 0, clicksScore: 0, addsScore: 0 });
+      totalItem.composite = totalItem.viewsScore + totalItem.clicksScore + totalItem.addsScore;
+      const busiestKey = cfg.items[0] && cfg.items[0].key;
+
+      function renderChips() {
+        const allChip = '<button class="ep-chip ' + (activeKey === ALL ? 'ep-chip--active' : '') + '" data-cut="' + ALL + '"><div class="ep-chip__top"><span class="material-symbols-outlined ep-chip__icon">apps</span><span class="ep-chip__name">All ' + cfg.unitPlural + '</span></div><span class="ep-chip__meta">' + cfg.items.length + ' ' + cfg.unitPlural.toLowerCase() + '</span></button>';
+        const itemChips = cfg.items.map(it => {
+          const isActive = it.key === activeKey;
+          const isBusy = it.key === busiestKey;
+          return '<button class="ep-chip ' + (isActive ? 'ep-chip--active' : '') + '" data-cut="' + it.key.replace(/"/g, '&quot;') + '">' +
+            (isBusy ? '<span class="ep-chip__badge">Top</span>' : '') +
+            '<div class="ep-chip__top"><span class="material-symbols-outlined ep-chip__icon">' + cfg.icon + '</span><span class="ep-chip__name" title="' + it.label + '">' + it.label + '</span></div>' +
+            '<span class="ep-chip__meta">' + it.views.toLocaleString() + ' views</span>' +
+          '</button>';
+        }).join('');
+        chipsHost.innerHTML = allChip + itemChips;
+        chipsHost.querySelectorAll('.ep-chip').forEach(btn => {
+          btn.addEventListener('click', () => {
+            activeKey = btn.dataset.cut;
+            renderChips();
+            renderDetail();
+          });
+        });
+      }
+
+      function renderDetail() {
+        const isAll = activeKey === ALL;
+        const item = isAll ? totalItem : cfg.items.find(x => x.key === activeKey);
+        if (!item) return;
+        const title = isAll ? 'All ' + cfg.unitPlural : item.label;
+        const ctr = item.views > 0 ? item.clicks / item.views : 0;
+        const sessionSec = Math.round(80 + ctr * 700);
+        const perUser = ((item.clicks + item.adds) / Math.max(1, Math.round(item.views / 3.4))).toFixed(1);
+
+        detailHeader.innerHTML =
+          '<div><span class="ep-detail-header__title">' + title + '</span></div>' +
+          '<div class="ep-detail-strip">' +
+            '<div class="ep-detail-strip__cell"><span class="ep-detail-strip__label">Circular Views</span><span class="ep-detail-strip__value ep-detail-strip__value--hero">' + item.views.toLocaleString() + '</span></div>' +
+            '<div class="ep-detail-strip__cell ep-detail-strip__cell--metric"><span class="ep-detail-strip__label">Clicks</span><span class="ep-detail-strip__value">' + item.clicks.toLocaleString() + '</span></div>' +
+            '<div class="ep-detail-strip__cell ep-detail-strip__cell--metric"><span class="ep-detail-strip__label">Adds</span><span class="ep-detail-strip__value">' + item.adds.toLocaleString() + '</span></div>' +
+            '<div class="ep-detail-strip__cell"><span class="ep-detail-strip__label">Avg Session</span><span class="ep-detail-strip__value">' + Math.floor(sessionSec / 60) + ':' + String(sessionSec % 60).padStart(2, '0') + '</span></div>' +
+            '<div class="ep-detail-strip__cell"><span class="ep-detail-strip__label">Interactions / User</span><span class="ep-detail-strip__value">' + perUser + '</span></div>' +
+            '<div class="ep-detail-strip__cell"><span class="ep-detail-strip__label" title="Composite = (Views × 1) + (Clicks × 5) + (Adds × 20). Single weighted score that blends the three engagement signals.">Composite</span><span class="ep-detail-strip__value">' + item.composite.toLocaleString() + '</span></div>' +
+          '</div>';
+
+        const secondaryMap = isAll ? cfg.globalSecondary : item.secondary;
+        const secondaryRows = Object.keys(secondaryMap)
+          .map(k => Object.assign({ label: k }, secondaryMap[k]))
+          .sort((a, b) => (b.viewsScore + b.clicksScore + b.addsScore) - (a.viewsScore + a.clicksScore + a.addsScore))
+          .slice(0, 8);
+        secondaryLabel.innerHTML = 'Engagement by ' + cfg.secondaryAxisLabel + ' — ' + title + VCA_LEGEND_HTML;
+        renderStoresStacked(secondaryHost, secondaryRows);
+
+        // DoW: real per-day breakdown not in GA-mock yet; synthesize from
+        // funnel ratios applied to the chip's total. Stable per-chip via seed.
+        const seed = isAll ? 0 : (activeKey.length || 0);
+        const baseTotals = dowVals.map((v, i) => v - 200 + ((seed + i * 13) % 400));
+        const itemTotal = baseTotals.reduce((s, v) => s + v, 0);
+        const targetTotal = item.views + item.clicks + item.adds;
+        const scale = itemTotal > 0 ? targetTotal / itemTotal : 1;
+        const scaled = baseTotals.map(v => Math.max(1, Math.round(v * scale)));
+        renderDow(dowHost, dowDataFromTotals(scaled));
+        dowLabel.innerHTML = 'Day of Week Pattern — ' + title + VCA_LEGEND_HTML;
+      }
+
+      renderChips();
+      renderDetail();
+    }
+
+    // Cut configs — wire all four remaining tabs from the current dataset.
+    setupEngagementCut({
+      paneKey: 'circular',
+      unitPlural: 'Circulars',
+      icon: 'menu_book',
+      secondaryAxisLabel: 'Store',
+      scaffoldNote: 'Chip drilldown by publication week. Each circular = a week’s ad. Real-data wiring through own-platform telemetry + Google Analytics on Vinay’s Angular conversion.',
+      items: aggregateBy(records, r => r.weekLabel || ('Week ' + r.weekNum), r => r.weekLabel || ('Week ' + r.weekNum), r => r.storeName || r.storeId),
+      globalSecondary: aggregateSecondaryAll(records, r => r.storeName || r.storeId)
+    });
+    setupEngagementCut({
+      paneKey: 'category',
+      unitPlural: 'Categories',
+      icon: 'category',
+      secondaryAxisLabel: 'Store',
+      scaffoldNote: 'Chip drilldown by product category. Composite ranks categories by combined V/C/A engagement.',
+      items: aggregateBy(records, r => r.category, r => r.category, r => r.storeName || r.storeId),
+      globalSecondary: aggregateSecondaryAll(records, r => r.storeName || r.storeId)
+    });
+    setupEngagementCut({
+      paneKey: 'store',
+      unitPlural: 'Stores',
+      icon: 'store',
+      secondaryAxisLabel: 'Promotion',
+      scaffoldNote: 'Chip drilldown by store location. Replaces what engagement-circulars.html attempts (store ranking) plus an All Stores aggregate row.',
+      items: aggregateBy(records, r => r.storeName || r.storeId, r => r.storeName || r.storeId, r => r.title || r.promotionId),
+      globalSecondary: aggregateSecondaryAll(records, r => r.title || r.promotionId)
+    });
+    // By Day — synthetic per-day engagement; GA wiring lands in Vinay’s
+    // Angular conversion. V/C/A split derived from real funnel ratios so the
+    // shape is honest even though daily counters are mock.
+    (function buildDayCut() {
+      const dayItems = days.map((d, i) => {
+        const t = dowVals[i];
+        const v = Math.round(t * viewsRatio);
+        const c = Math.round(t * clicksRatio);
+        const a = Math.max(0, t - v - c);
+        return {
+          key: d, label: d,
+          views: v, clicks: c, adds: a,
+          viewsScore: v, clicksScore: c * 5, addsScore: a * 20,
+          composite: v + c * 5 + a * 20,
+          secondary: {}
+        };
+      });
+      // Per-store split per day proportional to globalStoreFull share of total.
+      const storeShareTotal = Object.keys(globalStoreFull).reduce((s, k) => s + globalStoreFull[k].views, 0) || 1;
+      dayItems.forEach(di => {
+        Object.keys(globalStoreFull).forEach(sk => {
+          const g = globalStoreFull[sk];
+          const share = g.views / storeShareTotal;
+          di.secondary[sk] = {
+            views: Math.round(di.views * share),
+            clicks: Math.round(di.clicks * share),
+            adds: Math.round(di.adds * share),
+            viewsScore: Math.round(di.viewsScore * share),
+            clicksScore: Math.round(di.clicksScore * share),
+            addsScore: Math.round(di.addsScore * share)
+          };
+        });
+      });
+      dayItems.sort((a, b) => b.composite - a.composite);
+      const globalSecondary = {};
+      Object.keys(globalStoreFull).forEach(sk => { globalSecondary[sk] = Object.assign({}, globalStoreFull[sk]); });
+      setupEngagementCut({
+        paneKey: 'day',
+        unitPlural: 'Days',
+        icon: 'calendar_view_week',
+        secondaryAxisLabel: 'Store',
+        scaffoldNote: 'Per-day engagement synthesized from funnel ratios (≈ full V/C/A mix). Real daily counters arrive when GA per-day dimension is wired.',
+        items: dayItems,
+        globalSecondary: globalSecondary
+      });
+    })();
+  })();
+  </script>
+
+</body>
+</html>

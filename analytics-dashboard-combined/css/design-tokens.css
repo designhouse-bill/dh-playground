@@ -231,4 +231,16 @@
   --section-media-light:      #f4f7e0;
   --section-traffic:          #1b7f88;
   --section-traffic-light:    #e4f4f5;
+
+  /* Engagement section accent colors — same palette family (mid-saturation hues + very light tint) */
+  --section-overview:         #4f46e5;
+  --section-overview-light:   #eef2ff;
+  --section-sessions:         #2563eb;
+  --section-sessions-light:   #eff6ff;
+  --section-users:            #0891b2;
+  --section-users-light:      #ecfeff;
+  --section-duration:         #d97706;
+  --section-duration-light:   #fef3c7;
+  --section-cardevents:       #7c3aed;
+  --section-cardevents-light: #f5f3ff;
 }

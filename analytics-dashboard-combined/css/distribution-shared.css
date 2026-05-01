@@ -1,0 +1,454 @@
+/* ================================================================
+   distribution-shared.css
+   Shared chrome for all three Distribution pages
+   (Media, Visitation, Traffic). Consumed by distribution.css
+   and engagement.css — do not add page-specific overrides here.
+
+   Consumers: distribution-media.html, distribution-visitation.html,
+              distribution-traffic.html
+   Load before: distribution.css
+
+   Contents:
+     1. Color tokens   — --dist-funnel-* / --dist-audience-*
+     2. KPI strip      — .kpi-label / .kpi-value (canonical)
+     3. View toggle    — .view-toggle + children
+     4. Range chips    — .duration-presets / .ep-trend-ranges alias
+     5. Table utils    — .th-sort-* / .tree-toggle / .type-badge
+     6. Pane toolbar   — .dist-pane-toolbar (NEW)
+     7. Hero band      — .dist-hero-band (NEW)
+     8. Two-col grid   — .dist-2col (NEW)
+     9. Chip selector  — .dist-chip-selector (NEW)
+    10. Creative icon  — .creative-icon (NEW)
+   ================================================================ */
+
+/* ── 1. Color tokens ───────────────────────────────────────────── */
+
+:root {
+  /* Funnel palette: Impressions → Clicks → Visits */
+  --dist-funnel-1: #4272D8;
+  --dist-funnel-2: #f59e0b;
+  --dist-funnel-3: #ef4444;
+
+  /* Audience composition palette: Loyal → Returning → New */
+  --dist-audience-1: #4272D8;
+  --dist-audience-2: #f97316;
+  --dist-audience-3: #22c55e;
+}
+
+/* ── 2. KPI strip — canonical (distribution.css version) ──────── */
+
+.kpi-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--p-text-color-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.kpi-value {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--p-text-color);
+  line-height: 1.2;
+}
+
+/* ── 3. View toggle ───────────────────────────────────────────── */
+/* Moved from engagement.css — same component on all Distribution pages */
+
+.view-toggle {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.view-toggle__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  height: 32px;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.view-toggle__btn:hover {
+  background-color: var(--color-gray-100);
+  color: var(--color-text-secondary);
+}
+
+.view-toggle__btn.active {
+  background-color: var(--color-primary-500);
+  border-color: var(--color-primary-500);
+  color: white;
+}
+
+.view-toggle__btn .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.view-toggle__label {
+  font-size: var(--font-size-sm);
+}
+
+/* ── 4. Range chips ───────────────────────────────────────────── */
+/* Moved from distribution.css — .ep-trend-ranges is an alias */
+
+.duration-presets,
+.ep-trend-ranges {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.duration-preset,
+.ep-trend-range {
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.duration-preset:last-child,
+.ep-trend-range:last-child {
+  border-right: none;
+}
+
+.duration-preset:hover,
+.ep-trend-range:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text-primary);
+}
+
+.duration-preset.active,
+.ep-trend-range.active {
+  background: var(--color-gray-900, #1f2937);
+  color: #fff;
+}
+
+.duration-preset__sub {
+  font-size: 11px;
+  font-weight: 400;
+  opacity: 0.75;
+  margin-left: 2px;
+}
+
+.duration-presets--compact {
+  display: inline-flex;
+  gap: 4px;
+  border: none;
+  border-radius: 0;
+  overflow: visible;
+  margin-left: var(--space-3);
+}
+
+.duration-presets--compact .duration-preset {
+  padding: 4px 10px;
+  font-size: 11px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+}
+
+/* ── 5. Table utilities ───────────────────────────────────────── */
+/* Moved from engagement.css */
+
+.th-sortable {
+  padding: var(--space-2) var(--space-3) !important;
+}
+
+.th-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+}
+
+.th-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.th-header:hover .th-label {
+  color: var(--color-text-primary);
+}
+
+.th-header:hover .th-sort-icon {
+  color: var(--color-primary-600);
+}
+
+.th-label {
+  white-space: nowrap;
+}
+
+.th-sort-icon {
+  font-size: 16px;
+  color: var(--color-text-tertiary);
+  transition: color var(--transition-fast);
+}
+
+.th-sortable:hover .th-sort-icon,
+.th-sort--active .th-sort-icon {
+  color: var(--color-primary-600);
+}
+
+.th-sort--active {
+  background-color: var(--color-primary-50) !important;
+}
+
+.th-sort--active .th-label {
+  color: var(--color-gray-700);
+  font-weight: var(--font-weight-bold);
+}
+
+.tree-toggle {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: transform var(--transition-fast);
+}
+
+.tree-toggle:hover {
+  color: var(--color-text-primary);
+}
+
+.tree-toggle.collapsed {
+  transform: rotate(-90deg);
+}
+
+.tree-toggle .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.tree-toggle-placeholder {
+  width: 20px;
+  flex-shrink: 0;
+}
+
+.tree-row-hidden {
+  display: none;
+}
+
+.type-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.type-badge--brand {
+  background-color: var(--color-info-100);
+  color: var(--color-info-700);
+}
+
+.type-badge--subbrand {
+  background-color: var(--color-gray-200);
+  color: var(--color-gray-700);
+}
+
+.type-badge--store {
+  background-color: var(--color-success-100);
+  color: var(--color-success-700);
+}
+
+.type-badge--brand-group {
+  background-color: var(--color-warning-100);
+  color: var(--color-warning-700);
+}
+
+.type-badge--sub-group {
+  background-color: var(--color-purple-100);
+  color: var(--color-purple-700);
+}
+
+/* ── 6. Pane toolbar ─────────────────────────────────────────── */
+/* NEW — toolbar row inside each sub-tab pane.
+   Contains .view-toggle and/or .duration-presets. */
+
+.dist-pane-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0 var(--space-3);
+  flex-wrap: wrap;
+}
+
+.dist-pane-toolbar__label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+}
+
+.dist-pane-toolbar__spacer {
+  flex: 1;
+}
+
+/* ── 7. Hero band ────────────────────────────────────────────── */
+/* NEW — "ALL CREATIVES — Combined" band with 3 sub-metrics.
+   Background color set via --section-color-light on each page. */
+
+.dist-hero-band {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: var(--section-color-light, #eff6ff);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.dist-hero-band__name {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.dist-hero-band__name em {
+  font-style: normal;
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-normal);
+}
+
+.dist-hero-band__sep {
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-weight-normal);
+}
+
+.dist-hero-band__metrics {
+  display: flex;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+
+.dist-hero-band__metric {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 80px;
+}
+
+.dist-hero-band__metric-value {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.dist-hero-band__metric-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ── 8. Two-col grid ─────────────────────────────────────────── */
+/* NEW — two equal columns inside a perf-tab pane.
+   Collapses to single col below 640px. */
+
+.dist-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+@media (max-width: 639px) {
+  .dist-2col {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── 9. Chip selector strip ─────────────────────────────────── */
+/* NEW — horizontal chip strip driving in-pane filter.
+   Used on By Creative, By Day, By Store panes. */
+
+.dist-chip-selector {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  padding-bottom: var(--space-2);
+}
+
+/* ── 10. Creative icon ───────────────────────────────────────── */
+/* NEW — brand-colored initials block; shared version of
+   .creative-chip__thumb for use outside chip context. */
+
+.creative-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  background: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.creative-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.creative-icon .material-symbols-outlined {
+  font-size: 20px;
+}
+
+.creative-icon--sm {
+  width: 24px;
+  height: 24px;
+  font-size: 10px;
+  border-radius: 4px;
+}
+
+.creative-icon--lg {
+  width: 48px;
+  height: 48px;
+  font-size: 14px;
+  border-radius: 8px;
+}
+
+.creative-icon--all {
+  background: linear-gradient(135deg, #475569 0%, #64748b 100%);
+}
+
+/* Per-type color variants — driven by creative.type metadata */
+.creative-icon--image  { background: #3b82f6; }
+.creative-icon--video  { background: #ef4444; }
+.creative-icon--gif    { background: #8b5cf6; }
+.creative-icon--html   { background: #f59e0b; }

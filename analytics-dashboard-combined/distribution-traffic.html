@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
+  <link rel="stylesheet" href="css/distribution-shared.css?v=1">
   <link rel="stylesheet" href="css/distribution.css?v=28">
 </head>
 <body data-dist-page="traffic">
@@ -269,7 +270,11 @@
   <script src="js/shared/app-config.js"></script>
   <script src="js/shared/narrative-engine.js"></script>
   <script src="js/shared/chart-colors.js"></script>
-  <script src="js/data/pulse-real.js?v=3"></script>
+  <script src="js/shared/format.js"></script>
+  <script src="js/shared/chart-defaults.js"></script>
+  <!-- pulse-real-slim.js — Phase 0 prototype perf swap. Same PulseReal API.
+       Restore js/data/pulse-real.js?v=3 for full production-fidelity data. -->
+  <script src="js/data/pulse-real-slim.js?v=1"></script>
 
   <script src="js/data/distribution-entities.js?v=13"></script>
   <script src="js/data/distribution-records.js?v=21"></script>

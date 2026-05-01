@@ -651,3 +651,6 @@ a.dashboard-switcher__item {
 .dashboard-switcher__item .material-symbols-outlined {
   font-size: 20px;
 }
+
+/* Hide Original/Proposed/Proposed-Max version toggle (audit baseline = Proposed Max only). Markup retained for non-UI reference. */
+.view-version-toggle { display: none !important; }

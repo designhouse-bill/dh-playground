@@ -19,6 +19,10 @@
   <link rel="stylesheet" href="css/distribution.css">
 
   <style>
+    /* Ensure modals are hidden by default regardless of CSS load order */
+    .modal-overlay { display: none !important; }
+    .modal-overlay.active { display: flex !important; }
+
     /* VIEW (Original / Proposed) toggle — added to flip between the two
        engagement promotions surfaces during stakeholder review. */
     .view-version-toggle {
@@ -134,7 +138,7 @@
        gets the 3-segment stacked bar instead (see .ep-mini-stacked below). */
     .ep-mini-bar { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: 13px; }
     .ep-mini-bar__name { width: 130px; color: var(--color-text, #1f2937); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .ep-mini-bar__track { flex: 1; height: 8px; background: #f1f5f9; border-radius: 999px; overflow: hidden; }
+    .ep-mini-bar__track { flex: 1; height: 20px; background: #f1f5f9; border-radius: 999px; overflow: hidden; }
     .ep-mini-bar__fill { height: 100%; background: #4272D8; border-radius: 999px; }
     .ep-mini-bar__val { width: 60px; text-align: right; color: var(--color-text-secondary, #6b7280); font-variant-numeric: tabular-nums; }
 
@@ -145,7 +149,7 @@
     .ep-mini-stacked__bar { min-width: 40px; }
     .ep-mini-stacked__bar {
       flex: 1;
-      height: 10px;
+      height: 20px;
       display: flex;
       border-radius: 4px;
       overflow: hidden;
@@ -191,7 +195,7 @@
     .ep-dow-chart__seg--adds { background: #937DF8; }
     .ep-dow-chart__col:hover .ep-dow-chart__bar-stack { filter: brightness(0.95); }
     .ep-dow-chart__label { font-size: 10px; color: var(--color-text-secondary, #6b7280); text-transform: uppercase; letter-spacing: 0.04em; }
-    .ep-dow-chart__val { display: flex; flex-direction: column; align-items: center; gap: 1px; line-height: 1.1; }
+    .ep-dow-chart__val { display: none; flex-direction: column; align-items: center; gap: 1px; line-height: 1.1; }
     .ep-dow-chart__val-num { font-size: 12px; font-weight: 700; color: var(--color-text, #1f2937); font-variant-numeric: tabular-nums; }
     .ep-dow-chart__val-label { font-size: 9px; color: var(--color-text-secondary, #6b7280); text-transform: uppercase; letter-spacing: 0.04em; }
 
@@ -481,32 +485,33 @@
     }
     /* Hover tooltip — mirrors Original eCharts tooltip layout */
     .ep-perf-tooltip {
-      position: absolute;
+      position: fixed;
       z-index: 80;
-      background: #fff;
-      border: 1px solid var(--color-border, #e5e7eb);
-      border-radius: 8px;
-      box-shadow: 0 8px 24px -8px rgba(0,0,0,0.15);
-      padding: 12px 14px;
-      min-width: 240px;
+      background: rgba(17, 24, 39, 0.96);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 6px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.28);
+      padding: 10px 14px;
+      min-width: 200px;
       pointer-events: none;
       font-size: 13px;
+      color: #fff;
       display: none;
     }
     .ep-perf-tooltip--visible { display: block; }
     .ep-perf-tooltip__title {
       font-weight: 700;
       margin-bottom: 8px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--color-border, #e5e7eb);
-      color: var(--color-text, #1f2937);
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
     }
     .ep-perf-tooltip__row {
       display: grid;
       grid-template-columns: auto 1fr auto auto;
       gap: 8px;
       align-items: center;
-      padding: 4px 0;
+      padding: 3px 0;
     }
     .ep-perf-tooltip__dot {
       width: 8px; height: 8px; border-radius: 50%;
@@ -514,17 +519,17 @@
     .ep-perf-tooltip__dot--views { background: #4272D8; }
     .ep-perf-tooltip__dot--clicks { background: #B8D64D; }
     .ep-perf-tooltip__dot--adds { background: #937DF8; }
-    .ep-perf-tooltip__name { color: var(--color-text, #1f2937); }
-    .ep-perf-tooltip__val { font-weight: 600; font-variant-numeric: tabular-nums; }
-    .ep-perf-tooltip__score { color: var(--color-text-secondary, #6b7280); font-size: 11px; }
+    .ep-perf-tooltip__name { color: rgba(255,255,255,0.9); }
+    .ep-perf-tooltip__val { font-weight: 600; font-variant-numeric: tabular-nums; color: #fff; }
+    .ep-perf-tooltip__score { color: rgba(255,255,255,0.5); font-size: 11px; }
     .ep-perf-tooltip__total {
       display: flex;
       justify-content: space-between;
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px solid var(--color-border, #e5e7eb);
+      margin-top: 6px;
+      padding-top: 6px;
+      border-top: 1px solid rgba(255,255,255,0.2);
       font-weight: 700;
-      color: var(--color-text, #1f2937);
+      color: #fff;
     }
 
     /* Right Detail sidebar — parity w/ Original engagement-promotions.html
@@ -734,7 +739,7 @@
       </div>
 
       <div class="view-modes" id="view-modes">
-        <a href="engagement-promotions-proposed.html" class="mode-btn mode-btn--primary active" data-mode="base" aria-label="Report view">
+        <a href="engagement-promotions-proposed-max.html" class="mode-btn mode-btn--primary active" data-mode="base" aria-label="Report view">
           <span class="material-symbols-outlined">view_list</span>
           REPORT
         </a>
@@ -1021,10 +1026,127 @@
     </div>
   </aside>
 
+  <!-- Date Picker Modal -->
+  <div class="modal-overlay" id="date-picker-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-header-title">
+          <span class="material-symbols-outlined">calendar_month</span>
+          <h3 class="modal-title">Select Date Range</h3>
+        </div>
+        <button class="modal-close" onclick="closeDatePicker()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="date-picker-tabs">
+          <button class="date-picker-tab active" data-tab="week" onclick="switchDateTab('week')">By Week</button>
+          <button class="date-picker-tab" data-tab="custom" onclick="switchDateTab('custom')">Custom Range</button>
+        </div>
+        <div class="date-tab-content active" id="week-tab-content">
+          <div class="week-search-row">
+            <div class="week-search">
+              <span class="material-symbols-outlined">search</span>
+              <input type="text" id="week-search-input" placeholder="Search weeks..." oninput="filterWeeks(this.value)">
+            </div>
+            <div id="week-year-selector"></div>
+          </div>
+          <div class="week-list" id="week-list"></div>
+        </div>
+        <div class="date-tab-content" id="custom-tab-content">
+          <div class="custom-date-inputs">
+            <div class="date-input-group">
+              <label>Start Date</label>
+              <input type="date" id="custom-start-date" value="2025-11-18">
+            </div>
+            <div class="date-input-group">
+              <label>End Date</label>
+              <input type="date" id="custom-end-date" value="2025-11-24">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer modal-footer--right">
+        <button class="modal-btn modal-btn--secondary" onclick="closeDatePicker()">Cancel</button>
+        <button class="modal-btn modal-btn--primary" onclick="applyDateSelection()">Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Entity Selector Modal -->
+  <div class="modal-overlay" id="entity-selector-modal">
+    <div class="modal modal--extra-wide">
+      <div class="modal-header">
+        <div class="modal-header-title">
+          <span class="material-symbols-outlined">store</span>
+          <h3 class="modal-title">Select Entity</h3>
+        </div>
+        <button class="modal-close" onclick="closeEntitySelector()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="modal-body modal-body--no-padding">
+        <div class="entity-tabs" style="padding: 0 var(--space-6);">
+          <button class="entity-tab active" data-tab="nodes" onclick="switchEntityTab('nodes')">
+            <span class="material-symbols-outlined">account_tree</span>
+            Nodes
+          </button>
+          <button class="entity-tab" data-tab="groups" onclick="switchEntityTab('groups')">
+            <span class="material-symbols-outlined">workspaces</span>
+            Groups
+          </button>
+        </div>
+        <div class="entity-tab-content active" id="nodes-tab-content">
+          <div class="entity-search" style="margin: var(--space-4) var(--space-6);">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" id="entity-search-input" placeholder="Search entities..." oninput="filterEntities(this.value)">
+          </div>
+          <div class="tree-table-container">
+            <table class="tree-table">
+              <thead>
+                <tr>
+                  <th class="tree-col-name">Name</th>
+                  <th class="tree-col-type">Type</th>
+                  <th class="tree-col-address">Address</th>
+                  <th class="tree-col-subdomain">Subdomain</th>
+                  <th class="tree-col-path">Path</th>
+                </tr>
+              </thead>
+              <tbody id="entity-tree-body"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="entity-tab-content" id="groups-tab-content">
+          <div class="entity-search" style="margin: var(--space-4) var(--space-6);">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" id="group-search-input" placeholder="Search groups..." oninput="filterGroups(this.value)">
+          </div>
+          <div class="group-list" id="group-list" style="padding: 0 var(--space-6);"></div>
+          <div class="group-actions" style="padding: var(--space-4) var(--space-6);">
+            <button class="create-group-btn" onclick="openCreateGroupModal()">
+              <span class="material-symbols-outlined">add</span>
+              Create New Group
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer modal-footer--right">
+        <button class="modal-btn modal-btn--secondary" onclick="closeEntitySelector()">Cancel</button>
+        <button class="modal-btn modal-btn--primary" onclick="applyEntitySelection()">Apply</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ============================================================
        SCRIPTS
        ============================================================ -->
   <script src="js/data/engagement-promotions.js"></script>
+  <script src="js/data/engagement-mock-data.js"></script>
+  <script src="js/engagement/cache-manager.js"></script>
+  <script src="js/engagement/data-service.js"></script>
+  <script src="js/engagement/state-manager.js"></script>
+  <script src="js/engagement/shared-core.js"></script>
+  <script src="js/engagement/shared-modals.js"></script>
   <script src="js/header-slide.js"></script>
   <script src="js/engagement/engagement-page-app.js"></script>
 
@@ -1290,17 +1412,19 @@
       });
     }
     function renderDow(host, data) {
-      const max = data.reduce((m, d) => Math.max(m, d.total), 0);
+      const pts = d => d.views * 1 + d.clicks * 5 + d.adds * 20;
+      const max = data.reduce((m, d) => Math.max(m, pts(d)), 0);
       host.innerHTML = '<div class="ep-dow-chart">' + data.map(d => {
-        const h = max > 0 ? Math.round(d.total / max * 100) : 0;
-        const vPct = d.total > 0 ? (d.views / d.total * 100).toFixed(2) : 0;
-        const cPct = d.total > 0 ? (d.clicks / d.total * 100).toFixed(2) : 0;
-        const aPct = d.total > 0 ? (d.adds / d.total * 100).toFixed(2) : 0;
+        const p = pts(d);
+        const h = max > 0 ? Math.round(p / max * 100) : 0;
+        const vPct = p > 0 ? (d.views * 1 / p * 100).toFixed(2) : 0;
+        const cPct = p > 0 ? (d.clicks * 5 / p * 100).toFixed(2) : 0;
+        const aPct = p > 0 ? (d.adds * 20 / p * 100).toFixed(2) : 0;
         return '<div class="ep-dow-chart__col" ' +
-          'data-name="' + d.day + '" data-views="' + d.views + '" data-clicks="' + d.clicks + '" data-adds="' + d.adds + '" data-total="' + d.total + '">' +
+          'data-name="' + d.day + '" data-views="' + d.views + '" data-clicks="' + d.clicks + '" data-adds="' + d.adds + '" data-total="' + d.total + '" data-pts="' + p + '">' +
           '<span class="ep-dow-chart__val">' +
-            '<span class="ep-dow-chart__val-num">' + d.total.toLocaleString() + '</span>' +
-            '<span class="ep-dow-chart__val-label">total</span>' +
+            '<span class="ep-dow-chart__val-num">' + p.toLocaleString() + '</span>' +
+            '<span class="ep-dow-chart__val-label">pts</span>' +
           '</span>' +
           '<div class="ep-dow-chart__bar-wrap"><div class="ep-dow-chart__bar-stack" style="height:' + h + '%;">' +
             '<div class="ep-dow-chart__seg ep-dow-chart__seg--adds" style="height:' + aPct + '%;"></div>' +
@@ -1313,23 +1437,24 @@
       wireDowTooltip(host);
     }
     function dowTooltipHtml(ds) {
+      const p = +ds.pts || (+ds.views + +ds.clicks * 5 + +ds.adds * 20);
       return '<div class="ep-perf-tooltip__title">' + ds.name + '</div>' +
         '<div class="ep-perf-tooltip__row">' +
           '<span class="ep-perf-tooltip__dot ep-perf-tooltip__dot--views"></span>' +
-          '<span class="ep-perf-tooltip__name">Views</span>' +
+          '<span class="ep-perf-tooltip__name">Views <span style="color:rgba(255,255,255,0.5);font-size:10px;">×1</span></span>' +
           '<span class="ep-perf-tooltip__val">' + (+ds.views).toLocaleString() + '</span>' +
         '</div>' +
         '<div class="ep-perf-tooltip__row">' +
           '<span class="ep-perf-tooltip__dot ep-perf-tooltip__dot--clicks"></span>' +
-          '<span class="ep-perf-tooltip__name">Clicks</span>' +
+          '<span class="ep-perf-tooltip__name">Clicks <span style="color:rgba(255,255,255,0.5);font-size:10px;">×5</span></span>' +
           '<span class="ep-perf-tooltip__val">' + (+ds.clicks).toLocaleString() + '</span>' +
         '</div>' +
         '<div class="ep-perf-tooltip__row">' +
           '<span class="ep-perf-tooltip__dot ep-perf-tooltip__dot--adds"></span>' +
-          '<span class="ep-perf-tooltip__name">Adds</span>' +
+          '<span class="ep-perf-tooltip__name">Adds <span style="color:rgba(255,255,255,0.5);font-size:10px;">×20</span></span>' +
           '<span class="ep-perf-tooltip__val">' + (+ds.adds).toLocaleString() + '</span>' +
         '</div>' +
-        '<div class="ep-perf-tooltip__total"><span>Total Engagement</span><span>' + (+ds.total).toLocaleString() + '</span></div>';
+        '<div class="ep-perf-tooltip__total"><span>Engagement Score</span><span>' + p.toLocaleString() + '</span></div>';
     }
     function wireDowTooltip(host) {
       attachPerfTooltip(host.querySelectorAll('.ep-dow-chart__col'), dowTooltipHtml);
@@ -1373,6 +1498,7 @@
     }
 
     function renderChips() {
+      if (!chipsHost) return;
       const list = filteredPromos();
       const allStoresCount = Object.keys(storeAgg).length;
       const allChip = '<button class="ep-chip ' + (activeKey === ALL_KEY ? 'ep-chip--active' : '') + '" data-promo="' + ALL_KEY + '"><div class="ep-chip__top"><span class="material-symbols-outlined ep-chip__icon">apps</span><span class="ep-chip__name">All Promotions</span></div><span class="ep-chip__meta">' + promotions.length + ' promos · ' + allStoresCount + ' stores</span></button>';
@@ -1427,6 +1553,7 @@
     }
 
     function renderRankedTable() {
+      if (!rankedTbody) return;
       const list = filteredPromos();
       rankedTbody.innerHTML = list.map((p, idx) => {
         const safeKey = p.key.replace(/"/g, '&quot;');
@@ -1760,10 +1887,10 @@
       });
     }
 
-    renderChips();
-    renderRankedTable();
-    renderDetail();
-    updateCount();
+    try { renderChips(); } catch(e) {}
+    try { renderRankedTable(); } catch(e) {}
+    try { renderDetail(); } catch(e) {}
+    try { updateCount(); } catch(e) {}
 
     // ─── Other Engagement cuts: Circular / Category / Store / Day ─────────
     // Generic chip-drilldown builder (creative-chips pattern) for the
@@ -1854,6 +1981,7 @@
       const busiestKey = cfg.items[0] && cfg.items[0].key;
 
       function renderChips() {
+        if (!chipsHost) return;
         const allChip = '<button class="ep-chip ' + (activeKey === ALL ? 'ep-chip--active' : '') + '" data-cut="' + ALL + '"><div class="ep-chip__top"><span class="material-symbols-outlined ep-chip__icon">apps</span><span class="ep-chip__name">All ' + cfg.unitPlural + '</span></div><span class="ep-chip__meta">' + cfg.items.length + ' ' + cfg.unitPlural.toLowerCase() + '</span></button>';
         const itemChips = cfg.items.map(it => {
           const isActive = it.key === activeKey;
@@ -1991,6 +2119,17 @@
         items: dayItems,
         globalSecondary: globalSecondary
       });
+    })();
+
+    // Boot DashboardModals so Date Range and Entity overlays open on click.
+    (function bootModals() {
+      if (typeof window.DashboardCore === 'undefined' || typeof window.DashboardModals === 'undefined') return;
+      try {
+        const core = window.DashboardCore;
+        core.initElements();
+        window.DashboardModals.init(core);
+        core.loadData().catch(function() {}); // populate week/entity lists async
+      } catch(e) { /* non-critical — page renders without overlays */ }
     })();
   })();
   </script>

@@ -2550,7 +2550,13 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     const colors = ChartColors.series;
 
     chart.setOption({
-      tooltip: { trigger: 'axis' },
+      tooltip: {
+        trigger: 'axis',
+        backgroundColor: 'rgba(17,24,39,0.96)',
+        borderColor: 'rgba(255,255,255,0.12)',
+        textStyle: { color: '#fff', fontSize: 12 },
+        formatter: function(params) { return darkAxisTooltip(params, function(v) { return v.toFixed(1) + '%'; }); }
+      },
       legend: {
         data: D.competitiveCrossover.map(c => c.competitor_name),
         bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, itemGap: 20,
@@ -2600,7 +2606,13 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     var colors = ChartColors.series;
 
     chart.setOption({
-      tooltip: { trigger: 'axis' },
+      tooltip: {
+        trigger: 'axis',
+        backgroundColor: 'rgba(17,24,39,0.96)',
+        borderColor: 'rgba(255,255,255,0.12)',
+        textStyle: { color: '#fff', fontSize: 12 },
+        formatter: function(params) { return darkAxisTooltip(params, function(v) { return v.toFixed(1) + '%'; }); }
+      },
       legend: {
         data: D.competitiveCrossover.map(function(c) { return c.competitor_name; }),
         bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, itemGap: 20,
@@ -3497,7 +3509,15 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         splitLine: { lineStyle: { color: '#f3f4f6' } }
       },
       series: series,
-      tooltip: { trigger: 'axis', axisPointer: { type: 'line' } }
+      tooltip: {
+        trigger: 'axis', axisPointer: { type: 'line' },
+        backgroundColor: 'rgba(17,24,39,0.96)',
+        borderColor: 'rgba(255,255,255,0.12)',
+        textStyle: { color: '#fff', fontSize: 12 },
+        formatter: function(params) {
+          return darkAxisTooltip(params, function(v) { return v >= 1000 ? (v / 1000).toFixed(1) + 'k' : String(v); });
+        }
+      }
     }, true);
     setTimeout(function() { _perfStoreTrendChart.resize(); }, 50);
   }
@@ -3736,9 +3756,26 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       yAxis: { type: 'value', max: Math.ceil(maxVal * 1.2), axisLabel: { formatter: function(v) { return v >= 1000 ? (v/1000).toFixed(0)+'k' : v; }, color: '#9ca3af', fontSize: 9 }, splitLine: { lineStyle: { color: '#f3f4f6' } } },
       series: [{ type: 'bar', data: totals, barMaxWidth: 40,
         itemStyle: { color: '#6b7280', borderRadius: [4, 4, 0, 0] },
-        label: { show: true, position: 'top', fontSize: 9, color: '#6b7280', formatter: function(p) { return p.value >= 1000 ? (p.value/1000).toFixed(1)+'k' : p.value; } }
+        label: {
+          show: true, position: 'top',
+          formatter: function(p) {
+            var n = p.value >= 1000 ? (p.value/1000).toFixed(1)+'k' : String(p.value);
+            return '{val|' + n + '}\n{lbl|visits}';
+          },
+          rich: {
+            val: { fontSize: 11, fontWeight: 700, color: '#374151', lineHeight: 15 },
+            lbl: { fontSize: 9, color: '#9ca3af', lineHeight: 12 }
+          }
+        }
       }],
-      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: function(p) { return p[0].name + '<br/><b>' + p[0].value.toLocaleString() + '</b> visits'; } }
+      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, backgroundColor: 'rgba(17,24,39,0.96)', borderColor: 'rgba(255,255,255,0.12)', textStyle: { color: '#fff', fontSize: 12 },
+        formatter: function(p) {
+          var day = p[0].name;
+          var v = p[0].value;
+          return '<div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:5px;">' + day + '</div>'
+            + '<div style="color:#fff;font-weight:700;">' + v.toLocaleString() + ' <span style="font-weight:400;color:rgba(255,255,255,0.6);">visits</span></div>';
+        }
+      }
     }, true);
   }
 
@@ -3876,7 +3913,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       xAxis: { type: 'category', data: DAY_NAMES, axisLabel: { fontSize: 11, color: '#374151' }, axisLine: { lineStyle: { color: '#e5e7eb' } }, axisTick: { show: false } },
       yAxis: { type: 'value', max: series._yMax, axisLabel: { formatter: function(v) { return v >= 1000 ? (v/1000).toFixed(1)+'k' : v; }, color: '#9ca3af', fontSize: 10 }, splitLine: { lineStyle: { color: '#f3f4f6' } } },
       series: series,
-      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: _dowTooltipFormatter }
+      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, backgroundColor: 'rgba(17,24,39,0.96)', borderColor: 'rgba(255,255,255,0.12)', textStyle: { color: '#fff', fontSize: 12 }, formatter: _dowTooltipFormatter }
     }, true);
   }
 
@@ -3952,7 +3989,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       xAxis: { type: 'category', data: DAY_NAMES, axisLabel: { fontSize: 11, color: '#374151' }, axisLine: { lineStyle: { color: '#e5e7eb' } }, axisTick: { show: false } },
       yAxis: { type: 'value', max: series._yMax, axisLabel: { formatter: function(v) { return v >= 1000 ? (v/1000).toFixed(1)+'k' : v; }, color: '#9ca3af', fontSize: 10 }, splitLine: { lineStyle: { color: '#f3f4f6' } } },
       series: series,
-      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: _dowTooltipFormatter }
+      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, backgroundColor: 'rgba(17,24,39,0.96)', borderColor: 'rgba(255,255,255,0.12)', textStyle: { color: '#fff', fontSize: 12 }, formatter: _dowTooltipFormatter }
     }, true);
   }
 
@@ -4180,9 +4217,16 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
             show: true,
             position: 'top',
             color: activeIdx >= 0 && activeIdx !== i ? 'transparent' : '#374151',
-            fontSize: 10,
+            fontSize: 11,
             fontWeight: 600,
-            formatter: function(p) { return p.value >= 1000 ? (p.value / 1000).toFixed(1) + 'k' : p.value; }
+            formatter: function(p) {
+              var n = p.value >= 1000 ? (p.value / 1000).toFixed(1) + 'k' : String(p.value);
+              return '{val|' + n + '}\n{lbl|visits}';
+            },
+            rich: {
+              val: { fontSize: 11, fontWeight: 700, color: '#374151', lineHeight: 15 },
+              lbl: { fontSize: 9, color: '#9ca3af', lineHeight: 12 }
+            }
           }
         };
       })
@@ -4198,15 +4242,19 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     var totalParam = params.find(function(p) { return p.seriesName === '__total__'; });
     var dataParams = params.filter(function(p) { return p.seriesName !== '__total__'; });
     var fullTotal = totalParam ? totalParam.value : dataParams.reduce(function(s, p) { return s + p.value; }, 0);
-    if (dataParams.length === 0) {
-      return day + '<br/><hr style="margin:4px 0;border-color:#e5e7eb;">Total: <b>' + fullTotal.toLocaleString() + '</b>';
-    }
-    var lines = dataParams.map(function(p) {
-      return '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:' +
-        p.color + ';margin-right:4px;vertical-align:middle;"></span>' +
-        p.seriesName + ': <b>' + p.value.toLocaleString() + '</b>';
+    var header = '<div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:7px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.18);">' + day + '</div>';
+    var rows = dataParams.map(function(p) {
+      return '<div style="display:flex;justify-content:space-between;gap:14px;padding:2px 0;">'
+        + '<span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:' + p.color + ';margin-right:6px;vertical-align:middle;"></span>'
+        + '<span style="color:rgba(255,255,255,0.85);">' + p.seriesName + '</span></span>'
+        + '<span style="font-weight:600;color:#fff;">' + p.value.toLocaleString() + '</span>'
+        + '</div>';
     });
-    return day + '<br/>' + lines.join('<br/>') + '<br/><hr style="margin:4px 0;border-color:#e5e7eb;">Total: <b>' + fullTotal.toLocaleString() + '</b>';
+    var total = '<div style="display:flex;justify-content:space-between;gap:14px;padding-top:6px;margin-top:4px;border-top:1px solid rgba(255,255,255,0.18);">'
+      + '<span style="color:rgba(255,255,255,0.7);">Total</span>'
+      + '<span style="font-weight:700;color:#fff;">' + fullTotal.toLocaleString() + ' visits</span>'
+      + '</div>';
+    return header + (rows.length ? rows.join('') + total : total);
   }
 
   function _dayVisits(storeTotal, dayIdx) {
@@ -4309,7 +4357,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       xAxis: { type: 'category', data: DAY_NAMES, axisLabel: { fontSize: 11, color: '#374151' }, axisLine: { lineStyle: { color: '#e5e7eb' } }, axisTick: { show: false } },
       yAxis: { type: 'value', max: series._yMax, axisLabel: { formatter: function(v) { return v >= 1000 ? (v/1000).toFixed(1)+'k' : v; }, color: '#9ca3af', fontSize: 10 }, splitLine: { lineStyle: { color: '#f3f4f6' } } },
       series: series,
-      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: _dowTooltipFormatter }
+      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, backgroundColor: 'rgba(17,24,39,0.96)', borderColor: 'rgba(255,255,255,0.12)', textStyle: { color: '#fff', fontSize: 12 }, formatter: _dowTooltipFormatter }
     }, true);
   }
 
@@ -4800,15 +4848,75 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       series: series,
       tooltip: {
         trigger: 'axis', axisPointer: { type: 'shadow' },
-        formatter: function(params) {
-          var lines = params.map(function(p) {
-            return '<span style="display:inline-block;margin-right:4px;border-radius:10px;width:8px;height:8px;background:' + p.color + '"></span>' + p.seriesName + ': <b>' + p.value + '%</b>';
-          });
-          return params[0].axisValueLabel + '<br/>' + lines.join('<br/>');
-        }
+        backgroundColor: 'rgba(17,24,39,0.96)',
+        borderColor: 'rgba(255,255,255,0.12)',
+        textStyle: { color: '#fff', fontSize: 12 },
+        formatter: function(params) { return darkAxisTooltip(params, function(v) { return v + '%'; }); }
       }
     }, true);
   }
+
+  // ── Shared dark tooltip helpers ────────────────────────────────────────────
+
+  function _fmtDateRange(startISO, endISO) {
+    var mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var s = new Date(startISO + 'T00:00:00Z');
+    var e = new Date(endISO + 'T00:00:00Z');
+    if (s.getUTCMonth() === e.getUTCMonth()) {
+      return mo[s.getUTCMonth()] + ' ' + s.getUTCDate() + '–' + e.getUTCDate() + ', ' + e.getUTCFullYear();
+    }
+    return mo[s.getUTCMonth()] + ' ' + s.getUTCDate() + ' – ' + mo[e.getUTCMonth()] + ' ' + e.getUTCDate() + ', ' + e.getUTCFullYear();
+  }
+
+  // Returns a human-readable date hint for a bucket label (empty string = no hint).
+  function bucketDateHint(label) {
+    if (!label) return '';
+    // Day names — label is already self-explanatory
+    if (/^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)$/.test(label)) return '';
+    // 'Week N' format — look up start/end in D.flightWeeks
+    var wm = label.match(/^Week\s+(\d+)$/);
+    if (wm && D && D.flightWeeks) {
+      var fw = D.flightWeeks.find(function(w) { return w.label === label; });
+      if (fw) return _fmtDateRange(fw.start, fw.end);
+    }
+    // 'W1'–'W13' relative weeks — W13 = Dec 10–16, 2025 (flight anchor)
+    var rm = label.match(/^W(\d+)$/);
+    if (rm) {
+      var n = parseInt(rm[1]);
+      var anchorMs = Date.UTC(2025, 11, 10);
+      var startMs = anchorMs + (n - 13) * 7 * 86400000;
+      return _fmtDateRange(
+        new Date(startMs).toISOString().slice(0, 10),
+        new Date(startMs + 6 * 86400000).toISOString().slice(0, 10)
+      );
+    }
+    // Quarter labels
+    var quarters = { Q1: 'Jan – Mar 2025', Q2: 'Apr – Jun 2025', Q3: 'Jul – Sep 2025', Q4: 'Oct – Dec 2025' };
+    if (quarters[label]) return quarters[label];
+    return '';
+  }
+
+  // Renders a dark-themed eCharts axis tooltip body. valueFmt(v) formats each series value.
+  function darkAxisTooltip(params, valueFmt) {
+    if (!params || !params.length) return '';
+    var label = params[0].axisValueLabel || params[0].name;
+    var hint = bucketDateHint(label);
+    var header = hint
+      ? '<div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:2px;">' + label + '</div>'
+        + '<div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:7px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.18);">' + hint + '</div>'
+      : '<div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:7px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.18);">' + label + '</div>';
+    var rows = params.map(function(p) {
+      return '<div style="display:flex;justify-content:space-between;gap:14px;padding:2px 0;">'
+        + '<span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'
+        + p.color + ';margin-right:6px;vertical-align:middle;"></span>'
+        + '<span style="color:rgba(255,255,255,0.85);">' + p.seriesName + '</span></span>'
+        + '<span style="font-weight:600;color:#fff;">' + valueFmt(p.value) + '</span>'
+        + '</div>';
+    });
+    return header + rows.join('');
+  }
+
+  // ── /Shared dark tooltip helpers ───────────────────────────────────────────
 
   function bucketLabelsFor(duration) {
     if (duration === '1w') return ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -4930,12 +5038,10 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       series: series,
       tooltip: {
         trigger: 'axis', axisPointer: { type: 'shadow' },
-        formatter: function(params) {
-          var lines = params.map(function(p) {
-            return '<span style="display:inline-block;margin-right:4px;border-radius:10px;width:8px;height:8px;background:' + p.color + '"></span>' + p.seriesName + ': <b>' + p.value + '%</b>';
-          });
-          return params[0].axisValueLabel + '<br/>' + lines.join('<br/>');
-        }
+        backgroundColor: 'rgba(17,24,39,0.96)',
+        borderColor: 'rgba(255,255,255,0.12)',
+        textStyle: { color: '#fff', fontSize: 12 },
+        formatter: function(params) { return darkAxisTooltip(params, function(v) { return v + '%'; }); }
       }
     }, true);
   }

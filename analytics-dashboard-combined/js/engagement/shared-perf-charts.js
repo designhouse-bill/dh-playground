@@ -84,8 +84,8 @@ const PerfCharts = (() => {
   /**
    * Create eCharts stacked horizontal bar chart
    * @param {string} containerId - DOM element ID for chart
-   * @param {Object} data - { views, clicks, adds }
-   * @param {Object} options - { height, maxTotal, entityName }
+   * @param {Object} data - { views, clicks, adds, composite }
+   * @param {Object} options - { height, maxTotal, entityName, scoreOnly }
    */
   function createChart(containerId, data, options = {}) {
     const container = document.getElementById(containerId);
@@ -97,6 +97,7 @@ const PerfCharts = (() => {
     const height = options.height || 16;
     const maxTotal = options.maxTotal || maxValues.total || 1;
     const entityName = options.entityName || '';
+    const scoreOnly = options.scoreOnly || false;
 
     // Set container height
     container.style.height = `${height}px`;
@@ -106,7 +107,9 @@ const PerfCharts = (() => {
     chartInstances.set(containerId, chart);
 
     // Build chart option
-    const chartOption = buildChartOption(data, maxTotal, entityName);
+    const chartOption = scoreOnly
+      ? buildScoreOnlyChartOption(data.composite || 0, maxTotal, entityName)
+      : buildChartOption(data, maxTotal, entityName);
     chart.setOption(chartOption);
 
     // Setup resize observer
@@ -129,7 +132,11 @@ const PerfCharts = (() => {
     const views = data.views || 0;
     const clicks = data.clicks || 0;
     const adds = data.adds || 0;
-    const total = views + clicks + adds;
+
+    // Bar segments use weighted points, not raw counts
+    const viewsPts  = views * 1;
+    const clicksPts = clicks * 5;
+    const addsPts   = adds * 20;
 
     const showAll = selectedMetrics.includes('all');
     const series = [];
@@ -140,7 +147,7 @@ const PerfCharts = (() => {
         name: 'Views',
         type: 'bar',
         stack: 'total',
-        data: [views],
+        data: [viewsPts],
         itemStyle: {
           color: METRIC_COLORS.views,
           borderRadius: series.length === 0 ? [4, 0, 0, 4] : 0
@@ -158,7 +165,7 @@ const PerfCharts = (() => {
         name: 'Clicks',
         type: 'bar',
         stack: 'total',
-        data: [clicks],
+        data: [clicksPts],
         itemStyle: {
           color: METRIC_COLORS.clicks,
           borderRadius: 0
@@ -177,7 +184,7 @@ const PerfCharts = (() => {
         name: 'Adds',
         type: 'bar',
         stack: 'total',
-        data: [adds],
+        data: [addsPts],
         itemStyle: {
           color: METRIC_COLORS.adds,
           borderRadius: [0, 4, 4, 0]
@@ -229,59 +236,102 @@ const PerfCharts = (() => {
           // Fallback to cursor-based positioning
           return [point[0] - size.contentSize[0] / 2, point[1] + 30];
         },
-        backgroundColor: '#ffffff',
-        borderColor: '#e5e7eb',
+        backgroundColor: 'rgba(17,24,39,0.96)',
+        borderColor: 'rgba(255,255,255,0.12)',
         borderWidth: 1,
-        padding: [12, 16],
-        extraCssText: 'box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 9999;',
+        padding: [10, 14],
+        extraCssText: 'box-shadow: 0 6px 18px rgba(0,0,0,0.28); z-index: 9999;',
         textStyle: {
-          color: '#0f172a',
+          color: '#fff',
           fontSize: 12,
           fontFamily: 'inherit'
         },
         formatter: (params) => {
-          // Show all metrics with weighted scores
           let html = '';
 
-          // Add title if entity name is provided
           if (entityName) {
-            html += `<div style="font-weight:600;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #e5e7eb;">${entityName}</div>`;
+            html += `<div style="font-weight:600;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.2);color:#fff;">${entityName}</div>`;
           }
 
-          // Calculate weighted scores
-          const viewsScore = views * 1;
+          const viewsScore  = views * 1;
           const clicksScore = clicks * 5;
-          const addsScore = adds * 20;
-          const totalScore = viewsScore + clicksScore + addsScore;
+          const addsScore   = adds * 20;
+          const totalScore  = viewsScore + clicksScore + addsScore;
 
-          // Build metric rows
-          const metrics = [
-            { name: 'Views', value: views, score: viewsScore, color: METRIC_COLORS.views },
-            { name: 'Clicks', value: clicks, score: clicksScore, color: METRIC_COLORS.clicks },
-            { name: 'Adds', value: adds, score: addsScore, color: METRIC_COLORS.adds }
+          // Column headers
+          html += `<div style="display:flex;align-items:center;color:rgba(255,255,255,0.5);font-size:10px;margin-bottom:5px;padding-left:18px;">
+            <span style="min-width:52px;"></span>
+            <span style="min-width:64px;text-align:right;">Interactions</span>
+            <span style="min-width:64px;text-align:right;">Points</span>
+          </div>`;
+
+          const rows = [
+            { name: 'Views',  value: views,  score: viewsScore,  color: METRIC_COLORS.views,  weight: '×1'  },
+            { name: 'Clicks', value: clicks, score: clicksScore, color: METRIC_COLORS.clicks, weight: '×5'  },
+            { name: 'Adds',   value: adds,   score: addsScore,   color: METRIC_COLORS.adds,   weight: '×20' }
           ];
 
-          metrics.forEach(metric => {
-            html += `
-              <div style="display:flex;align-items:center;color:#0f172a;margin-bottom:4px;">
-                <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${metric.color};margin-right:8px;flex-shrink:0;"></span>
-                <span style="min-width:50px;">${metric.name}</span>
-                <span style="min-width:60px;text-align:right;margin-left:8px;">${formatNumber(metric.value)}</span>
-                <span style="color:#64748b;margin-left:8px;">(score: ${formatNumber(metric.score)})</span>
-              </div>`;
+          rows.forEach(row => {
+            html += `<div style="display:flex;align-items:center;color:#fff;margin-bottom:3px;">
+              <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${row.color};margin-right:8px;flex-shrink:0;"></span>
+              <span style="min-width:52px;">${row.name} <span style="color:rgba(255,255,255,0.5);font-size:10px;">${row.weight}</span></span>
+              <span style="min-width:64px;text-align:right;">${formatNumber(row.value)}</span>
+              <span style="min-width:64px;text-align:right;color:rgba(255,255,255,0.5);">${formatNumber(row.score)}</span>
+            </div>`;
           });
 
-          // Add total line
-          html += `
-            <div style="display:flex;align-items:center;color:#0f172a;margin-top:6px;padding-top:6px;border-top:1px solid #e5e7eb;font-weight:600;">
-              <span style="min-width:50px;margin-left:18px;">Total</span>
-              <span style="margin-left:auto;">${formatNumber(totalScore)}</span>
-            </div>`;
+          html += `<div style="display:flex;align-items:center;margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.2);font-weight:600;color:#fff;">
+            <span style="min-width:52px;padding-left:18px;">Score</span>
+            <span style="min-width:64px;"></span>
+            <span style="min-width:64px;text-align:right;">${formatNumber(totalScore)}</span>
+          </div>`;
 
           return html;
         }
       },
       series: series
+    };
+  }
+
+  /**
+   * Build eCharts option for a single composite score bar (used in Compare view)
+   * @param {number} score - Composite engagement score
+   * @param {number} maxScore - Maximum score for scaling
+   * @param {string} entityName
+   */
+  function buildScoreOnlyChartOption(score, maxScore, entityName = '') {
+    return {
+      grid: { left: 0, right: 0, top: 0, bottom: 0, containLabel: false },
+      xAxis: { type: 'value', show: false, max: maxScore || 1, min: 0 },
+      yAxis: { type: 'category', show: false, data: [''] },
+      tooltip: {
+        trigger: 'item',
+        confine: false,
+        appendToBody: true,
+        backgroundColor: 'rgba(17,24,39,0.96)',
+        borderColor: 'rgba(255,255,255,0.12)',
+        borderWidth: 1,
+        padding: [10, 14],
+        extraCssText: 'box-shadow: 0 6px 18px rgba(0,0,0,0.28); z-index: 9999;',
+        textStyle: { color: '#fff', fontSize: 12, fontFamily: 'inherit' },
+        formatter: () => {
+          let html = entityName ? `<div style="font-weight:600;margin-bottom:6px;color:#fff;">${entityName}</div>` : '';
+          html += `<div style="display:flex;align-items:center;gap:8px;color:#fff;">
+            <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#4272D8"></span>
+            <span>Engagement Score: <strong>${score}</strong></span>
+          </div>`;
+          return html;
+        }
+      },
+      series: [{
+        name: 'Score',
+        type: 'bar',
+        stack: 'total',
+        data: [score],
+        itemStyle: { color: '#4272D8', borderRadius: [4, 4, 4, 4] },
+        barWidth: '100%',
+        emphasis: { itemStyle: { shadowBlur: 4, shadowColor: 'rgba(0,0,0,0.2)' } }
+      }]
     };
   }
 

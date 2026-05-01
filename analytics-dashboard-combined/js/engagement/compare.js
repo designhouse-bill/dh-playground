@@ -59,6 +59,10 @@ const ComparePage = (function() {
   let dataA = null;
   let dataB = null;
 
+  // Saved selections for breadcrumb restore on layer switch (1.5)
+  let _savedSelectionsA = { categoryId: null, categoryName: '', promotionId: null, promotionName: '' };
+  let _savedSelectionsB = { categoryId: null, categoryName: '', promotionId: null, promotionName: '' };
+
   /* ============================================
      INITIALIZATION
      ============================================ */
@@ -246,27 +250,7 @@ const ComparePage = (function() {
       });
     });
 
-    // Initialize compare layer dropdown toggle
-    const dropdownTrigger = document.getElementById('compare-layer-dropdown');
-    if (dropdownTrigger) {
-      dropdownTrigger.addEventListener('click', function(e) {
-        e.stopPropagation();
-        const wrapper = document.getElementById('compare-layer-dropdown-wrapper');
-        if (wrapper) {
-          wrapper.classList.toggle('open');
-          this.setAttribute('aria-expanded', wrapper.classList.contains('open'));
-        }
-      });
-
-      // Close dropdown on outside click
-      document.addEventListener('click', function(e) {
-        const wrapper = document.getElementById('compare-layer-dropdown-wrapper');
-        if (wrapper && !wrapper.contains(e.target)) {
-          wrapper.classList.remove('open');
-          dropdownTrigger.setAttribute('aria-expanded', 'false');
-        }
-      });
-    }
+    // Layer tabs are plain buttons — no dropdown init needed
   }
 
   /* ============================================
@@ -279,6 +263,22 @@ const ComparePage = (function() {
   function selectLayer(layer) {
     if (layer === currentLayer) return;
 
+    // Save leaf selections only when leaving promotions layer (breadcrumb trail)
+    if (currentLayer === 'promotions') {
+      _savedSelectionsA = {
+        categoryId: contextA.categoryId,
+        categoryName: contextA.categoryName,
+        promotionId: contextA.promotionId,
+        promotionName: contextA.promotionName
+      };
+      _savedSelectionsB = {
+        categoryId: contextB.categoryId,
+        categoryName: contextB.categoryName,
+        promotionId: contextB.promotionId,
+        promotionName: contextB.promotionName
+      };
+    }
+
     currentLayer = layer;
 
     // Update tabs
@@ -287,7 +287,7 @@ const ComparePage = (function() {
     // Update visibility of category/promotion selectors
     updateLayerVisibility();
 
-    // Reset layer-specific selections if needed
+    // Reset or restore layer-specific selections
     if (layer === 'circulars') {
       // No need for category/promotion
     } else if (layer === 'categories') {
@@ -296,8 +296,25 @@ const ComparePage = (function() {
       contextA.promotionName = '';
       contextB.promotionId = null;
       contextB.promotionName = '';
+    } else if (layer === 'promotions') {
+      // Restore last-known selections
+      if (_savedSelectionsA.categoryId) {
+        contextA.categoryId = _savedSelectionsA.categoryId;
+        contextA.categoryName = _savedSelectionsA.categoryName;
+      }
+      if (_savedSelectionsA.promotionId) {
+        contextA.promotionId = _savedSelectionsA.promotionId;
+        contextA.promotionName = _savedSelectionsA.promotionName;
+      }
+      if (_savedSelectionsB.categoryId) {
+        contextB.categoryId = _savedSelectionsB.categoryId;
+        contextB.categoryName = _savedSelectionsB.categoryName;
+      }
+      if (_savedSelectionsB.promotionId) {
+        contextB.promotionId = _savedSelectionsB.promotionId;
+        contextB.promotionName = _savedSelectionsB.promotionName;
+      }
     }
-    // Promotions layer keeps all selections
 
     // Update buttons
     updateContextButtons();
@@ -317,28 +334,11 @@ const ComparePage = (function() {
    * Update layer dropdown active states and value
    */
   function updateLayerTabs() {
-    // Update dropdown value text
-    const valueEl = document.getElementById('compare-layer-value');
-    if (valueEl) {
-      const layerNames = {
-        'promotions': 'Promotions',
-        'categories': 'Categories',
-        'circulars': 'Circulars'
-      };
-      valueEl.textContent = layerNames[currentLayer] || 'Promotions';
-    }
-
-    // Update dropdown menu items
-    document.querySelectorAll('#compare-layer-menu .base-dropdown__item').forEach(btn => {
-      const layer = btn.dataset.layer;
-      btn.classList.toggle('active', layer === currentLayer);
+    document.querySelectorAll('.compare-layer-tabs [data-layer]').forEach(btn => {
+      const active = btn.dataset.layer === currentLayer;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-selected', String(active));
     });
-
-    // Close the dropdown
-    const wrapper = document.getElementById('compare-layer-dropdown-wrapper');
-    if (wrapper) {
-      wrapper.classList.remove('open');
-    }
   }
 
   /**
@@ -772,17 +772,34 @@ const ComparePage = (function() {
   }
 
   /**
+   * Format week label with run completeness stats for context button (1.1)
+   */
+  function formatWeekLabel(ctx) {
+    if (!ctx.weekId) return 'Select Week';
+    const week = MockData?.weeks?.find(w => w.id === ctx.weekId);
+    const daysRun = week?.daysRun || 7;
+    const totalDays = 7;
+    const isPartial = daysRun < totalDays;
+    const star = isPartial ? '★ ' : '';
+    let label = `${star}${ctx.weekLabel} (${daysRun} of ${totalDays} days)`;
+    if (ctx.entityCount) {
+      label += ` · (${ctx.entityCount} of ${ctx.entityCount} locations)`;
+    }
+    return label;
+  }
+
+  /**
    * Update context button displays
    */
   function updateContextButtons() {
     // Context A
-    updateButton('context-a-date', contextA.weekLabel || 'Select Week', !!contextA.weekId);
+    updateButton('context-a-date', formatWeekLabel(contextA), !!contextA.weekId);
     updateButton('context-a-entity', contextA.entityName || 'Select Entity', !!contextA.entityId);
     updateButton('context-a-category', contextA.categoryName || 'Select Category', !!contextA.categoryId);
     updateButton('context-a-promotion', contextA.promotionName || 'Select Promotion', !!contextA.promotionId);
 
     // Context B
-    updateButton('context-b-date', contextB.weekLabel || 'Select Week', !!contextB.weekId);
+    updateButton('context-b-date', formatWeekLabel(contextB), !!contextB.weekId);
     updateButton('context-b-entity', contextB.entityName || 'Select Entity', !!contextB.entityId);
     updateButton('context-b-category', contextB.categoryName || 'Select Category', !!contextB.categoryId);
     updateButton('context-b-promotion', contextB.promotionName || 'Select Promotion', !!contextB.promotionId);
@@ -1087,25 +1104,22 @@ const ComparePage = (function() {
 
     // Initialize performance charts after DOM is updated
     if (window.PerfCharts) {
-      // Calculate max values for scaling both charts
+      // Scale both bars against the same max engagement score so widths are directly comparable
       const metricsA = dataA?.metrics || {};
       const metricsB = dataB?.metrics || {};
-      const maxTotal = Math.max(
-        (metricsA.civ || 0) + (metricsA.cc || 0) + (metricsA.atl || 0),
-        (metricsB.civ || 0) + (metricsB.cc || 0) + (metricsB.atl || 0)
-      );
+      const maxTotal = Math.max(metricsA.engagementScore || 0, metricsB.engagementScore || 0) || 1;
 
-      // Initialize charts with consistent max values
       const chartContainers = document.querySelectorAll('.perf-chart[data-views]');
       chartContainers.forEach(container => {
         const data = {
-          views: parseInt(container.dataset.views, 10) || 0,
-          clicks: parseInt(container.dataset.clicks, 10) || 0,
-          adds: parseInt(container.dataset.adds, 10) || 0
+          views:     parseInt(container.dataset.views, 10)     || 0,
+          clicks:    parseInt(container.dataset.clicks, 10)    || 0,
+          adds:      parseInt(container.dataset.adds, 10)      || 0,
+          composite: parseInt(container.dataset.composite, 10) || 0
         };
         PerfCharts.createChart(container.id, data, {
           height: 16,
-          maxTotal: maxTotal || 1,
+          maxTotal,
           entityName: ''
         });
       });
@@ -1121,75 +1135,22 @@ const ComparePage = (function() {
     const metricsA = dataA.metrics;
     const metricsB = dataB.metrics;
 
-    return `
-      <!-- Summary Section -->
-      <div class="compare-section-header">
-        <span class="material-symbols-outlined">summarize</span>
-        Summary
-      </div>
-      <div class="compare-row">
-        <div class="compare-cell compare-cell--a">
-          ${renderContextSummary('A', contextA)}
-          <div class="compare-hero">
-            <img src="${dataA.logo}" alt="${core.escapeHtml(dataA.name)}" class="compare-hero__logo">
-            <h3 class="compare-hero__title">${core.escapeHtml(dataA.name)}</h3>
-          </div>
-          ${renderPercentileRow(metricsA.percentile, metricsA.engagementScore, false, 0, metricsA, 'compare-perf-circulars-a')}
+    const cellContent = (col, data, metrics, showVariance, percentileA, chartId, ctx) => `
+      <div class="compare-cell compare-cell--${col}">
+        <div class="compare-col-label compare-col-label--${col}">${col.toUpperCase()}</div>
+        ${renderPercentileRow(metrics.percentile, metrics.engagementScore, showVariance, percentileA, metrics, chartId, ctx)}
+        <div class="compare-mini-cards">
+          ${renderMiniCard('Views', formatNumber(metrics.civ), metricsA.civ, metrics.civ, showVariance)}
+          ${renderMiniCard('Clicks', formatNumber(metrics.cc), metricsA.cc, metrics.cc, showVariance)}
+          ${renderMiniCard('Adds', formatNumber(metrics.atl), metricsA.atl, metrics.atl, showVariance)}
+          ${renderMiniCard('Stores', formatNumber(metrics.storeCount), metricsA.storeCount, metrics.storeCount, showVariance)}
+          ${renderMiniCard('Categories', formatNumber(metrics.categoryCount), metricsA.categoryCount, metrics.categoryCount, showVariance)}
+          ${renderMiniCard('Promotions', formatNumber(metrics.promotionCount), metricsA.promotionCount, metrics.promotionCount, showVariance)}
         </div>
-        <div class="compare-cell compare-cell--b">
-          ${renderContextSummary('B', contextB)}
-          <div class="compare-hero">
-            <img src="${dataB.logo}" alt="${core.escapeHtml(dataB.name)}" class="compare-hero__logo">
-            <h3 class="compare-hero__title">${core.escapeHtml(dataB.name)}</h3>
-          </div>
-          ${renderPercentileRow(metricsB.percentile, metricsB.engagementScore, true, metricsA.percentile, metricsB, 'compare-perf-circulars-b')}
-        </div>
-      </div>
+      </div>`;
 
-      <!-- Primary Metrics Section -->
-      <div class="compare-section-header">
-        <span class="material-symbols-outlined">analytics</span>
-        Engagement Metrics
-      </div>
-      <div class="compare-row">
-        <div class="compare-cell compare-cell--a">
-          <div class="metric-rows">
-            ${renderMetricRow('Views', formatNumber(metricsA.civ))}
-            ${renderMetricRow('Clicks', formatNumber(metricsA.cc))}
-            ${renderMetricRow('Added', formatNumber(metricsA.atl))}
-          </div>
-        </div>
-        <div class="compare-cell compare-cell--b">
-          <div class="metric-rows">
-            ${renderMetricRowWithVariance('Views', formatNumber(metricsB.civ), metricsA.civ, metricsB.civ)}
-            ${renderMetricRowWithVariance('Clicks', formatNumber(metricsB.cc), metricsA.cc, metricsB.cc)}
-            ${renderMetricRowWithVariance('Added', formatNumber(metricsB.atl), metricsA.atl, metricsB.atl)}
-          </div>
-        </div>
-      </div>
-
-      <!-- Details Section -->
-      <div class="compare-section-header">
-        <span class="material-symbols-outlined">info</span>
-        Details
-      </div>
-      <div class="compare-row">
-        <div class="compare-cell compare-cell--a">
-          <div class="metric-rows">
-            ${renderMetricRow('Stores', formatNumber(metricsA.storeCount))}
-            ${renderMetricRow('Categories', formatNumber(metricsA.categoryCount))}
-            ${renderMetricRow('Promotions', formatNumber(metricsA.promotionCount))}
-          </div>
-        </div>
-        <div class="compare-cell compare-cell--b">
-          <div class="metric-rows">
-            ${renderMetricRowWithVariance('Stores', formatNumber(metricsB.storeCount), metricsA.storeCount, metricsB.storeCount)}
-            ${renderMetricRowWithVariance('Categories', formatNumber(metricsB.categoryCount), metricsA.categoryCount, metricsB.categoryCount)}
-            ${renderMetricRowWithVariance('Promotions', formatNumber(metricsB.promotionCount), metricsA.promotionCount, metricsB.promotionCount)}
-          </div>
-        </div>
-      </div>
-    `;
+    return cellContent('a', dataA, metricsA, false, 0, 'compare-perf-circulars-a', contextA)
+         + cellContent('b', dataB, metricsB, true, metricsA.percentile, 'compare-perf-circulars-b', contextB);
   }
 
   /**
@@ -1201,55 +1162,21 @@ const ComparePage = (function() {
     const metricsA = dataA.metrics;
     const metricsB = dataB.metrics;
 
-    return `
-      <!-- Summary Section -->
-      <div class="compare-section-header">
-        <span class="material-symbols-outlined">summarize</span>
-        Summary
-      </div>
-      <div class="compare-row">
-        <div class="compare-cell compare-cell--a">
-          ${renderContextSummary('A', contextA)}
-          <div class="compare-hero compare-hero--category">
-            <img src="${dataA.image}" alt="${core.escapeHtml(dataA.name)}" class="compare-hero__image">
-            <h3 class="compare-hero__title">${core.escapeHtml(dataA.name)}</h3>
-          </div>
-          ${renderPercentileRow(metricsA.percentile, metricsA.engagementScore, false, 0, metricsA, 'compare-perf-categories-a')}
+    const cellContent = (col, data, metrics, showVariance, percentileA, chartId, ctx) => `
+      <div class="compare-cell compare-cell--${col}">
+        <div class="compare-col-label compare-col-label--${col}">${col.toUpperCase()}</div>
+        <h3 class="compare-hero__title">${core.escapeHtml(data.name)}</h3>
+        ${renderPercentileRow(metrics.percentile, metrics.engagementScore, showVariance, percentileA, metrics, chartId, ctx)}
+        <div class="compare-mini-cards">
+          ${renderMiniCard('Views', formatNumber(metrics.civ), metricsA.civ, metrics.civ, showVariance)}
+          ${renderMiniCard('Clicks', formatNumber(metrics.cc), metricsA.cc, metrics.cc, showVariance)}
+          ${renderMiniCard('Adds', formatNumber(metrics.atl), metricsA.atl, metrics.atl, showVariance)}
+          ${renderMiniCard('Promotions', formatNumber(metrics.promotionCount), metricsA.promotionCount, metrics.promotionCount, showVariance)}
         </div>
-        <div class="compare-cell compare-cell--b">
-          ${renderContextSummary('B', contextB)}
-          <div class="compare-hero compare-hero--category">
-            <img src="${dataB.image}" alt="${core.escapeHtml(dataB.name)}" class="compare-hero__image">
-            <h3 class="compare-hero__title">${core.escapeHtml(dataB.name)}</h3>
-          </div>
-          ${renderPercentileRow(metricsB.percentile, metricsB.engagementScore, true, metricsA.percentile, metricsB, 'compare-perf-categories-b')}
-        </div>
-      </div>
+      </div>`;
 
-      <!-- Primary Metrics Section -->
-      <div class="compare-section-header">
-        <span class="material-symbols-outlined">analytics</span>
-        Engagement Metrics
-      </div>
-      <div class="compare-row">
-        <div class="compare-cell compare-cell--a">
-          <div class="metric-rows">
-            ${renderMetricRow('Views', formatNumber(metricsA.civ))}
-            ${renderMetricRow('Clicks', formatNumber(metricsA.cc))}
-            ${renderMetricRow('Added', formatNumber(metricsA.atl))}
-            ${renderMetricRow('Promotions', formatNumber(metricsA.promotionCount))}
-          </div>
-        </div>
-        <div class="compare-cell compare-cell--b">
-          <div class="metric-rows">
-            ${renderMetricRowWithVariance('Views', formatNumber(metricsB.civ), metricsA.civ, metricsB.civ)}
-            ${renderMetricRowWithVariance('Clicks', formatNumber(metricsB.cc), metricsA.cc, metricsB.cc)}
-            ${renderMetricRowWithVariance('Added', formatNumber(metricsB.atl), metricsA.atl, metricsB.atl)}
-            ${renderMetricRowWithVariance('Promotions', formatNumber(metricsB.promotionCount), metricsA.promotionCount, metricsB.promotionCount)}
-          </div>
-        </div>
-      </div>
-    `;
+    return cellContent('a', dataA, metricsA, false, 0, 'compare-perf-categories-a', contextA)
+         + cellContent('b', dataB, metricsB, true, metricsA.percentile, 'compare-perf-categories-b', contextB);
   }
 
   /**
@@ -1261,103 +1188,35 @@ const ComparePage = (function() {
     const metricsA = dataA.metrics;
     const metricsB = dataB.metrics;
 
-    return `
-      <!-- Summary Section -->
-      <div class="compare-section-header">
-        <span class="material-symbols-outlined">summarize</span>
-        Summary
-      </div>
-      <div class="compare-row">
-        <div class="compare-cell compare-cell--a">
-          ${renderContextSummary('A', contextA)}
-          <div class="compare-hero compare-hero--promotion">
-            <img src="${dataA.image}" alt="${core.escapeHtml(dataA.name)}" class="compare-hero__image">
-          </div>
-          <h3 class="compare-hero__title">${core.escapeHtml(dataA.name)}</h3>
-          <div class="compare-tags">
-            <span class="compare-tag compare-tag--category">${core.escapeHtml(dataA.categoryName)}</span>
-            <span class="compare-tag compare-tag--deal">${core.escapeHtml(metricsA.dealType || '')}</span>
-          </div>
-          ${renderPercentileRow(metricsA.percentile, metricsA.engagementScore, false, 0, metricsA, 'compare-perf-promotions-a')}
+    const cellContent = (col, data, metrics, showVariance, percentileA, chartId, ctx) => `
+      <div class="compare-cell compare-cell--${col}">
+        <div class="compare-col-label compare-col-label--${col}">${col.toUpperCase()}</div>
+        <div class="compare-hero compare-hero--promotion">
+          <img src="${data.image}" alt="${core.escapeHtml(data.name)}" class="compare-hero__image">
         </div>
-        <div class="compare-cell compare-cell--b">
-          ${renderContextSummary('B', contextB)}
-          <div class="compare-hero compare-hero--promotion">
-            <img src="${dataB.image}" alt="${core.escapeHtml(dataB.name)}" class="compare-hero__image">
-          </div>
-          <h3 class="compare-hero__title">${core.escapeHtml(dataB.name)}</h3>
-          <div class="compare-tags">
-            <span class="compare-tag compare-tag--category">${core.escapeHtml(dataB.categoryName)}</span>
-            <span class="compare-tag compare-tag--deal">${core.escapeHtml(metricsB.dealType || '')}</span>
-          </div>
-          ${renderPercentileRow(metricsB.percentile, metricsB.engagementScore, true, metricsA.percentile, metricsB, 'compare-perf-promotions-b')}
+        <h3 class="compare-hero__title">${core.escapeHtml(data.name)}</h3>
+        <div class="compare-tags">
+          <span class="compare-tag compare-tag--category">${core.escapeHtml(data.categoryName)}</span>
+          <span class="compare-tag compare-tag--deal">${core.escapeHtml(metrics.dealType || '')}</span>
         </div>
-      </div>
+        ${renderPercentileRow(metrics.percentile, metrics.engagementScore, showVariance, percentileA, metrics, chartId, ctx)}
+        <div class="compare-mini-cards">
+          ${renderMiniCard('Views', formatNumber(metrics.civ), metricsA.civ, metrics.civ, showVariance)}
+          ${renderMiniCard('Clicks', formatNumber(metrics.cc), metricsA.cc, metrics.cc, showVariance)}
+          ${renderMiniCard('Adds', formatNumber(metrics.atl), metricsA.atl, metrics.atl, showVariance)}
+          ${renderMiniCard('Deal Type', metrics.dealType || '-', metricsA.dealType, metrics.dealType, showVariance, true)}
+          ${renderMiniCard('Orig. Price', formatCurrency(metrics.originalPrice), metricsA.originalPrice, metrics.originalPrice, showVariance)}
+          ${renderMiniCard('Sale Price', formatCurrency(metrics.salePrice), metricsA.salePrice, metrics.salePrice, showVariance)}
+        </div>
+      </div>`;
 
-      <!-- Primary Metrics Section -->
-      <div class="compare-section-header">
-        <span class="material-symbols-outlined">analytics</span>
-        Engagement Metrics
-      </div>
-      <div class="compare-row">
-        <div class="compare-cell compare-cell--a">
-          <div class="metric-rows">
-            ${renderMetricRow('Views', formatNumber(metricsA.civ))}
-            ${renderMetricRow('Clicks', formatNumber(metricsA.cc))}
-            ${renderMetricRow('Added', formatNumber(metricsA.atl))}
-          </div>
-        </div>
-        <div class="compare-cell compare-cell--b">
-          <div class="metric-rows">
-            ${renderMetricRowWithVariance('Views', formatNumber(metricsB.civ), metricsA.civ, metricsB.civ)}
-            ${renderMetricRowWithVariance('Clicks', formatNumber(metricsB.cc), metricsA.cc, metricsB.cc)}
-            ${renderMetricRowWithVariance('Added', formatNumber(metricsB.atl), metricsA.atl, metricsB.atl)}
-          </div>
-        </div>
-      </div>
-
-      <!-- Details Section -->
-      <div class="compare-section-header">
-        <span class="material-symbols-outlined">info</span>
-        Details
-      </div>
-      <div class="compare-row">
-        <div class="compare-cell compare-cell--a">
-          <div class="metric-rows">
-            ${renderMetricRow('Card Size', metricsA.cardSize || '-')}
-            ${renderMetricRow('Original Price', formatCurrency(metricsA.originalPrice))}
-            ${renderMetricRow('Sale Price', formatCurrency(metricsA.salePrice))}
-          </div>
-        </div>
-        <div class="compare-cell compare-cell--b">
-          <div class="metric-rows">
-            ${renderMetricRowText('Card Size', metricsB.cardSize || '-', metricsA.cardSize, metricsB.cardSize)}
-            ${renderMetricRowWithVariance('Original Price', formatCurrency(metricsB.originalPrice), metricsA.originalPrice, metricsB.originalPrice)}
-            ${renderMetricRowWithVariance('Sale Price', formatCurrency(metricsB.salePrice), metricsA.salePrice, metricsB.salePrice)}
-          </div>
-        </div>
-      </div>
-    `;
+    return cellContent('a', dataA, metricsA, false, 0, 'compare-perf-promotions-a', contextA)
+         + cellContent('b', dataB, metricsB, true, metricsA.percentile, 'compare-perf-promotions-b', contextB);
   }
 
   /**
    * Render context summary header
    */
-  function renderContextSummary(label, ctx) {
-    // Format days display
-    const daysDisplay = ctx.daysFilter === 'all' || !ctx.daysFilter
-      ? 'All Days'
-      : `Days: ${ctx.daysFilter}`;
-
-    return `
-      <div class="context-summary">
-        <span class="context-summary__label">${label}</span>
-        <span class="context-summary__details">
-          ${ctx.weekLabel || 'No date'} &bull; ${ctx.entityName || 'No entity'} &bull; ${daysDisplay}
-        </span>
-      </div>
-    `;
-  }
 
   /**
    * Get percentile variant class (high/medium/low)
@@ -1368,13 +1227,79 @@ const ComparePage = (function() {
     return 'low';
   }
 
+  function ordinal(n) {
+    const s = ['th', 'st', 'nd', 'rd'];
+    const v = n % 100;
+    return n + (s[(v - 20) % 10] || s[v] || s[0]);
+  }
+
   /**
    * Render percentile row with eCharts performance bar (matching BASE)
    */
-  function renderPercentileRow(percentile, score, showVariance = false, percentileA = 0, metrics = null, chartId = null) {
+  function renderPercentileRow(percentile, score, showVariance = false, percentileA = 0, metrics = null, chartId = null, ctx = null) {
     const variance = showVariance ? calculateVariance(percentileA, percentile) : null;
     const variant = getPercentileVariant(percentile);
     const uniqueId = chartId || `compare-perf-chart-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+    let contextBlock = '';
+    if (ctx) {
+      const week = ctx.weekLabel || 'this week';
+      const entity = core.escapeHtml(ctx.entityName || 'all stores');
+      const n = metrics?.promotionCount;
+
+      const dealType = metrics?.dealType ? core.escapeHtml(metrics.dealType) : null;
+      const featuredPhrase = dealType
+        ? `that featured the ${dealType}`
+        : 'that were featured';
+      const categoryClause = ctx.categoryId && ctx.categoryName
+        ? ` in the <span class="category">${core.escapeHtml(ctx.categoryName)}</span>`
+        : '';
+      const subject = ctx.promotionId
+        ? core.escapeHtml(ctx.promotionName || 'this promotion')
+        : ctx.categoryId
+          ? 'this category'
+          : 'this circular';
+
+      // Layer-adaptive sentence (1.4)
+      let sentence;
+      if (ctx.promotionId) {
+        const promoSpan = `<span class="promotion">${n ? `${n} promotions` : 'promotions'}</span>`;
+        const subjectCap = subject.charAt(0).toUpperCase() + subject.slice(1);
+        sentence = `Among the ${promoSpan} ${featuredPhrase}${categoryClause} during <span class="week">${week}</span> across <span class="store">${entity}</span>.<br>${subjectCap} scored in the <span class="percentile">${ordinal(percentile)} percentile</span>.`;
+      } else if (ctx.categoryId) {
+        sentence = `Categories that were featured during <span class="week">${week}</span> across <span class="store">${entity}</span>. The category scored in the <span class="percentile">${ordinal(percentile)} percentile</span>.`;
+      } else {
+        const catCount = metrics?.categoryCount || 0;
+        const promoCount = metrics?.promotionCount || n || 0;
+        sentence = `<span class="category">${catCount} categories</span> and <span class="promotion">${promoCount} promotions</span>. The circular scored in the <span class="percentile">${ordinal(percentile)} percentile</span>.`;
+      }
+
+      let comparisonLine = '';
+      if (showVariance && percentileA > 0) {
+        const diff = percentile - percentileA;
+        if (diff > 0) {
+          comparisonLine = `<span class="percentile-context__vs percentile-context__vs--ahead">Scored ${diff} percentile point${diff === 1 ? '' : 's'} ahead of column A</span>`;
+        } else if (diff < 0) {
+          comparisonLine = `<span class="percentile-context__vs percentile-context__vs--behind">Scored ${Math.abs(diff)} percentile point${Math.abs(diff) === 1 ? '' : 's'} behind column A</span>`;
+        } else {
+          comparisonLine = `<span class="percentile-context__vs">Tied with column A this week</span>`;
+        }
+      }
+
+      const varianceInContext = showVariance && variance
+        ? `<span class="percentile-context__variance">${renderVarianceIndicator(variance)}</span>`
+        : '';
+
+      contextBlock = `
+        <div class="percentile-context">
+          <div class="percentile-context__body">
+            <span class="percentile-context__lead-in">How to interpret:</span>
+            <span class="percentile-context__sentence">${sentence}</span>
+            ${comparisonLine}
+          </div>
+          ${varianceInContext}
+        </div>`;
+    }
 
     // If metrics are provided, render eCharts bar, otherwise fallback to simple bar
     if (metrics && metrics.civ !== undefined) {
@@ -1389,11 +1314,11 @@ const ComparePage = (function() {
                  data-composite="${score || 0}">
             </div>
           </div>
-          <span class="percentile-score">${score}</span>
+          <span class="percentile-score">${Number(score).toLocaleString('en-US')}</span>
           <img src="assets/chart-bar.svg" alt="Percentile" class="percentile-icon">
           <span class="percentile-value percentile-value--${variant}">${percentile}%</span>
-          ${showVariance && variance ? renderVarianceIndicator(variance) : ''}
         </div>
+        ${contextBlock}
       `;
     }
 
@@ -1406,7 +1331,30 @@ const ComparePage = (function() {
         <span class="percentile-score">${score}</span>
         <img src="assets/chart-bar.svg" alt="Percentile" class="percentile-icon">
         <span class="percentile-value percentile-value--${variant}">${percentile}%</span>
-        ${showVariance && variance ? renderVarianceIndicator(variance) : ''}
+      </div>
+      ${contextBlock}
+    `;
+  }
+
+  /**
+   * Render a mini-card for the compare 2×3 grid (1.3)
+   */
+  function renderMiniCard(label, value, varA, varB, showVariance, isText = false) {
+    let varianceHtml = '';
+    if (showVariance) {
+      if (isText) {
+        varianceHtml = (varA !== varB)
+          ? '<span class="variance variance--different"><span class="material-symbols-outlined">sync_alt</span></span>'
+          : '';
+      } else if (varA !== undefined && varB !== undefined) {
+        const v = calculateVariance(varA, varB);
+        varianceHtml = v.direction !== 'equal' ? renderVarianceIndicator(v) : '';
+      }
+    }
+    return `
+      <div class="compare-mini-card">
+        <span class="compare-mini-card__label">${label}</span>
+        <span class="compare-mini-card__value">${value}${varianceHtml ? ' ' + varianceHtml : ''}</span>
       </div>
     `;
   }

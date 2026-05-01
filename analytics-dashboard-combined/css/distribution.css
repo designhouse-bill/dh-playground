@@ -3799,7 +3799,6 @@ display: flex;
 .section-panel-header {
   padding: var(--space-3) var(--space-2) var(--space-2);
   margin: var(--space-2) 0 0;
-  border-top: 1px solid var(--color-border-subtle, #eef0f2);
 }
 .section-panel-header--with-stat {
   display: flex;

@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Surfaces Audit — Visual Companion</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --p-primary-color: #2196F3;
+    --p-surface-card: #fff;
+    --p-surface-ground: #f8f9fa;
+    --p-surface-border: #e5e7eb;
+    --p-text-color: #1f2937;
+    --p-text-color-secondary: #6b7280;
+    --p-text-color-muted: #9ca3af;
+    --p-shadow: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px -1px rgba(0,0,0,0.1);
+    --p-radius: 6px;
+    --p-radius-lg: 12px;
+    --p-green-500: #22c55e;
+    --p-red-500: #ef4444;
+    --p-yellow-500: #eab308;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--p-text-color);
+    background: var(--p-surface-ground);
+    line-height: 1.5;
+  }
+  header {
+    background: #111827; color: #fff;
+    padding: 32px 40px;
+  }
+  header h1 { margin: 0 0 8px; font-size: 28px; font-weight: 700; }
+  header p { margin: 4px 0; color: #9ca3af; font-size: 14px; }
+  header a { color: #93c5fd; text-decoration: none; }
+  header a:hover { text-decoration: underline; }
+  nav.toc {
+    background: #1f2937; color: #d1d5db;
+    padding: 20px 40px;
+    border-bottom: 1px solid #374151;
+  }
+  nav.toc h2 {
+    margin: 0 0 12px; font-size: 12px; text-transform: uppercase;
+    letter-spacing: 0.08em; color: #9ca3af; font-weight: 600;
+  }
+  nav.toc ul { margin: 0; padding: 0; list-style: none; columns: 3; column-gap: 32px; }
+  nav.toc li { padding: 4px 0; font-size: 13px; }
+  nav.toc a { color: #93c5fd; text-decoration: none; }
+  nav.toc a:hover { color: #fff; }
+  main { max-width: 1280px; margin: 0 auto; padding: 32px 40px; }
+  section.group {
+    background: var(--p-surface-card);
+    border: 1px solid var(--p-surface-border);
+    border-radius: var(--p-radius-lg);
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    box-shadow: var(--p-shadow);
+  }
+  section.group h2 {
+    margin: 0 0 4px; font-size: 20px; font-weight: 700;
+    display: flex; align-items: center; gap: 12px;
+  }
+  section.group h2 .id {
+    font-size: 11px; padding: 3px 8px;
+    background: var(--p-primary-color); color: #fff;
+    border-radius: var(--p-radius); letter-spacing: 0.04em;
+    font-weight: 600;
+  }
+  section.group .purpose {
+    color: var(--p-text-color-secondary);
+    margin: 0 0 16px; font-size: 14px;
+  }
+  .canonical-block {
+    background: #f0f9ff;
+    border-left: 4px solid var(--p-primary-color);
+    padding: 12px 16px;
+    border-radius: 0 var(--p-radius) var(--p-radius) 0;
+    margin: 12px 0;
+  }
+  .canonical-block strong { color: var(--p-primary-color); }
+  .live-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--p-primary-color); color: #fff;
+    padding: 6px 14px; border-radius: var(--p-radius);
+    text-decoration: none; font-size: 13px; font-weight: 500;
+    margin: 4px 6px 4px 0;
+  }
+  .live-link:hover { background: #1976D2; }
+  .verdict-table {
+    width: 100%; border-collapse: collapse;
+    margin: 12px 0; font-size: 13px;
+  }
+  .verdict-table th, .verdict-table td {
+    padding: 8px 12px; text-align: left;
+    border-bottom: 1px solid var(--p-surface-border);
+  }
+  .verdict-table th {
+    background: var(--p-surface-ground);
+    font-size: 11px; text-transform: uppercase;
+    color: var(--p-text-color-secondary); letter-spacing: 0.04em;
+    font-weight: 600;
+  }
+  .verdict-table .v {
+    display: inline-block; min-width: 28px; text-align: center;
+    font-weight: 700; padding: 2px 8px; border-radius: 4px;
+    font-size: 12px;
+  }
+  .v-K { background: #dcfce7; color: #15803d; }
+  .v-U { background: #fef9c3; color: #854d0e; }
+  .v-T { background: #dbeafe; color: #1e40af; }
+  .v-D { background: #fee2e2; color: #991b1b; }
+  .dp-row {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 10px 0; border-top: 1px dashed var(--p-surface-border);
+    font-size: 13px;
+  }
+  .dp-row:first-of-type { border-top: 0; }
+  .dp-id {
+    font-weight: 700; color: var(--p-primary-color);
+    flex-shrink: 0; min-width: 80px;
+  }
+  .dp-locked { color: var(--p-green-500); font-size: 11px; font-weight: 700; }
+  .max-note {
+    background: #fef3c7;
+    border-left: 4px solid var(--p-yellow-500);
+    padding: 10px 14px;
+    border-radius: 0 var(--p-radius) var(--p-radius) 0;
+    margin: 12px 0;
+    font-size: 13px;
+  }
+  .max-note strong { color: #92400e; }
+  .principle {
+    background: #f3f4f6; padding: 10px 14px;
+    border-radius: var(--p-radius); margin: 6px 0;
+    font-size: 13px;
+  }
+  code { background: #f3f4f6; padding: 1px 6px; border-radius: 3px; font-size: 0.92em; }
+  .legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; margin: 8px 0 16px; }
+  .legend .item { display: inline-flex; align-items: center; gap: 4px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Surfaces Audit — Visual Companion</h1>
+  <p><strong>Audience:</strong> Max + Adam (review) · Vinay's team (Angular implementation handoff)</p>
+  <p><strong>Baseline:</strong> Proposed-Max only (Original + Proposed hidden in UI; markup retained for reference)</p>
+  <p><strong>Production stack:</strong> Angular / TypeScript · PrimeNG (UI) · eCharts via ngx-echarts (charts)</p>
+  <p><strong>Locked:</strong> 23 of 23 decision points · 2026-05-01</p>
+  <p><strong>Source docs:</strong>
+    <a href="surfaces-audit/04-similarity-groups-full.md">04 decision matrix</a> ·
+    <a href="surfaces-audit/06-per-page-diffs.md">06 per-page diffs</a> ·
+    <a href="surfaces-audit/page-updates-log.md">page-updates-log</a>
+  </p>
+</header>
+
+<nav class="toc">
+  <h2>Groups</h2>
+  <ul>
+    <li><a href="#g0">0 — Selector strip</a></li>
+    <li><a href="#g1">1 — Show ranked items</a></li>
+    <li><a href="#g2">2 — Section narrative header / hero stat</a></li>
+    <li><a href="#g3">3 — KPI tile / overview metric strip</a></li>
+    <li><a href="#g4">4 — Perf-tabs (metric-first vs entity-drill)</a></li>
+    <li><a href="#g5">5 — Sub-tabs within a metric pane</a></li>
+    <li><a href="#g6">6 — Time-trend visualization</a></li>
+    <li><a href="#g7">7 — Day-of-Week (DoW) breakdown</a></li>
+    <li><a href="#g8">8 — Detail sidebar</a></li>
+    <li><a href="#g9">9 — View All / jump-to-detail</a></li>
+    <li><a href="#g10">10 — Cohort note</a></li>
+    <li><a href="#g11">11 — Run-stats line</a></li>
+    <li><a href="#g12">12 — Compare workflow</a></li>
+    <li><a href="#g13">13 — Domain-flexible canonicals</a></li>
+    <li><a href="#principles">Audit principles</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<div class="legend">
+  <span class="item"><span class="v v-K">K</span> Keep (already canonical)</span>
+  <span class="item"><span class="v v-U">U</span> Upgrade (rebuild to canonical)</span>
+  <span class="item"><span class="v v-T">T</span> Thread (host inside canonical)</span>
+  <span class="item"><span class="v v-D">D</span> Drop</span>
+</div>
+
+<section class="group" id="g0">
+  <h2><span class="id">Group 0</span> Selector strip</h2>
+  <p class="purpose">Browse N items, drill into one. Top-level nav for "pick which X to look at."</p>
+  <div class="canonical-block">
+    <strong>Canonical:</strong> <code>.ep-chips-row</code> + <code>.ep-chip</code> + <code>.ep-view-toggle</code> + filter input + count badge.
+    Live: <a class="live-link" href="engagement-promotions-proposed.html">By Promotion tab on Proposed</a>
+  </div>
+  <table class="verdict-table">
+    <thead><tr><th>Page</th><th>Surface</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td>Promotions Proposed</td><td>Selector strip (full)</td><td><span class="v v-K">K</span></td></tr>
+      <tr><td>Visitation creative-chips</td><td><code>.creative-chips</code></td><td><span class="v v-U">U</span> wrap in canonical</td></tr>
+      <tr><td>Demographics demo-chips</td><td><code>.demo-chips</code></td><td><span class="v v-U">U</span> wrap in canonical</td></tr>
+      <tr><td>Media <code>.creative-list</code> carousel</td><td>—</td><td><span class="v v-D">D</span> drop, replace</td></tr>
+      <tr><td>Media multi-campaign nav</td><td>(none today)</td><td><strong>NEW</strong> add canonical above KPI tiles</td></tr>
+    </tbody>
+  </table>
+  <div class="dp-row"><span class="dp-id">DP15.1</span><span><span class="dp-locked">LOCKED</span> · <code>.ep-chips-row</code> canonical · <code>.creative-list</code> drops</span></div>
+  <div class="dp-row"><span class="dp-id">DP15.2</span><span><span class="dp-locked">LOCKED</span> · <code>.ep-panel-legend</code> per-panel (no global rule for segment colors)</span></div>
+  <div class="dp-row"><span class="dp-id">DP-NEW-0.1</span><span><span class="dp-locked">LOCKED</span> · Ranked Table mode: Engagement = <code>.ep-data-table</code>, Media = <code>.dist-tree-data-grid</code></span></div>
+  <div class="max-note"><strong>Max Apr-30 thread:</strong> Direct stakeholder confirmation — selector-strip canonical = Media Buy multi-campaign nav template.</div>
+</section>
+
+<section class="group" id="g1">
+  <h2><span class="id">Group 1</span> Show ranked items</h2>
+  <p class="purpose">Display a ranked list of entities (promotions, stores, categories, competitors) with one or more metrics.</p>
+  <div class="canonical-block">
+    <strong>Canonical:</strong> <code>.ep-stacked-list</code> — multi-segment bars, metric-colored, 9-row default.
+    Plus 3 valid siblings: <code>.dist-tree-data-grid</code>, <code>.leaderboard-table</code>, <code>.ep-data-table</code> (all preserved per audit principle 2).
+    Live: <a class="live-link" href="engagement-promotions-proposed-max.html">Proposed-Max → Sessions tab</a>
+  </div>
+  <table class="verdict-table">
+    <thead><tr><th>Page</th><th>Surface</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td>Promotions Base</td><td><code>.promo-data-grid</code></td><td><span class="v v-T">T</span> thread Data sub-pane</td></tr>
+      <tr><td>Promotions Base</td><td><code>.promotion-grid</code> card-view</td><td><span class="v v-D">D</span> drop</td></tr>
+      <tr><td>Proposed-Max</td><td><code>.ep-stacked-list</code></td><td><span class="v v-K">K</span></td></tr>
+      <tr><td>Proposed-Max</td><td><code>.ep-data-table</code></td><td><span class="v v-K">K</span></td></tr>
+      <tr><td>Categories / Circulars / Grid</td><td>data-grids</td><td><span class="v v-T">T</span> rebuild canonical shell, thread tables</td></tr>
+      <tr><td>Visitation</td><td><code>.store-perf-bar-view</code></td><td><span class="v v-U">U</span> upgrade to multi-segment</td></tr>
+      <tr><td>Media</td><td><code>.dist-tree-data-grid</code></td><td><span class="v v-K">K</span> Distribution canonical</td></tr>
+      <tr><td>Traffic</td><td><code>.leaderboard-table</code></td><td><span class="v v-K">K</span> Distribution canonical</td></tr>
+    </tbody>
+  </table>
+  <div class="dp-row"><span class="dp-id">DP1.1</span><span><span class="dp-locked">LOCKED B</span> · Thread existing tables; build canonical shell around them. Preserves in-dev tables.</span></div>
+  <div class="dp-row"><span class="dp-id">DP1.2</span><span><span class="dp-locked">LOCKED</span> · Drop card-view (page reference-only under baseline-lock).</span></div>
+</section>
+
+<section class="group" id="g2">
+  <h2><span class="id">Group 2</span> Section narrative header / hero stat</h2>
+  <p class="purpose">Frame each section with title + question + single hero metric.</p>
+  <div class="canonical-block">
+    <strong>Canonical:</strong> <code>.section-panel-header</code> + <code>.hero-stat</code> + <code>.narrative-header</code> + <code>.stat-strip</code>.
+    <strong>Single hero metric per Max Apr-17 LOCKED.</strong> Composition / counts / trend → breakdown panels below.
+  </div>
+  <div class="max-note"><strong>Max Apr-17 LOCKED:</strong> Right block = single hero stat + delta. Value + delta same font size, larger than current. Section titles up. Label small caps above. Applies to: Store Visitation, Store Performance, Demographics, Traffic Share, Media Buy.</div>
+  <div class="dp-row"><span class="dp-id">DP2.1</span><span><span class="dp-locked">LOCKED</span> · Stat-strip mandatory on every section header. Demographics + Media-visits both currently miss it → Upgrade.</span></div>
+</section>
+
+<section class="group" id="g3">
+  <h2><span class="id">Group 3</span> KPI tile / overview metric strip</h2>
+  <p class="purpose">Top-line metrics in a compact strip with click-to-jump nav.</p>
+  <div class="canonical-block">
+    <strong>Canonical:</strong> <code>.ep-kpi-strip</code> + <code>.ep-kpi-tile[data-jump-to]</code>.
+    <strong>Bill 2026-05-01:</strong> Add "View →" affordance bottom-right of each tile (UI cue for clickability).
+    Live: <a class="live-link" href="engagement-promotions-proposed-max.html">Proposed-Max Overview tab</a>
+  </div>
+  <div class="max-note"><strong>Max Apr-30 Media Buy exports:</strong> 4 tiles — Overview / CTR / Clicks / Impressions. Confirms multi-tile + jump pattern as canonical.</div>
+  <div class="dp-row"><span class="dp-id">DP3.1</span><span><span class="dp-locked">LOCKED</span> · KPI strip = canonical multi-metric overview. Single-metric strip = hero variant. Both valid.</span></div>
+  <div class="dp-row"><span class="dp-id">DP3.2</span><span><span class="dp-locked">LOCKED B</span> · Media-visits subsection → mini perf-tabs container <code>[By Store | By Week | Data]</code> w/ KPI strip above.</span></div>
+</section>
+
+<section class="group" id="g4">
+  <h2><span class="id">Group 4</span> Perf-tabs IA</h2>
+  <p class="purpose">Switch between primary dimensions / metrics within a section.</p>
+  <div class="canonical-block">
+    <strong>Two canonicals — one per domain:</strong><br>
+    Engagement = <code>.perf-tabs</code> metric-first <code>[Sessions | Total Users | Duration | Card Events]</code><br>
+    Distribution = <code>.perf-tabs</code> entity-drill <code>[Overview | By Store | By Day | By Creative | Time Trend]</code>
+  </div>
+  <div class="max-note"><strong>Max Apr-17 + Apr-30 LOCKED:</strong> Distribution = entity-drill (Store Performance Apr-17, Media Buy Apr-30). Verbal tab order matters (Store/Creative/Day, NOT Store/Day/Creative).</div>
+  <div class="dp-row"><span class="dp-id">DP4.1</span><span><span class="dp-locked">LOCKED</span> · Distribution = entity-drill (matches Max). Engagement = metric-first (Proposed-Max canonical).</span></div>
+  <div class="dp-row"><span class="dp-id">DP4.2</span><span><span class="dp-locked">LOCKED B</span> · Traffic adds perf-tabs <code>[Overview | By Competitor | By Store | Crossover Trend | Traffic Volume | Data]</code>. Bill: choose-your-own-adventure beats linear scroll.</span></div>
+  <div class="dp-row"><span class="dp-id">DP4.3</span><span><span class="dp-locked">LOCKED</span> · Media adds perf-tabs (biggest IA gap; Max validated).</span></div>
+</section>
+
+<section class="group" id="g5">
+  <h2><span class="id">Group 5</span> Sub-tabs within a metric pane</h2>
+  <p class="purpose">Within a metric tab, switch between cuts of that metric.</p>
+  <div class="canonical-block">
+    <strong>Canonical:</strong> <code>.ep-sub-tabs</code> + <code>.ep-sub-tab</code> — 4-button strip per metric.
+    Order: <code>By Store / By Day / Time Trend / Data</code>
+  </div>
+  <div class="dp-row"><span class="dp-id">DP5.1</span><span><span class="dp-locked">LOCKED</span> · Order locked. Visitation Composition gets formalized as <code>[Composition | Trend | Data]</code>.</span></div>
+  <div style="margin-top: 10px; padding: 10px; background: #fef3c7; border-radius: 6px; font-size: 12px;">
+    <strong>Forward note (Bill 2026-05-01):</strong> chip-strip pattern (creative-chips / demo-chips) is a candidate replacement for sub-tabs post-MVP.
+  </div>
+</section>
+
+<section class="group" id="g6">
+  <h2><span class="id">Group 6</span> Time-trend visualization</h2>
+  <p class="purpose">Metric trend over time with range toggle.</p>
+  <div class="canonical-block">
+    <strong>Canonical:</strong> <code>.ep-trend-toolbar</code> + <code>.ep-trend-ranges</code> (renamed from <code>.duration-presets</code>).
+    Range labels per Max Apr-17: <code>1 Week / 4 Week (Month) / 13 Week (Quarter) / 1 Year (by quarter | by month)</code>
+  </div>
+  <div class="dp-row"><span class="dp-id">DP6.1</span><span><span class="dp-locked">LOCKED A</span> · Prototype: alias class names, keep eCharts on Distribution + SVG on Engagement. <strong>Production: all eCharts via ngx-echarts</strong>; Engagement SVG = throwaway prototype code.</span></div>
+  <div class="dp-row"><span class="dp-id">DP6.2</span><span><span class="dp-locked">LOCKED</span> · Rename <code>.duration-presets</code> → <code>.ep-trend-ranges</code>. Mechanical.</span></div>
+</section>
+
+<section class="group" id="g7">
+  <h2><span class="id">Group 7</span> Day-of-Week breakdown</h2>
+  <p class="purpose">Metric by day of week (Mon–Sun).</p>
+  <div class="canonical-block">
+    <strong>Canonical:</strong> <code>.ep-sub-pane</code> inline grid (per metric tab) + always-visible variant in overview-panel.
+    One impl, two contexts.
+  </div>
+  <div class="dp-row"><span class="dp-id">DP7.1</span><span><span class="dp-locked">LOCKED</span> · One impl (single eCharts component, consumer passes data + sizing).</span></div>
+</section>
+
+<section class="group" id="g8">
+  <h2><span class="id">Group 8</span> Detail sidebar</h2>
+  <p class="purpose">Show full detail of selected entity.</p>
+  <div class="canonical-block">
+    <strong>Canonical:</strong> <code>.ep-detail-sidebar</code> — fixed-position right edge, 350px wide, transform slide-in. Production = PrimeNG <code>p-sidebar</code>.
+  </div>
+  <div class="dp-row"><span class="dp-id">DP8.1</span><span><span class="dp-locked">LOCKED</span> · Standardize fixed overlay everywhere. Inline-collapse <code>.panel--right.panel--collapsed</code> drops on Categories / Circulars / Base.</span></div>
+  <div class="dp-row"><span class="dp-id">DP8.2</span><span><span class="dp-locked">LOCKED</span> · Grid page adds detail sidebar (parity).</span></div>
+</section>
+
+<section class="group" id="g9">
+  <h2><span class="id">Group 9</span> View All / jump-to-detail link</h2>
+  <p class="purpose">Closes the loop overview→detail without scrolling.</p>
+  <div class="canonical-block">
+    <strong>Canonical:</strong> <code>.ep-view-all-btn</code> on every overview-panel header. Click jumps to corresponding metric tab + sub-pane.
+  </div>
+  <div class="dp-row"><span class="dp-id">DP9.1</span><span><span class="dp-locked">LOCKED</span> · Always add View All on overview panels where a perf-tab destination exists.</span></div>
+</section>
+
+<section class="group" id="g10">
+  <h2><span class="id">Group 10</span> Cohort note</h2>
+  <p class="purpose">Inline pill defining the cohort being shown.</p>
+  <div class="canonical-block">
+    <strong>Canonical:</strong> <code>.ep-cohort-note</code>.
+    <strong>Bill 2026-05-01 styling:</strong> wrapper = <code>.stat-strip__cards</code>, right-aligned, larger font, inner pieces in semantic spans (<code>__label</code> / <code>__count</code> / <code>__scope</code> / <code>__period</code> / <code>__sep</code>).
+  </div>
+  <div class="dp-row"><span class="dp-id">DP10.1</span><span><span class="dp-locked">LOCKED</span> · Universal across every page. Per-tab variants follow same span pattern.</span></div>
+</section>
+
+<section class="group" id="g11">
+  <h2><span class="id">Group 11</span> Run-stats line</h2>
+  <p class="purpose">Signal data completeness ("ran at 27 stores · 7 days") under date range card.</p>
+  <div class="canonical-block">
+    <strong>Canonical:</strong> <code>.card-run-stats</code>.
+    <strong>Bill 2026-05-01 styling:</strong> wrap text in <code>&lt;span class="card-run-stats__text"&gt;</code>, bold + italic starting state.
+  </div>
+  <div class="max-note"><strong>Max Apr-30 (Phase 1.1):</strong> Adds "Week N (X of Y days)" + locations + ★ partial-run star. Per-piece spans support partial-run state targeting.</div>
+  <div class="dp-row"><span class="dp-id">DP11.1</span><span><span class="dp-locked">LOCKED</span> · Universal across all pages.</span></div>
+</section>
+
+<section class="group" id="g12">
+  <h2><span class="id">Group 12</span> Compare workflow</h2>
+  <p class="purpose">Compare two cohorts side-by-side.</p>
+  <div class="canonical-block">
+    <strong>Canonical (own pattern):</strong> <code>.compare-layer-tabs</code> entity-drill (Circular / Category / Promotion) · <code>.compare-context-bar</code> (A + B w/ Copy A↔B) · <code>.compare-prompt</code> empty state · <code>.compare-grid</code> + mini-card 2×3.
+    Live: <a class="live-link" href="engagement-compare.html?bust=now">Compare → By Category</a>
+  </div>
+  <div class="dp-row"><span class="dp-id">DP12.1</span><span><span class="dp-locked">LOCKED</span> · Mini-card 2×3 lives inside <code>.compare-grid</code>. No per-section ("Engagement Metrics" / "Details") headers. + Bill 2026-05-01 inline tweaks: <code>.percentile-value</code> right-end of row, <code>.variance</code> moved into <code>.percentile-context__variance</code>, context = flex row w/ <code>__body</code> + <code>__variance</code>.</span></div>
+</section>
+
+<section class="group" id="g13">
+  <h2><span class="id">Group 13</span> Domain-flexible canonical surfaces</h2>
+  <p class="purpose">Surfaces that exist in Distribution today. Reframed (Bill 2026-05-01): NOT Distribution-only — they live there first because the data shape required them first. Available to Engagement if a future use-case calls.</p>
+  <div class="canonical-block">
+    <strong>Locked surfaces (8):</strong>
+    <ul style="margin: 8px 0; padding-left: 24px;">
+      <li><code>.dist-tree-data-grid</code> — Media hierarchical drill</li>
+      <li>Leaflet map + <code>.map-ring-legend</code> — Traffic geographic viz (Max Apr-17 LOCKED keep)</li>
+      <li><code>.leaderboard-table</code> — Traffic competitor-aware list</li>
+      <li><code>.compare-panel</code> modal — Traffic store-vs-competitor</li>
+      <li>Crossover stacked-area chart — Traffic market basket overlap</li>
+      <li><code>.demo-chips</code> + <code>.demo-charts-grid</code> + <code>.demo-single-view</code> — Visitation Demographics drill</li>
+      <li>Media-visits cross-ref (now mini perf-tabs per DP3.2)</li>
+      <li>Visitation Composition tabset (Current/Trend at hero level)</li>
+    </ul>
+  </div>
+  <div class="dp-row"><span class="dp-id">DP13.1</span><span><span class="dp-locked">LOCKED</span> · Lock as canonical patterns. Domain-flexible — available to Engagement if future use-case calls.</span></div>
+  <div class="dp-row"><span class="dp-id">DP13.2</span><span><span class="dp-locked">LOCKED</span> · Demographics chip selector stays canonical (multi-dim drill needs its own shape). Domain-flexible.</span></div>
+</section>
+
+<section class="group" id="principles">
+  <h2><span class="id">Principles</span> Audit-wide rules</h2>
+  <div class="principle"><strong>1.</strong> Baseline = Proposed-Max only. Original + Proposed hidden in UI; markup retained for reference. REPORT links land on Proposed-Max.</div>
+  <div class="principle"><strong>2.</strong> Preserve in-dev production tables (<code>.ep-data-table</code>, <code>.dist-tree-data-grid</code>, <code>.category-data-grid</code>, <code>.store-data-grid</code>, <code>.grid-data-table</code>, <code>.promo-data-grid</code>, <code>.store-perf-table</code>, <code>.leaderboard-table</code>). Thread inside canonical surfaces. No table rework.</div>
+  <div class="principle"><strong>3.</strong> Numbers always render with thousands-separator commas (<code>3541</code> → <code>3,541</code>). Production: <code>Intl.NumberFormat('en-US')</code> or Angular <code>number:'1.0-0':'en-US'</code> pipe.</div>
+  <div class="principle"><strong>Production stack:</strong> Angular / TypeScript · PrimeNG (UI) · eCharts via ngx-echarts (charts). Prototype mixed impls collapse to eCharts in Angular build.</div>
+</section>
+
+</main>
+
+</body>
+</html>

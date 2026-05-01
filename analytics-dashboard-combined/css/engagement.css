@@ -5228,12 +5228,15 @@ body:not(.comparison-active) .detail-comparison {
 
 /* Dual Context Bar */
 .compare-context-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-6);
   padding: var(--space-4) var(--space-6);
   background: linear-gradient(180deg, var(--color-gray-100), var(--color-gray-50));
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 2px solid var(--color-border);
 }
 
 .context-column {
@@ -5446,6 +5449,52 @@ body:not(.comparison-active) .detail-comparison {
 
 .compare-cell--b {
   border-left: 4px solid var(--color-success-500);
+}
+
+/* Column A/B label at top of each cell */
+.compare-col-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-4);
+}
+
+.compare-col-label--a {
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-700);
+}
+
+.compare-col-label--b {
+  background-color: var(--color-success-100);
+  color: var(--color-success-700);
+}
+
+/* Inner section headers (nested inside each cell) */
+.compare-inner-section {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.compare-inner-section__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-3);
+}
+
+.compare-inner-section__header .material-symbols-outlined {
+  font-size: 15px;
 }
 
 /* Context Summary in Results */
@@ -6197,6 +6246,151 @@ body:not(.comparison-active) .detail-comparison {
   width: 120px;
   padding-left: 8px !important;
   padding-right: 8px !important;
+}
+
+/* Percentile context block — flex row: body (left) + variance (right) */
+.percentile-context {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: 6px;
+  padding: 6px 8px;
+  min-height: 70px;
+  background-color: var(--color-gray-50, #f9fafb);
+  border-left: 2px solid var(--color-border, #e5e7eb);
+  border-radius: 0 4px 4px 0;
+}
+
+.percentile-context__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.percentile-context__sentence {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--color-text-primary, #1f2937);
+  line-height: 1.5;
+}
+
+.percentile-context__sentence .promotion,
+.percentile-context__sentence .category,
+.percentile-context__sentence .week,
+.percentile-context__sentence .store,
+.percentile-context__sentence .percentile {
+  font-weight: 600;
+}
+
+.percentile-context__vs {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-secondary, #6b7280);
+  line-height: 1.4;
+  margin-top: 2px;
+  padding-top: 4px;
+  border-top: 1px dashed var(--color-border, #e5e7eb);
+}
+
+.percentile-context__vs--ahead {
+  color: var(--p-green-500, #22c55e);
+}
+
+.percentile-context__vs--behind {
+  color: var(--p-red-500, #ef4444);
+}
+
+/* ── Phase 1 Compare Polish ─────────────────────────── */
+
+/* 1.1 Partial-run star */
+.compare-run-partial {
+  color: var(--color-warning-600);
+  font-size: 0.9em;
+  margin-right: 2px;
+}
+
+/* 1.2 Percentile bigger in compare cells — anchored to right end of row */
+.compare-cell .detail-percentile-row .percentile-value {
+  font-size: 1.5rem;
+  padding: var(--space-2) var(--space-4);
+  min-width: 72px;
+}
+
+/* Variance moved into .percentile-context — right column of the flex row */
+.percentile-context__variance {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.percentile-context__variance .variance {
+  font-size: 1.5rem;
+  font-weight: var(--font-weight-bold);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-lg);
+  min-width: 72px;
+  justify-content: center;
+}
+.percentile-context__variance .variance .material-symbols-outlined {
+  font-size: 1.5rem;
+}
+
+.compare-cell .detail-percentile-row {
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* 1.3 Mini-card 2×3 grid */
+.compare-mini-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.compare-mini-card {
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-100);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.compare-mini-card__label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+.compare-mini-card__value {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+}
+
+/* 1.4 "How to interpret:" lead-in */
+.percentile-context__lead-in {
+  display: block;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: 3px;
 }
 
 }

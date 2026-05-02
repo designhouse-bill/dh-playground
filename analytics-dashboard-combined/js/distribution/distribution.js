@@ -22,7 +22,6 @@
   let visitationView = 'current';     // 'current' | 'trend'
   let donutFilterSegment = null;       // null | 'zero_prev' | 'one_three' | 'four_plus'
   let _trendViewInitialized = false;
-  let creativeSortKey = 'visits';      // 'visits' | 'ctr' | 'spend' | 'stores'
 
   // Helper: parse name and region from label (e.g. "Holiday Steak — South FL")
   function parseLabel(cr) {
@@ -266,226 +265,150 @@
       return;
     }
 
-    const isMultiple = records.length >= 2;
+    // Phase 3 step 5+6+7: dist-chip-selector + view-toggle (Chips | Table).
+    // Default sort: visits desc. Sort dropdown removed (step 7); table column
+    // headers carry sort affordance once Table view becomes interactive.
+    // DP16.1 rank parity: every chip carries .creative-card__rank with the
+    // dataset rank (post-sort) — matches the same row's rank in Table view.
 
-    // User-controlled sort. Default 'visits' descending.
-    const SORT_ACCESSORS = {
-      visits: cr => cr.metrics ? cr.metrics.gross_visits : 0,
-      ctr:    cr => cr.metrics ? cr.metrics.ctr          : 0,
-      spend:  cr => cr.metrics ? cr.metrics.spend        : 0,
-      stores: cr => cr.store_group ? cr.store_group.length : 0
-    };
-    const accessor = SORT_ACCESSORS[creativeSortKey] || SORT_ACCESSORS.visits;
     const sorted = records
       .map(cr => ({ ...cr, _origIndex: allRecords.indexOf(cr) }))
-      .sort((a, b) => accessor(b) - accessor(a));
+      .sort((a, b) => (b.metrics?.gross_visits || 0) - (a.metrics?.gross_visits || 0));
 
-    // Helper: parse name and region from label (e.g. "Holiday Steak — South FL")
+    const CHIP_CAP = 50;
+
     function parseLabel(cr) {
       const full = cr.label || cr.notes || '';
       const parts = full.split(' — ');
       return { name: parts[0] || full, region: parts[1] || '' };
     }
 
-    {
-      // Single render path (was previously branched into a compact inline
-      // bar for 1 creative). Always use the carousel card so single + multi
-      // share the same width/visual treatment; when there's only one item we
-      // shift the list to center the card in the viewport.
-      const numVisible = 2;
-      const numScroll = 1;
-      const totalItems = sorted.length;
-      const totalPages = Math.ceil(Math.max(totalItems - numVisible + 1, 1) / numScroll);
-      const singleItem = totalItems === 1;
-      // Shift left by half a slot (25% of list width when numVisible=2) so a
-      // lone card is centered in the viewport.
-      // Single 50%-wide card sitting in a 100% viewport: shift the list
-      // (own width = 50% viewport) right by 50% of itself = 25% viewport,
-      // putting the card visually centered.
-      const initialTransform = singleItem ? 'translateX(50%)' : 'translateX(0%)';
+    function escapeHTML(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
 
-      el.className = 'creative-list' + (singleItem ? ' creative-list--single' : '');
+    function chipHtml(cr, rank) {
+      const typeIcon = cr.creative_type === 'video' ? 'movie' : (cr.creative_type === 'gif' ? 'gif_box' : 'image');
+      const { name } = parseLabel(cr);
+      return `<button type="button" class="dist-chip-selector__chip" data-orig-index="${cr._origIndex}" data-search="${escapeHTML(name.toLowerCase())}" title="${escapeHTML(name)}">
+        <span class="dist-chip-selector__chip__rank">${rank}</span>
+        <span class="material-symbols-outlined dist-chip-selector__chip__icon">${typeIcon}</span>
+        <span class="dist-chip-selector__chip__name">${escapeHTML(name)}</span>
+      </button>`;
+    }
 
-      const cardsHtml = sorted.map((cr, i) => {
-        const typeIcon = cr.creative_type === 'video' ? 'movie' : (cr.creative_type === 'gif' ? 'gif_box' : 'image');
+    function tableHtml(items) {
+      const rows = items.map((cr, i) => {
         const { name, region } = parseLabel(cr);
-
-        return `
-          <div class="p-carousel-item" data-index="${i}">
-            <div class="creative-card" id="creative-card-${i}">
-              <div class="creative-card__top">
-                <div class="creative-card__top-left">
-                <span class="creative-card__rank">${i + 1}</span>
-                <div class="creative-card__info">
-                  <div class="creative-card__thumb creative-card__thumb--square">
-                    <span class="material-symbols-outlined">${typeIcon}</span>
-                  </div>
-                  <div class="creative-card__info_text">
-                    <div class="creative-card__name">${name}</div>
-                    <div class="creative-card__region">${region}</div>
-                    <div class="creative-card__date">${cr.date_range_start} — ${cr.date_range_end}</div>
-                  </div>
-                </div>
-                </div>
-                <div class="creative-card__metrics">
-                <div class="creative-metric-tile">
-                  <div class="creative-metric-tile__label">Stores</div>
-                  <div class="creative-metric-tile__value">${cr.store_group.length}</div>
-                </div>
-                <div class="creative-metric-tile">
-                  <div class="creative-metric-tile__label">CTR</div>
-                  <div class="creative-metric-tile__value">${cr.metrics ? fmtPct(cr.metrics.ctr) : '—'}</div>
-                </div>
-                <div class="creative-metric-tile">
-                  <div class="creative-metric-tile__label">Visits</div>
-                  <div class="creative-metric-tile__value">${cr.metrics ? fmtNumber(cr.metrics.gross_visits) : '—'}</div>
-                </div>
-                <div class="creative-metric-tile">
-                  <div class="creative-metric-tile__label">CPM</div>
-                  <div class="creative-metric-tile__value">${cr.metrics ? fmtCurrency(cr.metrics.cpm) : '—'}</div>
-                </div>
-                <div class="creative-metric-tile">
-                  <div class="creative-metric-tile__label">CPC</div>
-                  <div class="creative-metric-tile__value">${cr.metrics ? fmtCurrency(cr.metrics.cpc) : '—'}</div>
-                </div>
-                <div class="creative-metric-tile">
-                  <div class="creative-metric-tile__label">Spend</div>
-                  <div class="creative-metric-tile__value">${cr.metrics ? fmtCurrency(cr.metrics.spend) : '—'}</div>
-                </div>
-              </div>
-              </div>
-              
-              <div class="creative-card__actions">
-                ${cr.target_url ? `<a class="creative-card__link" href="${cr.target_url}" target="_blank"><span class="material-symbols-outlined" style="font-size:14px;">link</span> Promotion Link</a>` : ''}
-                <button class="creative-card__details-btn" onclick="viewVariantDetails(${cr._origIndex})"><span class="material-symbols-outlined" style="font-size:14px;">visibility</span> View Details</button>
-              </div>
-            </div>
-          </div>
-        `;
+        const m = cr.metrics || {};
+        return `<tr data-orig-index="${cr._origIndex}">
+          <td class="col-num">${i + 1}</td>
+          <td class="col-creative">${escapeHTML(name)}${region ? ' <span style="color:var(--p-text-color-secondary);">— ' + escapeHTML(region) + '</span>' : ''}</td>
+          <td class="col-stores">${cr.store_group ? cr.store_group.length : 0}</td>
+          <td class="col-ctr">${m.ctr != null ? fmtPct(m.ctr) : '—'}</td>
+          <td class="col-visits">${m.gross_visits != null ? fmtNumber(m.gross_visits) : '—'}</td>
+          <td class="col-cpm">${m.cpm != null ? fmtCurrency(m.cpm) : '—'}</td>
+          <td class="col-cpc">${m.cpc != null ? fmtCurrency(m.cpc) : '—'}</td>
+          <td class="col-spend">${m.spend != null ? fmtCurrency(m.spend) : '—'}</td>
+        </tr>`;
       }).join('');
+      return `<table class="dist-tree-table">
+        <thead><tr>
+          <th class="col-num">#</th>
+          <th class="col-creative">Creative</th>
+          <th class="col-stores">Stores</th>
+          <th class="col-ctr">CTR</th>
+          <th class="col-visits">Visits</th>
+          <th class="col-cpm">CPM</th>
+          <th class="col-cpc">CPC</th>
+          <th class="col-spend">Spend</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+    }
 
-      // Page-counter row (replaces the long indicator-dot list when there are
-      // many pages). Dot list still rendered for ≤ 6 pages — feels more
-      // discoverable for small counts.
-      const useDots = totalPages > 1 && totalPages <= 6;
-      const indicatorHtml = useDots
-        ? `<ul class="p-carousel-indicator-list">${
-            Array.from({ length: totalPages }, (_, i) =>
-              `<li class="p-carousel-indicator${i === 0 ? ' p-carousel-indicator-active' : ''}"><button class="p-carousel-indicator-button" data-page="${i}" aria-label="Page ${i + 1}"></button></li>`
-            ).join('')
-          }</ul>`
-        : (totalPages > 1
-            ? `<div class="p-carousel-page-counter" aria-live="polite"><span class="p-carousel-page-counter__current">1</span> / ${totalPages}</div>`
-            : '');
-
-      // Sort dropdown — only shown when there's more than one creative.
-      const sortHtml = totalItems > 1
-        ? `<div class="creative-list__toolbar">
-             <label class="creative-sort">
-               <span class="creative-sort__label">Sort by</span>
-               <select class="creative-sort__select" id="creative-sort-select">
-                 <option value="visits" ${creativeSortKey === 'visits' ? 'selected' : ''}>Visits</option>
-                 <option value="ctr"    ${creativeSortKey === 'ctr'    ? 'selected' : ''}>CTR</option>
-                 <option value="spend"  ${creativeSortKey === 'spend'  ? 'selected' : ''}>Spend</option>
-                 <option value="stores" ${creativeSortKey === 'stores' ? 'selected' : ''}>Stores</option>
-               </select>
-             </label>
-             <span class="creative-list__total">${totalItems} creative${totalItems === 1 ? '' : 's'}</span>
-           </div>`
-        : '';
-
-      el.innerHTML = `
-        ${sortHtml}
-        <div class="p-carousel p-component">
-          <div class="p-carousel-content-container">
-            <button class="p-carousel-prev-button" aria-label="Previous" ${totalPages <= 1 ? 'disabled' : ''}>
-              <span class="material-symbols-outlined">chevron_left</span>
-            </button>
-            <div class="p-carousel-viewport">
-              <div class="p-carousel-item-list" style="transform: ${initialTransform};">
-                ${cardsHtml}
-              </div>
-            </div>
-            <button class="p-carousel-next-button" aria-label="Next" ${totalPages <= 1 ? 'disabled' : ''}>
-              <span class="material-symbols-outlined">chevron_right</span>
-            </button>
-          </div>
-          ${indicatorHtml}
+    el.className = 'creative-ranked';
+    el.innerHTML = `
+      <div class="creative-ranked__toolbar">
+        <input type="search" class="creative-ranked__filter p-inputtext" id="creative-filter" placeholder="Filter creatives…" aria-label="Filter creatives">
+        <span class="creative-ranked__total" id="creative-total">${sorted.length} creative${sorted.length === 1 ? '' : 's'}</span>
+        <span class="creative-ranked__spacer" style="flex:1"></span>
+        <div class="view-toggle" role="tablist" aria-label="Creative view mode">
+          <button type="button" class="view-toggle__btn active" data-cv-mode="chips" role="tab" aria-selected="true">
+            <span class="material-symbols-outlined">view_module</span> Chips
+          </button>
+          <button type="button" class="view-toggle__btn" data-cv-mode="table" role="tab" aria-selected="false">
+            <span class="material-symbols-outlined">table_rows</span> Table
+          </button>
         </div>
-      `;
+      </div>
+      <div class="dist-chip-selector" id="dist-chip-selector__chips" data-cv-pane="chips">
+        ${sorted.slice(0, CHIP_CAP).map((cr, i) => chipHtml(cr, i + 1)).join('')}
+      </div>
+      <div class="dist-tree-data-grid" id="creative-table-view" data-cv-pane="table" style="display:none;"></div>
+    `;
 
-      // Wire sort change → re-render
-      const sortSel = el.querySelector('#creative-sort-select');
-      if (sortSel) {
-        sortSel.addEventListener('change', e => {
-          creativeSortKey = e.target.value;
-          renderCreativeList();
-        });
-      }
-
-      // Wire up carousel JS
-      initCreativeCarousel(el, totalItems, numVisible, numScroll);
-    }
-  }
-
-  // ========================================
-  // Creative Carousel Controller
-  // ========================================
-
-  function initCreativeCarousel(container, totalItems, numVisible, numScroll) {
-    let currentPage = 0;
-    const maxPage = Math.ceil(Math.max(totalItems - numVisible, 0) / numScroll);
-    const itemList = container.querySelector('.p-carousel-item-list');
-    const prevBtn = container.querySelector('.p-carousel-prev-button');
-    const nextBtn = container.querySelector('.p-carousel-next-button');
-    const indicators = container.querySelectorAll('.p-carousel-indicator');
-    const counterEl = container.querySelector('.p-carousel-page-counter__current');
-    const singleItem = totalItems === 1;
-
-    function goToPage(page) {
-      currentPage = Math.max(0, Math.min(page, maxPage));
-      if (singleItem) {
-        // List is full viewport width with item at flex-basis 50%. Centering
-        // via flex justify-content avoids percentage-translate ambiguity.
-        itemList.style.transform = 'none';
-        itemList.style.justifyContent = 'center';
-        prevBtn.disabled = true;
-        nextBtn.disabled = true;
-        return;
-      }
-      const offsetIndex = currentPage * numScroll;
-      // Each item is (100% / numVisible) of the viewport, so shift by that unit
-      const pct = (offsetIndex / numVisible) * 100;
-      itemList.style.transform = `translateX(-${pct}%)`;
-      itemList.style.transition = 'transform 300ms ease';
-
-      // Update button states
-      prevBtn.disabled = currentPage === 0;
-      nextBtn.disabled = currentPage >= maxPage;
-
-      // Update indicators (when dot mode is in use)
-      indicators.forEach((ind, i) => {
-        ind.classList.toggle('p-carousel-indicator-active', i === currentPage);
-      });
-
-      // Update page counter (when counter mode is in use)
-      if (counterEl) counterEl.textContent = (currentPage + 1).toString();
-    }
-
-    prevBtn.addEventListener('click', () => goToPage(currentPage - 1));
-    nextBtn.addEventListener('click', () => goToPage(currentPage + 1));
-
-    // Indicator clicks
-    indicators.forEach(ind => {
-      const btn = ind.querySelector('.p-carousel-indicator-button');
-      btn.addEventListener('click', () => {
-        goToPage(parseInt(btn.dataset.page, 10));
+    // Chip click → viewVariantDetails (existing detail panel).
+    el.querySelectorAll('.dist-chip-selector__chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const idx = parseInt(chip.dataset.origIndex, 10);
+        if (typeof window.viewVariantDetails === 'function') window.viewVariantDetails(idx);
       });
     });
 
-    // Initial state
-    goToPage(0);
+    // Filter — searches ALL creatives, not just visible chips. Re-renders chip
+    // strip with matches; CHIP_CAP still applies to the result set.
+    const filterEl = el.querySelector('#creative-filter');
+    const totalEl = el.querySelector('#creative-total');
+    const chipsEl = el.querySelector('#dist-chip-selector__chips');
+    if (filterEl) {
+      filterEl.addEventListener('input', e => {
+        const q = e.target.value.trim().toLowerCase();
+        const matches = q ? sorted.filter(cr => parseLabel(cr).name.toLowerCase().includes(q)) : sorted;
+        chipsEl.innerHTML = matches.slice(0, CHIP_CAP).map((cr, i) => chipHtml(cr, sorted.indexOf(cr) + 1)).join('');
+        totalEl.textContent = `${matches.length} match${matches.length === 1 ? '' : 'es'}${matches.length > CHIP_CAP ? ' (showing ' + CHIP_CAP + ')' : ''}`;
+        chipsEl.querySelectorAll('.dist-chip-selector__chip').forEach(chip => {
+          chip.addEventListener('click', () => {
+            const idx = parseInt(chip.dataset.origIndex, 10);
+            if (typeof window.viewVariantDetails === 'function') window.viewVariantDetails(idx);
+          });
+        });
+        // Re-build table on next toggle since data set changed.
+        tableBuilt = false;
+        if (tableEl && tableEl.style.display !== 'none') renderTable();
+      });
+    }
+
+    // View-toggle (Chips | Table). Table lazy-renders on first activation.
+    let tableBuilt = false;
+    const chipsPane = el.querySelector('[data-cv-pane="chips"]');
+    const tableEl = el.querySelector('#creative-table-view');
+    function renderTable() {
+      const q = filterEl ? filterEl.value.trim().toLowerCase() : '';
+      const items = q ? sorted.filter(cr => parseLabel(cr).name.toLowerCase().includes(q)) : sorted;
+      tableEl.innerHTML = `<div class="dist-tree-table-wrap">${tableHtml(items)}</div>`;
+      tableBuilt = true;
+    }
+    el.querySelectorAll('.view-toggle__btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const mode = btn.dataset.cvMode;
+        el.querySelectorAll('.view-toggle__btn').forEach(b => {
+          const on = b === btn;
+          b.classList.toggle('active', on);
+          b.setAttribute('aria-selected', on ? 'true' : 'false');
+        });
+        if (mode === 'table') {
+          if (!tableBuilt) renderTable();
+          chipsPane.style.display = 'none';
+          tableEl.style.display = '';
+        } else {
+          tableEl.style.display = 'none';
+          chipsPane.style.display = '';
+        }
+      });
+    });
   }
+
 
   function renderDeliveryTrends() {
     const el = document.getElementById('trend-cards');

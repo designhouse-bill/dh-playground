@@ -56,13 +56,14 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--color-text-secondary, #6b7280);
-  background: #f8fafc;
+  background: #fefefe;
   border: 1px solid var(--color-border, #e5e7eb);
   padding: 4px 10px;
   border-radius: 999px;
-  margin-left: 8px;
+  margin-left: 0;
+  margin-top: 4px;
 }
 .ep-cohort-note .material-symbols-outlined { font-size: 14px; }
 

@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
+  <link rel="stylesheet" href="css/distribution-shared.css">
   <link rel="stylesheet" href="css/engagement.css">
   <!-- Pulled in for perf-tabs / creative-chips / stat-strip / section-panel-header rules -->
   <link rel="stylesheet" href="css/distribution.css">
@@ -72,7 +73,7 @@
     .engagement-proposed {
       max-width: 1480px;
       margin: 0 auto;
-      padding: var(--space-6) var(--space-6) var(--space-16);
+      padding: var(--space-2) var(--space-6) var(--space-16);
       display: flex;
       flex-direction: column;
       gap: var(--space-2);
@@ -182,7 +183,7 @@
 
     /* Max KPI tile strip — Overview snapshot (his sketch). Tiles are buttons that jump to the metric tab. */
     .ep-kpi-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; padding: var(--space-4) 0; }
-    .ep-kpi-tile { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 14px 16px; border: 1px solid var(--color-border, #e5e7eb); border-radius: 8px; background: #fff; cursor: pointer; text-align: left; transition: background .15s ease, border-color .15s ease, box-shadow .15s ease; }
+    .ep-kpi-tile { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 14px 16px; border: 1px solid var(--color-border, #e5e7eb); border-radius: 8px; background: #fff; cursor: pointer; text-align: left; transition: background .15s ease, border-color .15s ease, box-shadow .15s ease; }
     .ep-kpi-tile:hover { background: #f3f4f6; border-color: #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
     .ep-kpi-tile:focus-visible { outline: 2px solid var(--color-primary, #2196F3); outline-offset: 2px; }
     .ep-kpi-tile--active { background: #d1f0e0; border-color: #86d2a8; }
@@ -190,6 +191,20 @@
     .ep-kpi-tile__value { font-size: 26px; font-weight: 800; color: var(--color-text, #1f2937); line-height: 1.05; }
     .ep-kpi-tile__unit  { font-size: 14px; font-weight: 600; color: var(--color-text-secondary, #6b7280); }
     .ep-kpi-tile__sub   { font-size: 11px; color: var(--color-text-secondary, #6b7280); }
+    /* Phase 1 (v2.5) — View affordance pill, bottom-right of each KPI tile. Per surfaces-audit DP3.1. */
+    .ep-kpi-tile__view {
+      position: absolute; right: 10px; bottom: 8px;
+      display: inline-flex; align-items: center; gap: 2px;
+      padding: 2px 8px;
+      font-size: 10px; font-weight: 600; letter-spacing: .02em;
+      color: var(--p-primary-color, #2196F3);
+      background: rgba(33, 150, 243, 0.08);
+      border-radius: 999px;
+      pointer-events: none;
+      transition: background .15s ease;
+    }
+    .ep-kpi-tile__view .material-symbols-outlined { font-size: 12px; line-height: 1; }
+    .ep-kpi-tile:hover .ep-kpi-tile__view { background: rgba(33, 150, 243, 0.16); }
 
     /* PHASE B — patterns ported from Original (filter / hover tooltip / clickable row / inline data table) */
     .ep-metric-filter { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--color-border, #e5e7eb); border-radius: 6px; background: #fff; margin: 0 0 var(--space-3); }
@@ -1026,7 +1041,12 @@
           <p class="section-panel-header__subtitle">
         <span class="ep-cohort-note" id="ep-cohort-note">
           <span class="material-symbols-outlined">info</span>
-          Cohort: 75 promotions · Brand · Week 47
+          <span class="ep-cohort-note__label">Cohort:</span>
+          <span class="ep-cohort-note__count">75 promotions</span>
+          <span class="ep-cohort-note__sep">·</span>
+          <span class="ep-cohort-note__scope">Brand</span>
+          <span class="ep-cohort-note__sep">·</span>
+          <span class="ep-cohort-note__period">Week 47</span>
         </span>
       </p> </div>
         </div>
@@ -1082,21 +1102,25 @@
           <span class="ep-kpi-tile__label">Sessions</span>
           <span class="ep-kpi-tile__value">78,542</span>
           <span class="ep-kpi-tile__sub">this week</span>
+          <span class="ep-kpi-tile__view">View<span class="material-symbols-outlined">chevron_right</span></span>
         </button>
         <button class="ep-kpi-tile" data-jump-to="users" type="button">
           <span class="ep-kpi-tile__label">Total Users</span>
           <span class="ep-kpi-tile__value">54,011</span>
           <span class="ep-kpi-tile__sub">unique</span>
+          <span class="ep-kpi-tile__view">View<span class="material-symbols-outlined">chevron_right</span></span>
         </button>
         <button class="ep-kpi-tile" data-jump-to="duration" type="button">
           <span class="ep-kpi-tile__label">Avg Session Duration</span>
           <span class="ep-kpi-tile__value">368<span class="ep-kpi-tile__unit"> sec</span></span>
           <span class="ep-kpi-tile__sub">per session</span>
+          <span class="ep-kpi-tile__view">View<span class="material-symbols-outlined">chevron_right</span></span>
         </button>
         <button class="ep-kpi-tile" data-jump-to="cardevents" type="button">
           <span class="ep-kpi-tile__label">Card Engagement Events</span>
           <span class="ep-kpi-tile__value">271,298</span>
           <span class="ep-kpi-tile__sub">Adds + Clicks + share/save/print</span>
+          <span class="ep-kpi-tile__view">View<span class="material-symbols-outlined">chevron_right</span></span>
         </button>
       </div>
 
@@ -1508,13 +1532,26 @@
     const panes = document.querySelectorAll('.engagement-proposed .perf-tab-pane');
     const cohortNote = document.getElementById('ep-cohort-note');
 
+    // Canonical cohort-note parts (Phase 1, v2.5). Per-tab variants use {text} as
+    // transitional shape until each tab's canonical span schema is defined.
     const cohortLabels = {
-      overview:   'Cohort: 75 promotions · Brand · Week 47',
-      sessions:   'Sessions — 78,542 this week · cut by store / day / time trend',
-      users:      'Total Users — 54,011 this week · cut by store / day / time trend',
-      duration:   'Avg Session Duration — 368 ses · cut by store / day / time trend',
-      cardevents: 'Card Engagement Events — 271,298 this week · Adds + Clicks + share/save/print'
+      overview:   { label: 'Cohort:', count: '75 promotions', scope: 'Brand', period: 'Week 47' },
+      sessions:   { text: 'Sessions — 78,542 this week · cut by store / day / time trend' },
+      users:      { text: 'Total Users — 54,011 this week · cut by store / day / time trend' },
+      duration:   { text: 'Avg Session Duration — 368 ses · cut by store / day / time trend' },
+      cardevents: { text: 'Card Engagement Events — 271,298 this week · Adds + Clicks + share/save/print' }
     };
+    function renderCohortNote(parts) {
+      const icon = '<span class="material-symbols-outlined">info</span>';
+      if (!parts) return icon;
+      if (parts.text) return icon + '<span class="ep-cohort-note__text">' + parts.text + '</span>';
+      let h = icon;
+      if (parts.label)  h += '<span class="ep-cohort-note__label">' + parts.label + '</span>';
+      if (parts.count)  h += '<span class="ep-cohort-note__count">' + parts.count + '</span>';
+      if (parts.scope)  h += '<span class="ep-cohort-note__sep">·</span><span class="ep-cohort-note__scope">' + parts.scope + '</span>';
+      if (parts.period) h += '<span class="ep-cohort-note__sep">·</span><span class="ep-cohort-note__period">' + parts.period + '</span>';
+      return h;
+    }
 
     // Persist sub-tab choice across metric tabs (Bill 2026-04-30 — Sessions/Time Trend → Users keeps Time Trend)
     let currentSubTab = 'store';
@@ -1545,7 +1582,7 @@
       panes.forEach(p => p.classList.toggle('active', p.dataset.epPane === target));
       const targetPane = document.querySelector('[data-ep-pane="' + target + '"]');
       if (targetPane) applySubTab(targetPane, currentSubTab);
-      cohortNote.innerHTML = '<span class="material-symbols-outlined">info</span>' + (cohortLabels[target] || '');
+      cohortNote.innerHTML = renderCohortNote(cohortLabels[target]);
     }
     tabs.forEach(tab => tab.addEventListener('click', () => activateTab(tab.dataset.epTab)));
 
@@ -1585,27 +1622,11 @@
 
     // (Sessions stacked list now uses renderStackedList factory — see below after factory defs)
 
-    // ─── Sessions / By Day — DoW columns ──────────────────────────────────
-    (function renderSessionsByDay() {
-      const host = document.getElementById('ep-sessions-by-day');
-      if (!host) return;
-      const days = [
-        { d: 'MON', n: 9420 },  { d: 'TUE', n: 10120 }, { d: 'WED', n: 10880 },
-        { d: 'THU', n: 11540 }, { d: 'FRI', n: 13260 }, { d: 'SAT', n: 12940 }, { d: 'SUN', n: 10382 }
-      ];
-      const max = Math.max.apply(null, days.map(d => d.n));
-      host.innerHTML = '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:12px;align-items:end;height:240px;">'
-        + days.map(d => {
-            const h = (d.n / max * 100).toFixed(1) + '%';
-            const peak = d.n === max;
-            return '<div style="display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;">'
-              + '<div style="font-size:12px;font-weight:700;">' + d.n.toLocaleString() + '</div>'
-              + '<div style="width:80%;height:' + h + ';background:' + (peak ? '#475569' : '#94A3B8') + ';border-radius:4px 4px 0 0;"></div>'
-              + '<div style="font-size:11px;font-weight:600;color:#6b7280;">' + d.d + '</div>'
-              + '</div>';
-          }).join('')
-        + '</div>';
-    })();
+    // ─── Sessions / By Day — DoW columns (delegates to shared renderer) ───
+    renderDoWColumns('ep-sessions-by-day', [
+      { d: 'MON', n: 9420 },  { d: 'TUE', n: 10120 }, { d: 'WED', n: 10880 },
+      { d: 'THU', n: 11540 }, { d: 'FRI', n: 13260 }, { d: 'SAT', n: 12940 }, { d: 'SUN', n: 10382 }
+    ], { label: 'Sessions' });
 
     // Sessions / Time Trend — rendered after renderTrend factory is defined (see below)
 
@@ -1633,21 +1654,76 @@
       }).join('');
     }
 
-    function renderDoWColumns(hostId, days, fmt) {
+    // Day-of-week column renderer — single source for all DoW charts.
+    // opts: { label?: string (metric name for tooltip), fmt?: fn(n)→string }
+    // Back-compat: third arg may still be passed as a fn (treated as opts.fmt).
+    const DOW_FULL = { MON:'Monday', TUE:'Tuesday', WED:'Wednesday', THU:'Thursday', FRI:'Friday', SAT:'Saturday', SUN:'Sunday' };
+    function dowDayDates() {
+      // Returns 7 strings ("Nov 17, 2025") Mon→Sun for the active week.
+      // Anchor matches weekDateRange (W47 = Mon Nov 17 2025).
+      let weekLabel = 'W47';
+      if (typeof window.DashboardCore !== 'undefined' && DashboardCore.getState) {
+        const st = DashboardCore.getState();
+        if (st && st.selectedWeekId) weekLabel = st.selectedWeekId;
+      }
+      const m = weekLabel.match(/W(\d+)/);
+      const w = m ? parseInt(m[1]) : 47;
+      const anchor = new Date(2025, 10, 17);
+      const start = new Date(anchor);
+      start.setDate(anchor.getDate() + (w - 47) * 7);
+      const mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      return Array.from({ length: 7 }, (_, i) => {
+        const d = new Date(start);
+        d.setDate(start.getDate() + i);
+        return mo[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+      });
+    }
+    function renderDoWColumns(hostId, days, opts) {
       const host = document.getElementById(hostId);
       if (!host) return;
+      if (typeof opts === 'function') opts = { fmt: opts };
+      opts = opts || {};
+      const fmt = opts.fmt;
+      const label = opts.label || '';
       const max = Math.max.apply(null, days.map(d => d.n));
+      const total = days.reduce((s, d) => s + d.n, 0);
+      const avg = total / days.length;
+      const dates = dowDayDates();
       host.innerHTML = '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:12px;align-items:end;height:240px;">'
-        + days.map(d => {
+        + days.map((d, i) => {
             const h = (d.n / max * 100).toFixed(1) + '%';
             const peak = d.n === max;
-            return '<div style="display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;">'
+            return '<div class="ep-dow-col" data-dow-idx="' + i + '" style="display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;cursor:default;">'
               + '<div style="font-size:12px;font-weight:700;">' + (fmt ? fmt(d.n) : d.n.toLocaleString()) + '</div>'
-              + '<div style="width:80%;height:' + h + ';background:' + (peak ? '#475569' : '#94A3B8') + ';border-radius:4px 4px 0 0;"></div>'
+              + '<div class="dow-bar' + (peak ? ' dow-bar--peak' : '') + '" style="height:' + h + ';"></div>'
               + '<div style="font-size:11px;font-weight:600;color:#6b7280;">' + d.d + '</div>'
               + '</div>';
           }).join('')
         + '</div>';
+      // Wire dark hover tooltip — full day + date, value, share + vs-avg context.
+      host.querySelectorAll('.ep-dow-col').forEach(col => {
+        const i = parseInt(col.dataset.dowIdx);
+        const d = days[i];
+        col.addEventListener('mouseenter', () => {
+          const tip = ensurePerfTooltip();
+          const fullDay = DOW_FULL[d.d] || d.d;
+          const dateStr = dates[i] || '';
+          const valStr = fmt ? fmt(d.n) : d.n.toLocaleString();
+          const sharePct = total > 0 ? (d.n / total * 100).toFixed(1) + '%' : '';
+          const vsAvg = avg > 0 ? ((d.n - avg) / avg * 100) : 0;
+          const vsAvgStr = (vsAvg >= 0 ? '+' : '') + vsAvg.toFixed(1) + '% vs daily avg';
+          tip.innerHTML = '<div class="ep-perf-tooltip__title">' + fullDay + '</div>'
+            + '<div style="color:rgba(255,255,255,0.5);font-size:11px;margin-bottom:6px;margin-top:-4px;">' + dateStr + '</div>'
+            + (label ? '<div style="color:rgba(255,255,255,0.7);font-size:11px;">' + label + '</div>' : '')
+            + '<div style="color:#fff;font-size:15px;font-weight:700;padding-top:2px;">' + valStr + '</div>'
+            + '<div style="color:rgba(255,255,255,0.6);font-size:11px;margin-top:4px;">' + sharePct + ' of week · ' + vsAvgStr + '</div>';
+          tip.classList.add('ep-perf-tooltip--visible');
+        });
+        col.addEventListener('mousemove', positionPerfTooltip);
+        col.addEventListener('mouseleave', () => {
+          ensurePerfTooltip().classList.remove('ep-perf-tooltip--visible');
+        });
+      });
     }
 
     function weekDateRange(weekLabel) {
@@ -1777,7 +1853,7 @@
     renderDoWColumns('ep-users-by-day', [
       { d: 'MON', n: 6500 }, { d: 'TUE', n: 7000 }, { d: 'WED', n: 7500 },
       { d: 'THU', n: 8000 }, { d: 'FRI', n: 9100 }, { d: 'SAT', n: 8900 }, { d: 'SUN', n: 7011 }
-    ]);
+    ], { label: 'Total Users' });
     renderTrend('ep-users-trend',
       ['W40','W41','W42','W43','W44','W45','W46','W47','W48','W49','W50','W51','W52'],
       [ 16, 17, 18, 18, 17, 18, 18, 18, 17, 7, 6, 6, 6 ],
@@ -1801,7 +1877,7 @@
     renderDoWColumns('ep-duration-by-day', [
       { d: 'MON', n: 320 }, { d: 'TUE', n: 340 }, { d: 'WED', n: 355 },
       { d: 'THU', n: 372 }, { d: 'FRI', n: 410 }, { d: 'SAT', n: 405 }, { d: 'SUN', n: 350 }
-    ], v => v + ' ses');
+    ], { label: 'Avg Session Duration', fmt: v => v + ' ses' });
     renderTrend('ep-duration-trend',
       ['W40','W41','W42','W43','W44','W45','W46','W47','W48','W49','W50','W51','W52'],
       [ 380, 380, 370, 372, 370, 370, 365, 368, 360, 350, 360, 365, 360 ],
@@ -1827,7 +1903,7 @@
     renderDoWColumns('ep-cardevents-by-day', [
       { d: 'MON', n: 32500 }, { d: 'TUE', n: 35000 }, { d: 'WED', n: 37500 },
       { d: 'THU', n: 40000 }, { d: 'FRI', n: 45800 }, { d: 'SAT', n: 44500 }, { d: 'SUN', n: 35998 }
-    ]);
+    ], { label: 'Card Engagement Events' });
     renderTrend('ep-cardevents-trend',
       ['W40','W41','W42','W43','W44','W45','W46','W47','W48','W49','W50','W51','W52'],
       [ 28, 28, 28, 28, 28, 27, 27, 27, 27, 12, 11, 11, 11 ],
@@ -2324,9 +2400,9 @@
 
     // Update cohort note w/ real promo count
     const realCount = promotions.length;
-    cohortLabels.overview = 'Cohort: ' + realCount + ' promotions · Brand · Week 47';
-    cohortLabels.promotion = 'Cohort: ' + realCount + ' promotions · ranked within the active week';
-    cohortNote.innerHTML = '<span class="material-symbols-outlined">info</span>' + cohortLabels.overview;
+    cohortLabels.overview = { label: 'Cohort:', count: realCount + ' promotions', scope: 'Brand', period: 'Week 47' };
+    cohortLabels.promotion = { text: 'Cohort: ' + realCount + ' promotions · ranked within the active week' };
+    cohortNote.innerHTML = renderCohortNote(cohortLabels.overview);
 
     // Day-of-week mock (deterministic so it's stable for screenshots).
     // V/C/A breakdown derived from the real funnel ratios so the stacked
@@ -3087,7 +3163,7 @@
         if (st && st.currentEntity) storeCount = st.currentEntity.storeCount || storeCount;
       }
       const daysLabel = daysRun === 1 ? 'day' : 'days';
-      runStatsEl.textContent = 'Ran at ' + storeCount + ' stores · ' + daysRun + ' ' + daysLabel;
+      runStatsEl.innerHTML = '<span class="card-run-stats__text">Ran at ' + storeCount + ' stores · ' + daysRun + ' ' + daysLabel + '</span>';
     })();
   })();
   </script>

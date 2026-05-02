@@ -33,7 +33,21 @@
   --dist-audience-1: #4272D8;
   --dist-audience-2: #f97316;
   --dist-audience-3: #22c55e;
+
+  /* Day-of-week column palette — peak vs base, alias to brand primary. */
+  --dow-bar-base: var(--p-primary-color, #2196F3);
+  --dow-bar-peak: var(--p-primary-color-active, #1565C0);
 }
+
+/* Day-of-week column bars — shared across engagement DoW renderers
+   (renderDoWColumns + inline Sessions/By Day). Single source of truth
+   for the peak/base color pair; JS toggles --peak modifier. */
+.dow-bar {
+  width: 80%;
+  background: var(--dow-bar-base);
+  border-radius: 4px 4px 0 0;
+}
+.dow-bar--peak { background: var(--dow-bar-peak); }
 
 /* ── 2. KPI strip — canonical (distribution.css version) ──────── */
 

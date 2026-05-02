@@ -49,6 +49,33 @@
 }
 .dow-bar--peak { background: var(--dow-bar-peak); }
 
+/* Cohort note (DP10.1) — shared base for engagement + distribution pages.
+   Per-piece span typography iterated visually; spans render as inline text
+   under the base rule until per-__label/__count/__scope/__period rules land. */
+.ep-cohort-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--color-text-secondary, #6b7280);
+  background: #f8fafc;
+  border: 1px solid var(--color-border, #e5e7eb);
+  padding: 4px 10px;
+  border-radius: 999px;
+  margin-left: 8px;
+}
+.ep-cohort-note .material-symbols-outlined { font-size: 14px; }
+
+/* Run-stats line (DP11.1) — shared base for engagement + distribution.
+   __text span is the typography iteration hook (bold/italic per audit). */
+.card-run-stats {
+  display: block;
+  font-size: 10px;
+  color: var(--color-text-secondary, #6b7280);
+  margin-top: 2px;
+  font-weight: 500;
+}
+
 /* ── 2. KPI strip — canonical (distribution.css version) ──────── */
 
 .kpi-label {

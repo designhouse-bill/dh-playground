@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
+  <link rel="stylesheet" href="css/distribution-shared.css">
   <link rel="stylesheet" href="css/engagement.css">
   <!-- Pulled in for perf-tabs / creative-chips / stat-strip / section-panel-header rules -->
   <link rel="stylesheet" href="css/distribution.css">
@@ -804,12 +805,17 @@
   <main class="engagement-proposed" id="engagement-proposed">
 
     <header class="ep-section-header">
-      <h2 class="ep-section-header__title">Engagement
-        <span class="ep-cohort-note" id="ep-cohort-note">
-          <span class="material-symbols-outlined">info</span>
-          Cohort: 75 promotions · Brand · Week 47
-        </span>
-      </h2>
+      <h2 class="ep-section-header__title">Engagement</h2>
+      <div class="card-run-stats"><span class="card-run-stats__text" id="ep-proposed-run-stats">Ran at 27 stores · 7 days</span></div>
+      <span class="ep-cohort-note" id="ep-cohort-note">
+        <span class="material-symbols-outlined">info</span>
+        <span class="ep-cohort-note__label">Cohort:</span>
+        <span class="ep-cohort-note__count">75 promotions</span>
+        <span class="ep-cohort-note__sep">·</span>
+        <span class="ep-cohort-note__scope">Brand</span>
+        <span class="ep-cohort-note__sep">·</span>
+        <span class="ep-cohort-note__period">Week 47</span>
+      </span>
       <p class="ep-section-header__sub">Headline performance for the active circular plus drill-down by promotion, category, store, or day.</p>
     </header>
 
@@ -1164,14 +1170,27 @@
     const panes = document.querySelectorAll('.engagement-proposed .perf-tab-pane');
     const cohortNote = document.getElementById('ep-cohort-note');
 
+    // Phase 2 — canonical cohort-note parts (shared with Proposed-Max).
+    // Per-tab variants use {text} as transitional shape until each tab's schema is defined.
     const cohortLabels = {
-      overview: 'Cohort: 75 promotions · Brand · Week 47',
-      circular: 'Cohort: circulars · ranked within the active brand × range',
-      promotion: 'Cohort: 75 promotions · ranked within the active week',
-      category: 'Cohort: 8 categories · ranked within the active week',
-      store: 'Cohort: 27 stores · ranked within the active week',
-      day: 'Cohort: 7 days · current week (Mon–Sun)'
+      overview:  { label: 'Cohort:', count: '75 promotions', scope: 'Brand', period: 'Week 47' },
+      circular:  { text: 'Cohort: circulars · ranked within the active brand × range' },
+      promotion: { text: 'Cohort: 75 promotions · ranked within the active week' },
+      category:  { text: 'Cohort: 8 categories · ranked within the active week' },
+      store:     { text: 'Cohort: 27 stores · ranked within the active week' },
+      day:       { text: 'Cohort: 7 days · current week (Mon–Sun)' }
     };
+    function renderCohortNote(parts) {
+      const icon = '<span class="material-symbols-outlined">info</span>';
+      if (!parts) return icon;
+      if (parts.text) return icon + '<span class="ep-cohort-note__text">' + parts.text + '</span>';
+      let h = icon;
+      if (parts.label)  h += '<span class="ep-cohort-note__label">' + parts.label + '</span>';
+      if (parts.count)  h += '<span class="ep-cohort-note__count">' + parts.count + '</span>';
+      if (parts.scope)  h += '<span class="ep-cohort-note__sep">·</span><span class="ep-cohort-note__scope">' + parts.scope + '</span>';
+      if (parts.period) h += '<span class="ep-cohort-note__sep">·</span><span class="ep-cohort-note__period">' + parts.period + '</span>';
+      return h;
+    }
 
     tabs.forEach(tab => {
       tab.addEventListener('click', () => {
@@ -1182,8 +1201,7 @@
           t.setAttribute('aria-selected', on ? 'true' : 'false');
         });
         panes.forEach(p => p.classList.toggle('active', p.dataset.epPane === target));
-        cohortNote.querySelector('span:last-child') && (cohortNote.lastChild.textContent = '');
-        cohortNote.innerHTML = '<span class="material-symbols-outlined">info</span>' + cohortLabels[target];
+        cohortNote.innerHTML = renderCohortNote(cohortLabels[target]);
       });
     });
 

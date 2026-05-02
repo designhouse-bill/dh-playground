@@ -3342,6 +3342,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         renderVariantPanels();
         initTreeTableActions();
         renderMediaAttributedVisits();
+        initMediaBuyTabs();
       } else if (section === 'visitation') {
         renderVisitationKpis();
         renderStorePerfHero();
@@ -5135,6 +5136,29 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
      Media Buy surface; Store Visitation surface keeps its
      standalone treatment.
      ============================================================ */
+  /* ============================================================
+     Phase 3 step 3+4: Main Media Buy perf-tabs handler.
+     Five tabs (Overview / By Store / By Creative / Time Trend / Data).
+     Tab content beyond Overview is stubbed; later steps move pieces in.
+     ============================================================ */
+  function initMediaBuyTabs() {
+    var tabBar = document.getElementById('mb-perf-tabs');
+    if (!tabBar) return;
+    var tabs = tabBar.querySelectorAll('.perf-tab');
+    var panes = document.querySelectorAll('[data-mb-pane]');
+    tabs.forEach(function(t) {
+      t.addEventListener('click', function() {
+        var target = t.dataset.mbTab;
+        tabs.forEach(function(x) {
+          var on = x === t;
+          x.classList.toggle('active', on);
+          x.setAttribute('aria-selected', on ? 'true' : 'false');
+        });
+        panes.forEach(function(p) { p.classList.toggle('active', p.dataset.mbPane === target); });
+      });
+    });
+  }
+
   function renderMediaAttributedVisits() {
     var statsHost = document.getElementById('media-visits-stats');
     var byStoreEl = document.getElementById('media-visits-by-store');

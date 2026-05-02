@@ -166,6 +166,32 @@
       <!-- Narrative slot (phase 2, gated by FEATURES.narrative) -->
       <div class="insight-banner" data-narrative-section="media" hidden></div>
 
+      <!-- ═══════════════════════════════════════════════
+           Phase 3 step 3+4: Main Media Buy perf-tabs.
+           5 tabs (By Day dropped — no daily data at any layer).
+           Overview pane preserves the existing IA verbatim so the page
+           stays working; later steps (5-9) move pieces into the right panes.
+           ═══════════════════════════════════════════════ -->
+      <div class="perf-tabs" id="mb-perf-tabs" role="tablist">
+        <button class="perf-tab active" data-mb-tab="overview" role="tab" aria-selected="true">
+          <span class="material-symbols-outlined">dashboard</span> Overview
+        </button>
+        <button class="perf-tab" data-mb-tab="store" role="tab" aria-selected="false">
+          <span class="material-symbols-outlined">store</span> By Store
+        </button>
+        <button class="perf-tab" data-mb-tab="creative" role="tab" aria-selected="false">
+          <span class="material-symbols-outlined">image</span> By Creative
+        </button>
+        <button class="perf-tab" data-mb-tab="trend" role="tab" aria-selected="false">
+          <span class="material-symbols-outlined">show_chart</span> Time Trend
+        </button>
+        <button class="perf-tab" data-mb-tab="data" role="tab" aria-selected="false">
+          <span class="material-symbols-outlined">table_chart</span> Data
+        </button>
+      </div>
+
+      <div class="perf-tab-pane active" data-mb-pane="overview">
+
       <!-- Performance Ranking divider -->
       <div class="level-divider">Performance Ranking</div>
 
@@ -259,6 +285,21 @@
         </p>
       </section>
 
+      </div><!-- /Overview pane -->
+
+      <div class="perf-tab-pane" data-mb-pane="store">
+        <div class="dist-pane-toolbar"><span class="dist-pane-toolbar__label">By Store — coming in next checkpoint (Phase 3 step 6)</span></div>
+      </div>
+      <div class="perf-tab-pane" data-mb-pane="creative">
+        <div class="dist-pane-toolbar"><span class="dist-pane-toolbar__label">By Creative — coming in next checkpoint (Phase 3 step 5/8)</span></div>
+      </div>
+      <div class="perf-tab-pane" data-mb-pane="trend">
+        <div class="dist-pane-toolbar"><span class="dist-pane-toolbar__label">Time Trend — coming in next checkpoint</span></div>
+      </div>
+      <div class="perf-tab-pane" data-mb-pane="data">
+        <div class="dist-pane-toolbar"><span class="dist-pane-toolbar__label">Data — coming in next checkpoint</span></div>
+      </div>
+
     </section>
 
     <!-- Distribution modals injected here by distribution-modals.js -->
@@ -286,7 +327,7 @@
   <script src="js/data/distribution-data.js?v=17"></script>
 
   <script src="js/distribution/store-map.js"></script>
-  <script src="js/distribution/distribution.js?v=63"></script>
+  <script src="js/distribution/distribution.js?v=64"></script>
   <script src="js/distribution/distribution-modals.js?v=13"></script>
 
   <script src="js/header-slide.js"></script>

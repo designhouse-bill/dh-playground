@@ -203,3 +203,16 @@ Same rebuild as Categories — `store-data-grid` threads into Data sub-pane; ful
 Same rebuild — `grid-data-table` threads into Data sub-pane. Per DP8.2 (default Yes), add detail sidebar for consistency.
 
 ---
+
+## DP16.1 — Ranked-item rank badge (global rule)
+
+**Bill 2026-05-01:** Any item rendered into a ranked carousel, chip strip, or card list MUST display a `.creative-card__rank` (or equivalent `__rank`) badge that matches the rank shown in the corresponding data grid for the same dataset.
+
+- The rank value is the **dataset rank**, not the carousel position. If the carousel filters or paginates, the visible rank still reflects the underlying ranked position (e.g. carousel item 1 shows "5" if it's the 5th-ranked record after filtering).
+- Already in `js/distribution/distribution.js` (`creative-card__rank` at ~line 318) — generalize the same span to every ranked surface (Top Promotions, Top Stores, Top Creatives, By Store / By Creative panes, etc.).
+- Sort-by changes update the rank badge in lockstep with the grid.
+- Visually: small numeric badge top-left of each card (existing `.creative-card__rank` pattern in `css/distribution.css` ~line 418 is the canonical visual).
+
+Applies to all consumers, all phases going forward. Phase 3 onward must verify rank parity between carousel and data grid before commit.
+
+---

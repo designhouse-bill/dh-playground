@@ -294,10 +294,23 @@
         <div class="dist-pane-toolbar"><span class="dist-pane-toolbar__label">By Creative — coming in next checkpoint (Phase 3 step 5/8)</span></div>
       </div>
       <div class="perf-tab-pane" data-mb-pane="trend">
-        <div class="dist-pane-toolbar"><span class="dist-pane-toolbar__label">Time Trend — coming in next checkpoint</span></div>
+        <div class="dist-pane-toolbar">
+          <span class="dist-pane-toolbar__label">Delivery over time — Impressions, Clicks, CTR, CPV by week.</span>
+          <span class="dist-pane-toolbar__spacer" style="flex:1"></span>
+          <div class="duration-presets" id="mb-trend-ranges" role="tablist" aria-label="Time range">
+            <button type="button" class="duration-preset" data-mb-range="1w">1W</button>
+            <button type="button" class="duration-preset" data-mb-range="4w">4W</button>
+            <button type="button" class="duration-preset duration-preset--active" data-mb-range="13w">13W</button>
+            <button type="button" class="duration-preset" data-mb-range="1y">1Y</button>
+          </div>
+        </div>
+        <div id="mb-trend-chart" style="height:420px;"></div>
       </div>
       <div class="perf-tab-pane" data-mb-pane="data">
-        <div class="dist-pane-toolbar"><span class="dist-pane-toolbar__label">Data — coming in next checkpoint</span></div>
+        <div class="dist-pane-toolbar">
+          <span class="dist-pane-toolbar__label">Per-creative metric grid — sortable, exportable.</span>
+        </div>
+        <div class="dist-tree-data-grid" id="mb-data-grid"></div>
       </div>
 
     </section>
@@ -343,7 +356,7 @@
   <script src="js/data/distribution-data.js?v=17"></script>
 
   <script src="js/distribution/store-map.js"></script>
-  <script src="js/distribution/distribution.js?v=69"></script>
+  <script src="js/distribution/distribution.js?v=70"></script>
   <script src="js/distribution/distribution-modals.js?v=13"></script>
 
   <script src="js/header-slide.js"></script>

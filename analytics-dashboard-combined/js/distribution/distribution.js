@@ -5189,6 +5189,8 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     if (!tabBar) return;
     var tabs = tabBar.querySelectorAll('.perf-tab');
     var panes = document.querySelectorAll('[data-mb-pane]');
+    var trendBuilt = false;
+    var dataBuilt = false;
     tabs.forEach(function(t) {
       t.addEventListener('click', function() {
         var target = t.dataset.mbTab;
@@ -5198,8 +5200,145 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
           x.setAttribute('aria-selected', on ? 'true' : 'false');
         });
         panes.forEach(function(p) { p.classList.toggle('active', p.dataset.mbPane === target); });
+        if (target === 'trend' && !trendBuilt) { trendBuilt = renderMediaBuyTrendPane(); }
+        if (target === 'data'  && !dataBuilt)  { dataBuilt  = renderMediaBuyDataPane(); }
+        // Re-fire chart resize for already-built ECharts instances when their pane becomes active.
+        if (target === 'trend' && _mbTrendChart) _mbTrendChart.resize();
       });
     });
+  }
+
+  /* ============================================================
+     Phase 3 step 9a: Time Trend pane.
+     Single full-pane line chart with 4 metric series + range chips.
+     Range chips slice the trend data; mock has 5 weeks (wk50–wk2),
+     so 13W and 1Y both show the full series for now. Real Pulse feed
+     will populate longer ranges per IN-33.
+     ============================================================ */
+  var _mbTrendChart = null;
+  var _mbTrendRange = '13w';
+  function renderMediaBuyTrendPane() {
+    var el = document.getElementById('mb-trend-chart');
+    if (!el) return false;
+    var trend = (D.mediaBuyMetrics && D.mediaBuyMetrics.weeklyTrend) || [];
+    if (!trend.length) {
+      el.innerHTML = '<div class="dist-tree-empty">No trend data available for this entity yet.</div>';
+      return true;
+    }
+    function sliceFor(range) {
+      var n;
+      if (range === '1w') n = 1;
+      else if (range === '4w') n = 4;
+      else if (range === '13w') n = 13;
+      else n = trend.length; // 1y → all available
+      return trend.slice(Math.max(0, trend.length - n));
+    }
+    function paint(range) {
+      var series = sliceFor(range);
+      var weeks = series.map(function(w) { return D.getWeekLabel(w.week); });
+      _mbTrendChart.setOption({
+        legend: {
+          data: ['Impressions', 'Clicks', 'CTR', 'CPV'],
+          bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8,
+          textStyle: { fontSize: 11, color: '#6b7280' }
+        },
+        grid: { left: 50, right: 60, top: 30, bottom: 40, containLabel: true },
+        tooltip: { trigger: 'axis' },
+        xAxis: {
+          type: 'category', data: weeks,
+          axisLabel: { fontSize: 11, color: '#6b7280' },
+          axisLine: { lineStyle: { color: '#e5e7eb' } }
+        },
+        yAxis: [
+          { type: 'value', position: 'left', name: 'Volume', nameTextStyle: { fontSize: 10, color: '#9ca3af' },
+            axisLabel: { fontSize: 10, color: '#6b7280', formatter: function(v) { return (v / 1000).toFixed(0) + 'k'; } },
+            splitLine: { lineStyle: { color: '#f3f4f6' } } },
+          { type: 'value', position: 'right', name: 'Rate', nameTextStyle: { fontSize: 10, color: '#9ca3af' },
+            axisLabel: { fontSize: 10, color: '#6b7280' },
+            splitLine: { show: false } }
+        ],
+        series: [
+          { name: 'Impressions', type: 'line', smooth: true, lineStyle: { width: 2, color: '#3B82F6' }, itemStyle: { color: '#3B82F6' }, symbolSize: 6, data: series.map(function(w) { return w.impressions; }) },
+          { name: 'Clicks',      type: 'line', smooth: true, lineStyle: { width: 2, color: '#22c55e' }, itemStyle: { color: '#22c55e' }, symbolSize: 6, data: series.map(function(w) { return w.clicks; }) },
+          { name: 'CTR',         type: 'line', smooth: true, yAxisIndex: 1, lineStyle: { width: 2, color: '#6366f1' }, itemStyle: { color: '#6366f1' }, symbolSize: 6, data: series.map(function(w) { return w.ctr; }) },
+          { name: 'CPV',         type: 'line', smooth: true, yAxisIndex: 1, lineStyle: { width: 2, color: '#ef4444' }, itemStyle: { color: '#ef4444' }, symbolSize: 6, data: series.map(function(w) { return w.cost_per_visit; }) }
+        ]
+      });
+    }
+    _mbTrendChart = echarts.init(el);
+    paint(_mbTrendRange);
+    // Wire range chips
+    var chips = document.querySelectorAll('#mb-trend-ranges .duration-preset');
+    chips.forEach(function(c) {
+      c.addEventListener('click', function() {
+        _mbTrendRange = c.dataset.mbRange;
+        chips.forEach(function(x) { x.classList.toggle('duration-preset--active', x === c); });
+        paint(_mbTrendRange);
+      });
+    });
+    return true;
+  }
+
+  /* Phase 3 step 9a: Data pane — per-creative table (full set, sortable
+     column headers in a future pass). Reuses the same row shape as the
+     chip-selector Table view for rank parity (DP16.1). */
+  function renderMediaBuyDataPane() {
+    var host = document.getElementById('mb-data-grid');
+    if (!host) return false;
+    var allRecords = D.creativeRecords || [];
+    var records = allRecords.filter(function(cr) { return cr.metrics !== null; });
+    if (!records.length) {
+      host.innerHTML = '<div class="dist-tree-empty">No creative data available for this entity.</div>';
+      return true;
+    }
+    var sorted = records
+      .map(function(cr) { return Object.assign({}, cr, { _origIndex: allRecords.indexOf(cr) }); })
+      .sort(function(a, b) { return (b.metrics && b.metrics.gross_visits || 0) - (a.metrics && a.metrics.gross_visits || 0); });
+    function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+    var rows = sorted.map(function(cr, i) {
+      var labelParts = (cr.label || cr.notes || '').split(' — ');
+      var name = labelParts[0] || cr.label || '(unnamed)';
+      var region = labelParts[1] || '';
+      var m = cr.metrics || {};
+      return '<tr data-orig-index="' + cr._origIndex + '">'
+        + '<td class="col-num">' + (i + 1) + '</td>'
+        + '<td class="col-creative">' + esc(name) + (region ? ' <span style="color:var(--p-text-color-secondary);">— ' + esc(region) + '</span>' : '') + '</td>'
+        + '<td class="col-type">' + esc((cr.creative_type || '').toUpperCase()) + '</td>'
+        + '<td class="col-stores">' + (cr.store_group ? cr.store_group.length : 0) + '</td>'
+        + '<td class="col-ctr">' + (m.ctr != null ? fmtPct(m.ctr) : '—') + '</td>'
+        + '<td class="col-visits">' + (m.gross_visits != null ? fmtNumber(m.gross_visits) : '—') + '</td>'
+        + '<td class="col-cpv">' + (m.cost_per_visit != null ? fmtCurrency(m.cost_per_visit) : '—') + '</td>'
+        + '<td class="col-cpm">' + (m.cpm != null ? fmtCurrency(m.cpm) : '—') + '</td>'
+        + '<td class="col-cpc">' + (m.cpc != null ? fmtCurrency(m.cpc) : '—') + '</td>'
+        + '<td class="col-spend">' + (m.spend != null ? fmtCurrency(m.spend) : '—') + '</td>'
+        + '</tr>';
+    }).join('');
+    host.innerHTML = '<div class="dist-tree-table-wrap">'
+      + '<table class="dist-tree-table">'
+      +   '<thead><tr>'
+      +     '<th class="col-num">#</th>'
+      +     '<th class="col-creative">Creative</th>'
+      +     '<th class="col-type">Type</th>'
+      +     '<th class="col-stores">Stores</th>'
+      +     '<th class="col-ctr">CTR</th>'
+      +     '<th class="col-visits">Visits</th>'
+      +     '<th class="col-cpv">CPV</th>'
+      +     '<th class="col-cpm">CPM</th>'
+      +     '<th class="col-cpc">CPC</th>'
+      +     '<th class="col-spend">Spend</th>'
+      +   '</tr></thead>'
+      +   '<tbody>' + rows + '</tbody>'
+      + '</table>'
+    + '</div>';
+    // Click row → open detail sidebar (DP16.1: rank parity preserved with chip rank).
+    host.querySelectorAll('tbody tr').forEach(function(row) {
+      row.style.cursor = 'pointer';
+      row.addEventListener('click', function() {
+        var idx = parseInt(row.dataset.origIndex, 10);
+        if (typeof window.viewVariantDetails === 'function') window.viewVariantDetails(idx);
+      });
+    });
+    return true;
   }
 
   function renderMediaAttributedVisits() {

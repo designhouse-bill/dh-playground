@@ -3148,32 +3148,152 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
   };
 
   // View Details — scrolls to and expands the corresponding tree row
+  // Phase 3 step 8 — Creative detail sidebar.
+  // viewVariantDetails now opens the .ep-detail-sidebar instead of the
+  // old "expand the Detailed Breakdown row + scroll" behavior.
+
+  function getCreativeThumbUrl(cr) {
+    return cr && cr.file_url ? cr.file_url : null;
+  }
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function formatRange(cr) {
+    if (!cr.date_range_start && !cr.date_range_end) return '—';
+    return (cr.date_range_start || '?') + ' — ' + (cr.date_range_end || '?');
+  }
+
+  function renderCreativeDetailSidebar(cr) {
+    const body = document.getElementById('ep-detail-sidebar-body');
+    if (!body) return;
+    const thumbUrl = getCreativeThumbUrl(cr);
+    const typeIcon = cr.creative_type === 'video' ? 'movie' : (cr.creative_type === 'gif' ? 'gif_box' : 'image');
+    const m = cr.metrics || {};
+    const labelParts = (cr.label || cr.notes || '').split(' — ');
+    const name = labelParts[0] || cr.label || '(unnamed)';
+    const region = labelParts[1] || '';
+
+    const thumbHtml = thumbUrl
+      ? `<img src="${escapeHtml(thumbUrl)}" alt="${escapeHtml(name)} preview" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'material-symbols-outlined',textContent:'${typeIcon}'}))">`
+      : `<span class="material-symbols-outlined">${typeIcon}</span>`;
+
+    body.innerHTML = `
+      <div class="ep-detail-sidebar__thumb">${thumbHtml}</div>
+      <div>
+        <h3 class="ep-detail-sidebar__title">${escapeHtml(name)}</h3>
+        ${region ? `<p class="ep-detail-sidebar__subtitle">${escapeHtml(region)}</p>` : ''}
+      </div>
+      <div class="ep-detail-sidebar__meta">
+        <div>
+          <div class="ep-detail-sidebar__meta-label">Type</div>
+          <div class="ep-detail-sidebar__meta-value">${escapeHtml((cr.creative_type || '').toUpperCase() || '—')}</div>
+        </div>
+        <div>
+          <div class="ep-detail-sidebar__meta-label">Dimensions</div>
+          <div class="ep-detail-sidebar__meta-value">${escapeHtml(cr.dimensions || '—')}</div>
+        </div>
+        <div>
+          <div class="ep-detail-sidebar__meta-label">Date range</div>
+          <div class="ep-detail-sidebar__meta-value">${escapeHtml(formatRange(cr))}</div>
+        </div>
+        <div>
+          <div class="ep-detail-sidebar__meta-label">Stores</div>
+          <div class="ep-detail-sidebar__meta-value">${cr.store_group ? cr.store_group.length : 0}</div>
+        </div>
+        <div>
+          <div class="ep-detail-sidebar__meta-label">Status</div>
+          <div class="ep-detail-sidebar__meta-value">${escapeHtml(cr.status || '—')}</div>
+        </div>
+        <div>
+          <div class="ep-detail-sidebar__meta-label">KPI target</div>
+          <div class="ep-detail-sidebar__meta-value">${escapeHtml(cr.kpi_metric ? cr.kpi_metric.toUpperCase() + ' ' + (cr.kpi_value != null ? cr.kpi_value : '') : '—')}</div>
+        </div>
+      </div>
+      <div class="ep-detail-sidebar__scope-banner">This creative · single-campaign metrics</div>
+      <div class="ep-detail-sidebar__metrics">
+        <div class="ep-detail-sidebar__metric-tile">
+          <div class="ep-detail-sidebar__metric-label">CTR</div>
+          <div class="ep-detail-sidebar__metric-value">${m.ctr != null ? fmtPct(m.ctr) : '—'}</div>
+        </div>
+        <div class="ep-detail-sidebar__metric-tile">
+          <div class="ep-detail-sidebar__metric-label">Visits</div>
+          <div class="ep-detail-sidebar__metric-value">${m.gross_visits != null ? fmtNumber(m.gross_visits) : '—'}</div>
+        </div>
+        <div class="ep-detail-sidebar__metric-tile">
+          <div class="ep-detail-sidebar__metric-label">CPM</div>
+          <div class="ep-detail-sidebar__metric-value">${m.cpm != null ? fmtCurrency(m.cpm) : '—'}</div>
+        </div>
+        <div class="ep-detail-sidebar__metric-tile">
+          <div class="ep-detail-sidebar__metric-label">CPC</div>
+          <div class="ep-detail-sidebar__metric-value">${m.cpc != null ? fmtCurrency(m.cpc) : '—'}</div>
+        </div>
+        <div class="ep-detail-sidebar__metric-tile">
+          <div class="ep-detail-sidebar__metric-label">Spend</div>
+          <div class="ep-detail-sidebar__metric-value">${m.spend != null ? fmtCurrency(m.spend) : '—'}</div>
+        </div>
+        <div class="ep-detail-sidebar__metric-tile">
+          <div class="ep-detail-sidebar__metric-label">Impressions</div>
+          <div class="ep-detail-sidebar__metric-value">${m.impressions != null ? fmtNumber(m.impressions) : '—'}</div>
+        </div>
+      </div>
+      <div class="ep-detail-sidebar__actions">
+        ${cr.target_url ? `<a class="ep-detail-sidebar__action" href="${escapeHtml(cr.target_url)}" target="_blank" rel="noopener"><span class="material-symbols-outlined">open_in_new</span> Landing page</a>` : ''}
+      </div>
+    `;
+  }
+
+  function openCreativeDetailSidebar(cr) {
+    renderCreativeDetailSidebar(cr);
+    const sb = document.getElementById('ep-detail-sidebar');
+    const overlay = document.getElementById('ep-detail-sidebar-overlay');
+    if (sb) {
+      sb.classList.add('ep-detail-sidebar--open');
+      sb.setAttribute('aria-hidden', 'false');
+    }
+    if (overlay) {
+      overlay.hidden = false;
+      // Force a frame so transition fires.
+      requestAnimationFrame(() => overlay.classList.add('ep-detail-sidebar__overlay--open'));
+    }
+  }
+
+  function closeCreativeDetailSidebar() {
+    const sb = document.getElementById('ep-detail-sidebar');
+    const overlay = document.getElementById('ep-detail-sidebar-overlay');
+    if (sb) {
+      sb.classList.remove('ep-detail-sidebar--open');
+      sb.setAttribute('aria-hidden', 'true');
+    }
+    if (overlay) {
+      overlay.classList.remove('ep-detail-sidebar__overlay--open');
+      // Hide after fade-out so click-through is restored.
+      setTimeout(() => { if (!overlay.classList.contains('ep-detail-sidebar__overlay--open')) overlay.hidden = true; }, 200);
+    }
+  }
+
+  // Wire close affordances once on first call.
+  let _sidebarWired = false;
+  function ensureSidebarWired() {
+    if (_sidebarWired) return;
+    _sidebarWired = true;
+    const close = document.getElementById('ep-detail-sidebar-close');
+    if (close) close.addEventListener('click', closeCreativeDetailSidebar);
+    const overlay = document.getElementById('ep-detail-sidebar-overlay');
+    if (overlay) overlay.addEventListener('click', closeCreativeDetailSidebar);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeCreativeDetailSidebar();
+    });
+  }
+
   window.viewVariantDetails = function(variantIndex) {
-    // Find the creative_id from the original index
     const records = D.creativeRecords;
     if (variantIndex >= records.length) return;
     const cr = records[variantIndex];
     if (!cr) return;
-    const cid = cr.creative_id;
-
-    // Expand the row
-    if (!distTreeState.expandedCreatives[cid]) {
-      distTreeState.expandedCreatives[cid] = true;
-      document.querySelectorAll(`[data-parent="${cid}"]`).forEach(row => {
-        row.classList.remove('tree-row-hidden');
-      });
-      const parentRow = document.querySelector(`[data-creative-id="${cid}"]`);
-      if (parentRow) {
-        const toggle = parentRow.querySelector('.tree-toggle');
-        if (toggle) toggle.classList.remove('collapsed');
-      }
-    }
-
-    // Scroll into view
-    const parentRow = document.querySelector(`[data-creative-id="${cid}"]`);
-    if (parentRow) {
-      parentRow.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    ensureSidebarWired();
+    openCreativeDetailSidebar(cr);
   };
 
   window.toggleLevel2Section = function(sectionId) {

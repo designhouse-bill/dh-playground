@@ -304,6 +304,22 @@
 
     <!-- Distribution modals injected here by distribution-modals.js -->
     <div id="modals-container"></div>
+
+    <!-- Phase 3 step 8 — creative detail sidebar. Slides in from right
+         when a chip or table row is clicked. Closed via close button,
+         overlay click, or Escape. -->
+    <div class="ep-detail-sidebar__overlay" id="ep-detail-sidebar-overlay" hidden></div>
+    <aside class="ep-detail-sidebar" id="ep-detail-sidebar" aria-hidden="true" aria-label="Creative detail">
+      <header class="ep-detail-sidebar__header">
+        <span class="ep-detail-sidebar__eyebrow">Creative</span>
+        <button type="button" class="ep-detail-sidebar__close" id="ep-detail-sidebar-close" aria-label="Close creative detail">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </header>
+      <div class="ep-detail-sidebar__body" id="ep-detail-sidebar-body">
+        <!-- Filled by openCreativeDetailSidebar() -->
+      </div>
+    </aside>
   </main>
 
   <!-- ============================================================
@@ -327,7 +343,7 @@
   <script src="js/data/distribution-data.js?v=17"></script>
 
   <script src="js/distribution/store-map.js"></script>
-  <script src="js/distribution/distribution.js?v=68"></script>
+  <script src="js/distribution/distribution.js?v=69"></script>
   <script src="js/distribution/distribution-modals.js?v=13"></script>
 
   <script src="js/header-slide.js"></script>

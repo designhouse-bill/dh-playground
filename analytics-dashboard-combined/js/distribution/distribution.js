@@ -5155,8 +5155,38 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         + '<div class="media-visits-stat"><span class="media-visits-stat__value media-visits-stat__value--text">' + topCampaign + '</span><span class="media-visits-stat__label">Top driving campaign</span></div>';
     }
 
+    // Phase 3 step 2 — charts init lazily on first tab activation to avoid
+    // zero-width render bug when a chart's pane starts hidden (display:none).
+    var byStoreInit = false, byWeekInit = false;
+    function initByStore() { if (byStoreInit || !byStoreEl) return; byStoreInit = true; renderByStoreChart(byStoreEl); }
+    function initByWeek()  { if (byWeekInit  || !byWeekEl)  return; byWeekInit  = true; renderByWeekChart(byWeekEl); }
+
+    var tabBar = document.getElementById('media-visits-tabs');
+    if (tabBar) {
+      var tabs = tabBar.querySelectorAll('.perf-tab');
+      var panes = document.querySelectorAll('[data-mv-pane]');
+      tabs.forEach(function(t) {
+        t.addEventListener('click', function() {
+          var target = t.dataset.mvTab;
+          tabs.forEach(function(x) {
+            var on = x === t;
+            x.classList.toggle('active', on);
+            x.setAttribute('aria-selected', on ? 'true' : 'false');
+          });
+          panes.forEach(function(p) { p.classList.toggle('active', p.dataset.mvPane === target); });
+          if (target === 'store') initByStore();
+          if (target === 'week')  initByWeek();
+        });
+      });
+    } else {
+      // No tab strip on this page (other distribution pages may import this fn);
+      // fall back to eager init.
+      initByStore();
+      initByWeek();
+    }
+
     // Visits by store — joined to spend
-    if (byStoreEl) {
+    function renderByStoreChart(byStoreEl) {
       var stores = [
         { name: '#705 Haines City',   visits: 3520, spend: 2120 },
         { name: '#2487 Sarasota',     visits: 3010, spend: 1980 },
@@ -5196,7 +5226,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     }
 
     // Visits by week — current campaign window
-    if (byWeekEl) {
+    function renderByWeekChart(byWeekEl) {
       var weeks = ['Wk 51', 'Wk 52', 'Wk 1', 'Wk 2'];
       var visits = [14200, 16800, 17350, 18420];
       var spend = [11900, 12300, 12700, 12850];

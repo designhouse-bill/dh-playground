@@ -221,18 +221,35 @@
           <p class="section-panel-header__subtitle">Visits joined to media buy by store × week. Creative-level visits not available in source data — see Observed Store Visits tab for crossover detail.</p>
         </header>
 
-        <div class="media-visits-stats" id="media-visits-stats">
-          <!-- Populated by JS: total visits, visits-per-$, top-driving campaign -->
+        <!-- Phase 3 step 2 — canonical perf-tabs. By Creative skipped: visit
+             data isn't creative-attributed (see footnote). -->
+        <div class="perf-tabs" id="media-visits-tabs" role="tablist">
+          <button class="perf-tab active" data-mv-tab="overview" role="tab" aria-selected="true">
+            <span class="material-symbols-outlined">dashboard</span> Overview
+          </button>
+          <button class="perf-tab" data-mv-tab="store" role="tab" aria-selected="false">
+            <span class="material-symbols-outlined">store</span> By Store
+          </button>
+          <button class="perf-tab" data-mv-tab="week" role="tab" aria-selected="false">
+            <span class="material-symbols-outlined">calendar_view_week</span> By Week
+          </button>
         </div>
 
-        <div class="media-visits-grid">
+        <div class="perf-tab-pane active" data-mv-pane="overview">
+          <div class="media-visits-stats" id="media-visits-stats">
+            <!-- Populated by JS: total visits, visits-per-$, top-driving campaign -->
+          </div>
+        </div>
+        <div class="perf-tab-pane" data-mv-pane="store">
           <div class="media-visits-panel">
             <div class="media-visits-panel__label">Visits by Store — joined to spend</div>
-            <div id="media-visits-by-store" style="height:280px;"></div>
+            <div id="media-visits-by-store" style="height:320px;"></div>
           </div>
+        </div>
+        <div class="perf-tab-pane" data-mv-pane="week">
           <div class="media-visits-panel">
             <div class="media-visits-panel__label">Visits by Week — current campaign window</div>
-            <div id="media-visits-by-week" style="height:280px;"></div>
+            <div id="media-visits-by-week" style="height:320px;"></div>
           </div>
         </div>
 
@@ -269,7 +286,7 @@
   <script src="js/data/distribution-data.js?v=17"></script>
 
   <script src="js/distribution/store-map.js"></script>
-  <script src="js/distribution/distribution.js?v=61"></script>
+  <script src="js/distribution/distribution.js?v=63"></script>
   <script src="js/distribution/distribution-modals.js?v=13"></script>
 
   <script src="js/header-slide.js"></script>

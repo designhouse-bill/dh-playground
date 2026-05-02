@@ -5192,6 +5192,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     var trendBuilt = false;
     var dataBuilt = false;
     var creativeBuilt = false;
+    var storeBuilt = false;
     tabs.forEach(function(t) {
       t.addEventListener('click', function() {
         var target = t.dataset.mbTab;
@@ -5204,8 +5205,10 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         if (target === 'trend'    && !trendBuilt)    { trendBuilt    = renderMediaBuyTrendPane(); }
         if (target === 'data'     && !dataBuilt)     { dataBuilt     = renderMediaBuyDataPane(); }
         if (target === 'creative' && !creativeBuilt) { creativeBuilt = renderMediaBuyByCreativePane(); }
+        if (target === 'store'    && !storeBuilt)    { storeBuilt    = renderMediaBuyByStorePane(); }
         // Re-fire chart resize for already-built ECharts instances when their pane becomes active.
         if (target === 'trend' && _mbTrendChart) _mbTrendChart.resize();
+        if (target === 'store' && _mbStoreTrendChart) _mbStoreTrendChart.resize();
       });
     });
   }
@@ -5278,6 +5281,183 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         paint(_mbTrendRange);
       });
     });
+    return true;
+  }
+
+  /* ============================================================
+     Phase 3 step 9c: By Store pane.
+     Mode toggle (Bar / Data / Trend) over a single store-grain dataset
+     aggregated from Records.mediaRecords (store_id × week_id grain).
+     ============================================================ */
+  var _mbStoreMode = 'bar';
+  var _mbStoreTrendChart = null;
+
+  function _mbStoreAggregateAll() {
+    // Aggregate all mediaRecords by store_id (across weeks).
+    var byStore = {};
+    (D.getMediaRecords ? D.getMediaRecords('all', null) : []).forEach(function(r) {
+      var s = byStore[r.store_id];
+      if (!s) {
+        s = byStore[r.store_id] = { store_id: r.store_id, impressions: 0, clicks: 0, gross_visits: 0, spend: 0 };
+      }
+      s.impressions += r.impressions || 0;
+      s.clicks += r.clicks || 0;
+      s.gross_visits += r.gross_visits || 0;
+      s.spend += r.spend || 0;
+    });
+    return Object.keys(byStore).map(function(k) {
+      var s = byStore[k];
+      s.ctr = s.impressions > 0 ? (s.clicks / s.impressions) * 100 : 0;
+      s.cpv = s.gross_visits > 0 ? (s.spend / s.gross_visits) : 0;
+      s.cpm = s.impressions > 0 ? (s.spend / (s.impressions / 1000)) : 0;
+      return s;
+    }).sort(function(a, b) { return b.gross_visits - a.gross_visits; });
+  }
+
+  function _mbStoreAggregateByWeek() {
+    // Aggregate by store_id × week_id for trend mode.
+    var byKey = {};
+    (D.getMediaRecords ? D.getMediaRecords('all', null) : []).forEach(function(r) {
+      var k = r.store_id + '|' + r.week_id;
+      if (!byKey[k]) byKey[k] = { store_id: r.store_id, week_id: r.week_id, gross_visits: 0 };
+      byKey[k].gross_visits += r.gross_visits || 0;
+    });
+    return Object.keys(byKey).map(function(k) { return byKey[k]; });
+  }
+
+  function renderMediaBuyByStorePane() {
+    var host = document.getElementById('mb-store-content');
+    if (!host) return false;
+
+    function paint() {
+      if (_mbStoreMode === 'bar') paintBar();
+      else if (_mbStoreMode === 'data') paintData();
+      else if (_mbStoreMode === 'trend') paintTrend();
+    }
+
+    function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+    function paintBar() {
+      var stores = _mbStoreAggregateAll();
+      if (!stores.length) {
+        host.innerHTML = '<div class="dist-tree-empty">No store-level data available for this entity.</div>';
+        return;
+      }
+      var max = stores[0].gross_visits || 1;
+      host.innerHTML = '<div class="dist-tree-data-grid"><div class="dist-tree-header" style="padding:10px 12px;font-weight:600;">Top stores by visits (all weeks combined)</div>'
+        + '<div style="padding:10px 14px;display:flex;flex-direction:column;gap:8px;">'
+        + stores.map(function(s, i) {
+            var pct = (s.gross_visits / max) * 100;
+            return '<div style="display:flex;align-items:center;gap:10px;font-size:12px;">'
+              + '<span style="width:30px;color:var(--p-text-color-secondary);">#' + (i + 1) + '</span>'
+              + '<span style="flex:0 0 130px;">' + esc(s.store_id) + '</span>'
+              + '<span style="flex:1;height:10px;background:#eef2f7;border-radius:999px;overflow:hidden;"><span style="display:block;height:100%;width:' + pct.toFixed(1) + '%;background:var(--p-primary-color,#2196F3);"></span></span>'
+              + '<span style="flex:0 0 70px;text-align:right;font-weight:600;">' + fmtNumber(s.gross_visits) + '</span>'
+              + '<span style="flex:0 0 70px;text-align:right;color:var(--p-text-color-secondary);">' + (s.ctr ? fmtPct(s.ctr) : '—') + '</span>'
+              + '<span style="flex:0 0 80px;text-align:right;color:var(--p-text-color-secondary);">' + fmtCurrency(s.spend) + '</span>'
+              + '</div>';
+          }).join('')
+        + '</div></div>';
+    }
+
+    function paintData() {
+      var stores = _mbStoreAggregateAll();
+      if (!stores.length) { host.innerHTML = '<div class="dist-tree-empty">No store-level data available.</div>'; return; }
+      var rows = stores.map(function(s, i) {
+        return '<tr>'
+          + '<td class="col-num">' + (i + 1) + '</td>'
+          + '<td class="col-creative">' + esc(s.store_id) + '</td>'
+          + '<td class="col-stores">' + fmtNumber(s.impressions) + '</td>'
+          + '<td class="col-stores">' + fmtNumber(s.clicks) + '</td>'
+          + '<td class="col-ctr">' + (s.ctr ? fmtPct(s.ctr) : '—') + '</td>'
+          + '<td class="col-visits">' + fmtNumber(s.gross_visits) + '</td>'
+          + '<td class="col-cpv">' + fmtCurrency(s.cpv) + '</td>'
+          + '<td class="col-cpm">' + fmtCurrency(s.cpm) + '</td>'
+          + '<td class="col-spend">' + fmtCurrency(s.spend) + '</td>'
+          + '</tr>';
+      }).join('');
+      host.innerHTML = '<div class="dist-tree-data-grid"><div class="dist-tree-table-wrap">'
+        + '<table class="dist-tree-table">'
+        +   '<thead><tr>'
+        +     '<th class="col-num">#</th>'
+        +     '<th class="col-creative">Store</th>'
+        +     '<th class="col-stores">Impressions</th>'
+        +     '<th class="col-stores">Clicks</th>'
+        +     '<th class="col-ctr">CTR</th>'
+        +     '<th class="col-visits">Visits</th>'
+        +     '<th class="col-cpv">CPV</th>'
+        +     '<th class="col-cpm">CPM</th>'
+        +     '<th class="col-spend">Spend</th>'
+        +   '</tr></thead>'
+        +   '<tbody>' + rows + '</tbody>'
+        + '</table>'
+      + '</div></div>';
+    }
+
+    function paintTrend() {
+      // Top 5 stores' visit trend over weeks.
+      var stores = _mbStoreAggregateAll().slice(0, 5);
+      var byWeek = _mbStoreAggregateByWeek();
+      // Filter D.flightWeeks to just those that have data (mock spans a small
+      // subset; full flightWeeks list would render an empty x-axis tail).
+      var weeksWithData = {};
+      byWeek.forEach(function(r) { weeksWithData[r.week_id] = true; });
+      var weekIds = (D.flightWeeks || [])
+        .map(function(w) { return w.id; })
+        .filter(function(id) { return weeksWithData[id]; });
+      if (!weekIds.length) {
+        var seen = {}; weekIds = [];
+        byWeek.forEach(function(r) { if (!seen[r.week_id]) { seen[r.week_id] = true; weekIds.push(r.week_id); } });
+      }
+      host.innerHTML = '<div class="dist-tree-data-grid" style="padding:12px;">'
+        + '<div style="font-weight:600;margin-bottom:8px;">Top 5 stores — visits by week</div>'
+        + '<div id="mb-store-trend-chart" style="height:360px;"></div>'
+        + '</div>';
+      var el = document.getElementById('mb-store-trend-chart');
+      if (!el) return;
+      _mbStoreTrendChart = echarts.init(el);
+      var palette = ['#3B82F6', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6'];
+      _mbStoreTrendChart.setOption({
+        legend: { bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { fontSize: 11, color: '#6b7280' } },
+        grid: { left: 50, right: 30, top: 20, bottom: 40, containLabel: true },
+        tooltip: { trigger: 'axis' },
+        xAxis: {
+          type: 'category', data: weekIds.map(function(w) { return D.getWeekLabel ? D.getWeekLabel(w) : w; }),
+          axisLabel: { fontSize: 11, color: '#6b7280' },
+          axisLine: { lineStyle: { color: '#e5e7eb' } }
+        },
+        yAxis: { type: 'value', name: 'Visits', axisLabel: { fontSize: 10, color: '#6b7280' }, splitLine: { lineStyle: { color: '#f3f4f6' } } },
+        series: stores.map(function(s, i) {
+          var lookup = {};
+          byWeek.filter(function(r) { return r.store_id === s.store_id; }).forEach(function(r) { lookup[r.week_id] = r.gross_visits; });
+          return {
+            name: s.store_id,
+            type: 'line',
+            smooth: true,
+            symbolSize: 6,
+            lineStyle: { width: 2, color: palette[i % palette.length] },
+            itemStyle: { color: palette[i % palette.length] },
+            data: weekIds.map(function(w) { return lookup[w] || 0; })
+          };
+        })
+      });
+    }
+
+    // Wire mode toggle (re-bind once; mode buttons are static markup).
+    var modeBtns = document.querySelectorAll('#mb-store-mode .view-toggle__btn');
+    modeBtns.forEach(function(b) {
+      b.addEventListener('click', function() {
+        _mbStoreMode = b.dataset.mbStoreMode;
+        modeBtns.forEach(function(x) {
+          var on = x === b;
+          x.classList.toggle('active', on);
+          x.setAttribute('aria-selected', on ? 'true' : 'false');
+        });
+        paint();
+      });
+    });
+
+    paint();
     return true;
   }
 

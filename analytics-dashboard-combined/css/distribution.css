@@ -699,7 +699,9 @@
    stays full-width without scrolling. */
 .dist-tree-table-wrap {
   overflow-x: auto;
+  overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  max-height: 60vh;
 }
 
 /* Header with More Data toggle */
@@ -3797,8 +3799,8 @@ display: flex;
    Demographics). hero-stat is reserved for the page header. No blue
    shell, no metric strip; just title + question + subtitle stacked. */
 .section-panel-header {
-  padding: var(--space-3) var(--space-2) var(--space-2);
-  margin: var(--space-2) 0 0;
+  padding: 0;
+  margin: 0;
 }
 .section-panel-header--with-stat {
   display: flex;

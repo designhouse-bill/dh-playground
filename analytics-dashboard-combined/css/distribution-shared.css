@@ -476,6 +476,16 @@
   max-width: 200px;
 }
 
+/* Phase 3 step 9b — By Creative chip variant. Inherits .dist-chip-selector__chip
+   shape, adds active-state distinction. */
+.mb-creative-chip--active {
+  background: var(--p-primary-color, #2196F3);
+  border-color: var(--p-primary-color, #2196F3);
+  color: #fff;
+}
+.mb-creative-chip--active .creative-icon { background: rgba(255,255,255,0.2); }
+.mb-creative-chip--active .creative-card__rank { background: #fff; color: var(--p-primary-color, #2196F3); }
+
 .creative-ranked__toolbar {
   display: flex; align-items: center; gap: var(--space-3, 12px);
   margin-bottom: var(--space-2, 8px);

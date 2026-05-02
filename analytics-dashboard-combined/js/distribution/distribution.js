@@ -5191,6 +5191,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     var panes = document.querySelectorAll('[data-mb-pane]');
     var trendBuilt = false;
     var dataBuilt = false;
+    var creativeBuilt = false;
     tabs.forEach(function(t) {
       t.addEventListener('click', function() {
         var target = t.dataset.mbTab;
@@ -5200,8 +5201,9 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
           x.setAttribute('aria-selected', on ? 'true' : 'false');
         });
         panes.forEach(function(p) { p.classList.toggle('active', p.dataset.mbPane === target); });
-        if (target === 'trend' && !trendBuilt) { trendBuilt = renderMediaBuyTrendPane(); }
-        if (target === 'data'  && !dataBuilt)  { dataBuilt  = renderMediaBuyDataPane(); }
+        if (target === 'trend'    && !trendBuilt)    { trendBuilt    = renderMediaBuyTrendPane(); }
+        if (target === 'data'     && !dataBuilt)     { dataBuilt     = renderMediaBuyDataPane(); }
+        if (target === 'creative' && !creativeBuilt) { creativeBuilt = renderMediaBuyByCreativePane(); }
         // Re-fire chart resize for already-built ECharts instances when their pane becomes active.
         if (target === 'trend' && _mbTrendChart) _mbTrendChart.resize();
       });
@@ -5276,6 +5278,154 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         paint(_mbTrendRange);
       });
     });
+    return true;
+  }
+
+  /* ============================================================
+     Phase 3 step 9b: By Creative pane.
+     creative-icon chip strip ("All Creatives" + per-creative) +
+     hero band (active creative aggregate) + 2-col panels
+     (left: stores ranked by visit share, right: detail metric tiles).
+     ============================================================ */
+  var _mbActiveCreative = 'all'; // 'all' | creative_id
+
+  function _mbAggregateMetrics(records) {
+    // Sum aggregable fields, derive rates from sums.
+    var imp = 0, clk = 0, vis = 0, spend = 0, stores = {};
+    records.forEach(function(cr) {
+      var m = cr.metrics || {};
+      imp += m.impressions || 0;
+      clk += m.clicks || 0;
+      vis += m.gross_visits || 0;
+      spend += m.spend || 0;
+      (cr.store_group || []).forEach(function(s) { stores[s] = true; });
+    });
+    return {
+      impressions: imp,
+      clicks: clk,
+      gross_visits: vis,
+      spend: spend,
+      ctr: imp > 0 ? (clk / imp) * 100 : 0,
+      cpm: imp > 0 ? (spend / (imp / 1000)) : 0,
+      cpc: clk > 0 ? (spend / clk) : 0,
+      cost_per_visit: vis > 0 ? (spend / vis) : 0,
+      storeCount: Object.keys(stores).length
+    };
+  }
+
+  function _mbCreativeIcon(cr) {
+    // Brand-colored icon: prefer file_url thumb, else type icon, else initials.
+    var url = cr && cr.file_url;
+    var typeIcon = cr && cr.creative_type === 'video' ? 'movie' : (cr && cr.creative_type === 'gif' ? 'gif_box' : 'image');
+    if (url) return '<span class="creative-icon"><img src="' + url + '" alt="" onerror="this.replaceWith(Object.assign(document.createElement(\'span\'),{className:\'material-symbols-outlined\',textContent:\'' + typeIcon + '\'}))"></span>';
+    return '<span class="creative-icon"><span class="material-symbols-outlined">' + typeIcon + '</span></span>';
+  }
+
+  function renderMediaBuyByCreativePane() {
+    var chipsEl = document.getElementById('mb-creative-chips');
+    var heroEl = document.getElementById('mb-creative-hero');
+    var twoColEl = document.getElementById('mb-creative-2col');
+    if (!chipsEl || !heroEl || !twoColEl) return false;
+
+    var allRecords = (D.creativeRecords || []).filter(function(cr) { return cr.metrics !== null; });
+    if (!allRecords.length) {
+      chipsEl.innerHTML = '<div class="dist-tree-empty">No creative data available for this entity.</div>';
+      heroEl.innerHTML = '';
+      twoColEl.innerHTML = '';
+      return true;
+    }
+    var sorted = allRecords.slice().sort(function(a, b) { return (b.metrics && b.metrics.gross_visits || 0) - (a.metrics && a.metrics.gross_visits || 0); });
+
+    function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+    function chipHtml(cr, isAll, rank) {
+      var active = (isAll && _mbActiveCreative === 'all') || (cr && cr.creative_id === _mbActiveCreative);
+      var label = isAll ? 'All Creatives' : ((cr.label || cr.notes || '').split(' — ')[0] || cr.creative_id);
+      var key = isAll ? 'all' : cr.creative_id;
+      var icon = isAll
+        ? '<span class="creative-icon"><span class="material-symbols-outlined">apps</span></span>'
+        : _mbCreativeIcon(cr);
+      // DP16.1 — show rank for non-All chips.
+      var rankBadge = isAll ? '' : '<span class="creative-card__rank" style="margin-left:auto;">' + rank + '</span>';
+      return '<button type="button" class="dist-chip-selector__chip mb-creative-chip' + (active ? ' mb-creative-chip--active' : '') + '" data-creative-key="' + esc(key) + '" style="max-width:none;padding:6px 10px 6px 6px;gap:8px;">'
+        + icon
+        + '<span class="dist-chip-selector__chip__name">' + esc(label) + '</span>'
+        + rankBadge
+        + '</button>';
+    }
+
+    function paint() {
+      // 1. Chips — cap at 50 per plan (others reachable via Data tab table or filter).
+      var CHIP_CAP = 50;
+      var chipParts = [chipHtml(null, true, 0)];
+      sorted.slice(0, CHIP_CAP).forEach(function(cr, i) { chipParts.push(chipHtml(cr, false, i + 1)); });
+      if (sorted.length > CHIP_CAP) {
+        chipParts.push('<span class="dist-chip-selector__chip" style="border-style:dashed;cursor:default;color:var(--p-text-color-secondary);" title="' + (sorted.length - CHIP_CAP) + ' more not shown — use Data tab for full list">+' + (sorted.length - CHIP_CAP) + ' more</span>');
+      }
+      chipsEl.innerHTML = chipParts.join('');
+
+      // 2. Hero band — active aggregate
+      var activeRecords = _mbActiveCreative === 'all' ? sorted : sorted.filter(function(cr) { return cr.creative_id === _mbActiveCreative; });
+      var activeCr = activeRecords.length === 1 ? activeRecords[0] : null;
+      var agg = _mbAggregateMetrics(activeRecords);
+      var heroName = activeCr
+        ? esc((activeCr.label || activeCr.notes || '').split(' — ')[0] || activeCr.creative_id) + ' <em>— ' + esc((activeCr.label || '').split(' — ')[1] || activeCr.creative_type || '') + '</em>'
+        : 'ALL CREATIVES <em>— Combined (' + sorted.length + ')</em>';
+      heroEl.innerHTML = '<span class="dist-hero-band__name">' + heroName + '</span>'
+        + '<div class="dist-hero-band__metrics">'
+        +   '<div class="dist-hero-band__metric"><span class="dist-hero-band__metric-value">' + (agg.ctr ? fmtPct(agg.ctr) : '—') + '</span><span class="dist-hero-band__metric-label">CTR</span></div>'
+        +   '<div class="dist-hero-band__metric"><span class="dist-hero-band__metric-value">' + fmtNumber(agg.gross_visits) + '</span><span class="dist-hero-band__metric-label">Visits</span></div>'
+        +   '<div class="dist-hero-band__metric"><span class="dist-hero-band__metric-value">' + fmtCurrency(agg.cost_per_visit) + '</span><span class="dist-hero-band__metric-label">CPV</span></div>'
+        +   '<div class="dist-hero-band__metric"><span class="dist-hero-band__metric-value">' + fmtCurrency(agg.spend) + '</span><span class="dist-hero-band__metric-label">Spend</span></div>'
+        + '</div>';
+
+      // 3. Two-col panels — left: store list (rank by visit share within active set),
+      //    right: detail metric tiles (impressions, clicks, CPM, CPC, store count).
+      var stores = {};
+      activeRecords.forEach(function(cr) {
+        var perStoreVisits = (cr.metrics && cr.metrics.gross_visits || 0) / Math.max(1, (cr.store_group || []).length);
+        (cr.store_group || []).forEach(function(s) {
+          stores[s] = (stores[s] || 0) + perStoreVisits;
+        });
+      });
+      var storeRows = Object.keys(stores)
+        .map(function(s) { return { id: s, visits: stores[s] }; })
+        .sort(function(a, b) { return b.visits - a.visits; })
+        .slice(0, 12);
+      var maxVisits = storeRows.length ? storeRows[0].visits : 1;
+      var leftCol = '<div class="dist-tree-data-grid"><div class="dist-tree-header" style="padding:10px 12px;font-weight:600;">Top stores by visit share</div><div style="padding:8px 12px;display:flex;flex-direction:column;gap:6px;">'
+        + storeRows.map(function(r, i) {
+            var pct = (r.visits / maxVisits) * 100;
+            return '<div style="display:flex;align-items:center;gap:8px;">'
+              + '<span style="width:26px;font-size:11px;color:var(--p-text-color-secondary);">#' + (i + 1) + '</span>'
+              + '<span style="flex:0 0 130px;font-size:12px;">Store ' + esc(r.id) + '</span>'
+              + '<span style="flex:1;height:8px;background:#eef2f7;border-radius:999px;overflow:hidden;"><span style="display:block;height:100%;width:' + pct.toFixed(1) + '%;background:var(--p-primary-color,#2196F3);"></span></span>'
+              + '<span style="flex:0 0 64px;text-align:right;font-size:12px;font-weight:600;">' + fmtNumber(Math.round(r.visits)) + '</span>'
+              + '</div>';
+          }).join('')
+        + '</div></div>';
+
+      var rightCol = '<div class="dist-tree-data-grid"><div class="dist-tree-header" style="padding:10px 12px;font-weight:600;">Detail metrics</div><div class="ep-detail-sidebar__metrics" style="padding:12px;">'
+        +   '<div class="ep-detail-sidebar__metric-tile"><div class="ep-detail-sidebar__metric-label">Impressions</div><div class="ep-detail-sidebar__metric-value">' + fmtNumber(agg.impressions) + '</div></div>'
+        +   '<div class="ep-detail-sidebar__metric-tile"><div class="ep-detail-sidebar__metric-label">Clicks</div><div class="ep-detail-sidebar__metric-value">' + fmtNumber(agg.clicks) + '</div></div>'
+        +   '<div class="ep-detail-sidebar__metric-tile"><div class="ep-detail-sidebar__metric-label">CPM</div><div class="ep-detail-sidebar__metric-value">' + fmtCurrency(agg.cpm) + '</div></div>'
+        +   '<div class="ep-detail-sidebar__metric-tile"><div class="ep-detail-sidebar__metric-label">CPC</div><div class="ep-detail-sidebar__metric-value">' + fmtCurrency(agg.cpc) + '</div></div>'
+        +   '<div class="ep-detail-sidebar__metric-tile"><div class="ep-detail-sidebar__metric-label">Stores</div><div class="ep-detail-sidebar__metric-value">' + agg.storeCount + '</div></div>'
+        +   '<div class="ep-detail-sidebar__metric-tile"><div class="ep-detail-sidebar__metric-label">Creatives</div><div class="ep-detail-sidebar__metric-value">' + activeRecords.length + '</div></div>'
+        + '</div></div>';
+
+      twoColEl.innerHTML = leftCol + rightCol;
+
+      // Wire chip clicks (re-bound after each paint since markup is replaced).
+      chipsEl.querySelectorAll('.mb-creative-chip').forEach(function(c) {
+        c.addEventListener('click', function() {
+          _mbActiveCreative = c.dataset.creativeKey;
+          paint();
+        });
+      });
+    }
+
+    paint();
     return true;
   }
 

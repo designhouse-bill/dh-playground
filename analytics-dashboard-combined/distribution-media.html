@@ -291,7 +291,15 @@
         <div class="dist-pane-toolbar"><span class="dist-pane-toolbar__label">By Store — coming in next checkpoint (Phase 3 step 6)</span></div>
       </div>
       <div class="perf-tab-pane" data-mb-pane="creative">
-        <div class="dist-pane-toolbar"><span class="dist-pane-toolbar__label">By Creative — coming in next checkpoint (Phase 3 step 5/8)</span></div>
+        <div class="dist-chip-selector" id="mb-creative-chips" role="tablist" aria-label="Creative selector">
+          <!-- Filled by renderMediaBuyByCreativePane() — All + per-creative chips. -->
+        </div>
+        <div class="dist-hero-band" id="mb-creative-hero">
+          <!-- Filled by renderMediaBuyByCreativePane() — active creative name + key metrics. -->
+        </div>
+        <div class="dist-2col" id="mb-creative-2col">
+          <!-- Filled by renderMediaBuyByCreativePane() — left: store list, right: detail tiles. -->
+        </div>
       </div>
       <div class="perf-tab-pane" data-mb-pane="trend">
         <div class="dist-pane-toolbar">
@@ -356,7 +364,7 @@
   <script src="js/data/distribution-data.js?v=17"></script>
 
   <script src="js/distribution/store-map.js"></script>
-  <script src="js/distribution/distribution.js?v=70"></script>
+  <script src="js/distribution/distribution.js?v=72"></script>
   <script src="js/distribution/distribution-modals.js?v=13"></script>
 
   <script src="js/header-slide.js"></script>

@@ -329,36 +329,52 @@
       gap: var(--space-4);
       padding: var(--space-3) var(--space-1);
     }
+    .ep-view-toggle-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ep-view-toggle-group__label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--color-text-secondary, #6b7280);
+    }
     .ep-view-toggle {
       display: inline-flex;
       align-items: center;
-      gap: 0;
+      gap: 2px;
+      padding: 3px;
       border: 1px solid var(--color-border, #e5e7eb);
       border-radius: 8px;
-      background: #fff;
-      overflow: hidden;
+      background: var(--color-surface-hover, #f3f4f6);
     }
     .ep-view-toggle__btn {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 8px 14px;
+      padding: 7px 14px;
       border: 0;
+      border-radius: 6px;
       background: transparent;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 600;
-      letter-spacing: 0.02em;
-      color: var(--color-text-secondary, #6b7280);
+      letter-spacing: 0.01em;
+      color: var(--color-text, #1f2937);
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
     }
-    .ep-view-toggle__btn .material-symbols-outlined { font-size: 16px; }
-    .ep-view-toggle__btn:hover { color: var(--color-text, #1f2937); }
-    .ep-view-toggle__btn--active {
+    .ep-view-toggle__btn .material-symbols-outlined { font-size: 17px; }
+    .ep-view-toggle__btn:hover {
+      background: rgba(255, 255, 255, 0.6);
+    }
+    .ep-view-toggle__btn--active,
+    .ep-view-toggle__btn--active:hover {
       background: var(--color-primary, #2196F3);
       color: #fff;
+      box-shadow: 0 1px 2px 0 rgba(0,0,0,0.08), 0 0 0 1px rgba(33,150,243,0.4);
     }
-    .ep-view-toggle__btn--active:hover { color: #fff; }
     .ep-promo-toolbar__filter {
       display: inline-flex;
       align-items: center;
@@ -938,6 +954,8 @@
     <div class="perf-tab-pane" data-ep-pane="promotion">
 
       <div class="ep-promo-toolbar">
+        <div class="ep-view-toggle-group">
+        <span class="ep-view-toggle-group__label" aria-hidden="true">View</span>
         <div class="ep-view-toggle" role="group" aria-label="By Promotion view mode">
           <button class="ep-view-toggle__btn ep-view-toggle__btn--active" data-ep-promo-view="chips">
             <span class="material-symbols-outlined">view_module</span>
@@ -947,6 +965,7 @@
             <span class="material-symbols-outlined">table_rows</span>
             Ranked Table
           </button>
+        </div>
         </div>
         <div class="ep-promo-toolbar__filter">
           <span class="material-symbols-outlined">search</span>

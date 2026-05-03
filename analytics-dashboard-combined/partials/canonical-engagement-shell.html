@@ -1,0 +1,181 @@
+<!--
+  Canonical Engagement Shell — UX-846 Phase 5a (extracted from engagement-promotions-proposed-max.html)
+  Source-of-truth markup for the canonical Engagement page chrome:
+    - Section header (hero-stat + narrative-header + cohort-note + run-stats)
+    - KPI strip (4 tiles + View affordance)
+    - perf-tabs (Overview + 4 metric tabs)
+    - Per-metric pane: hero stat + sub-tabs [By Store | By Day | Time Trend | Data]
+    - Right detail sidebar
+
+  Strategy B (Bill v1 lock): bare pages copy this markup verbatim and substitute
+  the {{TOKENS}} for page-specific values. Class names must NOT drift —
+  shared CSS in css/engagement.css is the contract.
+
+  TOKENS (per consumer page):
+    {{PAGE_TITLE}}           e.g. "Engagement" / "Engagement — Categories"
+    {{PAGE_QUESTION}}        narrative h2 question
+    {{COHORT_COUNT}}         e.g. "75 promotions" / "8 categories" / "27 stores"
+    {{COHORT_SCOPE}}         e.g. "Brand"
+    {{COHORT_PERIOD}}        e.g. "Week 47"
+    {{INFO_ITEMS}}           ep-circular-info inline counts
+    {{KPI_*}}                4 KPI tiles (label/value/sub)
+    {{ENTITY_LABEL}}         e.g. "Stores" / "Categories" / "Circulars"
+    {{ENTITY_BY_STORE_ID}}   per-page DOM hook for stacked-list render targets
+-->
+
+<!-- ============================================================
+     1. SECTION HEADER — narrative-header + cohort-note + run-stats
+     ============================================================ -->
+<header class="section-panel-header">
+  <div class="hero-stat">
+    <div class="narrative-header">
+      <div class="narrative-header__left">
+        <h1 class="narrative-header__title">{{PAGE_TITLE}}</h1>
+        <h2 class="narrative-header__question">{{PAGE_QUESTION}}</h2>
+      </div>
+      <div class="narrative-header__text">
+        <p class="section-panel-header__subtitle">
+          <span class="ep-cohort-note" id="ep-cohort-note">
+            <span class="material-symbols-outlined">info</span>
+            <span class="ep-cohort-note__label">Cohort:</span>
+            <span class="ep-cohort-note__count">{{COHORT_COUNT}}</span>
+            <span class="ep-cohort-note__sep">·</span>
+            <span class="ep-cohort-note__scope">{{COHORT_SCOPE}}</span>
+            <span class="ep-cohort-note__sep">·</span>
+            <span class="ep-cohort-note__period">{{COHORT_PERIOD}}</span>
+          </span>
+        </p>
+        <span class="card-run-stats" id="context-date-run-stats"></span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- 2. Inline summary row (entity counts) -->
+<div class="ep-circular-info">
+  {{INFO_ITEMS}}
+</div>
+
+<!-- ============================================================
+     3. perf-tabs strip — METRIC TABS (Anchor 1)
+     ============================================================ -->
+<div class="perf-tabs" id="ep-perf-tabs" role="tablist">
+  <button class="perf-tab active" data-ep-tab="overview" role="tab" aria-selected="true">
+    <span class="material-symbols-outlined">dashboard</span> Overview
+  </button>
+  <button class="perf-tab" data-ep-tab="sessions" role="tab">
+    <span class="material-symbols-outlined">analytics</span> Sessions
+  </button>
+  <button class="perf-tab" data-ep-tab="users" role="tab">
+    <span class="material-symbols-outlined">group</span> Total Users
+  </button>
+  <button class="perf-tab" data-ep-tab="duration" role="tab">
+    <span class="material-symbols-outlined">schedule</span> Avg Session Duration
+  </button>
+  <button class="perf-tab" data-ep-tab="cardevents" role="tab">
+    <span class="material-symbols-outlined">ads_click</span> Card Engagement Events
+  </button>
+</div>
+
+<!-- ============================================================
+     4. OVERVIEW PANE — KPI strip + per-session metrics
+     ============================================================ -->
+<div class="perf-tab-pane active" data-ep-pane="overview">
+  <div class="ep-kpi-strip" role="group" aria-label="Metric snapshot">
+    <button class="ep-kpi-tile" data-jump-to="sessions" type="button">
+      <span class="ep-kpi-tile__label">Sessions</span>
+      <span class="ep-kpi-tile__value">{{KPI_SESSIONS_VALUE}}</span>
+      <span class="ep-kpi-tile__sub">this week</span>
+      <span class="ep-kpi-tile__view">View<span class="material-symbols-outlined">chevron_right</span></span>
+    </button>
+    <button class="ep-kpi-tile" data-jump-to="users" type="button">
+      <span class="ep-kpi-tile__label">Total Users</span>
+      <span class="ep-kpi-tile__value">{{KPI_USERS_VALUE}}</span>
+      <span class="ep-kpi-tile__sub">unique</span>
+      <span class="ep-kpi-tile__view">View<span class="material-symbols-outlined">chevron_right</span></span>
+    </button>
+    <button class="ep-kpi-tile" data-jump-to="duration" type="button">
+      <span class="ep-kpi-tile__label">Avg Session Duration</span>
+      <span class="ep-kpi-tile__value">{{KPI_DURATION_VALUE}}<span class="ep-kpi-tile__unit"> sec</span></span>
+      <span class="ep-kpi-tile__sub">per session</span>
+      <span class="ep-kpi-tile__view">View<span class="material-symbols-outlined">chevron_right</span></span>
+    </button>
+    <button class="ep-kpi-tile" data-jump-to="cardevents" type="button">
+      <span class="ep-kpi-tile__label">Card Engagement Events</span>
+      <span class="ep-kpi-tile__value">{{KPI_CARDEVENTS_VALUE}}</span>
+      <span class="ep-kpi-tile__sub">Adds + Clicks + share/save/print</span>
+      <span class="ep-kpi-tile__view">View<span class="material-symbols-outlined">chevron_right</span></span>
+    </button>
+  </div>
+</div>
+
+<!-- ============================================================
+     5. METRIC PANE TEMPLATE — repeats for sessions / users / duration / cardevents
+     Sub-tabs: By Store | By Day | Time Trend | Data
+     ============================================================ -->
+<!-- METRIC_PANE_TEMPLATE — duplicate per metric; substitute {{METRIC_*}} tokens -->
+<div class="perf-tab-pane" data-ep-pane="{{METRIC_KEY}}">
+  <div class="hero-stat">
+    <div class="narrative-header">
+      <div class="narrative-header-left">
+        <h2 class="narrative-header__title">{{METRIC_TITLE}}</h2>
+        <p class="narrative-header__question">{{METRIC_QUESTION}}</p>
+      </div>
+    </div>
+    <div class="stat-strip">
+      <div class="stat-strip__cards">
+        <div class="stat-strip__item">
+          <div class="stat-strip__label">{{METRIC_TITLE}}</div>
+          <div class="stat-strip__value" style="font-size:24px;font-weight:800;">{{METRIC_VALUE}}</div>
+          <div class="stat-strip__context">
+            <span class="stat-strip__context-line">Among <strong>{{COHORT_SCOPE}} · {{COHORT_PERIOD}} · {{COHORT_COUNT}}</strong></span>
+            <span class="stat-strip__context-line">Scored vs <strong>{{UNIVERSAL_SCORE}}</strong> universal</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ep-sub-tabs" role="tablist" aria-label="{{METRIC_TITLE}} cuts">
+    <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">{{METRIC_TITLE}} by {{ENTITY_LABEL}}</button>
+    <button class="ep-sub-tab" data-ep-sub="day" role="tab">{{METRIC_TITLE}} by Day</button>
+    <button class="ep-sub-tab" data-ep-sub="trend" role="tab">{{METRIC_TITLE}} Time Trend</button>
+    <a class="ep-sub-tab ep-sub-tab--data" href="engagement-grid.html" target="_blank" rel="noopener" role="tab" title="Opens the full data grid + preview panel">
+      <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">table_chart</span>
+      Data
+      <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;opacity:.55;">open_in_new</span>
+    </a>
+  </div>
+
+  <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="store">
+    <div class="ep-stacked-list" id="ep-{{METRIC_KEY}}-by-store"></div>
+  </div>
+  <div class="ep-sub-pane" data-ep-sub-pane="day">
+    <div id="ep-{{METRIC_KEY}}-by-day"></div>
+  </div>
+  <div class="ep-sub-pane" data-ep-sub-pane="trend">
+    <div class="ep-trend-toolbar">
+      <div class="ep-trend-toolbar__title">Time Trend <span style="font-weight:400;color:var(--color-text-secondary,#6b7280);font-size:12px;">— {{METRIC_TITLE}} per week</span></div>
+      <div class="ep-trend-ranges" role="group" aria-label="Trend range">
+        <button class="ep-trend-range" data-range="1w">1 Week</button>
+        <button class="ep-trend-range" data-range="4w">4 Week (Month)</button>
+        <button class="ep-trend-range ep-trend-range--active" data-range="13w">13 Week (Quarter)</button>
+        <button class="ep-trend-range" data-range="1y">1 Year</button>
+      </div>
+    </div>
+    <div id="ep-{{METRIC_KEY}}-trend"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     6. RIGHT DETAIL SIDEBAR — slides in on row/chip click (DP8.2)
+     ============================================================ -->
+<aside class="ep-detail-sidebar" id="ep-detail-sidebar" role="complementary" aria-label="Details" aria-hidden="true">
+  <div class="ep-detail-sidebar__header">
+    <span class="ep-detail-sidebar__title">Details</span>
+    <button class="ep-detail-sidebar__close" id="ep-detail-sidebar-close" aria-label="Close details">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+  <div class="ep-detail-sidebar__body" id="ep-detail-sidebar-body"></div>
+</aside>

@@ -161,8 +161,7 @@
     renderCrossoverDetail();
     renderSpotlightCards();
     renderTrafficKpis();
-    renderMap();
-    renderLeaderboard('change');
+    renderTrafficLeaderboardPreview();
     updateRetailerLabels();
   }
 
@@ -1846,6 +1845,56 @@
         </details>
       `;
     }).join('');
+  }
+
+  // ========================================
+  // Traffic Overview Preview (top 5, links to By Store tab)
+  // ========================================
+
+  function renderTrafficLeaderboardPreview() {
+    var host = document.getElementById('traffic-overview-preview');
+    if (!host) return;
+
+    function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+    function fmtChange(pp) {
+      if (pp == null) return '<span style="color:var(--p-text-color-muted)">—</span>';
+      var sign = pp > 0 ? '+' : '';
+      var color = pp > 0 ? 'var(--p-green-500)' : pp < 0 ? 'var(--p-red-500)' : 'var(--p-text-color-secondary)';
+      return '<span style="color:' + color + '">' + sign + pp.toFixed(1) + ' pp</span>';
+    }
+
+    var top5 = [].concat(D.trafficShareMetrics.storeLeaderboard || [])
+      .sort(function(a, b) { return (b.wk2_share || 0) - (a.wk2_share || 0); })
+      .slice(0, 5);
+
+    var header = '<div class="lb-header">' +
+      '<span class="lb-col lb-col--rank">#</span>' +
+      '<span class="lb-col lb-col--store">Store</span>' +
+      '<span class="lb-col lb-col--city">City</span>' +
+      '<span class="lb-col lb-col--share">Share</span>' +
+      '<span class="lb-col lb-col--change">Change</span>' +
+    '</div>';
+
+    var rows = top5.map(function(s, i) {
+      return '<div class="lb-row lb-row--leaf">' +
+        '<span class="lb-col lb-col--rank"><span class="lb-rank">' + (i + 1) + '</span></span>' +
+        '<span class="lb-col lb-col--store">Store #' + esc(s.store_id) + '</span>' +
+        '<span class="lb-col lb-col--city">' + esc(s.city || '') + '</span>' +
+        '<span class="lb-col lb-col--share">' + (s.wk2_share != null ? s.wk2_share + '%' : '—') + '</span>' +
+        '<span class="lb-col lb-col--change">' + fmtChange(s.change_pp) + '</span>' +
+      '</div>';
+    }).join('');
+
+    host.innerHTML = header + rows;
+
+    var link = document.getElementById('ts-overview-preview-link');
+    if (link && !link.dataset.bound) {
+      link.dataset.bound = '1';
+      link.addEventListener('click', function() {
+        var storeTab = document.querySelector('[data-ts-tab="store"]');
+        if (storeTab) storeTab.click();
+      });
+    }
   }
 
   // ========================================
@@ -3554,7 +3603,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         initVisitDonut();
         if (_trendViewInitialized) { initFrequencyChart(); initCrossoverTrendChart(); }
       } else if (section === 'traffic') {
-        renderTrafficKpis(); renderMap(); renderLeaderboard('change');
+        renderTrafficKpis(); renderTrafficLeaderboardPreview();
         initTrafficCombinedChart(); initCrossoverChart(); renderCrossoverDetail();
         initTrafficShareTabs();
       }
@@ -3595,8 +3644,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         initDemographics();
       } else if (section === 'traffic') {
         renderTrafficKpis();
-        renderMap();
-        renderLeaderboard('change');
+        renderTrafficLeaderboardPreview();
         initTrafficCombinedChart();
         initCrossoverChart();
         renderCrossoverDetail();
@@ -5407,8 +5455,8 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
             var inst = (typeof echarts !== 'undefined') && echarts.getInstanceByDom ? echarts.getInstanceByDom(el) : null;
             if (inst) inst.resize();
           });
-          // Overview Leaflet map invalidate on return.
-          if (activePane.querySelector('#store-map') && typeof window.StoreMap !== 'undefined' && window.StoreMap.invalidateSize) {
+          // By Store Leaflet map invalidate on return to the tab.
+          if (activePane.querySelector('#store-map-store-pane') && typeof window.StoreMap !== 'undefined' && window.StoreMap.invalidateSize) {
             window.StoreMap.invalidateSize();
           }
         }
@@ -5431,8 +5479,6 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
             renderTrafficDataPane();
             dataBuilt = true;
           }
-        } else if (target === 'overview' && storeBuilt) {
-          renderMap('store-map');
         }
       });
     });

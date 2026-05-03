@@ -629,6 +629,7 @@
   <script src="js/engagement/shared-modals.js"></script>
   <script src="js/header-slide.js"></script>
   <script src="js/engagement/engagement-page-app.js"></script>
+  <script src="js/engagement/canonical-shell-renderers.js?v=1"></script>
 
   <script>
   (function() {
@@ -744,26 +745,9 @@
 
     // ─── Generic factories so all 4 metrics share render code ────────────
     window.epMetrics = window.epMetrics || {};
+    // Proxies → js/engagement/canonical-shell-renderers.js (Phase 5e extraction)
     function renderStackedList(hostId, rows, segDefs, totalFmt) {
-      const host = document.getElementById(hostId);
-      if (!host) return;
-      window.epMetrics[hostId] = { rows: rows, segDefs: segDefs, totalFmt: totalFmt };
-      const totals = rows.map(r => segDefs.reduce((s, d) => s + (r[d.key] || 0), 0));
-      const max = Math.max.apply(null, totals);
-      host.innerHTML = rows.map((r, i) => {
-        const total = totals[i];
-        const w = (n) => (n / max * 100).toFixed(1) + '%';
-        const segs = segDefs.map(d =>
-          '<div class="ep-stacked-list__seg ep-stacked-list__seg--' + d.cls + '" style="width:' + w(r[d.key]) + '" title="' + d.label + ': ' + (r[d.key] || 0).toLocaleString() + '"></div>'
-        ).join('');
-        return ''
-          + '<div class="ep-stacked-list__row">'
-          +   '<div class="ep-stacked-list__rank">' + r.rank + '</div>'
-          +   '<div class="ep-stacked-list__name">' + r.name + (r.sub ? '<small>' + r.sub + '</small>' : '') + '</div>'
-          +   '<div class="ep-stacked-list__bar">' + segs + '</div>'
-          +   '<div class="ep-stacked-list__total">' + (totalFmt ? totalFmt(total) : total.toLocaleString()) + '</div>'
-          + '</div>';
-      }).join('');
+      window.CanonicalShellRenderers.renderStackedList(hostId, rows, segDefs, totalFmt);
     }
 
     // Day-of-week column renderer — single source for all DoW charts.
@@ -791,51 +775,7 @@
       });
     }
     function renderDoWColumns(hostId, days, opts) {
-      const host = document.getElementById(hostId);
-      if (!host) return;
-      if (typeof opts === 'function') opts = { fmt: opts };
-      opts = opts || {};
-      const fmt = opts.fmt;
-      const label = opts.label || '';
-      const max = Math.max.apply(null, days.map(d => d.n));
-      const total = days.reduce((s, d) => s + d.n, 0);
-      const avg = total / days.length;
-      const dates = dowDayDates();
-      host.innerHTML = '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:12px;align-items:end;height:240px;">'
-        + days.map((d, i) => {
-            const h = (d.n / max * 100).toFixed(1) + '%';
-            const peak = d.n === max;
-            return '<div class="ep-dow-col" data-dow-idx="' + i + '" style="display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;cursor:default;">'
-              + '<div style="font-size:12px;font-weight:700;">' + (fmt ? fmt(d.n) : d.n.toLocaleString()) + '</div>'
-              + '<div class="dow-bar' + (peak ? ' dow-bar--peak' : '') + '" style="height:' + h + ';"></div>'
-              + '<div style="font-size:11px;font-weight:600;color:#6b7280;">' + d.d + '</div>'
-              + '</div>';
-          }).join('')
-        + '</div>';
-      // Wire dark hover tooltip — full day + date, value, share + vs-avg context.
-      host.querySelectorAll('.ep-dow-col').forEach(col => {
-        const i = parseInt(col.dataset.dowIdx);
-        const d = days[i];
-        col.addEventListener('mouseenter', () => {
-          const tip = ensurePerfTooltip();
-          const fullDay = DOW_FULL[d.d] || d.d;
-          const dateStr = dates[i] || '';
-          const valStr = fmt ? fmt(d.n) : d.n.toLocaleString();
-          const sharePct = total > 0 ? (d.n / total * 100).toFixed(1) + '%' : '';
-          const vsAvg = avg > 0 ? ((d.n - avg) / avg * 100) : 0;
-          const vsAvgStr = (vsAvg >= 0 ? '+' : '') + vsAvg.toFixed(1) + '% vs daily avg';
-          tip.innerHTML = '<div class="ep-perf-tooltip__title">' + fullDay + '</div>'
-            + '<div style="color:rgba(255,255,255,0.5);font-size:11px;margin-bottom:6px;margin-top:-4px;">' + dateStr + '</div>'
-            + (label ? '<div style="color:rgba(255,255,255,0.7);font-size:11px;">' + label + '</div>' : '')
-            + '<div style="color:#fff;font-size:15px;font-weight:700;padding-top:2px;">' + valStr + '</div>'
-            + '<div style="color:rgba(255,255,255,0.6);font-size:11px;margin-top:4px;">' + sharePct + ' of week · ' + vsAvgStr + '</div>';
-          tip.classList.add('ep-perf-tooltip--visible');
-        });
-        col.addEventListener('mousemove', positionPerfTooltip);
-        col.addEventListener('mouseleave', () => {
-          ensurePerfTooltip().classList.remove('ep-perf-tooltip--visible');
-        });
-      });
+      window.CanonicalShellRenderers.renderDoWColumns(hostId, days, opts);
     }
 
     function weekDateRange(weekLabel) {
@@ -856,70 +796,7 @@
     }
 
     function renderTrend(hostId, weeks, vals, opts) {
-      const host = document.getElementById(hostId);
-      if (!host) return;
-      opts = opts || {};
-      const W = 880, H = 280, pad = 40;
-      const yMax = opts.yMax || Math.ceil(Math.max.apply(null, vals) * 1.15);
-      const ySteps = opts.ySteps || 5;
-      const fmt = opts.yFmt || (v => v);
-      const xs = vals.map((_, i) => pad + i * ((W - pad * 2) / (vals.length - 1)));
-      const ys = vals.map(v => H - pad - (v / yMax) * (H - pad * 2));
-      const baseY = H - pad;
-      const linePath = xs.map((x, i) => (i ? 'L' : 'M') + x + ',' + ys[i]).join(' ');
-      const areaPath = linePath + ' L' + xs[xs.length - 1] + ',' + baseY + ' L' + xs[0] + ',' + baseY + ' Z';
-      const gradId = hostId + '-grad';
-      const gridLines = [];
-      for (let i = 0; i <= ySteps; i++) {
-        const g = (yMax / ySteps) * i;
-        const y = H - pad - (g / yMax) * (H - pad * 2);
-        gridLines.push('<line x1="' + pad + '" x2="' + (W - pad) + '" y1="' + y + '" y2="' + y + '" stroke="#e5e7eb"/>'
-          + '<text x="' + (pad - 8) + '" y="' + (y + 4) + '" font-size="10" fill="#6b7280" text-anchor="end">' + fmt(g) + '</text>');
-      }
-      const labelStep = vals.length > 26 ? 4 : vals.length > 8 ? 2 : 1;
-      const labels = weeks.map((w, i) => {
-        const show = i % labelStep === 0 || i === weeks.length - 1;
-        return show ? '<text x="' + xs[i] + '" y="' + (H - 12) + '" font-size="10" fill="#6b7280" text-anchor="middle">' + w + '</text>' : '';
-      }).join('');
-      // Invisible wider hit-target circles sit on top to make hover easy to trigger
-      const dots = xs.map((x, i) =>
-        '<circle class="ep-trend-dot" cx="' + x + '" cy="' + ys[i] + '" r="4" fill="#fff" stroke="#2196F3" stroke-width="2" data-week="' + weeks[i] + '" data-val="' + vals[i] + '" style="cursor:crosshair;"/>'
-        + '<circle class="ep-trend-hit" cx="' + x + '" cy="' + ys[i] + '" r="12" fill="transparent" stroke="none" data-week="' + weeks[i] + '" data-val="' + vals[i] + '" style="cursor:crosshair;"/>'
-      ).join('');
-      host.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto;display:block;">'
-        + '<defs><linearGradient id="' + gradId + '" x1="0" y1="0" x2="0" y2="1">'
-        +   '<stop offset="0%" stop-color="#2196F3" stop-opacity="0.18"/>'
-        +   '<stop offset="100%" stop-color="#2196F3" stop-opacity="0"/>'
-        + '</linearGradient></defs>'
-        + gridLines.join('')
-        + '<path d="' + areaPath + '" fill="url(#' + gradId + ')" stroke="none"/>'
-        + '<path d="' + linePath + '" fill="none" stroke="#2196F3" stroke-width="2"/>'
-        + dots
-        + labels
-        + '</svg>'
-        + (opts.note ? '<div style="font-size:11px;color:#6b7280;margin-top:8px;">' + opts.note + '</div>' : '');
-
-      // Wire hover tooltip on each data point
-      host.querySelectorAll('.ep-trend-hit, .ep-trend-dot').forEach(el => {
-        el.addEventListener('mouseenter', () => {
-          const tip = ensurePerfTooltip();
-          const wNum = (el.dataset.week || '').replace('W', '');
-          const dateRange = weekDateRange(el.dataset.week);
-          tip.innerHTML = '<div class="ep-perf-tooltip__title">Week ' + wNum + '</div>'
-            + (dateRange ? '<div style="color:rgba(255,255,255,0.5);font-size:11px;margin-bottom:6px;margin-top:-4px;">' + dateRange + '</div>' : '')
-            + '<div style="color:#fff;font-size:15px;font-weight:700;padding-top:2px;">' + fmt(+el.dataset.val) + '</div>';
-          tip.classList.add('ep-perf-tooltip--visible');
-          // Grow visible dot on hover
-          const dot = host.querySelector('.ep-trend-dot[data-week="' + el.dataset.week + '"]');
-          if (dot) { dot.setAttribute('r', '6'); dot.setAttribute('fill', '#2196F3'); }
-        });
-        el.addEventListener('mousemove', positionPerfTooltip);
-        el.addEventListener('mouseleave', () => {
-          ensurePerfTooltip().classList.remove('ep-perf-tooltip--visible');
-          const dot = host.querySelector('.ep-trend-dot[data-week="' + el.dataset.week + '"]');
-          if (dot) { dot.setAttribute('r', '4'); dot.setAttribute('fill', '#fff'); }
-        });
-      });
+      window.CanonicalShellRenderers.renderTrend(hostId, weeks, vals, opts);
     }
 
     // ─── Sessions / Time Trend — initial render via shared factory ───────
@@ -1710,19 +1587,11 @@
     // selector-driven content via formatter callback. (binding hoisted to top
     // of IIFE so early renders that wire tooltips don't hit TDZ on perfTooltip)
     function ensurePerfTooltip() {
-      if (!perfTooltip) {
-        perfTooltip = document.createElement('div');
-        perfTooltip.className = 'ep-perf-tooltip';
-        document.body.appendChild(perfTooltip);
-      }
+      if (!perfTooltip) perfTooltip = window.CanonicalShellRenderers.ensurePerfTooltip();
       return perfTooltip;
     }
     function positionPerfTooltip(e) {
-      const x = e.clientX + 14, y = e.clientY + 14;
-      const tw = perfTooltip.offsetWidth, th = perfTooltip.offsetHeight;
-      const vw = window.innerWidth, vh = window.innerHeight;
-      perfTooltip.style.left = (x + tw > vw ? e.clientX - tw - 14 : x) + 'px';
-      perfTooltip.style.top = (y + th > vh ? e.clientY - th - 14 : y) + 'px';
+      window.CanonicalShellRenderers.positionPerfTooltip(e);
     }
     function attachPerfTooltip(els, htmlFn) {
       ensurePerfTooltip();

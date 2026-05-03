@@ -1849,6 +1849,61 @@
   }
 
   // ========================================
+  // Traffic Data Pane (dense flat leaderboard)
+  // ========================================
+
+  function renderTrafficDataPane() {
+    var host = document.getElementById('ts-data-grid');
+    if (!host) return;
+
+    function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+    function fmtChange(pp) {
+      if (pp == null) return '<span style="color:var(--p-text-color-muted)">—</span>';
+      var sign = pp > 0 ? '+' : '';
+      var color = pp > 0 ? 'var(--p-green-500)' : pp < 0 ? 'var(--p-red-500)' : 'var(--p-text-color-secondary)';
+      return '<span style="color:' + color + '">' + sign + pp.toFixed(1) + ' pp</span>';
+    }
+
+    var ourRows = (D.trafficShareMetrics.storeLeaderboard || []).map(function(s) {
+      return { name: 'Store #' + s.store_id, type: 'Our Store', city: s.city || '', share: s.wk2_share, change_pp: s.change_pp };
+    });
+    var compRows = (D.competitorStores || []).map(function(cs) {
+      return { name: cs.storeName || cs.brand, type: cs.brand, city: cs.city || '', share: cs.wk2_share, change_pp: null };
+    });
+
+    var combined = ourRows.concat(compRows).sort(function(a, b) { return (b.share || 0) - (a.share || 0); });
+
+    var rows = combined.map(function(r, i) {
+      var isOur = r.type === 'Our Store';
+      var typeChip = isOur
+        ? '<span class="ts-data-chip ts-data-chip--our">Our Store</span>'
+        : '<span class="ts-data-chip ts-data-chip--comp">' + esc(r.type) + '</span>';
+      return '<tr>'
+        + '<td class="col-num">' + (i + 1) + '</td>'
+        + '<td class="col-name">' + esc(r.name) + '</td>'
+        + '<td class="col-type">' + typeChip + '</td>'
+        + '<td class="col-city">' + esc(r.city) + '</td>'
+        + '<td class="col-share">' + (r.share != null ? r.share + '%' : '—') + '</td>'
+        + '<td class="col-change">' + fmtChange(r.change_pp) + '</td>'
+        + '</tr>';
+    }).join('');
+
+    host.innerHTML = '<div class="dist-tree-table-wrap">'
+      + '<table class="dist-tree-table ts-data-table">'
+      + '<thead><tr>'
+      + '<th class="col-num">#</th>'
+      + '<th class="col-name">Location</th>'
+      + '<th class="col-type">Type</th>'
+      + '<th class="col-city">City</th>'
+      + '<th class="col-share">Share %</th>'
+      + '<th class="col-change">Change</th>'
+      + '</tr></thead>'
+      + '<tbody>' + rows + '</tbody>'
+      + '</table>'
+      + '</div>';
+  }
+
+  // ========================================
   // Store Map
   // ========================================
 
@@ -5335,7 +5390,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     if (!tabBar) return;
     var tabs = tabBar.querySelectorAll('.perf-tab');
     var panes = document.querySelectorAll('[data-ts-pane]');
-    var storeBuilt = false, compBuilt = false;
+    var storeBuilt = false, compBuilt = false, dataBuilt = false;
     tabs.forEach(function(t) {
       t.addEventListener('click', function() {
         var target = t.dataset.tsTab;
@@ -5370,6 +5425,11 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
             renderLeaderboardInto(document.getElementById('leaderboard-table-comp'), 'competitors');
             bindCompTabInteractions();
             compBuilt = true;
+          }
+        } else if (target === 'data') {
+          if (!dataBuilt) {
+            renderTrafficDataPane();
+            dataBuilt = true;
           }
         } else if (target === 'overview' && storeBuilt) {
           renderMap('store-map');

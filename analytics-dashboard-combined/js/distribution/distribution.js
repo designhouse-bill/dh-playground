@@ -1788,6 +1788,17 @@
     elements.leaderboardTable.innerHTML = html;
   }
 
+  function renderLeaderboardInto(targetEl, viewOverride, sortBy) {
+    if (!targetEl) return;
+    var savedTable = elements.leaderboardTable;
+    var savedView = _leaderboardView;
+    elements.leaderboardTable = targetEl;
+    if (viewOverride) _leaderboardView = viewOverride;
+    renderLeaderboard(sortBy);
+    elements.leaderboardTable = savedTable;
+    _leaderboardView = savedView;
+  }
+
   function renderConcentration() {
     const s = D.trafficShareMetrics.summary;
     elements.concentrationStats.innerHTML = `
@@ -1841,10 +1852,10 @@
   // Store Map
   // ========================================
 
-  function renderMap() {
+  function renderMap(containerId) {
     if (typeof StoreMap === 'undefined') return;
 
-    StoreMap.init('store-map');
+    StoreMap.init(containerId || 'store-map');
     const stores = D.entities.stores;
     const storeData = {};
 
@@ -2007,9 +2018,9 @@
 
   // ── 1v1 Store vs Competitor Comparison Panel ───────────────────────────────
 
-  function showComparePanel(storeId, compData) {
-    var panel = document.getElementById('compare-panel');
-    var body = document.getElementById('compare-panel-body');
+  function showComparePanel(storeId, compData, panelEl, bodyEl) {
+    var panel = panelEl || document.getElementById('compare-panel');
+    var body = bodyEl || document.getElementById('compare-panel-body');
     if (!panel || !body) return;
 
     // Get crossover data for this competitor brand
@@ -2098,6 +2109,83 @@
   function hideComparePanel() {
     var panel = document.getElementById('compare-panel');
     if (panel) panel.style.display = 'none';
+  }
+
+  // ── By Store tab interactions ─────────────────────────────────────────────
+  function bindStoreTabInteractions() {
+    var table = document.getElementById('leaderboard-table-store');
+    if (!table) return;
+    table.addEventListener('click', function(e) {
+      var expandBtn = e.target.closest('.lb-expand-btn');
+      if (expandBtn) {
+        e.stopPropagation();
+        var parentRow = expandBtn.closest('.lb-row--parent');
+        var sid = parentRow ? parentRow.dataset.storeId : null;
+        if (!sid) return;
+        var children = document.getElementById('lb-children-' + sid);
+        if (!children) return;
+        children.classList.toggle('open', !children.classList.contains('open'));
+        expandBtn.setAttribute('aria-expanded', String(children.classList.contains('open')));
+        return;
+      }
+      var parentRow = e.target.closest('.lb-row--parent');
+      if (!parentRow || !parentRow.dataset.storeId) return;
+      table.querySelectorAll('.lb-row--parent').forEach(function(r) { r.classList.remove('lb-row--selected'); });
+      parentRow.classList.add('lb-row--selected');
+      parentRow.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      if (typeof StoreMap !== 'undefined') StoreMap.highlightStore(parentRow.dataset.storeId);
+      var legend = document.getElementById('ring-legend-store');
+      if (legend) legend.style.display = 'flex';
+    });
+    var resetBtn = document.getElementById('traffic-map-reset-btn-store');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function() {
+        table.querySelectorAll('.lb-row--selected').forEach(function(r) { r.classList.remove('lb-row--selected'); });
+        var legend = document.getElementById('ring-legend-store');
+        if (legend) legend.style.display = 'none';
+        if (typeof StoreMap !== 'undefined') StoreMap.fitBounds();
+      });
+    }
+  }
+
+  // ── By Competitor tab interactions ────────────────────────────────────────
+  function bindCompTabInteractions() {
+    var table = document.getElementById('leaderboard-table-comp');
+    if (!table) return;
+    table.addEventListener('click', function(e) {
+      var sortCol = e.target.closest('.lb-col--sortable');
+      if (sortCol) {
+        renderLeaderboardInto(table, 'competitors', sortCol.dataset.sort);
+        return;
+      }
+      var row = e.target.closest('.lb-row--leaf');
+      if (!row || !row.dataset.compId) return;
+      var compData = D.competitorStores.find(function(c) { return c.id === row.dataset.compId; });
+      if (!compData) return;
+      table.querySelectorAll('.lb-row--leaf').forEach(function(r) { r.classList.remove('lb-row--selected'); });
+      row.classList.add('lb-row--selected');
+      showComparePanelModal(null, compData);
+    });
+    var closeBtn = document.getElementById('comp-modal-close');
+    if (closeBtn) closeBtn.addEventListener('click', hideComparePanelModal);
+    var backdrop = document.getElementById('comp-modal-backdrop');
+    if (backdrop) backdrop.addEventListener('click', function(e) {
+      if (e.target === backdrop) hideComparePanelModal();
+    });
+  }
+
+  function showComparePanelModal(storeId, compData) {
+    showComparePanel(storeId, compData,
+      document.getElementById('comp-modal'),
+      document.getElementById('comp-modal-body')
+    );
+    var backdrop = document.getElementById('comp-modal-backdrop');
+    if (backdrop) backdrop.style.display = 'flex';
+  }
+
+  function hideComparePanelModal() {
+    var backdrop = document.getElementById('comp-modal-backdrop');
+    if (backdrop) backdrop.style.display = 'none';
   }
 
   function buildFreqBar(label, value, total, color) {
@@ -5247,6 +5335,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     if (!tabBar) return;
     var tabs = tabBar.querySelectorAll('.perf-tab');
     var panes = document.querySelectorAll('[data-ts-pane]');
+    var storeBuilt = false, compBuilt = false;
     tabs.forEach(function(t) {
       t.addEventListener('click', function() {
         var target = t.dataset.tsTab;
@@ -5263,10 +5352,27 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
             var inst = (typeof echarts !== 'undefined') && echarts.getInstanceByDom ? echarts.getInstanceByDom(el) : null;
             if (inst) inst.resize();
           });
-          // Leaflet map needs invalidateSize() when becoming visible.
+          // Overview Leaflet map invalidate on return.
           if (activePane.querySelector('#store-map') && typeof window.StoreMap !== 'undefined' && window.StoreMap.invalidateSize) {
             window.StoreMap.invalidateSize();
           }
+        }
+        // Per-tab lazy init
+        if (target === 'store') {
+          renderMap('store-map-store-pane');
+          if (!storeBuilt) {
+            renderLeaderboardInto(document.getElementById('leaderboard-table-store'), 'ours');
+            bindStoreTabInteractions();
+            storeBuilt = true;
+          }
+        } else if (target === 'competitor') {
+          if (!compBuilt) {
+            renderLeaderboardInto(document.getElementById('leaderboard-table-comp'), 'competitors');
+            bindCompTabInteractions();
+            compBuilt = true;
+          }
+        } else if (target === 'overview' && storeBuilt) {
+          renderMap('store-map');
         }
       });
     });

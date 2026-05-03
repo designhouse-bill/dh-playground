@@ -4974,3 +4974,34 @@ body[data-dist-page] .narrative-header__title {
   color: var(--color-primary, #2196F3);
   text-decoration: underline;
 }
+
+/* ── Competitor tab: table-only layout ──────────────────────────────────── */
+.traffic-perf-panel--table-only .traffic-perf-body--table-only {
+  display: block;
+}
+.traffic-perf-table-wrap--full {
+  height: 560px;
+  overflow: hidden;
+  border-right: none;
+}
+
+/* ── Competitor compare modal (page-level centered overlay) ─────────────── */
+.comp-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+.comp-modal {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  width: min(520px, calc(100vw - 40px));
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: var(--space-4);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}

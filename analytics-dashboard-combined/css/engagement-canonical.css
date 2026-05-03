@@ -56,9 +56,8 @@
       flex-direction: column;
       gap: var(--space-2);
     }
-    .engagement-proposed .perf-tab-pane.active {
-      display: block;
-    }
+    .engagement-proposed .perf-tab-pane { display: none; }
+    .engagement-proposed .perf-tab-pane.active { display: block; }
 
     /* MAX IA — metric-tab styling: tabs are KPI cards (label + value).
        Active tab = mint background per Max sketch. */

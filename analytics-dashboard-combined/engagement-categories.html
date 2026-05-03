@@ -145,7 +145,199 @@
   </header>
 
   <!-- ============================================================
-       MAIN CONTENT — Categories Two-Column Layout
+       CANONICAL ENGAGEMENT SHELL — UX-846 Phase 5b
+       Source: partials/canonical-engagement-shell.html
+       ============================================================ -->
+  <main class="engagement-canonical engagement-proposed" id="engagement-canonical">
+
+    <header class="section-panel-header">
+      <div class="hero-stat">
+        <div class="narrative-header">
+          <div class="narrative-header__left">
+            <h1 class="narrative-header__title">Categories</h1>
+            <h2 class="narrative-header__question">How are categories engaging users this week?</h2>
+          </div>
+          <div class="narrative-header__text">
+            <p class="section-panel-header__subtitle">
+              <span class="ep-cohort-note" id="ep-cohort-note">
+                <span class="material-symbols-outlined">info</span>
+                <span class="ep-cohort-note__label">Cohort:</span>
+                <span class="ep-cohort-note__count">8 categories</span>
+                <span class="ep-cohort-note__sep">·</span>
+                <span class="ep-cohort-note__scope">Brand</span>
+                <span class="ep-cohort-note__sep">·</span>
+                <span class="ep-cohort-note__period">Week 47</span>
+              </span>
+            </p>
+            <span class="card-run-stats" id="context-date-run-stats">Ran at 27 stores · 7 days</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="ep-circular-info">
+      <span class="ep-circular-info__item"><span class="ep-circular-info__num">8</span> categories</span>
+      <span class="ep-circular-info__sep">·</span>
+      <span class="ep-circular-info__item"><span class="ep-circular-info__num">75</span> promotions</span>
+      <span class="ep-circular-info__sep">·</span>
+      <span class="ep-circular-info__item"><span class="ep-circular-info__num">27</span> stores</span>
+    </div>
+
+    <div class="perf-tabs" id="ep-perf-tabs" role="tablist">
+      <button class="perf-tab active" data-ep-tab="overview" role="tab" aria-selected="true">
+        <span class="material-symbols-outlined">dashboard</span> Overview
+      </button>
+      <button class="perf-tab" data-ep-tab="sessions" role="tab">
+        <span class="material-symbols-outlined">analytics</span> Sessions
+      </button>
+      <button class="perf-tab" data-ep-tab="users" role="tab">
+        <span class="material-symbols-outlined">group</span> Total Users
+      </button>
+      <button class="perf-tab" data-ep-tab="duration" role="tab">
+        <span class="material-symbols-outlined">schedule</span> Avg Session Duration
+      </button>
+      <button class="perf-tab" data-ep-tab="cardevents" role="tab">
+        <span class="material-symbols-outlined">ads_click</span> Card Engagement Events
+      </button>
+    </div>
+
+    <div class="perf-tab-pane active" data-ep-pane="overview">
+      <div class="ep-kpi-strip" role="group" aria-label="Metric snapshot">
+        <button class="ep-kpi-tile" data-jump-to="sessions" type="button">
+          <span class="ep-kpi-tile__label">Sessions</span>
+          <span class="ep-kpi-tile__value">78,542</span>
+          <span class="ep-kpi-tile__sub">this week</span>
+          <span class="ep-kpi-tile__view">View<span class="material-symbols-outlined">chevron_right</span></span>
+        </button>
+        <button class="ep-kpi-tile" data-jump-to="users" type="button">
+          <span class="ep-kpi-tile__label">Total Users</span>
+          <span class="ep-kpi-tile__value">54,011</span>
+          <span class="ep-kpi-tile__sub">unique</span>
+          <span class="ep-kpi-tile__view">View<span class="material-symbols-outlined">chevron_right</span></span>
+        </button>
+        <button class="ep-kpi-tile" data-jump-to="duration" type="button">
+          <span class="ep-kpi-tile__label">Avg Session Duration</span>
+          <span class="ep-kpi-tile__value">368<span class="ep-kpi-tile__unit"> sec</span></span>
+          <span class="ep-kpi-tile__sub">per session</span>
+          <span class="ep-kpi-tile__view">View<span class="material-symbols-outlined">chevron_right</span></span>
+        </button>
+        <button class="ep-kpi-tile" data-jump-to="cardevents" type="button">
+          <span class="ep-kpi-tile__label">Card Engagement Events</span>
+          <span class="ep-kpi-tile__value">271,298</span>
+          <span class="ep-kpi-tile__sub">Adds + Clicks + share/save/print</span>
+          <span class="ep-kpi-tile__view">View<span class="material-symbols-outlined">chevron_right</span></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Metric panes — Sessions / Users / Duration / Card Events -->
+    <div class="perf-tab-pane" data-ep-pane="sessions">
+      <div class="hero-stat">
+        <div class="narrative-header">
+          <div class="narrative-header-left">
+            <h2 class="narrative-header__title">Sessions</h2>
+            <p class="narrative-header__question">How are sessions distributed across categories, days, and weeks?</p>
+          </div>
+        </div>
+      </div>
+      <div class="ep-sub-tabs" role="tablist" aria-label="Sessions cuts">
+        <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Sessions by Category</button>
+        <button class="ep-sub-tab" data-ep-sub="day" role="tab">Sessions by Day</button>
+        <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Sessions Time Trend</button>
+        <a class="ep-sub-tab ep-sub-tab--data" href="engagement-grid.html" target="_blank" rel="noopener" role="tab">
+          <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">table_chart</span>
+          Data
+          <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;opacity:.55;">open_in_new</span>
+        </a>
+      </div>
+      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="store">
+        <div class="ep-stacked-list" id="ep-sessions-by-store"></div>
+      </div>
+      <div class="ep-sub-pane" data-ep-sub-pane="day">
+        <div id="ep-sessions-by-day"></div>
+      </div>
+      <div class="ep-sub-pane" data-ep-sub-pane="trend">
+        <div id="ep-sessions-trend"></div>
+      </div>
+    </div>
+
+    <div class="perf-tab-pane" data-ep-pane="users">
+      <div class="hero-stat">
+        <div class="narrative-header">
+          <div class="narrative-header-left">
+            <h2 class="narrative-header__title">Total Users</h2>
+            <p class="narrative-header__question">How many unique users engaged this week, and where are they?</p>
+          </div>
+        </div>
+      </div>
+      <div class="ep-sub-tabs" role="tablist" aria-label="Users cuts">
+        <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Users by Category</button>
+        <button class="ep-sub-tab" data-ep-sub="day" role="tab">Users by Day</button>
+        <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Users Time Trend</button>
+        <a class="ep-sub-tab ep-sub-tab--data" href="engagement-grid.html" target="_blank" rel="noopener" role="tab">
+          <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">table_chart</span>
+          Data
+          <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;opacity:.55;">open_in_new</span>
+        </a>
+      </div>
+      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="store"><div class="ep-stacked-list" id="ep-users-by-store"></div></div>
+      <div class="ep-sub-pane" data-ep-sub-pane="day"><div id="ep-users-by-day"></div></div>
+      <div class="ep-sub-pane" data-ep-sub-pane="trend"><div id="ep-users-trend"></div></div>
+    </div>
+
+    <div class="perf-tab-pane" data-ep-pane="duration">
+      <div class="hero-stat">
+        <div class="narrative-header">
+          <div class="narrative-header-left">
+            <h2 class="narrative-header__title">Avg Session Duration</h2>
+            <p class="narrative-header__question">How long are users spending per visit, by category?</p>
+          </div>
+        </div>
+      </div>
+      <div class="ep-sub-tabs" role="tablist" aria-label="Duration cuts">
+        <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Duration by Category</button>
+        <button class="ep-sub-tab" data-ep-sub="day" role="tab">Duration by Day</button>
+        <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Duration Time Trend</button>
+        <a class="ep-sub-tab ep-sub-tab--data" href="engagement-grid.html" target="_blank" rel="noopener" role="tab">
+          <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">table_chart</span>
+          Data
+          <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;opacity:.55;">open_in_new</span>
+        </a>
+      </div>
+      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="store"><div class="ep-stacked-list" id="ep-duration-by-store"></div></div>
+      <div class="ep-sub-pane" data-ep-sub-pane="day"><div id="ep-duration-by-day"></div></div>
+      <div class="ep-sub-pane" data-ep-sub-pane="trend"><div id="ep-duration-trend"></div></div>
+    </div>
+
+    <div class="perf-tab-pane" data-ep-pane="cardevents">
+      <div class="hero-stat">
+        <div class="narrative-header">
+          <div class="narrative-header-left">
+            <h2 class="narrative-header__title">Card Engagement Events</h2>
+            <p class="narrative-header__question">Which interactions are users taking on category cards?</p>
+          </div>
+        </div>
+      </div>
+      <div class="ep-sub-tabs" role="tablist" aria-label="Card Events cuts">
+        <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Card Events by Category</button>
+        <button class="ep-sub-tab" data-ep-sub="day" role="tab">Card Events by Day</button>
+        <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Card Events Time Trend</button>
+        <a class="ep-sub-tab ep-sub-tab--data" href="engagement-grid.html" target="_blank" rel="noopener" role="tab">
+          <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">table_chart</span>
+          Data
+          <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;opacity:.55;">open_in_new</span>
+        </a>
+      </div>
+      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="store"><div class="ep-stacked-list" id="ep-cardevents-by-store"></div></div>
+      <div class="ep-sub-pane" data-ep-sub-pane="day"><div id="ep-cardevents-by-day"></div></div>
+      <div class="ep-sub-pane" data-ep-sub-pane="trend"><div id="ep-cardevents-trend"></div></div>
+    </div>
+
+  </main>
+
+  <!-- ============================================================
+       EXISTING IN-DEV GRID — kept unchanged below canonical shell
+       (per Phase 5 verification: "Data sub-pane shows existing in-dev grid unchanged")
        ============================================================ -->
   <main class="layout layout--categories" id="categories-layout">
 
@@ -439,7 +631,8 @@
   <script src="js/engagement/shared-modals.js"></script>
   <script src="js/engagement/shared-filters.js"></script>
   <script src="js/engagement/shared-perf-charts.js"></script>
-  <script src="js/engagement/base-categories.js"></script>
+  <script src="js/engagement/canonical-shell-tabs.js?v=1"></script>
+  <script src="js/engagement/base-categories.js"</script>
   <script src="js/header-slide.js"></script>
   <script src="js/engagement/engagement-page-app.js"></script>
 

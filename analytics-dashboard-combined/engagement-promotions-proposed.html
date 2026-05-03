@@ -942,7 +942,7 @@
 
       <!-- Promotion Detail view (default) -->
       <div class="ep-promo-view ep-promo-view--chips ep-promo-view--active" data-ep-promo-pane="chips">
-        <div class="ep-chips-row ep-chips-row--scroll" id="ep-promo-chips" role="tablist" aria-label="Promotion drilldown"></div>
+        <div class="creative-chips creative-chips--scroll" id="ep-promo-chips" role="tablist" aria-label="Promotion detail"></div>
 
         <div class="ep-detail-header" id="ep-promo-detail-header"></div>
 
@@ -1519,18 +1519,32 @@
       if (!chipsHost) return;
       const list = filteredPromos();
       const allStoresCount = Object.keys(storeAgg).length;
-      const allChip = '<button class="ep-chip ' + (activeKey === ALL_KEY ? 'ep-chip--active' : '') + '" data-promo="' + ALL_KEY + '"><div class="ep-chip__top"><span class="material-symbols-outlined ep-chip__icon">apps</span><span class="ep-chip__name">All Promotions</span></div><span class="ep-chip__meta">' + promotions.length + ' promos · ' + allStoresCount + ' stores</span></button>';
+      const escAttr = s => String(s).replace(/"/g, '&quot;');
+      const initialsOf = s => String(s || '').split(/\s+/).filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase();
+      const allChip =
+        '<button class="creative-chip' + (activeKey === ALL_KEY ? ' creative-chip--active' : '') + '" data-promo="' + ALL_KEY + '">' +
+          '<div class="creative-chip__header">' +
+            '<div class="creative-chip__thumb creative-chip__thumb--all"><span class="material-symbols-outlined">apps</span></div>' +
+          '</div>' +
+          '<span class="creative-chip__name">All Promotions</span>' +
+          '<span class="creative-chip__meta">' + promotions.length + ' promos · ' + allStoresCount + ' stores</span>' +
+        '</button>';
       const promoChips = list.map(p => {
         const isActive = p.key === activeKey;
         const isBusy = p.key === busiestKey;
-        return '<button class="ep-chip ' + (isActive ? 'ep-chip--active' : '') + '" data-promo="' + p.key.replace(/"/g, '&quot;') + '">' +
-          (isBusy ? '<span class="ep-chip__badge">Top</span>' : '') +
-          '<div class="ep-chip__top"><span class="material-symbols-outlined ep-chip__icon">local_offer</span><span class="ep-chip__name" title="' + p.title + '">' + p.title + '</span></div>' +
-          '<span class="ep-chip__meta">' + p.category + ' · ' + p.views.toLocaleString() + ' views</span>' +
-          '</button>';
+        const initials = initialsOf(p.title);
+        const flag = isBusy ? '<span class="creative-chip__flag">Top</span>' : '';
+        return '<button class="creative-chip' + (isActive ? ' creative-chip--active' : '') + '" data-promo="' + escAttr(p.key) + '">' +
+          '<div class="creative-chip__header">' +
+            '<div class="creative-chip__thumb"><span class="creative-chip__thumb-initials">' + initials + '</span></div>' +
+            flag +
+          '</div>' +
+          '<span class="creative-chip__name" title="' + escAttr(p.title) + '">' + p.title + '</span>' +
+          '<span class="creative-chip__meta">' + p.category + ' · ' + p.views.toLocaleString() + ' views</span>' +
+        '</button>';
       }).join('');
       chipsHost.innerHTML = allChip + promoChips;
-      chipsHost.querySelectorAll('.ep-chip').forEach(btn => {
+      chipsHost.querySelectorAll('.creative-chip').forEach(btn => {
         btn.addEventListener('click', () => {
           activeKey = btn.dataset.promo;
           renderChips();

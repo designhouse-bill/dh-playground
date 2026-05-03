@@ -3413,6 +3413,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       } else if (section === 'traffic') {
         renderTrafficKpis(); renderMap(); renderLeaderboard('change');
         initTrafficCombinedChart(); initCrossoverChart(); renderCrossoverDetail();
+        initTrafficShareTabs();
       }
       updateRetailerLabels();
       initContext();
@@ -3464,6 +3465,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         initCrossoverTrendPresets();
         updateCrossoverTrendPeriod(4);
         bindTrafficStoreSelection();
+        initTrafficShareTabs();
       }
 
       console.log('Distribution page initialized:', section);
@@ -5232,6 +5234,44 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
      Five tabs (Overview / By Store / By Creative / Time Trend / Data).
      Tab content beyond Overview is stubbed; later steps move pieces in.
      ============================================================ */
+  /* ============================================================
+     Phase 4: Traffic Share main perf-tabs handler.
+     Six tabs (Overview / By Competitor / By Store / Crossover Trend /
+     Traffic Volume / Data). First checkpoint: Overview holds all
+     existing content; other tabs are stubs. On tab activation,
+     resize any visible ECharts (charts inited while hidden render at
+     0 width) and invalidate Leaflet map size if present.
+     ============================================================ */
+  function initTrafficShareTabs() {
+    var tabBar = document.getElementById('ts-perf-tabs');
+    if (!tabBar) return;
+    var tabs = tabBar.querySelectorAll('.perf-tab');
+    var panes = document.querySelectorAll('[data-ts-pane]');
+    tabs.forEach(function(t) {
+      t.addEventListener('click', function() {
+        var target = t.dataset.tsTab;
+        tabs.forEach(function(x) {
+          var on = x === t;
+          x.classList.toggle('active', on);
+          x.setAttribute('aria-selected', on ? 'true' : 'false');
+        });
+        panes.forEach(function(p) { p.classList.toggle('active', p.dataset.tsPane === target); });
+        // Resize all ECharts in the active pane (was display:none, now visible).
+        var activePane = document.querySelector('[data-ts-pane="' + target + '"]');
+        if (activePane) {
+          activePane.querySelectorAll('[_echarts_instance_]').forEach(function(el) {
+            var inst = (typeof echarts !== 'undefined') && echarts.getInstanceByDom ? echarts.getInstanceByDom(el) : null;
+            if (inst) inst.resize();
+          });
+          // Leaflet map needs invalidateSize() when becoming visible.
+          if (activePane.querySelector('#store-map') && typeof window.StoreMap !== 'undefined' && window.StoreMap.invalidateSize) {
+            window.StoreMap.invalidateSize();
+          }
+        }
+      });
+    });
+  }
+
   function initMediaBuyTabs() {
     var tabBar = document.getElementById('mb-perf-tabs');
     if (!tabBar) return;

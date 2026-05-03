@@ -167,6 +167,35 @@
       <!-- Narrative slot (phase 2, gated by FEATURES.narrative) -->
       <div class="insight-banner" data-narrative-section="traffic" hidden></div>
 
+      <!-- ═══════════════════════════════════════════════
+           Phase 4: Traffic Share main perf-tabs.
+           6 tabs per plan DP4.2=B. Overview pane preserves the
+           existing IA verbatim so the page stays renderable;
+           subsequent checkpoints move pieces into right panes.
+           ═══════════════════════════════════════════════ -->
+      <div class="perf-tabs" id="ts-perf-tabs" role="tablist">
+        <button class="perf-tab active" data-ts-tab="overview" role="tab" aria-selected="true">
+          <span class="material-symbols-outlined">dashboard</span> Overview
+        </button>
+        <button class="perf-tab" data-ts-tab="competitor" role="tab" aria-selected="false">
+          <span class="material-symbols-outlined">compare_arrows</span> By Competitor
+        </button>
+        <button class="perf-tab" data-ts-tab="store" role="tab" aria-selected="false">
+          <span class="material-symbols-outlined">store</span> By Store
+        </button>
+        <button class="perf-tab" data-ts-tab="trend" role="tab" aria-selected="false">
+          <span class="material-symbols-outlined">show_chart</span> Crossover Trend
+        </button>
+        <button class="perf-tab" data-ts-tab="volume" role="tab" aria-selected="false">
+          <span class="material-symbols-outlined">bar_chart</span> Traffic Volume
+        </button>
+        <button class="perf-tab" data-ts-tab="data" role="tab" aria-selected="false">
+          <span class="material-symbols-outlined">table_chart</span> Data
+        </button>
+      </div>
+
+      <div class="perf-tab-pane active" data-ts-pane="overview">
+
       <!-- Competitive Crossover: 5 + All Other -->
       <div class="chart-card">
         <div class="chart-card__header">
@@ -265,6 +294,24 @@
         <div id="chart-traffic-combined" style="height: 360px;"></div>
       </div>
 
+      </div><!-- /Overview pane -->
+
+      <div class="perf-tab-pane" data-ts-pane="competitor">
+        <div class="dist-pane-toolbar"><span class="dist-pane-toolbar__label">By Competitor — coming in next checkpoint (full leaderboard + Compare modal).</span></div>
+      </div>
+      <div class="perf-tab-pane" data-ts-pane="store">
+        <div class="dist-pane-toolbar"><span class="dist-pane-toolbar__label">By Store — coming in next checkpoint (per-store table + Leaflet map).</span></div>
+      </div>
+      <div class="perf-tab-pane" data-ts-pane="trend">
+        <div class="dist-pane-toolbar"><span class="dist-pane-toolbar__label">Crossover Trend — coming in next checkpoint.</span></div>
+      </div>
+      <div class="perf-tab-pane" data-ts-pane="volume">
+        <div class="dist-pane-toolbar"><span class="dist-pane-toolbar__label">Traffic Volume — coming in next checkpoint.</span></div>
+      </div>
+      <div class="perf-tab-pane" data-ts-pane="data">
+        <div class="dist-pane-toolbar"><span class="dist-pane-toolbar__label">Data — coming in next checkpoint (dense leaderboard).</span></div>
+      </div>
+
     </section>
 
     <!-- Distribution modals injected here by distribution-modals.js -->
@@ -291,7 +338,7 @@
   <script src="js/data/distribution-data.js?v=17"></script>
 
   <script src="js/distribution/store-map.js?v=24"></script>
-  <script src="js/distribution/distribution.js?v=61"></script>
+  <script src="js/distribution/distribution.js?v=76"></script>
   <script src="js/distribution/distribution-modals.js?v=13"></script>
 
   <script src="js/header-slide.js"></script>

@@ -4496,82 +4496,6 @@ body[data-dist-page] .narrative-header__title {
    By Creative tab — chip selector
    ============================================================ */
 
-.creative-chips {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: var(--space-2);
-  padding: var(--space-3) 0 var(--space-4);
-}
-
-.creative-chip {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
-  padding: var(--space-2) var(--space-3);
-  background: var(--color-surface, #fff);
-  border: 1.5px solid var(--color-border, #e5e7eb);
-  border-radius: var(--radius-md, 6px);
-  cursor: pointer;
-  min-width: 0;
-  text-align: left;
-  transition: border-color 0.15s, box-shadow 0.15s;
-}
-.creative-chip:hover {
-  border-color: var(--color-primary, #2196F3);
-  box-shadow: 0 0 0 3px rgba(33,150,243,0.12);
-}
-.creative-chip--active {
-  border-color: var(--color-primary, #2196F3);
-  background: rgba(33,150,243,0.05);
-}
-.creative-chip__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  gap: 6px;
-}
-.creative-chip__icon {
-  font-size: 18px;
-  color: var(--color-text-secondary, #6b7280);
-}
-.creative-chip--active .creative-chip__icon {
-  color: var(--color-primary, #2196F3);
-}
-/* Apr 28 plan #6: creative imagery on chips. Slot for real artwork via
-   def.imageUrl; falls back to colored initial tile (accent + label initials)
-   so the chip strip reads as creative-aware even without artwork wired. */
-.creative-chip__thumb {
-  width: 36px;
-  height: 36px;
-  border-radius: 6px;
-  background: #475569;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  flex-shrink: 0;
-  position: relative;
-}
-.creative-chip__thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.creative-chip__thumb .material-symbols-outlined {
-  color: #fff;
-  font-size: 20px;
-}
-.creative-chip__thumb-initials {
-  color: #fff;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-}
-.creative-chip__thumb--all {
-  background: linear-gradient(135deg, #475569 0%, #64748b 100%);
-}
 
 /* Apr 28 plan #4: Overview → Media Buy jump button. Lives at the top of
    the Overview pane in Store Performance. Acknowledges the crossover
@@ -4620,34 +4544,6 @@ body[data-dist-page] .narrative-header__title {
 }
 .perf-overview-jump:hover .perf-overview-jump__action .material-symbols-outlined {
   transform: translateX(2px);
-}
-.creative-chip__flag {
-  font-size: 9px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--color-primary, #2196F3);
-  background: rgba(33,150,243,0.12);
-  padding: 2px 6px;
-  border-radius: 10px;
-  line-height: 1;
-}
-.creative-chip__name {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--color-text-primary, #1f2937);
-  line-height: 1.2;
-}
-.creative-chip__meta {
-  font-size: 10px;
-  color: var(--color-text-muted, #9ca3af);
-  margin-top: 2px;
-}
-.creative-chip__date {
-  font-size: 10px;
-  color: var(--color-text-muted, #9ca3af);
-  margin-top: 1px;
-  line-height: 1.2;
 }
 .section-label__date {
   font-size: 11px;

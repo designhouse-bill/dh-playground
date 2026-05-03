@@ -271,9 +271,15 @@
     // DP16.1 rank parity: every chip carries .creative-card__rank with the
     // dataset rank (post-sort) — matches the same row's rank in Table view.
 
-    const sorted = records
-      .map(cr => ({ ...cr, _origIndex: allRecords.indexOf(cr) }))
-      .sort((a, b) => (b.metrics?.gross_visits || 0) - (a.metrics?.gross_visits || 0));
+    // Default sort: visits desc. Direction toggle below flips asc/desc on demand.
+    let _sortDir = 'desc';
+    function applySort(items) {
+      const sortVal = cr => (cr.metrics ? cr.metrics.gross_visits || 0 : 0);
+      return items.slice().sort((a, b) => _sortDir === 'desc' ? (sortVal(b) - sortVal(a)) : (sortVal(a) - sortVal(b)));
+    }
+    let sorted = records
+      .map(cr => ({ ...cr, _origIndex: allRecords.indexOf(cr) }));
+    sorted = applySort(sorted);
 
     const CHIP_CAP = 50;
 
@@ -288,12 +294,26 @@
     }
 
     function chipHtml(cr, rank) {
+      // Canonical rich .creative-chip card (lifted from Visitation pattern).
+      // DP16.1 rank badge in header; thumb prefers file_url, falls back to
+      // type icon or initials. Click → viewVariantDetails detail sidebar.
       const typeIcon = cr.creative_type === 'video' ? 'movie' : (cr.creative_type === 'gif' ? 'gif_box' : 'image');
-      const { name } = parseLabel(cr);
-      return `<button type="button" class="dist-chip-selector__chip" data-orig-index="${cr._origIndex}" data-search="${escapeHTML(name.toLowerCase())}" title="${escapeHTML(name)}">
-        <span class="dist-chip-selector__chip__rank">${rank}</span>
-        <span class="material-symbols-outlined dist-chip-selector__chip__icon">${typeIcon}</span>
-        <span class="dist-chip-selector__chip__name">${escapeHTML(name)}</span>
+      const { name, region } = parseLabel(cr);
+      const initials = name.split(/\s+/).map(w => w[0] || '').join('').slice(0, 2).toUpperCase();
+      const hasImg = !!cr.file_url;
+      const thumbInner = hasImg
+        ? `<img src="${escapeHTML(cr.file_url)}" alt="${escapeHTML(name)}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'creative-chip__thumb-initials',textContent:'${initials}'}))">`
+        : (cr.creative_type === 'video'
+            ? '<span class="material-symbols-outlined">play_arrow</span>'
+            : `<span class="creative-chip__thumb-initials">${initials}</span>`);
+      const meta = `${(cr.creative_type || '').toUpperCase() || '—'}${cr.dimensions ? ' · ' + escapeHTML(cr.dimensions) : ''}${cr.store_group ? ' · ' + cr.store_group.length + ' stores' : ''}`;
+      return `<button type="button" class="creative-chip" data-orig-index="${cr._origIndex}" data-search="${escapeHTML(name.toLowerCase())}" title="${escapeHTML(name)}">
+        <div class="creative-chip__header">
+          <div class="creative-chip__thumb">${thumbInner}</div>
+          <span class="creative-chip__rank">${rank}</span>
+        </div>
+        <span class="creative-chip__name">${escapeHTML(name)}</span>
+        <span class="creative-chip__meta">${meta}</span>
       </button>`;
     }
 
@@ -332,7 +352,10 @@
       <div class="creative-ranked__toolbar">
         <input type="search" class="creative-ranked__filter p-inputtext" id="creative-filter" placeholder="Filter creatives…" aria-label="Filter creatives">
         <span class="creative-ranked__total" id="creative-total">${sorted.length} creative${sorted.length === 1 ? '' : 's'}</span>
-        <span class="creative-ranked__spacer" style="flex:1"></span>
+        <div class="creative-sort-direction" role="group" aria-label="Sort direction (visits)">
+          <button type="button" class="creative-sort-direction__btn active" data-cv-sort="desc" title="High → Low" aria-pressed="true"><span class="material-symbols-outlined">arrow_downward</span></button>
+          <button type="button" class="creative-sort-direction__btn" data-cv-sort="asc" title="Low → High" aria-pressed="false"><span class="material-symbols-outlined">arrow_upward</span></button>
+        </div>
         <div class="view-toggle" role="tablist" aria-label="Creative view mode">
           <button type="button" class="view-toggle__btn active" data-cv-mode="chips" role="tab" aria-selected="true">
             <span class="material-symbols-outlined">view_module</span> Chips
@@ -342,14 +365,14 @@
           </button>
         </div>
       </div>
-      <div class="dist-chip-selector" id="dist-chip-selector__chips" data-cv-pane="chips">
+      <div class="creative-chips creative-chips--scroll" id="creative-chips-strip" data-cv-pane="chips">
         ${sorted.slice(0, CHIP_CAP).map((cr, i) => chipHtml(cr, i + 1)).join('')}
       </div>
       <div class="dist-tree-data-grid" id="creative-table-view" data-cv-pane="table" style="display:none;"></div>
     `;
 
     // Chip click → viewVariantDetails (existing detail panel).
-    el.querySelectorAll('.dist-chip-selector__chip').forEach(chip => {
+    el.querySelectorAll('.creative-chip').forEach(chip => {
       chip.addEventListener('click', () => {
         const idx = parseInt(chip.dataset.origIndex, 10);
         if (typeof window.viewVariantDetails === 'function') window.viewVariantDetails(idx);
@@ -360,14 +383,14 @@
     // strip with matches; CHIP_CAP still applies to the result set.
     const filterEl = el.querySelector('#creative-filter');
     const totalEl = el.querySelector('#creative-total');
-    const chipsEl = el.querySelector('#dist-chip-selector__chips');
+    const chipsEl = el.querySelector('#creative-chips-strip');
     if (filterEl) {
       filterEl.addEventListener('input', e => {
         const q = e.target.value.trim().toLowerCase();
         const matches = q ? sorted.filter(cr => parseLabel(cr).name.toLowerCase().includes(q)) : sorted;
         chipsEl.innerHTML = matches.slice(0, CHIP_CAP).map((cr, i) => chipHtml(cr, sorted.indexOf(cr) + 1)).join('');
         totalEl.textContent = `${matches.length} match${matches.length === 1 ? '' : 'es'}${matches.length > CHIP_CAP ? ' (showing ' + CHIP_CAP + ')' : ''}`;
-        chipsEl.querySelectorAll('.dist-chip-selector__chip').forEach(chip => {
+        chipsEl.querySelectorAll('.creative-chip').forEach(chip => {
           chip.addEventListener('click', () => {
             const idx = parseInt(chip.dataset.origIndex, 10);
             if (typeof window.viewVariantDetails === 'function') window.viewVariantDetails(idx);
@@ -378,6 +401,31 @@
         if (tableEl && tableEl.style.display !== 'none') renderTable();
       });
     }
+
+    // Sort direction toggle (High → Low / Low → High). Re-applies sort,
+    // re-renders chip strip + invalidates table.
+    el.querySelectorAll('.creative-sort-direction__btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        _sortDir = btn.dataset.cvSort;
+        el.querySelectorAll('.creative-sort-direction__btn').forEach(b => {
+          const on = b === btn;
+          b.classList.toggle('active', on);
+          b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+        sorted = applySort(sorted);
+        const q = filterEl ? filterEl.value.trim().toLowerCase() : '';
+        const matches = q ? sorted.filter(cr => parseLabel(cr).name.toLowerCase().includes(q)) : sorted;
+        chipsEl.innerHTML = matches.slice(0, CHIP_CAP).map((cr, i) => chipHtml(cr, sorted.indexOf(cr) + 1)).join('');
+        chipsEl.querySelectorAll('.creative-chip').forEach(chip => {
+          chip.addEventListener('click', () => {
+            const idx = parseInt(chip.dataset.origIndex, 10);
+            if (typeof window.viewVariantDetails === 'function') window.viewVariantDetails(idx);
+          });
+        });
+        tableBuilt = false;
+        if (tableEl && tableEl.style.display !== 'none') renderTable();
+      });
+    });
 
     // View-toggle (Chips | Table). Table lazy-renders on first activation.
     let tableBuilt = false;
@@ -5519,18 +5567,36 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
     function chipHtml(cr, isAll, rank) {
+      // Canonical rich .creative-chip card. "All" chip uses the gradient
+      // thumb variant; specific creatives use file_url thumb → type icon →
+      // initials fallback chain. DP16.1 rank badge for non-All only.
       var active = (isAll && _mbActiveCreative === 'all') || (cr && cr.creative_id === _mbActiveCreative);
-      var label = isAll ? 'All Creatives' : ((cr.label || cr.notes || '').split(' — ')[0] || cr.creative_id);
       var key = isAll ? 'all' : cr.creative_id;
-      var icon = isAll
-        ? '<span class="creative-icon"><span class="material-symbols-outlined">apps</span></span>'
-        : _mbCreativeIcon(cr);
-      // DP16.1 — show rank for non-All chips.
-      var rankBadge = isAll ? '' : '<span class="creative-card__rank" style="margin-left:auto;">' + rank + '</span>';
-      return '<button type="button" class="dist-chip-selector__chip mb-creative-chip' + (active ? ' mb-creative-chip--active' : '') + '" data-creative-key="' + esc(key) + '" style="max-width:none;padding:6px 10px 6px 6px;gap:8px;">'
-        + icon
-        + '<span class="dist-chip-selector__chip__name">' + esc(label) + '</span>'
-        + rankBadge
+      if (isAll) {
+        return '<button type="button" class="creative-chip mb-creative-chip' + (active ? ' creative-chip--active' : '') + '" data-creative-key="all">'
+          + '<div class="creative-chip__header">'
+          +   '<div class="creative-chip__thumb creative-chip__thumb--all"><span class="material-symbols-outlined">apps</span></div>'
+          + '</div>'
+          + '<span class="creative-chip__name">All Creatives</span>'
+          + '<span class="creative-chip__meta">' + sorted.length + ' creatives</span>'
+          + '</button>';
+      }
+      var label = (cr.label || cr.notes || '').split(' — ')[0] || cr.creative_id;
+      var initials = label.split(/\s+/).map(function(w) { return w[0] || ''; }).join('').slice(0, 2).toUpperCase();
+      var hasImg = !!cr.file_url;
+      var thumbInner = hasImg
+        ? '<img src="' + esc(cr.file_url) + '" alt="' + esc(label) + '" onerror="this.replaceWith(Object.assign(document.createElement(\'span\'),{className:\'creative-chip__thumb-initials\',textContent:\'' + initials + '\'}))">'
+        : (cr.creative_type === 'video'
+            ? '<span class="material-symbols-outlined">play_arrow</span>'
+            : '<span class="creative-chip__thumb-initials">' + initials + '</span>');
+      var meta = ((cr.creative_type || '').toUpperCase() || '—') + (cr.dimensions ? ' · ' + esc(cr.dimensions) : '') + (cr.store_group ? ' · ' + cr.store_group.length + ' stores' : '');
+      return '<button type="button" class="creative-chip mb-creative-chip' + (active ? ' creative-chip--active' : '') + '" data-creative-key="' + esc(key) + '">'
+        + '<div class="creative-chip__header">'
+        +   '<div class="creative-chip__thumb">' + thumbInner + '</div>'
+        +   '<span class="creative-chip__rank">' + rank + '</span>'
+        + '</div>'
+        + '<span class="creative-chip__name">' + esc(label) + '</span>'
+        + '<span class="creative-chip__meta">' + meta + '</span>'
         + '</button>';
     }
 

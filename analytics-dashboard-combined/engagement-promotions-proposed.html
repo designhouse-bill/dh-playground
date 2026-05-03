@@ -399,6 +399,22 @@
     }
     .ep-chips-row--scroll .ep-chip { flex-shrink: 0; }
 
+    /* Pinned All-card + scrollable promo chips */
+    .ep-promo-chips-strip {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 12px;
+      align-items: stretch;
+      min-width: 0;
+    }
+    .ep-promo-chips-strip__anchor {
+      flex: 0 0 auto;
+      padding-right: 12px;
+      border-right: 1px dashed var(--color-border, #e5e7eb);
+    }
+    .ep-promo-chips-strip__anchor .creative-chip { flex-shrink: 0; }
+    .ep-promo-chips-strip__scroll { min-width: 0; }
+
     /* Per-chip stat strip — now carries views / clicks / adds + new metrics */
     .ep-detail-strip { flex-wrap: wrap; }
     .ep-detail-strip__cell--metric .ep-detail-strip__value { color: var(--color-text, #1f2937); }
@@ -942,7 +958,10 @@
 
       <!-- Promotion Detail view (default) -->
       <div class="ep-promo-view ep-promo-view--chips ep-promo-view--active" data-ep-promo-pane="chips">
-        <div class="creative-chips creative-chips--scroll" id="ep-promo-chips" role="tablist" aria-label="Promotion detail"></div>
+        <div class="ep-promo-chips-strip">
+          <div class="creative-chips ep-promo-chips-strip__anchor" id="ep-promo-chips-anchor" role="tablist" aria-label="All promotions"></div>
+          <div class="creative-chips creative-chips--scroll ep-promo-chips-strip__scroll" id="ep-promo-chips" role="tablist" aria-label="Promotion detail"></div>
+        </div>
 
         <div class="ep-detail-header" id="ep-promo-detail-header"></div>
 
@@ -1543,14 +1562,16 @@
           '<span class="creative-chip__meta">' + p.category + ' · ' + p.views.toLocaleString() + ' views</span>' +
         '</button>';
       }).join('');
-      chipsHost.innerHTML = allChip + promoChips;
-      chipsHost.querySelectorAll('.creative-chip').forEach(btn => {
-        btn.addEventListener('click', () => {
-          activeKey = btn.dataset.promo;
-          renderChips();
-          renderDetail();
-        });
+      const anchorHost = document.getElementById('ep-promo-chips-anchor');
+      if (anchorHost) anchorHost.innerHTML = allChip;
+      chipsHost.innerHTML = promoChips;
+      const bind = btn => btn.addEventListener('click', () => {
+        activeKey = btn.dataset.promo;
+        renderChips();
+        renderDetail();
       });
+      if (anchorHost) anchorHost.querySelectorAll('.creative-chip').forEach(bind);
+      chipsHost.querySelectorAll('.creative-chip').forEach(bind);
     }
 
     function pctClass(pct) {

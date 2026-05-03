@@ -342,7 +342,7 @@
     if (window.PerfCharts && data.length > 0) {
       // Calculate max values for chart scaling
       PerfCharts.calculateMaxValues(data);
-      PerfCharts.initAllCharts({ height: 16, dataArray: data });
+      PerfCharts.initAllCharts({ height: 16, dataArray: data, scoreOnly: true });
     }
   }
 

@@ -608,6 +608,7 @@ const PerfCharts = (() => {
   function initAllCharts(options = {}) {
     const height = options.height || 16;
     const dataArray = options.dataArray || [];
+    const scoreOnly = options.scoreOnly || false;
 
     // Calculate max values if data provided
     if (dataArray.length > 0) {
@@ -615,18 +616,29 @@ const PerfCharts = (() => {
     }
 
     const chartContainers = document.querySelectorAll('.perf-chart[data-views]');
+    // Score-only mode scales by max composite across all rendered rows.
+    let maxScore = 1;
+    if (scoreOnly) {
+      chartContainers.forEach(c => {
+        const s = parseInt(c.dataset.composite, 10) || 0;
+        if (s > maxScore) maxScore = s;
+      });
+    }
+
     chartContainers.forEach(container => {
       const data = {
         views: parseInt(container.dataset.views, 10) || 0,
         clicks: parseInt(container.dataset.clicks, 10) || 0,
-        adds: parseInt(container.dataset.adds, 10) || 0
+        adds: parseInt(container.dataset.adds, 10) || 0,
+        composite: parseInt(container.dataset.composite, 10) || 0
       };
       const entityName = container.dataset.name || '';
 
       createChart(container.id, data, {
         height: height,
-        maxTotal: maxValues.total || 1,
-        entityName: entityName
+        maxTotal: scoreOnly ? maxScore : (maxValues.total || 1),
+        entityName: entityName,
+        scoreOnly: scoreOnly
       });
     });
   }

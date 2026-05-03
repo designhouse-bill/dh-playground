@@ -153,7 +153,164 @@
   </header>
 
   <!-- ============================================================
-       MAIN CONTENT — Grid Inquiry (Full Width)
+       CANONICAL ENGAGEMENT SHELL — UX-846 Phase 5d
+       Source: partials/canonical-engagement-shell.html
+       ============================================================ -->
+  <main class="engagement-canonical engagement-proposed" id="engagement-canonical">
+
+    <header class="section-panel-header">
+      <div class="hero-stat">
+        <div class="narrative-header">
+          <div class="narrative-header__left">
+            <h1 class="narrative-header__title">Explore</h1>
+            <h2 class="narrative-header__question">What does the underlying data look like, row by row?</h2>
+          </div>
+          <div class="narrative-header__text">
+            <p class="section-panel-header__subtitle">
+              <span class="ep-cohort-note" id="ep-cohort-note">
+                <span class="material-symbols-outlined">info</span>
+                <span class="ep-cohort-note__label">Cohort:</span>
+                <span class="ep-cohort-note__count">75 promotions</span>
+                <span class="ep-cohort-note__sep">·</span>
+                <span class="ep-cohort-note__scope">Brand</span>
+                <span class="ep-cohort-note__sep">·</span>
+                <span class="ep-cohort-note__period">Week 47</span>
+              </span>
+            </p>
+            <span class="card-run-stats" id="context-date-run-stats">Ran at 27 stores · 7 days</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="ep-circular-info">
+      <span class="ep-circular-info__item"><span class="ep-circular-info__num">75</span> promotions</span>
+      <span class="ep-circular-info__sep">·</span>
+      <span class="ep-circular-info__item"><span class="ep-circular-info__num">8</span> categories</span>
+      <span class="ep-circular-info__sep">·</span>
+      <span class="ep-circular-info__item"><span class="ep-circular-info__num">27</span> circulars</span>
+    </div>
+
+    <div class="perf-tabs" id="ep-perf-tabs" role="tablist">
+      <button class="perf-tab active" data-ep-tab="overview" role="tab" aria-selected="true"><span class="material-symbols-outlined">dashboard</span> Overview</button>
+      <button class="perf-tab" data-ep-tab="sessions" role="tab"><span class="material-symbols-outlined">analytics</span> Sessions</button>
+      <button class="perf-tab" data-ep-tab="users" role="tab"><span class="material-symbols-outlined">group</span> Total Users</button>
+      <button class="perf-tab" data-ep-tab="duration" role="tab"><span class="material-symbols-outlined">schedule</span> Avg Session Duration</button>
+      <button class="perf-tab" data-ep-tab="cardevents" role="tab"><span class="material-symbols-outlined">ads_click</span> Card Engagement Events</button>
+    </div>
+
+    <div class="perf-tab-pane active" data-ep-pane="overview">
+      <div class="ep-kpi-strip" role="group" aria-label="Metric snapshot">
+        <button class="ep-kpi-tile" data-jump-to="sessions" type="button">
+          <span class="ep-kpi-tile__label">Sessions</span>
+          <span class="ep-kpi-tile__value">78,542</span>
+          <span class="ep-kpi-tile__sub">this week</span>
+          <span class="ep-kpi-tile__view">View<span class="material-symbols-outlined">chevron_right</span></span>
+        </button>
+        <button class="ep-kpi-tile" data-jump-to="users" type="button">
+          <span class="ep-kpi-tile__label">Total Users</span>
+          <span class="ep-kpi-tile__value">54,011</span>
+          <span class="ep-kpi-tile__sub">unique</span>
+          <span class="ep-kpi-tile__view">View<span class="material-symbols-outlined">chevron_right</span></span>
+        </button>
+        <button class="ep-kpi-tile" data-jump-to="duration" type="button">
+          <span class="ep-kpi-tile__label">Avg Session Duration</span>
+          <span class="ep-kpi-tile__value">368<span class="ep-kpi-tile__unit"> sec</span></span>
+          <span class="ep-kpi-tile__sub">per session</span>
+          <span class="ep-kpi-tile__view">View<span class="material-symbols-outlined">chevron_right</span></span>
+        </button>
+        <button class="ep-kpi-tile" data-jump-to="cardevents" type="button">
+          <span class="ep-kpi-tile__label">Card Engagement Events</span>
+          <span class="ep-kpi-tile__value">271,298</span>
+          <span class="ep-kpi-tile__sub">Adds + Clicks + share/save/print</span>
+          <span class="ep-kpi-tile__view">View<span class="material-symbols-outlined">chevron_right</span></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="perf-tab-pane" data-ep-pane="sessions">
+      <div class="hero-stat"><div class="narrative-header"><div class="narrative-header-left">
+        <h2 class="narrative-header__title">Sessions</h2>
+        <p class="narrative-header__question">How are sessions distributed across promotions, days, and weeks?</p>
+      </div></div></div>
+      <div class="ep-sub-tabs" role="tablist" aria-label="Sessions cuts">
+        <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Sessions by Promotion</button>
+        <button class="ep-sub-tab" data-ep-sub="day" role="tab">Sessions by Day</button>
+        <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Sessions Time Trend</button>
+        <button class="ep-sub-tab ep-sub-tab--data" data-ep-sub="data" role="tab"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">table_chart</span> Data</button>
+      </div>
+      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="store"><div class="ep-stacked-list" id="ep-sessions-by-store"></div></div>
+      <div class="ep-sub-pane" data-ep-sub-pane="day"><div id="ep-sessions-by-day"></div></div>
+      <div class="ep-sub-pane" data-ep-sub-pane="trend"><div id="ep-sessions-trend"></div></div>
+      <div class="ep-sub-pane" data-ep-sub-pane="data"><div class="ep-data-pane-note" style="font-size:12px;color:#6b7280;padding:8px var(--space-6);">Full data grid is below — this is the canonical home of the row-level Explore view.</div></div>
+    </div>
+
+    <div class="perf-tab-pane" data-ep-pane="users">
+      <div class="hero-stat"><div class="narrative-header"><div class="narrative-header-left">
+        <h2 class="narrative-header__title">Total Users</h2>
+        <p class="narrative-header__question">How many unique users engaged this week?</p>
+      </div></div></div>
+      <div class="ep-sub-tabs" role="tablist" aria-label="Users cuts">
+        <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Users by Promotion</button>
+        <button class="ep-sub-tab" data-ep-sub="day" role="tab">Users by Day</button>
+        <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Users Time Trend</button>
+        <button class="ep-sub-tab ep-sub-tab--data" data-ep-sub="data" role="tab"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">table_chart</span> Data</button>
+      </div>
+      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="store"><div class="ep-stacked-list" id="ep-users-by-store"></div></div>
+      <div class="ep-sub-pane" data-ep-sub-pane="day"><div id="ep-users-by-day"></div></div>
+      <div class="ep-sub-pane" data-ep-sub-pane="trend"><div id="ep-users-trend"></div></div>
+      <div class="ep-sub-pane" data-ep-sub-pane="data"></div>
+    </div>
+
+    <div class="perf-tab-pane" data-ep-pane="duration">
+      <div class="hero-stat"><div class="narrative-header"><div class="narrative-header-left">
+        <h2 class="narrative-header__title">Avg Session Duration</h2>
+        <p class="narrative-header__question">How long are users spending per visit?</p>
+      </div></div></div>
+      <div class="ep-sub-tabs" role="tablist" aria-label="Duration cuts">
+        <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Duration by Promotion</button>
+        <button class="ep-sub-tab" data-ep-sub="day" role="tab">Duration by Day</button>
+        <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Duration Time Trend</button>
+        <button class="ep-sub-tab ep-sub-tab--data" data-ep-sub="data" role="tab"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">table_chart</span> Data</button>
+      </div>
+      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="store"><div class="ep-stacked-list" id="ep-duration-by-store"></div></div>
+      <div class="ep-sub-pane" data-ep-sub-pane="day"><div id="ep-duration-by-day"></div></div>
+      <div class="ep-sub-pane" data-ep-sub-pane="trend"><div id="ep-duration-trend"></div></div>
+      <div class="ep-sub-pane" data-ep-sub-pane="data"></div>
+    </div>
+
+    <div class="perf-tab-pane" data-ep-pane="cardevents">
+      <div class="hero-stat"><div class="narrative-header"><div class="narrative-header-left">
+        <h2 class="narrative-header__title">Card Engagement Events</h2>
+        <p class="narrative-header__question">Which interactions are users taking on cards?</p>
+      </div></div></div>
+      <div class="ep-sub-tabs" role="tablist" aria-label="Card Events cuts">
+        <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Card Events by Promotion</button>
+        <button class="ep-sub-tab" data-ep-sub="day" role="tab">Card Events by Day</button>
+        <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Card Events Time Trend</button>
+        <button class="ep-sub-tab ep-sub-tab--data" data-ep-sub="data" role="tab"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">table_chart</span> Data</button>
+      </div>
+      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="store"><div class="ep-stacked-list" id="ep-cardevents-by-store"></div></div>
+      <div class="ep-sub-pane" data-ep-sub-pane="day"><div id="ep-cardevents-by-day"></div></div>
+      <div class="ep-sub-pane" data-ep-sub-pane="trend"><div id="ep-cardevents-trend"></div></div>
+      <div class="ep-sub-pane" data-ep-sub-pane="data"></div>
+    </div>
+
+  </main>
+
+  <!-- DP8.2: Detail sidebar slides in on grid row click -->
+  <aside class="ep-detail-sidebar" id="ep-detail-sidebar" role="complementary" aria-label="Promotion details" aria-hidden="true">
+    <div class="ep-detail-sidebar__header">
+      <span class="ep-detail-sidebar__title">Promotion Details</span>
+      <button class="ep-detail-sidebar__close" id="ep-detail-sidebar-close" aria-label="Close details">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="ep-detail-sidebar__body" id="ep-detail-sidebar-body"></div>
+  </aside>
+
+  <!-- ============================================================
+       EXISTING IN-DEV GRID — kept unchanged below canonical shell
        ============================================================ -->
   <main class="layout layout--grid" id="grid-layout">
     <section class="panel panel--grid-full" role="main" aria-label="Data Grid">
@@ -414,9 +571,46 @@
   <script src="js/engagement/shared-modals.js"></script>
   <script src="js/engagement/shared-filters.js"></script>
   <script src="js/engagement/shared-perf-charts.js"></script>
-  <script src="js/engagement/grid-inquiry.js"></script>
+  <script src="js/engagement/canonical-shell-tabs.js?v=1"></script>
+  <script src="js/engagement/grid-inquiry.js"</script>
   <script src="js/header-slide.js"></script>
   <script src="js/engagement/engagement-page-app.js"></script>
+
+  <!-- Phase 5d: Detail sidebar slide-in on grid row click (DP8.2) -->
+  <script>
+    (function () {
+      var sidebar = document.getElementById('ep-detail-sidebar');
+      var body = document.getElementById('ep-detail-sidebar-body');
+      var closeBtn = document.getElementById('ep-detail-sidebar-close');
+      var tableBody = document.getElementById('grid-table-body');
+      if (!sidebar || !tableBody || !body || !closeBtn) return;
+
+      function openSidebar(row) {
+        var cells = row.querySelectorAll('td');
+        var html = '<dl class="ep-detail-sidebar__list">';
+        cells.forEach(function (cell, i) {
+          var headers = document.querySelectorAll('#grid-table-head th');
+          var label = headers[i] ? headers[i].textContent.trim() : ('Col ' + i);
+          html += '<dt>' + label + '</dt><dd>' + cell.innerHTML + '</dd>';
+        });
+        html += '</dl>';
+        body.innerHTML = html;
+        sidebar.classList.add('ep-detail-sidebar--open');
+        sidebar.setAttribute('aria-hidden', 'false');
+      }
+
+      function closeSidebar() {
+        sidebar.classList.remove('ep-detail-sidebar--open');
+        sidebar.setAttribute('aria-hidden', 'true');
+      }
+
+      tableBody.addEventListener('click', function (e) {
+        var row = e.target.closest('tr');
+        if (row && tableBody.contains(row)) openSidebar(row);
+      });
+      closeBtn.addEventListener('click', closeSidebar);
+    })();
+  </script>
 
 </body>
 </html>

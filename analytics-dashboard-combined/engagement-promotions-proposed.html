@@ -916,7 +916,7 @@
          Carries the full 75-promotion dataset (not a demo slice) and
          preserves the original engagement-promotions.html metric set
          (views / clicks / adds / composite / %tile). View-toggle lets
-         the user swap between chip drilldown (new pattern) and a
+         the user swap between promotion detail (new pattern) and a
          ranked table (parity w/ Original) so we don't abandon the
          working surface during transition. -->
     <div class="perf-tab-pane" data-ep-pane="promotion">
@@ -925,7 +925,7 @@
         <div class="ep-view-toggle" role="group" aria-label="By Promotion view mode">
           <button class="ep-view-toggle__btn ep-view-toggle__btn--active" data-ep-promo-view="chips">
             <span class="material-symbols-outlined">view_module</span>
-            Chip Drilldown
+            Promotion Detail
           </button>
           <button class="ep-view-toggle__btn" data-ep-promo-view="table">
             <span class="material-symbols-outlined">table_rows</span>
@@ -940,7 +940,7 @@
         </div>
       </div>
 
-      <!-- Chip Drilldown view (default) -->
+      <!-- Promotion Detail view (default) -->
       <div class="ep-promo-view ep-promo-view--chips ep-promo-view--active" data-ep-promo-pane="chips">
         <div class="ep-chips-row ep-chips-row--scroll" id="ep-promo-chips" role="tablist" aria-label="Promotion drilldown"></div>
 
@@ -1836,7 +1836,7 @@
     sidebarClose.addEventListener('click', closeDetailSidebar);
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetailSidebar(); });
 
-    // View-toggle: Chip Drilldown ↔ Ranked Table (parity w/ Original)
+    // View-toggle: Promotion Detail ↔ Ranked Table (parity w/ Original)
     document.querySelectorAll('[data-ep-promo-view]').forEach(btn => {
       btn.addEventListener('click', () => {
         const target = btn.dataset.epPromoView;

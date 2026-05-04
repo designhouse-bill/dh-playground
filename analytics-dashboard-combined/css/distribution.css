@@ -3908,47 +3908,7 @@ body[data-dist-page] .narrative-header__title {
   --stat-strip-accent: var(--color-primary, #2196F3);
 }
 
-/* ============================================================
-   Phase 2: Duration Presets
-   ============================================================ */
-
-.duration-presets {
-  display: flex;
-  gap: 0;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.duration-preset {
-  padding: 4px 12px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--color-text-secondary);
-  background: transparent;
-  border: none;
-  border-right: 1px solid var(--color-border);
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.duration-preset:last-child { border-right: none; }
-
-.duration-preset:hover {
-  background: var(--color-surface-hover);
-  color: var(--color-text-primary);
-}
-
-.duration-preset.active,
-.duration-preset--active {
-  background: var(--color-gray-900, #1f2937);
-  color: #fff;
-}
-.duration-preset.active .duration-preset__sub,
-.duration-preset--active .duration-preset__sub {
-  color: #fff;
-  opacity: 0.85;
-}
+/* .duration-preset* moved to css/analytics-architecture.css (Phase 0b block 12, 2026-05-04). */
 
 /* Narrative / interpretive summary slot — phase 2, gated by FEATURES.narrative */
 .insight-banner {
@@ -3963,13 +3923,6 @@ body[data-dist-page] .narrative-header__title {
 }
 .insight-banner:empty { display: none; }
 .insight-banner[hidden] { display: none; }
-
-.duration-preset__sub {
-  font-size: 11px;
-  font-weight: 400;
-  opacity: 0.75;
-  margin-left: 2px;
-}
 
 .year-granularity {
   display: inline-flex;
@@ -4329,13 +4282,6 @@ body[data-dist-page] .narrative-header__title {
 }
 .demo-tabset--current .demo-tabset__presets {
   visibility: hidden;
-}
-
-.duration-preset__sub {
-  opacity: 0.65;
-  font-weight: 400;
-  font-size: 11px;
-  margin-left: 2px;
 }
 
 .demo-more-toggle {
@@ -4819,15 +4765,7 @@ body[data-dist-page] .narrative-header__title {
   border-radius: var(--radius-md, 6px);
   padding: var(--space-3) var(--space-4);
 }
-.duration-presets--compact {
-  display: inline-flex;
-  gap: 4px;
-  margin-left: var(--space-3);
-}
-.duration-presets--compact .duration-preset {
-  padding: 4px 10px;
-  font-size: 11px;
-}
+/* .duration-presets--compact moved to css/analytics-architecture.css (Phase 0b block 12, 2026-05-04). */
 
 /* ============================================================
    Media-attributed Visits panel (Apr 28 plan #1)

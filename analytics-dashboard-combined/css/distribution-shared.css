@@ -114,77 +114,7 @@
   font-size: var(--font-size-sm);
 }
 
-/* ── 4. Range chips ───────────────────────────────────────────── */
-/* Moved from distribution.css — .ep-trend-ranges is an alias */
-
-.duration-presets,
-.ep-trend-ranges {
-  display: flex;
-  gap: 0;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.duration-preset,
-.ep-trend-range {
-  padding: 4px 12px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--color-text-secondary);
-  background: transparent;
-  border: none;
-  border-right: 1px solid var(--color-border);
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.duration-preset:last-child,
-.ep-trend-range:last-child {
-  border-right: none;
-}
-
-.duration-preset:hover,
-.ep-trend-range:hover {
-  background: var(--color-surface-hover);
-  color: var(--color-text-primary);
-}
-
-.duration-preset.active,
-.duration-preset--active,
-.ep-trend-range.active,
-.ep-trend-range--active {
-  background: var(--color-gray-900, #1f2937);
-  color: #fff;
-}
-.duration-preset--active .duration-preset__sub,
-.duration-preset.active .duration-preset__sub {
-  opacity: 0.85;
-  color: #fff;
-}
-
-.duration-preset__sub {
-  font-size: 11px;
-  font-weight: 400;
-  opacity: 0.75;
-  margin-left: 2px;
-}
-
-.duration-presets--compact {
-  display: inline-flex;
-  gap: 4px;
-  border: none;
-  border-radius: 0;
-  overflow: visible;
-  margin-left: var(--space-3);
-}
-
-.duration-presets--compact .duration-preset {
-  padding: 4px 10px;
-  font-size: 11px;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-}
+/* .duration-presets / .duration-preset / .ep-trend-range* moved to css/analytics-architecture.css (Phase 0b block 12, 2026-05-04). */
 
 /* ── 5. Table utilities ───────────────────────────────────────── */
 /* Moved from engagement.css */

@@ -726,3 +726,74 @@
   margin-top: var(--space-1);
 }
 .ep-cohort-note .material-symbols-outlined { font-size: var(--font-size-14); }
+
+/* ── duration-presets / ep-trend-ranges ─────────────────────────
+   Range chips segmented control. Multi-page chrome (3 dist surfaces).
+   .ep-trend-range* are aliases used on engagement-promotions. */
+.duration-presets,
+.ep-trend-ranges {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.duration-preset,
+.ep-trend-range {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-12);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.duration-preset:last-child,
+.ep-trend-range:last-child { border-right: none; }
+
+.duration-preset:hover,
+.ep-trend-range:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text-primary);
+}
+
+.duration-preset.active,
+.duration-preset--active,
+.ep-trend-range.active,
+.ep-trend-range--active {
+  background: var(--color-gray-900);
+  color: #fff;
+}
+
+.duration-preset--active .duration-preset__sub,
+.duration-preset.active .duration-preset__sub {
+  opacity: 0.85;
+  color: #fff;
+}
+
+.duration-preset__sub {
+  font-size: var(--font-size-11);
+  font-weight: 400;
+  opacity: 0.75;
+  margin-left: 2px;
+}
+
+.duration-presets--compact {
+  display: inline-flex;
+  gap: var(--space-1);
+  border: none;
+  border-radius: 0;
+  overflow: visible;
+  margin-left: var(--space-3);
+}
+
+.duration-presets--compact .duration-preset {
+  padding: var(--space-1) var(--space-2-5);
+  font-size: var(--font-size-11);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}

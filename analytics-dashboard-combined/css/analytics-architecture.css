@@ -1219,3 +1219,37 @@
 }
 .chip-carousel { width: 100%; }
 .chip-carousel .p-carousel-viewport { width: 100%; }
+
+/* ============================================================
+   Phase 0b block 26 (2026-05-04): .creative-sort-direction family
+   Source: distribution-shared.css
+   Single-source — only consumer js/distribution/distribution.js.
+   Verbatim migration. Tokens preserved with literal fallbacks.
+   ============================================================ */
+.creative-sort-direction {
+  display: inline-flex;
+  gap: 2px;
+  margin-left: auto;
+}
+.creative-sort-direction__btn {
+  height: 32px;
+  padding: 0 12px;
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  background: #fff;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 6px;
+  color: var(--color-text-secondary, #6b7280);
+  font-size: 13px;
+  font-weight: var(--font-weight-medium, 500);
+  cursor: pointer;
+}
+.creative-sort-direction__btn:hover { background: #f3f4f6; }
+.creative-sort-direction__btn.active {
+  background: var(--p-primary-color, #2196F3);
+  border-color: var(--p-primary-color, #2196F3);
+  color: #fff;
+}
+.creative-sort-direction__btn .material-symbols-outlined { font-size: 16px; }

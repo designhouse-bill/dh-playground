@@ -14,10 +14,10 @@
   'use strict';
 
   function init(root) {
-    var tabBar = root.querySelector('#ep-perf-tabs');
-    if (!tabBar) return;
-
-    var tabs = tabBar.querySelectorAll('.perf-tab');
+    // Phase 1: perf-tabs strip lives in the injected shell (sibling of root).
+    // Look up at document level; sub-tab wiring runs even if tab strip is absent.
+    var tabBar = root.querySelector('#ep-perf-tabs') || document.querySelector('#ep-perf-tabs');
+    var tabs = tabBar ? tabBar.querySelectorAll('.perf-tab') : [];
     var panes = root.querySelectorAll('.perf-tab-pane');
     var currentSubTab = 'store';
 

@@ -18,132 +18,12 @@
   <link rel="stylesheet" href="css/engagement.css">
   <link rel="stylesheet" href="css/engagement-canonical.css">
 </head>
-<body data-engagement-page="circulars">
+<body data-engagement-page="circulars" data-active-tab="overview">
 
-<div class="dh-top-bar">
-  <div class="dh-top-bar__left">
-    <img src="assets/ideal-sale-logo.svg" alt="ideal.sale" class="dh-top-bar__logo">
-    <div class="dh-top-bar__node">
-      <div class="dh-top-bar__node-icon"><span class="material-symbols-outlined">image</span></div>
-      <div class="dh-top-bar__node-info">
-        <span class="dh-top-bar__node-brand">Ideal-Brand</span>
-        <span class="dh-top-bar__node-name">All Stores</span>
-      </div>
-      <button class="dh-top-bar__change-btn">Change <span class="material-symbols-outlined">expand_more</span></button>
-    </div>
-  </div>
-  <div class="dh-top-bar__right">
-    <span class="dh-top-bar__user"><span class="dh-top-bar__user-label">User: </span>Adam Zimmerman</span>
-    <button class="dh-top-bar__logout"><span>Logout</span> <span class="material-symbols-outlined">logout</span></button>
-  </div>
-</div>
+<!-- UX-846 Phase 1: chrome injected by shell-loader.js from partials/engagement-tabs-shell.html -->
+<div data-shell="engagement-tabs"></div>
 
 <div id="engagement-dashboard">
-
-  <header class="header">
-
-    <div class="topbar">
-      <div class="topbar__left">
-
-        <div class="brand">
-          <h1 class="title">Analytics Dashboard</h1>
-        </div>
-        <span class="topbar__separator">|</span>
-
-        <!-- Dashboard Switcher -->
-        <div class="dashboard-switcher" id="dashboard-switcher">
-          <button class="performance-dropdown" id="performance-type-dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="performance-dropdown__text">Engagement</span>
-            <span class="material-symbols-outlined">expand_more</span>
-          </button>
-          <div class="dashboard-switcher__menu" id="dashboard-menu" role="menu">
-            <button class="dashboard-switcher__item active" role="menuitem">
-              <span class="material-symbols-outlined">monitoring</span>
-              Engagement
-            </button>
-            <a class="dashboard-switcher__item" data-href="distribution-media.html" role="menuitem">
-              <span class="material-symbols-outlined">campaign</span>
-              Distribution
-            </a>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- View Modes -->
-      <div class="view-modes" id="view-modes">
-        <a class="mode-btn mode-btn--primary active" href="engagement-promotions.html" aria-label="Report view">
-          <span class="material-symbols-outlined">view_list</span>
-          REPORT
-        </a>
-        <a class="mode-btn mode-btn--outline" href="engagement-grid.html" aria-label="Explore view">
-          <span class="material-symbols-outlined">table_chart</span>
-          EXPLORE
-        </a>
-        <a class="mode-btn mode-btn--outline" href="engagement-compare.html" aria-label="Comparison view">
-          <span class="material-symbols-outlined">compare</span>
-          COMPARE
-        </a>
-      </div>
-
-      <div class="topbar__actions">
-        <button class="header-share-btn" id="header-share-btn">
-          <span class="material-symbols-outlined">share</span>
-          Share
-        </button>
-      </div>
-    </div>
-
-    <!-- Context Row -->
-    <div class="context-row">
-
-      <button class="context-card context-card--date" id="date-selector" aria-label="Select date range">
-        <div class="card-label">Date Range</div>
-        <div class="card-row">
-          <div class="card-icon">
-            <span class="material-symbols-outlined">calendar_month</span>
-          </div>
-          <div class="card-content">
-            <div class="card-breadcrumb" id="context-date-breadcrumb">ALL STORES</div>
-            <div class="card-value" id="context-date-value">Week 47</div>
-            <div class="card-sub" id="context-date-sub">Nov 18–24, 2025</div>
-          </div>
-          <span class="card-arrow">
-            <span class="material-symbols-outlined">expand_more</span>
-          </span>
-        </div>
-      </button>
-
-      <button class="context-card" id="entity-selector" aria-label="Select entity">
-        <div class="card-label">Entity</div>
-        <div class="card-row">
-          <div class="card-icon card-icon--entity">
-            <span class="material-symbols-outlined">corporate_fare</span>
-          </div>
-          <div class="card-content">
-            <div class="card-breadcrumb" id="context-entity-breadcrumb">ALL STORES</div>
-            <div class="card-value" id="context-entity-value">All Brands</div>
-            <div class="card-sub" id="context-entity-sub">27 locations</div>
-          </div>
-          <span class="card-arrow">
-            <span class="material-symbols-outlined">expand_more</span>
-          </span>
-        </div>
-      </button>
-
-      <div class="filter-group">
-        <div class="filter-label">Filters</div>
-        <div class="filter-chips" id="filter-chips">
-          <button class="add-filter" id="add-filter-btn" aria-label="Add filter">
-            <span class="material-symbols-outlined">add</span>
-            Add Filter
-          </button>
-        </div>
-      </div>
-
-    </div>
-
-  </header>
 
   <!-- ============================================================
        CANONICAL ENGAGEMENT SHELL — UX-846 Phase 5c
@@ -184,13 +64,7 @@
       <span class="ep-circular-info__item"><span class="ep-circular-info__num">8</span> categories</span>
     </div>
 
-    <div class="perf-tabs" id="ep-perf-tabs" role="tablist">
-      <button class="perf-tab active" data-ep-tab="overview" role="tab" aria-selected="true"><span class="material-symbols-outlined">dashboard</span> Overview</button>
-      <button class="perf-tab" data-ep-tab="sessions" role="tab"><span class="material-symbols-outlined">analytics</span> Sessions</button>
-      <button class="perf-tab" data-ep-tab="users" role="tab"><span class="material-symbols-outlined">group</span> Total Users</button>
-      <button class="perf-tab" data-ep-tab="duration" role="tab"><span class="material-symbols-outlined">schedule</span> Avg Session Duration</button>
-      <button class="perf-tab" data-ep-tab="cardevents" role="tab"><span class="material-symbols-outlined">ads_click</span> Card Engagement Events</button>
-    </div>
+    <!-- perf-tabs strip lives in partials/engagement-tabs-shell.html (Phase 1 refactor) -->
 
     <div class="perf-tab-pane active" data-ep-pane="overview">
       <div class="ep-kpi-strip" role="group" aria-label="Metric snapshot">
@@ -221,92 +95,29 @@
       </div>
     </div>
 
-    <div class="perf-tab-pane" data-ep-pane="sessions">
-      <div class="hero-stat"><div class="narrative-header"><div class="narrative-header-left">
-        <h2 class="narrative-header__title">Sessions</h2>
-        <p class="narrative-header__question">How are sessions distributed across circulars, days, and weeks?</p>
-      </div></div></div>
-      <div class="ep-sub-tabs" role="tablist" aria-label="Sessions cuts">
-        <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Sessions by Circular</button>
-        <button class="ep-sub-tab" data-ep-sub="day" role="tab">Sessions by Day</button>
-        <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Sessions Time Trend</button>
-        <a class="ep-sub-tab ep-sub-tab--data" href="engagement-grid.html" target="_blank" rel="noopener" role="tab"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">table_chart</span> Data <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;opacity:.55;">open_in_new</span></a>
-      </div>
-      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="store"><div class="ep-stacked-list" id="ep-sessions-by-store"></div></div>
-      <div class="ep-sub-pane" data-ep-sub-pane="day"><div id="ep-sessions-by-day"></div></div>
-      <div class="ep-sub-pane" data-ep-sub-pane="trend"><div id="ep-sessions-trend"></div></div>
-    </div>
+    <!-- Phase 1: sessions/users/duration/cardevents panes moved to sibling sub-pages
+         (engagement-circulars-{sessions,users,duration,cardevents,data-grid}.html). -->
 
-    <div class="perf-tab-pane" data-ep-pane="users">
-      <div class="hero-stat"><div class="narrative-header"><div class="narrative-header-left">
-        <h2 class="narrative-header__title">Total Users</h2>
-        <p class="narrative-header__question">How many unique users engaged this week, and which circulars drove them?</p>
-      </div></div></div>
-      <div class="ep-sub-tabs" role="tablist" aria-label="Users cuts">
-        <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Users by Circular</button>
-        <button class="ep-sub-tab" data-ep-sub="day" role="tab">Users by Day</button>
-        <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Users Time Trend</button>
-        <a class="ep-sub-tab ep-sub-tab--data" href="engagement-grid.html" target="_blank" rel="noopener" role="tab"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">table_chart</span> Data <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;opacity:.55;">open_in_new</span></a>
-      </div>
-      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="store"><div class="ep-stacked-list" id="ep-users-by-store"></div></div>
-      <div class="ep-sub-pane" data-ep-sub-pane="day"><div id="ep-users-by-day"></div></div>
-      <div class="ep-sub-pane" data-ep-sub-pane="trend"><div id="ep-users-trend"></div></div>
-    </div>
-
-    <div class="perf-tab-pane" data-ep-pane="duration">
-      <div class="hero-stat"><div class="narrative-header"><div class="narrative-header-left">
-        <h2 class="narrative-header__title">Avg Session Duration</h2>
-        <p class="narrative-header__question">How long are users spending on each circular?</p>
-      </div></div></div>
-      <div class="ep-sub-tabs" role="tablist" aria-label="Duration cuts">
-        <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Duration by Circular</button>
-        <button class="ep-sub-tab" data-ep-sub="day" role="tab">Duration by Day</button>
-        <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Duration Time Trend</button>
-        <a class="ep-sub-tab ep-sub-tab--data" href="engagement-grid.html" target="_blank" rel="noopener" role="tab"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">table_chart</span> Data <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;opacity:.55;">open_in_new</span></a>
-      </div>
-      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="store"><div class="ep-stacked-list" id="ep-duration-by-store"></div></div>
-      <div class="ep-sub-pane" data-ep-sub-pane="day"><div id="ep-duration-by-day"></div></div>
-      <div class="ep-sub-pane" data-ep-sub-pane="trend"><div id="ep-duration-trend"></div></div>
-    </div>
-
-    <div class="perf-tab-pane" data-ep-pane="cardevents">
-      <div class="hero-stat"><div class="narrative-header"><div class="narrative-header-left">
-        <h2 class="narrative-header__title">Card Engagement Events</h2>
-        <p class="narrative-header__question">Which interactions are users taking on circular cards?</p>
-      </div></div></div>
-      <div class="ep-sub-tabs" role="tablist" aria-label="Card Events cuts">
-        <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Card Events by Circular</button>
-        <button class="ep-sub-tab" data-ep-sub="day" role="tab">Card Events by Day</button>
-        <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Card Events Time Trend</button>
-        <a class="ep-sub-tab ep-sub-tab--data" href="engagement-grid.html" target="_blank" rel="noopener" role="tab"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">table_chart</span> Data <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;opacity:.55;">open_in_new</span></a>
-      </div>
-      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="store"><div class="ep-stacked-list" id="ep-cardevents-by-store"></div></div>
-      <div class="ep-sub-pane" data-ep-sub-pane="day"><div id="ep-cardevents-by-day"></div></div>
-      <div class="ep-sub-pane" data-ep-sub-pane="trend"><div id="ep-cardevents-trend"></div></div>
-    </div>
-
-  </main>
-
-  <!-- ============================================================
-       EXISTING IN-DEV GRID — kept unchanged below canonical shell
-       ============================================================ -->
-  <main class="layout layout--categories" id="circulars-layout">
+    <!-- ============================================================
+         EXISTING IN-DEV GRID — moved inside engagement-canonical (bottom slot).
+         Outer <main> demoted to <section> to avoid nested-main.
+         ============================================================ -->
+    <section class="layout layout--categories" id="circulars-layout">
 
     <!-- Left Panel: Stores Grid -->
     <section class="panel panel--category-grid" role="main" aria-label="Stores">
       <div class="panel-header panel-header--categories">
         <div class="panel-header__left">
-          <div class="base-dropdown" id="base-layer-dropdown-wrapper">
-            <button class="base-dropdown__trigger" id="base-layer-dropdown" aria-haspopup="true" aria-expanded="false">
-              <span class="base-dropdown__label">REPORT</span>
-              <span class="base-dropdown__value">Circulars</span>
-              <span class="material-symbols-outlined">expand_more</span>
-            </button>
-            <div class="base-dropdown__menu" id="base-layer-menu" role="menu">
-              <a href="engagement-promotions.html" class="base-dropdown__item" role="menuitem">Promotions</a>
-              <a href="engagement-categories.html" class="base-dropdown__item" role="menuitem">Categories</a>
-              <a href="engagement-circulars.html" class="base-dropdown__item active" role="menuitem">Circulars</a>
-            </div>
+          <div class="perf-tabs perf-tabs--base-layer" role="tablist" aria-label="Report base layer">
+            <a class="perf-tab active" href="engagement-circulars.html" role="tab" aria-selected="true">
+              <span class="material-symbols-outlined">storefront</span> Circulars
+            </a>
+            <a class="perf-tab" href="engagement-categories.html" role="tab">
+              <span class="material-symbols-outlined">category</span> Categories
+            </a>
+            <a class="perf-tab" href="engagement-promotions.html" role="tab">
+              <span class="material-symbols-outlined">local_offer</span> Promotions
+            </a>
           </div>
           <label class="toggle-switch">
             <input type="checkbox" id="more-data-toggle">
@@ -393,6 +204,8 @@
         </button>
       </div>
     </aside>
+
+    </section>
 
   </main>
 
@@ -575,6 +388,7 @@
   <!-- ============================================================
        SCRIPTS
        ============================================================ -->
+  <script src="js/engagement/shell-loader.js"></script>
   <script src="js/vendor/echarts.min.js"></script>
   <script src="js/shared/chart-colors.js"></script>
   <script src="js/data/engagement-promotions.js"></script>
@@ -586,7 +400,7 @@
   <script src="js/engagement/shared-modals.js"></script>
   <script src="js/engagement/shared-filters.js"></script>
   <script src="js/engagement/shared-perf-charts.js"></script>
-  <script src="js/engagement/canonical-shell-tabs.js?v=2"></script>
+  <script src="js/engagement/canonical-shell-tabs.js?v=3"></script>
   <script src="js/engagement/canonical-shell-renderers.js?v=1"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {

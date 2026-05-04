@@ -1463,3 +1463,20 @@
    Combined with distribution.css recon-resolved finale, Phase 0b
    shared-core lift work is complete across both entity files.
    ────────────────────────────────────────────────────────────── */
+
+/* ──────────────────────────────────────────────────────────────
+   Phase 1 — shell-loader skeleton (FOUC mitigation, 2026-05-04)
+   Reserves vertical space for the fetched engagement-tabs-shell
+   so layout doesn't reflow when the partial injects. Heights
+   approximate the rendered chrome (top-bar + header + perf-tabs).
+   ────────────────────────────────────────────────────────────── */
+[data-shell="engagement-tabs"]:empty {
+  display: block;
+  min-height: 248px;
+  background:
+    linear-gradient(var(--color-surface-card, #fff), var(--color-surface-card, #fff)) 0 0/100% 48px no-repeat,
+    linear-gradient(var(--color-surface-ground, #f8f9fa), var(--color-surface-ground, #f8f9fa)) 0 48px/100% 144px no-repeat,
+    linear-gradient(var(--color-surface-card, #fff), var(--color-surface-card, #fff)) 0 192px/100% 56px no-repeat;
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+}
+

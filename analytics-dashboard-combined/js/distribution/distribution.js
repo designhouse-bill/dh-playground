@@ -5321,16 +5321,22 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
   function renderDemoChips() {
     var host = document.getElementById('demo-chips');
     if (!host) return;
-    var chips = [{ key: 'all', label: 'All Demographics', icon: 'dashboard', sub: '8 categories · combined view' }]
-      .concat(DEMO_CATEGORIES.map(function(c) {
-        var cfg = DEMO_CHARTS && DEMO_CHARTS.find(function(cc) { return cc.id === c.id; });
-        var sub = cfg ? (cfg.cats.length + ' buckets') : '';
-        return { key: c.key, label: c.label, icon: c.icon, sub: sub };
-      }));
+    var isAll = DEMO_ACTIVE_KEY === 'all';
+    var allChip = { key: 'all', label: 'All Demographics', icon: 'dashboard', sub: '8 categories · combined view' };
+    function catToChip(c) {
+      var cfg = DEMO_CHARTS && DEMO_CHARTS.find(function(cc) { return cc.id === c.id; });
+      return { key: c.key, label: c.label, icon: c.icon, sub: cfg ? (cfg.cats.length + ' buckets') : '' };
+    }
+    // Lead chip slot: All when 'all' active; selected category chip when individual active (no stacking).
+    var lead = isAll ? allChip : catToChip(DEMO_CATEGORIES.find(function(c) { return c.key === DEMO_ACTIVE_KEY; }));
+    var rest = DEMO_CATEGORIES.filter(function(c) { return c.key !== DEMO_ACTIVE_KEY; }).map(catToChip);
+    var chips = [lead].concat(rest);
     host.innerHTML = chips.map(function(ch) {
+      var isLeadActive = !isAll && ch.key === DEMO_ACTIVE_KEY;
       var active = (ch.key === DEMO_ACTIVE_KEY) ? ' creative-chip--active' : '';
+      var dataReset = isLeadActive ? ' data-demo-reset="1"' : '';
       return ''
-        + '<button class="creative-chip demo-chip' + active + '" role="tab" aria-selected="' + (active ? 'true' : 'false') + '" data-demo-key="' + ch.key + '">'
+        + '<button class="creative-chip demo-chip' + active + '" role="tab" aria-selected="' + (active ? 'true' : 'false') + '" data-demo-key="' + ch.key + '"' + dataReset + '>'
         +   '<div class="creative-chip__header">'
         +     '<span class="material-symbols-outlined creative-chip__icon">' + ch.icon + '</span>'
         +   '</div>'
@@ -5340,7 +5346,8 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     }).join('');
     host.querySelectorAll('[data-demo-key]').forEach(function(btn) {
       btn.addEventListener('click', function() {
-        DEMO_ACTIVE_KEY = btn.dataset.demoKey;
+        // Lead chip in non-'all' mode acts as "back to All Demographics".
+        DEMO_ACTIVE_KEY = btn.dataset.demoReset ? 'all' : btn.dataset.demoKey;
         renderDemoChips();
         renderDemographicsAll();
       });

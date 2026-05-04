@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Engagement — Circulars · Data Grid | Analytics Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <link rel="stylesheet" href="css/design-tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/analytics-architecture.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/context-bar.css">
+  <link rel="stylesheet" href="css/detail-panel.css">
+  <link rel="stylesheet" href="css/engagement.css">
+  <link rel="stylesheet" href="css/engagement-canonical.css">
+</head>
+<body data-engagement-page="circulars" data-active-tab="data-grid">
+
+<div data-shell="engagement-tabs"></div>
+
+<div id="engagement-dashboard">
+
+  <!-- Data Grid (moved verbatim from engagement-grid.html lines 317-384, Phase 1) -->
+  <main class="layout layout--grid" id="grid-layout">
+    <section class="panel panel--grid-full" role="main" aria-label="Data Grid">
+      <div class="grid-controls">
+        <div class="grid-controls__left">
+          <span class="grid-label">EXPLORE</span>
+        </div>
+        <div class="grid-controls__center">
+          <span class="showing-count">Total Promotions: <span id="grid-record-count">0</span></span>
+          <div class="topn-selector">
+            <select id="grid-topn-select" class="topn-select" onchange="changeGridRowsPerPage(this.value)">
+              <option value="25" selected>Show 25</option>
+              <option value="50">Show 50</option>
+              <option value="100">Show 100</option>
+              <option value="250">Show 250</option>
+              <option value="all">Show All</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid-controls__right">
+          <button class="panel-action-btn" id="grid-export-btn" onclick="exportGridToCSV()" aria-label="Export to CSV">
+            <span class="material-symbols-outlined">download</span>
+            Export CSV
+          </button>
+          <div class="grid-columns-toggle">
+            <button class="panel-action-btn" id="grid-columns-btn" aria-label="Toggle column visibility">
+              <span class="material-symbols-outlined">view_column</span>
+              Columns
+              <span class="material-symbols-outlined">expand_more</span>
+            </button>
+            <div class="grid-columns-dropdown" id="grid-columns-dropdown">
+              <div class="grid-columns-dropdown__header">
+                <span>Show/Hide Columns</span>
+                <button class="grid-columns-reset" onclick="resetGridColumns()">Reset</button>
+              </div>
+              <div class="grid-columns-dropdown__list" id="grid-columns-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="grid-table-wrapper" id="grid-table-wrapper">
+        <table class="grid-table" id="grid-data-table">
+          <thead id="grid-table-head"></thead>
+          <tbody id="grid-table-body"></tbody>
+        </table>
+      </div>
+      <div class="grid-footer">
+        <div class="grid-footer__left">
+          <span class="grid-footer__label">View</span>
+          <select class="grid-rows-select" id="grid-rows-select" onchange="changeGridRowsPerPage(this.value)">
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+          <span class="grid-footer__label">rows per page</span>
+        </div>
+        <div class="grid-footer__center">
+          <div class="grid-pagination" id="grid-pagination">
+            <button class="grid-pagination__btn" id="grid-prev-btn" onclick="gridPrevPage()" disabled><span class="material-symbols-outlined">chevron_left</span></button>
+            <span class="grid-pagination__info" id="grid-page-info">Page 1 of 1</span>
+            <button class="grid-pagination__btn" id="grid-next-btn" onclick="gridNextPage()" disabled><span class="material-symbols-outlined">chevron_right</span></button>
+          </div>
+        </div>
+        <div class="grid-footer__right">
+          <span class="grid-footer__range" id="grid-range-info">1-25 of 0</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+</div><!-- /#engagement-dashboard -->
+
+  <script src="js/engagement/shell-loader.js"></script>
+  <script src="js/vendor/echarts.min.js"></script>
+  <script src="js/shared/chart-colors.js"></script>
+  <script src="js/data/engagement-promotions.js"></script>
+  <script src="js/data/engagement-mock-data.js"></script>
+  <script src="js/engagement/cache-manager.js"></script>
+  <script src="js/engagement/data-service.js"></script>
+  <script src="js/engagement/state-manager.js"></script>
+  <script src="js/engagement/shared-core.js"></script>
+  <script src="js/engagement/shared-modals.js"></script>
+  <script src="js/engagement/shared-filters.js"></script>
+  <script src="js/engagement/shared-perf-charts.js"></script>
+  <script src="js/engagement/grid-inquiry.js"></script>
+  <script src="js/header-slide.js"></script>
+  <script src="js/engagement/engagement-page-app.js"></script>
+
+</body>
+</html>

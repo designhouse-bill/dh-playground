@@ -347,17 +347,16 @@
     <section class="panel panel--category-grid" role="main" aria-label="Categories">
       <div class="panel-header panel-header--categories">
         <div class="panel-header__left">
-          <div class="base-dropdown" id="base-layer-dropdown-wrapper">
-            <button class="base-dropdown__trigger" id="base-layer-dropdown" aria-haspopup="true" aria-expanded="false">
-              <span class="base-dropdown__label">REPORT</span>
-              <span class="base-dropdown__value">Categories</span>
-              <span class="material-symbols-outlined">expand_more</span>
-            </button>
-            <div class="base-dropdown__menu" id="base-layer-menu" role="menu">
-              <a href="engagement-promotions.html" class="base-dropdown__item" role="menuitem">Promotions</a>
-              <a href="engagement-categories.html" class="base-dropdown__item active" role="menuitem">Categories</a>
-              <a href="engagement-circulars.html" class="base-dropdown__item" role="menuitem">Circulars</a>
-            </div>
+          <div class="perf-tabs perf-tabs--base-layer" role="tablist" aria-label="Report base layer">
+            <a class="perf-tab" href="engagement-circulars.html" role="tab">
+              <span class="material-symbols-outlined">storefront</span> Circulars
+            </a>
+            <a class="perf-tab active" href="engagement-categories.html" role="tab" aria-selected="true">
+              <span class="material-symbols-outlined">category</span> Categories
+            </a>
+            <a class="perf-tab" href="engagement-promotions.html" role="tab">
+              <span class="material-symbols-outlined">local_offer</span> Promotions
+            </a>
           </div>
           <label class="toggle-switch">
             <input type="checkbox" id="more-data-toggle">

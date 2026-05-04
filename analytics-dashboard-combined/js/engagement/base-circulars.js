@@ -696,7 +696,7 @@
     setStoreEntityContext();
 
     core.saveState();
-    StateManager.navigateTo('engagement-grid.html', state, { storeId: state.selectedStoreId });
+    StateManager.navigateTo('engagement-circulars-data-grid.html', state, { storeId: state.selectedStoreId });
   }
 
   /**

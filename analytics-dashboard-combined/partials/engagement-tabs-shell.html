@@ -1,0 +1,169 @@
+<!--
+  Engagement Tabs Shell — UX-846 Phase 1 (runtime fetch+inject)
+  Fetched by js/engagement/shell-loader.js into <div data-shell="engagement-tabs"> placeholder.
+  Active tab = body[data-active-tab="overview|sessions|users|duration|cardevents|data-grid"].
+
+  Scope: entity-agnostic chrome only.
+    - dh-top-bar
+    - <header class="header"> (topbar + dashboard-switcher + view-modes + context-row)
+    - perf-tabs strip (6 tabs: overview / sessions / users / duration / cardevents / data-grid)
+    - ep-detail-sidebar (closing chrome)
+
+  NOT in shell (per-page inline):
+    - narrative-header (entity title + question)
+    - ep-circular-info (entity counts)
+    - active perf-tab-pane content
+-->
+
+<div class="dh-top-bar">
+  <div class="dh-top-bar__left">
+    <img src="assets/ideal-sale-logo.svg" alt="ideal.sale" class="dh-top-bar__logo">
+    <div class="dh-top-bar__node">
+      <div class="dh-top-bar__node-icon"><span class="material-symbols-outlined">image</span></div>
+      <div class="dh-top-bar__node-info">
+        <span class="dh-top-bar__node-brand">Ideal-Brand</span>
+        <span class="dh-top-bar__node-name">All Stores</span>
+      </div>
+      <button class="dh-top-bar__change-btn">Change <span class="material-symbols-outlined">expand_more</span></button>
+    </div>
+  </div>
+  <div class="dh-top-bar__right">
+    <span class="dh-top-bar__user"><span class="dh-top-bar__user-label">User: </span>Adam Zimmerman</span>
+    <button class="dh-top-bar__logout"><span>Logout</span> <span class="material-symbols-outlined">logout</span></button>
+  </div>
+</div>
+
+<header class="header">
+
+  <div class="topbar">
+    <div class="topbar__left">
+
+      <div class="brand">
+        <h1 class="title">Analytics Dashboard</h1>
+      </div>
+      <span class="topbar__separator">|</span>
+
+      <div class="dashboard-switcher" id="dashboard-switcher">
+        <button class="performance-dropdown" id="performance-type-dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="performance-dropdown__text">Engagement</span>
+          <span class="material-symbols-outlined">expand_more</span>
+        </button>
+        <div class="dashboard-switcher__menu" id="dashboard-menu" role="menu">
+          <button class="dashboard-switcher__item active" role="menuitem">
+            <span class="material-symbols-outlined">monitoring</span>
+            Engagement
+          </button>
+          <a class="dashboard-switcher__item" data-href="distribution-visitation.html" role="menuitem">
+            <span class="material-symbols-outlined">campaign</span>
+            Distribution
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="view-modes" id="view-modes">
+      <a class="mode-btn mode-btn--primary active" href="engagement-circulars.html" aria-label="Report view">
+        <span class="material-symbols-outlined">view_list</span>
+        REPORT
+      </a>
+      <a class="mode-btn mode-btn--outline" href="engagement-circulars-data-grid.html" aria-label="Explore view">
+        <span class="material-symbols-outlined">table_chart</span>
+        EXPLORE
+      </a>
+      <a class="mode-btn mode-btn--outline" href="engagement-compare.html" aria-label="Comparison view">
+        <span class="material-symbols-outlined">compare</span>
+        COMPARE
+      </a>
+    </div>
+
+    <div class="topbar__actions">
+      <button class="header-share-btn" id="header-share-btn">
+        <span class="material-symbols-outlined">share</span>
+        Share
+      </button>
+    </div>
+  </div>
+
+  <div class="context-row">
+
+    <button class="context-card context-card--date" id="date-selector" aria-label="Select date range">
+      <div class="card-label">Date Range</div>
+      <div class="card-row">
+        <div class="card-icon">
+          <span class="material-symbols-outlined">calendar_month</span>
+        </div>
+        <div class="card-content">
+          <div class="card-breadcrumb" id="context-date-breadcrumb">ALL STORES</div>
+          <div class="card-value" id="context-date-value">Week 47</div>
+          <div class="card-sub" id="context-date-sub">Nov 18–24, 2025</div>
+        </div>
+        <span class="card-arrow">
+          <span class="material-symbols-outlined">expand_more</span>
+        </span>
+      </div>
+    </button>
+
+    <button class="context-card" id="entity-selector" aria-label="Select entity">
+      <div class="card-label">Entity</div>
+      <div class="card-row">
+        <div class="card-icon card-icon--entity">
+          <span class="material-symbols-outlined">corporate_fare</span>
+        </div>
+        <div class="card-content">
+          <div class="card-breadcrumb" id="context-entity-breadcrumb">ALL STORES</div>
+          <div class="card-value" id="context-entity-value">All Brands</div>
+          <div class="card-sub" id="context-entity-sub">27 locations</div>
+        </div>
+        <span class="card-arrow">
+          <span class="material-symbols-outlined">expand_more</span>
+        </span>
+      </div>
+    </button>
+
+    <div class="filter-group">
+      <div class="filter-label">Filters</div>
+      <div class="filter-chips" id="filter-chips">
+        <button class="add-filter" id="add-filter-btn" aria-label="Add filter">
+          <span class="material-symbols-outlined">add</span>
+          Add Filter
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+</header>
+
+<!-- perf-tabs strip — 6 tabs. Active marked by shell-loader.js from body[data-active-tab]. -->
+<div class="perf-tabs" id="ep-perf-tabs" role="tablist">
+  <a class="perf-tab" data-ep-tab="overview" data-href="engagement-circulars.html" role="tab">
+    <span class="material-symbols-outlined">dashboard</span> Overview
+  </a>
+  <a class="perf-tab" data-ep-tab="sessions" data-href="engagement-circulars-sessions.html" role="tab">
+    <span class="material-symbols-outlined">analytics</span> Sessions
+  </a>
+  <a class="perf-tab" data-ep-tab="users" data-href="engagement-circulars-users.html" role="tab">
+    <span class="material-symbols-outlined">group</span> Total Users
+  </a>
+  <a class="perf-tab" data-ep-tab="duration" data-href="engagement-circulars-duration.html" role="tab">
+    <span class="material-symbols-outlined">schedule</span> Avg Session Duration
+  </a>
+  <a class="perf-tab" data-ep-tab="cardevents" data-href="engagement-circulars-cardevents.html" role="tab">
+    <span class="material-symbols-outlined">ads_click</span> Card Engagement Events
+  </a>
+  <a class="perf-tab" data-ep-tab="data-grid" data-href="engagement-circulars-data-grid.html" role="tab">
+    <span class="material-symbols-outlined">table_chart</span> Data Grid
+  </a>
+</div>
+
+<!-- Right detail sidebar (DP8.2) — slides in on row/chip click. -->
+<aside class="ep-detail-sidebar" id="ep-detail-sidebar" role="complementary" aria-label="Details" aria-hidden="true">
+  <div class="ep-detail-sidebar__header">
+    <span class="ep-detail-sidebar__title">Details</span>
+    <button class="ep-detail-sidebar__close" id="ep-detail-sidebar-close" aria-label="Close details">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+  <div class="ep-detail-sidebar__body" id="ep-detail-sidebar-body"></div>
+</aside>

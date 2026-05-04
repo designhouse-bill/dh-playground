@@ -479,6 +479,8 @@
       case 'performance':
         cellClass += ' col-perf table-performance';
         const chartId = `perf-chart-grid-${promo.id}`;
+        // Show points total (views×1 + clicks×5 + adds×20), not raw interaction count.
+        const pointsTotal = (promo.civ || 0) * 1 + (promo.cc || 0) * 5 + (promo.atl || 0) * 20;
         displayValue = `
           <div class="perf-chart-container">
             <div class="perf-chart" id="${chartId}"
@@ -488,7 +490,7 @@
                  data-adds="${promo.atl || 0}"
                  data-composite="${promo.compositeScore || 0}">
             </div>
-            <span class="perf-chart__value">${core.formatNumber(value)}</span>
+            <span class="perf-chart__value">${core.formatNumber(pointsTotal)}</span>
           </div>
         `;
         break;

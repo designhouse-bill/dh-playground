@@ -49,23 +49,7 @@
 }
 .dow-bar--peak { background: var(--dow-bar-peak); }
 
-/* Cohort note (DP10.1) — shared base for engagement + distribution pages.
-   Per-piece span typography iterated visually; spans render as inline text
-   under the base rule until per-__label/__count/__scope/__period rules land. */
-.ep-cohort-note {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: var(--color-text-secondary, #6b7280);
-  background: #fefefe;
-  border: 1px solid var(--color-border, #e5e7eb);
-  padding: 4px 10px;
-  border-radius: 999px;
-  margin-left: 0;
-  margin-top: 4px;
-}
-.ep-cohort-note .material-symbols-outlined { font-size: 14px; }
+/* .ep-cohort-note moved to css/analytics-architecture.css (Phase 0b block 10, 2026-05-04). */
 
 /* .card-run-stats moved to css/analytics-architecture.css (Phase 0b block 9, 2026-05-04). */
 

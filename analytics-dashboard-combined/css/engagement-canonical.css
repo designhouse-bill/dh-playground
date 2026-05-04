@@ -425,20 +425,7 @@
       margin-bottom: var(--space-3);
     }
 
-    /* Cohort tooltip on the proposed surface — shows the active cut */
-    .ep-cohort-note {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      color: var(--color-text-secondary, #6b7280);
-      background: #f8fafc;
-      border: 1px solid var(--color-border, #e5e7eb);
-      padding: 4px 10px;
-      border-radius: 999px;
-      margin-left: 8px;
-    }
-    .ep-cohort-note .material-symbols-outlined { font-size: 14px; }
+    /* .ep-cohort-note moved to css/analytics-architecture.css (Phase 0b block 10, 2026-05-04 — reconciled to dist spec). */
 
     /* By Promotion toolbar — view-toggle (Chips / Ranked Table) + filter */
     .ep-promo-toolbar {

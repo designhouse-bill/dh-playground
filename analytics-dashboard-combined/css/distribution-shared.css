@@ -81,65 +81,7 @@
 
 /* .dist-pane-toolbar family moved to css/analytics-architecture.css (Phase 0b block 21, 2026-05-04). */
 
-/* ── 7. Hero band ────────────────────────────────────────────── */
-/* NEW — "ALL CREATIVES — Combined" band with 3 sub-metrics.
-   Background color set via --section-color-light on each page. */
-
-.dist-hero-band {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-3) var(--space-4);
-  background: var(--section-color-light, #eff6ff);
-  border-radius: var(--radius-md);
-  margin-bottom: var(--space-3);
-  flex-wrap: wrap;
-}
-
-.dist-hero-band__name {
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-primary);
-  white-space: nowrap;
-}
-
-.dist-hero-band__name em {
-  font-style: normal;
-  color: var(--color-text-secondary);
-  font-weight: var(--font-weight-normal);
-}
-
-.dist-hero-band__sep {
-  color: var(--color-text-tertiary);
-  font-weight: var(--font-weight-normal);
-}
-
-.dist-hero-band__metrics {
-  display: flex;
-  gap: var(--space-5);
-  flex-wrap: wrap;
-  margin-left: auto;
-}
-
-.dist-hero-band__metric {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 80px;
-}
-
-.dist-hero-band__metric-value {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
-}
-
-.dist-hero-band__metric-label {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
+/* .dist-hero-band family moved to css/analytics-architecture.css (Phase 0b block 22, 2026-05-04). */
 
 /* ── 8. Two-col grid ─────────────────────────────────────────── */
 /* NEW — two equal columns inside a perf-tab pane.

@@ -1435,3 +1435,31 @@
   font-weight: 700;
   line-height: 1;
 }
+
+/* ──────────────────────────────────────────────────────────────
+   Phase 0b audit — engagement.css recon-resolved (2026-05-04)
+   ──────────────────────────────────────────────────────────────
+   engagement.css (6158 lines, 536 selectors) is fully wrapped in
+   a single `#engagement-dashboard { ... }` CSS-nesting block
+   (line 2 → EOF). Every selector inside resolves to
+   `#engagement-dashboard .x` — higher specificity than any bare
+   `.x` rule in this file by design.
+
+   Per hard rule "ID-scoped CSS-nesting overrides STAY in entity
+   files" the entire file is architecturally pinned. No clean
+   shared lift candidates remain.
+
+   Cross-file overlap audit:
+   - eng ∩ arch (2): .kpi-label, .kpi-value
+       Already documented at block 19 header above. Engagement
+       variants are divergent rules (kpi-value = flex column
+       container, kpi-label = smaller without uppercase /
+       letter-spacing / semibold). STAY.
+   - eng ∩ dist (4): .col-num, .store-name, .store-row,
+       .tree-name-cell. All classified STAY in Phase 0b
+       distribution audit (commit 972d8bd). No change.
+
+   Verdict: engagement.css migration closed for Phase 0b.
+   Combined with distribution.css recon-resolved finale, Phase 0b
+   shared-core lift work is complete across both entity files.
+   ────────────────────────────────────────────────────────────── */

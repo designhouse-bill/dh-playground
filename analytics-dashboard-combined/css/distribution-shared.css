@@ -186,16 +186,7 @@
   line-height: 1;
 }
 
-.creative-ranked__toolbar {
-  display: flex; align-items: center; gap: var(--space-3, 12px);
-  margin: var(--space-2, 8px) 0;
-}
-.creative-ranked__filter {
-  flex: 0 0 240px; height: 32px; padding: 4px 10px;
-  border: 1px solid var(--color-border, #e5e7eb); border-radius: 6px;
-  font-size: 13px;
-}
-.creative-ranked__total { font-size: 12px; color: var(--color-text-secondary, #6b7280); }
+/* .creative-ranked__toolbar/__filter/__total moved to css/analytics-architecture.css (Phase 0b block 27, 2026-05-04). */
 
 /* .ep-detail-sidebar* removed — dead code; no distribution-*.html consumed it.
    Canonical sidebar (engagement schema) lives in analytics-architecture.css. */

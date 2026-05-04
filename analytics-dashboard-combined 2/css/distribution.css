@@ -4873,7 +4873,7 @@ body[data-dist-page] .narrative-header__title {
 
 /* By Creative / By Day — scrollable store bar containers */
 .bar-scroll-wrap {
-  max-height: 500px;
+  max-height: 320px;
   overflow-y: auto;
   overflow-x: hidden;
 }

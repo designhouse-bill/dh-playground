@@ -356,7 +356,7 @@
               </div>
               
               <div class="creative-card__actions">
-                ${cr.target_url ? `<a class="creative-card__link" href="${cr.target_url}" target="_blank"><span class="material-symbols-outlined" style="font-size:14px;">link</span> Promotion Link</a>` : ''}
+                ${cr.target_url ? `<a class="creative-card__link" href="${cr.target_url}" target="_blank"><span class="material-symbols-outlined" style="font-size:14px;">link</span> Target Circular Promotion Link</a>` : ''}
                 <button class="creative-card__details-btn" onclick="viewVariantDetails(${cr._origIndex})"><span class="material-symbols-outlined" style="font-size:14px;">visibility</span> View Details</button>
               </div>
             </div>

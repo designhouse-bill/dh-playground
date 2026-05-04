@@ -898,3 +898,51 @@
 .tree-row-hidden {
   display: none;
 }
+
+/* ──────────────────────────────────────────────────────────────
+   Type badges  (Phase 0b block 18, 2026-05-04)
+   Cross-entity tree-row type indicators (brand / subbrand / store
+   / brand-group / sub-group). Distribution media-buy creative-type
+   pills (.type-badge--gif / --jpeg / --video) are a separate
+   visual family and stay in distribution.css; they intentionally
+   override the base below via load-order cascade.
+   NOTE: --color-info-*, --color-warning-700, --color-purple-* are
+   currently undefined in design-tokens.css; preserved as-is
+   (block 18 migration is non-mutating).
+   ────────────────────────────────────────────────────────────── */
+
+.type-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.type-badge--brand {
+  background-color: var(--color-info-100);
+  color: var(--color-info-700);
+}
+
+.type-badge--subbrand {
+  background-color: var(--color-gray-200);
+  color: var(--color-gray-700);
+}
+
+.type-badge--store {
+  background-color: var(--color-success-100);
+  color: var(--color-success-700);
+}
+
+.type-badge--brand-group {
+  background-color: var(--color-warning-100);
+  color: var(--color-warning-700);
+}
+
+.type-badge--sub-group {
+  background-color: var(--color-purple-100);
+  color: var(--color-purple-700);
+}

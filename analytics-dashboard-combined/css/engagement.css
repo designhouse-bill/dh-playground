@@ -4170,42 +4170,8 @@ body:not(.comparison-active) .detail-comparison {
 .tree-table td.tree-indent-2 { padding-left: calc(var(--space-4) + 64px); }
 .tree-table td.tree-indent-3 { padding-left: calc(var(--space-4) + 72px); }
 
-/* Type badges */
-.type-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 8px;
-  border-radius: var(--radius-sm);
-  font-size: 10px;
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.type-badge--brand {
-  background-color: var(--color-info-100);
-  color: var(--color-info-700);
-}
-
-.type-badge--subbrand {
-  background-color: var(--color-gray-200);
-  color: var(--color-gray-700);
-}
-
-.type-badge--store {
-  background-color: var(--color-success-100);
-  color: var(--color-success-700);
-}
-
-.type-badge--brand-group {
-  background-color: var(--color-warning-100);
-  color: var(--color-warning-700);
-}
-
-.type-badge--sub-group {
-  background-color: var(--color-purple-100);
-  color: var(--color-purple-700);
-}
+/* .type-badge + .type-badge--brand/--subbrand/--store/--brand-group/--sub-group
+   moved to css/analytics-architecture.css (Phase 0b block 18, 2026-05-04). */
 
 /* .tree-row-hidden moved to css/analytics-architecture.css
    (Phase 0b block 17, 2026-05-04). */

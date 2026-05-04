@@ -1267,3 +1267,18 @@
   font-size: 13px;
 }
 .creative-ranked__total { font-size: 12px; color: var(--color-text-secondary, #6b7280); }
+
+/* ── Day-of-week column bar (Phase 0b block 28, 2026-05-04) ──
+   Migrated from distribution-shared.css. Consumed by engagement
+   renderers (canonical-shell-renderers.js renderDoWColumns).
+   Vars colocated; alias brand primary for peak/base. */
+:root {
+  --dow-bar-base: var(--p-primary-color, #2196F3);
+  --dow-bar-peak: var(--p-primary-color-active, #1565C0);
+}
+.dow-bar {
+  width: 80%;
+  background: var(--dow-bar-base);
+  border-radius: 4px 4px 0 0;
+}
+.dow-bar--peak { background: var(--dow-bar-peak); }

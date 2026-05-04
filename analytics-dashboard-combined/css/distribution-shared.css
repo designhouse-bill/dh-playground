@@ -83,21 +83,7 @@
 
 /* .dist-hero-band family moved to css/analytics-architecture.css (Phase 0b block 22, 2026-05-04). */
 
-/* ── 8. Two-col grid ─────────────────────────────────────────── */
-/* NEW — two equal columns inside a perf-tab pane.
-   Collapses to single col below 640px. */
-
-.dist-2col {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-4);
-}
-
-@media (max-width: 639px) {
-  .dist-2col {
-    grid-template-columns: 1fr;
-  }
-}
+/* .dist-2col moved to css/analytics-architecture.css (Phase 0b block 23, 2026-05-04). */
 
 /* ── 9. Chip selector strip ─────────────────────────────────── */
 /* NEW — horizontal chip strip driving in-pane filter.

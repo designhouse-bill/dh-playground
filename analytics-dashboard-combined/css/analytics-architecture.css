@@ -1122,3 +1122,21 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
+
+/* ─────────────────────────────────────────────────────────────────
+   Block 23 — .dist-2col (2026-05-04)
+   Migrated from css/distribution-shared.css. Single-source.
+   Two-col grid inside a perf-tab pane; collapses below 640px.
+   ───────────────────────────────────────────────────────────────── */
+
+.dist-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+@media (max-width: 639px) {
+  .dist-2col {
+    grid-template-columns: 1fr;
+  }
+}

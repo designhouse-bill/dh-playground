@@ -79,24 +79,7 @@
 /* NEW — toolbar row inside each sub-tab pane.
    Contains .view-toggle and/or .duration-presets. */
 
-.dist-pane-toolbar {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-2) 0 var(--space-3);
-  flex-wrap: wrap;
-}
-
-.dist-pane-toolbar__label {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-tertiary);
-  font-weight: var(--font-weight-medium);
-  white-space: nowrap;
-}
-
-.dist-pane-toolbar__spacer {
-  flex: 1;
-}
+/* .dist-pane-toolbar family moved to css/analytics-architecture.css (Phase 0b block 21, 2026-05-04). */
 
 /* ── 7. Hero band ────────────────────────────────────────────── */
 /* NEW — "ALL CREATIVES — Combined" band with 3 sub-metrics.

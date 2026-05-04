@@ -1034,3 +1034,28 @@
   padding: 4px 12px;
   font-size: 12px;
 }
+
+/* ─────────────────────────────────────────────────────────────────
+   Block 21 — .dist-pane-toolbar family (2026-05-04)
+   Migrated from css/distribution-shared.css.
+   Single-source, fully tokenized. Pane toolbar row above sub-tab content.
+   ───────────────────────────────────────────────────────────────── */
+
+.dist-pane-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0 var(--space-3);
+  flex-wrap: wrap;
+}
+
+.dist-pane-toolbar__label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+}
+
+.dist-pane-toolbar__spacer {
+  flex: 1;
+}

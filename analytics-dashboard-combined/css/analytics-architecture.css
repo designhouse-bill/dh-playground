@@ -1331,3 +1331,104 @@
 .creative-icon--video  { background: #ef4444; }
 .creative-icon--gif    { background: #8b5cf6; }
 .creative-icon--html   { background: #f59e0b; }
+
+/* ── Creative chip rich-card (Phase 0b block 30, 2026-05-04) ──
+   Migrated from distribution-shared.css. Distribution-only consumer
+   (js/distribution/distribution.js renderCreativeChip / chip-strip).
+   Engagement pages load this file but never render .creative-chip.
+   Note: distribution.css scopes .creative-chip__rank into the unified
+   24×24 circle badge alongside .creative-card__rank, .lb-rank, etc.
+   That override stays in distribution.css (entity scoped-override). */
+.creative-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface, #fff);
+  border: 1.5px solid var(--color-border, #e5e7eb);
+  border-radius: var(--radius-md, 6px);
+  cursor: pointer;
+  min-width: 0;
+  text-align: left;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.creative-chip:hover {
+  border-color: var(--p-primary-color, #2196F3);
+  box-shadow: 0 0 0 3px rgba(33,150,243,0.12);
+}
+.creative-chip--active {
+  border-color: var(--p-primary-color, #2196F3);
+  background: rgba(33,150,243,0.05);
+}
+.creative-chip__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+.creative-chip__thumb {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  background: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+}
+.creative-chip__thumb img { width: 100%; height: 100%; object-fit: cover; }
+.creative-chip__thumb .material-symbols-outlined { color: #fff; font-size: 20px; }
+.creative-chip__thumb-initials { color: #fff; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; }
+.creative-chip__thumb--all { background: linear-gradient(135deg, #475569 0%, #64748b 100%); }
+.creative-chip__flag {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--p-primary-color, #2196F3);
+  background: rgba(33,150,243,0.12);
+  padding: 2px 6px;
+  border-radius: 10px;
+  line-height: 1;
+}
+.creative-chip__name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text, #1f2937);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+.creative-chip__meta,
+.creative-chip__stores {
+  font-size: 10px;
+  color: var(--color-text-tertiary, #9ca3af);
+  margin-top: 2px;
+}
+.creative-chip__date {
+  font-size: 10px;
+  color: var(--color-text-tertiary, #9ca3af);
+  margin-top: 1px;
+  line-height: 1.2;
+}
+.creative-chip__rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 18px;
+  padding: 0 5px;
+  background: var(--p-primary-color, #2196F3);
+  color: #fff;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+}

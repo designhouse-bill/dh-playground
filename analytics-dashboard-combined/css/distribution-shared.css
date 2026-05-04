@@ -85,52 +85,7 @@
 
 /* .dist-2col moved to css/analytics-architecture.css (Phase 0b block 23, 2026-05-04). */
 
-/* ── 9. Chip selector strip ─────────────────────────────────── */
-/* NEW — horizontal chip strip driving in-pane filter.
-   Used on By Creative, By Day, By Store panes. */
-
-.dist-chip-selector {
-  display: flex;
-  gap: var(--space-2);
-  flex-wrap: wrap;
-  padding-bottom: var(--space-2);
-}
-
-/* Phase 3 step 5+6+7 — Compact selection chip for ranked carousels.
-   Standalone class (NOT a .creative-card variant) to avoid inheriting
-   the existing .creative-card flex-column block layout from distribution.css.
-   DP16.1 rank parity: __rank badge required; equivalent class allowed. */
-.dist-chip-selector__chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px 4px 4px;
-  background: #fff;
-  border: 1px solid var(--color-border, #e5e7eb);
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--color-text, #1f2937);
-  cursor: pointer;
-  transition: background .15s ease, border-color .15s ease, box-shadow .15s ease;
-  max-width: 280px;
-}
-.dist-chip-selector__chip:hover { background: #f3f4f6; border-color: #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
-.dist-chip-selector__chip:focus-visible { outline: 2px solid var(--p-primary-color, #2196F3); outline-offset: 2px; }
-.dist-chip-selector__chip__rank {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 22px; height: 22px;
-  background: var(--p-primary-color, #2196F3);
-  color: #fff;
-  border-radius: 999px;
-  font-size: 11px; font-weight: 700;
-  flex-shrink: 0;
-}
-.dist-chip-selector__chip__icon { font-size: 16px; color: var(--color-text-secondary, #6b7280); flex-shrink: 0; }
-.dist-chip-selector__chip__name {
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  max-width: 200px;
-}
+/* .dist-chip-selector family moved to css/analytics-architecture.css (Phase 0b block 24, 2026-05-04). */
 
 /* ── Canonical .creative-chip rich-card pattern (lifted from distribution.css
    2026-05-02 per Bill: "Visitation drives the canonical, lift to shared"). ──

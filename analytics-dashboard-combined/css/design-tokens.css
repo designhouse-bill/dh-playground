@@ -278,4 +278,12 @@
   --color-accent-soft-border: #86d2a8;
   --color-accent-info-border: #bfdbfe;
   --color-accent-info-bg: #eff6ff;
+
+  /* KPI tile (block 6) */
+  --space-3-5: 0.875rem;        /* 14px — kpi tile padding-y */
+  --font-size-14: 0.875rem;     /* 14px — kpi tile unit */
+  --font-size-26: 1.625rem;     /* 26px — kpi tile value */
+  --color-border-hover: #cbd5e1;/* slate-300 — kpi tile hover border */
+  --color-primary-soft-bg: rgba(33, 150, 243, 0.08);
+  --color-primary-soft-bg-hover: rgba(33, 150, 243, 0.16);
 }

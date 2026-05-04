@@ -432,3 +432,100 @@
 
 .ep-sub-pane { display: none; padding: var(--space-4) var(--space-6); }
 .ep-sub-pane--active { display: block; }
+
+/* ============================================================
+   ep-kpi-strip / ep-kpi-tile — Overview KPI snapshot tiles
+   Phase 0b block 6 migrated 2026-05-04 from engagement-canonical.css (157-180).
+   Tiles are buttons that jump to a metric tab. Entity-agnostic chrome.
+   Entity override: per-tile [data-jump-to=...] hover section colors stay
+   in engagement-canonical.css (140-143).
+   ============================================================ */
+
+.ep-kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
+}
+
+.ep-kpi-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+  padding: var(--space-3-5) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-white);
+  cursor: pointer;
+  text-align: left;
+  transition: background .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+
+.ep-kpi-tile:hover {
+  background: var(--p-surface-hover);
+  border-color: var(--color-border-hover);
+  box-shadow: var(--shadow-xs);
+}
+
+.ep-kpi-tile:focus-visible {
+  outline: 2px solid var(--color-primary, #2196F3);
+  outline-offset: 2px;
+}
+
+.ep-kpi-tile--active {
+  background: var(--color-accent-soft-bg);
+  border-color: var(--color-accent-soft-border);
+}
+
+.ep-kpi-tile__label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+}
+
+.ep-kpi-tile__value {
+  font-size: var(--font-size-26);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--p-text-color);
+  line-height: 1.05;
+}
+
+.ep-kpi-tile__unit {
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+}
+
+.ep-kpi-tile__sub {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.ep-kpi-tile__view {
+  position: absolute;
+  right: 10px;
+  bottom: var(--space-2);
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px var(--space-2);
+  font-size: var(--font-size-10);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: .02em;
+  color: var(--p-primary-color, #2196F3);
+  background: var(--color-primary-soft-bg);
+  border-radius: 999px;
+  pointer-events: none;
+  transition: background .15s ease;
+}
+
+.ep-kpi-tile__view .material-symbols-outlined {
+  font-size: var(--font-size-12);
+  line-height: 1;
+}
+
+.ep-kpi-tile:hover .ep-kpi-tile__view {
+  background: var(--color-primary-soft-bg-hover);
+}

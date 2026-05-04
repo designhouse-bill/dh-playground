@@ -21,20 +21,8 @@
     10. Creative icon  — .creative-icon (NEW)
    ================================================================ */
 
-/* ── 1. Color tokens ───────────────────────────────────────────── */
-
-:root {
-  /* Funnel palette: Impressions → Clicks → Visits */
-  --dist-funnel-1: #4272D8;
-  --dist-funnel-2: #f59e0b;
-  --dist-funnel-3: #ef4444;
-
-  /* Audience composition palette: Loyal → Returning → New */
-  --dist-audience-1: #4272D8;
-  --dist-audience-2: #f97316;
-  --dist-audience-3: #22c55e;
-
-}
+/* --dist-funnel-1/2/3 + --dist-audience-1/2/3 deleted as dead tokens
+   (Phase 0b block 31, 2026-05-04). Zero consumers across css/js/html. */
 
 /* .dow-bar + --dow-bar-* moved to css/analytics-architecture.css (Phase 0b block 28, 2026-05-04). */
 

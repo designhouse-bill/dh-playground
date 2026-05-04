@@ -289,3 +289,31 @@
   color: var(--color-text-secondary);
   margin: 2px 0 0;
 }
+
+/* ============================================
+   MODAL OVERLAY (Phase 0b block 3)
+   Generic centered modal scrim + active transition.
+   Entity-prefixed variants (e.g. .dist-modal-overlay)
+   stay in their entity CSS.
+   ============================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-fast);
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-overlay.active .modal {
+  transform: translateY(0);
+}

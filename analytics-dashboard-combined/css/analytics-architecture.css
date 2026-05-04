@@ -242,3 +242,50 @@
 .hero-stat > .stat-strip {
   flex: 0 1 auto;
 }
+
+/* ============================================================
+   section-panel-header — secondary section header
+   Title + question + subtitle stacked. Used for sub-panels
+   (Store Performance, Demographics, Engagement section panels).
+   No blue shell, no metric strip.
+   Phase 0b migrated 2026-05-04 from distribution.css (3819-3850).
+   Engagement pages (circulars/grid/categories/promotions) gain
+   these styles intentionally — unification per Phase 0b precedent.
+   ============================================================ */
+
+.section-panel-header {
+  padding: 0;
+  margin: 0;
+}
+
+.section-panel-header--with-stat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.section-panel-header__title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-black);
+  color: var(--color-text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 var(--space-1);
+  line-height: 1.2;
+}
+
+.section-panel-header__question {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.section-panel-header__subtitle {
+  font-size: var(--font-size-12);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+  margin: 2px 0 0;
+}

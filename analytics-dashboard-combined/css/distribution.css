@@ -3813,41 +3813,8 @@ display: flex;
    and in responsive @media blocks.
    ============================================================ */
 
-/* Secondary section header — used for sub-panels (Store Performance,
-   Demographics). hero-stat is reserved for the page header. No blue
-   shell, no metric strip; just title + question + subtitle stacked. */
-.section-panel-header {
-  padding: 0;
-  margin: 0;
-}
-.section-panel-header--with-stat {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-}
-.section-panel-header__title {
-  font-size: 20px;
-  font-weight: 900;
-  color: var(--color-text-primary);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin: 0 0 4px;
-  line-height: 1.2;
-}
-.section-panel-header__question {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--color-text-primary);
-  margin: 0;
-  line-height: 1.4;
-}
-.section-panel-header__subtitle {
-  font-size: 12px;
-  font-weight: 400;
-  color: var(--color-text-secondary);
-  margin: 2px 0 0;
-}
+/* .section-panel-header family migrated 2026-05-04
+   → analytics-architecture.css (Phase 0b). */
 
 /* .hero-stat > .narrative-header / .stat-strip joiners migrated
    2026-05-04 → analytics-architecture.css (Phase 0b). */

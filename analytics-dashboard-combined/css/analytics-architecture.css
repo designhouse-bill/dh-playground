@@ -529,3 +529,30 @@
 .ep-kpi-tile:hover .ep-kpi-tile__view {
   background: var(--color-primary-soft-bg-hover);
 }
+
+/* ============================================================================
+   ENTITY-SUMMARY INFO ROW (.ep-circular-info)
+   ----------------------------------------------------------------------------
+   Inline counts row above perf-tabs. Used on engagement-circulars,
+   engagement-categories, engagement-promotions, engagement-grid.
+   ============================================================================ */
+
+.ep-circular-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2-5);
+  padding: var(--space-2) var(--space-6);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-gray-50);
+}
+
+.ep-circular-info__num {
+  font-weight: 700;
+  color: var(--p-text-color);
+}
+
+.ep-circular-info__sep {
+  color: var(--color-gray-300);
+}

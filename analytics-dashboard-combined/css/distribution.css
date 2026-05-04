@@ -1005,6 +1005,11 @@
   color: var(--p-text-color);
 }
 
+/* .th-sort-icon / .th-sort--active .th-sort-icon — DOCUMENTED DIVERGENCE
+   (Phase 0b audit, 2026-05-04). Canonical lives in analytics-architecture.css
+   (16px, color-based). This dist-tree-table variant uses 14px + opacity-based
+   active state. Wins via load-order on distribution-* pages + index.
+   Engagement pages keep canonical (no dist.css load). */
 .th-sort-icon {
   font-size: 14px;
   vertical-align: middle;
@@ -1122,7 +1127,11 @@
 .tree-indent-0 { padding-left: var(--p-spacing-4) !important; }
 .tree-indent-1 { padding-left: calc(var(--p-spacing-4) + 32px) !important; }
 
-/* Name cell layout */
+/* Name cell layout — DOCUMENTED DIVERGENCE (Phase 0b audit, 2026-05-04).
+   Engagement defines .tree-name-cell with gap: var(--space-2) (8px) and
+   adds a `> span` padding rule (eng:4115). This dist variant uses 6px
+   gap, no descendant rule. Different conventions per surface; lift to
+   arch.css would force a 2px visual delta on one side. STAY. */
 .tree-name-cell {
   display: flex;
   align-items: center;
@@ -3083,7 +3092,15 @@ display: flex;
 }
 
 /* ========================================
-   View Toggle
+   View Toggle — THIRD .view-toggle pattern (DOCUMENTED DIVERGENCE,
+   Phase 0b audit, 2026-05-04). Two prior patterns:
+     (1) PILL canonical in analytics-architecture.css w/ .view-toggle__btn
+     (2) SEGMENTED override at dist:1755 w/ .view-toggle__btn
+   This block adds (3) STRIP variant: .view-toggle + .sort-toggle parent
+   with .toggle-btn (NOT __btn) children. Used only by index.html
+   (#store-view-toggle, #leaderboard-sort). Distinct child class so
+   no cascade conflict with (1)/(2). Stays in distribution.css since
+   index.html loads dist.css.
    ======================================== */
 
 .view-toggle,

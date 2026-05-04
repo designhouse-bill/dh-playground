@@ -983,6 +983,9 @@
    engagement-promotions + index. Documented divergence — same
    class, two patterns (see block 18/19 pattern).
    .view-toggle--compact is a generic padding/font-size modifier.
+   STRIP variant (3rd pattern, Phase 0b audit 2026-05-04): also lives
+   in distribution.css (~3089) using .toggle-btn children (not __btn);
+   index.html only. No cascade conflict — distinct child class.
    ────────────────────────────────────────────────────────────── */
 
 .view-toggle {

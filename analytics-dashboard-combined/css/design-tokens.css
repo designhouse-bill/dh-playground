@@ -18,6 +18,7 @@
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
 
   /* Font Sizes */
   --font-size-xs: 0.6875rem;    /* 11px */
@@ -245,4 +246,29 @@
   --section-duration-light:   #fef3c7;
   --section-cardevents:       #7c3aed;
   --section-cardevents-light: #f5f3ff;
+
+  /* ========================================
+     Architecture Component Tokens
+     Used by analytics-architecture.css. No magic numbers.
+     ======================================== */
+
+  /* Extended font-size scale (exact px from prototype) */
+  --font-size-8:  0.5rem;     /* 8px  — proposed-badge */
+  --font-size-10: 0.625rem;   /* 10px — stat-strip label */
+  --font-size-12: 0.75rem;    /* 12px — narrative subtitle */
+  --font-size-28: 1.75rem;    /* 28px — stat-strip trend icon */
+
+  /* Extended spacing / radius (exact px from prototype) */
+  --space-2-5:  0.625rem;     /* 10px */
+  --radius-10:  0.625rem;     /* 10px — stat-strip wrapper */
+
+  /* Faint surfaces */
+  --color-border-faint: rgba(0,0,0,0.06);
+  --shadow-xs: 0 1px 3px rgba(0,0,0,0.06);
+
+  /* Hero-stat shell (default; entity overrides via body[data-dist-page]) */
+  --hero-stat-bg: var(--p-primary-50);
+
+  /* Stat-strip accent (default; entity overrides) */
+  --stat-strip-accent: var(--color-primary, #2196F3);
 }

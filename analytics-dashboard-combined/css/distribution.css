@@ -3807,184 +3807,11 @@ display: flex;
 }
 
 /* ============================================================
-   Phase 2: Narrative Headers, Stat/Insight Strips
+   Phase 2: Narrative Headers, Stat/Insight Strips, Hero-Stat
+   Migrated 2026-05-04 → analytics-architecture.css (Phase 0b).
+   Entity overrides remain below in body[data-dist-page] block
+   and in responsive @media blocks.
    ============================================================ */
-
-.narrative-header {
-  padding: var(--space-3) 0;
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  flex-wrap: wrap;
-}
-
-.narrative-header__title {
-  font-size: 30px;
-  font-weight: 800;
-  color: var(--color-text-primary);
-  text-transform: uppercase;
-  letter-spacing: -0.01em;
-  margin: 0;
-  white-space: nowrap;
-  line-height: 1.2;
-}
-
-.narrative-header__text {
-  flex: 1;
-}
-
-.narrative-header__question {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--color-text-primary);
-  margin: 0;
-  line-height: 1.4;
-}
-
-.narrative-header__subtitle {
-  font-size: 12px;
-  font-weight: 400;
-  color: var(--color-text-secondary);
-  margin: 2px 0 0 0;
-}
-
-.stat-strip {
-  border-radius: 10px;
-  padding: var(--space-3) var(--space-3);
-  display: flex;
-  align-items: stretch;
-  gap: var(--space-3);
-  flex-wrap: wrap;
-  margin: 0;
-}
-
-.stat-strip__title {
-  display: none;
-}
-
-.stat-strip__cards {
-  display: flex;
-  align-items: stretch;
-  gap: var(--space-3);
-  flex-wrap: wrap;
-  flex: 1;
-}
-
-.stat-strip__item {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  white-space: nowrap;
-  background: #fff;
-  border: 1px solid rgba(0,0,0,0.06);
-  border-radius: 8px;
-  padding: 10px 16px;
-  min-width: 0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-  flex: 1;
-}
-
-.stat-strip__label {
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-text-secondary);
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.stat-strip__proposed-badge {
-  font-size: 8px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  color: var(--color-text-muted, #9ca3af);
-  background: var(--color-gray-100, #f3f4f6);
-  border: 1px solid var(--color-border, #e5e7eb);
-  border-radius: 3px;
-  padding: 1px 4px;
-  text-transform: uppercase;
-  line-height: 1.4;
-}
-
-.stat-strip__value-row {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-}
-
-.stat-strip__value {
-  font-size: 30px;
-  font-weight: 700;
-  color: var(--color-text-primary);
-  line-height: 1.15;
-}
-
-.stat-strip__trend {
-  font-size: 30px;
-  font-weight: 700;
-  line-height: 1.15;
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-}
-
-.stat-strip__trend .material-symbols-outlined {
-  font-size: 28px;
-}
-
-/* Only the arrow icon carries the directional color;
-   the number text stays neutral so the hero metric reads as one unit. */
-.stat-strip__trend { color: var(--color-text-secondary); }
-.stat-strip__trend--up .material-symbols-outlined { color: var(--color-success, #22c55e); }
-.stat-strip__trend--down .material-symbols-outlined { color: var(--color-danger, #ef4444); }
-.stat-strip__trend--flat .material-symbols-outlined { color: #374151; }
-
-.stat-strip__separator {
-  display: none;
-}
-
-/* Apr 17 decision (plan item 25): stat strip holds ONE hero metric only.
-   Composition pills (NEW/RETURNING/LOYAL %, Outperforming/Trend, etc.) live
-   in the breakdown panel below where they earn their place.
-   CSS-only hide of nth-child(n+2) keeps JS render untouched while flipping
-   the pattern across every section. */
-.stat-strip__cards > .stat-strip__item:nth-child(n+2) {
-  display: none;
-}
-.stat-strip__cards > .stat-strip__item:first-child {
-  flex: 1;
-}
-
-/* Color-coord hook (item 19b scaffold): each section can override
-   --stat-strip-accent to tie the hero metric to its chart color.
-   Default = blue (matches Gross Visits / blue segment in donut/bar). */
-.stat-strip {
-  --stat-strip-accent: var(--color-primary, #2196F3);
-}
-.stat-strip__cards > .stat-strip__item:first-child {
-  border-left: 3px solid var(--stat-strip-accent);
-}
-
-/* ============================================================
-   Plan item 2/6/25 (Apr 17): hero-stat — unified narrative-header
-   + single hero stat shell. Title/question/subtitle on left, one
-   hero metric on right, both wrapped in the light blue section
-   accent. Applies to every row (Visitation / Performance /
-   Demographics / Traffic Share / Media Buy).
-   ============================================================ */
-
-.hero-stat {
-  background: #e3f2fd;
-  border-radius: 12px;
-  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-5);
-  display: flex;
-  align-items: center;
-  gap: var(--space-5);
-  margin-top: var(--space-2);
-  flex-wrap: wrap;
-}
 
 /* Secondary section header — used for sub-panels (Store Performance,
    Demographics). hero-stat is reserved for the page header. No blue
@@ -4022,17 +3849,8 @@ display: flex;
   margin: 2px 0 0;
 }
 
-.hero-stat > .narrative-header {
-  flex: 1 1 60%;
-  padding: 0;
-  margin: 0;
-  min-width: 0;
-}
-
-.hero-stat > .stat-strip {
-  flex: 0 1 auto;
-
-}
+/* .hero-stat > .narrative-header / .stat-strip joiners migrated
+   2026-05-04 → analytics-architecture.css (Phase 0b). */
 
 /* ============================================================
    R4 (Item 19b): Per-section accent colors

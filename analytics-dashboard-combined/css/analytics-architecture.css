@@ -56,3 +56,189 @@
 /* perf-tab-pane visibility toggle (architecture default) */
 .perf-tab-pane { display: none; }
 .perf-tab-pane.active { display: block; }
+
+/* ============================================================
+   narrative-header — section title + question + subtitle stack
+   Phase 0b migrated 2026-05-04 from distribution.css (3813-3849).
+   Entity overrides (engagement-canonical .perf-tab-pane scope,
+   body[data-dist-page] title color) stay in entity files.
+   ============================================================ */
+
+.narrative-header {
+  padding: var(--space-3) 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.narrative-header__title {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-text-primary);
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  margin: 0;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.narrative-header__text {
+  flex: 1;
+}
+
+.narrative-header__question {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.narrative-header__subtitle {
+  font-size: var(--font-size-12);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+  margin: 2px 0 0 0;
+}
+
+/* ============================================================
+   stat-strip — hero metric strip (project-wide)
+   Phase 0b migrated 2026-05-04 from distribution.css (3851-3968).
+   --stat-strip-accent default in design-tokens.css; entity files
+   override via body[data-dist-page] / .perf-tab-pane scope.
+   ============================================================ */
+
+.stat-strip {
+  border-radius: var(--radius-10);
+  padding: var(--space-3) var(--space-3);
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin: 0;
+}
+
+.stat-strip__title {
+  display: none;
+}
+
+.stat-strip__cards {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.stat-strip__item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  white-space: nowrap;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-faint);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2-5) var(--space-4);
+  min-width: 0;
+  box-shadow: var(--shadow-xs);
+  flex: 1;
+}
+
+.stat-strip__label {
+  font-size: var(--font-size-10);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.stat-strip__proposed-badge {
+  font-size: var(--font-size-8);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.06em;
+  color: var(--color-text-tertiary);
+  background: var(--color-gray-100);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 1px 4px;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+
+.stat-strip__value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.stat-strip__value {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  line-height: 1.15;
+}
+
+.stat-strip__trend {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.15;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--color-text-secondary);
+}
+
+.stat-strip__trend .material-symbols-outlined {
+  font-size: var(--font-size-28);
+}
+
+/* Arrow icon carries directional color; number stays neutral. */
+.stat-strip__trend--up .material-symbols-outlined { color: var(--color-success-500); }
+.stat-strip__trend--down .material-symbols-outlined { color: var(--color-error-500); }
+.stat-strip__trend--flat .material-symbols-outlined { color: var(--color-gray-700); }
+
+.stat-strip__separator {
+  display: none;
+}
+
+/* Apr 17: hero strip = ONE metric only. Hide siblings via CSS, keep JS render. */
+.stat-strip__cards > .stat-strip__item:nth-child(n+2) {
+  display: none;
+}
+.stat-strip__cards > .stat-strip__item:first-child {
+  flex: 1;
+  border-left: 3px solid var(--stat-strip-accent);
+}
+
+/* ============================================================
+   hero-stat — narrative-header + single hero stat shell
+   Phase 0b migrated 2026-05-04 from distribution.css
+   (3978-3987 + 4025-4035). Entity files override background
+   via body[data-dist-page].
+   ============================================================ */
+
+.hero-stat {
+  background: var(--hero-stat-bg);
+  border-radius: var(--radius-xl);
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-5);
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  margin-top: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.hero-stat > .narrative-header {
+  flex: 1 1 60%;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+.hero-stat > .stat-strip {
+  flex: 0 1 auto;
+}

@@ -71,15 +71,8 @@
     .perf-tab__label { font-size: 11px; font-weight: 600; color: var(--color-text-secondary, #6b7280); text-transform: none; letter-spacing: 0; }
     .perf-tab__value { font-size: 22px; font-weight: 700; color: var(--color-text, #1f2937); line-height: 1.1; }
 
-    /* Sub-tab strip (dimensions inside each metric pane) */
-    .ep-sub-tabs { display: flex; gap: 8px; padding: 0 var(--space-6); flex-wrap: wrap; }
-    .ep-sub-tab { padding: 8px 16px; border: 1px solid var(--color-border, #e5e7eb); border-radius: 6px; background: #fff; font-size: 13px; font-weight: 500; color: var(--color-text, #1f2937); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
-    .ep-sub-tab:hover { background: #f3f4f6; }
-    .ep-sub-tab--active { background: #d1f0e0; border-color: #86d2a8; }
-    .ep-sub-tab--data { margin-left: auto; color: var(--color-primary, #2196F3); border-color: #bfdbfe; }
-    .ep-sub-tab--data:hover { background: #eff6ff; }
-    .ep-sub-pane { display: none; padding: var(--space-4) var(--space-6); }
-    .ep-sub-pane--active { display: block; }
+    /* Sub-tab strip (.ep-sub-tabs/.ep-sub-tab/.ep-sub-pane) — moved to analytics-architecture.css (Phase 0b block 5, 2026-05-04).
+       Per-section --section-color override for active state stays at line ~143 below. */
 
     /* Stacked-bar list (matches Max sketch: per-store row, V/C/A segments + total) */
     .ep-stacked-list { display: flex; flex-direction: column; gap: 10px; }

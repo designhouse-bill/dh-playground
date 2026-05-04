@@ -272,4 +272,10 @@
 
   /* Stat-strip accent (default; entity overrides) */
   --stat-strip-accent: var(--color-primary, #2196F3);
+
+  /* Soft-accent pill (sub-tab active default; entity overrides via --section-color) */
+  --color-accent-soft-bg: #d1f0e0;
+  --color-accent-soft-border: #86d2a8;
+  --color-accent-info-border: #bfdbfe;
+  --color-accent-info-bg: #eff6ff;
 }

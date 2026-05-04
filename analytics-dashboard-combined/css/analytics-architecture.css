@@ -1,0 +1,58 @@
+/**
+ * Analytics Dashboard — Architecture CSS
+ *
+ * Single source of truth for shell + cross-entity chrome.
+ * Token-driven only — no magic numbers, no hard-coded colors.
+ * Maps to future Angular shell-component stylesheet.
+ *
+ * Owns: .perf-tabs, .perf-tab, .perf-tab-pane (architecture rules only).
+ *
+ * Load order: design-tokens.css → base.css → analytics-architecture.css → entity-specific.
+ *
+ * Phase 0 — perf-tabs strip migrated 2026-05-04
+ *   from distribution.css (4327-4363) + engagement-canonical.css (62-90).
+ *   Entity overrides (section-color active states, hero-stat tints) stay in entity files.
+ */
+
+/* ============================================================
+   perf-tabs strip — underline-tab chrome (project-wide)
+   ============================================================ */
+
+.perf-tabs {
+  display: flex;
+  gap: var(--space-1);
+  border-bottom: 1px solid var(--color-border-subtle);
+  margin-bottom: 0;
+}
+
+.perf-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  padding: var(--space-3) var(--space-4);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  margin-bottom: -1px;
+}
+
+.perf-tab .material-symbols-outlined {
+  font-size: var(--font-size-lg);
+}
+
+.perf-tab:hover {
+  color: var(--color-text-primary);
+}
+
+.perf-tab.active {
+  color: var(--p-primary-color);
+  border-bottom-color: var(--p-primary-color);
+}
+
+/* perf-tab-pane visibility toggle (architecture default) */
+.perf-tab-pane { display: none; }
+.perf-tab-pane.active { display: block; }

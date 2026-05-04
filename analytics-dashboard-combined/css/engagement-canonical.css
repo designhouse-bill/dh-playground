@@ -59,35 +59,8 @@
     .engagement-proposed .perf-tab-pane { display: none; }
     .engagement-proposed .perf-tab-pane.active { display: block; }
 
-    /* Base perf-tabs / perf-tab styling — lifted from distribution.css so bare
-       Engagement pages (categories/circulars/grid) get the same underline-tab
-       chrome without linking the full distribution.css. */
-    .engagement-canonical .perf-tabs {
-      display: flex;
-      gap: 4px;
-      border-bottom: 1px solid var(--color-border-subtle, #e5e7eb);
-      margin-bottom: 0;
-    }
-    .engagement-canonical .perf-tab {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: var(--space-3) var(--space-4);
-      background: transparent;
-      border: none;
-      border-bottom: 2px solid transparent;
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--color-text-secondary, #6b7280);
-      cursor: pointer;
-      margin-bottom: -1px;
-    }
-    .engagement-canonical .perf-tab .material-symbols-outlined { font-size: 18px; }
-    .engagement-canonical .perf-tab:hover { color: var(--color-text-primary, #1f2937); }
-    .engagement-canonical .perf-tab.active {
-      color: var(--color-primary, #2196F3);
-      border-bottom-color: var(--color-primary, #2196F3);
-    }
+    /* Base perf-tabs / perf-tab / .active — moved to analytics-architecture.css (Phase 0, 2026-05-04).
+       Per-section accent overrides for #ep-perf-tabs .perf-tab[...] active states stay below. */
 
     /* MAX IA — metric-tab styling: tabs are KPI cards (label + value).
        Active tab = mint background per Max sketch. */

@@ -241,17 +241,7 @@
   overflow: hidden;
 }
 
-.mode-group--base .mode-btn--primary {
-  border-radius: 0;
-  border: none;
-  background-color: white;
-}
-
-.mode-group--base.active .mode-btn--primary,
-.mode-group--base .mode-btn--primary.active {
-  background-color: #2563EB;
-  color: white;
-}
+/* .mode-group--base + .mode-btn--primary rules moved to analytics-architecture.css (Phase 0b block 4). */
 
 .mode-subtabs {
   display: flex;
@@ -279,45 +269,7 @@
   font-weight: var(--font-weight-semibold);
 }
 
-.mode-btn {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-4);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-secondary);
-  background: none;
-  border: none;
-  border-radius: var(--radius-lg);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.mode-btn .material-symbols-outlined {
-  font-size: 18px;
-}
-
-.mode-btn--outline {
-  background: white;
-  border: 1px solid var(--color-gray-200);
-}
-
-.mode-btn--outline:hover {
-  background-color: var(--color-gray-50);
-  border-color: var(--color-gray-300);
-}
-
-.mode-btn--outline.active {
-  background-color: var(--color-gray-900);
-  color: white;
-  border-color: var(--color-gray-900);
-}
-
-.mode-btn:focus-visible {
-  outline: 2px solid var(--color-primary-500);
-  outline-offset: 2px;
-}
+/* .mode-btn rules moved to analytics-architecture.css (Phase 0b block 4). */
 
 /* Distribution Section Tabs — left-aligned in topbar after the dropdown */
 .dist-section-tabs {

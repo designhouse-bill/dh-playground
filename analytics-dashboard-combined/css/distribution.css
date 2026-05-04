@@ -536,7 +536,7 @@
 }
 
 .creative-metric-tile {
-  background: #fff;
+  background: #f9fafb;
   border: 1px solid var(--p-surface-border);
   border-radius: 4px;
   padding: 6px 4px;
@@ -1127,10 +1127,8 @@
   padding: var(--p-spacing-4);
 }
 
-/* Hidden rows */
-.tree-row-hidden {
-  display: none;
-}
+/* .tree-row-hidden (base display:none) moved to css/analytics-architecture.css
+   (Phase 0b block 17, 2026-05-04). Print-mode override below stays here. */
 
 /* ── Tree indentation ── */
 .tree-indent-0 { padding-left: var(--p-spacing-4) !important; }
@@ -1143,38 +1141,8 @@
   gap: 6px;
 }
 
-/* Expand/collapse toggle */
-.tree-toggle {
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  border: none;
-  color: var(--p-text-color-muted);
-  cursor: pointer;
-  padding: 0;
-  flex-shrink: 0;
-  transition: transform 150ms ease;
-}
-
-.tree-toggle:hover {
-  color: var(--p-text-color);
-}
-
-.tree-toggle.collapsed {
-  transform: rotate(-90deg);
-}
-
-.tree-toggle .material-symbols-outlined {
-  font-size: 18px;
-}
-
-.tree-toggle-placeholder {
-  width: 20px;
-  flex-shrink: 0;
-}
+/* .tree-toggle / .tree-toggle-placeholder moved to css/analytics-architecture.css
+   (Phase 0b block 17, 2026-05-04). */
 
 /* Thumbnail in tree table */
 .tree-thumb {
@@ -4395,7 +4363,7 @@ body[data-dist-page] .narrative-header__title {
 .perf-overview-jump-row {
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 12px;
+  margin: 12px 0;
 }
 .perf-overview-jump {
   display: inline-flex;
@@ -4662,7 +4630,7 @@ body[data-dist-page] .narrative-header__title {
 
 /* By Creative / By Day — scrollable store bar containers */
 .bar-scroll-wrap {
-  max-height: 500px;
+  max-height: 320px;
   overflow-y: auto;
   overflow-x: hidden;
 }

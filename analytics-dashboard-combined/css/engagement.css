@@ -4161,37 +4161,8 @@ body:not(.comparison-active) .detail-comparison {
   padding: var(--space-1) var(--space-2);
 }
 
-.tree-toggle {
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  border: none;
-  color: var(--color-text-tertiary);
-  cursor: pointer;
-  padding: 0;
-  flex-shrink: 0;
-  transition: transform var(--transition-fast);
-}
-
-.tree-toggle:hover {
-  color: var(--color-text-primary);
-}
-
-.tree-toggle.collapsed {
-  transform: rotate(-90deg);
-}
-
-.tree-toggle .material-symbols-outlined {
-  font-size: 18px;
-}
-
-.tree-toggle-placeholder {
-  width: 20px;
-  flex-shrink: 0;
-}
+/* .tree-toggle / .tree-toggle-placeholder moved to css/analytics-architecture.css
+   (Phase 0b block 17, 2026-05-04). */
 
 /* Indentation levels */
 .tree-table td.tree-indent-0 { padding-left: var(--space-4); }
@@ -4236,10 +4207,8 @@ body:not(.comparison-active) .detail-comparison {
   color: var(--color-purple-700);
 }
 
-/* Hidden rows (collapsed children) */
-.tree-row-hidden {
-  display: none;
-}
+/* .tree-row-hidden moved to css/analytics-architecture.css
+   (Phase 0b block 17, 2026-05-04). */
 
 /* Row level indicators */
 .tree-row--brand {

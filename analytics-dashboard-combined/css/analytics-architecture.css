@@ -1429,10 +1429,10 @@
 }
 .dow-bar {
   width: 80%;
-  background: var(--dow-bar-base);
+  background: var(--section-color, var(--dow-bar-base));
   border-radius: 4px 4px 0 0;
 }
-.dow-bar--peak { background: var(--dow-bar-peak); }
+.dow-bar--peak { background: color-mix(in srgb, var(--section-color, var(--dow-bar-base)) 80%, #000); }
 
 /* ── Creative icon (Phase 0b block 29, 2026-05-04) ──
    Migrated verbatim from distribution-shared.css. Distribution-only

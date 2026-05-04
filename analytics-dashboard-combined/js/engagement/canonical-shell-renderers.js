@@ -140,10 +140,17 @@
     return mo[start.getMonth()] + ' ' + start.getDate() + ' – ' + mo[end.getMonth()] + ' ' + end.getDate() + ', ' + end.getFullYear();
   }
 
+  function sectionColor(host) {
+    var c = '';
+    try { c = (getComputedStyle(host).getPropertyValue('--section-color') || '').trim(); } catch (_) {}
+    return c || '#2196F3';
+  }
+
   function renderTrend(hostId, weeks, vals, opts) {
     var host = document.getElementById(hostId);
     if (!host) return;
     opts = opts || {};
+    var accent = sectionColor(host);
     var W = 880, H = 280, pad = 40;
     var yMax = opts.yMax || Math.ceil(Math.max.apply(null, vals) * 1.15);
     var ySteps = opts.ySteps || 5;
@@ -167,17 +174,17 @@
       return show ? '<text x="' + xs[i] + '" y="' + (H - 12) + '" font-size="10" fill="#6b7280" text-anchor="middle">' + w + '</text>' : '';
     }).join('');
     var dots = xs.map(function (x, i) {
-      return '<circle class="ep-trend-dot" cx="' + x + '" cy="' + ys[i] + '" r="4" fill="#fff" stroke="#2196F3" stroke-width="2" data-week="' + weeks[i] + '" data-val="' + vals[i] + '" style="cursor:crosshair;"/>'
+      return '<circle class="ep-trend-dot" cx="' + x + '" cy="' + ys[i] + '" r="4" fill="#fff" stroke="' + accent + '" stroke-width="2" data-week="' + weeks[i] + '" data-val="' + vals[i] + '" style="cursor:crosshair;"/>'
         + '<circle class="ep-trend-hit" cx="' + x + '" cy="' + ys[i] + '" r="12" fill="transparent" stroke="none" data-week="' + weeks[i] + '" data-val="' + vals[i] + '" style="cursor:crosshair;"/>';
     }).join('');
     host.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto;display:block;">'
       + '<defs><linearGradient id="' + gradId + '" x1="0" y1="0" x2="0" y2="1">'
-      +   '<stop offset="0%" stop-color="#2196F3" stop-opacity="0.18"/>'
-      +   '<stop offset="100%" stop-color="#2196F3" stop-opacity="0"/>'
+      +   '<stop offset="0%" stop-color="' + accent + '" stop-opacity="0.18"/>'
+      +   '<stop offset="100%" stop-color="' + accent + '" stop-opacity="0"/>'
       + '</linearGradient></defs>'
       + gridLines.join('')
       + '<path d="' + areaPath + '" fill="url(#' + gradId + ')" stroke="none"/>'
-      + '<path d="' + linePath + '" fill="none" stroke="#2196F3" stroke-width="2"/>'
+      + '<path d="' + linePath + '" fill="none" stroke="' + accent + '" stroke-width="2"/>'
       + dots
       + labels
       + '</svg>'
@@ -193,7 +200,7 @@
           + '<div style="color:#fff;font-size:15px;font-weight:700;padding-top:2px;">' + fmt(+el.dataset.val) + '</div>';
         tip.classList.add('ep-perf-tooltip--visible');
         var dot = host.querySelector('.ep-trend-dot[data-week="' + el.dataset.week + '"]');
-        if (dot) { dot.setAttribute('r', '6'); dot.setAttribute('fill', '#2196F3'); }
+        if (dot) { dot.setAttribute('r', '6'); dot.setAttribute('fill', accent); }
       });
       el.addEventListener('mousemove', positionPerfTooltip);
       el.addEventListener('mouseleave', function () {

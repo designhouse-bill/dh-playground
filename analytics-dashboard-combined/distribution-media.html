@@ -17,7 +17,6 @@
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/distribution-shared.css?v=5">
   <link rel="stylesheet" href="css/distribution.css?v=33">
 </head>
 <body data-dist-page="media">
@@ -142,6 +141,7 @@
       <div class="hero-stat">
         <div class="narrative-header">
           <div class="narrative-header__left">
+          <h4 class="narrative-header__section">Distribution</h4>
           <h1 class="narrative-header__title">Media Buy</h1>
           <h2 class="narrative-header__question">How efficiently is our ad spend being delivered?</h2>
           </div>
@@ -233,14 +233,12 @@
           Source: panel-tracked <strong>observed visits</strong> joined to Pulse spend on store × week. Directional — not a census. No creative attribution at this layer — for competitive crossover and frequency-bucket detail, see <a href="distribution-visitation.html">Observed Store Visits</a>.
         </p>
       </section><!-- /.media-visits-section -->
-      <!-- Performance Ranking divider -->
-      <div class="level-divider">Performance Ranking</div>
-         <!-- ═══════════════════════════════════════════════
-           Phase 3 step 3+4: Main Media Buy perf-tabs.
-           5 tabs (By Day dropped — no daily data at any layer).
-           Overview pane preserves the existing IA verbatim so the page
-           stays working; later steps (5-9) move pieces into the right panes.
-           ═══════════════════════════════════════════════ -->
+            <section class="media-visits-section">
+        <header class="section-panel-header ">
+          <h2 class="section-panel-header__title">Off-Platform Media Performance Ranking</h2>
+          <p class="section-panel-header__question">REQUIRES A QUESTION</p>
+          <p class="section-panel-header__subtitle">REQUIRES A SUBTITLE</p>
+        </header>
       <div class="perf-tabs" id="mb-perf-tabs" role="tablist">
         <button class="perf-tab active" data-mb-tab="overview" role="tab" aria-selected="true">
           <span class="material-symbols-outlined">dashboard</span> Overview
@@ -258,6 +256,8 @@
           <span class="material-symbols-outlined">table_chart</span> Data
         </button>
       </div>
+            <!-- Performance Ranking divider -->
+
 
       <div class="perf-tab-pane active" data-mb-pane="overview">
 
@@ -274,6 +274,8 @@
           <div class="creative-inline-detail__placeholder">Select a promotion above to see details, or All Media Campaigns for the full set.</div>
         </div>
       </div>
+        </section>
+
 
       <!-- ═══════════════════════════════════════════════
            LEVEL 2: Detailed Breakdown

@@ -357,8 +357,8 @@
     el.className = 'creative-ranked';
     el.innerHTML = `
       <div class="creative-ranked__toolbar">
-        <input type="search" class="creative-ranked__filter p-inputtext" id="creative-filter" placeholder="Filter creatives…" aria-label="Filter creatives">
-        <span class="creative-ranked__total" id="creative-total">${sorted.length} creative${sorted.length === 1 ? '' : 's'}</span>
+        <input type="search" class="creative-ranked__filter p-inputtext" id="creative-filter" placeholder="Find creative campaign" aria-label="Find creative campaign">
+        <span class="creative-ranked__total" id="creative-total">${sorted.length} creative campaign${sorted.length === 1 ? '' : 's'}</span>
         <div class="creative-sort-direction" role="group" aria-label="Sort direction (visits)">
           <button type="button" class="creative-sort-direction__btn active" data-cv-sort="desc" title="Sort by visits, high to low" aria-pressed="true"><span class="material-symbols-outlined">south</span> High to Low</button>
           <button type="button" class="creative-sort-direction__btn" data-cv-sort="asc" title="Sort by visits, low to high" aria-pressed="false"><span class="material-symbols-outlined">north</span> Low to High</button>
@@ -3670,7 +3670,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
                 ${region ? `<div class="creative-card__region">${escapeHtml(region)}</div>` : ''}
                 <div class="creative-card__date">${escapeHtml(formatRange(cr))}</div>
                 <div class="creative-card__actions">
-                  ${cr.target_url ? `<a class="creative-card__link" href="${escapeHtml(cr.target_url)}" target="_blank" rel="noopener"><span class="material-symbols-outlined" style="font-size:14px;">link</span> Promotion Link</a>` : ''}
+                  ${cr.target_url ? `<a class="creative-card__link" href="${escapeHtml(cr.target_url)}" target="_blank" rel="noopener"><span class="material-symbols-outlined" style="font-size:14px;">link</span> Target Circular Promotion Link</a>` : ''}
                 </div>
               </div>
             </div>

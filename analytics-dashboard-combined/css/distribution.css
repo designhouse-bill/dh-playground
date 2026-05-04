@@ -166,20 +166,8 @@
   background: var(--p-primary-50);
 }
 
-.kpi-label {
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  color: var(--p-text-color-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.kpi-value {
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--p-text-color);
-  line-height: 1.2;
-}
+/* .kpi-label / .kpi-value moved to css/analytics-architecture.css
+   (Phase 0b block 19, 2026-05-04). Scoped variants below stay. */
 
 .kpi-tile--primary .kpi-value {
   color: var(--p-primary-700);

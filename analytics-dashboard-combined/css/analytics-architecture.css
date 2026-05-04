@@ -946,3 +946,27 @@
   background-color: var(--color-purple-100);
   color: var(--color-purple-700);
 }
+
+/* ──────────────────────────────────────────────────────────────
+   KPI label/value  (Phase 0b block 19, 2026-05-04)
+   Canonical KPI strip text styling. Engagement has a scoped
+   variant under `#engagement-dashboard & .kpi-*` (CSS nesting,
+   higher specificity) that stays in engagement.css.
+   Distribution scoped variants `.kpi-tile--primary .kpi-value`
+   and `.video-kpis .kpi-value` stay in distribution.css.
+   ────────────────────────────────────────────────────────────── */
+
+.kpi-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--p-text-color-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.kpi-value {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--p-text-color);
+  line-height: 1.2;
+}

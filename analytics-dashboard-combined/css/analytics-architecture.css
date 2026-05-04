@@ -970,3 +970,67 @@
   color: var(--p-text-color);
   line-height: 1.2;
 }
+
+/* ──────────────────────────────────────────────────────────────
+   Phase 0b block 20 (2026-05-04): .view-toggle family
+   Canonical: PILL variant (gap, per-btn border+radius, primary-500
+   active). Sourced from distribution-shared.css + engagement.css
+   (identical duplicates). Used on engagement-categories /
+   -circulars / -grid / -compare.
+   Divergent: SEGMENTED variant (single outer border, fit-content,
+   gray-900 active) lives in distribution.css and overrides this
+   canonical via load-order cascade on distribution-* +
+   engagement-promotions + index. Documented divergence — same
+   class, two patterns (see block 18/19 pattern).
+   .view-toggle--compact is a generic padding/font-size modifier.
+   ────────────────────────────────────────────────────────────── */
+
+.view-toggle {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.view-toggle__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  height: 32px;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.view-toggle__btn:hover {
+  background-color: var(--color-gray-100);
+  color: var(--color-text-secondary);
+}
+
+.view-toggle__btn.active {
+  background-color: var(--color-primary-500);
+  border-color: var(--color-primary-500);
+  color: white;
+}
+
+.view-toggle__btn .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.view-toggle__label {
+  font-size: var(--font-size-sm);
+}
+
+.view-toggle--compact {
+  display: inline-flex;
+}
+
+.view-toggle--compact .view-toggle__btn {
+  padding: 4px 12px;
+  font-size: 12px;
+}

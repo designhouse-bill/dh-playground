@@ -797,3 +797,61 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
 }
+
+/* ─────────────────────────────────────────────────────────────────
+   Sortable table-header chrome (Phase 0b block 16, 2026-05-04)
+   Cross-entity: distribution + engagement (4 tables).
+   Entity-scoped legacy variant lives in distribution.css
+   (`.dist-tree-table th.th-sortable` — simpler markup, 14px icon).
+───────────────────────────────────────────────────────────────── */
+.th-sortable {
+  padding: var(--space-2) var(--space-3) !important;
+}
+
+.th-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+}
+
+.th-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.th-header:hover .th-label {
+  color: var(--color-text-primary);
+}
+
+.th-header:hover .th-sort-icon {
+  color: var(--color-primary-600);
+}
+
+.th-label {
+  white-space: nowrap;
+}
+
+.th-sort-icon {
+  font-size: 16px;
+  color: var(--color-text-tertiary);
+  transition: color var(--transition-fast);
+}
+
+.th-sortable:hover .th-sort-icon,
+.th-sort--active .th-sort-icon {
+  color: var(--color-primary-600);
+}
+
+.th-sort--active {
+  background-color: var(--color-primary-50) !important;
+}
+
+.th-sort--active .th-label {
+  color: var(--color-gray-700);
+  font-weight: var(--font-weight-bold);
+}

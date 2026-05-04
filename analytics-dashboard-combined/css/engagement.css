@@ -61,7 +61,7 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-xl);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
   background: transparent;
@@ -1363,58 +1363,8 @@ body.app-mode-grid .view-search {
   z-index: 1;
 }
 
-/* Sortable table headers */
-.th-sortable {
-  padding: var(--space-2) var(--space-3) !important;
-}
-
-.th-content {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-1);
-}
-
-.th-header {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  user-select: none;
-}
-
-.th-header:hover .th-label {
-  color: var(--color-text-primary);
-}
-
-.th-header:hover .th-sort-icon {
-  color: var(--color-primary-600);
-}
-
-.th-label {
-  white-space: nowrap;
-}
-
-.th-sort-icon {
-  font-size: 16px;
-  color: var(--color-text-tertiary);
-  transition: color var(--transition-fast);
-}
-
-.th-sortable:hover .th-sort-icon,
-.th-sort--active .th-sort-icon {
-  color: var(--color-primary-600);
-}
-
-.th-sort--active {
-  background-color: var(--color-primary-50) !important;
-}
-
-.th-sort--active .th-label {
-  color: var(--color-gray-700);
-  font-weight: var(--font-weight-bold);
-}
+/* Sortable table headers — moved to css/analytics-architecture.css
+   (Phase 0b block 16, 2026-05-04). */
 
 /* Column filter dropdown */
 .th-filter {

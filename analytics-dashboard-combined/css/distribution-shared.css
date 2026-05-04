@@ -117,59 +117,8 @@
 /* .duration-presets / .duration-preset / .ep-trend-range* moved to css/analytics-architecture.css (Phase 0b block 12, 2026-05-04). */
 
 /* ── 5. Table utilities ───────────────────────────────────────── */
-/* Moved from engagement.css */
-
-.th-sortable {
-  padding: var(--space-2) var(--space-3) !important;
-}
-
-.th-content {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-1);
-}
-
-.th-header {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  user-select: none;
-}
-
-.th-header:hover .th-label {
-  color: var(--color-text-primary);
-}
-
-.th-header:hover .th-sort-icon {
-  color: var(--color-primary-600);
-}
-
-.th-label {
-  white-space: nowrap;
-}
-
-.th-sort-icon {
-  font-size: 16px;
-  color: var(--color-text-tertiary);
-  transition: color var(--transition-fast);
-}
-
-.th-sortable:hover .th-sort-icon,
-.th-sort--active .th-sort-icon {
-  color: var(--color-primary-600);
-}
-
-.th-sort--active {
-  background-color: var(--color-primary-50) !important;
-}
-
-.th-sort--active .th-label {
-  color: var(--color-gray-700);
-  font-weight: var(--font-weight-bold);
-}
+/* .th-sortable / .th-content / .th-header / .th-label / .th-sort-icon / .th-sort--active*
+   moved to css/analytics-architecture.css (Phase 0b block 16, 2026-05-04). */
 
 .tree-toggle {
   width: 20px;
@@ -395,7 +344,7 @@
    Performance and now Media Buy Performance Ranking + By Creative panes. */
 .creative-chips {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
   gap: var(--space-2);
   padding: var(--space-3) 0 var(--space-4);
 }
@@ -548,7 +497,7 @@
 
 .creative-ranked__toolbar {
   display: flex; align-items: center; gap: var(--space-3, 12px);
-  margin-bottom: var(--space-2, 8px);
+  margin: var(--space-2, 8px) 0;
 }
 .creative-ranked__filter {
   flex: 0 0 240px; height: 32px; padding: 4px 10px;

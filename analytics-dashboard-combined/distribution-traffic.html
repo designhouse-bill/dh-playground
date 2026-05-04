@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
   <link rel="stylesheet" href="css/distribution-shared.css?v=1">
-  <link rel="stylesheet" href="css/distribution.css?v=28">
+  <link rel="stylesheet" href="css/distribution.css?v=29">
 </head>
 <body data-dist-page="traffic">
 
@@ -57,7 +57,7 @@
             <span class="material-symbols-outlined">expand_more</span>
           </button>
           <div class="dashboard-switcher__menu" id="dashboard-menu" role="menu">
-            <a class="dashboard-switcher__item" data-href="engagement-promotions-proposed-max.html" role="menuitem">
+            <a class="dashboard-switcher__item" data-href="engagement-promotions.html" role="menuitem">
               <span class="material-symbols-outlined">monitoring</span>
               Engagement
             </a>
@@ -177,17 +177,11 @@
         <button class="perf-tab active" data-ts-tab="overview" role="tab" aria-selected="true">
           <span class="material-symbols-outlined">dashboard</span> Overview
         </button>
-        <button class="perf-tab" data-ts-tab="competitor" role="tab" aria-selected="false">
-          <span class="material-symbols-outlined">compare_arrows</span> By Competitor
-        </button>
-        <button class="perf-tab" data-ts-tab="store" role="tab" aria-selected="false">
-          <span class="material-symbols-outlined">store</span> By Store
+        <button class="perf-tab" data-ts-tab="compare" role="tab" aria-selected="false">
+          <span class="material-symbols-outlined">map</span> Performance Map
         </button>
         <button class="perf-tab" data-ts-tab="trend" role="tab" aria-selected="false">
           <span class="material-symbols-outlined">show_chart</span> Crossover Trend
-        </button>
-        <button class="perf-tab" data-ts-tab="volume" role="tab" aria-selected="false">
-          <span class="material-symbols-outlined">bar_chart</span> Traffic Volume
         </button>
         <button class="perf-tab" data-ts-tab="data" role="tab" aria-selected="false">
           <span class="material-symbols-outlined">table_chart</span> Data
@@ -216,79 +210,59 @@
         <div class="crossover-detail" id="crossover-detail"></div>
       </div>
 
-      <!-- Store Performance preview — top 5 Our Stores. Full table+map lives in By Store tab. -->
-      <div class="chart-card ts-overview-preview">
-        <div class="chart-card__header">
-          <div>
-            <h3 class="panel-label">Top Stores by Traffic Share</h3>
-            <p class="panel-subtitle">Highest-share locations this week — full table and map in <strong>By Store</strong></p>
-          </div>
-          <button class="p-button p-button-text p-button-sm" id="ts-overview-preview-link">
-            View all stores
-            <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
-          </button>
-        </div>
-        <div class="leaderboard-table" id="traffic-overview-preview"></div>
-      </div>
-
       </div><!-- /Overview pane -->
 
-      <div class="perf-tab-pane" data-ts-pane="competitor">
-        <!-- Competitor leaderboard — no map. Row click opens centered compare modal. -->
-        <div class="traffic-perf-panel traffic-perf-panel--table-only">
-          <div class="traffic-perf-body traffic-perf-body--table-only">
-            <div class="traffic-perf-table-wrap traffic-perf-table-wrap--full">
-              <div class="traffic-perf-header">
-                <div class="traffic-perf-header__left">
-                  <h3 class="panel-label">Competitor Performance</h3>
-                  <p class="panel-subtitle">Competitor traffic share — click a row to see crossover detail</p>
-                </div>
-              </div>
-              <div class="leaderboard-table" id="leaderboard-table-comp"></div>
-            </div>
-          </div>
-        </div>
-        <!-- Page-level compare modal (centered overlay, no map needed) -->
-        <div class="comp-modal-backdrop" id="comp-modal-backdrop" style="display:none;">
-          <div class="comp-modal" id="comp-modal">
-            <div class="compare-panel__header">
-              <h3 class="panel-label">Competitor Detail</h3>
-              <button class="compare-panel__close" id="comp-modal-close" title="Close">
-                <span class="material-symbols-outlined">close</span>
-              </button>
-            </div>
-            <div class="compare-panel__body" id="comp-modal-body"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="perf-tab-pane" data-ts-pane="store">
-        <!-- Store leaderboard + Leaflet map. Locked to Our Stores. Row click = map zoom. -->
+      <!-- ═══════════════════════════════════════════════
+           Compare Map pane (UX-846 traffic-compare-map-merge plan).
+           Replaces By Store + By Competitor. Phase A+B: shared
+           leaderboard + map (Our Stores only); Store/Competitor toggle
+           swaps leaderboard data source. Phase C wires competitor
+           markers; Phase D wires bidirectional sync. ════════════════ -->
+      <div class="perf-tab-pane" data-ts-pane="compare">
         <div class="traffic-perf-panel">
           <div class="traffic-perf-body">
             <div class="traffic-perf-table-wrap">
               <div class="traffic-perf-header">
                 <div class="traffic-perf-header__left">
-                  <h3 class="panel-label">Store Performance</h3>
-                  <p class="panel-subtitle" id="traffic-perf-subtitle-store">Traffic share by store — click a row to focus on the map</p>
+                  <h3 class="panel-label" id="compare-panel-label">Store Performance</h3>
+                  <p class="panel-subtitle" id="compare-panel-subtitle">Traffic share by store — click a row to focus on the map</p>
+                </div>
+                <div class="view-toggle" id="compare-source-toggle" role="tablist" aria-label="Leaderboard source">
+                  <button type="button" class="view-toggle__btn active" data-compare-source="ours" role="tab" aria-selected="true">
+                    <span class="material-symbols-outlined">store</span> Store
+                  </button>
+                  <button type="button" class="view-toggle__btn" data-compare-source="competitors" role="tab" aria-selected="false">
+                    <span class="material-symbols-outlined">compare_arrows</span> Competitor
+                  </button>
                 </div>
               </div>
-              <div class="leaderboard-table" id="leaderboard-table-store"></div>
+              <div class="leaderboard-table" id="leaderboard-table-compare"></div>
             </div>
             <div class="traffic-perf-map-wrap">
-              <div id="store-map-store-pane" style="height: 100%; min-height: 480px; border-radius: 8px;"></div>
-              <div class="map-ring-legend" id="ring-legend-store" style="display:none; position:absolute; top:12px; right:12px; z-index:800;">
+              <div id="store-map-compare-pane" style="height: 100%; min-height: 480px; border-radius: 8px;"></div>
+              <div class="map-ring-legend" id="ring-legend-compare" style="display:none; position:absolute; top:12px; right:12px; z-index:800;">
                 <div class="map-ring-legend__item"><span class="map-ring-legend__circle map-ring-legend__circle--1"></span>1 mi</div>
                 <div class="map-ring-legend__item"><span class="map-ring-legend__circle map-ring-legend__circle--3"></span>3 mi</div>
                 <div class="map-ring-legend__item"><span class="map-ring-legend__circle map-ring-legend__circle--5"></span>5 mi</div>
               </div>
-              <button class="map-reset-btn" id="traffic-map-reset-btn-store" title="Reset map view">
+              <button class="map-reset-btn" id="traffic-map-reset-btn-compare" title="Reset map view">
                 <span class="material-symbols-outlined">zoom_out_map</span> Reset
               </button>
+              <div class="map-layer-legend" id="layer-legend-compare" aria-label="Map layers">
+                <div class="map-layer-legend__item">
+                  <span class="map-layer-legend__swatch map-layer-legend__swatch--store"></span>
+                  Our stores
+                </div>
+                <div class="map-layer-legend__item">
+                  <span class="map-layer-legend__swatch map-layer-legend__swatch--comp"></span>
+                  Competitors
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
       <div class="perf-tab-pane" data-ts-pane="trend">
         <!-- Crossover Trend (Phase 4 step 2: moved from Overview) -->
         <div class="chart-card">
@@ -298,6 +272,10 @@
               <p class="panel-subtitle">Among visitors attributed to paid media</p>
             </div>
             <div class="chart-card__header-right">
+              <div class="view-toggle view-toggle--compact" id="crossover-trend-metric">
+                <button class="view-toggle__btn active" data-trend-metric="share">Share %</button>
+                <button class="view-toggle__btn" data-trend-metric="volume">Visits</button>
+              </div>
               <div class="duration-presets" id="crossover-trend-presets">
                 <button class="duration-preset" data-period="1w">1 Week</button>
                 <button class="duration-preset active" data-period="1m">4 Week <span class="duration-preset__sub">(Month)</span></button>
@@ -307,24 +285,6 @@
             </div>
           </div>
           <div id="chart-crossover-trend" style="height: 280px;"></div>
-        </div>
-      </div>
-      <div class="perf-tab-pane" data-ts-pane="volume">
-        <!-- Traffic Share chart with Visits + CTR / Visits Only toggle (Phase 4 step 2: moved from Overview) -->
-        <div class="chart-card">
-          <div class="chart-card__header">
-            <div>
-              <h3 class="panel-label">Traffic Share</h3>
-              <p class="panel-subtitle">Our Brand + Top 5 Competitors + All Other</p>
-            </div>
-            <div class="chart-card__header-right">
-              <div class="view-toggle view-toggle--compact" id="traffic-chart-toggle">
-                <button class="view-toggle__btn active" data-traffic-view="share">Visits + CTR</button>
-                <button class="view-toggle__btn" data-traffic-view="volume">Visits Only</button>
-              </div>
-            </div>
-          </div>
-          <div id="chart-traffic-combined" style="height: 360px;"></div>
         </div>
       </div>
       <div class="perf-tab-pane" data-ts-pane="data">
@@ -360,7 +320,7 @@
   <script src="js/data/distribution-data.js?v=17"></script>
 
   <script src="js/distribution/store-map.js?v=24"></script>
-  <script src="js/distribution/distribution.js?v=80"></script>
+  <script src="js/distribution/distribution.js?v=89"></script>
   <script src="js/distribution/distribution-modals.js?v=13"></script>
 
   <script src="js/header-slide.js"></script>

@@ -161,7 +161,7 @@
     renderCrossoverDetail();
     renderSpotlightCards();
     renderTrafficKpis();
-    renderTrafficLeaderboardPreview();
+    /* renderTrafficLeaderboardPreview removed — Top Stores preview deleted from Overview */
     updateRetailerLabels();
   }
 
@@ -278,6 +278,12 @@
     }
     let sorted = records
       .map(cr => ({ ...cr, _origIndex: allRecords.indexOf(cr) }));
+    // Stable desc-by-visits rank — survives sort-direction flips so the
+    // "#1" chip is always the top performer, not whatever currently sits first.
+    {
+      const descRanked = sorted.slice().sort((a, b) => (b.metrics?.gross_visits || 0) - (a.metrics?.gross_visits || 0));
+      descRanked.forEach((cr, i) => { cr._descRank = i + 1; });
+    }
     sorted = applySort(sorted);
 
     const CHIP_CAP = 50;
@@ -305,7 +311,8 @@
         : (cr.creative_type === 'video'
             ? '<span class="material-symbols-outlined">play_arrow</span>'
             : `<span class="creative-chip__thumb-initials">${initials}</span>`);
-      const meta = `${(cr.creative_type || '').toUpperCase() || '—'}${cr.dimensions ? ' · ' + escapeHTML(cr.dimensions) : ''}${cr.store_group ? ' · ' + cr.store_group.length + ' stores' : ''}`;
+      const meta = `${(cr.creative_type || '').toUpperCase() || '—'}${cr.dimensions ? ' · ' + escapeHTML(cr.dimensions) : ''}`;
+      const storesLine = cr.store_group ? `<span class="creative-chip__stores">${cr.store_group.length} stores</span>` : '';
       return `<button type="button" class="creative-chip" data-orig-index="${cr._origIndex}" data-search="${escapeHTML(name.toLowerCase())}" title="${escapeHTML(name)}">
         <div class="creative-chip__header">
           <div class="creative-chip__thumb">${thumbInner}</div>
@@ -313,15 +320,16 @@
         </div>
         <span class="creative-chip__name">${escapeHTML(name)}</span>
         <span class="creative-chip__meta">${meta}</span>
+        ${storesLine}
       </button>`;
     }
 
     function tableHtml(items) {
-      const rows = items.map((cr, i) => {
+      const rows = items.map((cr) => {
         const { name, region } = parseLabel(cr);
         const m = cr.metrics || {};
         return `<tr data-orig-index="${cr._origIndex}">
-          <td class="col-num">${i + 1}</td>
+          <td class="col-num">${cr._descRank}</td>
           <td class="col-creative">${escapeHTML(name)}${region ? ' <span style="color:var(--p-text-color-secondary);">— ' + escapeHTML(region) + '</span>' : ''}</td>
           <td class="col-stores">${cr.store_group ? cr.store_group.length : 0}</td>
           <td class="col-ctr">${m.ctr != null ? fmtPct(m.ctr) : '—'}</td>
@@ -352,8 +360,8 @@
         <input type="search" class="creative-ranked__filter p-inputtext" id="creative-filter" placeholder="Filter creatives…" aria-label="Filter creatives">
         <span class="creative-ranked__total" id="creative-total">${sorted.length} creative${sorted.length === 1 ? '' : 's'}</span>
         <div class="creative-sort-direction" role="group" aria-label="Sort direction (visits)">
-          <button type="button" class="creative-sort-direction__btn active" data-cv-sort="desc" title="High → Low" aria-pressed="true"><span class="material-symbols-outlined">arrow_downward</span></button>
-          <button type="button" class="creative-sort-direction__btn" data-cv-sort="asc" title="Low → High" aria-pressed="false"><span class="material-symbols-outlined">arrow_upward</span></button>
+          <button type="button" class="creative-sort-direction__btn active" data-cv-sort="desc" title="Sort by visits, high to low" aria-pressed="true"><span class="material-symbols-outlined">south</span> High to Low</button>
+          <button type="button" class="creative-sort-direction__btn" data-cv-sort="asc" title="Sort by visits, low to high" aria-pressed="false"><span class="material-symbols-outlined">north</span> Low to High</button>
         </div>
         <div class="view-toggle" role="tablist" aria-label="Creative view mode">
           <button type="button" class="view-toggle__btn active" data-cv-mode="chips" role="tab" aria-selected="true">
@@ -364,8 +372,18 @@
           </button>
         </div>
       </div>
+      <div class="creative-chips-row">
+      <button type="button" class="creative-chip creative-chip--all creative-chip--active" id="creative-all-chip" aria-pressed="true" title="All Media Campaigns">
+        <div class="creative-chip__header">
+          <div class="creative-chip__thumb"><span class="material-symbols-outlined">grid_view</span></div>
+          <span class="creative-chip__rank creative-chip__rank--all">All</span>
+        </div>
+        <span class="creative-chip__name">All Media Campaigns</span>
+        <span class="creative-chip__meta">All campaigns combined</span>
+      </button>
       <div class="creative-chips creative-chips--scroll" id="creative-chips-strip" data-cv-pane="chips">
-        ${sorted.slice(0, CHIP_CAP).map((cr, i) => chipHtml(cr, i + 1)).join('')}
+        ${sorted.slice(0, CHIP_CAP).map(cr => chipHtml(cr, cr._descRank)).join('')}
+      </div>
       </div>
       <div class="dist-tree-data-grid" id="creative-table-view" data-cv-pane="table" style="display:none;"></div>
     `;
@@ -383,11 +401,32 @@
     const filterEl = el.querySelector('#creative-filter');
     const totalEl = el.querySelector('#creative-total');
     const chipsEl = el.querySelector('#creative-chips-strip');
+    if (window.ChipCarousel && chipsEl) ChipCarousel.init(chipsEl);
+
+    // Default inline-detail state.
+    // - 1 creative: hide "All Media Campaigns" chip, auto-select the single chip.
+    // - >1: show All chip active, render aggregate.
+    setTimeout(() => {
+      const allChip = document.getElementById('creative-all-chip');
+      ensureAllChipWired();
+      if (sorted.length === 1) {
+        if (allChip) allChip.style.display = 'none';
+        if (typeof window.viewVariantDetails === 'function') {
+          window.viewVariantDetails(sorted[0]._origIndex != null ? sorted[0]._origIndex : 0);
+        }
+      } else {
+        if (allChip) allChip.style.display = '';
+        setActiveChip(null);
+        renderAllCampaignsAggregate();
+      }
+    }, 0);
+
     if (filterEl) {
       filterEl.addEventListener('input', e => {
         const q = e.target.value.trim().toLowerCase();
         const matches = q ? sorted.filter(cr => parseLabel(cr).name.toLowerCase().includes(q)) : sorted;
-        chipsEl.innerHTML = matches.slice(0, CHIP_CAP).map((cr, i) => chipHtml(cr, sorted.indexOf(cr) + 1)).join('');
+        chipsEl.innerHTML = matches.slice(0, CHIP_CAP).map((cr, i) => chipHtml(cr, cr._descRank)).join('');
+        if (window.ChipCarousel) ChipCarousel.refresh(chipsEl);
         totalEl.textContent = `${matches.length} match${matches.length === 1 ? '' : 'es'}${matches.length > CHIP_CAP ? ' (showing ' + CHIP_CAP + ')' : ''}`;
         chipsEl.querySelectorAll('.creative-chip').forEach(chip => {
           chip.addEventListener('click', () => {
@@ -414,7 +453,8 @@
         sorted = applySort(sorted);
         const q = filterEl ? filterEl.value.trim().toLowerCase() : '';
         const matches = q ? sorted.filter(cr => parseLabel(cr).name.toLowerCase().includes(q)) : sorted;
-        chipsEl.innerHTML = matches.slice(0, CHIP_CAP).map((cr, i) => chipHtml(cr, sorted.indexOf(cr) + 1)).join('');
+        chipsEl.innerHTML = matches.slice(0, CHIP_CAP).map((cr, i) => chipHtml(cr, cr._descRank)).join('');
+        if (window.ChipCarousel) ChipCarousel.refresh(chipsEl);
         chipsEl.querySelectorAll('.creative-chip').forEach(chip => {
           chip.addEventListener('click', () => {
             const idx = parseInt(chip.dataset.origIndex, 10);
@@ -428,7 +468,8 @@
 
     // View-toggle (Chips | Table). Table lazy-renders on first activation.
     let tableBuilt = false;
-    const chipsPane = el.querySelector('[data-cv-pane="chips"]');
+    const chipsPane = el.querySelector('.creative-chips-row') || el.querySelector('[data-cv-pane="chips"]');
+    const inlineDetailEl = document.getElementById('creative-inline-detail');
     const tableEl = el.querySelector('#creative-table-view');
     function renderTable() {
       const q = filterEl ? filterEl.value.trim().toLowerCase() : '';
@@ -447,10 +488,12 @@
         if (mode === 'table') {
           if (!tableBuilt) renderTable();
           chipsPane.style.display = 'none';
+          if (inlineDetailEl) inlineDetailEl.style.display = 'none';
           tableEl.style.display = '';
         } else {
           tableEl.style.display = 'none';
           chipsPane.style.display = '';
+          if (inlineDetailEl) inlineDetailEl.style.display = '';
         }
       });
     });
@@ -1688,6 +1731,31 @@
       var comps = [].concat(D.competitorStores).sort(function(a, b) {
         return (b.wk2_share || 0) - (a.wk2_share || 0);
       });
+      // Competitor → Our Stores within trade-area radius. Trade area = grocery
+      // industry default 5 mi (Bill: shown to Adam/Max as "directly competing").
+      // Future: per-format threshold (supercenter ~7–10 mi, convenience ~1 mi)
+      // and panel-crossover overlay where available.
+      var COMPETITOR_TRADE_AREA_MI = 5;
+      var shareByStoreId = {};
+      (D.trafficShareMetrics && D.trafficShareMetrics.storeLeaderboard || []).forEach(function(lb) {
+        shareByStoreId['store-' + lb.store_id] = lb;
+      });
+      var compStoreMap = {};
+      D.competitorStores.forEach(function(cs) {
+        if (!cs.lat || !cs.lng) return;
+        var inRange = D.entities.stores
+          .filter(function(s) { return s.lat && s.lng; })
+          .map(function(s) { return { s: s, dist: haversineDistance(cs.lat, cs.lng, s.lat, s.lng) }; })
+          .filter(function(x) { return x.dist <= COMPETITOR_TRADE_AREA_MI; })
+          .sort(function(a, b) {
+            var sa = (shareByStoreId[a.s.id] || {}).wk2_share || 0;
+            var sb = (shareByStoreId[b.s.id] || {}).wk2_share || 0;
+            return sb - sa;
+          })
+          .map(function(x) { return x.s; });
+        if (inRange.length) compStoreMap[cs.id] = inRange;
+      });
+
       var compHtml = '<div class="lb-header">' +
         '<span class="lb-col lb-col--expand"></span>' +
         '<span class="lb-col lb-col--store">Competitor</span>' +
@@ -1696,8 +1764,14 @@
       '</div>';
       comps.forEach(function(cs, i) {
         var pipColor = LEADERBOARD_BRAND_COLORS[cs.brand] || '#9CA3AF';
-        compHtml += '<div class="lb-row lb-row--leaf" data-comp-id="' + cs.id + '">' +
-          '<span class="lb-col lb-col--expand"></span>' +
+        var ourStores = compStoreMap[cs.id] || [];
+        var hasChildren = ourStores.length > 0;
+        compHtml += '<div class="lb-row lb-row--parent' + (hasChildren ? '' : ' lb-row--leaf') + '" data-comp-id="' + cs.id + '">' +
+          '<span class="lb-col lb-col--expand">' +
+            (hasChildren
+              ? '<button class="lb-expand-btn" aria-expanded="false" title="Show our stores in range"><span class="material-symbols-outlined">chevron_right</span></button>'
+              : '') +
+          '</span>' +
           '<span class="lb-col lb-col--store">' +
             '<span class="lb-rank">' + (i + 1) + '</span>' +
             '<span class="lb-comp-pip" style="background:' + pipColor + ';"></span>' +
@@ -1706,6 +1780,20 @@
           '<span class="lb-col lb-col--city">' + (cs.city || '') + '</span>' +
           '<span class="lb-col lb-col--share">' + (cs.wk2_share != null ? cs.wk2_share + '%' : '—') + '</span>' +
         '</div>';
+        if (hasChildren) {
+          compHtml += '<div class="lb-children" id="lb-children-comp-' + cs.id + '">';
+          ourStores.forEach(function(s) {
+            var lb = shareByStoreId[s.id] || {};
+            var displayName = '#' + (s.storeNumber != null ? s.storeNumber : s.id.replace(/^store-/, '')) + (s.name ? ' ' + s.name : '');
+            compHtml += '<div class="lb-row lb-row--child" data-store-id="' + s.id + '" data-parent-comp-id="' + cs.id + '">' +
+              '<span class="lb-col lb-col--expand"></span>' +
+              '<span class="lb-col lb-col--store">' + displayName + '</span>' +
+              '<span class="lb-col lb-col--city">' + (s.city || '') + '</span>' +
+              '<span class="lb-col lb-col--share">' + (lb.wk2_share != null ? lb.wk2_share + '%' : '—') + '</span>' +
+            '</div>';
+          });
+          compHtml += '</div>';
+        }
       });
       elements.leaderboardTable.innerHTML = compHtml;
       return;
@@ -1891,8 +1979,8 @@
     if (link && !link.dataset.bound) {
       link.dataset.bound = '1';
       link.addEventListener('click', function() {
-        var storeTab = document.querySelector('[data-ts-tab="store"]');
-        if (storeTab) storeTab.click();
+        var compareTab = document.querySelector('[data-ts-tab="compare"]');
+        if (compareTab) compareTab.click();
       });
     }
   }
@@ -2169,7 +2257,7 @@
             '<div class="compare-panel__sub">' + store.city + '</div>' +
             '<div class="compare-panel__stat"><span class="compare-panel__stat-label">Share</span><span class="compare-panel__stat-value">' + storeShare + '</span></div>' +
             '<div class="compare-panel__stat"><span class="compare-panel__stat-label">Change</span><span class="compare-panel__stat-value">' + storeChange + '</span></div>' +
-            '<div class="compare-panel__stat"><span class="compare-panel__stat-label">Total Visits</span><span class="compare-panel__stat-value">' + storeVisits + '</span></div>' +
+            '<div class="compare-panel__stat"><span class="compare-panel__stat-label">Observed Visits</span><span class="compare-panel__stat-value">' + storeVisits + '</span></div>' +
           '</div>' +
           '<div class="compare-panel__vs">VS</div>' +
           compCol +
@@ -2246,6 +2334,101 @@
       resetBtn.addEventListener('click', function() {
         table.querySelectorAll('.lb-row--selected').forEach(function(r) { r.classList.remove('lb-row--selected'); });
         var legend = document.getElementById('ring-legend-store');
+        if (legend) legend.style.display = 'none';
+        if (typeof StoreMap !== 'undefined') StoreMap.fitBounds();
+      });
+    }
+  }
+
+  // ── Compare Map tab interactions (Phase B: toggle swaps source) ───────────
+  var _compareSource = 'ours';
+  function bindCompareTabInteractions() {
+    var table = document.getElementById('leaderboard-table-compare');
+    var toggle = document.getElementById('compare-source-toggle');
+    var labelEl = document.getElementById('compare-panel-label');
+    var subtitleEl = document.getElementById('compare-panel-subtitle');
+    if (!table || !toggle) return;
+
+    function applySource(source) {
+      _compareSource = source;
+      toggle.querySelectorAll('.view-toggle__btn').forEach(function(b) {
+        var on = b.dataset.compareSource === source;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      if (labelEl) labelEl.textContent = source === 'competitors' ? 'Competitor Performance' : 'Store Performance';
+      if (subtitleEl) subtitleEl.textContent = source === 'competitors'
+        ? 'Competitor traffic share — click a row to see crossover detail'
+        : 'Traffic share by store — click a row to focus on the map';
+      renderLeaderboardInto(table, source);
+    }
+
+    toggle.addEventListener('click', function(e) {
+      var btn = e.target.closest('.view-toggle__btn');
+      if (!btn || btn.classList.contains('active')) return;
+      applySource(btn.dataset.compareSource);
+    });
+
+    // Row interactions — store rows pan map, competitor rows open modal (Phase A
+    // parity with old panes; Phase C/D will replace modal with map-side detail).
+    table.addEventListener('click', function(e) {
+      var sortCol = e.target.closest('.lb-col--sortable');
+      if (sortCol) {
+        renderLeaderboardInto(table, _compareSource, sortCol.dataset.sort);
+        return;
+      }
+      if (_compareSource === 'ours') {
+        var expandBtn = e.target.closest('.lb-expand-btn');
+        if (expandBtn) {
+          e.stopPropagation();
+          var pr = expandBtn.closest('.lb-row--parent');
+          var sid = pr ? pr.dataset.storeId : null;
+          if (!sid) return;
+          var children = document.getElementById('lb-children-' + sid);
+          if (!children) return;
+          children.classList.toggle('open', !children.classList.contains('open'));
+          expandBtn.setAttribute('aria-expanded', String(children.classList.contains('open')));
+          return;
+        }
+        var parentRow = e.target.closest('.lb-row--parent');
+        if (!parentRow || !parentRow.dataset.storeId) return;
+        table.querySelectorAll('.lb-row--parent').forEach(function(r) { r.classList.remove('lb-row--selected'); });
+        parentRow.classList.add('lb-row--selected');
+        parentRow.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        if (typeof StoreMap !== 'undefined') StoreMap.highlightStore(parentRow.dataset.storeId);
+        var legend = document.getElementById('ring-legend-compare');
+        if (legend) legend.style.display = 'flex';
+      } else {
+        var expandBtnC = e.target.closest('.lb-expand-btn');
+        if (expandBtnC) {
+          e.stopPropagation();
+          var parentCompRow = expandBtnC.closest('.lb-row--parent');
+          var cidExpand = parentCompRow ? parentCompRow.dataset.compId : null;
+          if (!cidExpand) return;
+          var children = document.getElementById('lb-children-comp-' + cidExpand);
+          if (!children) return;
+          children.classList.toggle('open', !children.classList.contains('open'));
+          expandBtnC.setAttribute('aria-expanded', String(children.classList.contains('open')));
+          return;
+        }
+        var childRow = e.target.closest('.lb-row--child');
+        if (childRow && childRow.dataset.storeId) {
+          if (typeof StoreMap !== 'undefined' && StoreMap.highlightStore) StoreMap.highlightStore(childRow.dataset.storeId);
+          return;
+        }
+        var compRow = e.target.closest('.lb-row--parent, .lb-row--leaf');
+        if (!compRow || !compRow.dataset.compId) return;
+        table.querySelectorAll('.lb-row--selected').forEach(function(r) { r.classList.remove('lb-row--selected'); });
+        compRow.classList.add('lb-row--selected');
+        if (typeof StoreMap !== 'undefined' && StoreMap.highlightCompetitor) StoreMap.highlightCompetitor(compRow.dataset.compId);
+      }
+    });
+
+    var resetBtn = document.getElementById('traffic-map-reset-btn-compare');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function() {
+        table.querySelectorAll('.lb-row--selected').forEach(function(r) { r.classList.remove('lb-row--selected'); });
+        var legend = document.getElementById('ring-legend-compare');
         if (legend) legend.style.display = 'none';
         if (typeof StoreMap !== 'undefined') StoreMap.fitBounds();
       });
@@ -2740,19 +2923,41 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     });
   }
 
+  // Crossover Trend metric mode: 'share' (% per competitor) or 'volume' (visit counts Our Brand vs Competitors).
+  // Replaces removed Traffic Volume tab (Bill 2026-05-03 — kill cognitive overload of separate tab).
+  var _crossoverTrendMetric = 'share';
+  var _crossoverTrendWeekCount = 4;
+
   function initCrossoverTrendPresets() {
     var container = document.getElementById('crossover-trend-presets');
-    if (!container) return;
-    var presets = container.querySelectorAll('.duration-preset');
-    presets.forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        presets.forEach(function(b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-        var period = btn.dataset.period;
-        var weekCount = period === '1w' ? 1 : period === '1m' ? 4 : period === '1q' ? 13 : 52;
-        updateCrossoverTrendPeriod(weekCount);
+    if (container) {
+      var presets = container.querySelectorAll('.duration-preset');
+      presets.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          presets.forEach(function(b) { b.classList.remove('active'); });
+          btn.classList.add('active');
+          var period = btn.dataset.period;
+          _crossoverTrendWeekCount = period === '1w' ? 1 : period === '1m' ? 4 : period === '1q' ? 13 : 52;
+          updateCrossoverTrendPeriod(_crossoverTrendWeekCount);
+        });
       });
-    });
+    }
+    var metricEl = document.getElementById('crossover-trend-metric');
+    if (metricEl) {
+      var metricBtns = metricEl.querySelectorAll('.view-toggle__btn');
+      metricBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          if (btn.classList.contains('active')) return;
+          metricBtns.forEach(function(b) {
+            var on = b === btn;
+            b.classList.toggle('active', on);
+            b.setAttribute('aria-selected', on ? 'true' : 'false');
+          });
+          _crossoverTrendMetric = btn.dataset.trendMetric;
+          updateCrossoverTrendPeriod(_crossoverTrendWeekCount);
+        });
+      });
+    }
   }
 
   function updateCrossoverTrendPeriod(weekCount) {
@@ -2767,6 +2972,36 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     var sliceStart = Math.max(0, totalWeeks - weekCount);
     var slicedWeeks = flightWeeks.slice(sliceStart).map(function(w) { return w.label; });
     var colors = ChartColors.series;
+
+    if (_crossoverTrendMetric === 'volume') {
+      // Visits view — Our Brand bar + Competitors bar from trafficShareMetrics.trend.
+      var trend = (D.trafficShareMetrics && D.trafficShareMetrics.trend) || [];
+      var trendSlice = trend.slice(Math.max(0, trend.length - weekCount));
+      var entityName = (typeof getEntityLabel === 'function' ? getEntityLabel() : 'Our Brand');
+      chart.setOption({
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { type: 'shadow' },
+          backgroundColor: 'rgba(17,24,39,0.96)',
+          borderColor: 'rgba(255,255,255,0.12)',
+          textStyle: { color: '#fff', fontSize: 12 },
+          formatter: function(params) {
+            var html = '<strong>' + params[0].axisValue + '</strong><br>';
+            params.forEach(function(p) { html += p.marker + ' ' + p.seriesName + ': ' + p.value.toLocaleString() + '<br>'; });
+            return html;
+          }
+        },
+        legend: { data: [entityName, 'Competitors'], bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, itemGap: 20, textStyle: { fontSize: 12, color: '#6b7280' } },
+        grid: { left: 60, right: 20, top: 20, bottom: 50 },
+        xAxis: { type: 'category', data: trendSlice.map(function(w) { return D.getWeekLabel(w.week); }), axisLabel: { fontSize: 11 } },
+        yAxis: { type: 'value', name: 'Visits', nameTextStyle: { fontSize: 10, color: '#9ca3af' }, axisLabel: { formatter: function(v) { return (v / 1000).toFixed(0) + 'K'; } } },
+        series: [
+          { name: entityName, type: 'bar', data: trendSlice.map(function(w) { return w.retailer_visits; }), itemStyle: { color: ChartColors.green, borderRadius: [3, 3, 0, 0] } },
+          { name: 'Competitors', type: 'bar', data: trendSlice.map(function(w) { return w.comp_visits; }), itemStyle: { color: ChartColors.gray, borderRadius: [3, 3, 0, 0] } }
+        ]
+      });
+      return;
+    }
 
     chart.setOption({
       tooltip: {
@@ -3405,8 +3640,11 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     return (cr.date_range_start || '?') + ' — ' + (cr.date_range_end || '?');
   }
 
+  // Inline creative detail — replaces the old slide-in sidebar.
+  // Renders the .creative-card layout (borderless) into #creative-inline-detail-body
+  // when a chip is clicked. "All Media Campaigns" chip resets to placeholder.
   function renderCreativeDetailSidebar(cr) {
-    const body = document.getElementById('ep-detail-sidebar-body');
+    const body = document.getElementById('creative-inline-detail-body');
     if (!body) return;
     const thumbUrl = getCreativeThumbUrl(cr);
     const typeIcon = cr.creative_type === 'video' ? 'movie' : (cr.creative_type === 'gif' ? 'gif_box' : 'image');
@@ -3414,117 +3652,156 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     const labelParts = (cr.label || cr.notes || '').split(' — ');
     const name = labelParts[0] || cr.label || '(unnamed)';
     const region = labelParts[1] || '';
+    const rank = (cr._origIndex != null ? cr._origIndex : 0) + 1;
 
-    const thumbHtml = thumbUrl
+    const thumbInner = thumbUrl
       ? `<img src="${escapeHtml(thumbUrl)}" alt="${escapeHtml(name)} preview" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'material-symbols-outlined',textContent:'${typeIcon}'}))">`
       : `<span class="material-symbols-outlined">${typeIcon}</span>`;
 
     body.innerHTML = `
-      <div class="ep-detail-sidebar__thumb">${thumbHtml}</div>
-      <div>
-        <h3 class="ep-detail-sidebar__title">${escapeHtml(name)}</h3>
-        ${region ? `<p class="ep-detail-sidebar__subtitle">${escapeHtml(region)}</p>` : ''}
-      </div>
-      <div class="ep-detail-sidebar__meta">
-        <div>
-          <div class="ep-detail-sidebar__meta-label">Type</div>
-          <div class="ep-detail-sidebar__meta-value">${escapeHtml((cr.creative_type || '').toUpperCase() || '—')}</div>
+      <div class="creative-card creative-card--borderless">
+        <div class="creative-card__top">
+          <div class="creative-card__top-left">
+            <span class="creative-card__rank">${rank}</span>
+            <div class="creative-card__info">
+              <div class="creative-card__thumb creative-card__thumb--xl">${thumbInner}</div>
+              <div class="creative-card__info_text">
+                <div class="creative-card__name">${escapeHtml(name)}</div>
+                ${region ? `<div class="creative-card__region">${escapeHtml(region)}</div>` : ''}
+                <div class="creative-card__date">${escapeHtml(formatRange(cr))}</div>
+                <div class="creative-card__actions">
+                  ${cr.target_url ? `<a class="creative-card__link" href="${escapeHtml(cr.target_url)}" target="_blank" rel="noopener"><span class="material-symbols-outlined" style="font-size:14px;">link</span> Promotion Link</a>` : ''}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="creative-card__metrics">
+            <div class="creative-metric-tile">
+              <div class="creative-metric-tile__label">Stores</div>
+              <div class="creative-metric-tile__value">${cr.store_group ? cr.store_group.length : 0}</div>
+            </div>
+            <div class="creative-metric-tile">
+              <div class="creative-metric-tile__label">CTR</div>
+              <div class="creative-metric-tile__value">${m.ctr != null ? fmtPct(m.ctr) : '—'}</div>
+            </div>
+            <div class="creative-metric-tile">
+              <div class="creative-metric-tile__label">Visits</div>
+              <div class="creative-metric-tile__value">${m.gross_visits != null ? fmtNumber(m.gross_visits) : '—'}</div>
+            </div>
+            <div class="creative-metric-tile">
+              <div class="creative-metric-tile__label">CPM</div>
+              <div class="creative-metric-tile__value">${m.cpm != null ? fmtCurrency(m.cpm) : '—'}</div>
+            </div>
+            <div class="creative-metric-tile">
+              <div class="creative-metric-tile__label">CPC</div>
+              <div class="creative-metric-tile__value">${m.cpc != null ? fmtCurrency(m.cpc) : '—'}</div>
+            </div>
+            <div class="creative-metric-tile">
+              <div class="creative-metric-tile__label">Spend</div>
+              <div class="creative-metric-tile__value">${m.spend != null ? fmtCurrency(m.spend) : '—'}</div>
+            </div>
+          </div>
         </div>
-        <div>
-          <div class="ep-detail-sidebar__meta-label">Dimensions</div>
-          <div class="ep-detail-sidebar__meta-value">${escapeHtml(cr.dimensions || '—')}</div>
-        </div>
-        <div>
-          <div class="ep-detail-sidebar__meta-label">Date range</div>
-          <div class="ep-detail-sidebar__meta-value">${escapeHtml(formatRange(cr))}</div>
-        </div>
-        <div>
-          <div class="ep-detail-sidebar__meta-label">Stores</div>
-          <div class="ep-detail-sidebar__meta-value">${cr.store_group ? cr.store_group.length : 0}</div>
-        </div>
-        <div>
-          <div class="ep-detail-sidebar__meta-label">Status</div>
-          <div class="ep-detail-sidebar__meta-value">${escapeHtml(cr.status || '—')}</div>
-        </div>
-        <div>
-          <div class="ep-detail-sidebar__meta-label">KPI target</div>
-          <div class="ep-detail-sidebar__meta-value">${escapeHtml(cr.kpi_metric ? cr.kpi_metric.toUpperCase() + ' ' + (cr.kpi_value != null ? cr.kpi_value : '') : '—')}</div>
-        </div>
-      </div>
-      <div class="ep-detail-sidebar__scope-banner">This creative · single-campaign metrics</div>
-      <div class="ep-detail-sidebar__metrics">
-        <div class="ep-detail-sidebar__metric-tile">
-          <div class="ep-detail-sidebar__metric-label">CTR</div>
-          <div class="ep-detail-sidebar__metric-value">${m.ctr != null ? fmtPct(m.ctr) : '—'}</div>
-        </div>
-        <div class="ep-detail-sidebar__metric-tile">
-          <div class="ep-detail-sidebar__metric-label">Visits</div>
-          <div class="ep-detail-sidebar__metric-value">${m.gross_visits != null ? fmtNumber(m.gross_visits) : '—'}</div>
-        </div>
-        <div class="ep-detail-sidebar__metric-tile">
-          <div class="ep-detail-sidebar__metric-label">CPM</div>
-          <div class="ep-detail-sidebar__metric-value">${m.cpm != null ? fmtCurrency(m.cpm) : '—'}</div>
-        </div>
-        <div class="ep-detail-sidebar__metric-tile">
-          <div class="ep-detail-sidebar__metric-label">CPC</div>
-          <div class="ep-detail-sidebar__metric-value">${m.cpc != null ? fmtCurrency(m.cpc) : '—'}</div>
-        </div>
-        <div class="ep-detail-sidebar__metric-tile">
-          <div class="ep-detail-sidebar__metric-label">Spend</div>
-          <div class="ep-detail-sidebar__metric-value">${m.spend != null ? fmtCurrency(m.spend) : '—'}</div>
-        </div>
-        <div class="ep-detail-sidebar__metric-tile">
-          <div class="ep-detail-sidebar__metric-label">Impressions</div>
-          <div class="ep-detail-sidebar__metric-value">${m.impressions != null ? fmtNumber(m.impressions) : '—'}</div>
-        </div>
-      </div>
-      <div class="ep-detail-sidebar__actions">
-        ${cr.target_url ? `<a class="ep-detail-sidebar__action" href="${escapeHtml(cr.target_url)}" target="_blank" rel="noopener"><span class="material-symbols-outlined">open_in_new</span> Landing page</a>` : ''}
       </div>
     `;
   }
 
-  function openCreativeDetailSidebar(cr) {
-    renderCreativeDetailSidebar(cr);
-    const sb = document.getElementById('ep-detail-sidebar');
-    const overlay = document.getElementById('ep-detail-sidebar-overlay');
-    if (sb) {
-      sb.classList.add('ep-detail-sidebar--open');
-      sb.setAttribute('aria-hidden', 'false');
-    }
-    if (overlay) {
-      overlay.hidden = false;
-      // Force a frame so transition fires.
-      requestAnimationFrame(() => overlay.classList.add('ep-detail-sidebar__overlay--open'));
-    }
-  }
-
-  function closeCreativeDetailSidebar() {
-    const sb = document.getElementById('ep-detail-sidebar');
-    const overlay = document.getElementById('ep-detail-sidebar-overlay');
-    if (sb) {
-      sb.classList.remove('ep-detail-sidebar--open');
-      sb.setAttribute('aria-hidden', 'true');
-    }
-    if (overlay) {
-      overlay.classList.remove('ep-detail-sidebar__overlay--open');
-      // Hide after fade-out so click-through is restored.
-      setTimeout(() => { if (!overlay.classList.contains('ep-detail-sidebar__overlay--open')) overlay.hidden = true; }, 200);
-    }
-  }
-
-  // Wire close affordances once on first call.
-  let _sidebarWired = false;
-  function ensureSidebarWired() {
-    if (_sidebarWired) return;
-    _sidebarWired = true;
-    const close = document.getElementById('ep-detail-sidebar-close');
-    if (close) close.addEventListener('click', closeCreativeDetailSidebar);
-    const overlay = document.getElementById('ep-detail-sidebar-overlay');
-    if (overlay) overlay.addEventListener('click', closeCreativeDetailSidebar);
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeCreativeDetailSidebar();
+  function renderAllCampaignsAggregate() {
+    const body = document.getElementById('creative-inline-detail-body');
+    if (!body) return;
+    const records = (D.creativeRecords || []).filter(Boolean);
+    const n = records.length;
+    let totalImp = 0, totalClicks = 0, totalVisits = 0, totalSpend = 0;
+    const storeSet = new Set();
+    let earliest = null, latest = null;
+    records.forEach(cr => {
+      const m = cr.metrics || {};
+      totalImp += +m.impressions || 0;
+      totalClicks += (+m.impressions || 0) * (+m.ctr || 0);
+      totalVisits += +m.gross_visits || 0;
+      totalSpend += +m.spend || 0;
+      (cr.store_group || []).forEach(s => storeSet.add(typeof s === 'object' ? (s.id || s.store_id || JSON.stringify(s)) : s));
+      if (cr.date_range_start && (!earliest || cr.date_range_start < earliest)) earliest = cr.date_range_start;
+      if (cr.date_range_end && (!latest || cr.date_range_end > latest)) latest = cr.date_range_end;
     });
+    const ctr = totalImp ? totalClicks / totalImp : null;
+    const cpm = totalImp ? (totalSpend / totalImp) * 1000 : null;
+    const cpc = totalClicks ? totalSpend / totalClicks : null;
+    const dateRange = (earliest || latest) ? `${earliest || '?'} — ${latest || '?'}` : '—';
+
+    body.innerHTML = `
+      <div class="creative-card creative-card--borderless">
+        <div class="creative-card__top">
+          <div class="creative-card__top-left">
+            <div class="creative-card__info">
+              <div class="creative-card__info_text">
+                <div class="creative-card__name">All Media Campaigns</div>
+                <div class="creative-card__region">${n} campaign${n === 1 ? '' : 's'}</div>
+                <div class="creative-card__date">${escapeHtml(dateRange)}</div>
+              </div>
+            </div>
+          </div>
+          <div class="creative-card__metrics">
+            <div class="creative-metric-tile">
+              <div class="creative-metric-tile__label">Stores</div>
+              <div class="creative-metric-tile__value">${storeSet.size}</div>
+            </div>
+            <div class="creative-metric-tile">
+              <div class="creative-metric-tile__label">CTR</div>
+              <div class="creative-metric-tile__value">${ctr != null ? fmtPct(ctr) : '—'}</div>
+            </div>
+            <div class="creative-metric-tile">
+              <div class="creative-metric-tile__label">Visits</div>
+              <div class="creative-metric-tile__value">${fmtNumber(totalVisits)}</div>
+            </div>
+            <div class="creative-metric-tile">
+              <div class="creative-metric-tile__label">CPM</div>
+              <div class="creative-metric-tile__value">${cpm != null ? fmtCurrency(cpm) : '—'}</div>
+            </div>
+            <div class="creative-metric-tile">
+              <div class="creative-metric-tile__label">CPC</div>
+              <div class="creative-metric-tile__value">${cpc != null ? fmtCurrency(cpc) : '—'}</div>
+            </div>
+            <div class="creative-metric-tile">
+              <div class="creative-metric-tile__label">Spend</div>
+              <div class="creative-metric-tile__value">${fmtCurrency(totalSpend)}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function resetCreativeInlineDetail() {
+    renderAllCampaignsAggregate();
+  }
+
+  function setActiveChip(activeIdx) {
+    const allChip = document.getElementById('creative-all-chip');
+    const isAll = activeIdx == null;
+    if (allChip) {
+      allChip.classList.toggle('creative-chip--active', isAll);
+      allChip.setAttribute('aria-pressed', isAll ? 'true' : 'false');
+    }
+    document.querySelectorAll('#creative-chips-strip .creative-chip').forEach(chip => {
+      const on = !isAll && parseInt(chip.dataset.origIndex, 10) === activeIdx;
+      chip.classList.toggle('creative-chip--active', on);
+      chip.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+
+  // Wire All-chip click once.
+  let _allChipWired = false;
+  function ensureAllChipWired() {
+    if (_allChipWired) return;
+    _allChipWired = true;
+    const allChip = document.getElementById('creative-all-chip');
+    if (allChip) {
+      allChip.addEventListener('click', () => {
+        setActiveChip(null);
+        resetCreativeInlineDetail();
+      });
+    }
   }
 
   window.viewVariantDetails = function(variantIndex) {
@@ -3532,8 +3809,9 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     if (variantIndex >= records.length) return;
     const cr = records[variantIndex];
     if (!cr) return;
-    ensureSidebarWired();
-    openCreativeDetailSidebar(cr);
+    ensureAllChipWired();
+    setActiveChip(variantIndex);
+    renderCreativeDetailSidebar(cr);
   };
 
   window.toggleLevel2Section = function(sectionId) {
@@ -3603,7 +3881,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         initVisitDonut();
         if (_trendViewInitialized) { initFrequencyChart(); initCrossoverTrendChart(); }
       } else if (section === 'traffic') {
-        renderTrafficKpis(); renderTrafficLeaderboardPreview();
+        renderTrafficKpis(); /* renderTrafficLeaderboardPreview removed — Top Stores preview deleted from Overview */
         initTrafficCombinedChart(); initCrossoverChart(); renderCrossoverDetail();
         initTrafficShareTabs();
       }
@@ -3644,7 +3922,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         initDemographics();
       } else if (section === 'traffic') {
         renderTrafficKpis();
-        renderTrafficLeaderboardPreview();
+        /* renderTrafficLeaderboardPreview removed — Top Stores preview deleted from Overview */
         initTrafficCombinedChart();
         initCrossoverChart();
         renderCrossoverDetail();
@@ -3977,7 +4255,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         barMaxWidth: 18,
         label: { show: true, position: 'right', fontSize: 10, color: '#111827', fontWeight: 600, formatter: function(p) { return p.value.toLocaleString(); } }
       }],
-      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: function(p) { return p[0].name + '<br/><b>' + p[0].value.toLocaleString() + '</b> total visits'; } }
+      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: function(p) { return p[0].name + '<br/><b>' + p[0].value.toLocaleString() + '</b> observed visits'; } }
     }, true);
   }
 
@@ -4158,7 +4436,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         '<div class="creative-dh__stats">' +
           '<div class="creative-dh__stat"><span class="creative-dh__stat-val">' + CREATIVE_DEFS.length + '</span><span class="creative-dh__stat-lbl">Creatives in flight</span></div>' +
           '<div class="creative-dh__stat"><span class="creative-dh__stat-val">' + storeCount + ' stores</span><span class="creative-dh__stat-lbl">Reached</span></div>' +
-          '<div class="creative-dh__stat creative-dh__stat--hero"><span class="creative-dh__stat-val">' + total.toLocaleString() + '</span><span class="creative-dh__stat-lbl">Total Visits</span></div>' +
+          '<div class="creative-dh__stat creative-dh__stat--hero"><span class="creative-dh__stat-val">' + total.toLocaleString() + '</span><span class="creative-dh__stat-lbl">Observed Visits</span></div>' +
         '</div>' +
       '</div>';
   }
@@ -4234,7 +4512,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
           '<div class="creative-dh__stat"><span class="creative-dh__stat-val">' + def.dateStart + '\u00a0–\u00a0' + def.dateEnd + '</span><span class="creative-dh__stat-lbl">Flight window</span></div>' +
           '<div class="creative-dh__stat"><span class="creative-dh__stat-val">' + def.numDays + ' days</span><span class="creative-dh__stat-lbl">Duration</span></div>' +
           '<div class="creative-dh__stat"><span class="creative-dh__stat-val">' + def.stores.length + ' stores</span><span class="creative-dh__stat-lbl">Reached</span></div>' +
-          '<div class="creative-dh__stat creative-dh__stat--hero"><span class="creative-dh__stat-val">' + totalVisits.toLocaleString() + '</span><span class="creative-dh__stat-lbl">Total Visits</span></div>' +
+          '<div class="creative-dh__stat creative-dh__stat--hero"><span class="creative-dh__stat-val">' + totalVisits.toLocaleString() + '</span><span class="creative-dh__stat-lbl">Observed Visits</span></div>' +
         '</div>' +
       '</div>';
   }
@@ -5438,7 +5716,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     if (!tabBar) return;
     var tabs = tabBar.querySelectorAll('.perf-tab');
     var panes = document.querySelectorAll('[data-ts-pane]');
-    var storeBuilt = false, compBuilt = false, dataBuilt = false;
+    var storeBuilt = false, compBuilt = false, dataBuilt = false, compareBuilt = false;
     tabs.forEach(function(t) {
       t.addEventListener('click', function() {
         var target = t.dataset.tsTab;
@@ -5467,6 +5745,14 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
             renderLeaderboardInto(document.getElementById('leaderboard-table-store'), 'ours');
             bindStoreTabInteractions();
             storeBuilt = true;
+          }
+        } else if (target === 'compare') {
+          renderMap('store-map-compare-pane');
+          if (typeof StoreMap !== 'undefined' && StoreMap.toggleCompetitors) StoreMap.toggleCompetitors(true);
+          if (!compareBuilt) {
+            renderLeaderboardInto(document.getElementById('leaderboard-table-compare'), _compareSource);
+            bindCompareTabInteractions();
+            compareBuilt = true;
           }
         } else if (target === 'competitor') {
           if (!compBuilt) {
@@ -5548,7 +5834,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
           textStyle: { fontSize: 11, color: '#6b7280' }
         },
         grid: { left: 50, right: 60, top: 30, bottom: 40, containLabel: true },
-        tooltip: { trigger: 'axis' },
+        tooltip: chartTooltipDark(),
         xAxis: {
           type: 'category', data: weeks,
           axisLabel: { fontSize: 11, color: '#6b7280' },
@@ -5861,6 +6147,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         chipParts.push('<span class="dist-chip-selector__chip" style="border-style:dashed;cursor:default;color:var(--p-text-color-secondary);" title="' + (sorted.length - CHIP_CAP) + ' more not shown — use Data tab for full list">+' + (sorted.length - CHIP_CAP) + ' more</span>');
       }
       chipsEl.innerHTML = chipParts.join('');
+      if (window.ChipCarousel) ChipCarousel.refresh(chipsEl);
 
       // 2. Hero band — active aggregate
       var activeRecords = _mbActiveCreative === 'all' ? sorted : sorted.filter(function(cr) { return cr.creative_id === _mbActiveCreative; });
@@ -5993,7 +6280,8 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     var statsHost = document.getElementById('media-visits-stats');
     var byStoreEl = document.getElementById('media-visits-by-store');
     var byWeekEl  = document.getElementById('media-visits-by-week');
-    if (!statsHost && !byStoreEl && !byWeekEl) return; // not on this page
+    var trendEl   = document.getElementById('media-visits-trend-chart');
+    if (!statsHost && !byStoreEl && !byWeekEl && !trendEl) return; // not on this page
 
     // Mock totals — replaces with Pulse-joined panel data when ingest lands.
     var mockTotal = 18420;
@@ -6003,7 +6291,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
 
     if (statsHost) {
       statsHost.innerHTML = ''
-        + '<div class="media-visits-stat"><span class="media-visits-stat__value">' + mockTotal.toLocaleString() + '</span><span class="media-visits-stat__label">Attributed visits (wk 2)</span></div>'
+        + '<div class="media-visits-stat"><span class="media-visits-stat__value">' + mockTotal.toLocaleString() + '</span><span class="media-visits-stat__label">Observed visits attributed to media (wk 2)</span></div>'
         + '<div class="media-visits-stat"><span class="media-visits-stat__value">$' + mockSpend.toLocaleString() + '</span><span class="media-visits-stat__label">Spend joined</span></div>'
         + '<div class="media-visits-stat"><span class="media-visits-stat__value">' + visitsPerDollar + '</span><span class="media-visits-stat__label">Visits per $1 spent</span></div>'
         + '<div class="media-visits-stat"><span class="media-visits-stat__value media-visits-stat__value--text">' + topCampaign + '</span><span class="media-visits-stat__label">Top driving campaign</span></div>';
@@ -6011,9 +6299,10 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
 
     // Phase 3 step 2 — charts init lazily on first tab activation to avoid
     // zero-width render bug when a chart's pane starts hidden (display:none).
-    var byStoreInit = false, byWeekInit = false;
+    var byStoreInit = false, byWeekInit = false, trendInit = false;
     function initByStore() { if (byStoreInit || !byStoreEl) return; byStoreInit = true; renderByStoreChart(byStoreEl); }
     function initByWeek()  { if (byWeekInit  || !byWeekEl)  return; byWeekInit  = true; renderByWeekChart(byWeekEl); }
+    function initTrend()   { if (trendInit   || !trendEl)   return; trendInit   = true; renderTrendOverTimeChart(trendEl); }
 
     var tabBar = document.getElementById('media-visits-tabs');
     if (tabBar) {
@@ -6030,6 +6319,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
           panes.forEach(function(p) { p.classList.toggle('active', p.dataset.mvPane === target); });
           if (target === 'store') initByStore();
           if (target === 'week')  initByWeek();
+          if (target === 'trendovertime') initTrend();
         });
       });
     } else {
@@ -6037,49 +6327,91 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       // fall back to eager init.
       initByStore();
       initByWeek();
+      initTrend();
     }
 
     // Visits by store — joined to spend
     function renderByStoreChart(byStoreEl) {
-      var stores = [
-        { name: '#705 Haines City',   visits: 3520, spend: 2120 },
-        { name: '#2487 Sarasota',     visits: 3010, spend: 1980 },
-        { name: '#2288 Orlando',      visits: 2840, spend: 1860 },
-        { name: '#726 St James City', visits: 2570, spend: 1740 },
-        { name: '#481 Jacksonville',  visits: 2200, spend: 1540 },
-        { name: '#436 Tampa',         visits: 1320, spend: 1190 },
-        { name: '#123 Jacksonville',  visits: 860,  spend: 920  },
-        { name: '#711 Orlando',       visits: 580,  spend: 700  }
+      // 83-store mock — matches cohort count surfaced in main context.
+      // Real Pulse-joined panel data will replace this when ingest lands.
+      var seedNames = [
+        ['705','Haines City'],['2487','Sarasota'],['2288','Orlando'],['726','St James City'],
+        ['481','Jacksonville'],['436','Tampa'],['123','Jacksonville'],['711','Orlando'],
+        ['1042','Miami'],['1187','Fort Lauderdale'],['223','Naples'],['634','Cape Coral'],
+        ['819','Gainesville'],['912','Tallahassee'],['305','Pensacola'],['418','Lakeland'],
+        ['557','Ocala'],['673','Daytona Beach'],['748','Melbourne'],['861','Palm Bay'],
+        ['934','Vero Beach'],['1024','Port St Lucie'],['1156','Stuart'],['1289','Jupiter'],
+        ['1342','Boca Raton'],['1455','Delray Beach'],['1567','Boynton Beach'],['1678','Palm Beach'],
+        ['1789','West Palm Beach'],['1890','Wellington'],['1933','Coral Springs'],['2011','Pompano'],
+        ['2098','Hollywood'],['2145','Aventura'],['2231','Hialeah'],['2356','Doral'],
+        ['2467','Kendall'],['2589','Homestead'],['2611','Key Largo'],['2734','Marathon'],
+        ['2856','Key West'],['2942','Big Pine'],['3057','Islamorada'],['3168','Pinecrest'],
+        ['3284','Cutler Bay'],['3391','Palmetto Bay'],['3458','South Miami'],['3572','Coral Gables'],
+        ['3689','Pinecrest E'],['3712','Brickell'],['3845','Wynwood'],['3967','Little Havana'],
+        ['4023','North Miami'],['4156','Miami Beach'],['4278','Surfside'],['4389','Bal Harbour'],
+        ['4471','Sunny Isles'],['4592','Aventura N'],['4658','Hallandale'],['4773','Davie'],
+        ['4886','Plantation'],['4934','Sunrise'],['5042','Weston'],['5167','Coconut Creek'],
+        ['5273','Margate'],['5398','Coconut Grove'],['5421','Pembroke Pines'],['5536','Miramar'],
+        ['5648','Cooper City'],['5759','SW Ranches'],['5872','Parkland'],['5983','Tamarac'],
+        ['6094','Lauderhill'],['6201','N Lauderdale'],['6318','Oakland Park'],['6429','Wilton Manors'],
+        ['6537','Lighthouse Pt'],['6648','Deerfield Beach'],['6759','Highland Beach'],['6871','Manalapan'],
+        ['6982','Lantana'],['7094','Greenacres'],['7211','Lake Worth']
       ];
-      var ch = echarts.init(byStoreEl);
-      ch.setOption({
-        grid: { left: 130, right: 80, top: 10, bottom: 30, containLabel: false },
-        xAxis: { type: 'value', show: false },
-        yAxis: {
-          type: 'category', data: stores.map(function(s) { return s.name; }).reverse(),
-          axisLabel: { fontSize: 11, color: '#374151' }, axisLine: { show: false }, axisTick: { show: false }
-        },
-        series: [{
-          type: 'bar', barMaxWidth: 18,
-          data: stores.slice().reverse().map(function(s) {
-            return { value: s.visits, itemStyle: { color: '#4272D8', borderRadius: [0, 3, 3, 0] }, _spend: s.spend };
-          }),
-          label: {
-            show: true, position: 'right', fontSize: 11, color: '#374151',
-            formatter: function(p) { return p.value.toLocaleString() + ' · $' + p.data._spend.toLocaleString(); }
-          }
-        }],
-        tooltip: {
-          trigger: 'axis', axisPointer: { type: 'shadow' },
-          formatter: function(params) {
-            var p = params[0];
-            return p.name + '<br/><b>' + p.value.toLocaleString() + '</b> visits<br/>$' + p.data._spend.toLocaleString() + ' spend';
-          }
-        }
+      var stores = seedNames.map(function(n, i) {
+        var v = Math.round(3600 * Math.pow(0.96, i) + ((i * 31) % 17 - 8) * 5);
+        var spendBase = v * (0.45 + ((i * 17) % 11) / 100);
+        return { name: '#' + n[0] + ' ' + n[1], visits: Math.max(40, v), spend: Math.max(30, Math.round(spendBase)) };
+      });
+      // Sort desc + assign explicit rank, share, CPV.
+      stores = stores.slice().sort(function(a, b) { return b.visits - a.visits; });
+      stores.forEach(function(s, i) { s.rank = i + 1; });
+      var totalVisits = stores.reduce(function(t, s) { return t + s.visits; }, 0);
+      var maxVisits = stores.reduce(function(m, s) { return Math.max(m, s.visits); }, 0);
+      stores.forEach(function(s) {
+        s.share = totalVisits ? s.visits / totalVisits : 0;
+        s.cpv = s.visits ? s.spend / s.visits : 0;
+      });
+      // CSS-bar list — pixel-perfect rank-badge alignment (matches
+      // .creative-card__rank spec) and a CSS-driven dark hover popover.
+      byStoreEl.style.height = '';
+      byStoreEl.classList.add('mv-store-list');
+      byStoreEl.innerHTML = stores.map(function(s) {
+        var widthPct = maxVisits ? (s.visits / maxVisits * 100).toFixed(2) : 0;
+        var tipText = s.name + '\n' + s.visits.toLocaleString() + ' observed visits · $' + s.spend.toLocaleString() + ' spend';
+        return '<div class="mv-store-row" data-tip="' + tipText.replace(/"/g, '&quot;') + '">'
+          +   '<span class="mv-store-row__rank">' + s.rank + '</span>'
+          +   '<span class="mv-store-row__name">' + s.name + '</span>'
+          +   '<div class="mv-store-row__bar"><div class="mv-store-row__bar-fill" style="width:' + widthPct + '%"></div></div>'
+          +   '<span class="mv-store-row__end">$' + s.cpv.toFixed(2) + '/visit · ' + (s.share * 100).toFixed(1) + '%</span>'
+          + '</div>';
+      }).join('');
+      bindStoreRowTooltip(byStoreEl);
+    }
+    function bindStoreRowTooltip(host) {
+      var tip = document.getElementById('mv-store-tip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'mv-store-tip';
+        tip.className = 'mv-store-tip';
+        document.body.appendChild(tip);
+      }
+      host.querySelectorAll('.mv-store-row').forEach(function(row) {
+        row.addEventListener('mouseenter', function() {
+          var lines = (row.dataset.tip || '').split('\n');
+          tip.innerHTML = lines.map(function(l, idx) {
+            return idx === 0 ? '<div class="mv-store-tip__title">' + l + '</div>' : '<div>' + l + '</div>';
+          }).join('');
+          tip.style.display = 'block';
+        });
+        row.addEventListener('mousemove', function(e) {
+          tip.style.left = (e.clientX + 12) + 'px';
+          tip.style.top  = (e.clientY + 12) + 'px';
+        });
+        row.addEventListener('mouseleave', function() { tip.style.display = 'none'; });
       });
     }
 
-    // Visits by week — current campaign window
+    // Visits by week — static current-campaign-window chart.
     function renderByWeekChart(byWeekEl) {
       var weeks = ['Wk 51', 'Wk 52', 'Wk 1', 'Wk 2'];
       var visits = [14200, 16800, 17350, 18420];
@@ -6087,10 +6419,10 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       var ch2 = echarts.init(byWeekEl);
       ch2.setOption({
         grid: { left: 50, right: 60, top: 30, bottom: 40, containLabel: true },
-        legend: { data: ['Visits', 'Spend ($)'], bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { fontSize: 11, color: '#6b7280' } },
+        legend: { data: ['Observed visits', 'Spend ($)'], bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { fontSize: 11, color: '#6b7280' } },
         xAxis: { type: 'category', data: weeks, axisLabel: { fontSize: 11, color: '#6b7280' }, axisLine: { lineStyle: { color: '#e5e7eb' } } },
         yAxis: [
-          { type: 'value', position: 'left', name: 'Visits', nameTextStyle: { fontSize: 10, color: '#9ca3af' },
+          { type: 'value', position: 'left', name: 'Observed visits', nameTextStyle: { fontSize: 10, color: '#9ca3af' },
             axisLabel: { fontSize: 10, color: '#6b7280', formatter: function(v) { return (v/1000).toFixed(0) + 'k'; } },
             splitLine: { lineStyle: { color: '#f3f4f6' } } },
           { type: 'value', position: 'right', name: 'Spend ($)', nameTextStyle: { fontSize: 10, color: '#9ca3af' },
@@ -6098,10 +6430,63 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
             splitLine: { show: false } }
         ],
         series: [
-          { name: 'Visits', type: 'bar', barMaxWidth: 36, itemStyle: { color: '#4272D8', borderRadius: [3, 3, 0, 0] }, data: visits },
+          { name: 'Observed visits', type: 'bar', barMaxWidth: 36, itemStyle: { color: '#4272D8', borderRadius: [3, 3, 0, 0] }, data: visits },
           { name: 'Spend ($)', type: 'line', smooth: true, yAxisIndex: 1, lineStyle: { width: 2, color: '#E07850' }, itemStyle: { color: '#E07850' }, symbolSize: 6, data: spend }
         ],
-        tooltip: { trigger: 'axis' }
+        tooltip: chartTooltipDark()
+      });
+    }
+
+    // Trend Over Time — duration-preset driven (1W/4W/13W/1Y).
+    // Mirrors Visitation page's Trend Over Time architecture.
+    function renderTrendOverTimeChart(trendEl) {
+      var fullSeries = (function() {
+        var out = [];
+        var baseVisits = 12000, baseSpend = 10500;
+        for (var i = 0; i < 52; i++) {
+          var growth = 1 + i * 0.012;
+          var noise = 1 + (Math.sin(i * 0.7) * 0.08);
+          out.push({
+            label: 'Wk ' + (((i + 1 - 1) % 52) + 1),
+            visits: Math.round(baseVisits * growth * noise),
+            spend:  Math.round(baseSpend  * growth * (1 + Math.cos(i * 0.5) * 0.05))
+          });
+        }
+        return out;
+      })();
+      function sliceFor(r) {
+        var n = r === '1w' ? 1 : r === '1m' ? 4 : r === '1q' ? 13 : 52;
+        return fullSeries.slice(Math.max(0, fullSeries.length - n));
+      }
+      var ch3 = echarts.init(trendEl);
+      function paint(r) {
+        var s = sliceFor(r);
+        ch3.setOption({
+          grid: { left: 50, right: 60, top: 30, bottom: 40, containLabel: true },
+          legend: { data: ['Observed visits', 'Spend ($)'], bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { fontSize: 11, color: '#6b7280' } },
+          xAxis: { type: 'category', data: s.map(function(w) { return w.label; }), axisLabel: { fontSize: 11, color: '#6b7280' }, axisLine: { lineStyle: { color: '#e5e7eb' } } },
+          yAxis: [
+            { type: 'value', position: 'left', name: 'Observed visits', nameTextStyle: { fontSize: 10, color: '#9ca3af' },
+              axisLabel: { fontSize: 10, color: '#6b7280', formatter: function(v) { return (v/1000).toFixed(0) + 'k'; } },
+              splitLine: { lineStyle: { color: '#f3f4f6' } } },
+            { type: 'value', position: 'right', name: 'Spend ($)', nameTextStyle: { fontSize: 10, color: '#9ca3af' },
+              axisLabel: { fontSize: 10, color: '#6b7280', formatter: function(v) { return '$' + (v/1000).toFixed(0) + 'k'; } },
+              splitLine: { show: false } }
+          ],
+          series: [
+            { name: 'Observed visits', type: 'bar', barMaxWidth: 36, itemStyle: { color: '#4272D8', borderRadius: [3, 3, 0, 0] }, data: s.map(function(w) { return w.visits; }) },
+            { name: 'Spend ($)', type: 'line', smooth: true, yAxisIndex: 1, lineStyle: { width: 2, color: '#E07850' }, itemStyle: { color: '#E07850' }, symbolSize: 6, data: s.map(function(w) { return w.spend; }) }
+          ],
+          tooltip: chartTooltipDark()
+        }, true);
+      }
+      paint('1q');
+      var chips = document.querySelectorAll('#media-visits-trend-ranges .duration-preset');
+      chips.forEach(function(c) {
+        c.addEventListener('click', function() {
+          chips.forEach(function(x) { x.classList.toggle('duration-preset--active', x === c); });
+          paint(c.dataset.mvRange);
+        });
       });
     }
   }

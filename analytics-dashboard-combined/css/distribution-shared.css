@@ -175,8 +175,15 @@
 }
 
 .duration-preset.active,
-.ep-trend-range.active {
+.duration-preset--active,
+.ep-trend-range.active,
+.ep-trend-range--active {
   background: var(--color-gray-900, #1f2937);
+  color: #fff;
+}
+.duration-preset--active .duration-preset__sub,
+.duration-preset.active .duration-preset__sub {
+  opacity: 0.85;
   color: #fff;
 }
 
@@ -500,6 +507,15 @@
   flex: 0 0 160px;
   scroll-snap-align: start;
 }
+/* When wrapped by ChipCarousel: viewport handles overflow, strip translates. */
+.chip-carousel .creative-chips,
+.chip-carousel .creative-chips--scroll {
+  overflow: visible;
+  padding-bottom: 0;
+  scroll-snap-type: none;
+}
+.chip-carousel { width: 100%; }
+.chip-carousel .p-carousel-viewport { width: 100%; }
 /* Sort direction toggle — small icon-only button pair. */
 .creative-sort-direction {
   display: inline-flex;
@@ -507,12 +523,18 @@
   margin-left: auto;
 }
 .creative-sort-direction__btn {
-  width: 28px; height: 28px;
+  height: 32px;
+  padding: 0 12px;
   display: inline-flex; align-items: center; justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
   background: #fff;
   border: 1px solid var(--color-border, #e5e7eb);
   border-radius: 6px;
   color: var(--color-text-secondary, #6b7280);
+  font-size: 13px;
+  font-weight: var(--font-weight-medium, 500);
   cursor: pointer;
 }
 .creative-sort-direction__btn:hover { background: #f3f4f6; }
@@ -550,6 +572,7 @@
   justify-content: space-between;
   width: 100%;
   gap: 6px;
+  margin-bottom: 4px;
 }
 .creative-chip__thumb {
   width: 36px;
@@ -588,7 +611,8 @@
   text-overflow: ellipsis;
   max-width: 100%;
 }
-.creative-chip__meta {
+.creative-chip__meta,
+.creative-chip__stores {
   font-size: 10px;
   color: var(--color-text-tertiary, #9ca3af);
   margin-top: 2px;

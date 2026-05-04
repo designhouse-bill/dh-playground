@@ -11,13 +11,13 @@
   <!-- Leaflet CSS — not used on Media; only Traffic page needs the map -->
 
   <!-- CSS -->
-  <link rel="stylesheet" href="css/design-tokens.css">
+  <link rel="stylesheet" href="css/design-tokens.css?v=3">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/distribution-shared.css?v=1">
-  <link rel="stylesheet" href="css/distribution.css?v=28">
+  <link rel="stylesheet" href="css/distribution-shared.css?v=5">
+  <link rel="stylesheet" href="css/distribution.css?v=33">
 </head>
 <body data-dist-page="media">
 
@@ -56,7 +56,7 @@
             <span class="material-symbols-outlined">expand_more</span>
           </button>
           <div class="dashboard-switcher__menu" id="dashboard-menu" role="menu">
-            <a class="dashboard-switcher__item" data-href="engagement-promotions-proposed-max.html" role="menuitem">
+            <a class="dashboard-switcher__item" data-href="engagement-promotions.html" role="menuitem">
               <span class="material-symbols-outlined">monitoring</span>
               Engagement
             </a>
@@ -165,8 +165,76 @@
 
       <!-- Narrative slot (phase 2, gated by FEATURES.narrative) -->
       <div class="insight-banner" data-narrative-section="media" hidden></div>
-
       <!-- ═══════════════════════════════════════════════
+           LEVEL 3: Media-attributed Visits (Apr 28 plan #1)
+           Split per Max ask: Store Visitation surface stays;
+           media-attributed slice lives here next to spend/CTR/conv.
+           Aggregation: by store × week × campaign group (NOT by
+           creative — visit data isn't creative-attributed).
+           ═══════════════════════════════════════════════ -->
+
+      <section class="media-visits-section">
+        <header class="section-panel-header ">
+          <h2 class="section-panel-header__title">Observed visits attributed to media spend</h2>
+          <p class="section-panel-header__question">Which media drove store visits this week?</p>
+          <p class="section-panel-header__subtitle">Visits joined to media buy by store × week. Creative-level visits not available in source data — see Observed Store Visits tab for crossover detail.</p>
+        </header>
+
+        <!-- Phase 3 step 2 — canonical perf-tabs. By Creative skipped: visit
+             data isn't creative-attributed (see footnote). -->
+        <div class="perf-tabs" id="media-visits-tabs" role="tablist">
+          <button class="perf-tab active" data-mv-tab="overview" role="tab" aria-selected="true">
+            <span class="material-symbols-outlined">dashboard</span> Overview
+          </button>
+          <button class="perf-tab" data-mv-tab="store" role="tab" aria-selected="false">
+            <span class="material-symbols-outlined">store</span> By Store
+          </button>
+          <button class="perf-tab" data-mv-tab="trendovertime" role="tab" aria-selected="false">
+            <span class="material-symbols-outlined">trending_up</span> Trend Over Time
+          </button>
+        </div>
+
+        <div class="perf-tab-pane active" data-mv-pane="overview">
+          <div class="media-visits-stats" id="media-visits-stats">
+            <!-- Populated by JS: total visits, visits-per-$, top-driving campaign -->
+          </div>
+        </div>
+        <div class="perf-tab-pane" data-mv-pane="store">
+          <div class="media-visits-panel">
+            <div class="media-visits-panel__label">Visits by Store — joined to spend</div>
+            <div class="media-visits-by-store-scroll" style="max-height:320px; overflow-y:auto;">
+              <div id="media-visits-by-store"></div>
+            </div>
+          </div>
+        </div>
+        <div class="perf-tab-pane" data-mv-pane="trendovertime">
+          <div class="chart-card">
+            <div class="chart-card__header">
+              <div>
+                <h3 class="panel-label">Attributed Visits Over Time</h3>
+                <p class="panel-subtitle">Each bar = observed visits attributed to media for the period. Spend overlay joined on store × week.</p>
+              </div>
+              <div class="chart-card__header-right">
+                <div class="duration-presets" id="media-visits-trend-ranges" role="tablist" aria-label="Time range">
+                  <button class="duration-preset" data-mv-range="1w">1 Week</button>
+                  <button class="duration-preset" data-mv-range="1m">4 Week <span class="duration-preset__sub">(Month)</span></button>
+                  <button class="duration-preset duration-preset--active" data-mv-range="1q">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
+                  <button class="duration-preset" data-mv-range="1y">1 Year</button>
+                </div>
+              </div>
+            </div>
+            <div id="media-visits-trend-chart" style="height:320px;"></div>
+          </div>
+        </div>
+
+        <p class="media-visits-footnote">
+          <span class="material-symbols-outlined">info</span>
+          Source: panel-tracked <strong>observed visits</strong> joined to Pulse spend on store × week. Directional — not a census. No creative attribution at this layer — for competitive crossover and frequency-bucket detail, see <a href="distribution-visitation.html">Observed Store Visits</a>.
+        </p>
+      </section><!-- /.media-visits-section -->
+      <!-- Performance Ranking divider -->
+      <div class="level-divider">Performance Ranking</div>
+         <!-- ═══════════════════════════════════════════════
            Phase 3 step 3+4: Main Media Buy perf-tabs.
            5 tabs (By Day dropped — no daily data at any layer).
            Overview pane preserves the existing IA verbatim so the page
@@ -183,7 +251,7 @@
           <span class="material-symbols-outlined">image</span> By Creative
         </button>
         <button class="perf-tab" data-mb-tab="trend" role="tab" aria-selected="false">
-          <span class="material-symbols-outlined">show_chart</span> Time Trend
+          <span class="material-symbols-outlined">show_chart</span> By Week
         </button>
         <button class="perf-tab" data-mb-tab="data" role="tab" aria-selected="false">
           <span class="material-symbols-outlined">table_chart</span> Data
@@ -192,11 +260,19 @@
 
       <div class="perf-tab-pane active" data-mb-pane="overview">
 
-      <!-- Performance Ranking divider -->
-      <div class="level-divider">Performance Ranking</div>
+
 
       <!-- Creative List: horizontal carousel of variant cards -->
       <div class="creative-list" id="creative-list"></div>
+
+      <!-- Inline creative detail panel — replaces the slide-in sidebar.
+           Populated by renderCreativeDetailSidebar() when a chip is clicked.
+           "All Media Campaigns" chip resets to placeholder. -->
+      <div class="creative-inline-detail" id="creative-inline-detail">
+        <div class="creative-inline-detail__body" id="creative-inline-detail-body">
+          <div class="creative-inline-detail__placeholder">Select a promotion above to see details, or All Media Campaigns for the full set.</div>
+        </div>
+      </div>
 
       <!-- ═══════════════════════════════════════════════
            LEVEL 2: Detailed Breakdown
@@ -230,60 +306,6 @@
           </table>
         </div>
       </div>
-
-      <!-- ═══════════════════════════════════════════════
-           LEVEL 3: Media-attributed Visits (Apr 28 plan #1)
-           Split per Max ask: Store Visitation surface stays;
-           media-attributed slice lives here next to spend/CTR/conv.
-           Aggregation: by store × week × campaign group (NOT by
-           creative — visit data isn't creative-attributed).
-           ═══════════════════════════════════════════════ -->
-      <div class="level-divider">Media-attributed Visits</div>
-
-      <section class="media-visits-section">
-        <header class="section-panel-header ">
-          <h2 class="section-panel-header__title">Visits attributed to media spend</h2>
-          <p class="section-panel-header__question">Which media drove store visits this week?</p>
-          <p class="section-panel-header__subtitle">Visits joined to media buy by store × week. Creative-level visits not available in source data — see Observed Store Visits tab for crossover detail.</p>
-        </header>
-
-        <!-- Phase 3 step 2 — canonical perf-tabs. By Creative skipped: visit
-             data isn't creative-attributed (see footnote). -->
-        <div class="perf-tabs" id="media-visits-tabs" role="tablist">
-          <button class="perf-tab active" data-mv-tab="overview" role="tab" aria-selected="true">
-            <span class="material-symbols-outlined">dashboard</span> Overview
-          </button>
-          <button class="perf-tab" data-mv-tab="store" role="tab" aria-selected="false">
-            <span class="material-symbols-outlined">store</span> By Store
-          </button>
-          <button class="perf-tab" data-mv-tab="week" role="tab" aria-selected="false">
-            <span class="material-symbols-outlined">calendar_view_week</span> By Week
-          </button>
-        </div>
-
-        <div class="perf-tab-pane active" data-mv-pane="overview">
-          <div class="media-visits-stats" id="media-visits-stats">
-            <!-- Populated by JS: total visits, visits-per-$, top-driving campaign -->
-          </div>
-        </div>
-        <div class="perf-tab-pane" data-mv-pane="store">
-          <div class="media-visits-panel">
-            <div class="media-visits-panel__label">Visits by Store — joined to spend</div>
-            <div id="media-visits-by-store" style="height:320px;"></div>
-          </div>
-        </div>
-        <div class="perf-tab-pane" data-mv-pane="week">
-          <div class="media-visits-panel">
-            <div class="media-visits-panel__label">Visits by Week — current campaign window</div>
-            <div id="media-visits-by-week" style="height:320px;"></div>
-          </div>
-        </div>
-
-        <p class="media-visits-footnote">
-          <span class="material-symbols-outlined">info</span>
-          Source: panel-tracking visit data joined to Pulse spend on store + week. No creative attribution at this layer — for competitive crossover and frequency-bucket detail, see <a href="distribution-visitation.html">Observed Store Visits</a>.
-        </p>
-      </section>
 
       </div><!-- /Overview pane -->
 
@@ -321,10 +343,10 @@
           <span class="dist-pane-toolbar__label">Delivery over time — Impressions, Clicks, CTR, CPV by week.</span>
           <span class="dist-pane-toolbar__spacer" style="flex:1"></span>
           <div class="duration-presets" id="mb-trend-ranges" role="tablist" aria-label="Time range">
-            <button type="button" class="duration-preset" data-mb-range="1w">1W</button>
-            <button type="button" class="duration-preset" data-mb-range="4w">4W</button>
-            <button type="button" class="duration-preset duration-preset--active" data-mb-range="13w">13W</button>
-            <button type="button" class="duration-preset" data-mb-range="1y">1Y</button>
+            <button type="button" class="duration-preset" data-mb-range="1w">1 Week</button>
+            <button type="button" class="duration-preset" data-mb-range="4w">4 Week <span class="duration-preset__sub">(Month)</span></button>
+            <button type="button" class="duration-preset duration-preset--active" data-mb-range="13w">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
+            <button type="button" class="duration-preset" data-mb-range="1y">1 Year</button>
           </div>
         </div>
         <div id="mb-trend-chart" style="height:420px;"></div>
@@ -341,21 +363,6 @@
     <!-- Distribution modals injected here by distribution-modals.js -->
     <div id="modals-container"></div>
 
-    <!-- Phase 3 step 8 — creative detail sidebar. Slides in from right
-         when a chip or table row is clicked. Closed via close button,
-         overlay click, or Escape. -->
-    <div class="ep-detail-sidebar__overlay" id="ep-detail-sidebar-overlay" hidden></div>
-    <aside class="ep-detail-sidebar" id="ep-detail-sidebar" aria-hidden="true" aria-label="Creative detail">
-      <header class="ep-detail-sidebar__header">
-        <span class="ep-detail-sidebar__eyebrow">Creative</span>
-        <button type="button" class="ep-detail-sidebar__close" id="ep-detail-sidebar-close" aria-label="Close creative detail">
-          <span class="material-symbols-outlined">close</span>
-        </button>
-      </header>
-      <div class="ep-detail-sidebar__body" id="ep-detail-sidebar-body">
-        <!-- Filled by openCreativeDetailSidebar() -->
-      </div>
-    </aside>
   </main>
 
   <!-- ============================================================
@@ -379,7 +386,8 @@
   <script src="js/data/distribution-data.js?v=17"></script>
 
   <script src="js/distribution/store-map.js"></script>
-  <script src="js/distribution/distribution.js?v=75"></script>
+  <script src="js/distribution/chip-carousel.js?v=2"></script>
+  <script src="js/distribution/distribution.js?v=94"></script>
   <script src="js/distribution/distribution-modals.js?v=13"></script>
 
   <script src="js/header-slide.js"></script>

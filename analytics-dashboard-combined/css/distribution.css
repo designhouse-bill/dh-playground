@@ -471,6 +471,27 @@
   max-height: 192px;
 }
 
+/* XL thumb — inline creative detail panel under the carousel.
+   Sits left of .creative-card__info_text, larger preview surface. */
+.creative-card__thumb--xl {
+  width: 480px;
+  height: 240px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+.creative-card__thumb--xl .material-symbols-outlined {
+  font-size: 64px;
+}
+.creative-card__thumb--xl img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+@media (max-width: 900px) {
+  .creative-card__thumb--xl { width: 100%; max-width: 100%; height: 200px; }
+}
+
 .creative-card__name {
   font-size: 18px;
   font-weight: var(--font-weight-bold);
@@ -515,7 +536,7 @@
 }
 
 .creative-metric-tile {
-  background: #f9fafb;
+  background: #fff;
   border: 1px solid var(--p-surface-border);
   border-radius: 4px;
   padding: 6px 4px;
@@ -555,7 +576,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  justify-content: flex-end;
+  justify-content: flex-start;
   padding: 8px;
   background: #f6f6f6;
   border-top: 1px solid var(--p-surface-border);
@@ -585,6 +606,120 @@
 .creative-card__link:hover {
   background: #e3f2fd;
   text-decoration: none;
+}
+
+/* Visits-by-Store CSS-bar list (replaces ECharts bar chart for this surface
+   so rank badges can use the canonical .creative-card__rank circle styling
+   and the row gets a CSS-driven dark hover popover). */
+.mv-store-list { display: flex; flex-direction: column; gap: 8px; padding: 4px 0; }
+.mv-store-row {
+  display: grid;
+  grid-template-columns: 32px 140px 1fr auto;
+  align-items: center;
+  column-gap: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: default;
+}
+.mv-store-row:hover { background: rgba(0,0,0,0.03); }
+.mv-store-row__rank {
+  /* Inherits unified rank-badge spec below (24×24 section-color circle). */
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--section-color, #2196F3);
+  color: #fff; font-size: 11px; font-weight: 700; line-height: 1;
+}
+.mv-store-row__name {
+  font-size: 13px; color: #374151;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.mv-store-row__bar { height: 18px; background: #f3f4f6; border-radius: 3px; overflow: hidden; }
+.mv-store-row__bar-fill { height: 100%; background: #4272D8; border-radius: 3px; transition: width 0.2s; }
+.mv-store-row__end { font-size: 13px; color: #374151; white-space: nowrap; }
+
+/* Dark hover popover — matches chartTooltipDark pattern. */
+.mv-store-tip {
+  position: fixed; z-index: 1000; display: none;
+  background: rgba(17,24,39,0.96);
+  color: #fff; font-size: 12px; line-height: 1.5;
+  padding: 8px 12px; border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.12);
+  pointer-events: none; max-width: 280px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+}
+.mv-store-tip__title { font-weight: 600; margin-bottom: 2px; }
+
+/* Unified numeric badge — all in-circle rank/index numbers across the
+   Distribution section share one spec: 24×24 perfect circle, section
+   color background, white bold text. Distribution Media section color
+   defaults to #2196F3 via --section-color. */
+.creative-card__rank,
+.creative-chip__rank,
+.dist-tree-table .row-number,
+.lb-rank,
+.col-num .num-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--section-color, #2196F3);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* Borderless variant — used by the inline creative detail panel
+   that replaced the slide-in sidebar. */
+.creative-card--borderless {
+  border: none;
+  border-top: 1px solid gray;
+  background: transparent;
+}
+.creative-card--borderless .creative-card__actions {
+  background: transparent;
+  border-top: none;
+  padding: 8px 0;
+}
+
+/* Inline creative detail — sits under the promotions carousel.
+   Renders the active chip's creative-card (borderless), or a
+   placeholder when "All Promotions" is selected. */
+.creative-inline-detail {
+  margin-top: 8px;
+}
+.creative-inline-detail__placeholder {
+  color: var(--p-text-color-muted);
+  font-size: 13px;
+  padding: 16px 8px;
+  text-align: center;
+}
+
+/* Fixed "All Promotions" chip + carousel sit on a single row. */
+.creative-chips-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+}
+.creative-chips-row > .p-carousel { flex: 1; min-width: 0; }
+.creative-chip--all {
+  flex-shrink: 0;
+  margin-top: 12px;
+  height: 100px;
+}
+/* Rank-badge pill on the All chip — same color/size scheme as numeric
+   rank badges, but accommodates the literal "All" label. */
+.creative-chip__rank--all {
+  width: auto;
+  min-width: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
 }
 
 /* Filled blue "View Details" button */
@@ -2097,6 +2232,44 @@
   border-radius: 50%;
   transform: rotate(-45deg);
   border: 1px solid rgba(255,255,255,0.6);
+}
+
+/* Compare Map layer legend — bottom-right, always visible. */
+.map-layer-legend {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  z-index: 800;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 10px;
+  background: rgba(255,255,255,0.95);
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  font-size: 12px;
+  color: var(--color-text-primary, #1f2937);
+}
+.map-layer-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.map-layer-legend__swatch {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.25);
+}
+.map-layer-legend__swatch--store {
+  background: var(--p-primary-color, #2196F3);
+  border-radius: 50%;
+}
+.map-layer-legend__swatch--comp {
+  background: #6b7280;
+  transform: rotate(45deg);
 }
 
 /* ═══ 1v1 Comparison Panel — map overlay ═══ */
@@ -3981,9 +4154,15 @@ body[data-dist-page] .narrative-header__title {
   color: var(--color-text-primary);
 }
 
-.duration-preset.active {
+.duration-preset.active,
+.duration-preset--active {
   background: var(--color-gray-900, #1f2937);
   color: #fff;
+}
+.duration-preset.active .duration-preset__sub,
+.duration-preset--active .duration-preset__sub {
+  color: #fff;
+  opacity: 0.85;
 }
 
 /* Narrative / interpretive summary slot — phase 2, gated by FEATURES.narrative */

@@ -225,8 +225,8 @@
   --p-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
 
   /* Section accent colors (R4 / Item 19b) */
-  --section-visitation:       #b72b34;
-  --section-visitation-light: #fbe9ea;
+  --section-visitation:       #f59e0b;
+  --section-visitation-light: #fef3c7;
   --section-media:            #6b7302;
   --section-media-light:      #f4f7e0;
   --section-traffic:          #1b7f88;

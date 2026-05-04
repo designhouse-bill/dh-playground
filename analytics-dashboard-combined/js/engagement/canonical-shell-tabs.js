@@ -7,7 +7,7 @@
  * Scope: pages with a wrapper element matching `.engagement-canonical`.
  * Hooks: data-ep-tab, data-ep-pane, data-ep-sub, data-ep-sub-pane, data-jump-to.
  *
- * Behavior mirrors engagement-promotions-proposed-max.html inline tab logic so
+ * Behavior mirrors engagement-promotions.html inline tab logic so
  * bare pages (categories/circulars/grid) get the same UX without duplicating it.
  */
 (function () {

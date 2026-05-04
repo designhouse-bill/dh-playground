@@ -1183,3 +1183,39 @@
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   max-width: 200px;
 }
+
+/* ── Phase 0b block 25 (2026-05-04): .creative-chips / .chip-carousel family ─
+   Source: distribution-shared.css lines 90-122. Canonical chip-strip layout
+   (grid + horizontal-scroll variant + carousel wrapper). Consumers:
+   distribution-visitation.html (#creative-chips, #day-chips, #demo-chips),
+   distribution-media.html (#mb-creative-chips with --scroll). Engagement: no
+   CSS consumer. Verbatim migration. */
+.creative-chips {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
+  gap: var(--space-2);
+  padding: var(--space-3) 0 var(--space-4);
+}
+/* Horizontal-scroll variant — for ranked chip strips with many items
+   (e.g. Media Buy Performance Ranking, By Creative). */
+.creative-chips--scroll {
+  display: flex;
+  grid-template-columns: none;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  padding-bottom: var(--space-3);
+}
+.creative-chips--scroll > .creative-chip {
+  flex: 0 0 160px;
+  scroll-snap-align: start;
+}
+/* When wrapped by ChipCarousel: viewport handles overflow, strip translates. */
+.chip-carousel .creative-chips,
+.chip-carousel .creative-chips--scroll {
+  overflow: visible;
+  padding-bottom: 0;
+  scroll-snap-type: none;
+}
+.chip-carousel { width: 100%; }
+.chip-carousel .p-carousel-viewport { width: 100%; }

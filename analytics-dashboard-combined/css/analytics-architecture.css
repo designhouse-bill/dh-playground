@@ -695,3 +695,15 @@
   color: var(--p-primary-color);
 }
 .ep-detail-sidebar__btn .material-symbols-outlined { font-size: 16px; }
+
+/* ── card-run-stats ─────────────────────────────────────────────
+   "Ran at X stores · Y days" line beneath the narrative-header
+   date selector. Multi-page chrome (dist + eng).
+   __text span reserved as typography iteration hook. */
+.card-run-stats {
+  display: block;
+  font-size: var(--font-size-10);
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+  font-weight: var(--font-weight-medium);
+}

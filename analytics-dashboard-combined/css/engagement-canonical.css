@@ -151,8 +151,7 @@
     .ep-mvp-strip__text { color: var(--color-text-secondary, #6b7280); }
     .ep-mvp-strip__text strong { color: var(--color-text, #1f2937); }
 
-    /* T6 (Apr 29 Max meeting): run-stats line beneath date selector — "ran at X stores · Y days" */
-    .card-run-stats { display: block; font-size: 10px; color: var(--color-text-secondary, #6b7280); margin-top: 2px; font-weight: 500; }
+    /* .card-run-stats moved to css/analytics-architecture.css (Phase 0b block 9, 2026-05-04). */
 
     /* .ep-kpi-strip / .ep-kpi-tile / __label/__value/__unit/__sub/__view
        moved to css/analytics-architecture.css (Phase 0b block 6, 2026-05-04).

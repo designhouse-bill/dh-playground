@@ -67,15 +67,7 @@
 }
 .ep-cohort-note .material-symbols-outlined { font-size: 14px; }
 
-/* Run-stats line (DP11.1) — shared base for engagement + distribution.
-   __text span is the typography iteration hook (bold/italic per audit). */
-.card-run-stats {
-  display: block;
-  font-size: 10px;
-  color: var(--color-text-secondary, #6b7280);
-  margin-top: 2px;
-  font-weight: 500;
-}
+/* .card-run-stats moved to css/analytics-architecture.css (Phase 0b block 9, 2026-05-04). */
 
 /* ── 2. KPI strip — canonical (distribution.css version) ──────── */
 

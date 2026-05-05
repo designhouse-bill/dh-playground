@@ -57,6 +57,30 @@
     ]
   };
 
+  function fmtNum(n) { return n.toLocaleString(); }
+  function fmtMinSec(s) { var m = Math.floor(s / 60); var r = Math.round(s % 60); return m + 'm ' + (r < 10 ? '0' + r : r) + 's'; }
+
+  // Cohort values for Overview mini-additivity rows. Pills are ordered --n, --r, --e.
+  // duration values are seconds (cohort-mean). Hero is weighted across cohorts.
+  var COHORT_VALUES = {
+    users:      { fmt: fmtNum,    vals: [22640, 19825, 11546] },
+    duration:   { fmt: fmtMinSec, vals: [252, 365, 524] },
+    cardevents: { fmt: fmtNum,    vals: [138750, 96420, 36128] }
+  };
+
+  function renderAdditivity(kpi) {
+    var entry = COHORT_VALUES[kpi];
+    if (!entry) return;
+    var card = document.querySelector('.ep-kpi-card[data-kpi="' + kpi + '"]');
+    if (!card) return;
+    var pills = card.querySelectorAll('.ep-additivity__pill');
+    pills.forEach(function (p, i) {
+      if (i >= entry.vals.length) return;
+      var label = p.textContent.trim();
+      p.innerHTML = label + ' <span class="ep-additivity__pill-val">' + entry.fmt(entry.vals[i]) + '</span>';
+    });
+  }
+
   function renderLegend(kpi, items, colors) {
     var ul = document.getElementById('ep-kpi-legend-' + kpi);
     if (!ul) return;
@@ -114,7 +138,10 @@
   }
 
   function renderAll() {
-    ['sessions', 'users', 'duration', 'cardevents'].forEach(renderDonut);
+    ['sessions', 'users', 'duration', 'cardevents'].forEach(function (kpi) {
+      renderDonut(kpi);
+      renderAdditivity(kpi);
+    });
   }
 
   function wireJumps() {

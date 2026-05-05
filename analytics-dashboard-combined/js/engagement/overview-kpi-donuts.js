@@ -148,6 +148,18 @@
     document.querySelectorAll('.ep-kpi-card[data-jump-to]').forEach(function (card) {
       card.addEventListener('click', function () {
         var target = card.getAttribute('data-jump-to');
+        // Page-aware: if a same-doc pane exists, activate the perf-tab (inline-pane page,
+        // e.g. Categories). Otherwise navigate to the sibling sub-page (Circulars model).
+        var inlinePane = document.querySelector('[data-ep-pane="' + target + '"]');
+        if (inlinePane) {
+          var tab = document.querySelector('.perf-tab[data-ep-tab="' + target + '"]');
+          if (tab) {
+            tab.click();
+            var bar = document.getElementById('ep-perf-tabs');
+            if (bar && bar.scrollIntoView) bar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+          return;
+        }
         var map = {
           sessions:   'engagement-circulars-sessions.html',
           users:      'engagement-circulars-users.html',

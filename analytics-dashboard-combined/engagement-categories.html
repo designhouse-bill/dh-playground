@@ -204,30 +204,81 @@
     </div>
 
     <div class="perf-tab-pane active" data-ep-pane="overview">
-      <div class="ep-kpi-strip" role="group" aria-label="Metric snapshot">
-        <button class="ep-kpi-tile" data-jump-to="sessions" type="button">
-          <span class="ep-kpi-tile__label">Sessions</span>
-          <span class="ep-kpi-tile__value">78,542</span>
-          <span class="ep-kpi-tile__sub">this week</span>
-          <span class="ep-kpi-tile__view">View<span class="material-symbols-outlined">chevron_right</span></span>
+      <div class="ep-kpi-grid" role="group" aria-label="Metric snapshot — donut breakdown">
+        <button class="ep-kpi-card" data-jump-to="sessions" data-kpi="sessions" type="button">
+          <span class="ep-kpi-card__label">Sessions</span>
+          <div class="ep-kpi-card__chart">
+            <div class="ep-kpi-card__donut" id="ep-kpi-donut-sessions" aria-hidden="true"></div>
+            <div class="ep-kpi-card__center">
+              <span class="ep-kpi-card__value">78,542</span>
+              <span class="ep-kpi-card__delta ep-kpi-card__delta--up">▲ 4.2% vs last wk</span>
+            </div>
+          </div>
+          <ul class="ep-kpi-card__legend" id="ep-kpi-legend-sessions" aria-label="Sessions breakdown"></ul>
+          <span class="ep-kpi-card__view">Open Sessions<span class="material-symbols-outlined">chevron_right</span></span>
         </button>
-        <button class="ep-kpi-tile" data-jump-to="users" type="button">
-          <span class="ep-kpi-tile__label">Total Users</span>
-          <span class="ep-kpi-tile__value">54,011</span>
-          <span class="ep-kpi-tile__sub">unique</span>
-          <span class="ep-kpi-tile__view">View<span class="material-symbols-outlined">chevron_right</span></span>
+
+        <button class="ep-kpi-card" data-jump-to="users" data-kpi="users" type="button">
+          <span class="ep-kpi-card__label">Total Users</span>
+          <div class="ep-kpi-card__chart">
+            <div class="ep-kpi-card__donut" id="ep-kpi-donut-users" aria-hidden="true"></div>
+            <div class="ep-kpi-card__center">
+              <span class="ep-kpi-card__value">54,011</span>
+              <span class="ep-kpi-card__delta ep-kpi-card__delta--up">▲ 2.8% vs last wk</span>
+            </div>
+          </div>
+          <ul class="ep-kpi-card__legend" id="ep-kpi-legend-users" aria-label="Users breakdown"></ul>
+          <p class="ep-additivity" aria-label="Total Users is the sum of New, Returning, and Engaged users">
+            <span class="ep-additivity__lbl">Of the total:</span>
+            <span class="ep-additivity__pill ep-additivity__pill--n">New</span>
+            <span class="ep-additivity__plus">+</span>
+            <span class="ep-additivity__pill ep-additivity__pill--r">Returning</span>
+            <span class="ep-additivity__plus">+</span>
+            <span class="ep-additivity__pill ep-additivity__pill--e">Engaged</span>
+          </p>
+          <span class="ep-kpi-card__view">Open Users<span class="material-symbols-outlined">chevron_right</span></span>
         </button>
-        <button class="ep-kpi-tile" data-jump-to="duration" type="button">
-          <span class="ep-kpi-tile__label">Avg Session Duration</span>
-          <span class="ep-kpi-tile__value">368<span class="ep-kpi-tile__unit"> sec</span></span>
-          <span class="ep-kpi-tile__sub">per session</span>
-          <span class="ep-kpi-tile__view">View<span class="material-symbols-outlined">chevron_right</span></span>
+
+        <button class="ep-kpi-card" data-jump-to="duration" data-kpi="duration" type="button">
+          <span class="ep-kpi-card__label">Average Session Duration</span>
+          <div class="ep-kpi-card__chart">
+            <div class="ep-kpi-card__donut" id="ep-kpi-donut-duration" aria-hidden="true"></div>
+            <div class="ep-kpi-card__center">
+              <span class="ep-kpi-card__value">6<span class="ep-kpi-card__unit">min</span> 8<span class="ep-kpi-card__unit">sec</span></span>
+              <span class="ep-kpi-card__delta ep-kpi-card__delta--down">▼ 1.5% vs last wk</span>
+            </div>
+          </div>
+          <ul class="ep-kpi-card__legend" id="ep-kpi-legend-duration" aria-label="Duration breakdown"></ul>
+          <p class="ep-additivity" aria-label="Avg Session Duration is the weighted average across New, Returning, and Engaged users">
+            <span class="ep-additivity__lbl">Of the avg:</span>
+            <span class="ep-additivity__pill ep-additivity__pill--n">New</span>
+            <span class="ep-additivity__plus">+</span>
+            <span class="ep-additivity__pill ep-additivity__pill--r">Returning</span>
+            <span class="ep-additivity__plus">+</span>
+            <span class="ep-additivity__pill ep-additivity__pill--e">Engaged</span>
+          </p>
+          <span class="ep-kpi-card__view">Open Duration<span class="material-symbols-outlined">chevron_right</span></span>
         </button>
-        <button class="ep-kpi-tile" data-jump-to="cardevents" type="button">
-          <span class="ep-kpi-tile__label">Card Engagement Events</span>
-          <span class="ep-kpi-tile__value">271,298</span>
-          <span class="ep-kpi-tile__sub">Adds + Clicks + share/save/print</span>
-          <span class="ep-kpi-tile__view">View<span class="material-symbols-outlined">chevron_right</span></span>
+
+        <button class="ep-kpi-card" data-jump-to="cardevents" data-kpi="cardevents" type="button">
+          <span class="ep-kpi-card__label">Card Engagement Events</span>
+          <div class="ep-kpi-card__chart">
+            <div class="ep-kpi-card__donut" id="ep-kpi-donut-cardevents" aria-hidden="true"></div>
+            <div class="ep-kpi-card__center">
+              <span class="ep-kpi-card__value">271,298</span>
+              <span class="ep-kpi-card__delta ep-kpi-card__delta--up">▲ 7.1% vs last wk</span>
+            </div>
+          </div>
+          <ul class="ep-kpi-card__legend" id="ep-kpi-legend-cardevents" aria-label="Card events breakdown"></ul>
+          <p class="ep-additivity" aria-label="Card Engagement Events totals roll up Card Clicks, Add to List, and Card View / Share">
+            <span class="ep-additivity__lbl">Of the total:</span>
+            <span class="ep-additivity__pill ep-additivity__pill--n">Card Click</span>
+            <span class="ep-additivity__plus">+</span>
+            <span class="ep-additivity__pill ep-additivity__pill--r">Add to List</span>
+            <span class="ep-additivity__plus">+</span>
+            <span class="ep-additivity__pill ep-additivity__pill--e">Card View / Share</span>
+          </p>
+          <span class="ep-kpi-card__view">Open Card Events<span class="material-symbols-outlined">chevron_right</span></span>
         </button>
       </div>
     </div>
@@ -633,7 +684,8 @@
   <script src="js/engagement/shared-filters.js"></script>
   <script src="js/engagement/shared-perf-charts.js"></script>
   <script src="js/engagement/canonical-shell-tabs.js?v=2"></script>
-  <script src="js/engagement/canonical-shell-renderers.js?v=1"></script>
+  <script src="js/engagement/canonical-shell-renderers.js?v=2"></script>
+  <script src="js/engagement/overview-kpi-donuts.js?v=3"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       if (window.CanonicalShellRenderers) {

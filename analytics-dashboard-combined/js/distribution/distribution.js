@@ -163,6 +163,43 @@
     renderTrafficKpis();
     /* renderTrafficLeaderboardPreview removed — Top Stores preview deleted from Overview */
     updateRetailerLabels();
+    invalidateLazyPanes();
+  }
+
+  // ========================================
+  // Lazy-pane invalidation on context change
+  // (UX-846 deferred-decisions #1) — Main Context (entity / date range)
+  // drives all surfaces. Per-tab lazy panes cache built state in the
+  // _trafficShareBuilt / _mediaBuyBuilt objects below; on context change
+  // (entity reset, date change, dataRefresh) renderAll() calls this to
+  // reset flags, dispose stale ECharts in lazy panes, and re-trigger the
+  // active tab so its content rebuilds against fresh context.
+  // ========================================
+  var _trafficShareBuilt = { store: false, compare: false, comp: false, data: false };
+  var _mediaBuyBuilt = { trend: false, data: false, creative: false, store: false };
+
+  function invalidateLazyPanes() {
+    var tsBar = document.getElementById('ts-perf-tabs');
+    var mbBar = document.getElementById('mb-perf-tabs');
+    if (!tsBar && !mbBar) return; // tabs not initialized yet (initial load)
+
+    Object.keys(_trafficShareBuilt).forEach(function(k) { _trafficShareBuilt[k] = false; });
+    Object.keys(_mediaBuyBuilt).forEach(function(k) { _mediaBuyBuilt[k] = false; });
+
+    ['data-ts-pane', 'data-mb-pane'].forEach(function(attr) {
+      document.querySelectorAll('[' + attr + ']').forEach(function(p) {
+        p.querySelectorAll('[_echarts_instance_]').forEach(function(el) {
+          var inst = (typeof echarts !== 'undefined') && echarts.getInstanceByDom ? echarts.getInstanceByDom(el) : null;
+          if (inst) inst.dispose();
+        });
+      });
+    });
+
+    [tsBar, mbBar].forEach(function(bar) {
+      if (!bar) return;
+      var active = bar.querySelector('.perf-tab.active');
+      if (active) active.click();
+    });
   }
 
   // ========================================
@@ -5723,7 +5760,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     if (!tabBar) return;
     var tabs = tabBar.querySelectorAll('.perf-tab');
     var panes = document.querySelectorAll('[data-ts-pane]');
-    var storeBuilt = false, compBuilt = false, dataBuilt = false, compareBuilt = false;
+    // Built flags lifted to module-scope `_trafficShareBuilt` for invalidateLazyPanes().
     tabs.forEach(function(t) {
       t.addEventListener('click', function() {
         var target = t.dataset.tsTab;
@@ -5748,29 +5785,29 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         // Per-tab lazy init
         if (target === 'store') {
           renderMap('store-map-store-pane');
-          if (!storeBuilt) {
+          if (!_trafficShareBuilt.store) {
             renderLeaderboardInto(document.getElementById('leaderboard-table-store'), 'ours');
             bindStoreTabInteractions();
-            storeBuilt = true;
+            _trafficShareBuilt.store = true;
           }
         } else if (target === 'compare') {
           renderMap('store-map-compare-pane');
           if (typeof StoreMap !== 'undefined' && StoreMap.toggleCompetitors) StoreMap.toggleCompetitors(true);
-          if (!compareBuilt) {
+          if (!_trafficShareBuilt.compare) {
             renderLeaderboardInto(document.getElementById('leaderboard-table-compare'), _compareSource);
             bindCompareTabInteractions();
-            compareBuilt = true;
+            _trafficShareBuilt.compare = true;
           }
         } else if (target === 'competitor') {
-          if (!compBuilt) {
+          if (!_trafficShareBuilt.comp) {
             renderLeaderboardInto(document.getElementById('leaderboard-table-comp'), 'competitors');
             bindCompTabInteractions();
-            compBuilt = true;
+            _trafficShareBuilt.comp = true;
           }
         } else if (target === 'data') {
-          if (!dataBuilt) {
+          if (!_trafficShareBuilt.data) {
             renderTrafficDataPane();
-            dataBuilt = true;
+            _trafficShareBuilt.data = true;
           }
         }
       });
@@ -5782,10 +5819,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     if (!tabBar) return;
     var tabs = tabBar.querySelectorAll('.perf-tab');
     var panes = document.querySelectorAll('[data-mb-pane]');
-    var trendBuilt = false;
-    var dataBuilt = false;
-    var creativeBuilt = false;
-    var storeBuilt = false;
+    // Built flags lifted to module-scope `_mediaBuyBuilt` for invalidateLazyPanes().
     tabs.forEach(function(t) {
       t.addEventListener('click', function() {
         var target = t.dataset.mbTab;
@@ -5795,10 +5829,10 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
           x.setAttribute('aria-selected', on ? 'true' : 'false');
         });
         panes.forEach(function(p) { p.classList.toggle('active', p.dataset.mbPane === target); });
-        if (target === 'trend'    && !trendBuilt)    { trendBuilt    = renderMediaBuyTrendPane(); }
-        if (target === 'data'     && !dataBuilt)     { dataBuilt     = renderMediaBuyDataPane(); }
-        if (target === 'creative' && !creativeBuilt) { creativeBuilt = renderMediaBuyByCreativePane(); }
-        if (target === 'store'    && !storeBuilt)    { storeBuilt    = renderMediaBuyByStorePane(); }
+        if (target === 'trend'    && !_mediaBuyBuilt.trend)    { _mediaBuyBuilt.trend    = renderMediaBuyTrendPane(); }
+        if (target === 'data'     && !_mediaBuyBuilt.data)     { _mediaBuyBuilt.data     = renderMediaBuyDataPane(); }
+        if (target === 'creative' && !_mediaBuyBuilt.creative) { _mediaBuyBuilt.creative = renderMediaBuyByCreativePane(); }
+        if (target === 'store'    && !_mediaBuyBuilt.store)    { _mediaBuyBuilt.store    = renderMediaBuyByStorePane(); }
         // Re-fire chart resize for already-built ECharts instances when their pane becomes active.
         if (target === 'trend' && _mbTrendChart) _mbTrendChart.resize();
         if (target === 'store' && _mbStoreTrendChart) _mbStoreTrendChart.resize();

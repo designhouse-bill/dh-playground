@@ -547,7 +547,7 @@
 .ep-kpi-card {
   position: relative;
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto 1fr auto auto;
   gap: var(--space-3);
   padding: var(--space-4) var(--space-5) var(--space-5);
   border: 1px solid var(--color-border);
@@ -651,6 +651,13 @@
   border-radius: 2px;
   display: inline-block;
 }
+
+.ep-kpi-card .ep-additivity {
+  margin: 0;
+  justify-content: center;
+  font-size: var(--font-size-11, 11px);
+}
+.ep-kpi-card .ep-additivity__pill { font-size: 10px; padding: 1px 6px; }
 
 .ep-kpi-card__view {
   position: absolute;

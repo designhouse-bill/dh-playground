@@ -282,10 +282,11 @@
     renderDoWColumns('ep-sessions-by-day', [
       { d: 'MON', n: 9420 },  { d: 'TUE', n: 10120 }, { d: 'WED', n: 10880 },
       { d: 'THU', n: 11540 }, { d: 'FRI', n: 13260 }, { d: 'SAT', n: 12940 }, { d: 'SUN', n: 10382 }
-    ], { label: 'Sessions' });
+    ], { label: 'Sessions', tooltip: 'dark' });
+    var sessionsOpts = Object.assign({}, trendFull['ep-sessions-trend'].opts, { tooltip: 'dark' });
     renderTrend('ep-sessions-trend', W13,
       [22,21,22,22,21,22,22,22,22,8,7,7,7],
-      trendFull['ep-sessions-trend'].opts
+      sessionsOpts
     );
 
     // Total Users
@@ -307,10 +308,11 @@
     renderDoWColumns('ep-users-by-day', [
       { d: 'MON', n: 6500 }, { d: 'TUE', n: 7000 }, { d: 'WED', n: 7500 },
       { d: 'THU', n: 8000 }, { d: 'FRI', n: 9100 }, { d: 'SAT', n: 8900 }, { d: 'SUN', n: 7011 }
-    ], { label: 'Total Users' });
+    ], { label: 'Total Users', tooltip: 'dark' });
+    var usersOpts = Object.assign({}, trendFull['ep-users-trend'].opts, { tooltip: 'dark' });
     renderTrend('ep-users-trend', W13,
       [16,17,18,18,17,18,18,18,17,7,6,6,6],
-      trendFull['ep-users-trend'].opts
+      usersOpts
     );
 
     // Avg Session Duration — N/R/E spell-out, Min/Sec format
@@ -343,28 +345,31 @@
 
     // Card Engagement Events
     renderStackedList('ep-cardevents-by-store', [
-      { rank: 1, name: '#336 Hollywood, FL',     sub: '14,210 total', adds: 4800, clicks: 6800, other: 2610 },
-      { rank: 2, name: '#508 Fort Myers, FL',    sub: '13,580 total', adds: 4500, clicks: 6500, other: 2580 },
-      { rank: 3, name: '#195 Jacksonville, FL',  sub: '13,120 total', adds: 4350, clicks: 6300, other: 2470 },
-      { rank: 4, name: '#2415 Tampa, FL',        sub: '12,640 total', adds: 4200, clicks: 6100, other: 2340 },
-      { rank: 5, name: '#2487 Sarasota, FL',     sub: '12,210 total', adds: 4050, clicks: 5900, other: 2260 },
-      { rank: 6, name: '#2288 Orlando, FL',      sub: '11,820 total', adds: 3900, clicks: 5700, other: 2220 },
-      { rank: 7, name: '#2247 Palm Coast, FL',   sub: '11,440 total', adds: 3800, clicks: 5500, other: 2140 },
-      { rank: 8, name: '#2545 The Villages, FL', sub: '11,090 total', adds: 3700, clicks: 5350, other: 2040 },
-      { rank: 9, name: '#319 Homestead, FL',     sub: '10,720 total', adds: 3580, clicks: 5180, other: 1960 }
+      { rank: 1, name: '#336 Hollywood, FL',     sub: '14,210 total', clicks: 6800, adds: 4800, other: 2610 },
+      { rank: 2, name: '#508 Fort Myers, FL',    sub: '13,580 total', clicks: 6500, adds: 4500, other: 2580 },
+      { rank: 3, name: '#195 Jacksonville, FL',  sub: '13,120 total', clicks: 6300, adds: 4350, other: 2470 },
+      { rank: 4, name: '#2415 Tampa, FL',        sub: '12,640 total', clicks: 6100, adds: 4200, other: 2340 },
+      { rank: 5, name: '#2487 Sarasota, FL',     sub: '12,210 total', clicks: 5900, adds: 4050, other: 2260 },
+      { rank: 6, name: '#2288 Orlando, FL',      sub: '11,820 total', clicks: 5700, adds: 3900, other: 2220 },
+      { rank: 7, name: '#2247 Palm Coast, FL',   sub: '11,440 total', clicks: 5500, adds: 3800, other: 2140 },
+      { rank: 8, name: '#2545 The Villages, FL', sub: '11,090 total', clicks: 5350, adds: 3700, other: 2040 },
+      { rank: 9, name: '#319 Homestead, FL',     sub: '10,720 total', clicks: 5180, adds: 3580, other: 1960 }
     ], [
-      { key: 'adds',   cls: 'a', label: 'Add to List' },
-      { key: 'clicks', cls: 'c', label: 'Card Click' },
-      { key: 'other',  cls: 'v', label: 'Card View / Share' }
+      { key: 'clicks', cls: 'v', label: 'Card Click' },
+      { key: 'adds',   cls: 'c', label: 'Add to List' },
+      { key: 'other',  cls: 'a', label: 'Card View / Share' }
     ]);
     renderDoWColumns('ep-cardevents-by-day', [
       { d: 'MON', n: 32500 }, { d: 'TUE', n: 35000 }, { d: 'WED', n: 37500 },
       { d: 'THU', n: 40000 }, { d: 'FRI', n: 45800 }, { d: 'SAT', n: 44500 }, { d: 'SUN', n: 35998 }
-    ], { label: 'Card Engagement Events' });
+    ], { label: 'Card Engagement Events', tooltip: 'dark' });
+    var cardeventsOpts = Object.assign({}, trendFull['ep-cardevents-trend'].opts, { tooltip: 'dark' });
     renderTrend('ep-cardevents-trend', W13,
       [28,28,28,28,28,27,27,27,27,12,11,11,11],
-      trendFull['ep-cardevents-trend'].opts
+      cardeventsOpts
     );
+    var cardeventsHero = document.getElementById('ep-cardevents-hero-value');
+    if (cardeventsHero) cardeventsHero.textContent = '271,298';
   }
 
   function wireTrendRanges() {

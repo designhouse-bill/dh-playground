@@ -59,6 +59,15 @@
       <div class="hero-stat"><div class="narrative-header"><div class="narrative-header-left">
         <h2 class="narrative-header__title">Avg Session Duration</h2>
         <p class="narrative-header__question">How long are users spending on each circular?</p>
+        <p class="narrative-header__value" id="ep-duration-hero-value">—</p>
+        <p class="ep-additivity" aria-label="Avg Session Duration is the weighted average across New, Returning, and Engaged users">
+          <span class="ep-additivity__lbl">Of the avg:</span>
+          <span class="ep-additivity__pill ep-additivity__pill--n">New</span>
+          <span class="ep-additivity__plus">+</span>
+          <span class="ep-additivity__pill ep-additivity__pill--r">Returning</span>
+          <span class="ep-additivity__plus">+</span>
+          <span class="ep-additivity__pill ep-additivity__pill--e">Engaged</span>
+        </p>
       </div></div></div>
       <div class="ep-sub-tabs" role="tablist" aria-label="Duration cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Duration by Circular</button>
@@ -87,7 +96,7 @@
   <script src="js/engagement/shared-filters.js"></script>
   <script src="js/engagement/shared-perf-charts.js"></script>
   <script src="js/engagement/canonical-shell-tabs.js?v=3"></script>
-  <script src="js/engagement/canonical-shell-renderers.js?v=1"></script>
+  <script src="js/engagement/canonical-shell-renderers.js?v=2"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       if (window.CanonicalShellRenderers) {

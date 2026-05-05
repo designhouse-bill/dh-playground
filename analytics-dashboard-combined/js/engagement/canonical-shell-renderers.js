@@ -19,13 +19,22 @@
   'use strict';
 
   var perfTooltip = null;
-  function ensurePerfTooltip() {
+  function ensurePerfTooltip(opts) {
     if (!perfTooltip) {
       perfTooltip = document.createElement('div');
       perfTooltip.className = 'ep-perf-tooltip';
       document.body.appendChild(perfTooltip);
     }
+    if (opts && opts.tooltip === 'dark') perfTooltip.classList.add('ep-perf-tooltip--dark');
+    else perfTooltip.classList.remove('ep-perf-tooltip--dark');
     return perfTooltip;
+  }
+
+  function formatMinSec(seconds) {
+    var s = Math.max(0, Math.round(+seconds || 0));
+    var m = Math.floor(s / 60);
+    var r = s % 60;
+    return m + 'm ' + r + 's';
   }
   function positionPerfTooltip(e) {
     ensurePerfTooltip();
@@ -106,7 +115,7 @@
       var i = parseInt(col.dataset.dowIdx);
       var d = days[i];
       col.addEventListener('mouseenter', function () {
-        var tip = ensurePerfTooltip();
+        var tip = ensurePerfTooltip(opts);
         var fullDay = DOW_FULL[d.d] || d.d;
         var dateStr = dates[i] || '';
         var valStr = fmt ? fmt(d.n) : d.n.toLocaleString();
@@ -192,7 +201,7 @@
 
     host.querySelectorAll('.ep-trend-hit, .ep-trend-dot').forEach(function (el) {
       el.addEventListener('mouseenter', function () {
-        var tip = ensurePerfTooltip();
+        var tip = ensurePerfTooltip(opts);
         var wNum = (el.dataset.week || '').replace('W', '');
         var dateRange = weekDateRange(el.dataset.week);
         tip.innerHTML = '<div class="ep-perf-tooltip__title">Week ' + wNum + '</div>'
@@ -304,28 +313,33 @@
       trendFull['ep-users-trend'].opts
     );
 
-    // Avg Session Duration
+    // Avg Session Duration — N/R/E spell-out, Min/Sec format
     renderStackedList('ep-duration-by-store', [
-      { rank: 1, name: '#336 Hollywood, FL',     sub: 'Avg 412 ses', ses: 412 },
-      { rank: 2, name: '#508 Fort Myers, FL',    sub: 'Avg 398 ses', ses: 398 },
-      { rank: 3, name: '#195 Jacksonville, FL',  sub: 'Avg 384 ses', ses: 384 },
-      { rank: 4, name: '#2415 Tampa, FL',        sub: 'Avg 372 ses', ses: 372 },
-      { rank: 5, name: '#2487 Sarasota, FL',     sub: 'Avg 365 ses', ses: 365 },
-      { rank: 6, name: '#2288 Orlando, FL',      sub: 'Avg 358 ses', ses: 358 },
-      { rank: 7, name: '#2247 Palm Coast, FL',   sub: 'Avg 348 ses', ses: 348 },
-      { rank: 8, name: '#2545 The Villages, FL', sub: 'Avg 342 ses', ses: 342 },
-      { rank: 9, name: '#319 Homestead, FL',     sub: 'Avg 332 ses', ses: 332 }
+      { rank: 1, name: '#336 Hollywood, FL',     sub: '4m 32s avg', n: 180, r: 240, e: 412 },
+      { rank: 2, name: '#508 Fort Myers, FL',    sub: '4m 18s avg', n: 172, r: 230, e: 398 },
+      { rank: 3, name: '#195 Jacksonville, FL',  sub: '4m 04s avg', n: 168, r: 222, e: 384 },
+      { rank: 4, name: '#2415 Tampa, FL',        sub: '3m 52s avg', n: 158, r: 215, e: 372 },
+      { rank: 5, name: '#2487 Sarasota, FL',     sub: '3m 45s avg', n: 152, r: 210, e: 365 },
+      { rank: 6, name: '#2288 Orlando, FL',      sub: '3m 38s avg', n: 148, r: 205, e: 358 },
+      { rank: 7, name: '#2247 Palm Coast, FL',   sub: '3m 28s avg', n: 142, r: 198, e: 348 },
+      { rank: 8, name: '#2545 The Villages, FL', sub: '3m 22s avg', n: 138, r: 192, e: 342 },
+      { rank: 9, name: '#319 Homestead, FL',     sub: '3m 12s avg', n: 132, r: 184, e: 332 }
     ], [
-      { key: 'ses', cls: 'v', label: 'Avg Session (ses)' }
-    ], function (v) { return v + ' ses'; });
+      { key: 'n', cls: 'v', label: 'New (avg)' },
+      { key: 'r', cls: 'c', label: 'Returning (avg)' },
+      { key: 'e', cls: 'a', label: 'Engaged (avg)' }
+    ], formatMinSec);
     renderDoWColumns('ep-duration-by-day', [
       { d: 'MON', n: 320 }, { d: 'TUE', n: 340 }, { d: 'WED', n: 355 },
       { d: 'THU', n: 372 }, { d: 'FRI', n: 410 }, { d: 'SAT', n: 405 }, { d: 'SUN', n: 350 }
-    ], { label: 'Avg Session Duration', fmt: function (v) { return v + ' ses'; } });
+    ], { label: 'Avg Session Duration', fmt: formatMinSec, tooltip: 'dark' });
+    var durationOpts = Object.assign({}, trendFull['ep-duration-trend'].opts, { yFmt: formatMinSec, tooltip: 'dark' });
     renderTrend('ep-duration-trend', W13,
       [380,380,370,372,370,370,365,368,360,350,360,365,360],
-      trendFull['ep-duration-trend'].opts
+      durationOpts
     );
+    var heroEl = document.getElementById('ep-duration-hero-value');
+    if (heroEl) heroEl.textContent = formatMinSec(372);
 
     // Card Engagement Events
     renderStackedList('ep-cardevents-by-store', [
@@ -386,6 +400,7 @@
     wireTrendRanges: wireTrendRanges,
     renderDefaultPlaceholders: renderDefaultPlaceholders,
     ensurePerfTooltip: ensurePerfTooltip,
-    positionPerfTooltip: positionPerfTooltip
+    positionPerfTooltip: positionPerfTooltip,
+    formatMinSec: formatMinSec
   };
 })();

@@ -623,6 +623,7 @@
       display: none;
     }
     .ep-perf-tooltip--visible { display: block; }
+    .ep-perf-tooltip--dark { background: #1f2937; color: #fff; }
     .ep-perf-tooltip__title {
       font-weight: 700;
       margin-bottom: 8px;

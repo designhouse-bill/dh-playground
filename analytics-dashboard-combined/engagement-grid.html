@@ -193,36 +193,10 @@
       <span class="ep-circular-info__item"><span class="ep-circular-info__num">27</span> circulars</span>
     </div>
 
-    <!-- IA decision 2026-05-06: Grid / Inquiry is a single explore view.
+    <!-- IA decision 2026-05-06: Grid / Inquiry = spreadsheet/Excel view of data.
+         No KPI surface (donut grid OR flat strip). Base/Reports owns the
+         "summary with some detail" framing; Grid is pure row-level data.
          Sessions / Users / Duration / Card Events perf-tabs removed. -->
-    <div class="perf-tab-pane active" data-ep-pane="overview">
-      <div class="ep-kpi-strip" role="group" aria-label="Metric snapshot">
-        <button class="ep-kpi-tile" data-jump-to="sessions" type="button">
-          <span class="ep-kpi-tile__label">Sessions</span>
-          <span class="ep-kpi-tile__value">78,542</span>
-          <span class="ep-kpi-tile__sub">this week</span>
-          <span class="ep-kpi-tile__view">View<span class="material-symbols-outlined">chevron_right</span></span>
-        </button>
-        <button class="ep-kpi-tile" data-jump-to="users" type="button">
-          <span class="ep-kpi-tile__label">Total Users</span>
-          <span class="ep-kpi-tile__value">54,011</span>
-          <span class="ep-kpi-tile__sub">unique</span>
-          <span class="ep-kpi-tile__view">View<span class="material-symbols-outlined">chevron_right</span></span>
-        </button>
-        <button class="ep-kpi-tile" data-jump-to="duration" type="button">
-          <span class="ep-kpi-tile__label">Avg Session Duration</span>
-          <span class="ep-kpi-tile__value">368<span class="ep-kpi-tile__unit"> sec</span></span>
-          <span class="ep-kpi-tile__sub">per session</span>
-          <span class="ep-kpi-tile__view">View<span class="material-symbols-outlined">chevron_right</span></span>
-        </button>
-        <button class="ep-kpi-tile" data-jump-to="cardevents" type="button">
-          <span class="ep-kpi-tile__label">Card Engagement Events</span>
-          <span class="ep-kpi-tile__value">271,298</span>
-          <span class="ep-kpi-tile__sub">Adds + Clicks + share/save/print</span>
-          <span class="ep-kpi-tile__view">View<span class="material-symbols-outlined">chevron_right</span></span>
-        </button>
-      </div>
-    </div>
 
   </main>
 

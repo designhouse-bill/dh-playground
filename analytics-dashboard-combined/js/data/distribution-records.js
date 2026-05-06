@@ -132,15 +132,9 @@ const DistributionRecords = (function() {
   // running out of dates.
   // ────────────────────────────────────────────────────────────────────
   function generateFlightWeeks() {
-    var seq = [
-      { id: 'wk50', label: 'Week 50' },
-      { id: 'wk51', label: 'Week 51' },
-      { id: 'wk52', label: 'Week 52' },
-      { id: 'wk1',  label: 'Week 1'  },
-      { id: 'wk2',  label: 'Week 2'  }
-    ];
-    for (var n = 3; n <= 52; n++) seq.push({ id: 'wk' + n, label: 'Week ' + n });
-    var anchor = Date.UTC(2025, 11, 10); // Dec 10, 2025
+    var seq = [];
+    for (var n = 1; n <= 52; n++) seq.push({ id: 'wk' + n, label: 'Week ' + n });
+    var anchor = Date.UTC(2025, 11, 31); // Dec 31, 2025 (Wed) = wk1/2026
     var oneDay = 86400000;
     return seq.map(function (w, idx) {
       var s = new Date(anchor + idx * 7 * oneDay);

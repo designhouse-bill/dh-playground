@@ -330,9 +330,16 @@ const DistributionData = (function() {
     const storeIds = getStoreIds();
     const allRecords = getTrafficRecords('all', storeIds);
 
-    // Latest week summary
+    // Latest week summary. For single-week context, compare against prior week
+    // so summary deltas are meaningful (latest vs prior, not latest vs itself).
     const latestWeek = currentContext.flightWeek === 'all' ? LATEST_WEEK_ID : currentContext.flightWeek;
-    const firstWeek = currentContext.flightWeek === 'all' ? 'wk50' : currentContext.flightWeek;
+    let firstWeek;
+    if (currentContext.flightWeek === 'all') {
+      firstWeek = flightWeeks[0].id;
+    } else {
+      const idx = flightWeeks.findIndex(w => w.id === latestWeek);
+      firstWeek = idx > 0 ? flightWeeks[idx - 1].id : flightWeeks[0].id;
+    }
 
     const latestRecords = allRecords.filter(r => r.week_id === latestWeek);
     const firstRecords = allRecords.filter(r => r.week_id === firstWeek);

@@ -13,7 +13,7 @@
   <!-- CSS -->
   <link rel="stylesheet" href="css/design-tokens.css?v=3">
   <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/analytics-architecture.css">
+  <link rel="stylesheet" href="css/analytics-architecture.css?v=3">
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
@@ -166,6 +166,26 @@
 
       <!-- Narrative slot (phase 2, gated by FEATURES.narrative) -->
       <div class="insight-banner" data-narrative-section="media" hidden></div>
+
+      <!-- ═══════════════════════════════════════════════
+           Decision 7 prototype — Row 1 perf-tabs (Section nav, lines-bottom).
+           Switches between Observed Visits / Off-Platform Ranking sections.
+           Variant Panels promotion deferred (still nested in Ranking).
+           ═══════════════════════════════════════════════ -->
+      <div class="perf-tabs perf-tabs--section" id="mb-section-tabs" role="tablist" aria-label="Media Buy section">
+        <button class="perf-tab active" data-mb-section-tab="observed-visits" role="tab" aria-selected="true">
+          <span class="material-symbols-outlined">storefront</span> Observed Visits
+        </button>
+        <button class="perf-tab" data-mb-section-tab="ranking" role="tab" aria-selected="false">
+          <span class="material-symbols-outlined">leaderboard</span> Off-Platform Ranking
+        </button>
+      </div>
+      <!-- Mobile collapse: native select mirrors Row 1 -->
+      <select class="mb-section-select" id="mb-section-select" aria-label="Media Buy section (mobile)">
+        <option value="observed-visits" selected>Observed Visits</option>
+        <option value="ranking">Off-Platform Ranking</option>
+      </select>
+
       <!-- ═══════════════════════════════════════════════
            LEVEL 3: Media-attributed Visits (Apr 28 plan #1)
            Split per Max ask: Store Visitation surface stays;
@@ -174,7 +194,7 @@
            creative — visit data isn't creative-attributed).
            ═══════════════════════════════════════════════ -->
 
-      <section class="media-visits-section">
+      <section class="media-visits-section dist-section-pane active" data-mb-section="observed-visits">
         <header class="section-panel-header ">
           <h2 class="section-panel-header__title">Observed visits attributed to media spend</h2>
           <p class="section-panel-header__question">Which media drove store visits this week?</p>
@@ -182,8 +202,9 @@
         </header>
 
         <!-- Phase 3 step 2 — canonical perf-tabs. By Creative skipped: visit
-             data isn't creative-attributed (see footnote). -->
-        <div class="perf-tabs" id="media-visits-tabs" role="tablist">
+             data isn't creative-attributed (see footnote).
+             Decision 7 prototype: Row 2 = filled-pill style. -->
+        <div class="perf-tabs perf-tabs--filled" id="media-visits-tabs" role="tablist">
           <button class="perf-tab active" data-mv-tab="overview" role="tab" aria-selected="true">
             <span class="material-symbols-outlined">dashboard</span> Overview
           </button>
@@ -233,13 +254,13 @@
           Source: panel-tracked <strong>observed visits</strong> joined to Pulse spend on store × week. Directional — not a census. No creative attribution at this layer — for competitive crossover and frequency-bucket detail, see <a href="distribution-visitation.html">Observed Store Visits</a>.
         </p>
       </section><!-- /.media-visits-section -->
-            <section class="media-visits-section">
+            <section class="media-visits-section dist-section-pane" data-mb-section="ranking">
         <header class="section-panel-header ">
           <h2 class="section-panel-header__title">Off-Platform Media Performance Ranking</h2>
           <p class="section-panel-header__question">Which creatives, stores, and weeks delivered the strongest off-platform media performance?</p>
           <p class="section-panel-header__subtitle">Delivery metrics from Pulse — impressions, clicks, CTR — ranked by cut. Does NOT include attributed visits; see Observed Visits attributed to media spend for outcome metrics.</p>
         </header>
-      <div class="perf-tabs" id="mb-perf-tabs" role="tablist">
+      <div class="perf-tabs perf-tabs--filled" id="mb-perf-tabs" role="tablist">
         <button class="perf-tab active" data-mb-tab="overview" role="tab" aria-selected="true">
           <span class="material-symbols-outlined">dashboard</span> Overview
         </button>
@@ -387,7 +408,7 @@
 
   <script src="js/distribution/store-map.js"></script>
   <script src="js/distribution/chip-carousel.js?v=2"></script>
-  <script src="js/distribution/distribution.js?v=94"></script>
+  <script src="js/distribution/distribution.js?v=95"></script>
   <script src="js/distribution/distribution-modals.js?v=13"></script>
 
   <script src="js/header-slide.js"></script>

@@ -58,6 +58,63 @@
 .perf-tab-pane.active { display: block; }
 
 /* ============================================================
+   Decision 7 (2026-05-06) — 2-row perf-tabs prototype.
+   Row 1 (Section): default lines-bottom (.perf-tabs) — no override needed.
+   Row 2 (Sub-section): .perf-tabs--filled modifier = filled-pill on active.
+   Section-pane visibility: .dist-section-pane[.active] toggles content
+   under Row 1.
+   Mobile (≤ 640px): Row 1 buttons hide; <select> mirror appears.
+   ============================================================ */
+.perf-tabs--filled {
+  border-bottom: none;
+  gap: var(--space-2);
+  padding: var(--space-1) 0;
+}
+.perf-tabs--filled .perf-tab {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md, 6px);
+  background: var(--color-surface);
+  padding: var(--space-2) var(--space-3-5, 14px);
+  margin-bottom: 0;
+}
+.perf-tabs--filled .perf-tab:hover {
+  background: var(--color-surface-hover, #f3f4f6);
+}
+body[data-dist-page] .perf-tabs--filled .perf-tab.active,
+.perf-tabs--filled .perf-tab.active {
+  background: var(--p-primary-color);
+  color: #fff;
+  border-color: var(--p-primary-color);
+  border-bottom-color: var(--p-primary-color);
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.08), 0 0 0 1px rgba(33,150,243,0.4);
+}
+body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outlined,
+.perf-tabs--filled .perf-tab.active .material-symbols-outlined {
+  color: #fff;
+}
+
+.dist-section-pane { display: none; }
+.dist-section-pane.active { display: block; }
+
+.mb-section-select { display: none; }
+
+@media (max-width: 640px) {
+  .perf-tabs--section { display: none; }
+  .mb-section-select {
+    display: block;
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md, 6px);
+    background: var(--color-surface);
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-3);
+  }
+}
+
+/* ============================================================
    narrative-header — section title + question + subtitle stack
    Phase 0b migrated 2026-05-04 from distribution.css (3813-3849).
    Entity overrides (engagement-canonical .perf-tab-pane scope,

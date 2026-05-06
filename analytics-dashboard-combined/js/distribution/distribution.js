@@ -3934,6 +3934,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         initTreeTableActions();
         renderMediaAttributedVisits();
         initMediaBuyTabs();
+        initMediaSectionTabs();
       } else if (section === 'visitation') {
         renderVisitationKpis();
         renderStorePerfHero();
@@ -5804,6 +5805,72 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         }
       });
     });
+  }
+
+  /* ============================================================
+     Decision 7 prototype (2026-05-06) — Row 1 section tabs.
+     Switches between Observed Visits / Off-Platform Ranking section
+     panes. Deep-link via ?section=X&tab=Y; switching sections resets
+     ?tab=Y. Mobile <select> mirrors Row 1 buttons.
+     ============================================================ */
+  function initMediaSectionTabs() {
+    var tabBar = document.getElementById('mb-section-tabs');
+    if (!tabBar) return;
+    var tabs = tabBar.querySelectorAll('.perf-tab');
+    var panes = document.querySelectorAll('[data-mb-section]');
+    var select = document.getElementById('mb-section-select');
+
+    function applySection(target, opts) {
+      opts = opts || {};
+      tabs.forEach(function(x) {
+        var on = x.dataset.mbSectionTab === target;
+        x.classList.toggle('active', on);
+        x.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      panes.forEach(function(p) {
+        p.classList.toggle('active', p.dataset.mbSection === target);
+      });
+      if (select && select.value !== target) select.value = target;
+      // Resize charts in newly visible pane (echarts goes 0×0 if init'd hidden).
+      var activePane = document.querySelector('[data-mb-section="' + target + '"]');
+      if (activePane) {
+        activePane.querySelectorAll('[_echarts_instance_]').forEach(function(el) {
+          var inst = window.echarts && window.echarts.getInstanceByDom(el);
+          if (inst) inst.resize();
+        });
+      }
+      if (!opts.skipUrl && window.history && window.history.replaceState) {
+        var url = new URL(window.location.href);
+        url.searchParams.set('section', target);
+        if (opts.resetTab) url.searchParams.delete('tab');
+        window.history.replaceState({}, '', url.toString());
+      }
+    }
+
+    tabs.forEach(function(t) {
+      t.addEventListener('click', function() {
+        applySection(t.dataset.mbSectionTab, { resetTab: true });
+      });
+    });
+    if (select) {
+      select.addEventListener('change', function() {
+        applySection(select.value, { resetTab: true });
+      });
+    }
+
+    // Deep-link: parse ?section=X on load.
+    var params = new URLSearchParams(window.location.search);
+    var initialSection = params.get('section');
+    var validSections = Array.prototype.map.call(tabs, function(t) { return t.dataset.mbSectionTab; });
+    if (initialSection && validSections.indexOf(initialSection) !== -1) {
+      applySection(initialSection, { skipUrl: true });
+    }
+    // ?tab=Y honored by initMediaBuyTabs (Row 2 of ranking section) — fire matching click.
+    var initialTab = params.get('tab');
+    if (initialTab) {
+      var row2 = document.querySelector('[data-mb-tab="' + initialTab + '"], [data-mv-tab="' + initialTab + '"]');
+      if (row2) row2.click();
+    }
   }
 
   function initMediaBuyTabs() {

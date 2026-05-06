@@ -179,11 +179,15 @@
         <button class="perf-tab" data-mb-section-tab="ranking" role="tab" aria-selected="false">
           <span class="material-symbols-outlined">leaderboard</span> Off-Platform Ranking
         </button>
+        <button class="perf-tab" data-mb-section-tab="variants" role="tab" aria-selected="false">
+          <span class="material-symbols-outlined">grid_view</span> Variant Panels
+        </button>
       </div>
       <!-- Mobile collapse: native select mirrors Row 1 -->
       <select class="mb-section-select" id="mb-section-select" aria-label="Media Buy section (mobile)">
         <option value="observed-visits" selected>Observed Visits</option>
         <option value="ranking">Off-Platform Ranking</option>
+        <option value="variants">Variant Panels</option>
       </select>
 
       <!-- ═══════════════════════════════════════════════
@@ -297,39 +301,6 @@
       </div>
       </div><!-- /Overview pane -->
 
-      <!-- ═══════════════════════════════════════════════
-           LEVEL 2: Detailed Breakdown — always visible below perf-tabs
-           ═══════════════════════════════════════════════ -->
-      <div class="level-divider">Detailed Breakdown</div>
-
-      <!-- Variant Tree Table (dynamically generated) -->
-      <div id="variant-panels" class="dist-tree-data-grid">
-        <div class="dist-tree-header">
-          <label class="toggle-switch">
-            <input type="checkbox" id="dist-more-data-toggle">
-            <span class="toggle-slider"></span>
-          </label>
-          <span class="toggle-label">More Data</span>
-          <div class="dist-tree-actions">
-            <button class="dist-tree-action-btn" id="dist-export-btn" title="Export">
-              <span class="material-symbols-outlined">download</span> Export
-            </button>
-            <button class="dist-tree-action-btn" id="dist-print-btn" title="Print">
-              <span class="material-symbols-outlined">print</span> Print
-            </button>
-            <button class="dist-tree-action-btn" id="dist-share-btn" title="Share">
-              <span class="material-symbols-outlined">share</span> Share
-            </button>
-          </div>
-        </div>
-        <div class="dist-tree-table-wrap">
-          <table class="dist-tree-table">
-            <thead id="dist-tree-head"></thead>
-            <tbody id="dist-tree-body"></tbody>
-          </table>
-        </div>
-      </div>
-
       <div class="perf-tab-pane" data-mb-pane="store">
         <div class="dist-pane-toolbar">
           <span class="dist-pane-toolbar__label">Per-store delivery — ranked by visits.</span>
@@ -378,6 +349,46 @@
         </div>
         <div class="dist-tree-data-grid" id="mb-data-grid"></div>
       </div>
+      </section><!-- /.media-visits-section (ranking) -->
+
+      <!-- ═══════════════════════════════════════════════
+           Decision 7 prototype — Variant Panels promoted to Row 1 section
+           (was orphan Detailed Breakdown grid nested in Ranking).
+           ═══════════════════════════════════════════════ -->
+      <section class="media-visits-section dist-section-pane" data-mb-section="variants">
+        <header class="section-panel-header ">
+          <h2 class="section-panel-header__title">Variant Panels</h2>
+          <p class="section-panel-header__question">How does each creative variant compare across the full metric set?</p>
+          <p class="section-panel-header__subtitle">Detailed breakdown grid — every creative × every metric. Sortable, exportable. Toggle More Data for secondary metrics.</p>
+        </header>
+
+        <div id="variant-panels" class="dist-tree-data-grid">
+          <div class="dist-tree-header">
+            <label class="toggle-switch">
+              <input type="checkbox" id="dist-more-data-toggle">
+              <span class="toggle-slider"></span>
+            </label>
+            <span class="toggle-label">More Data</span>
+            <div class="dist-tree-actions">
+              <button class="dist-tree-action-btn" id="dist-export-btn" title="Export">
+                <span class="material-symbols-outlined">download</span> Export
+              </button>
+              <button class="dist-tree-action-btn" id="dist-print-btn" title="Print">
+                <span class="material-symbols-outlined">print</span> Print
+              </button>
+              <button class="dist-tree-action-btn" id="dist-share-btn" title="Share">
+                <span class="material-symbols-outlined">share</span> Share
+              </button>
+            </div>
+          </div>
+          <div class="dist-tree-table-wrap">
+            <table class="dist-tree-table">
+              <thead id="dist-tree-head"></thead>
+              <tbody id="dist-tree-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section><!-- /.media-visits-section (variants) -->
 
     </section>
 
@@ -408,7 +419,7 @@
 
   <script src="js/distribution/store-map.js"></script>
   <script src="js/distribution/chip-carousel.js?v=2"></script>
-  <script src="js/distribution/distribution.js?v=95"></script>
+  <script src="js/distribution/distribution.js?v=96"></script>
   <script src="js/distribution/distribution-modals.js?v=13"></script>
 
   <script src="js/header-slide.js"></script>

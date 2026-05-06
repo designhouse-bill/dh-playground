@@ -71,7 +71,7 @@ const DashboardModals = (() => {
 
   function openDatePicker(target = null) {
     _modalTarget = target;
-    const modal = elements.datePickerModal || document.getElementById('date-picker-modal');
+    const modal = (elements && elements.datePickerModal) || document.getElementById('date-picker-modal');
     if (modal) {
       modal.classList.add('active');
       switchDateTab('week');
@@ -106,7 +106,7 @@ const DashboardModals = (() => {
   }
 
   function closeDatePicker() {
-    const modal = elements.datePickerModal || document.getElementById('date-picker-modal');
+    const modal = (elements && elements.datePickerModal) || document.getElementById('date-picker-modal');
     if (modal) {
       modal.classList.remove('active');
     }
@@ -225,7 +225,7 @@ const DashboardModals = (() => {
 
     // Base mode behavior
     if (isCustomRange) {
-      const dateCard = elements.dateSelector || document.getElementById('date-selector');
+      const dateCard = (elements && elements.dateSelector) || document.getElementById('date-selector');
       if (dateCard) {
         const valueEl = dateCard.querySelector('.card-value');
         const subEl = dateCard.querySelector('.card-sub');
@@ -281,7 +281,7 @@ const DashboardModals = (() => {
 
   function openEntitySelector(target = null) {
     _modalTarget = target;
-    const modal = elements.entitySelectorModal || document.getElementById('entity-selector-modal');
+    const modal = (elements && elements.entitySelectorModal) || document.getElementById('entity-selector-modal');
     if (modal) {
       modal.classList.add('active');
       switchEntityTab('nodes');
@@ -295,7 +295,7 @@ const DashboardModals = (() => {
   }
 
   function closeEntitySelector() {
-    const modal = elements.entitySelectorModal || document.getElementById('entity-selector-modal');
+    const modal = (elements && elements.entitySelectorModal) || document.getElementById('entity-selector-modal');
     if (modal) {
       modal.classList.remove('active');
     }
@@ -611,7 +611,7 @@ const DashboardModals = (() => {
      ============================================ */
 
   function openFilterModal() {
-    const modal = elements.addFilterModal || document.getElementById('add-filter-modal');
+    const modal = (elements && elements.addFilterModal) || document.getElementById('add-filter-modal');
     if (modal) {
       modal.classList.add('active');
       state.selectedFilterType = 'category';
@@ -628,7 +628,7 @@ const DashboardModals = (() => {
   }
 
   function closeFilterModal() {
-    const modal = elements.addFilterModal || document.getElementById('add-filter-modal');
+    const modal = (elements && elements.addFilterModal) || document.getElementById('add-filter-modal');
     if (modal) {
       modal.classList.remove('active');
     }
@@ -797,3 +797,22 @@ window.selectFilterType = (el) => DashboardModals.selectFilterType(el);
 window.selectFilterOption = (el) => DashboardModals.selectFilterOption(el);
 window.applyFilter = () => DashboardModals.applyFilter();
 window.filterFilterOptions = (id, q) => DashboardModals.filterFilterOptions(id, q);
+
+// Auto-init: every page that loads shared-modals.js + shared-core.js gets DashboardModals
+// wired without needing per-page boot blocks. Runs once on DOMContentLoaded.
+(function autoInitDashboardModals() {
+  function boot() {
+    if (typeof window.DashboardCore === 'undefined') return;
+    try {
+      const core = window.DashboardCore;
+      if (typeof core.initElements === 'function') core.initElements();
+      DashboardModals.init(core);
+      if (typeof core.loadData === 'function') core.loadData().catch(function() {});
+    } catch (e) { /* non-critical — fallback DOM lookups still work via null guards */ }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+})();

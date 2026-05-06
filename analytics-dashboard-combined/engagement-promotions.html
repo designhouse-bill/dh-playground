@@ -1326,6 +1326,7 @@
     // data-* attrs feed the same tooltip used by the ranked-table stacked bar.
     function renderTopPromotionsStacked() {
       const host = document.getElementById('ep-top-promotions');
+      if (!host) return;
       const top = promotions.slice(0, 10);
       const maxComp = top.reduce((m, p) => Math.max(m, p.composite), 0);
       host.innerHTML = top.map(p => {

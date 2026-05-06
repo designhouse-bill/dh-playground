@@ -6,7 +6,12 @@
 (function () {
   'use strict';
 
-  let currentDashboard = 'home';
+  // Read initial dashboard from active switcher item (DOM source of truth).
+  // Falls back to 'engagement' so context-card clicks always have a target.
+  let currentDashboard = (function () {
+    var active = document.querySelector('.dashboard-switcher__item.active');
+    return (active && active.dataset.dashboard) || 'engagement';
+  })();
   let distributionInitialized = false;
 
   // ── Dashboard Switching ──────────────────────────────────────────────────────

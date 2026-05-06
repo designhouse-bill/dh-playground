@@ -1731,17 +1731,9 @@
               <span class="material-symbols-outlined">${changeIcon}</span>${changePp >= 0 ? '+' : ''}${changePp.toFixed(1)}pp
             </span>
           </div>
-        </div>
-        <div class="stat-strip__item">
-          <span class="stat-strip__label">Outperforming</span>
-          <div class="stat-strip__value-row">
-            <span class="stat-strip__value">${s.stores_outperforming} <span style="font-size:13px;font-weight:500;color:var(--color-text-secondary);">of ${s.stores_total}</span></span>
-          </div>
-        </div>
-        <div class="stat-strip__item">
-          <span class="stat-strip__label">Trend</span>
-          <div class="stat-strip__value-row">
-            <span class="stat-strip__value" style="font-size:14px;font-weight:600;">${gapText}</span>
+          <div class="stat-strip__context">
+            <span class="stat-strip__context-line"><strong>${s.stores_outperforming} of ${s.stores_total}</strong> stores outperforming</span>
+            <span class="stat-strip__context-line">${gapText}</span>
           </div>
         </div>
       </div>

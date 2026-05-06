@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>UX-846 Site Map — Preview v2</title>
+<style>
+  :root {
+    --eng: #2196F3;
+    --eng-light: #DBEAFE;
+    --dist: #F59E0B;
+    --dist-light: #FEF3C7;
+    --root: #1f2937;
+  }
+  body { font: 13px/1.4 -apple-system, system-ui, sans-serif; background: #f3f4f6; color: #1f2937; margin: 0; padding: 24px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .meta { color: #6b7280; margin-bottom: 8px; font-size: 13px; }
+  .note { background: #FEF3C7; border-left: 4px solid #F59E0B; padding: 12px 16px; margin: 16px 0 24px; border-radius: 4px; font-size: 13px; }
+  .canvas { position: relative; background: white; border-radius: 12px; padding: 32px; min-width: 2200px; }
+
+  .node { position: absolute; box-sizing: border-box; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,.12); font-weight: 600; }
+  .node small { display: block; font-weight: 400; font-size: 11px; opacity: .85; margin-top: 4px; }
+
+  .root { background: var(--root); color: white; padding: 16px 20px; }
+  .family { color: white; padding: 12px 18px; }
+  .family.eng { background: var(--eng); }
+  .family.dist { background: var(--dist); }
+
+  .section { padding: 10px 14px; font-size: 13px; }
+  .section.eng { background: var(--eng-light); border: 2px solid var(--eng); color: #0c4a6e; }
+  .section.dist { background: var(--dist-light); border: 2px solid var(--dist); color: #78350f; }
+
+  .page { background: white; padding: 8px 12px; }
+  .page.eng { border: 2px solid var(--eng); }
+  .page.dist { border: 2px solid var(--dist); }
+
+  .tab-card { background: #f8fafc; border-radius: 6px; padding: 6px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .tab-card .lbl { font-size: 9px; font-weight: 700; padding: 2px 0 4px; text-transform: uppercase; letter-spacing: .03em; }
+  .tab-card.eng .lbl { color: var(--eng); }
+  .tab-card.dist .lbl { color: var(--dist); }
+  .tab-card img { width: 100%; height: 110px; object-fit: cover; object-position: top; border-radius: 3px; display: block; background: #e5e7eb; }
+  .tab-card .more { display: flex; align-items: center; justify-content: center; height: 110px; background: #f1f5f9; color: #64748b; font-size: 11px; border-radius: 3px; }
+
+  svg.connectors { position: absolute; inset: 0; pointer-events: none; }
+  svg.connectors path { fill: none; stroke-width: 1.5; }
+
+  .legend { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; }
+  .legend span::before { content: ""; width: 14px; height: 14px; border-radius: 3px; }
+  .legend .e::before { background: var(--eng); }
+  .legend .e2::before { background: var(--eng-light); border: 2px solid var(--eng); }
+  .legend .d::before { background: var(--dist); }
+  .legend .d2::before { background: var(--dist-light); border: 2px solid var(--dist); }
+  .legend .r::before { background: var(--root); }
+</style>
+</head>
+<body>
+
+<h1>UX-846 Site Map — Direction Preview v2</h1>
+<div class="meta">4-tier tree: Root → Family → Section → Page → Tabs. Showing 2 of N tabs per page; full version puts every screenshot as a leaf.</div>
+<div class="legend">
+  <span class="r">Root</span>
+  <span class="e">Engagement family</span>
+  <span class="e2">Engagement section</span>
+  <span class="d">Distribution family</span>
+  <span class="d2">Distribution section</span>
+</div>
+<div class="note">
+  <strong>Engagement now correctly grouped:</strong> 3 sections under Engagement family — <em>Base / Report</em> (Promotions·Categories·Circulars share one shell; base-layer perf-tab switches grain), <em>Grid / Inquiry</em> (Explore Grid), <em>Compare</em>.
+  Distribution: 3 pages live directly under family (no sub-sections — they're peer narratives).
+  Tell me if Distribution should also gain a section layer (e.g. Reach / Performance / Competitive).
+</div>
+
+<div class="canvas" id="canvas">
+  <svg class="connectors" id="connectors" width="2200" height="1100" viewBox="0 0 2200 1100"></svg>
+
+  <!-- Root -->
+  <div class="node root" id="root" style="left: 940px; top: 0; width: 320px;">
+    Analytics Dashboard
+    <small>103 screenshots · 8 pages</small>
+  </div>
+
+  <!-- Families -->
+  <div class="node family eng" id="fam-eng" style="left: 280px; top: 130px; width: 260px;">
+    ENGAGEMENT
+    <small>3 sections · 5 pages</small>
+  </div>
+  <div class="node family dist" id="fam-dist" style="left: 1700px; top: 130px; width: 260px;">
+    DISTRIBUTION
+    <small>3 pages</small>
+  </div>
+
+  <!-- ENGAGEMENT sections -->
+  <div class="node section eng" id="sec-base" style="left: 80px; top: 270px; width: 240px;">
+    Base / Report
+    <small>3 pages · shared shell</small>
+  </div>
+  <div class="node section eng" id="sec-grid" style="left: 360px; top: 270px; width: 200px;">
+    Grid / Inquiry
+    <small>1 page · data-first</small>
+  </div>
+  <div class="node section eng" id="sec-compare" style="left: 860px; top: 270px; width: 580px;">
+    Compare
+    <small>3 grain pages — Promotions · Categories · Circulars (default)</small>
+  </div>
+
+  <!-- ENGAGEMENT › Base / Report pages -->
+  <div class="node page eng" id="p-promo"     style="left:  60px; top: 400px; width: 180px;">Promotions <small>22 tabs</small></div>
+  <div class="node page eng" id="p-cat"       style="left: 260px; top: 400px; width: 180px;">Categories <small>18 tabs</small></div>
+  <div class="node page eng" id="p-circ"      style="left: 460px; top: 400px; width: 180px;">Circulars <small>18 tabs</small></div>
+
+  <!-- Grid (single page) -->
+  <div class="node page eng" id="p-grid"      style="left: 660px; top: 400px; width: 180px;">Explore Grid <small>22 tabs</small></div>
+
+  <!-- Compare grain pages (mirror Base/Report) -->
+  <div class="node page eng" id="p-cmp-promo" style="left: 860px;  top: 400px; width: 180px;">Promotions <small>compare</small></div>
+  <div class="node page eng" id="p-cmp-cat"   style="left: 1060px; top: 400px; width: 180px;">Categories <small>compare</small></div>
+  <div class="node page eng" id="p-cmp-circ"  style="left: 1260px; top: 400px; width: 180px;">Circulars (default) <small>compare</small></div>
+
+  <!-- DISTRIBUTION pages -->
+  <div class="node page dist" id="p-vis"     style="left: 1560px; top: 400px; width: 180px;">Visitation <small>8 tabs</small></div>
+  <div class="node page dist" id="p-media"   style="left: 1760px; top: 400px; width: 180px;">Media Buy <small>9 tabs</small></div>
+  <div class="node page dist" id="p-traffic" style="left: 1960px; top: 400px; width: 180px;">Traffic Share <small>5 tabs</small></div>
+
+  <!-- Tab leaves (2 per page for preview) -->
+  <div class="tab-card node eng" style="left:  60px; top: 530px; width: 180px;"><div class="lbl">overview</div><img src="engagement-promotions__overview.png"></div>
+  <div class="tab-card node eng" style="left:  60px; top: 670px; width: 180px;"><div class="lbl">+ 21 more</div><div class="more">21 more tabs</div></div>
+
+  <div class="tab-card node eng" style="left: 260px; top: 530px; width: 180px;"><div class="lbl">overview</div><img src="engagement-categories__overview.png"></div>
+  <div class="tab-card node eng" style="left: 260px; top: 670px; width: 180px;"><div class="lbl">+ 17 more</div><div class="more">17 more tabs</div></div>
+
+  <div class="tab-card node eng" style="left: 460px; top: 530px; width: 180px;"><div class="lbl">overview</div><img src="engagement-circulars__overview.png"></div>
+  <div class="tab-card node eng" style="left: 460px; top: 670px; width: 180px;"><div class="lbl">+ 17 more</div><div class="more">17 more tabs</div></div>
+
+  <div class="tab-card node eng" style="left: 660px; top: 530px; width: 180px;"><div class="lbl">overview</div><img src="engagement-grid__overview.png"></div>
+  <div class="tab-card node eng" style="left: 660px; top: 670px; width: 180px;"><div class="lbl">+ 21 more</div><div class="more">21 more tabs</div></div>
+
+  <!-- Compare grain leaves (only baseline captured today; placeholder for grain-specific states) -->
+  <div class="tab-card node eng" style="left:  860px; top: 530px; width: 180px;"><div class="lbl">baseline</div><img src="engagement-compare__baseline.png"></div>
+  <div class="tab-card node eng" style="left: 1060px; top: 530px; width: 180px;"><div class="lbl">⚠ not captured</div><div class="more">grain not separable today</div></div>
+  <div class="tab-card node eng" style="left: 1260px; top: 530px; width: 180px;"><div class="lbl">⚠ not captured</div><div class="more">grain not separable today</div></div>
+
+  <div class="tab-card node dist" style="left: 1560px; top: 530px; width: 180px;"><div class="lbl">overview</div><img src="distribution-visitation__overview.png"></div>
+  <div class="tab-card node dist" style="left: 1560px; top: 670px; width: 180px;"><div class="lbl">+ 7 more</div><div class="more">7 more tabs</div></div>
+
+  <div class="tab-card node dist" style="left: 1760px; top: 530px; width: 180px;"><div class="lbl">overview</div><img src="distribution-media__overview.png"></div>
+  <div class="tab-card node dist" style="left: 1760px; top: 670px; width: 180px;"><div class="lbl">+ 8 more</div><div class="more">8 more tabs</div></div>
+
+  <div class="tab-card node dist" style="left: 1960px; top: 530px; width: 180px;"><div class="lbl">overview</div><img src="distribution-traffic__overview.png"></div>
+  <div class="tab-card node dist" style="left: 1960px; top: 670px; width: 180px;"><div class="lbl">+ 4 more</div><div class="more">4 more tabs</div></div>
+</div>
+
+<script>
+const svg = document.getElementById('connectors');
+const ENG = '#2196F3', DIST = '#F59E0B';
+
+function rect(id) {
+  const el = document.getElementById(id);
+  if (!el) return null;
+  const r = el.getBoundingClientRect();
+  const c = document.getElementById('canvas').getBoundingClientRect();
+  return { x: r.left - c.left, y: r.top - c.top, w: r.width, h: r.height };
+}
+function elbow(from, to, color) {
+  const x1 = from.x + from.w / 2;
+  const y1 = from.y + from.h;
+  const x2 = to.x + to.w / 2;
+  const y2 = to.y;
+  const my = (y1 + y2) / 2;
+  const d = `M ${x1} ${y1} L ${x1} ${my} L ${x2} ${my} L ${x2} ${y2}`;
+  const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  p.setAttribute('d', d); p.setAttribute('stroke', color);
+  svg.appendChild(p);
+}
+
+window.addEventListener('load', () => {
+  const r = rect('root'), eng = rect('fam-eng'), dist = rect('fam-dist');
+  if (eng) elbow(r, eng, ENG);
+  if (dist) elbow(r, dist, DIST);
+
+  // Engagement: family → 3 sections
+  ['sec-base','sec-grid','sec-compare'].forEach(id => { const s = rect(id); if (eng && s) elbow(eng, s, ENG); });
+
+  // Sections → pages
+  const base = rect('sec-base'); ['p-promo','p-cat','p-circ'].forEach(id => { const p = rect(id); if (base && p) elbow(base, p, ENG); });
+  const grid = rect('sec-grid'); { const p = rect('p-grid'); if (grid && p) elbow(grid, p, ENG); }
+  const cmp = rect('sec-compare');
+  ['p-cmp-promo','p-cmp-cat','p-cmp-circ'].forEach(id => { const p = rect(id); if (cmp && p) elbow(cmp, p, ENG); });
+
+  // Distribution: family → pages directly (no section layer)
+  ['p-vis','p-media','p-traffic'].forEach(id => { const p = rect(id); if (dist && p) elbow(dist, p, DIST); });
+
+  // Pages → tab leaves (every page has its tabs at left position + 0/140 below page)
+  const PAGE_LEAVES = [
+    ['p-promo', ENG, 2], ['p-cat', ENG, 2], ['p-circ', ENG, 2], ['p-grid', ENG, 2],
+    ['p-cmp-promo', ENG, 1], ['p-cmp-cat', ENG, 1], ['p-cmp-circ', ENG, 1],
+    ['p-vis', DIST, 2], ['p-media', DIST, 2], ['p-traffic', DIST, 2],
+  ];
+  for (const [id, color, leafCount] of PAGE_LEAVES) {
+    const pg = rect(id); if (!pg) continue;
+    const ys = leafCount === 1 ? [530] : [530, 670];
+    ys.forEach(y => elbow(pg, { x: pg.x, y, w: pg.w, h: 0 }, color));
+  }
+});
+</script>
+
+</body>
+</html>

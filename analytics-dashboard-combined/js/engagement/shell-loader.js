@@ -46,6 +46,28 @@
     });
   }
 
+  // R2 (2026-05-06): URL ?tab=X overrides body[data-active-tab] and toggles
+  // .perf-tab-pane.active so circulars sub-pages can be deep-linked without
+  // separate HTML files. Valid keys: overview|sessions|users|duration|cardevents.
+  function resolveActiveTab() {
+    var fromUrl = null;
+    try {
+      var params = new URLSearchParams(window.location.search);
+      var t = params.get('tab');
+      if (t) fromUrl = t;
+    } catch (_) {}
+    if (fromUrl) document.body.dataset.activeTab = fromUrl;
+    return document.body.dataset.activeTab || 'overview';
+  }
+
+  function activatePane(activeKey) {
+    var panes = document.querySelectorAll('.perf-tab-pane[data-ep-pane]');
+    if (!panes.length) return;
+    panes.forEach(function (p) {
+      p.classList.toggle('active', p.dataset.epPane === activeKey);
+    });
+  }
+
   function load() {
     var mount = document.querySelector('[data-shell="engagement-tabs"]');
     if (!mount) return;
@@ -57,8 +79,9 @@
       })
       .then(function (html) {
         mount.innerHTML = html;
-        var activeKey = document.body.dataset.activeTab;
+        var activeKey = resolveActiveTab();
         markActiveTab(mount, activeKey);
+        activatePane(activeKey);
         wireTabNav(mount);
         wireDashboardSwitcherLinks(mount);
         relocatePerfTabs(mount);

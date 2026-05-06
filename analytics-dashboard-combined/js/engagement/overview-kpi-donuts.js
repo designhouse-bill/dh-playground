@@ -160,13 +160,10 @@
           }
           return;
         }
-        var map = {
-          sessions:   'engagement-circulars-sessions.html',
-          users:      'engagement-circulars-users.html',
-          duration:   'engagement-circulars-duration.html',
-          cardevents: 'engagement-circulars-cardevents.html'
-        };
-        if (map[target]) window.location.href = map[target];
+        // R2 (2026-05-06): sub-pages dropped; deep-link via ?tab=X.
+        if (['sessions','users','duration','cardevents'].indexOf(target) !== -1) {
+          window.location.href = 'engagement-circulars.html?tab=' + target;
+        }
       });
     });
   }

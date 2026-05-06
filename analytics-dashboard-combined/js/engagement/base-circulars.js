@@ -696,7 +696,8 @@
     setStoreEntityContext();
 
     core.saveState();
-    StateManager.navigateTo('engagement-circulars-data-grid.html', state, { storeId: state.selectedStoreId });
+    // R2 (2026-05-06): data-grid sub-page dropped; route to canonical Explore surface.
+    StateManager.navigateTo('engagement-grid.html', state, { storeId: state.selectedStoreId });
   }
 
   /**

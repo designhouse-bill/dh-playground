@@ -146,8 +146,95 @@
       </div>
     </div>
 
-    <!-- Phase 1: sessions/users/duration/cardevents panes moved to sibling sub-pages
-         (engagement-circulars-{sessions,users,duration,cardevents,data-grid}.html). -->
+    <!-- R2 (2026-05-06): sub-page files dropped. All 4 metric panes inlined here.
+         Tab activation via URL ?tab=X param parsed by shell-loader.js.
+         data-grid tab routes to engagement-grid.html (canonical Explore surface). -->
+
+    <div class="perf-tab-pane" data-ep-pane="sessions">
+      <div class="hero-stat"><div class="narrative-header"><div class="narrative-header-left">
+        <h2 class="narrative-header__title">Sessions</h2>
+        <p class="narrative-header__question">How are sessions distributed across circulars, days, and weeks?</p>
+      </div></div></div>
+      <div class="ep-sub-tabs" role="tablist" aria-label="Sessions cuts">
+        <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Sessions by Circular</button>
+        <button class="ep-sub-tab" data-ep-sub="day" role="tab">Sessions by Day</button>
+        <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Sessions Time Trend</button>
+      </div>
+      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="store"><div class="ep-stacked-list" id="ep-sessions-by-store"></div></div>
+      <div class="ep-sub-pane" data-ep-sub-pane="day"><div id="ep-sessions-by-day"></div></div>
+      <div class="ep-sub-pane" data-ep-sub-pane="trend"><div id="ep-sessions-trend"></div></div>
+    </div>
+
+    <div class="perf-tab-pane" data-ep-pane="users">
+      <div class="hero-stat"><div class="narrative-header"><div class="narrative-header-left">
+        <h2 class="narrative-header__title">Total Users</h2>
+        <p class="narrative-header__question">How many unique users engaged this week, and which circulars drove them?</p>
+        <p class="ep-additivity" aria-label="Total Users is the sum of New, Returning, and Engaged users">
+          <span class="ep-additivity__lbl">Of the total:</span>
+          <span class="ep-additivity__pill ep-additivity__pill--n">New</span>
+          <span class="ep-additivity__plus">+</span>
+          <span class="ep-additivity__pill ep-additivity__pill--r">Returning</span>
+          <span class="ep-additivity__plus">+</span>
+          <span class="ep-additivity__pill ep-additivity__pill--e">Engaged</span>
+        </p>
+      </div></div></div>
+      <div class="ep-sub-tabs" role="tablist" aria-label="Users cuts">
+        <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Users by Circular</button>
+        <button class="ep-sub-tab" data-ep-sub="day" role="tab">Users by Day</button>
+        <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Users Time Trend</button>
+      </div>
+      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="store"><div class="ep-stacked-list" id="ep-users-by-store"></div></div>
+      <div class="ep-sub-pane" data-ep-sub-pane="day"><div id="ep-users-by-day"></div></div>
+      <div class="ep-sub-pane" data-ep-sub-pane="trend"><div id="ep-users-trend"></div></div>
+    </div>
+
+    <div class="perf-tab-pane" data-ep-pane="duration">
+      <div class="hero-stat"><div class="narrative-header"><div class="narrative-header-left">
+        <h2 class="narrative-header__title">Avg Session Duration</h2>
+        <p class="narrative-header__question">How long are users spending on each circular?</p>
+        <p class="narrative-header__value" id="ep-duration-hero-value">—</p>
+        <p class="ep-additivity" aria-label="Avg Session Duration is the weighted average across New, Returning, and Engaged users">
+          <span class="ep-additivity__lbl">Of the avg:</span>
+          <span class="ep-additivity__pill ep-additivity__pill--n">New</span>
+          <span class="ep-additivity__plus">+</span>
+          <span class="ep-additivity__pill ep-additivity__pill--r">Returning</span>
+          <span class="ep-additivity__plus">+</span>
+          <span class="ep-additivity__pill ep-additivity__pill--e">Engaged</span>
+        </p>
+      </div></div></div>
+      <div class="ep-sub-tabs" role="tablist" aria-label="Duration cuts">
+        <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Duration by Circular</button>
+        <button class="ep-sub-tab" data-ep-sub="day" role="tab">Duration by Day</button>
+        <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Duration Time Trend</button>
+      </div>
+      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="store"><div class="ep-stacked-list" id="ep-duration-by-store"></div></div>
+      <div class="ep-sub-pane" data-ep-sub-pane="day"><div id="ep-duration-by-day"></div></div>
+      <div class="ep-sub-pane" data-ep-sub-pane="trend"><div id="ep-duration-trend"></div></div>
+    </div>
+
+    <div class="perf-tab-pane" data-ep-pane="cardevents">
+      <div class="hero-stat"><div class="narrative-header"><div class="narrative-header-left">
+        <h2 class="narrative-header__title">Card Engagement Events</h2>
+        <p class="narrative-header__question">Which interactions are users taking on circular cards?</p>
+        <p class="narrative-header__value" id="ep-cardevents-hero-value">—</p>
+        <p class="ep-additivity" aria-label="Card Engagement Events totals roll up Card Clicks, Add to List, and Card View / Share">
+          <span class="ep-additivity__lbl">Of the total:</span>
+          <span class="ep-additivity__pill ep-additivity__pill--n">Card Click</span>
+          <span class="ep-additivity__plus">+</span>
+          <span class="ep-additivity__pill ep-additivity__pill--r">Add to List</span>
+          <span class="ep-additivity__plus">+</span>
+          <span class="ep-additivity__pill ep-additivity__pill--e">Card View / Share</span>
+        </p>
+      </div></div></div>
+      <div class="ep-sub-tabs" role="tablist" aria-label="Card Events cuts">
+        <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Card Events by Circular</button>
+        <button class="ep-sub-tab" data-ep-sub="day" role="tab">Card Events by Day</button>
+        <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Card Events Time Trend</button>
+      </div>
+      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="store"><div class="ep-stacked-list" id="ep-cardevents-by-store"></div></div>
+      <div class="ep-sub-pane" data-ep-sub-pane="day"><div id="ep-cardevents-by-day"></div></div>
+      <div class="ep-sub-pane" data-ep-sub-pane="trend"><div id="ep-cardevents-trend"></div></div>
+    </div>
 
     <!-- ============================================================
          EXISTING IN-DEV GRID — moved inside engagement-canonical (bottom slot).

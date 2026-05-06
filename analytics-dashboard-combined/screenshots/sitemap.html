@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>UX-846 Analytics Dashboard — Site Map</title>
+<style>
+  :root {
+    --eng: #2196F3;
+    --eng-light: #DBEAFE;
+    --dist: #F59E0B;
+    --dist-light: #FEF3C7;
+    --root: #1f2937;
+    --gray-1: #f3f4f6;
+    --gray-2: #e5e7eb;
+    --gray-3: #9CA3AF;
+    --text: #1f2937;
+    --text-muted: #6b7280;
+  }
+  * { box-sizing: border-box; }
+  body { font: 13px/1.4 -apple-system, system-ui, sans-serif; background: var(--gray-1); color: var(--text); margin: 0; padding: 24px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .meta { color: var(--text-muted); margin-bottom: 16px; font-size: 13px; }
+  .legend { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: white; border-radius: 999px; font-size: 12px; }
+  .legend span::before { content: ""; width: 12px; height: 12px; border-radius: 3px; }
+  .legend .e::before { background: var(--eng); }
+  .legend .e2::before { background: var(--eng-light); border: 2px solid var(--eng); }
+  .legend .d::before { background: var(--dist); }
+  .legend .r::before { background: var(--root); }
+  .legend a { color: var(--eng); text-decoration: none; }
+  .legend a:hover { text-decoration: underline; }
+
+  .canvas { position: relative; background: white; border-radius: 12px; overflow-x: auto; overflow-y: visible; }
+  .canvas-inner { position: relative; padding: 32px; min-width: max-content; display: flex; flex-direction: column; align-items: center; }
+
+  .tier { display: flex; justify-content: center; margin-bottom: 28px; }
+  .tier-families { gap: 96px; align-items: flex-start; }
+
+  /* Root */
+  .root-card { background: var(--root); color: white; padding: 14px 20px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,.18); text-align: center; min-width: 280px; }
+  .root-card h2 { margin: 0; font-size: 16px; }
+  .root-card small { display: block; opacity: .8; font-size: 11px; margin-top: 3px; }
+
+  /* Family */
+  .family-band { display: flex; flex-direction: column; align-items: center; }
+  .family-card { color: white; padding: 10px 18px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,.14); margin-bottom: 24px; text-align: center; min-width: 220px; }
+  .family-card.eng { background: var(--eng); }
+  .family-card.dist { background: var(--dist); }
+  .family-card h3 { margin: 0; font-size: 14px; letter-spacing: .04em; }
+  .family-card small { display: block; opacity: .85; font-size: 11px; margin-top: 2px; }
+
+  /* Section */
+  .section-row { display: flex; gap: 36px; align-items: flex-start; }
+  .section-band { display: flex; flex-direction: column; align-items: stretch; }
+  .section-band.flat .section-header { display: none; }
+  .section-header { padding: 8px 12px; border-radius: 10px; font-weight: 700; text-align: center; margin-bottom: 18px; font-size: 12px; }
+  .section-header.eng { background: var(--eng-light); border: 2px solid var(--eng); color: #0c4a6e; }
+  .section-header.dist { background: var(--dist-light); border: 2px solid var(--dist); color: #78350f; }
+  .section-header small { display: block; font-weight: 400; font-size: 10px; opacity: .8; margin-top: 1px; }
+
+  /* Page row inside a section */
+  .page-row { display: flex; gap: 24px; align-items: flex-start; }
+  .page-column { display: flex; flex-direction: column; gap: 12px; align-items: stretch; }
+
+  /* Page card — w/ baseline thumb */
+  .page-card { background: white; border-radius: 8px; padding: 6px; box-shadow: 0 1px 3px rgba(0,0,0,.10); display: flex; gap: 8px; align-items: center; min-height: 56px; }
+  .page-card.eng { border: 2px solid var(--eng); }
+  .page-card.dist { border: 2px solid var(--dist); }
+  .page-card .thumb { width: 56px; height: 36px; border-radius: 3px; object-fit: cover; object-position: top; background: var(--gray-2); flex: 0 0 auto; cursor: zoom-in; }
+  .page-card .lbl { font-weight: 700; font-size: 12px; line-height: 1.2; }
+  .page-card .lbl small { display: block; font-weight: 400; font-size: 10px; color: var(--text-muted); margin-top: 1px; }
+  .page-card .lbl small.warn { color: #b45309; font-style: italic; }
+
+  /* Sub-pages row */
+  .subpage-row { display: flex; gap: 8px; align-items: flex-start; padding-top: 8px; border-top: 2px dashed var(--gray-2); }
+  .subpage-column { display: flex; flex-direction: column; gap: 6px; min-width: 138px; max-width: 138px; }
+  .subpage-card { background: white; border-radius: 6px; padding: 4px 6px; text-align: center; font-size: 10px; font-weight: 700; }
+  .subpage-card.eng { border: 1px solid var(--eng); color: var(--eng); }
+  .subpage-card.dist { border: 1px solid var(--dist); color: var(--dist); }
+
+  /* Leaf cards under a sub-page */
+  .leaves { display: flex; flex-direction: column; gap: 4px; }
+  .leaf { background: #f8fafc; border-radius: 4px; padding: 3px; box-shadow: 0 1px 2px rgba(0,0,0,.06); cursor: zoom-in; transition: transform .12s, box-shadow .12s; }
+  .leaf:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,.10); }
+  .leaf .lbl { font-size: 8px; font-weight: 700; padding: 1px 2px 2px; text-transform: uppercase; letter-spacing: .02em; word-break: break-all; }
+  .leaf.eng .lbl { color: var(--eng); }
+  .leaf.dist .lbl { color: var(--dist); }
+  .leaf img { width: 100%; height: 78px; object-fit: cover; object-position: top; border-radius: 2px; display: block; background: var(--gray-2); }
+  .leaf .placeholder { display: flex; align-items: center; justify-content: center; height: 78px; background: #f1f5f9; color: #64748b; font-size: 10px; border-radius: 2px; cursor: default; text-align: center; padding: 4px; }
+
+  /* Nested sub-section block (Media Buy "Attributed Visits") */
+  .nested-block { margin-top: 12px; padding: 6px; border: 1px dashed var(--dist); border-radius: 6px; background: rgba(245, 158, 11, 0.04); }
+  .nested-block .nested-label { font-size: 10px; font-weight: 700; color: var(--dist); text-transform: uppercase; letter-spacing: .03em; margin-bottom: 4px; padding: 0 2px; }
+
+  /* SVG connectors layer */
+  svg.connectors { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+  svg.connectors path { fill: none; stroke-width: 1.5; }
+  .canvas > *:not(svg) { position: relative; z-index: 1; }
+
+  /* ───── Lightbox (lifted from index.html) ───── */
+  .lb { position: fixed; inset: 0; background: rgba(15, 23, 42, .94); z-index: 100; display: none; flex-direction: column; }
+  .lb.open { display: flex; }
+  .lb__bar { display: flex; align-items: center; gap: 16px; padding: 12px 20px; color: white; flex: 0 0 auto; }
+  .lb__bar .crumb { font-size: 13px; color: rgba(255,255,255,.65); }
+  .lb__bar .title { font-size: 15px; font-weight: 600; }
+  .lb__bar .counter { font-size: 12px; color: rgba(255,255,255,.6); margin-left: auto; }
+  .lb__bar .close { background: transparent; border: 1px solid rgba(255,255,255,.3); color: white; font: inherit; padding: 6px 14px; border-radius: 6px; cursor: pointer; }
+  .lb__bar .close:hover { background: rgba(255,255,255,.1); }
+  .lb__stage { flex: 1; display: block; padding: 8px 80px 20px; min-height: 0; position: relative; overflow-y: auto; overflow-x: hidden; }
+  .lb__img { display: block; width: 100%; height: auto; box-shadow: 0 20px 60px rgba(0,0,0,.5); border-radius: 8px; background: white; }
+  .lb__stage--fit .lb__img { width: auto; max-width: 100%; max-height: calc(100vh - 220px); margin: 0 auto; }
+  .lb__fitbtn { position: absolute; top: 16px; right: 80px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25); color: white; font: inherit; font-size: 12px; padding: 6px 12px; border-radius: 6px; cursor: pointer; z-index: 2; }
+  .lb__fitbtn:hover { background: rgba(255,255,255,.25); }
+  .lb__nav { position: fixed; }
+  .lb__nav { position: absolute; top: 50%; transform: translateY(-50%); width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25); color: white; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .15s; }
+  .lb__nav:hover { background: rgba(255,255,255,.25); }
+  .lb__nav:disabled { opacity: .25; cursor: default; }
+  .lb__prev { left: 16px; }
+  .lb__next { right: 16px; }
+  .lb__thumbs { flex: 0 0 auto; display: flex; gap: 6px; padding: 8px 20px 16px; overflow-x: auto; }
+  .lb__thumbs button { flex: 0 0 auto; width: 80px; height: 50px; padding: 0; border: 2px solid transparent; border-radius: 4px; background: rgba(255,255,255,.05); cursor: pointer; overflow: hidden; }
+  .lb__thumbs button.active { border-color: white; }
+  .lb__thumbs img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .lb__hint { position: fixed; bottom: 76px; left: 50%; transform: translateX(-50%); font-size: 11px; color: rgba(255,255,255,.5); pointer-events: none; background: rgba(0,0,0,.4); padding: 4px 12px; border-radius: 999px; }
+</style>
+</head>
+<body>
+
+<h1 id="page-h1">UX-846 Analytics Dashboard — Site Map</h1>
+<div class="meta" id="meta">Click any thumbnail to open in gallery · ← / → / Esc keyboard nav</div>
+<div class="legend" id="legend">
+  <span class="r">Root</span>
+  <span class="e">Engagement</span>
+  <span class="e2">Section</span>
+  <span class="d">Distribution</span>
+  <span style="margin-left:auto"></span>
+  <strong style="font-size:11px;color:var(--text-muted);">VIEWS:</strong>
+  <a href="sitemap.html" id="view-all">All families</a>
+  <a href="sitemap.html?family=eng" id="view-eng">Engagement only</a>
+  <a href="sitemap.html?family=dist" id="view-dist">Distribution only</a>
+  <span style="margin-left:12px"></span>
+  <a href="index.html">→ flat contact sheet</a>
+</div>
+
+<div class="canvas" id="canvas">
+  <div class="canvas-inner" id="canvas-inner">
+    <svg class="connectors" id="connectors" width="100%" height="100%"></svg>
+    <div class="tier"><div class="root-card" id="root">
+      <h2>Analytics Dashboard</h2>
+      <small id="root-meta"></small>
+    </div></div>
+    <div class="tier tier-families" id="families"></div>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-labelledby="lb-title">
+  <div class="lb__bar">
+    <div>
+      <div class="crumb" id="lb-crumb"></div>
+      <div class="title" id="lb-title"></div>
+    </div>
+    <div class="counter" id="lb-counter"></div>
+    <button class="close" id="lb-close">Close ✕</button>
+  </div>
+  <button class="lb__fitbtn" id="lb-fit">Fit to screen</button>
+  <div class="lb__stage" id="lb-stage">
+    <img class="lb__img" id="lb-img" alt="">
+  </div>
+  <button class="lb__nav lb__prev" id="lb-prev">‹</button>
+  <button class="lb__nav lb__next" id="lb-next">›</button>
+  <div class="lb__hint">← / → navigate · Esc close · F toggle fit · scroll to see more</div>
+  <div class="lb__thumbs" id="lb-thumbs"></div>
+</div>
+
+<script>
+// ── Engagement sub-page templates (5 perf-tabs per page) ─────
+function epSubpages(metricExtras) {
+  // metricExtras: array of sub-tab suffixes available, e.g. ['store','day','trend','data']
+  const subs = ['store','day','trend','data'];
+  return [
+    { title: 'Overview',     shots: ['overview'] },
+    { title: 'Sessions',     shots: ['sessions',     ...subs.filter(s => metricExtras.includes(s)).map(s => 'sessions__'     + s)] },
+    { title: 'Users',        shots: ['users',        ...subs.filter(s => metricExtras.includes(s)).map(s => 'users__'        + s)] },
+    { title: 'Duration',     shots: ['duration',     ...subs.filter(s => metricExtras.includes(s)).map(s => 'duration__'     + s)] },
+    { title: 'Card Events',  shots: ['cardevents',   ...subs.filter(s => metricExtras.includes(s)).map(s => 'cardevents__'   + s)] },
+  ];
+}
+
+// ── Tree schema ──────────────────────────────────────────────
+const TREE = [
+  {
+    title: "ENGAGEMENT", family: "eng",
+    sections: [
+      {
+        title: "Base / Report",
+        sub: "3 grain pages · shared 5-tab shell",
+        pages: [
+          { title: "Circulars (default · Engagement Start Page)", file: "engagement-circulars", baseline: "baseline", subPages: epSubpages(['store','day','trend']) },
+          { title: "Categories",  file: "engagement-categories",  baseline: "baseline", subPages: epSubpages(['store','day','trend']) },
+          { title: "Promotions ⚠ rebuild pending", file: "engagement-promotions", baseline: "baseline", subPages: epSubpages(['store','day','trend','data']), note: "drop 3-up overview panels — adopt Categories shell (decision 2026-05-06)" },
+        ]
+      },
+      {
+        title: "Grid / Inquiry",
+        sub: "single explore view · no metric perf-tabs (IA decision 2026-05-06)",
+        pages: [
+          { title: "Explore Grid", file: "engagement-grid", baseline: "baseline", subPages: [], note: "Single view · no Sessions/Users/Duration/Card Events sub-pages" }
+        ]
+      },
+      {
+        title: "Compare",
+        sub: "3 grain pages — Promotions · Categories · Circulars (default)",
+        pages: [
+          { title: "Promotions",          file: "engagement-compare", grain: "promotions", baseline: "baseline", subPages: [], note: "grain not separable today" },
+          { title: "Categories",          file: "engagement-compare", grain: "categories", baseline: null,        subPages: [], note: "not captured today" },
+          { title: "Circulars (default)", file: "engagement-compare", grain: "circulars",  baseline: "baseline", subPages: [], note: "default grain · only baseline captured" },
+        ]
+      }
+    ]
+  },
+  {
+    title: "DISTRIBUTION", family: "dist",
+    sections: [
+      {
+        title: null,
+        pages: [
+          { title: "Visitation", file: "distribution-visitation", baseline: "baseline",
+            subPages: [
+              { title: "Overview",    shots: ['overview'] },
+              { title: "By Store",    shots: ['store', 'store__view-bar', 'store__view-data', 'store__view-trend'] },
+              { title: "By Creative", shots: ['creative'] },
+              { title: "By Day",      shots: ['day'] },
+            ]
+          },
+          { title: "Media Buy", file: "distribution-media", baseline: "baseline",
+            subPages: [
+              { title: "Overview",    shots: ['overview'] },
+              { title: "By Store",    shots: ['store'] },
+              { title: "By Creative", shots: ['creative'] },
+              { title: "Trend",       shots: ['trend'] },
+              { title: "Data",        shots: ['data'] },
+            ],
+            nestedSubsection: {
+              title: "Attributed Visits (nested mini perf-tabs)",
+              subPages: [
+                { title: "mv-overview",      shots: ['mv-overview'] },
+                { title: "mv-store",         shots: ['mv-store'] },
+                { title: "mv-trendovertime", shots: ['mv-trendovertime'] },
+              ]
+            }
+          },
+          { title: "Traffic Share", file: "distribution-traffic", baseline: "baseline",
+            subPages: [
+              { title: "Overview", shots: ['overview'] },
+              { title: "Compare",  shots: ['compare'] },
+              { title: "Trend",    shots: ['trend'] },
+              { title: "Data",     shots: ['data'] },
+            ]
+          },
+        ]
+      }
+    ]
+  }
+];
+
+// ── Helpers ─────────────────────────────────────────────────
+function leafSrc(file, tab) { return file + '__' + tab + '.png'; }
+
+const SEQ = []; // flat sequence for gallery
+function pushLeaf(crumb, family, file, tab, subTitle, grain) {
+  SEQ.push({
+    src: leafSrc(file, tab),
+    tab, subTitle, grain: grain || null,
+    crumb, family
+  });
+}
+
+// ── Family filter via URL param (?family=eng|dist) ───────────
+const FAMILY_PARAM = new URLSearchParams(location.search).get('family');
+const RENDER_TREE = FAMILY_PARAM ? TREE.filter(f => f.family === FAMILY_PARAM) : TREE;
+
+// Update H1 + active link
+const familyNames = { eng: 'Engagement', dist: 'Distribution' };
+if (FAMILY_PARAM && familyNames[FAMILY_PARAM]) {
+  document.getElementById('page-h1').textContent = 'UX-846 ' + familyNames[FAMILY_PARAM] + ' — Site Map';
+  document.title = 'UX-846 ' + familyNames[FAMILY_PARAM] + ' — Site Map';
+}
+// Highlight active view link
+const activeId = FAMILY_PARAM === 'eng' ? 'view-eng' : FAMILY_PARAM === 'dist' ? 'view-dist' : 'view-all';
+const activeLink = document.getElementById(activeId);
+if (activeLink) { activeLink.style.fontWeight = '700'; activeLink.style.textDecoration = 'underline'; }
+
+// ── Render ───────────────────────────────────────────────────
+const families = document.getElementById('families');
+let totalShots = 0, totalPages = 0;
+
+for (const family of RENDER_TREE) {
+  const famBand = document.createElement('div');
+  famBand.className = 'family-band';
+
+  const famCard = document.createElement('div');
+  famCard.className = 'family-card ' + family.family;
+  famCard.id = 'fam-' + family.family;
+  let pageCount = 0;
+  for (const sec of family.sections) pageCount += sec.pages.length;
+  famCard.innerHTML = '<h3>' + family.title + '</h3><small>' + pageCount + ' pages</small>';
+  famBand.appendChild(famCard);
+  totalPages += pageCount;
+
+  const sectionRow = document.createElement('div');
+  sectionRow.className = 'section-row';
+
+  family.sections.forEach((sec, sIdx) => {
+    const secBand = document.createElement('div');
+    secBand.className = 'section-band' + (sec.title ? '' : ' flat');
+
+    if (sec.title) {
+      const secHdr = document.createElement('div');
+      secHdr.className = 'section-header ' + family.family;
+      secHdr.id = 'sec-' + family.family + '-' + sIdx;
+      secHdr.innerHTML = sec.title + (sec.sub ? '<small>' + sec.sub + '</small>' : '');
+      secBand.appendChild(secHdr);
+    }
+
+    const pageRow = document.createElement('div');
+    pageRow.className = 'page-row';
+
+    sec.pages.forEach((page, pIdx) => {
+      const col = document.createElement('div');
+      col.className = 'page-column';
+
+      // Page card with baseline thumb
+      const pageId = 'page-' + family.family + '-' + sIdx + '-' + pIdx;
+      const pageCard = document.createElement('div');
+      pageCard.className = 'page-card ' + family.family;
+      pageCard.id = pageId;
+      const sumShots = (page.subPages || []).reduce((a, sp) => a + sp.shots.length, 0)
+                     + (page.nestedSubsection ? page.nestedSubsection.subPages.reduce((a, sp) => a + sp.shots.length, 0) : 0)
+                     + (page.baseline ? 1 : 0);
+      const baselineSrc = page.baseline ? leafSrc(page.file, page.baseline) : null;
+      const crumb = family.title + (sec.title ? ' › ' + sec.title : '') + ' › ' + page.title + (page.grain ? ' (' + page.grain + ')' : '');
+
+      let pageInner = '';
+      if (baselineSrc) {
+        pageInner += '<img class="thumb" src="' + baselineSrc + '" data-leaf="1" data-src="' + baselineSrc + '" data-crumb="' + crumb + '" data-title="baseline" alt="">';
+        pushLeaf(crumb, family.family, page.file, page.baseline, 'Page baseline', page.grain);
+        totalShots++;
+      }
+      pageInner += '<div class="lbl">' + page.title;
+      if (sumShots) {
+        pageInner += '<small>' + sumShots + ' shot' + (sumShots > 1 ? 's' : '') + '</small>';
+      } else if (page.note) {
+        pageInner += '<small class="warn">⚠ ' + page.note + '</small>';
+      }
+      pageInner += '</div>';
+      pageCard.innerHTML = pageInner;
+      col.appendChild(pageCard);
+
+      // Sub-page row (if any)
+      const renderSubpages = (subs, container, isNested) => {
+        const row = document.createElement('div');
+        row.className = 'subpage-row';
+        subs.forEach((sp, spIdx) => {
+          const spCol = document.createElement('div');
+          spCol.className = 'subpage-column';
+          const spCard = document.createElement('div');
+          spCard.className = 'subpage-card ' + family.family;
+          const subId = pageId + (isNested ? '-nested' : '') + '-sp-' + spIdx;
+          spCard.id = subId;
+          spCard.textContent = sp.title;
+          spCol.appendChild(spCard);
+
+          const leaves = document.createElement('div');
+          leaves.className = 'leaves';
+          sp.shots.forEach(tab => {
+            const leaf = document.createElement('div');
+            leaf.className = 'leaf ' + family.family;
+            const src = leafSrc(page.file, tab);
+            leaf.dataset.leaf = "1";
+            leaf.dataset.src = src;
+            leaf.dataset.crumb = crumb + ' › ' + sp.title;
+            leaf.dataset.title = tab;
+            leaf.innerHTML = '<div class="lbl">' + tab + '</div><img loading="lazy" src="' + src + '" alt="">';
+            leaves.appendChild(leaf);
+            pushLeaf(crumb + ' › ' + sp.title, family.family, page.file, tab, sp.title, page.grain);
+            totalShots++;
+          });
+          spCol.appendChild(leaves);
+          row.appendChild(spCol);
+        });
+        container.appendChild(row);
+      };
+
+      if (page.subPages && page.subPages.length > 0) {
+        renderSubpages(page.subPages, col, false);
+      }
+
+      // Nested subsection (Media Buy's Attributed Visits)
+      if (page.nestedSubsection) {
+        const nest = document.createElement('div');
+        nest.className = 'nested-block';
+        const lbl = document.createElement('div');
+        lbl.className = 'nested-label';
+        lbl.textContent = '⚙︎ ' + page.nestedSubsection.title;
+        nest.appendChild(lbl);
+        renderSubpages(page.nestedSubsection.subPages, nest, true);
+        col.appendChild(nest);
+      }
+
+      // No-shots placeholder (Compare grains)
+      if (!page.subPages.length && !page.baseline && page.note) {
+        const ph = document.createElement('div');
+        ph.className = 'leaf ' + family.family;
+        ph.style.marginTop = '8px';
+        ph.innerHTML = '<div class="lbl">⚠ no capture</div><div class="placeholder">' + page.note + '</div>';
+        col.appendChild(ph);
+      }
+
+      pageRow.appendChild(col);
+    });
+
+    secBand.appendChild(pageRow);
+    sectionRow.appendChild(secBand);
+  });
+
+  famBand.appendChild(sectionRow);
+  families.appendChild(famBand);
+}
+
+document.getElementById('root-meta').textContent = totalShots + ' screenshots · ' + totalPages + ' pages';
+document.getElementById('meta').textContent = totalShots + ' screenshots across ' + totalPages + ' pages · click any thumbnail (page or leaf) to open gallery · ← / → / Esc keyboard nav';
+
+// ── Connectors ───────────────────────────────────────────────
+function drawConnectors() {
+  const svg = document.getElementById('connectors');
+  const inner = document.getElementById('canvas-inner');
+  const ir = inner.getBoundingClientRect();
+  // Inner dimensions = full content area (not clipped by overflow scroller)
+  const w = inner.scrollWidth;
+  const h = inner.scrollHeight;
+  svg.setAttribute('width', w);
+  svg.setAttribute('height', h);
+  svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+  function center(el, edge) {
+    const r = el.getBoundingClientRect();
+    return {
+      x: r.left - ir.left + r.width / 2,
+      y: edge === 'top' ? r.top - ir.top : r.bottom - ir.top
+    };
+  }
+  function draw(from, to, color) {
+    const my = (from.y + to.y) / 2;
+    const d = `M ${from.x} ${from.y} L ${from.x} ${my} L ${to.x} ${my} L ${to.x} ${to.y}`;
+    const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    p.setAttribute('d', d); p.setAttribute('stroke', color);
+    svg.appendChild(p);
+  }
+
+  const root = document.getElementById('root');
+  const colors = { eng: '#2196F3', dist: '#F59E0B' };
+
+  for (const family of RENDER_TREE) {
+    const fam = document.getElementById('fam-' + family.family);
+    if (!fam) continue;
+    draw(center(root, 'bottom'), center(fam, 'top'), colors[family.family]);
+
+    family.sections.forEach((sec, sIdx) => {
+      const secEl = sec.title ? document.getElementById('sec-' + family.family + '-' + sIdx) : null;
+      sec.pages.forEach((page, pIdx) => {
+        const pageId = 'page-' + family.family + '-' + sIdx + '-' + pIdx;
+        const pageEl = document.getElementById(pageId);
+        if (!pageEl) return;
+        if (secEl) {
+          draw(center(fam, 'bottom'), center(secEl, 'top'), colors[family.family]);
+          draw(center(secEl, 'bottom'), center(pageEl, 'top'), colors[family.family]);
+        } else {
+          draw(center(fam, 'bottom'), center(pageEl, 'top'), colors[family.family]);
+        }
+      });
+    });
+  }
+}
+
+window.addEventListener('load', () => setTimeout(drawConnectors, 100));
+window.addEventListener('resize', drawConnectors);
+
+// ── Lightbox ─────────────────────────────────────────────────
+const lb = document.getElementById('lb');
+const lbImg = document.getElementById('lb-img');
+const lbCrumb = document.getElementById('lb-crumb');
+const lbTitle = document.getElementById('lb-title');
+const lbCounter = document.getElementById('lb-counter');
+const lbPrev = document.getElementById('lb-prev');
+const lbNext = document.getElementById('lb-next');
+const lbClose = document.getElementById('lb-close');
+const lbThumbs = document.getElementById('lb-thumbs');
+let idx = 0, thumbsBuilt = false;
+
+function buildThumbs() {
+  if (thumbsBuilt) return;
+  for (let i = 0; i < SEQ.length; i++) {
+    const b = document.createElement('button');
+    b.dataset.i = i;
+    b.title = SEQ[i].crumb + ' — ' + SEQ[i].tab;
+    b.innerHTML = '<img loading="lazy" src="' + SEQ[i].src + '" alt="">';
+    lbThumbs.appendChild(b);
+  }
+  lbThumbs.addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if (btn) seek(parseInt(btn.dataset.i, 10));
+  });
+  thumbsBuilt = true;
+}
+function open(i) { buildThumbs(); seek(i); lb.classList.add('open'); document.body.style.overflow = 'hidden'; const st = document.getElementById('lb-stage'); if (st) st.scrollTop = 0; }
+function close() { lb.classList.remove('open'); document.body.style.overflow = ''; }
+function seek(i) {
+  if (i < 0) i = 0;
+  if (i >= SEQ.length) i = SEQ.length - 1;
+  idx = i;
+  const s = SEQ[idx];
+  lbImg.src = s.src;
+  lbImg.alt = s.crumb + ' — ' + s.tab;
+  lbCrumb.textContent = s.crumb;
+  lbTitle.textContent = s.tab + (s.grain ? ' · ' + s.grain : '');
+  lbCounter.textContent = (idx + 1) + ' / ' + SEQ.length;
+  lbPrev.disabled = idx === 0;
+  lbNext.disabled = idx === SEQ.length - 1;
+  const active = lbThumbs.querySelector('button.active');
+  if (active) active.classList.remove('active');
+  const next = lbThumbs.querySelector('button[data-i="' + idx + '"]');
+  if (next) { next.classList.add('active'); next.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); }
+  const st = document.getElementById('lb-stage'); if (st) st.scrollTop = 0;
+}
+
+// Fit toggle: 'wide' (default) shows 100% stage width + scroll | 'fit' shrinks to viewport
+const lbStage = document.getElementById('lb-stage');
+const lbFit = document.getElementById('lb-fit');
+let fitMode = 'wide';
+function applyFit() {
+  if (fitMode === 'fit') { lbStage.classList.add('lb__stage--fit'); lbFit.textContent = 'Full width'; }
+  else { lbStage.classList.remove('lb__stage--fit'); lbFit.textContent = 'Fit to screen'; }
+}
+lbFit.addEventListener('click', () => { fitMode = fitMode === 'wide' ? 'fit' : 'wide'; applyFit(); });
+
+document.addEventListener('click', e => {
+  const target = e.target.closest('[data-leaf]');
+  if (!target) return;
+  const src = target.dataset.src || target.querySelector('img')?.src?.split('/').pop();
+  if (!src) return;
+  const i = SEQ.findIndex(s => s.src === src || s.src.endsWith(src));
+  if (i >= 0) open(i);
+});
+
+lbPrev.addEventListener('click', () => seek(idx - 1));
+lbNext.addEventListener('click', () => seek(idx + 1));
+lbClose.addEventListener('click', close);
+lb.addEventListener('click', e => {
+  if (e.target.closest('.lb__img, .lb__nav, .lb__thumbs, .lb__bar button, .lb__bar .title, .lb__bar .crumb, .lb__bar .counter')) return;
+  close();
+});
+document.addEventListener('keydown', e => {
+  if (!lb.classList.contains('open')) return;
+  if (e.key === 'Escape') close();
+  else if (e.key === 'ArrowLeft') seek(idx - 1);
+  else if (e.key === 'ArrowRight') seek(idx + 1);
+  else if (e.key === 'Home') seek(0);
+  else if (e.key === 'End') seek(SEQ.length - 1);
+  else if (e.key === 'f' || e.key === 'F') { fitMode = fitMode === 'wide' ? 'fit' : 'wide'; applyFit(); }
+});
+</script>
+
+</body>
+</html>

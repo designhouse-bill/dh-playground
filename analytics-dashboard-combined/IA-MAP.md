@@ -89,12 +89,7 @@ Entity grain: **circular** (store). Cohort default: 27 circulars.
 
 Same shell as Promotions/Categories with one extension: above the cohort line a **base-layer perf-tab strip** lets the user switch entity grain without re-navigating: `[Circulars (active) | Categories | Promotions]` — links to sibling pages.
 
-Sub-pages (alternate URL form, same content as in-pane sub-tab):
-- `engagement-circulars-sessions.html` (Sessions tab pre-active)
-- `engagement-circulars-users.html`
-- `engagement-circulars-duration.html`
-- `engagement-circulars-cardevents.html`
-- `engagement-circulars-data-grid.html` (Data tab → embedded grid)
+**R2 RESOLVED 2026-05-06:** All 5 sub-page files dropped. Tab activation via URL query param: `engagement-circulars.html?tab=sessions|users|duration|cardevents` (parsed by `shell-loader.js`). `data-grid` tab routes out to `engagement-grid.html` (canonical Explore surface — no longer an embedded copy).
 
 ### 4. Engagement › Explore Grid (`engagement-grid.html`)
 
@@ -219,7 +214,7 @@ Same component reused across multiple pages. If any one of these drifts, the oth
 4. **Engagement Compare ↔ Distribution Compare** — Compare today is engagement-flavored only. No Distribution Compare exists. Gap?
 5. ~~**Grid (Explore) vs Promotions**~~ — RESOLVED 2026-05-06: Grid = spreadsheet/Excel view (no KPI), Promotions = "summary with some detail" (donut KPI + grid). Distinct roles, zero metric duplication.
 6. **Media subsection "Observed visits attributed to media spend"** — has its OWN mini perf-tabs nested inside Media Buy's perf-tabs. Two levels of perf-tabs on one page. Cognitive load risk.
-7. **Sub-page URL variants on Circulars** (`-sessions.html`, `-users.html`, etc.) — duplicate of in-page tabs. Keep as deep-link entry points or drop?
+7. ~~**Sub-page URL variants on Circulars**~~ — RESOLVED 2026-05-06: 5 sub-pages dropped; deep-link via `?tab=X` query param. `data-grid` tab routes to canonical Explore (`engagement-grid.html`).
 
 ---
 

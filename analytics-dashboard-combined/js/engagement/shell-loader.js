@@ -20,6 +20,19 @@
       if (on) t.setAttribute('aria-selected', 'true');
       else t.removeAttribute('aria-selected');
     });
+    // Decision 7 — mobile select mirrors active Row 1 + navigates on change.
+    var select = root.querySelector('#ep-section-select');
+    if (select) {
+      if (select.value !== activeKey) select.value = activeKey;
+      if (!select.dataset.wired) {
+        select.dataset.wired = '1';
+        select.addEventListener('change', function () {
+          var match = root.querySelector('.perf-tabs .perf-tab[data-ep-tab="' + select.value + '"]');
+          var href = match && (match.getAttribute('href') || match.dataset.href);
+          if (href) window.location.assign(href);
+        });
+      }
+    }
   }
 
   function wireTabNav(root) {

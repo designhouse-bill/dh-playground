@@ -11,7 +11,7 @@
   <!-- CSS (in dependency order) -->
   <link rel="stylesheet" href="css/design-tokens.css">
   <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/analytics-architecture.css?v=20260506-decision5d">
+  <link rel="stylesheet" href="css/analytics-architecture.css?v=20260506-decision5e">
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
@@ -322,25 +322,68 @@
           </div>
         </div>
 
-        <!-- Cell 4 (L, span 12) — Top performers: Top Promotions ranked bar (drill engine), full-width row -->
-        <button class="ep-kpi-cell ep-kpi-cell--l" data-jump-to="cardevents" type="button">
+        <!-- Cell 4 (L, span 12) — Top Promotions chip strip (Distribution chip pattern).
+             Each chip links to a promotion-detail view (the Promotions analog of Distribution's "creative" detail). -->
+        <div class="ep-kpi-cell ep-kpi-cell--l" style="cursor:default;">
           <div class="ep-kpi-cell__head">
             <div>
               <div class="ep-kpi-cell__story">Top performers</div>
-              <div class="ep-kpi-cell__metric">Top 5 promotions · Card Engagement Events</div>
+              <div class="ep-kpi-cell__metric">Top 5 promotions · Card Engagement Events · Week 47</div>
+            </div>
+            <a href="engagement-cardevents.html" class="ep-kpi-cell__view" style="margin-top:0;">
+              View all promotions <span class="material-symbols-outlined" style="font-size:14px;">chevron_right</span>
+            </a>
+          </div>
+          <div class="ep-kpi-cell__chart" style="min-height:0;">
+            <div class="ep-topn-chips" role="list" aria-label="Top 5 promotions by Card Engagement Events">
+              <a class="creative-chip" href="#promo/coca-cola-12pk" role="listitem" title="Coca-Cola 12pk — Beverages">
+                <div class="creative-chip__header">
+                  <div class="creative-chip__thumb"><span class="creative-chip__thumb-initials">CC</span></div>
+                  <span class="creative-chip__rank">1</span>
+                </div>
+                <span class="creative-chip__name">Coca-Cola 12pk</span>
+                <span class="creative-chip__meta">Beverages · $5.99</span>
+                <span class="creative-chip__value">18.2K<span class="creative-chip__value-lbl">Card events</span></span>
+              </a>
+              <a class="creative-chip" href="#promo/tide-pods-81ct" role="listitem" title="Tide Pods 81ct — Household">
+                <div class="creative-chip__header">
+                  <div class="creative-chip__thumb"><span class="creative-chip__thumb-initials">TP</span></div>
+                  <span class="creative-chip__rank">2</span>
+                </div>
+                <span class="creative-chip__name">Tide Pods 81ct</span>
+                <span class="creative-chip__meta">Household · $19.99</span>
+                <span class="creative-chip__value">15.3K<span class="creative-chip__value-lbl">Card events</span></span>
+              </a>
+              <a class="creative-chip" href="#promo/pepperidge-farm-bread" role="listitem" title="Pepperidge Farm Bread — Bakery">
+                <div class="creative-chip__header">
+                  <div class="creative-chip__thumb"><span class="creative-chip__thumb-initials">PF</span></div>
+                  <span class="creative-chip__rank">3</span>
+                </div>
+                <span class="creative-chip__name">Pepperidge Farm Bread</span>
+                <span class="creative-chip__meta">Bakery · $4.49</span>
+                <span class="creative-chip__value">12.9K<span class="creative-chip__value-lbl">Card events</span></span>
+              </a>
+              <a class="creative-chip" href="#promo/nature-valley-bars" role="listitem" title="Nature Valley Bars — Snacks">
+                <div class="creative-chip__header">
+                  <div class="creative-chip__thumb"><span class="creative-chip__thumb-initials">NV</span></div>
+                  <span class="creative-chip__rank">4</span>
+                </div>
+                <span class="creative-chip__name">Nature Valley Bars</span>
+                <span class="creative-chip__meta">Snacks · $3.99</span>
+                <span class="creative-chip__value">10.5K<span class="creative-chip__value-lbl">Card events</span></span>
+              </a>
+              <a class="creative-chip" href="#promo/boars-head-deli" role="listitem" title="Boar's Head Deli — Deli">
+                <div class="creative-chip__header">
+                  <div class="creative-chip__thumb"><span class="creative-chip__thumb-initials">BH</span></div>
+                  <span class="creative-chip__rank">5</span>
+                </div>
+                <span class="creative-chip__name">Boar's Head Deli</span>
+                <span class="creative-chip__meta">Deli · $8.99/lb</span>
+                <span class="creative-chip__value">8.4K<span class="creative-chip__value-lbl">Card events</span></span>
+              </a>
             </div>
           </div>
-          <div class="ep-kpi-cell__chart">
-            <div class="ep-topn">
-              <div class="ep-topn__row"><span class="ep-topn__rank">1</span><div class="ep-topn__bar"><div class="ep-topn__bar-fill" style="width:100%"></div><span class="ep-topn__label">Coca-Cola 12pk</span></div><span class="ep-topn__val">18.2K</span></div>
-              <div class="ep-topn__row"><span class="ep-topn__rank">2</span><div class="ep-topn__bar"><div class="ep-topn__bar-fill" style="width:84%"></div><span class="ep-topn__label">Tide Pods 81ct</span></div><span class="ep-topn__val">15.3K</span></div>
-              <div class="ep-topn__row"><span class="ep-topn__rank">3</span><div class="ep-topn__bar"><div class="ep-topn__bar-fill" style="width:71%"></div><span class="ep-topn__label">Pepperidge Farm Bread</span></div><span class="ep-topn__val">12.9K</span></div>
-              <div class="ep-topn__row"><span class="ep-topn__rank">4</span><div class="ep-topn__bar"><div class="ep-topn__bar-fill" style="width:58%"></div><span class="ep-topn__label">Nature Valley Bars</span></div><span class="ep-topn__val">10.5K</span></div>
-              <div class="ep-topn__row"><span class="ep-topn__rank">5</span><div class="ep-topn__bar"><div class="ep-topn__bar-fill" style="width:46%"></div><span class="ep-topn__label">Boar's Head Deli</span></div><span class="ep-topn__val">8.4K</span></div>
-            </div>
-          </div>
-          <span class="ep-kpi-cell__view">Open Card Engagement Events <span class="material-symbols-outlined" style="font-size:14px;">chevron_right</span></span>
-        </button>
+        </div>
 
         <!-- Cell 6 (S) — Entity vs parent: 4-metric small multiples -->
         <button class="ep-kpi-cell ep-kpi-cell--s" data-jump-to="overview" type="button">

@@ -663,7 +663,10 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
 /* Cell 1 — DoW bar (Sessions) */
 .ep-dow-bars { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; align-items: end; height: 120px; }
 .ep-dow-bar { display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: end; }
-.ep-dow-bar__fill { width: 100%; background: linear-gradient(to top, var(--section-sessions, #2196F3), color-mix(in srgb, var(--section-sessions, #2196F3) 60%, white)); border-radius: 3px 3px 0 0; min-height: 4px; }
+/* Flat fill — parity w/ canonical .dow-bar in sub-panes (no gradient).
+   Same DoW chart appears on Sessions > By Day; visual must match. */
+.ep-dow-bar__fill { width: 100%; background: var(--section-sessions, #2196F3); border-radius: 3px 3px 0 0; min-height: 4px; }
+.ep-dow-bar--peak .ep-dow-bar__fill { background: color-mix(in srgb, var(--section-sessions, #2196F3) 80%, #000); }
 .ep-dow-bar__label { font-size: 10px; color: var(--color-text-secondary); }
 
 /* Cell 2 — sparkline (Total Users). Value lifted to .ep-kpi-cell__head; chart slot is sparkline only. */

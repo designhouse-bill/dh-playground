@@ -219,8 +219,11 @@
         <!-- Row 1 left column — DoW + Audience Reach stacked. -->
         <div class="ep-kpi-stack">
 
-        <!-- Cell 1 — When engagement happens: Sessions by Day-of-Week -->
-        <button class="ep-kpi-cell" data-jump-to="sessions" data-jump-sub="day" type="button">
+        <!-- Cell 1 — When engagement happens: Sessions by Day-of-Week.
+             Jump-sub intentionally NOT set: clicking lands on Sessions tab
+             default (Sessions by Store stacked list) — different cut, not
+             the same chart. Saturday is peak. -->
+        <button class="ep-kpi-cell" data-jump-to="sessions" type="button">
           <div class="ep-kpi-cell__head">
             <div>
               <div class="ep-kpi-cell__story">When engagement happens</div>
@@ -238,11 +241,11 @@
               <div class="ep-dow-bar"><div class="ep-dow-bar__fill" style="height:55%"></div><div class="ep-dow-bar__label">W</div></div>
               <div class="ep-dow-bar"><div class="ep-dow-bar__fill" style="height:71%"></div><div class="ep-dow-bar__label">T</div></div>
               <div class="ep-dow-bar"><div class="ep-dow-bar__fill" style="height:88%"></div><div class="ep-dow-bar__label">F</div></div>
-              <div class="ep-dow-bar"><div class="ep-dow-bar__fill" style="height:96%"></div><div class="ep-dow-bar__label">S</div></div>
+              <div class="ep-dow-bar ep-dow-bar--peak"><div class="ep-dow-bar__fill" style="height:96%"></div><div class="ep-dow-bar__label">S</div></div>
               <div class="ep-dow-bar"><div class="ep-dow-bar__fill" style="height:42%"></div><div class="ep-dow-bar__label">S</div></div>
             </div>
           </div>
-          <span class="ep-kpi-cell__view">Open Sessions <span class="material-symbols-outlined" >chevron_right</span></span>
+          <span class="ep-kpi-cell__view">Open Sessions <span class="material-symbols-outlined">chevron_right</span></span>
         </button>
 
         <!-- Cell 2 — Audience reach: Total Users (value lifted to head, parity w/ DoW cell). -->

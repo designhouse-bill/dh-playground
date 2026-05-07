@@ -641,15 +641,24 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
 }
 .ep-kpi-cell:hover { border-color: var(--color-border-hover); box-shadow: var(--shadow-sm); }
 .ep-kpi-cell:focus-visible { outline: 2px solid var(--p-primary-color, #2196F3); outline-offset: 2px; }
-.ep-kpi-cell__head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
-.ep-kpi-cell__story { font-size: var(--font-size-xs); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--color-text-secondary); }
-.ep-kpi-cell__metric { font-size: 13px; color: var(--color-text-secondary); }
-.ep-kpi-cell__value { font-size: 22px; font-weight: 800; color: var(--p-text-color); line-height: 1.1; }
+.ep-kpi-cell__head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); min-height: 44px; }
+.ep-kpi-cell__story { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--color-text-secondary); }
+.ep-kpi-cell__metric { font-size: 13px; color: var(--color-text-secondary); margin-top: 2px; }
+.ep-kpi-cell__value { font-size: 26px; font-weight: 800; color: var(--p-text-color); line-height: 1.05; font-variant-numeric: tabular-nums; }
 .ep-kpi-cell__delta { font-size: 12px; font-weight: 600; }
 .ep-kpi-cell__delta--up { color: #16a34a; }
 .ep-kpi-cell__delta--down { color: #dc2626; }
-.ep-kpi-cell__chart { flex: 1; min-height: 120px; }
-.ep-kpi-cell__view { display: inline-flex; align-items: center; gap: 2px; font-size: 11px; font-weight: 600; color: var(--p-primary-color, #2196F3); margin-top: auto; }
+.ep-kpi-cell__chart { flex: 1; min-height: 120px; display: flex; flex-direction: column; justify-content: center; }
+/* Jump button — bottom-pinned, divider above, consistent across all cells */
+.ep-kpi-cell__view {
+  display: inline-flex; align-items: center; gap: 2px;
+  font-size: 12px; font-weight: 600;
+  color: var(--p-primary-color, #2196F3);
+  margin-top: auto;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border, #e5e7eb);
+}
+.ep-kpi-cell__view .material-symbols-outlined { font-size: 16px; }
 
 /* Cell 1 — DoW bar (Sessions) */
 .ep-dow-bars { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; align-items: end; height: 120px; }
@@ -657,12 +666,11 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
 .ep-dow-bar__fill { width: 100%; background: linear-gradient(to top, var(--section-sessions, #2196F3), color-mix(in srgb, var(--section-sessions, #2196F3) 60%, white)); border-radius: 3px 3px 0 0; min-height: 4px; }
 .ep-dow-bar__label { font-size: 10px; color: var(--color-text-secondary); }
 
-/* Cell 2 — sparkline (Total Users) */
-.ep-sparkline-wrap { display: flex; flex-direction: column; gap: 6px; }
-.ep-sparkline-big { font-size: 28px; font-weight: 800; line-height: 1.05; }
-.ep-sparkline-svg { width: 100%; height: 60px; }
-.ep-sparkline-svg path { fill: none; stroke: var(--section-users, #f59e0b); stroke-width: 2; }
-.ep-sparkline-svg .area { fill: color-mix(in srgb, var(--section-users, #f59e0b) 18%, transparent); stroke: none; }
+/* Cell 2 — sparkline (Total Users). Value lifted to .ep-kpi-cell__head; chart slot is sparkline only. */
+.ep-sparkline-wrap { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+.ep-sparkline-svg { width: 100%; height: 80px; }
+.ep-sparkline-svg path { fill: none; stroke: var(--section-users, #0891b2); stroke-width: 2; }
+.ep-sparkline-svg .area { fill: color-mix(in srgb, var(--section-users, #0891b2) 18%, transparent); stroke: none; }
 
 /* Cell 3 — Depth of Engagement: vertical bar chart by device. */
 .ep-depth-vbars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; align-items: end; height: 180px; }
@@ -704,7 +712,8 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
 .ep-perf-donut__legend-row span { font-size: 11px; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: .04em; }
 .ep-perf-donut__legend-row strong { font-variant-numeric: tabular-nums; font-size: 16px; font-weight: 700; }
 
-/* Cell 6 — Comparison strip (entity vs parent avg, 4 metrics) */
+/* Legacy cells 6+7 (Compare strip + Funnel) replaced by .ep-entity-compare below.
+   Classes kept in case other pages still reference them. */
 .ep-compare-strip { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 .ep-compare-strip__cell { padding: 8px; border-radius: 6px; background: #f8fafc; }
 .ep-compare-strip__lbl { font-size: 10px; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: .04em; }
@@ -712,13 +721,81 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
 .ep-compare-strip__delta { font-size: 10px; font-weight: 600; }
 .ep-compare-strip__bar { height: 4px; background: #e2e8f0; border-radius: 2px; margin-top: 4px; position: relative; }
 .ep-compare-strip__bar-fill { position: absolute; left: 0; top: 0; height: 100%; background: var(--p-primary-color, #2196F3); border-radius: 2px; }
-
-/* Cell 7 — Funnel (Impressions → CTR) */
 .ep-funnel { display: flex; flex-direction: column; gap: 8px; }
 .ep-funnel__row { display: grid; grid-template-columns: 80px 1fr; gap: 8px; align-items: center; font-size: 12px; }
 .ep-funnel__lbl { font-size: 11px; color: var(--color-text-secondary); }
 .ep-funnel__bar { height: 28px; background: linear-gradient(90deg, var(--p-primary-color, #2196F3), color-mix(in srgb, var(--p-primary-color, #2196F3) 60%, white)); border-radius: 4px; display: flex; align-items: center; padding: 0 10px; color: white; font-weight: 700; font-size: 12px; }
 .ep-funnel__rate { font-size: 11px; color: var(--color-text-secondary); margin-top: 4px; text-align: center; font-style: italic; }
+
+/* ============================================================
+   .ep-entity-compare — full-width "How this entity compares" cell
+   4 columns, one per section metric (Sessions / Users / Duration /
+   Card Events). Each column section-color tinted, value + Δ vs
+   banner avg + Δ vs brand avg + benchmark bar w/ marker + percentile
+   sentence + jump button.
+   ============================================================ */
+.ep-entity-compare { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; align-items: stretch; }
+.ep-entity-compare__col {
+  display: flex; flex-direction: column; gap: 6px;
+  padding: 0 var(--space-4);
+  border-left: 1px solid var(--color-border, #e5e7eb);
+  text-decoration: none; color: inherit;
+  cursor: pointer; background: none; border-top: none; border-right: none; border-bottom: none;
+  text-align: left; font: inherit;
+  min-width: 0;
+}
+.ep-entity-compare__col:first-child { border-left: none; padding-left: 0; }
+.ep-entity-compare__col:last-child { padding-right: 0; }
+.ep-entity-compare__col:hover .ep-entity-compare__value { color: var(--col-color, var(--p-primary-color, #2196F3)); }
+.ep-entity-compare__col[data-kpi="sessions"]   { --col-color: var(--section-sessions);   --col-light: var(--section-sessions-light); }
+.ep-entity-compare__col[data-kpi="users"]      { --col-color: var(--section-users);      --col-light: var(--section-users-light); }
+.ep-entity-compare__col[data-kpi="duration"]   { --col-color: var(--section-duration);   --col-light: var(--section-duration-light); }
+.ep-entity-compare__col[data-kpi="cardevents"] { --col-color: var(--section-cardevents); --col-light: var(--section-cardevents-light); }
+
+.ep-entity-compare__lbl { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--col-color, var(--color-text-secondary)); }
+.ep-entity-compare__value { font-size: 26px; font-weight: 800; color: var(--p-text-color); line-height: 1.05; font-variant-numeric: tabular-nums; transition: color .15s ease; }
+.ep-entity-compare__deltas { display: flex; flex-direction: column; gap: 2px; font-size: 12px; font-variant-numeric: tabular-nums; }
+.ep-entity-compare__delta { display: flex; justify-content: space-between; gap: 8px; }
+.ep-entity-compare__delta-lbl { color: var(--color-text-secondary); font-size: 11px; }
+.ep-entity-compare__delta-val { font-weight: 700; }
+.ep-entity-compare__delta-val--up   { color: #16a34a; }
+.ep-entity-compare__delta-val--down { color: #dc2626; }
+
+/* Benchmark bar — gradient from low (red) → mid (gray) → high (green); marker = entity position. */
+.ep-entity-compare__bench {
+  position: relative; height: 8px; border-radius: 4px;
+  background: linear-gradient(90deg, color-mix(in srgb, #dc2626 30%, transparent) 0%, #f1f5f9 50%, color-mix(in srgb, #16a34a 35%, transparent) 100%);
+  margin-top: 4px;
+}
+.ep-entity-compare__bench-marker {
+  position: absolute; top: -3px; width: 4px; height: 14px; border-radius: 2px;
+  background: var(--col-color, var(--p-text-color));
+  transform: translateX(-50%);
+}
+.ep-entity-compare__bench-scale { display: flex; justify-content: space-between; font-size: 9px; color: var(--color-text-muted, #94a3b8); margin-top: 2px; text-transform: uppercase; letter-spacing: .04em; }
+.ep-entity-compare__rank { font-size: 12px; font-weight: 600; color: var(--p-text-color); }
+.ep-entity-compare__rank strong { color: var(--col-color, var(--p-text-color)); }
+.ep-entity-compare__sub { font-size: 11px; color: var(--color-text-secondary); font-style: italic; }
+.ep-entity-compare__view {
+  display: inline-flex; align-items: center; gap: 2px;
+  font-size: 12px; font-weight: 600;
+  color: var(--col-color, var(--p-primary-color));
+  margin-top: auto;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border, #e5e7eb);
+}
+.ep-entity-compare__view .material-symbols-outlined { font-size: 16px; }
+@media (max-width: 1100px) {
+  .ep-entity-compare { grid-template-columns: repeat(2, 1fr); }
+  .ep-entity-compare__col { border-left: none; padding: var(--space-3) 0; border-top: 1px solid var(--color-border, #e5e7eb); }
+  .ep-entity-compare__col:nth-child(2n+1) { padding-left: 0; }
+  .ep-entity-compare__col:nth-child(-n+2) { border-top: none; padding-top: 0; }
+}
+@media (max-width: 700px) {
+  .ep-entity-compare { grid-template-columns: 1fr; }
+  .ep-entity-compare__col { border-left: none; padding: var(--space-3) 0; border-top: 1px solid var(--color-border, #e5e7eb); }
+  .ep-entity-compare__col:first-child { border-top: none; padding-top: 0; }
+}
 
 .ep-kpi-card {
   position: relative;

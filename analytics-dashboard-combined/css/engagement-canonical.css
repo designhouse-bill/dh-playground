@@ -118,7 +118,28 @@
     [data-ep-pane="duration"]   { --section-color: var(--section-duration);   --section-color-light: var(--section-duration-light); }
     [data-ep-pane="cardevents"] { --section-color: var(--section-cardevents); --section-color-light: var(--section-cardevents-light); }
 
-    /* hero-stat panel header — colored tint per pane */
+    /* Page-level hero-stat — section-color tint reflects ACTIVE tab.
+       JS sets .hero-stat[data-ep-active="<tab>"] in activateTab(). The
+       legacy .perf-tab-pane .hero-stat scope below never matched (hero is
+       page-level, not inside a pane wrapper); rules duplicated here so
+       tinting actually fires. Overview = neutral light gray (not indigo)
+       so it reads as "no specific section selected".
+       RULE: hero-stat bg + accent must always pair the section's
+       light + base color tokens — defines the section visually. */
+    .hero-stat[data-ep-active="overview"]   { --section-color: var(--color-text-secondary, #6b7280); --section-color-light: #f3f4f6; }
+    .hero-stat[data-ep-active="sessions"]   { --section-color: var(--section-sessions);   --section-color-light: var(--section-sessions-light); }
+    .hero-stat[data-ep-active="users"]      { --section-color: var(--section-users);      --section-color-light: var(--section-users-light); }
+    .hero-stat[data-ep-active="duration"]   { --section-color: var(--section-duration);   --section-color-light: var(--section-duration-light); }
+    .hero-stat[data-ep-active="cardevents"] { --section-color: var(--section-cardevents); --section-color-light: var(--section-cardevents-light); }
+    .hero-stat[data-ep-active] {
+      background-color: var(--section-color-light) !important;
+    }
+    .hero-stat[data-ep-active] .narrative-header__title { color: var(--section-color); }
+    .hero-stat[data-ep-active] .stat-strip__item { border-left: 4px solid var(--section-color); }
+    .hero-stat[data-ep-active] .stat-strip__value { color: var(--section-color); }
+
+    /* Legacy duplicated rules — kept to avoid regressing other consumers
+       that rely on .perf-tab-pane .hero-stat (none today, but defensive). */
     .perf-tab-pane .hero-stat {
       background: var(--section-color-light);
       border-radius: 12px;

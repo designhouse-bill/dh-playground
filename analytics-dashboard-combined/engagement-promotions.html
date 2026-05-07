@@ -948,9 +948,13 @@
         heroQuestionEl.textContent = h.question;
         renderHeroStrip(h);
       }
+      // Section-color tint on page-level hero-stat (CSS targets [data-ep-active]).
+      const heroStatEl = document.getElementById('ep-page-hero-stat');
+      if (heroStatEl) heroStatEl.dataset.epActive = target;
     }
     // Initial hero render (Overview default)
     renderHeroStrip(heroByTab.overview);
+    document.getElementById('ep-page-hero-stat').dataset.epActive = 'overview';
     tabs.forEach(tab => tab.addEventListener('click', () => activateTab(tab.dataset.epTab)));
 
     // Overview panel "View All" buttons → jump to metric tab + sub-tab

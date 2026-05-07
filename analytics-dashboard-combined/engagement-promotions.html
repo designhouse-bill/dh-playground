@@ -11,7 +11,7 @@
   <!-- CSS (in dependency order) -->
   <link rel="stylesheet" href="css/design-tokens.css">
   <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/analytics-architecture.css?v=20260506-decision5c">
+  <link rel="stylesheet" href="css/analytics-architecture.css?v=20260506-decision5d">
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
@@ -216,8 +216,11 @@
            Row 3: Users sparkline (S) + Comparison strip (S) + Funnel (S) -->
       <div class="ep-kpi-grid" role="group" aria-label="Promotions Overview — 7-cell mixed KPI grid">
 
-        <!-- Cell 1 (M) — When engagement happens: Sessions by Day-of-Week -->
-        <button class="ep-kpi-cell ep-kpi-cell--m" data-jump-to="sessions" data-jump-sub="day" type="button">
+        <!-- Row 1 left column — DoW + Audience Reach stacked. -->
+        <div class="ep-kpi-stack">
+
+        <!-- Cell 1 — When engagement happens: Sessions by Day-of-Week -->
+        <button class="ep-kpi-cell" data-jump-to="sessions" data-jump-sub="day" type="button">
           <div class="ep-kpi-cell__head">
             <div>
               <div class="ep-kpi-cell__story">When engagement happens</div>
@@ -241,6 +244,28 @@
           </div>
           <span class="ep-kpi-cell__view">Open Sessions <span class="material-symbols-outlined" style="font-size:14px;">chevron_right</span></span>
         </button>
+
+        <!-- Cell 2 — Audience reach: Total Users big-number + sparkline (stacked under DoW) -->
+        <button class="ep-kpi-cell" data-jump-to="users" type="button">
+          <div class="ep-kpi-cell__head">
+            <div>
+              <div class="ep-kpi-cell__story">Audience reach</div>
+              <div class="ep-kpi-cell__metric">Total Users · 8-week trend</div>
+            </div>
+          </div>
+          <div class="ep-kpi-cell__chart">
+            <div class="ep-sparkline-wrap">
+              <div class="ep-sparkline-big">54,011 <span style="font-size:11px;font-weight:600;color:#16a34a;">▲ 2.8%</span></div>
+              <svg class="ep-sparkline-svg" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true">
+                <path class="area" d="M0,42 L28,38 L56,40 L84,30 L112,32 L140,22 L168,18 L200,14 L200,60 L0,60 Z"/>
+                <path d="M0,42 L28,38 L56,40 L84,30 L112,32 L140,22 L168,18 L200,14"/>
+              </svg>
+            </div>
+          </div>
+          <span class="ep-kpi-cell__view">Open Total Users <span class="material-symbols-outlined" style="font-size:14px;">chevron_right</span></span>
+        </button>
+
+        </div><!-- /.ep-kpi-stack -->
 
         <!-- Cell 5 (M) — Performance Score 2/3 + Depth of Engagement 1/3 (nested split inside one M cell). -->
         <div class="ep-kpi-cell ep-kpi-cell--m" style="cursor:default;">
@@ -315,26 +340,6 @@
             </div>
           </div>
           <span class="ep-kpi-cell__view">Open Card Engagement Events <span class="material-symbols-outlined" style="font-size:14px;">chevron_right</span></span>
-        </button>
-
-        <!-- Cell 2 (S) — Audience reach: Total Users big-number + sparkline -->
-        <button class="ep-kpi-cell ep-kpi-cell--s" data-jump-to="users" type="button">
-          <div class="ep-kpi-cell__head">
-            <div>
-              <div class="ep-kpi-cell__story">Audience reach</div>
-              <div class="ep-kpi-cell__metric">Total Users · 8-week trend</div>
-            </div>
-          </div>
-          <div class="ep-kpi-cell__chart">
-            <div class="ep-sparkline-wrap">
-              <div class="ep-sparkline-big">54,011 <span style="font-size:11px;font-weight:600;color:#16a34a;">▲ 2.8%</span></div>
-              <svg class="ep-sparkline-svg" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true">
-                <path class="area" d="M0,42 L28,38 L56,40 L84,30 L112,32 L140,22 L168,18 L200,14 L200,60 L0,60 Z"/>
-                <path d="M0,42 L28,38 L56,40 L84,30 L112,32 L140,22 L168,18 L200,14"/>
-              </svg>
-            </div>
-          </div>
-          <span class="ep-kpi-cell__view">Open Total Users <span class="material-symbols-outlined" style="font-size:14px;">chevron_right</span></span>
         </button>
 
         <!-- Cell 6 (S) — Entity vs parent: 4-metric small multiples -->

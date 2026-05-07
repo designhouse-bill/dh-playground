@@ -249,6 +249,19 @@
   --section-cardevents-light: #f5f3ff;
 
   /* ========================================
+     Canonical 3-color series palette (RULE — DO NOT OVERRIDE)
+     Used for ALL multi-segment series whose 3 parts map to the
+     v/c/a triad: Sessions/Returning/Engaged AND Views/Clicks/Adds.
+     Same palette in stacked-list segs, donut slices, legend swatches,
+     anywhere the same triad is shown. Section-color tinting is NOT
+     applied here — segs always read the same across every metric pane
+     so the legend stays a single learned key.
+     ======================================== */
+  --series-v: #2196F3; /* Sessions / Views        — blue  */
+  --series-c: #f59e0b; /* Returning / Clicks      — amber */
+  --series-a: #22c55e; /* Engaged / Adds          — green */
+
+  /* ========================================
      Architecture Component Tokens
      Used by analytics-architecture.css. No magic numbers.
      ======================================== */

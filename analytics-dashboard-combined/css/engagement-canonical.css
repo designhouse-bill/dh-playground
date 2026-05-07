@@ -82,12 +82,15 @@
     .ep-stacked-list__name small { display: block; font-size: 11px; font-weight: 400; color: var(--color-text-secondary, #6b7280); }
     .ep-stacked-list__bar { display: flex; height: 22px; border-radius: 4px; overflow: hidden; background: #f3f4f6; }
     .ep-stacked-list__seg { height: 100%; }
-    /* Canonical segment palette — matches overlay legend + Inquiry > Performance
-       column bar chart. Section-color tinting intentionally NOT applied here:
-       segs always read as Sessions/Returning/Engaged across every pane. */
-    .ep-stacked-list__seg--v { background: #2196F3; }
-    .ep-stacked-list__seg--c { background: #f59e0b; }
-    .ep-stacked-list__seg--a { background: #22c55e; }
+    /* RULE — canonical 3-color series palette for v/c/a triad
+       (Sessions/Returning/Engaged AND Views/Clicks/Adds). Tokenized in
+       design-tokens.css → --series-v / --series-c / --series-a.
+       Section-color tinting intentionally NOT applied here: segs and
+       donut slices for the v/c/a triad always read the same across
+       every metric pane so the legend stays a single learned key. */
+    .ep-stacked-list__seg--v { background: var(--series-v, #2196F3); }
+    .ep-stacked-list__seg--c { background: var(--series-c, #f59e0b); }
+    .ep-stacked-list__seg--a { background: var(--series-a, #22c55e); }
 
     /* Users hero additivity hint — explicit New + Returning + Engaged framing */
     .ep-additivity { margin: 4px 0 0; font-size: 12px; color: var(--color-text-secondary, #6b7280); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }

@@ -669,9 +669,22 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
 .ep-dow-bar--peak .ep-dow-bar__fill { background: color-mix(in srgb, var(--section-sessions, #2196F3) 80%, #000); }
 .ep-dow-bar__label { font-size: 10px; color: var(--color-text-secondary); }
 
-/* Cell 2 — Audience composition (v/c/a stacked bar + 3-row legend) for the
-   selected week. Replaces 8-week sparkline. v/c/a tokens enforce canonical
-   palette parity (RULE — see topics/canonical-vca-series-palette.md). */
+/* Cell 2 — Store rank distribution. Single-color (section-users teal by
+   default) horizontal bars showing top N stores for the selected week.
+   Variant via --ep-store-rank-color (set per consumer: users teal,
+   sessions blue, etc). NOT a v/c/a triad — single metric, single hue. */
+.ep-store-rank { display: flex; flex-direction: column; gap: 6px; width: 100%; --ep-store-rank-color: var(--section-users, #0891b2); }
+.ep-store-rank--users    { --ep-store-rank-color: var(--section-users, #0891b2); }
+.ep-store-rank--sessions { --ep-store-rank-color: var(--section-sessions, #2563eb); }
+.ep-store-rank__row { display: grid; grid-template-columns: minmax(110px, 1fr) minmax(80px, 2fr) auto; align-items: center; gap: 10px; font-size: 12px; }
+.ep-store-rank__lbl { color: var(--p-text-color); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ep-store-rank__bar { height: 10px; background: #f3f4f6; border-radius: 3px; overflow: hidden; }
+.ep-store-rank__fill { height: 100%; background: var(--ep-store-rank-color); border-radius: 3px; transition: width .3s ease; }
+.ep-store-rank__val { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--p-text-color); min-width: 36px; text-align: right; }
+.ep-store-rank__tail { display: flex; justify-content: space-between; align-items: baseline; padding-top: 6px; margin-top: 2px; border-top: 1px dashed var(--color-border, #e5e7eb); font-size: 11px; color: var(--color-text-secondary); }
+.ep-store-rank__tail-val { font-variant-numeric: tabular-nums; font-weight: 600; }
+
+/* Legacy classes preserved (audience-comp + sparkline). */
 .ep-audience-comp { display: flex; flex-direction: column; gap: 12px; width: 100%; }
 .ep-audience-comp__bar { display: flex; height: 22px; border-radius: 4px; overflow: hidden; background: #f3f4f6; }
 .ep-audience-comp__seg { height: 100%; }
@@ -744,7 +757,46 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
 .ep-funnel__rate { font-size: 11px; color: var(--color-text-secondary); margin-top: 4px; text-align: center; font-style: italic; }
 
 /* ============================================================
-   .ep-entity-compare — full-width "How this entity compares" cell
+   .ep-cardevents-showcase — Card Events standalone showcase cell
+   Replaces 4-col Entity-vs-Parent block. 2-col layout: deltas list
+   on left, benchmark bar + ranking sentence on right. Cardevents
+   purple accents, hero value lives in .ep-kpi-cell__head.
+   ============================================================ */
+.ep-cardevents-showcase {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5);
+  align-items: center;
+  width: 100%;
+}
+.ep-cardevents-showcase__deltas { display: flex; flex-direction: column; gap: 8px; }
+.ep-cardevents-showcase__delta { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 6px 0; border-bottom: 1px dashed var(--color-border, #e5e7eb); }
+.ep-cardevents-showcase__delta:last-child { border-bottom: none; }
+.ep-cardevents-showcase__delta-lbl { font-size: 12px; color: var(--color-text-secondary); }
+.ep-cardevents-showcase__delta-val { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--p-text-color); }
+.ep-cardevents-showcase__delta-val--up   { color: #16a34a; }
+.ep-cardevents-showcase__delta-val--down { color: #dc2626; }
+.ep-cardevents-showcase__bench-block { display: flex; flex-direction: column; gap: 6px; }
+.ep-cardevents-showcase__bench {
+  position: relative; height: 12px; border-radius: 6px;
+  background: linear-gradient(90deg, color-mix(in srgb, #dc2626 25%, transparent) 0%, #f1f5f9 50%, color-mix(in srgb, #16a34a 30%, transparent) 100%);
+}
+.ep-cardevents-showcase__bench-marker {
+  position: absolute; top: -4px; width: 6px; height: 20px; border-radius: 3px;
+  background: var(--section-cardevents, #7c3aed);
+  transform: translateX(-50%);
+  box-shadow: 0 0 0 2px #fff;
+}
+.ep-cardevents-showcase__bench-scale { display: flex; justify-content: space-between; font-size: 10px; color: var(--color-text-muted, #94a3b8); text-transform: uppercase; letter-spacing: .04em; }
+.ep-cardevents-showcase__rank { font-size: 13px; font-weight: 500; color: var(--p-text-color); margin-top: 4px; }
+.ep-cardevents-showcase__rank strong { color: var(--section-cardevents, #7c3aed); }
+@media (max-width: 900px) {
+  .ep-cardevents-showcase { grid-template-columns: 1fr; gap: var(--space-3); }
+}
+
+/* ============================================================
+   .ep-entity-compare — legacy 4-col Entity-vs-Parent (no longer used on
+   engagement-promotions but preserved for any other page that wires it).
    4 columns, one per section metric (Sessions / Users / Duration /
    Card Events). Each column section-color tinted, value + Δ vs
    banner avg + Δ vs brand avg + benchmark bar w/ marker + percentile

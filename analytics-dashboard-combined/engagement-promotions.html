@@ -248,52 +248,57 @@
           <span class="ep-kpi-cell__view">Open Sessions <span class="material-symbols-outlined">chevron_right</span></span>
         </button>
 
-        <!-- Cell 2 — Audience reach: Total Users + v/c/a composition for the
-             SELECTED week. Replaces 8-week sparkline (contradicted Week 47
-             date-range context AND duplicated the Users tab Time Trend chart).
-             Composition uses canonical --series-v/c/a palette: same legend
-             user has already learned from Performance Score donut + segs. -->
-        <button class="ep-kpi-cell" data-jump-to="users" type="button">
+        <!-- Cell 2 — Audience reach: Total Users distribution across the Main
+             Context entity's 77 stores for Week 47. Single-color teal
+             (--section-users), no v/c/a 3-color (those compete w/ donut +
+             stacked-list legend). Top-5 ranked bars + "+72 more" tail.
+             Top-store callout in head right (no mirror w/ DoW number).
+             Jump → Users by Store sub-pane (full per-store cut). -->
+        <button class="ep-kpi-cell" data-jump-to="users" data-jump-sub="store" type="button">
           <div class="ep-kpi-cell__head">
             <div>
               <div class="ep-kpi-cell__story">Audience reach</div>
-              <div class="ep-kpi-cell__metric">Total Users · composition · Week 47</div>
+              <div class="ep-kpi-cell__metric">Total Users across 77 stores · Week 47</div>
             </div>
             <div style="text-align:right;">
-              <div class="ep-kpi-cell__value">54,011</div>
-              <div class="ep-kpi-cell__delta ep-kpi-cell__delta--up">▲ 2.8% vs last wk</div>
+              <div class="ep-kpi-cell__value" style="font-size:14px; font-weight:600;">#336 Hollywood, FL</div>
+              <div class="ep-kpi-cell__delta" style="color: var(--section-users, #0891b2);">2,210 top store</div>
             </div>
           </div>
           <div class="ep-kpi-cell__chart">
-            <div class="ep-audience-comp" aria-label="Audience composition for Week 47">
-              <div class="ep-audience-comp__bar" aria-hidden="true">
-                <div class="ep-audience-comp__seg" style="flex-basis:41.9%; background: var(--series-v, #2196F3);" title="New · 22,640"></div>
-                <div class="ep-audience-comp__seg" style="flex-basis:36.7%; background: var(--series-c, #f59e0b);" title="Returning · 19,825"></div>
-                <div class="ep-audience-comp__seg" style="flex-basis:21.4%; background: var(--series-a, #22c55e);" title="Engaged · 11,546"></div>
+            <div class="ep-store-rank ep-store-rank--users" aria-label="Top 5 stores by Total Users for Week 47">
+              <div class="ep-store-rank__row">
+                <span class="ep-store-rank__lbl">#336 Hollywood</span>
+                <div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:100%;"></div></div>
+                <span class="ep-store-rank__val">2.2K</span>
               </div>
-              <div class="ep-audience-comp__legend">
-                <div class="ep-audience-comp__row">
-                  <span class="ep-audience-comp__sw" style="background: var(--series-v, #2196F3);"></span>
-                  <span class="ep-audience-comp__lbl">New</span>
-                  <span class="ep-audience-comp__val">22,640</span>
-                  <span class="ep-audience-comp__pct">42%</span>
-                </div>
-                <div class="ep-audience-comp__row">
-                  <span class="ep-audience-comp__sw" style="background: var(--series-c, #f59e0b);"></span>
-                  <span class="ep-audience-comp__lbl">Returning</span>
-                  <span class="ep-audience-comp__val">19,825</span>
-                  <span class="ep-audience-comp__pct">37%</span>
-                </div>
-                <div class="ep-audience-comp__row">
-                  <span class="ep-audience-comp__sw" style="background: var(--series-a, #22c55e);"></span>
-                  <span class="ep-audience-comp__lbl">Engaged</span>
-                  <span class="ep-audience-comp__val">11,546</span>
-                  <span class="ep-audience-comp__pct">21%</span>
-                </div>
+              <div class="ep-store-rank__row">
+                <span class="ep-store-rank__lbl">#421 Pembroke Pines</span>
+                <div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:91%;"></div></div>
+                <span class="ep-store-rank__val">2.0K</span>
+              </div>
+              <div class="ep-store-rank__row">
+                <span class="ep-store-rank__lbl">#189 Aventura</span>
+                <div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:84%;"></div></div>
+                <span class="ep-store-rank__val">1.9K</span>
+              </div>
+              <div class="ep-store-rank__row">
+                <span class="ep-store-rank__lbl">#052 Miami Beach</span>
+                <div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:78%;"></div></div>
+                <span class="ep-store-rank__val">1.7K</span>
+              </div>
+              <div class="ep-store-rank__row">
+                <span class="ep-store-rank__lbl">#214 Boca Raton</span>
+                <div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:72%;"></div></div>
+                <span class="ep-store-rank__val">1.6K</span>
+              </div>
+              <div class="ep-store-rank__tail">
+                <span class="ep-store-rank__tail-lbl">+ 72 more stores</span>
+                <span class="ep-store-rank__tail-val">+ 44.6K (83%)</span>
               </div>
             </div>
           </div>
-          <span class="ep-kpi-cell__view">Open Total Users <span class="material-symbols-outlined">chevron_right</span></span>
+          <span class="ep-kpi-cell__view">Open Users by Store <span class="material-symbols-outlined">chevron_right</span></span>
         </button>
 
         </div><!-- /.ep-kpi-stack -->
@@ -354,114 +359,50 @@
           </div>
         </div>
 
-        <!-- Row 2 (L, span 12) — Entity vs Parent rich comparison.
-             Replaces legacy Compare-strip (S) + Reach-funnel (S). 4 columns,
-             one per section metric (Sessions/Users/Duration/Card Events).
-             Each column: value · Δ vs banner avg · Δ vs brand avg · benchmark
-             bar with marker · percentile sentence · jump button. Funnel CTR
-             folded into Card Events column as supplementary stat. -->
-        <div class="ep-kpi-cell ep-kpi-cell--l" style="cursor:default;">
+        <!-- Row 2 (L, span 12) — Card Events standalone showcase.
+             Promoted from Entity-vs-Parent 4-col grid (rest of cols dropped:
+             Sessions/Users/Duration values just repeated charts above).
+             Card Events kept because its number wasn't shown elsewhere on
+             Overview AND its rich context (vs banner/brand, ranking, CTR)
+             is the section's most actionable signal. Cardevents purple. -->
+        <button class="ep-kpi-cell ep-kpi-cell--l" data-jump-to="cardevents" type="button">
           <div class="ep-kpi-cell__head">
             <div>
-              <div class="ep-kpi-cell__story">How this entity compares</div>
+              <div class="ep-kpi-cell__story">Card Engagement Events</div>
               <div class="ep-kpi-cell__metric">Brand: Acme · Banner: Acme East · Week 47</div>
+            </div>
+            <div style="text-align:right;">
+              <div class="ep-kpi-cell__value" style="color: var(--section-cardevents, #7c3aed);">271,298</div>
+              <div class="ep-kpi-cell__delta ep-kpi-cell__delta--up">▲ 7.1% vs last wk</div>
             </div>
           </div>
           <div class="ep-kpi-cell__chart" style="min-height:0;">
-            <div class="ep-entity-compare" role="group" aria-label="Entity vs parent — 4-metric comparison">
-
-              <!-- Sessions -->
-              <button class="ep-entity-compare__col" data-kpi="sessions" data-jump-to="sessions" type="button">
-                <span class="ep-entity-compare__lbl">Sessions</span>
-                <span class="ep-entity-compare__value">78,542</span>
-                <div class="ep-entity-compare__deltas">
-                  <div class="ep-entity-compare__delta">
-                    <span class="ep-entity-compare__delta-lbl">vs banner avg</span>
-                    <span class="ep-entity-compare__delta-val ep-entity-compare__delta-val--up">+12%</span>
-                  </div>
-                  <div class="ep-entity-compare__delta">
-                    <span class="ep-entity-compare__delta-lbl">vs brand avg</span>
-                    <span class="ep-entity-compare__delta-val ep-entity-compare__delta-val--up">+7%</span>
-                  </div>
+            <div class="ep-cardevents-showcase">
+              <div class="ep-cardevents-showcase__deltas">
+                <div class="ep-cardevents-showcase__delta">
+                  <span class="ep-cardevents-showcase__delta-lbl">vs banner avg</span>
+                  <span class="ep-cardevents-showcase__delta-val ep-cardevents-showcase__delta-val--up">+18%</span>
                 </div>
-                <div class="ep-entity-compare__bench" aria-hidden="true">
-                  <div class="ep-entity-compare__bench-marker" style="left:78%;"></div>
+                <div class="ep-cardevents-showcase__delta">
+                  <span class="ep-cardevents-showcase__delta-lbl">vs brand avg</span>
+                  <span class="ep-cardevents-showcase__delta-val ep-cardevents-showcase__delta-val--up">+14%</span>
                 </div>
-                <div class="ep-entity-compare__bench-scale" aria-hidden="true"><span>Low</span><span>Avg</span><span>High</span></div>
-                <div class="ep-entity-compare__rank">Top <strong>22%</strong> of stores</div>
-                <span class="ep-entity-compare__view">Open Sessions <span class="material-symbols-outlined">chevron_right</span></span>
-              </button>
-
-              <!-- Total Users -->
-              <button class="ep-entity-compare__col" data-kpi="users" data-jump-to="users" type="button">
-                <span class="ep-entity-compare__lbl">Total Users</span>
-                <span class="ep-entity-compare__value">54,011</span>
-                <div class="ep-entity-compare__deltas">
-                  <div class="ep-entity-compare__delta">
-                    <span class="ep-entity-compare__delta-lbl">vs banner avg</span>
-                    <span class="ep-entity-compare__delta-val ep-entity-compare__delta-val--up">+8%</span>
-                  </div>
-                  <div class="ep-entity-compare__delta">
-                    <span class="ep-entity-compare__delta-lbl">vs brand avg</span>
-                    <span class="ep-entity-compare__delta-val ep-entity-compare__delta-val--up">+3%</span>
-                  </div>
+                <div class="ep-cardevents-showcase__delta">
+                  <span class="ep-cardevents-showcase__delta-lbl">CTR (GA4 reach funnel)</span>
+                  <span class="ep-cardevents-showcase__delta-val">10.3%</span>
                 </div>
-                <div class="ep-entity-compare__bench" aria-hidden="true">
-                  <div class="ep-entity-compare__bench-marker" style="left:68%;"></div>
+              </div>
+              <div class="ep-cardevents-showcase__bench-block">
+                <div class="ep-cardevents-showcase__bench" aria-hidden="true">
+                  <div class="ep-cardevents-showcase__bench-marker" style="left:88%;"></div>
                 </div>
-                <div class="ep-entity-compare__bench-scale" aria-hidden="true"><span>Low</span><span>Avg</span><span>High</span></div>
-                <div class="ep-entity-compare__rank">Top <strong>32%</strong> of stores</div>
-                <span class="ep-entity-compare__view">Open Users <span class="material-symbols-outlined">chevron_right</span></span>
-              </button>
-
-              <!-- Avg Duration -->
-              <button class="ep-entity-compare__col" data-kpi="duration" data-jump-to="duration" type="button">
-                <span class="ep-entity-compare__lbl">Avg Duration</span>
-                <span class="ep-entity-compare__value">6m 8s</span>
-                <div class="ep-entity-compare__deltas">
-                  <div class="ep-entity-compare__delta">
-                    <span class="ep-entity-compare__delta-lbl">vs banner avg</span>
-                    <span class="ep-entity-compare__delta-val ep-entity-compare__delta-val--down">−4%</span>
-                  </div>
-                  <div class="ep-entity-compare__delta">
-                    <span class="ep-entity-compare__delta-lbl">vs brand avg</span>
-                    <span class="ep-entity-compare__delta-val ep-entity-compare__delta-val--down">−9%</span>
-                  </div>
-                </div>
-                <div class="ep-entity-compare__bench" aria-hidden="true">
-                  <div class="ep-entity-compare__bench-marker" style="left:38%;"></div>
-                </div>
-                <div class="ep-entity-compare__bench-scale" aria-hidden="true"><span>Low</span><span>Avg</span><span>High</span></div>
-                <div class="ep-entity-compare__rank">Bottom <strong>38%</strong> of stores</div>
-                <span class="ep-entity-compare__view">Open Duration <span class="material-symbols-outlined">chevron_right</span></span>
-              </button>
-
-              <!-- Card Events (absorbs Reach-funnel CTR as sub-stat) -->
-              <button class="ep-entity-compare__col" data-kpi="cardevents" data-jump-to="cardevents" type="button">
-                <span class="ep-entity-compare__lbl">Card Events</span>
-                <span class="ep-entity-compare__value">271,298</span>
-                <div class="ep-entity-compare__deltas">
-                  <div class="ep-entity-compare__delta">
-                    <span class="ep-entity-compare__delta-lbl">vs banner avg</span>
-                    <span class="ep-entity-compare__delta-val ep-entity-compare__delta-val--up">+18%</span>
-                  </div>
-                  <div class="ep-entity-compare__delta">
-                    <span class="ep-entity-compare__delta-lbl">vs brand avg</span>
-                    <span class="ep-entity-compare__delta-val ep-entity-compare__delta-val--up">+14%</span>
-                  </div>
-                </div>
-                <div class="ep-entity-compare__bench" aria-hidden="true">
-                  <div class="ep-entity-compare__bench-marker" style="left:88%;"></div>
-                </div>
-                <div class="ep-entity-compare__bench-scale" aria-hidden="true"><span>Low</span><span>Avg</span><span>High</span></div>
-                <div class="ep-entity-compare__rank">Top <strong>8%</strong> of stores</div>
-                <div class="ep-entity-compare__sub">CTR 10.3% · GA4 reach funnel</div>
-                <span class="ep-entity-compare__view">Open Card Events <span class="material-symbols-outlined">chevron_right</span></span>
-              </button>
-
+                <div class="ep-cardevents-showcase__bench-scale" aria-hidden="true"><span>Low</span><span>Avg</span><span>High</span></div>
+                <div class="ep-cardevents-showcase__rank">Top <strong>8%</strong> of <strong>77 stores</strong> · Week 47</div>
+              </div>
             </div>
           </div>
-        </div>
+          <span class="ep-kpi-cell__view">Open Card Events <span class="material-symbols-outlined">chevron_right</span></span>
+        </button>
 
         <!-- Row 3 (L, span 12) — Top Promotions chip strip. Moved to bottom 2026-05-06 evening
              so the rich Entity-vs-Parent block fills the higher-impact slot. -->

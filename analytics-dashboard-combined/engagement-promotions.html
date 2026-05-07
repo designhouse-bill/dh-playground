@@ -400,6 +400,18 @@
                 <div class="ep-cardevents-showcase__rank">Top <strong>8%</strong> of <strong>77 stores</strong> · Week 47</div>
               </div>
             </div>
+            <!-- Per-session density. Folded in from the standalone
+                 .ep-per-session-row footer below the grid (2026-05-06).
+                 Pairs naturally w/ Card Events totals — same 3 components
+                 (views/clicks/adds) at session-rate granularity. -->
+            <div class="ep-cardevents-showcase__density">
+              <span class="ep-cardevents-showcase__density-lbl">Per session</span>
+              <span class="ep-cardevents-showcase__density-metric"><strong>21.5</strong> card views</span>
+              <span class="ep-cardevents-showcase__density-sep">·</span>
+              <span class="ep-cardevents-showcase__density-metric"><strong>1.5</strong> card clicks</span>
+              <span class="ep-cardevents-showcase__density-sep">·</span>
+              <span class="ep-cardevents-showcase__density-metric"><strong>0.21</strong> adds to list</span>
+            </div>
           </div>
           <span class="ep-kpi-cell__view">Open Card Events <span class="material-symbols-outlined">chevron_right</span></span>
         </button>
@@ -468,24 +480,8 @@
         </div>
       </div>
 
-      <!-- 2.3 Per-session metrics -->
-      <div class="ep-per-session-row">
-        <span class="ep-per-session-label">Per session:</span>
-        <div class="ep-per-session-metric">
-          <span class="ep-per-session-metric__value">21.5</span>
-          <span class="ep-per-session-metric__unit">card views</span>
-        </div>
-        <span class="ep-per-session-sep">·</span>
-        <div class="ep-per-session-metric">
-          <span class="ep-per-session-metric__value">1.5</span>
-          <span class="ep-per-session-metric__unit">card clicks</span>
-        </div>
-        <span class="ep-per-session-sep">·</span>
-        <div class="ep-per-session-metric">
-          <span class="ep-per-session-metric__value">0.21</span>
-          <span class="ep-per-session-metric__unit">adds to list</span>
-        </div>
-      </div>
+      <!-- Per-session density moved into Card Events showcase
+           (.ep-cardevents-showcase__density) 2026-05-06. -->
 
       <!-- IA decision 2026-05-06: 3-up overview panels removed.
            Engagement Start Page = donuts + grain switcher + data grid (pending).

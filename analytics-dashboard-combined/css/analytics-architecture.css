@@ -793,6 +793,19 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
 @media (max-width: 900px) {
   .ep-cardevents-showcase { grid-template-columns: 1fr; gap: var(--space-3); }
 }
+/* Per-session density footer — folded in from standalone .ep-per-session-row.
+   Reads as a sub-strip of the Card Events totals. Strong = numeric value. */
+.ep-cardevents-showcase__density {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border, #e5e7eb);
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px;
+  font-size: 12px; color: var(--color-text-secondary);
+}
+.ep-cardevents-showcase__density-lbl { font-weight: 700; text-transform: uppercase; letter-spacing: .04em; font-size: 11px; color: var(--color-text-secondary); }
+.ep-cardevents-showcase__density-metric { color: var(--p-text-color); font-variant-numeric: tabular-nums; }
+.ep-cardevents-showcase__density-metric strong { font-weight: 800; color: var(--section-cardevents, #7c3aed); margin-right: 2px; }
+.ep-cardevents-showcase__density-sep { color: var(--color-text-muted, #94a3b8); }
 
 /* ============================================================
    .ep-entity-compare — legacy 4-col Entity-vs-Parent (no longer used on

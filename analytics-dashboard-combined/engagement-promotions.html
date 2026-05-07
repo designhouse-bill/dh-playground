@@ -208,82 +208,190 @@
     <!-- ─── Overview tab ─── -->
     <div class="perf-tab-pane active" data-ep-pane="overview">
 
-      <!-- Max KPI snapshot — 2×2 donut grid. Click a tile to jump to its tab. -->
-      <div class="ep-kpi-grid" role="group" aria-label="Metric snapshot — donut breakdown">
-        <button class="ep-kpi-card" data-jump-to="sessions" data-kpi="sessions" type="button">
-          <span class="ep-kpi-card__label">Sessions</span>
-          <div class="ep-kpi-card__chart">
-            <div class="ep-kpi-card__donut" id="ep-kpi-donut-sessions" aria-hidden="true"></div>
-            <div class="ep-kpi-card__center">
-              <span class="ep-kpi-card__value">78,542</span>
-              <span class="ep-kpi-card__delta ep-kpi-card__delta--up">▲ 4.2% vs last wk</span>
+      <!-- Decision 5 (2026-05-06) — 7-cell mixed KPI grid.
+           Each cell = different data story + different chart type.
+           Layout: 12-col grid, M=span 6 (2/row), S=span 4 (3/row).
+           Row 1: DoW bar (M) + Performance donut (M)
+           Row 2: Top-N ranked (M) + Duration stacked (M)
+           Row 3: Users sparkline (S) + Comparison strip (S) + Funnel (S) -->
+      <div class="ep-kpi-grid" role="group" aria-label="Promotions Overview — 7-cell mixed KPI grid">
+
+        <!-- Cell 1 (M) — When engagement happens: Sessions by Day-of-Week -->
+        <button class="ep-kpi-cell ep-kpi-cell--m" data-jump-to="sessions" data-jump-sub="day" type="button">
+          <div class="ep-kpi-cell__head">
+            <div>
+              <div class="ep-kpi-cell__story">When engagement happens</div>
+              <div class="ep-kpi-cell__metric">Sessions by day of week</div>
+            </div>
+            <div style="text-align:right;">
+              <div class="ep-kpi-cell__value">78,542</div>
+              <div class="ep-kpi-cell__delta ep-kpi-cell__delta--up">▲ 4.2% vs last wk</div>
             </div>
           </div>
-          <ul class="ep-kpi-card__legend" id="ep-kpi-legend-sessions" aria-label="Sessions breakdown"></ul>
-          <span class="ep-kpi-card__view">Open Sessions<span class="material-symbols-outlined">chevron_right</span></span>
+          <div class="ep-kpi-cell__chart">
+            <div class="ep-dow-bars" id="ep-dow-bars" aria-hidden="true">
+              <div class="ep-dow-bar"><div class="ep-dow-bar__fill" style="height:62%"></div><div class="ep-dow-bar__label">M</div></div>
+              <div class="ep-dow-bar"><div class="ep-dow-bar__fill" style="height:48%"></div><div class="ep-dow-bar__label">T</div></div>
+              <div class="ep-dow-bar"><div class="ep-dow-bar__fill" style="height:55%"></div><div class="ep-dow-bar__label">W</div></div>
+              <div class="ep-dow-bar"><div class="ep-dow-bar__fill" style="height:71%"></div><div class="ep-dow-bar__label">T</div></div>
+              <div class="ep-dow-bar"><div class="ep-dow-bar__fill" style="height:88%"></div><div class="ep-dow-bar__label">F</div></div>
+              <div class="ep-dow-bar"><div class="ep-dow-bar__fill" style="height:96%"></div><div class="ep-dow-bar__label">S</div></div>
+              <div class="ep-dow-bar"><div class="ep-dow-bar__fill" style="height:42%"></div><div class="ep-dow-bar__label">S</div></div>
+            </div>
+          </div>
+          <span class="ep-kpi-cell__view">Open Sessions <span class="material-symbols-outlined" style="font-size:14px;">chevron_right</span></span>
         </button>
 
-        <button class="ep-kpi-card" data-jump-to="users" data-kpi="users" type="button">
-          <span class="ep-kpi-card__label">Total Users</span>
-          <div class="ep-kpi-card__chart">
-            <div class="ep-kpi-card__donut" id="ep-kpi-donut-users" aria-hidden="true"></div>
-            <div class="ep-kpi-card__center">
-              <span class="ep-kpi-card__value">54,011</span>
-              <span class="ep-kpi-card__delta ep-kpi-card__delta--up">▲ 2.8% vs last wk</span>
+        <!-- Cell 5 (M) — Performance pillar: Views/Clicks/Adds donut → Grid -->
+        <a class="ep-kpi-cell ep-kpi-cell--m" href="engagement-grid.html?metric=performance" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+          <div class="ep-kpi-cell__head">
+            <div>
+              <div class="ep-kpi-cell__story">Performance pillar</div>
+              <div class="ep-kpi-cell__metric">Views · Clicks · Adds (point totals)</div>
             </div>
           </div>
-          <ul class="ep-kpi-card__legend" id="ep-kpi-legend-users" aria-label="Users breakdown"></ul>
-          <p class="ep-additivity" aria-label="Total Users is the sum of New, Returning, and Engaged users">
-            <span class="ep-additivity__lbl">Of the total:</span>
-            <span class="ep-additivity__pill ep-additivity__pill--n">New</span>
-            <span class="ep-additivity__plus">+</span>
-            <span class="ep-additivity__pill ep-additivity__pill--r">Returning</span>
-            <span class="ep-additivity__plus">+</span>
-            <span class="ep-additivity__pill ep-additivity__pill--e">Engaged</span>
-          </p>
-          <span class="ep-kpi-card__view">Open Users<span class="material-symbols-outlined">chevron_right</span></span>
+          <div class="ep-kpi-cell__chart">
+            <div class="ep-perf-donut-wrap">
+              <div class="ep-perf-donut" style="background:conic-gradient(#2196F3 0% 56%, #f59e0b 56% 84%, #8b5cf6 84% 100%);" aria-hidden="true">
+                <div class="ep-perf-donut__center">
+                  <span class="ep-perf-donut__center-val">142.8K</span>
+                  <span class="ep-perf-donut__center-lbl">total points</span>
+                </div>
+              </div>
+              <div class="ep-perf-donut__legend">
+                <div class="ep-perf-donut__legend-row" style="--swatch:#2196F3;"><span></span><span>Views</span><strong>80,170</strong></div>
+                <div class="ep-perf-donut__legend-row" style="--swatch:#f59e0b;"><span></span><span>Clicks</span><strong>40,030</strong></div>
+                <div class="ep-perf-donut__legend-row" style="--swatch:#8b5cf6;"><span></span><span>Adds</span><strong>22,600</strong></div>
+              </div>
+            </div>
+          </div>
+          <span class="ep-kpi-cell__view">Open Grid (point totals) <span class="material-symbols-outlined" style="font-size:14px;">open_in_new</span></span>
+        </a>
+
+        <!-- Cell 4 (M) — Top performers: Top Promotions ranked bar (drill engine) -->
+        <button class="ep-kpi-cell ep-kpi-cell--m" data-jump-to="cardevents" type="button">
+          <div class="ep-kpi-cell__head">
+            <div>
+              <div class="ep-kpi-cell__story">Top performers</div>
+              <div class="ep-kpi-cell__metric">Top 5 promotions · Card Engagement Events</div>
+            </div>
+          </div>
+          <div class="ep-kpi-cell__chart">
+            <div class="ep-topn">
+              <div class="ep-topn__row"><span class="ep-topn__rank">1</span><div class="ep-topn__bar"><div class="ep-topn__bar-fill" style="width:100%"></div><span class="ep-topn__label">Coca-Cola 12pk</span></div><span class="ep-topn__val">18.2K</span></div>
+              <div class="ep-topn__row"><span class="ep-topn__rank">2</span><div class="ep-topn__bar"><div class="ep-topn__bar-fill" style="width:84%"></div><span class="ep-topn__label">Tide Pods 81ct</span></div><span class="ep-topn__val">15.3K</span></div>
+              <div class="ep-topn__row"><span class="ep-topn__rank">3</span><div class="ep-topn__bar"><div class="ep-topn__bar-fill" style="width:71%"></div><span class="ep-topn__label">Pepperidge Farm Bread</span></div><span class="ep-topn__val">12.9K</span></div>
+              <div class="ep-topn__row"><span class="ep-topn__rank">4</span><div class="ep-topn__bar"><div class="ep-topn__bar-fill" style="width:58%"></div><span class="ep-topn__label">Nature Valley Bars</span></div><span class="ep-topn__val">10.5K</span></div>
+              <div class="ep-topn__row"><span class="ep-topn__rank">5</span><div class="ep-topn__bar"><div class="ep-topn__bar-fill" style="width:46%"></div><span class="ep-topn__label">Boar's Head Deli</span></div><span class="ep-topn__val">8.4K</span></div>
+            </div>
+          </div>
+          <span class="ep-kpi-cell__view">Open Card Engagement Events <span class="material-symbols-outlined" style="font-size:14px;">chevron_right</span></span>
         </button>
 
-        <button class="ep-kpi-card" data-jump-to="duration" data-kpi="duration" type="button">
-          <span class="ep-kpi-card__label">Average Session Duration</span>
-          <div class="ep-kpi-card__chart">
-            <div class="ep-kpi-card__donut" id="ep-kpi-donut-duration" aria-hidden="true"></div>
-            <div class="ep-kpi-card__center">
-              <span class="ep-kpi-card__value">6<span class="ep-kpi-card__unit">min</span> 8<span class="ep-kpi-card__unit">sec</span></span>
-              <span class="ep-kpi-card__delta ep-kpi-card__delta--down">▼ 1.5% vs last wk</span>
+        <!-- Cell 3 (M) — Depth: Avg Session Duration by Device (horizontal stacked) -->
+        <button class="ep-kpi-cell ep-kpi-cell--m" data-jump-to="duration" type="button">
+          <div class="ep-kpi-cell__head">
+            <div>
+              <div class="ep-kpi-cell__story">Depth of engagement</div>
+              <div class="ep-kpi-cell__metric">Avg Session Duration by device (GA4)</div>
+            </div>
+            <div style="text-align:right;">
+              <div class="ep-kpi-cell__value">6m 8s</div>
+              <div class="ep-kpi-cell__delta ep-kpi-cell__delta--down">▼ 1.5% vs last wk</div>
             </div>
           </div>
-          <ul class="ep-kpi-card__legend" id="ep-kpi-legend-duration" aria-label="Duration breakdown"></ul>
-          <p class="ep-additivity" aria-label="Avg Session Duration is the weighted average across New, Returning, and Engaged users">
-            <span class="ep-additivity__lbl">Of the avg:</span>
-            <span class="ep-additivity__pill ep-additivity__pill--n">New</span>
-            <span class="ep-additivity__plus">+</span>
-            <span class="ep-additivity__pill ep-additivity__pill--r">Returning</span>
-            <span class="ep-additivity__plus">+</span>
-            <span class="ep-additivity__pill ep-additivity__pill--e">Engaged</span>
-          </p>
-          <span class="ep-kpi-card__view">Open Duration<span class="material-symbols-outlined">chevron_right</span></span>
+          <div class="ep-kpi-cell__chart">
+            <div class="ep-stacked-h">
+              <div class="ep-stacked-h__bar">
+                <div class="ep-stacked-h__seg" style="flex:0 0 48%; background:#2196F3;">Mobile 48%</div>
+                <div class="ep-stacked-h__seg" style="flex:0 0 34%; background:#f59e0b;">Desktop 34%</div>
+                <div class="ep-stacked-h__seg" style="flex:0 0 14%; background:#8b5cf6;">Tablet 14%</div>
+                <div class="ep-stacked-h__seg" style="flex:0 0 4%;  background:#94a3b8;"></div>
+              </div>
+              <div class="ep-stacked-h__legend">
+                <span style="--swatch:#2196F3;">Mobile · 7m 12s</span>
+                <span style="--swatch:#f59e0b;">Desktop · 5m 02s</span>
+                <span style="--swatch:#8b5cf6;">Tablet · 4m 31s</span>
+                <span style="--swatch:#94a3b8;">Other · 3m 18s</span>
+              </div>
+            </div>
+          </div>
+          <span class="ep-kpi-cell__view">Open Duration <span class="material-symbols-outlined" style="font-size:14px;">chevron_right</span></span>
         </button>
 
-        <button class="ep-kpi-card" data-jump-to="cardevents" data-kpi="cardevents" type="button">
-          <span class="ep-kpi-card__label">Card Engagement Events</span>
-          <div class="ep-kpi-card__chart">
-            <div class="ep-kpi-card__donut" id="ep-kpi-donut-cardevents" aria-hidden="true"></div>
-            <div class="ep-kpi-card__center">
-              <span class="ep-kpi-card__value">271,298</span>
-              <span class="ep-kpi-card__delta ep-kpi-card__delta--up">▲ 7.1% vs last wk</span>
+        <!-- Cell 2 (S) — Audience reach: Total Users big-number + sparkline -->
+        <button class="ep-kpi-cell ep-kpi-cell--s" data-jump-to="users" type="button">
+          <div class="ep-kpi-cell__head">
+            <div>
+              <div class="ep-kpi-cell__story">Audience reach</div>
+              <div class="ep-kpi-cell__metric">Total Users · 8-week trend</div>
             </div>
           </div>
-          <ul class="ep-kpi-card__legend" id="ep-kpi-legend-cardevents" aria-label="Card events breakdown"></ul>
-          <p class="ep-additivity" aria-label="Card Engagement Events totals roll up Card Clicks, Add to List, and Card View / Share">
-            <span class="ep-additivity__lbl">Of the total:</span>
-            <span class="ep-additivity__pill ep-additivity__pill--n">Card Click</span>
-            <span class="ep-additivity__plus">+</span>
-            <span class="ep-additivity__pill ep-additivity__pill--r">Add to List</span>
-            <span class="ep-additivity__plus">+</span>
-            <span class="ep-additivity__pill ep-additivity__pill--e">Card View / Share</span>
-          </p>
-          <span class="ep-kpi-card__view">Open Card Events<span class="material-symbols-outlined">chevron_right</span></span>
+          <div class="ep-kpi-cell__chart">
+            <div class="ep-sparkline-wrap">
+              <div class="ep-sparkline-big">54,011 <span style="font-size:11px;font-weight:600;color:#16a34a;">▲ 2.8%</span></div>
+              <svg class="ep-sparkline-svg" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true">
+                <path class="area" d="M0,42 L28,38 L56,40 L84,30 L112,32 L140,22 L168,18 L200,14 L200,60 L0,60 Z"/>
+                <path d="M0,42 L28,38 L56,40 L84,30 L112,32 L140,22 L168,18 L200,14"/>
+              </svg>
+            </div>
+          </div>
+          <span class="ep-kpi-cell__view">Open Total Users <span class="material-symbols-outlined" style="font-size:14px;">chevron_right</span></span>
+        </button>
+
+        <!-- Cell 6 (S) — Entity vs parent: 4-metric small multiples -->
+        <button class="ep-kpi-cell ep-kpi-cell--s" data-jump-to="overview" type="button">
+          <div class="ep-kpi-cell__head">
+            <div>
+              <div class="ep-kpi-cell__story">Entity vs parent</div>
+              <div class="ep-kpi-cell__metric">Brand vs Banner avg</div>
+            </div>
+          </div>
+          <div class="ep-kpi-cell__chart">
+            <div class="ep-compare-strip">
+              <div class="ep-compare-strip__cell">
+                <div class="ep-compare-strip__lbl">Sessions</div>
+                <div class="ep-compare-strip__val">78,542</div>
+                <div class="ep-compare-strip__delta" style="color:#16a34a;">+12% vs avg</div>
+                <div class="ep-compare-strip__bar"><div class="ep-compare-strip__bar-fill" style="width:62%; background:#16a34a;"></div></div>
+              </div>
+              <div class="ep-compare-strip__cell">
+                <div class="ep-compare-strip__lbl">Users</div>
+                <div class="ep-compare-strip__val">54,011</div>
+                <div class="ep-compare-strip__delta" style="color:#16a34a;">+8% vs avg</div>
+                <div class="ep-compare-strip__bar"><div class="ep-compare-strip__bar-fill" style="width:54%; background:#16a34a;"></div></div>
+              </div>
+              <div class="ep-compare-strip__cell">
+                <div class="ep-compare-strip__lbl">Duration</div>
+                <div class="ep-compare-strip__val">6m 8s</div>
+                <div class="ep-compare-strip__delta" style="color:#dc2626;">−4% vs avg</div>
+                <div class="ep-compare-strip__bar"><div class="ep-compare-strip__bar-fill" style="width:40%; background:#dc2626;"></div></div>
+              </div>
+              <div class="ep-compare-strip__cell">
+                <div class="ep-compare-strip__lbl">Card Events</div>
+                <div class="ep-compare-strip__val">271K</div>
+                <div class="ep-compare-strip__delta" style="color:#16a34a;">+18% vs avg</div>
+                <div class="ep-compare-strip__bar"><div class="ep-compare-strip__bar-fill" style="width:72%; background:#16a34a;"></div></div>
+              </div>
+            </div>
+          </div>
+        </button>
+
+        <!-- Cell 7 (S) — Reach funnel: Impressions → CTR (GA4) -->
+        <button class="ep-kpi-cell ep-kpi-cell--s" data-jump-to="overview" type="button">
+          <div class="ep-kpi-cell__head">
+            <div>
+              <div class="ep-kpi-cell__story">Reach funnel</div>
+              <div class="ep-kpi-cell__metric">Impressions → Clicks (GA4)</div>
+            </div>
+          </div>
+          <div class="ep-kpi-cell__chart">
+            <div class="ep-funnel">
+              <div class="ep-funnel__row"><span class="ep-funnel__lbl">Impressions</span><div class="ep-funnel__bar" style="width:100%;">412,580</div></div>
+              <div class="ep-funnel__row"><span class="ep-funnel__lbl">Clicks</span><div class="ep-funnel__bar" style="width:42%;">42,310</div></div>
+            </div>
+            <div class="ep-funnel__rate">CTR · <strong>10.3%</strong> · ▲ 0.6 pts vs last wk</div>
+          </div>
         </button>
       </div>
 
@@ -728,10 +836,19 @@
       });
     });
 
-    // Overview KPI tiles → jump to that metric's tab
-    document.querySelectorAll('.ep-kpi-tile[data-jump-to]').forEach(tile => {
-      tile.addEventListener('click', () => {
-        activateTab(tile.dataset.jumpTo);
+    // Overview KPI cells (Decision 5 mixed grid) → jump to metric's tab + optional sub-tab
+    document.querySelectorAll('.ep-kpi-cell[data-jump-to]').forEach(cell => {
+      cell.addEventListener('click', (e) => {
+        // Anchor cells (e.g. Performance donut → Grid) handle their own nav
+        if (cell.tagName === 'A') return;
+        const tab = cell.dataset.jumpTo;
+        const sub = cell.dataset.jumpSub;
+        activateTab(tab);
+        if (sub) {
+          currentSubTab = sub;
+          const targetPane = document.querySelector('[data-ep-pane="' + tab + '"]');
+          if (targetPane) applySubTab(targetPane, sub);
+        }
         document.getElementById('ep-perf-tabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     });

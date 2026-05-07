@@ -940,10 +940,12 @@
       });
     });
 
-    // Overview KPI cells (Decision 5 mixed grid) → jump to metric's tab + optional sub-tab
-    document.querySelectorAll('.ep-kpi-cell[data-jump-to]').forEach(cell => {
+    // Overview jump-to cells → jump to metric's tab + optional sub-tab.
+    // Selector covers .ep-kpi-cell (DoW, Audience Reach), .ep-perf-depth-split__col
+    // (Depth), AND .ep-entity-compare__col (Sessions/Users/Duration/CardEvents).
+    document.querySelectorAll('[data-jump-to]').forEach(cell => {
       cell.addEventListener('click', (e) => {
-        // Anchor cells (e.g. Performance donut → Grid) handle their own nav
+        // Anchor jump-to elements (none today) would handle their own nav
         if (cell.tagName === 'A') return;
         const tab = cell.dataset.jumpTo;
         const sub = cell.dataset.jumpSub;
@@ -1045,6 +1047,24 @@
       });
       closeBtn.addEventListener('click', closePanel);
       document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePanel(); });
+
+      // Outside-click closer — collapse panel when click lands outside it,
+      // unless the click is on another known panel-opener (chip / store-row /
+      // ranked-table row), in which case the opener's own handler will
+      // immediately re-open the panel with new content. Net effect = swap.
+      // New openers must add `data-detail-panel-opener` so this stays in sync.
+      const OPENER_SELECTORS = [
+        '.ep-topn-chips .creative-chip',
+        '#ep-ranked-tbody tr',
+        '.ep-data-table tbody tr',
+        '[data-detail-panel-opener]'
+      ].join(', ');
+      document.addEventListener('click', (e) => {
+        if (!panel.classList.contains('detail-panel--open')) return;
+        if (panel.contains(e.target)) return;
+        if (e.target.closest(OPENER_SELECTORS)) return;
+        closePanel();
+      });
     })();
 
     // ─── Sub-tab switching (per metric pane) ─────────────────────────────

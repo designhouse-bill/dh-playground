@@ -248,12 +248,16 @@
           <span class="ep-kpi-cell__view">Open Sessions <span class="material-symbols-outlined">chevron_right</span></span>
         </button>
 
-        <!-- Cell 2 — Audience reach: Total Users (value lifted to head, parity w/ DoW cell). -->
+        <!-- Cell 2 — Audience reach: Total Users + v/c/a composition for the
+             SELECTED week. Replaces 8-week sparkline (contradicted Week 47
+             date-range context AND duplicated the Users tab Time Trend chart).
+             Composition uses canonical --series-v/c/a palette: same legend
+             user has already learned from Performance Score donut + segs. -->
         <button class="ep-kpi-cell" data-jump-to="users" type="button">
           <div class="ep-kpi-cell__head">
             <div>
               <div class="ep-kpi-cell__story">Audience reach</div>
-              <div class="ep-kpi-cell__metric">Total Users · 8-week trend</div>
+              <div class="ep-kpi-cell__metric">Total Users · composition · Week 47</div>
             </div>
             <div style="text-align:right;">
               <div class="ep-kpi-cell__value">54,011</div>
@@ -261,11 +265,32 @@
             </div>
           </div>
           <div class="ep-kpi-cell__chart">
-            <div class="ep-sparkline-wrap">
-              <svg class="ep-sparkline-svg" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true">
-                <path class="area" d="M0,42 L28,38 L56,40 L84,30 L112,32 L140,22 L168,18 L200,14 L200,60 L0,60 Z"/>
-                <path d="M0,42 L28,38 L56,40 L84,30 L112,32 L140,22 L168,18 L200,14"/>
-              </svg>
+            <div class="ep-audience-comp" aria-label="Audience composition for Week 47">
+              <div class="ep-audience-comp__bar" aria-hidden="true">
+                <div class="ep-audience-comp__seg" style="flex-basis:41.9%; background: var(--series-v, #2196F3);" title="New · 22,640"></div>
+                <div class="ep-audience-comp__seg" style="flex-basis:36.7%; background: var(--series-c, #f59e0b);" title="Returning · 19,825"></div>
+                <div class="ep-audience-comp__seg" style="flex-basis:21.4%; background: var(--series-a, #22c55e);" title="Engaged · 11,546"></div>
+              </div>
+              <div class="ep-audience-comp__legend">
+                <div class="ep-audience-comp__row">
+                  <span class="ep-audience-comp__sw" style="background: var(--series-v, #2196F3);"></span>
+                  <span class="ep-audience-comp__lbl">New</span>
+                  <span class="ep-audience-comp__val">22,640</span>
+                  <span class="ep-audience-comp__pct">42%</span>
+                </div>
+                <div class="ep-audience-comp__row">
+                  <span class="ep-audience-comp__sw" style="background: var(--series-c, #f59e0b);"></span>
+                  <span class="ep-audience-comp__lbl">Returning</span>
+                  <span class="ep-audience-comp__val">19,825</span>
+                  <span class="ep-audience-comp__pct">37%</span>
+                </div>
+                <div class="ep-audience-comp__row">
+                  <span class="ep-audience-comp__sw" style="background: var(--series-a, #22c55e);"></span>
+                  <span class="ep-audience-comp__lbl">Engaged</span>
+                  <span class="ep-audience-comp__val">11,546</span>
+                  <span class="ep-audience-comp__pct">21%</span>
+                </div>
+              </div>
             </div>
           </div>
           <span class="ep-kpi-cell__view">Open Total Users <span class="material-symbols-outlined">chevron_right</span></span>

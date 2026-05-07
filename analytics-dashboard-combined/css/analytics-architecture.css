@@ -603,16 +603,19 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
   gap: var(--space-4);
   padding: var(--space-4) 0;
 }
-/* Decision 5 (2026-05-06) — 7-cell mixed grid.
-   M=span 6 (1/2), S=span 4 (1/3), M23=span 8 (2/3), M13=span 4 (1/3). */
+/* Decision 5 (2026-05-06) — 7-cell mixed grid. M=span 6, S=span 4, L=span 12. */
 .ep-kpi-cell { grid-column: span 12; }
-.ep-kpi-cell--m   { grid-column: span 6; }
-.ep-kpi-cell--s   { grid-column: span 4; }
-.ep-kpi-cell--m23 { grid-column: span 8; }
-.ep-kpi-cell--m13 { grid-column: span 4; }
+.ep-kpi-cell--m { grid-column: span 6; }
+.ep-kpi-cell--s { grid-column: span 4; }
+.ep-kpi-cell--l { grid-column: span 12; }
 @media (max-width: 900px) {
-  .ep-kpi-cell--m, .ep-kpi-cell--s, .ep-kpi-cell--m23, .ep-kpi-cell--m13 { grid-column: span 12; }
+  .ep-kpi-cell--m, .ep-kpi-cell--s, .ep-kpi-cell--l { grid-column: span 12; }
 }
+
+/* Performance + Depth split: 2/3 donut block, 1/3 vertical-bars block, inside one M cell. */
+.ep-perf-depth-split { display: grid; grid-template-columns: 2fr 1fr; gap: var(--space-4); flex: 1; }
+.ep-perf-depth-split__col { display: flex; flex-direction: column; gap: var(--space-2); }
+.ep-perf-depth-split__col + .ep-perf-depth-split__col { border-left: 1px solid var(--color-border, #e5e7eb); padding-left: var(--space-4); }
 
 /* ============================================================
    ep-kpi-cell — Decision 5 mixed-shape Overview cells

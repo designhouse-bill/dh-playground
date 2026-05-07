@@ -899,6 +899,96 @@
       });
     });
 
+    // ─── Top Promotions chip → ep-detail-sidebar slide-in ────────────────
+    // Decision 5 chip strip mirrors Distribution creative-chip pattern.
+    // Clicking a chip opens the right-edge Details panel populated with
+    // promotion-specific metrics + Performance Score breakdown.
+    (function () {
+      const sidebar  = document.getElementById('ep-detail-sidebar');
+      const body     = document.getElementById('ep-detail-sidebar-body');
+      const closeBtn = document.getElementById('ep-detail-sidebar-close');
+      if (!sidebar || !body || !closeBtn) return;
+
+      // Mock promo data — slug → details. Real impl pulls from promotion records.
+      const promos = {
+        'coca-cola-12pk':         { name: 'Coca-Cola 12pk',          cat: 'Beverages',  price: '$5.99',    initials: 'CC', rank: 1, sessions: 18240, users: 12410, duration: '7m 02s', cardEvents: 18200, views: 11800, clicks: 4900, adds: 1500 },
+        'tide-pods-81ct':         { name: 'Tide Pods 81ct',          cat: 'Household',  price: '$19.99',   initials: 'TP', rank: 2, sessions: 15310, users: 10220, duration: '6m 41s', cardEvents: 15300, views: 10100, clicks: 4050, adds: 1150 },
+        'pepperidge-farm-bread':  { name: 'Pepperidge Farm Bread',   cat: 'Bakery',     price: '$4.49',    initials: 'PF', rank: 3, sessions: 12940, users:  8810, duration: '5m 58s', cardEvents: 12900, views:  8400, clicks: 3500, adds: 1000 },
+        'nature-valley-bars':     { name: 'Nature Valley Bars',      cat: 'Snacks',     price: '$3.99',    initials: 'NV', rank: 4, sessions: 10510, users:  7240, duration: '5m 22s', cardEvents: 10500, views:  6900, clicks: 2800, adds:  800 },
+        'boars-head-deli':        { name: "Boar's Head Deli",        cat: 'Deli',       price: '$8.99/lb', initials: 'BH', rank: 5, sessions:  8420, users:  5910, duration: '4m 50s', cardEvents:  8400, views:  5500, clicks: 2200, adds:  700 }
+      };
+      const fmt = n => n.toLocaleString();
+
+      function openSidebar(slug) {
+        const p = promos[slug];
+        if (!p) return;
+        const totalPoints = p.views + p.clicks + p.adds;
+        body.innerHTML = `
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div class="creative-chip__thumb" style="width:64px; height:64px; border-radius:6px;">
+              <span class="creative-chip__thumb-initials" style="font-size:18px;">${p.initials}</span>
+            </div>
+            <div style="flex:1; min-width:0;">
+              <h3 class="ep-detail-sidebar__name">${p.name}</h3>
+              <p class="ep-detail-sidebar__cat">${p.cat} · ${p.price}</p>
+              <p class="ep-detail-sidebar__cat" style="margin-top:4px;"><strong>Rank #${p.rank}</strong> · Card Engagement Events</p>
+            </div>
+          </div>
+          <div class="ep-detail-sidebar__metric-grid">
+            <div class="ep-detail-sidebar__metric ep-detail-sidebar__metric--hero">
+              <div class="ep-detail-sidebar__metric-label">Card Events</div>
+              <div class="ep-detail-sidebar__metric-value">${fmt(p.cardEvents)}</div>
+            </div>
+            <div class="ep-detail-sidebar__metric">
+              <div class="ep-detail-sidebar__metric-label">Sessions</div>
+              <div class="ep-detail-sidebar__metric-value">${fmt(p.sessions)}</div>
+            </div>
+            <div class="ep-detail-sidebar__metric">
+              <div class="ep-detail-sidebar__metric-label">Total Users</div>
+              <div class="ep-detail-sidebar__metric-value">${fmt(p.users)}</div>
+            </div>
+            <div class="ep-detail-sidebar__metric">
+              <div class="ep-detail-sidebar__metric-label">Avg Duration</div>
+              <div class="ep-detail-sidebar__metric-value">${p.duration}</div>
+            </div>
+          </div>
+          <div>
+            <div class="ep-detail-sidebar__section-label">Performance Score (point totals)</div>
+            <div class="ep-detail-sidebar__metric-grid" style="grid-template-columns:repeat(3, 1fr);">
+              <div class="ep-detail-sidebar__metric"><div class="ep-detail-sidebar__metric-label">Views</div><div class="ep-detail-sidebar__metric-value">${fmt(p.views)}</div></div>
+              <div class="ep-detail-sidebar__metric"><div class="ep-detail-sidebar__metric-label">Clicks</div><div class="ep-detail-sidebar__metric-value">${fmt(p.clicks)}</div></div>
+              <div class="ep-detail-sidebar__metric"><div class="ep-detail-sidebar__metric-label">Adds</div><div class="ep-detail-sidebar__metric-value">${fmt(p.adds)}</div></div>
+            </div>
+            <p class="ep-detail-sidebar__cat" style="margin-top:8px;"><strong>${fmt(totalPoints)}</strong> total Performance Score points</p>
+          </div>
+          <div style="display:flex; gap:8px; margin-top:auto;">
+            <a class="ep-detail-sidebar__btn" href="engagement-grid.html?promo=${slug}">
+              <span class="material-symbols-outlined">table_chart</span> Open in Grid
+            </a>
+            <a class="ep-detail-sidebar__btn" href="engagement-compare.html?promo=${slug}">
+              <span class="material-symbols-outlined">compare_arrows</span> Compare
+            </a>
+          </div>
+        `;
+        sidebar.classList.add('ep-detail-sidebar--open');
+        sidebar.setAttribute('aria-hidden', 'false');
+      }
+      function closeSidebar() {
+        sidebar.classList.remove('ep-detail-sidebar--open');
+        sidebar.setAttribute('aria-hidden', 'true');
+      }
+      document.querySelectorAll('.ep-topn-chips .creative-chip').forEach(chip => {
+        chip.addEventListener('click', (e) => {
+          e.preventDefault();
+          const href = chip.getAttribute('href') || '';
+          const slug = href.split('#promo/')[1] || '';
+          openSidebar(slug);
+        });
+      });
+      closeBtn.addEventListener('click', closeSidebar);
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebar(); });
+    })();
+
     // ─── Sub-tab switching (per metric pane) ─────────────────────────────
     document.querySelectorAll('.engagement-proposed .perf-tab-pane').forEach(pane => {
       const subTabs = pane.querySelectorAll('.ep-sub-tab:not(.ep-sub-tab--data)');

@@ -616,22 +616,22 @@
 
   </main>
 
-  <!-- Right Detail sidebar — preserves Original's panel--right behavior -->
-  <aside class="ep-detail-sidebar" id="ep-detail-sidebar" role="complementary" aria-label="Promotion details" aria-hidden="true">
-    <div class="ep-detail-sidebar__header">
-      <span class="ep-detail-sidebar__title">Details</span>
-      <button class="ep-detail-sidebar__close" id="ep-detail-sidebar-close" aria-label="Close details">
+  <!-- Right Detail panel — canonical .detail-panel shell (css/detail-panel.css) -->
+  <aside class="detail-panel" id="detail-panel" role="complementary" aria-label="Promotion details" aria-hidden="true">
+    <div class="detail-panel__header">
+      <span class="detail-panel__title">Details</span>
+      <button class="detail-panel__close" id="detail-panel-close" aria-label="Close details">
         <span class="material-symbols-outlined">close</span>
       </button>
     </div>
-    <div class="ep-detail-sidebar__body" id="ep-detail-sidebar-body"></div>
+    <div class="detail-panel__body" id="detail-panel-body"></div>
     <!-- T2 (Apr 29 Max meeting): hidden until routing targets are resolved (filter-view vs. circular-view ambiguity) -->
-    <div class="ep-detail-sidebar__footer" hidden>
-      <button class="ep-detail-sidebar__btn">
+    <div class="detail-panel__footer" hidden>
+      <button class="detail-action detail-action--secondary">
         <span class="material-symbols-outlined">table_chart</span>
         Grid Inquiry
       </button>
-      <button class="ep-detail-sidebar__btn">
+      <button class="detail-action detail-action--secondary">
         <span class="material-symbols-outlined">compare</span>
         Compare
       </button>
@@ -899,15 +899,15 @@
       });
     });
 
-    // ─── Top Promotions chip → ep-detail-sidebar slide-in ────────────────
+    // ─── Top Promotions chip → canonical .detail-panel slide-in ──────────
     // Decision 5 chip strip mirrors Distribution creative-chip pattern.
     // Clicking a chip opens the right-edge Details panel populated with
     // promotion-specific metrics + Performance Score breakdown.
     (function () {
-      const sidebar  = document.getElementById('ep-detail-sidebar');
-      const body     = document.getElementById('ep-detail-sidebar-body');
-      const closeBtn = document.getElementById('ep-detail-sidebar-close');
-      if (!sidebar || !body || !closeBtn) return;
+      const panel    = document.getElementById('detail-panel');
+      const body     = document.getElementById('detail-panel-body');
+      const closeBtn = document.getElementById('detail-panel-close');
+      if (!panel || !body || !closeBtn) return;
 
       // Mock promo data — slug → details. Real impl pulls from promotion records.
       const promos = {
@@ -919,74 +919,74 @@
       };
       const fmt = n => n.toLocaleString();
 
-      function openSidebar(slug) {
+      function openPanel(slug) {
         const p = promos[slug];
         if (!p) return;
         const totalPoints = p.views + p.clicks + p.adds;
         body.innerHTML = `
-          <div style="display:flex; align-items:center; gap:12px;">
-            <div class="creative-chip__thumb" style="width:64px; height:64px; border-radius:6px;">
+          <div class="detail-title" style="display:flex; align-items:center; gap:12px;">
+            <div class="creative-chip__thumb" style="width:64px; height:64px; border-radius:6px; flex-shrink:0;">
               <span class="creative-chip__thumb-initials" style="font-size:18px;">${p.initials}</span>
             </div>
             <div style="flex:1; min-width:0;">
-              <h3 class="ep-detail-sidebar__name">${p.name}</h3>
-              <p class="ep-detail-sidebar__cat">${p.cat} · ${p.price}</p>
-              <p class="ep-detail-sidebar__cat" style="margin-top:4px;"><strong>Rank #${p.rank}</strong> · Card Engagement Events</p>
+              <h3 class="detail-title__name">${p.name}</h3>
+              <p class="detail-title__meta">${p.cat} · ${p.price}</p>
+              <p class="detail-title__meta" style="margin-top:4px;"><strong>Rank #${p.rank}</strong> · Card Engagement Events</p>
             </div>
           </div>
-          <div class="ep-detail-sidebar__metric-grid">
-            <div class="ep-detail-sidebar__metric ep-detail-sidebar__metric--hero">
-              <div class="ep-detail-sidebar__metric-label">Card Events</div>
-              <div class="ep-detail-sidebar__metric-value">${fmt(p.cardEvents)}</div>
+          <div class="detail-kpis">
+            <div class="detail-kpi">
+              <div class="detail-kpi__value">${fmt(p.cardEvents)}</div>
+              <div class="detail-kpi__label">Card Events</div>
             </div>
-            <div class="ep-detail-sidebar__metric">
-              <div class="ep-detail-sidebar__metric-label">Sessions</div>
-              <div class="ep-detail-sidebar__metric-value">${fmt(p.sessions)}</div>
+            <div class="detail-kpi">
+              <div class="detail-kpi__value">${fmt(p.sessions)}</div>
+              <div class="detail-kpi__label">Sessions</div>
             </div>
-            <div class="ep-detail-sidebar__metric">
-              <div class="ep-detail-sidebar__metric-label">Total Users</div>
-              <div class="ep-detail-sidebar__metric-value">${fmt(p.users)}</div>
+            <div class="detail-kpi">
+              <div class="detail-kpi__value">${fmt(p.users)}</div>
+              <div class="detail-kpi__label">Total Users</div>
             </div>
-            <div class="ep-detail-sidebar__metric">
-              <div class="ep-detail-sidebar__metric-label">Avg Duration</div>
-              <div class="ep-detail-sidebar__metric-value">${p.duration}</div>
+            <div class="detail-kpi">
+              <div class="detail-kpi__value">${p.duration}</div>
+              <div class="detail-kpi__label">Avg Duration</div>
             </div>
           </div>
-          <div>
-            <div class="ep-detail-sidebar__section-label">Performance Score (point totals)</div>
-            <div class="ep-detail-sidebar__metric-grid" style="grid-template-columns:repeat(3, 1fr);">
-              <div class="ep-detail-sidebar__metric"><div class="ep-detail-sidebar__metric-label">Views</div><div class="ep-detail-sidebar__metric-value">${fmt(p.views)}</div></div>
-              <div class="ep-detail-sidebar__metric"><div class="ep-detail-sidebar__metric-label">Clicks</div><div class="ep-detail-sidebar__metric-value">${fmt(p.clicks)}</div></div>
-              <div class="ep-detail-sidebar__metric"><div class="ep-detail-sidebar__metric-label">Adds</div><div class="ep-detail-sidebar__metric-value">${fmt(p.adds)}</div></div>
+          <div class="detail-section">
+            <div class="detail-section__title">Performance Score (point totals)</div>
+            <div class="detail-kpis" style="grid-template-columns:repeat(3, 1fr);">
+              <div class="detail-kpi"><div class="detail-kpi__value">${fmt(p.views)}</div><div class="detail-kpi__label">Views</div></div>
+              <div class="detail-kpi"><div class="detail-kpi__value">${fmt(p.clicks)}</div><div class="detail-kpi__label">Clicks</div></div>
+              <div class="detail-kpi"><div class="detail-kpi__value">${fmt(p.adds)}</div><div class="detail-kpi__label">Adds</div></div>
             </div>
-            <p class="ep-detail-sidebar__cat" style="margin-top:8px;"><strong>${fmt(totalPoints)}</strong> total Performance Score points</p>
+            <p class="detail-title__meta" style="margin-top:8px;"><strong>${fmt(totalPoints)}</strong> total Performance Score points</p>
           </div>
           <div style="display:flex; gap:8px; margin-top:auto;">
-            <a class="ep-detail-sidebar__btn" href="engagement-grid.html?promo=${slug}">
+            <a class="detail-action detail-action--secondary" href="engagement-grid.html?promo=${slug}">
               <span class="material-symbols-outlined">table_chart</span> Open in Grid
             </a>
-            <a class="ep-detail-sidebar__btn" href="engagement-compare.html?promo=${slug}">
+            <a class="detail-action detail-action--secondary" href="engagement-compare.html?promo=${slug}">
               <span class="material-symbols-outlined">compare_arrows</span> Compare
             </a>
           </div>
         `;
-        sidebar.classList.add('ep-detail-sidebar--open');
-        sidebar.setAttribute('aria-hidden', 'false');
+        panel.classList.add('detail-panel--open');
+        panel.setAttribute('aria-hidden', 'false');
       }
-      function closeSidebar() {
-        sidebar.classList.remove('ep-detail-sidebar--open');
-        sidebar.setAttribute('aria-hidden', 'true');
+      function closePanel() {
+        panel.classList.remove('detail-panel--open');
+        panel.setAttribute('aria-hidden', 'true');
       }
       document.querySelectorAll('.ep-topn-chips .creative-chip').forEach(chip => {
         chip.addEventListener('click', (e) => {
           e.preventDefault();
           const href = chip.getAttribute('href') || '';
           const slug = href.split('#promo/')[1] || '';
-          openSidebar(slug);
+          openPanel(slug);
         });
       });
-      closeBtn.addEventListener('click', closeSidebar);
-      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebar(); });
+      closeBtn.addEventListener('click', closePanel);
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePanel(); });
     })();
 
     // ─── Sub-tab switching (per metric pane) ─────────────────────────────
@@ -1237,8 +1237,8 @@
     // PHASE B — Port Original UI patterns (filter / hover tooltip / click-to-sidebar / inline data table)
     // ════════════════════════════════════════════════════════════════════
     (function initPhaseB() {
-      const epSidebar = document.getElementById('ep-detail-sidebar');
-      const epSidebarBody = document.getElementById('ep-detail-sidebar-body');
+      const epSidebar = document.getElementById('detail-panel');
+      const epSidebarBody = document.getElementById('detail-panel-body');
       if (!epSidebar || !epSidebarBody) return;
 
       // Single shared tooltip
@@ -1270,7 +1270,7 @@
               '<div class="ep-detail-sidebar__metric-label">Total</div>' +
               '<div class="ep-detail-sidebar__metric-value">' + (totalFmt ? totalFmt(total) : total.toLocaleString()) + '</div>' +
             '</div>' + segRows + '</div></div>';
-        epSidebar.classList.add('ep-detail-sidebar--open');
+        epSidebar.classList.add('detail-panel--open');
         epSidebar.setAttribute('aria-hidden', 'false');
       }
 
@@ -1989,9 +1989,9 @@
     }
 
     // ─── Right Detail sidebar (parity w/ Original panel--right) ──────────
-    const sidebar = document.getElementById('ep-detail-sidebar');
-    const sidebarBody = document.getElementById('ep-detail-sidebar-body');
-    const sidebarClose = document.getElementById('ep-detail-sidebar-close');
+    const sidebar = document.getElementById('detail-panel');
+    const sidebarBody = document.getElementById('detail-panel-body');
+    const sidebarClose = document.getElementById('detail-panel-close');
 
     function openDetailSidebar(key) {
       const p = promotions.find(x => x.key === key);
@@ -2069,12 +2069,12 @@
       const storesHost = document.getElementById('ep-sidebar-stores');
       if (storesHost) renderStoresStacked(storesHost, topStores);
 
-      sidebar.classList.add('ep-detail-sidebar--open');
+      sidebar.classList.add('detail-panel--open');
       sidebar.setAttribute('aria-hidden', 'false');
     }
 
     function closeDetailSidebar() {
-      sidebar.classList.remove('ep-detail-sidebar--open');
+      sidebar.classList.remove('detail-panel--open');
       sidebar.setAttribute('aria-hidden', 'true');
       rankedTbody.querySelectorAll('tr.ep-row--active').forEach(r => r.classList.remove('ep-row--active'));
     }

@@ -134,40 +134,11 @@
 
   <main class="engagement-proposed" id="engagement-proposed">
 
-    <header class="section-panel-header">
-       <div class="hero-stat">
-        <div class="narrative-header">
-        <div class="narrative-header__left">
-          <h1 class="narrative-header__title">Promotions</h1>
-          <h2 class="narrative-header__question">How are promotions engaging users this week?</h2>
-        </div>
-          <div class="narrative-header__text">
-          <p class="section-panel-header__subtitle">
-        <span class="ep-cohort-note" id="ep-cohort-note">
-          <span class="material-symbols-outlined">info</span>
-          <span class="ep-cohort-note__label">Cohort:</span>
-          <span class="ep-cohort-note__count">75 promotions</span>
-          <span class="ep-cohort-note__sep">·</span>
-          <span class="ep-cohort-note__scope">Brand</span>
-          <span class="ep-cohort-note__sep">·</span>
-          <span class="ep-cohort-note__period">Week 47</span>
-        </span>
-      </p> </div>
-        </div>
-      </div>
-    </header>
-
-    <!-- 2.1 Circular-info row: static summary above perf-tabs -->
-    <div class="ep-circular-info">
-      <span class="ep-circular-info__item"><span class="ep-circular-info__num">75</span> promotions</span>
-      <span class="ep-circular-info__sep">·</span>
-      <span class="ep-circular-info__item"><span class="ep-circular-info__num">8</span> pages</span>
-      <span class="ep-circular-info__sep">·</span>
-      <span class="ep-circular-info__item"><span class="ep-circular-info__num">8</span> categories</span>
-    </div>
-
     <!-- ============================================================
-         perf-tabs strip (Anchor 1)
+         Decision 1 (2026-05-06): perf-tabs ABOVE Distribution-pattern
+         hero-stat. Each tab swaps the hero KPI in the stat-strip.
+         Page-level hero-stat is the single source — per-pane hero-stats
+         removed.
          ============================================================ -->
     <!-- T7 — MVP Phase 1 scope strip (Apr 29 Max meeting). Phase 2 deferred metrics flagged below. -->
     <div class="ep-mvp-strip">
@@ -195,6 +166,43 @@
       <button class="perf-tab" data-ep-tab="cardevents" role="tab">
         <span class="material-symbols-outlined">ads_click</span> Card Engagement Events
       </button>
+    </div>
+
+    <!-- ============================================================
+         Decision 1: page-level hero-stat shell. Distribution pattern
+         (narrative-header left + stat-strip right). Updated by JS as
+         active perf-tab changes — title, question, and hero KPI swap.
+         ============================================================ -->
+    <div class="hero-stat" id="ep-page-hero-stat">
+      <div class="narrative-header">
+        <div class="narrative-header__left">
+          <h4 class="narrative-header__section">Engagement</h4>
+          <h1 class="narrative-header__title" id="ep-hero-title">Promotions</h1>
+          <h2 class="narrative-header__question" id="ep-hero-question">How are promotions engaging users this week?</h2>
+        </div>
+        <div class="narrative-header__text">
+          <p class="narrative-header__subtitle"><em><span id="ep-hero-entity">Ideal Media Lab</span>, <span id="ep-hero-period">Week 47 (Nov 17, 2025 – Nov 23, 2025)</span></em></p>
+          <div class="ep-circular-info">
+            <span class="ep-circular-info__item"><span class="ep-circular-info__num">75</span> promotions</span>
+            <span class="ep-circular-info__sep">·</span>
+            <span class="ep-circular-info__item"><span class="ep-circular-info__num">8</span> pages</span>
+            <span class="ep-circular-info__sep">·</span>
+            <span class="ep-circular-info__item"><span class="ep-circular-info__num">8</span> categories</span>
+          </div>
+          <span class="ep-cohort-note" id="ep-cohort-note">
+            <span class="material-symbols-outlined">info</span>
+            <span class="ep-cohort-note__label">Cohort:</span>
+            <span class="ep-cohort-note__count">75 promotions</span>
+            <span class="ep-cohort-note__sep">·</span>
+            <span class="ep-cohort-note__scope">Brand</span>
+            <span class="ep-cohort-note__sep">·</span>
+            <span class="ep-cohort-note__period">Week 47</span>
+          </span>
+        </div>
+      </div>
+      <div class="stat-strip" id="ep-page-stat-strip">
+        <!-- Populated by JS: hero KPI for active perf-tab (Sessions / Total Users / Duration / Card Events). Overview = blank placeholder per Decision 1. -->
+      </div>
     </div>
 
     <!-- ─── Overview tab ─── -->
@@ -313,15 +321,7 @@
 
     <!-- ─── Metric: Sessions (fully wired demo) ─── -->
     <div class="perf-tab-pane" data-ep-pane="sessions">
-      <div class="hero-stat">
-        <div class="narrative-header">
-          <div class="narrative-header-left">
-          <h2 class="narrative-header__title">Sessions</h2>
-          <p class="narrative-header__question">How are sessions distributed across stores, days, and weeks?</p>
-          </div>
-        </div>
-        <div class="stat-strip"><div class="stat-strip__cards"><div class="stat-strip__item"><div class="stat-strip__label">Sessions</div><div class="stat-strip__value" style="font-size:24px;font-weight:800;">78,542</div><div class="stat-strip__context"><span class="stat-strip__context-line">Among <strong>Brand · Week 47 · 75 promotions</strong></span><span class="stat-strip__context-line">Scored vs <strong>27 stores · 7 days · Card / Stores / Days</strong> universal</span></div></div></div></div>
-      </div>
+      <!-- Decision 1: per-pane hero-stat removed; lifted to page-level. -->
       <div class="ep-sub-tabs" role="tablist" aria-label="Sessions cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Sessions by Store</button>
         <button class="ep-sub-tab" data-ep-sub="day" role="tab">Sessions by Day</button>
@@ -360,15 +360,7 @@
 
     <!-- ─── Metric: Total Users (shell — populates w/ BigQuery user dimension) ─── -->
     <div class="perf-tab-pane" data-ep-pane="users">
-      <div class="hero-stat">
-        <div class="narrative-header">
-          <div class="narrative-header-left">
-          <h2 class="narrative-header__title">Total Users</h2>
-          <p class="narrative-header__question">How many unique users engaged this week, and where are they?</p>
-          </div>
-        </div>
-        <div class="stat-strip"><div class="stat-strip__cards"><div class="stat-strip__item"><div class="stat-strip__label">Total Users</div><div class="stat-strip__value" style="font-size:24px;font-weight:800;">54,011</div><div class="stat-strip__context"><span class="stat-strip__context-line">Among <strong>Brand · Week 47 · 75 promotions</strong></span><span class="stat-strip__context-line">Scored vs <strong>27 stores · 7 days · Card / Stores / Days</strong> universal</span></div></div></div></div>
-      </div>
+      <!-- Decision 1: per-pane hero-stat removed; lifted to page-level. -->
       <div class="ep-sub-tabs" role="tablist" aria-label="Users cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Users by Store</button>
         <button class="ep-sub-tab" data-ep-sub="day" role="tab">Users by Day</button>
@@ -401,15 +393,7 @@
 
     <!-- ─── Metric: Avg Session Duration ─── -->
     <div class="perf-tab-pane" data-ep-pane="duration">
-      <div class="hero-stat">
-        <div class="narrative-header">
-          <div class="narrative-header-left">
-          <h2 class="narrative-header__title">Avg Session Duration</h2>
-          <p class="narrative-header__question">How long are users spending on the circular per visit?</p>
-          </div>
-        </div>
-        <div class="stat-strip"><div class="stat-strip__cards"><div class="stat-strip__item"><div class="stat-strip__label">Avg Session</div><div class="stat-strip__value" style="font-size:24px;font-weight:800;">368<span style="font-size:14px;font-weight:600;color:#6b7280;"> sec</span></div><div class="stat-strip__context"><span class="stat-strip__context-line">Among <strong>Brand · Week 47 · 75 promotions</strong></span><span class="stat-strip__context-line">Scored vs <strong>27 stores · 7 days · Card / Stores / Days</strong> universal</span></div></div></div></div>
-      </div>
+      <!-- Decision 1: per-pane hero-stat removed; lifted to page-level. -->
       <div class="ep-sub-tabs" role="tablist" aria-label="Duration cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Duration by Store</button>
         <button class="ep-sub-tab" data-ep-sub="day" role="tab">Duration by Day</button>
@@ -442,15 +426,7 @@
 
     <!-- ─── Metric: Card Engagement Events (Adds + Clicks + share/save/print roll-up) ─── -->
     <div class="perf-tab-pane" data-ep-pane="cardevents">
-      <div class="hero-stat">
-        <div class="narrative-header">
-          <div class="narrative-header-left">
-          <h2 class="narrative-header__title">Card Engagement Events</h2>
-          <p class="narrative-header__question">Which interactions are users taking on promotion cards?</p>
-          </div>
-        </div>
-        <div class="stat-strip"><div class="stat-strip__cards"><div class="stat-strip__item"><div class="stat-strip__label">Card Events</div><div class="stat-strip__value" style="font-size:24px;font-weight:800;">271,298</div><div class="stat-strip__context"><span class="stat-strip__context-line">Among <strong>Brand · Week 47 · 75 promotions</strong></span><span class="stat-strip__context-line">Scored vs <strong>27 stores · 7 days · Card / Stores / Days</strong> universal</span></div></div></div></div>
-      </div>
+      <!-- Decision 1: per-pane hero-stat removed; lifted to page-level. -->
       <div class="ep-sub-tabs" role="tablist" aria-label="Card Events cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Card Events by Store</button>
         <button class="ep-sub-tab" data-ep-sub="day" role="tab">Card Events by Day</button>
@@ -690,6 +666,32 @@
         subPanes[0] && subPanes[0].classList.add('ep-sub-pane--active');
       }
     }
+    // Decision 1: page-level hero-stat per-tab content (Distribution pattern).
+    // Title + question swap; stat-strip becomes the active metric's hero KPI.
+    const heroByTab = {
+      overview:   { title: 'Promotions',           question: 'How are promotions engaging users this week?',         label: '',              value: '',         delta: '',                       deltaDir: '' },
+      sessions:   { title: 'Sessions',             question: 'How are sessions distributed across stores, days, and weeks?', label: 'Sessions',     value: '78,542',  delta: '▲ 4.2% vs last wk',     deltaDir: 'up' },
+      users:      { title: 'Total Users',          question: 'How many unique users engaged this week, and where are they?', label: 'Total Users',  value: '54,011',  delta: '▲ 2.8% vs last wk',     deltaDir: 'up' },
+      duration:   { title: 'Avg Session Duration', question: 'How long are users spending on the circular per visit?',      label: 'Avg Session',  value: '6m 8s',   delta: '▼ 1.5% vs last wk',     deltaDir: 'down' },
+      cardevents: { title: 'Card Engagement Events', question: 'Which interactions are users taking on promotion cards?',   label: 'Card Events',  value: '271,298', delta: '▲ 7.1% vs last wk',     deltaDir: 'up' }
+    };
+    const heroTitleEl = document.getElementById('ep-hero-title');
+    const heroQuestionEl = document.getElementById('ep-hero-question');
+    const heroStripEl = document.getElementById('ep-page-stat-strip');
+    function renderHeroStrip(h) {
+      if (!h.label) {
+        // Overview = blank placeholder per Decision 1
+        heroStripEl.innerHTML = '<div class="ep-hero-placeholder" style="font-size:13px;color:#9ca3af;font-style:italic;padding:12px 0;">Overview — KPI grid below</div>';
+        return;
+      }
+      const deltaClass = h.deltaDir === 'down' ? 'stat-strip__delta--down' : 'stat-strip__delta--up';
+      heroStripEl.innerHTML =
+        '<div class="stat-strip__cards"><div class="stat-strip__item">' +
+          '<div class="stat-strip__label">' + h.label + '</div>' +
+          '<div class="stat-strip__value" style="font-size:32px;font-weight:800;line-height:1.05;">' + h.value + '</div>' +
+          '<div class="stat-strip__delta ' + deltaClass + '" style="font-size:13px;font-weight:600;margin-top:4px;color:' + (h.deltaDir === 'down' ? '#ef4444' : '#22c55e') + ';">' + h.delta + '</div>' +
+        '</div></div>';
+    }
     function activateTab(target) {
       tabs.forEach(t => {
         const on = t.dataset.epTab === target;
@@ -700,7 +702,15 @@
       const targetPane = document.querySelector('[data-ep-pane="' + target + '"]');
       if (targetPane) applySubTab(targetPane, currentSubTab);
       cohortNote.innerHTML = renderCohortNote(cohortLabels[target]);
+      const h = heroByTab[target];
+      if (h) {
+        heroTitleEl.textContent = h.title;
+        heroQuestionEl.textContent = h.question;
+        renderHeroStrip(h);
+      }
     }
+    // Initial hero render (Overview default)
+    renderHeroStrip(heroByTab.overview);
     tabs.forEach(tab => tab.addEventListener('click', () => activateTab(tab.dataset.epTab)));
 
     // Overview panel "View All" buttons → jump to metric tab + sub-tab

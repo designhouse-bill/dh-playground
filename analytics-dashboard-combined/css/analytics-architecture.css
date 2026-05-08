@@ -97,13 +97,15 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
 .dist-section-pane.active { display: block; }
 
 .mb-section-select,
-.ep-section-select { display: none; }
+.ep-section-select,
+.vis-section-select { display: none; }
 
 @media (max-width: 640px) {
   .perf-tabs--section,
   #ep-perf-tabs { display: none; }
   .mb-section-select,
-  .ep-section-select {
+  .ep-section-select,
+  .vis-section-select {
     display: block;
     width: 100%;
     padding: var(--space-2) var(--space-3);

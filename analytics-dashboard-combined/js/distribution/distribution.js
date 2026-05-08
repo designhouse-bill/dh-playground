@@ -3950,6 +3950,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         initPerfTabs();
         initDurationPresets();
         initDemographics();
+        initVisSectionTabs();
       } else if (section === 'traffic') {
         renderTrafficKpis();
         /* renderTrafficLeaderboardPreview removed — Top Stores preview deleted from Overview */
@@ -5870,6 +5871,65 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     if (initialTab) {
       var row2 = document.querySelector('[data-mb-tab="' + initialTab + '"], [data-mv-tab="' + initialTab + '"]');
       if (row2) row2.click();
+    }
+  }
+
+  /* ============================================================
+     Decision 7 (plan v2.12, 2026-05-08) — Row 1 section tabs on
+     Visitation. Mirrors initMediaSectionTabs. Row 1 = Overview /
+     Store Performance / Demographics. Deep-link via ?section=X.
+     Mobile <select> mirror via #vis-section-select.
+     ============================================================ */
+  function initVisSectionTabs() {
+    var tabBar = document.getElementById('vis-section-tabs');
+    if (!tabBar) return;
+    var tabs = tabBar.querySelectorAll('.perf-tab');
+    var panes = document.querySelectorAll('[data-vis-section]');
+    var select = document.getElementById('vis-section-select');
+
+    function applySection(target, opts) {
+      opts = opts || {};
+      tabs.forEach(function(x) {
+        var on = x.dataset.visSectionTab === target;
+        x.classList.toggle('active', on);
+        x.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      panes.forEach(function(p) {
+        p.classList.toggle('active', p.dataset.visSection === target);
+      });
+      if (select && select.value !== target) select.value = target;
+      // Resize ECharts in newly visible pane (init'd-while-hidden = 0×0).
+      var activePane = document.querySelector('[data-vis-section="' + target + '"]');
+      if (activePane) {
+        activePane.querySelectorAll('[_echarts_instance_]').forEach(function(el) {
+          var inst = window.echarts && window.echarts.getInstanceByDom(el);
+          if (inst) inst.resize();
+        });
+      }
+      if (!opts.skipUrl && window.history && window.history.replaceState) {
+        var url = new URL(window.location.href);
+        url.searchParams.set('section', target);
+        window.history.replaceState({}, '', url.toString());
+      }
+    }
+
+    tabs.forEach(function(t) {
+      t.addEventListener('click', function() {
+        applySection(t.dataset.visSectionTab, {});
+      });
+    });
+    if (select) {
+      select.addEventListener('change', function() {
+        applySection(select.value, {});
+      });
+    }
+
+    // Deep-link: ?section=X on load.
+    var params = new URLSearchParams(window.location.search);
+    var initialSection = params.get('section');
+    var validSections = Array.prototype.map.call(tabs, function(t) { return t.dataset.visSectionTab; });
+    if (initialSection && validSections.indexOf(initialSection) !== -1) {
+      applySection(initialSection, { skipUrl: true });
     }
   }
 

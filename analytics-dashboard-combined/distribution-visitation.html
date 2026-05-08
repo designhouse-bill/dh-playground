@@ -167,14 +167,42 @@
       <!-- Narrative slot (phase 2, gated by FEATURES.narrative) -->
       <div class="insight-banner" data-narrative-section="visitation" hidden></div>
 
-      <!-- View Toggle: Current (snapshot) vs Trend (over time) -->
-      <div class="tabset">
-      <div class="tabset__tabs perf-subtabs" id="visitation-view-toggle">
-        <button class="perf-subtab active" data-view="current">
-          <span class="material-symbols-outlined">donut_large</span> Current Composition
+      <!-- ════════════════════════════════════════════════════════════
+           Decision 7 Row 1 — Section nav (Visitation, plan v2.12).
+           Default lines-bottom .perf-tabs styling (no --filled modifier).
+           Mobile (≤640px): perf-tabs hide, .vis-section-select shows.
+           Deep-link: ?section=overview|performance|demographics.
+           ════════════════════════════════════════════════════════════ -->
+      <div class="perf-tabs perf-tabs--section" id="vis-section-tabs" role="tablist" aria-label="Visitation sections">
+        <button class="perf-tab active" data-vis-section-tab="overview" aria-selected="true" type="button">
+          <span class="material-symbols-outlined">dashboard</span> Overview
         </button>
-        <button class="perf-subtab" data-view="trend">
-          <span class="material-symbols-outlined">trending_up</span> Trend Over Time
+        <button class="perf-tab" data-vis-section-tab="performance" aria-selected="false" type="button">
+          <span class="material-symbols-outlined">store</span> Store Performance
+        </button>
+        <button class="perf-tab" data-vis-section-tab="demographics" aria-selected="false" type="button">
+          <span class="material-symbols-outlined">groups</span> Demographics
+        </button>
+      </div>
+      <select class="vis-section-select" id="vis-section-select" aria-label="Select visitation section">
+        <option value="overview">Overview</option>
+        <option value="performance">Store Performance</option>
+        <option value="demographics">Demographics</option>
+      </select>
+
+      <!-- ═══ Section pane: Overview (Composition + Trend Row 2) ═══ -->
+      <section class="dist-section-pane active" data-vis-section="overview">
+
+      <!-- Overview Row 2: Composition (snapshot) vs Trend (over time).
+           Upgraded from .perf-subtabs to .perf-tabs.perf-tabs--filled
+           (Decision 7 Row 2 styling) per plan v2.12. -->
+      <div class="tabset">
+      <div class="tabset__tabs perf-tabs perf-tabs--filled" id="visitation-view-toggle">
+        <button class="perf-tab active" data-view="current">
+          <span class="material-symbols-outlined">donut_large</span> Composition
+        </button>
+        <button class="perf-tab" data-view="trend">
+          <span class="material-symbols-outlined">trending_up</span> Trend
         </button>
       </div>
       <div class="tabset__body">
@@ -233,16 +261,17 @@
       </div>
 
       </div><!-- /.tabset__body -->
-      </div><!-- /.tabset (Current/Trend) -->
+      </div><!-- /.tabset (Composition/Trend) -->
 
-      <!-- Performance/Demographics tab pattern removed Apr 17 (plan item 2).
-           Each panel now lives as its own full-width row below Visit Frequency,
-           consistent with the narrative-header + stat-strip shell Bill wants
-           throughout the distribution page. Tabs remain INSIDE Performance
-           (item 3: Store/Creative/Day) and INSIDE Demographics (item 7: time
-           trend views), but not at this level. -->
+      </section><!-- /.dist-section-pane[data-vis-section="overview"] -->
 
-      <!-- ═══ Row 1: Store Performance ═══ -->
+      <!-- ═══ Section pane: Store Performance ═══ -->
+      <section class="dist-section-pane" data-vis-section="performance">
+
+      <!-- Store Performance section row.
+           Internal .perf-tabs (Overview/Store/Creative/Day) acts as Row 2.
+           Per plan v2.12 — Row 2 styling unchanged this phase (cross-section
+           Row 2 parity = follow-up). -->
       <section class="section-row section-row--performance">
         <header class="section-panel-header section-panel-header--with-stat">
           <div>
@@ -397,7 +426,14 @@
         </div>
       </section>
 
-      <!-- ═══ Row 2: Demographics ═══ -->
+      </section><!-- /.dist-section-pane[data-vis-section="performance"] -->
+
+      <!-- ═══ Section pane: Demographics ═══ -->
+      <section class="dist-section-pane" data-vis-section="demographics">
+
+      <!-- Demographics section row.
+           Internal .perf-subtabs (Current/Trend) acts as Row 2 — markup
+           unchanged this phase per plan v2.12. -->
       <section class="section-row section-row--demographics">
         <header class="section-panel-header">
           <h2 class="section-panel-header__title">Demographics</h2>
@@ -456,6 +492,8 @@
         </div>
       </section>
 
+      </section><!-- /.dist-section-pane[data-vis-section="demographics"] -->
+
     </section>
 
     <!-- Distribution modals injected here by distribution-modals.js -->
@@ -482,7 +520,7 @@
   <script src="js/data/distribution-data.js?v=19"></script>
 
   <script src="js/distribution/chip-carousel.js?v=1"></script>
-  <script src="js/distribution/distribution.js?v=63"></script>
+  <script src="js/distribution/distribution.js?v=64"></script>
   <script src="js/distribution/distribution-modals.js?v=13"></script>
 
   <script src="js/header-slide.js"></script>

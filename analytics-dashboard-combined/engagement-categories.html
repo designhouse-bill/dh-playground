@@ -155,37 +155,40 @@
        ============================================================ -->
   <main class="engagement-canonical engagement-proposed" id="engagement-canonical">
 
-    <header class="section-panel-header">
-      <div class="hero-stat">
-        <div class="narrative-header">
-          <div class="narrative-header__left">
-            <h1 class="narrative-header__title">Categories</h1>
-            <h2 class="narrative-header__question">How are categories engaging users this week?</h2>
+    <!-- Page-level hero-stat shell — same structure as engagement-promotions
+         (narrative-header left + stat-strip right). Title / question /
+         entity counts swap per grain; stat-strip is populated by JS as the
+         active perf-tab changes. -->
+    <div class="hero-stat" id="ep-page-hero-stat">
+      <div class="narrative-header">
+        <div class="narrative-header__left">
+          <h4 class="narrative-header__section">Engagement</h4>
+          <h1 class="narrative-header__title" id="ep-hero-title">Categories</h1>
+          <h2 class="narrative-header__question" id="ep-hero-question">How are categories engaging users this week?</h2>
+        </div>
+        <div class="narrative-header__text">
+          <p class="narrative-header__subtitle"><em><span id="ep-hero-entity">Ideal Media Lab</span>, <span id="ep-hero-period">Week 47 (Nov 17, 2025 – Nov 23, 2025)</span></em></p>
+          <div class="ep-circular-info">
+            <span class="ep-circular-info__item"><span class="ep-circular-info__num">8</span> categories</span>
+            <span class="ep-circular-info__sep">·</span>
+            <span class="ep-circular-info__item"><span class="ep-circular-info__num">75</span> promotions</span>
+            <span class="ep-circular-info__sep">·</span>
+            <span class="ep-circular-info__item"><span class="ep-circular-info__num">27</span> stores</span>
           </div>
-          <div class="narrative-header__text">
-            <p class="section-panel-header__subtitle">
-              <span class="ep-cohort-note" id="ep-cohort-note">
-                <span class="material-symbols-outlined">info</span>
-                <span class="ep-cohort-note__label">Cohort:</span>
-                <span class="ep-cohort-note__count">8 categories</span>
-                <span class="ep-cohort-note__sep">·</span>
-                <span class="ep-cohort-note__scope">Brand</span>
-                <span class="ep-cohort-note__sep">·</span>
-                <span class="ep-cohort-note__period">Week 47</span>
-              </span>
-            </p>
-            <span class="card-run-stats" id="context-date-run-stats">Ran at 27 stores · 7 days</span>
-          </div>
+          <span class="ep-cohort-note" id="ep-cohort-note">
+            <span class="material-symbols-outlined">info</span>
+            <span class="ep-cohort-note__label">Cohort:</span>
+            <span class="ep-cohort-note__count">8 categories</span>
+            <span class="ep-cohort-note__sep">·</span>
+            <span class="ep-cohort-note__scope">Brand</span>
+            <span class="ep-cohort-note__sep">·</span>
+            <span class="ep-cohort-note__period">Week 47</span>
+          </span>
         </div>
       </div>
-    </header>
-
-    <div class="ep-circular-info">
-      <span class="ep-circular-info__item"><span class="ep-circular-info__num">8</span> categories</span>
-      <span class="ep-circular-info__sep">·</span>
-      <span class="ep-circular-info__item"><span class="ep-circular-info__num">75</span> promotions</span>
-      <span class="ep-circular-info__sep">·</span>
-      <span class="ep-circular-info__item"><span class="ep-circular-info__num">27</span> stores</span>
+      <div class="stat-strip" id="ep-page-stat-strip">
+        <!-- Populated by JS: hero KPI for active perf-tab. -->
+      </div>
     </div>
 
     <div class="perf-tabs" id="ep-perf-tabs" role="tablist">

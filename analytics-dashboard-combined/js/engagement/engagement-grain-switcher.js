@@ -15,12 +15,19 @@
 (function () {
   'use strict';
 
+  function preserveSearch(anchor) {
+    var base = anchor.dataset.grainHref || anchor.getAttribute('href');
+    if (!anchor.dataset.grainHref) anchor.dataset.grainHref = base;
+    var search = window.location.search;
+    anchor.setAttribute('href', search ? base + search : base);
+  }
+
   function applyActive() {
     var grain = document.body.dataset.grain;
-    if (!grain) return;
     var anchors = document.querySelectorAll('.grain-switcher [data-grain-link]');
     anchors.forEach(function (a) {
-      a.classList.toggle('active', a.dataset.grainLink === grain);
+      preserveSearch(a);
+      if (grain) a.classList.toggle('active', a.dataset.grainLink === grain);
     });
   }
 
@@ -30,4 +37,6 @@
     applyActive();
   }
   document.addEventListener('engagement-shell:loaded', applyActive);
+  // Re-sync after a modal commit pushes new params to the URL.
+  document.addEventListener('engagement-url:updated', applyActive);
 })();

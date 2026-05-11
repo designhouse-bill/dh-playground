@@ -421,9 +421,21 @@ const DashboardCore = (() => {
       state.selectedWeekId = state.selectedWeekId || MockData.context.weekId;
     }
 
-    // Initialize entity context
-    state.currentEntity = MockData.context.entity;
-    state.selectedEntityId = MockData.context.entity.id;
+    // Initialize entity context — URL param wins if present
+    if (urlParams.entityId && typeof MockData.getEntityById === 'function') {
+      const ent = MockData.getEntityById(urlParams.entityId);
+      if (ent) {
+        MockData.setEntity(ent.id, ent.level, ent.name);
+        state.currentEntity = MockData.context.entity;
+        state.selectedEntityId = ent.id;
+      } else {
+        state.currentEntity = MockData.context.entity;
+        state.selectedEntityId = MockData.context.entity.id;
+      }
+    } else {
+      state.currentEntity = MockData.context.entity;
+      state.selectedEntityId = MockData.context.entity.id;
+    }
 
     updateDateDisplay();
     updateEntityDisplay();

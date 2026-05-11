@@ -778,6 +778,84 @@
       </div>
     </div>
 
+    <!-- UX-846 β-2 — Section Summary cards. Visible only in Standard mode
+         (data-tier="basic" hides when Advanced toggle is on).
+         Each card: sparkline + key stat + delta + jump-to-Advanced CTA.
+         Whole card is clickable; jump flips Advanced on and activates the
+         matching perf-tab. -->
+    <section class="ux846-section-summaries" data-tier="basic" aria-label="Section summaries">
+      <header class="ux846-section-summaries__intro">
+        <h2 class="ux846-section-summaries__title">Section Summaries</h2>
+        <p class="ux846-section-summaries__desc">Quick reads for each metric. Toggle Advanced for full cuts and sub-tabs.</p>
+      </header>
+      <div class="ux846-section-summaries__grid">
+        <button class="ux846-section-card" data-jump-tab="sessions" type="button">
+          <div class="ux846-section-card__head">
+            <span class="material-symbols-outlined">analytics</span>
+            <span class="ux846-section-card__title">Sessions</span>
+          </div>
+          <div class="ux846-section-card__chart" data-sparkline="sessions" aria-hidden="true"></div>
+          <div class="ux846-section-card__stat">
+            <span class="ux846-section-card__value" data-value="sessions">—</span>
+            <span class="ux846-section-card__delta" data-delta="sessions">—</span>
+          </div>
+          <span class="ux846-section-card__cta">Open in Advanced <span class="material-symbols-outlined">arrow_forward</span></span>
+        </button>
+
+        <button class="ux846-section-card" data-jump-tab="users" type="button">
+          <div class="ux846-section-card__head">
+            <span class="material-symbols-outlined">group</span>
+            <span class="ux846-section-card__title">Total Users</span>
+          </div>
+          <div class="ux846-section-card__chart" data-sparkline="users" aria-hidden="true"></div>
+          <div class="ux846-section-card__stat">
+            <span class="ux846-section-card__value" data-value="users">—</span>
+            <span class="ux846-section-card__delta" data-delta="users">—</span>
+          </div>
+          <span class="ux846-section-card__cta">Open in Advanced <span class="material-symbols-outlined">arrow_forward</span></span>
+        </button>
+
+        <button class="ux846-section-card" data-jump-tab="cardevents" type="button">
+          <div class="ux846-section-card__head">
+            <span class="material-symbols-outlined">ads_click</span>
+            <span class="ux846-section-card__title">Card Events</span>
+          </div>
+          <div class="ux846-section-card__chart" data-sparkline="cardevents" aria-hidden="true"></div>
+          <div class="ux846-section-card__stat">
+            <span class="ux846-section-card__value" data-value="cardevents">—</span>
+            <span class="ux846-section-card__delta" data-delta="cardevents">—</span>
+          </div>
+          <span class="ux846-section-card__cta">Open in Advanced <span class="material-symbols-outlined">arrow_forward</span></span>
+        </button>
+
+        <button class="ux846-section-card" data-jump-tab="coupon" type="button">
+          <div class="ux846-section-card__head">
+            <span class="material-symbols-outlined">confirmation_number</span>
+            <span class="ux846-section-card__title">Coupon</span>
+          </div>
+          <div class="ux846-section-card__chart" data-sparkline="coupon" aria-hidden="true"></div>
+          <div class="ux846-section-card__stat">
+            <span class="ux846-section-card__value" data-value="coupon">—</span>
+            <span class="ux846-section-card__delta" data-delta="coupon">—</span>
+          </div>
+          <span class="ux846-section-card__cta">Open in Advanced <span class="material-symbols-outlined">arrow_forward</span></span>
+        </button>
+
+        <button class="ux846-section-card" data-jump-tab="dealtype" type="button">
+          <div class="ux846-section-card__head">
+            <span class="material-symbols-outlined">sell</span>
+            <span class="ux846-section-card__title">Deal Type</span>
+          </div>
+          <div class="ux846-section-card__chart" data-sparkline="dealtype" aria-hidden="true"></div>
+          <div class="ux846-section-card__stat">
+            <span class="ux846-section-card__value" data-value="dealtype">—</span>
+            <span class="ux846-section-card__delta" data-delta="dealtype">—</span>
+          </div>
+          <span class="ux846-section-card__cta">Open in Advanced <span class="material-symbols-outlined">arrow_forward</span></span>
+        </button>
+      </div>
+    </section>
+
   </main>
 
   <!-- Right Detail panel — canonical .detail-panel shell (css/detail-panel.css) -->
@@ -917,6 +995,7 @@
        SCRIPTS
        ============================================================ -->
   <script src="js/shared/surface-controller.js?v=1"></script>
+  <script src="js/engagement/section-summaries.js?v=1"></script>
   <script src="js/data/engagement-promotions.js"></script>
   <script src="js/data/engagement-mock-data.js"></script>
   <script src="js/engagement/cache-manager.js"></script>

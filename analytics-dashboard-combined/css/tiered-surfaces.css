@@ -12,6 +12,7 @@
    ============================================================ */
 
 body[data-advanced="off"] [data-tier="advanced"] { display: none !important; }
+body[data-advanced="on"]  [data-tier="basic"]    { display: none !important; }
 
 /* Advanced reveal divider — contextual hint above the perf-tabs strip when
    Advanced toggle is on. Hidden by the rule above when toggle is off. */
@@ -32,4 +33,134 @@ body[data-advanced="off"] [data-tier="advanced"] { display: none !important; }
 .ux846-advanced-divider .material-symbols-outlined {
   font-size: 16px;
   color: var(--color-primary-600, #2196F3);
+}
+
+/* β-2 — Section Summary cards (Standard mode).
+   Stacks below the Overview pane content, gives Standard substance. */
+.ux846-section-summaries {
+  margin: 24px 0 16px;
+  padding: 20px 0 4px;
+  border-top: 1px solid var(--color-border, #e5e7eb);
+}
+
+.ux846-section-summaries__intro {
+  margin-bottom: 16px;
+}
+
+.ux846-section-summaries__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--p-text-color, #1f2937);
+  margin: 0 0 4px;
+}
+
+.ux846-section-summaries__desc {
+  font-size: 12px;
+  color: var(--color-text-secondary, #6b7280);
+  margin: 0;
+}
+
+.ux846-section-summaries__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.ux846-section-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  background: var(--p-surface-card, #ffffff);
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+
+.ux846-section-card:hover {
+  border-color: var(--color-primary-600, #2196F3);
+  box-shadow: var(--p-shadow-md, 0 4px 6px -1px rgba(0,0,0,0.1));
+  transform: translateY(-1px);
+}
+
+.ux846-section-card:focus-visible {
+  outline: 2px solid var(--color-primary-600, #2196F3);
+  outline-offset: 2px;
+}
+
+.ux846-section-card__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text-secondary, #6b7280);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ux846-section-card__head .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.ux846-section-card__title {
+  color: var(--p-text-color, #1f2937);
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 13px;
+}
+
+.ux846-section-card__chart {
+  height: 48px;
+  width: 100%;
+}
+
+.ux846-section-card__stat {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.ux846-section-card__value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--p-text-color, #1f2937);
+  font-variant-numeric: tabular-nums;
+}
+
+.ux846-section-card__delta {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-secondary, #6b7280);
+  font-variant-numeric: tabular-nums;
+}
+
+.ux846-section-card__delta--up {
+  color: var(--p-green-500, #22c55e);
+}
+
+.ux846-section-card__delta--down {
+  color: var(--p-red-500, #ef4444);
+}
+
+.ux846-section-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-primary-600, #2196F3);
+  margin-top: 2px;
+}
+
+.ux846-section-card__cta .material-symbols-outlined {
+  font-size: 14px;
+  transition: transform 0.15s;
+}
+
+.ux846-section-card:hover .ux846-section-card__cta .material-symbols-outlined {
+  transform: translateX(3px);
 }

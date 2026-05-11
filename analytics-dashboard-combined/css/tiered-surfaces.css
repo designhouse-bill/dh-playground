@@ -131,6 +131,18 @@ body[data-view="summary"] .ep-stacked-list > .ep-stacked-list__row:nth-of-type(n
    selection lives only in the Advanced/expanded view. */
 body[data-view="summary"] .ep-trend-toolbar { display: none !important; }
 
+/* Make the trend chart fill the card height in summary view. SVG height
+   is set to 100% by JS and preserveAspectRatio flipped to "none" so it
+   stretches instead of letterboxing. */
+body[data-view="summary"] .ep-sub-pane[data-ep-sub-pane="trend"] [id$="-trend"] {
+  height: 220px;
+}
+body[data-view="summary"] .ep-sub-pane[data-ep-sub-pane="trend"] svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 /* Performance Score + Depth of Engagement — split into two individual
    .ep-kpi-cell cards. The legacy "__col + __col { border-left, padding-left }"
    rule was meant to separate flush columns inside ONE card; now each col

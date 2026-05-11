@@ -16,32 +16,32 @@
     sessions: {
       store: { stat: 'Acme #1234',  detail: '28% of sessions · ▲21% wow' },
       day:   { stat: 'Saturday',    detail: '▲35% above weekly avg' },
-      trend: { stat: '▲18% in 13w', detail: 'current 12.4K · trending up' },
+      trend: { stat: '▲5.2% in 4w', detail: 'current 12.4K · trending up' },
     },
     users: {
       store: { stat: 'Acme #1234',  detail: '24% of users · ▲14% wow' },
       day:   { stat: 'Friday',      detail: '▲28% above weekly avg' },
-      trend: { stat: '▲9% in 13w',  detail: 'current 9.1K · steady climb' },
+      trend: { stat: '▲3.1% in 4w', detail: 'current 9.1K · steady climb' },
     },
     duration: {
       store: { stat: 'Acme #2099',  detail: '3:42 avg · 18% above brand' },
       day:   { stat: 'Sunday',      detail: 'longest avg session (4:12)' },
-      trend: { stat: 'Stable',      detail: '13w range 3:10–3:55' },
+      trend: { stat: 'Stable 4w',   detail: 'range 3:30–3:55' },
     },
     cardevents: {
       store: { stat: 'Acme #1234',  detail: '31% of card events · ▲24% wow' },
       day:   { stat: 'Saturday',    detail: 'peak 9.4K events' },
-      trend: { stat: '▲24% in 13w', detail: 'current 38.7K · accelerating' },
+      trend: { stat: '▲8.0% in 4w', detail: 'current 38.7K · accelerating' },
     },
     coupon: {
       store: { stat: 'Acme #0418',  detail: '22% of redemptions · ▼3% wow' },
       day:   { stat: 'Wednesday',   detail: 'highest redemption rate' },
-      trend: { stat: '▼7% in 13w',  detail: 'softening — investigate' },
+      trend: { stat: '▼2.1% in 4w', detail: 'softening — investigate' },
     },
     dealtype: {
       store: { stat: 'BOGO',        detail: '38% of activity · top deal' },
       day:   { stat: 'Saturday',    detail: '▲40% above weekly avg' },
-      trend: { stat: '▲6% in 13w',  detail: 'BOGO holds lead' },
+      trend: { stat: '▲1.8% in 4w', detail: 'BOGO holds lead' },
     },
   };
 
@@ -151,6 +151,16 @@
     });
   }
 
+  // Stretch trend SVGs vertically so they fill the taller card slot in
+  // summary view. Default viewBox is 880x280 with preserveAspectRatio=meet
+  // which letterboxes when forced taller — switch to "none" to stretch.
+  function stretchTrendSvgs() {
+    document.querySelectorAll('.ep-sub-pane[data-ep-sub-pane="trend"] svg').forEach((svg) => {
+      svg.setAttribute('preserveAspectRatio', 'none');
+      svg.style.height = '100%';
+    });
+  }
+
   function ensureOverviewTab(pane) {
     const nav = pane.querySelector('.ep-sub-tabs');
     if (!nav || nav.querySelector('[data-ep-sub="overview"]')) return;
@@ -196,7 +206,11 @@
     });
     // Defer 4w default until canonical-shell-renderers has wired the
     // toolbar (it runs on DOMContentLoaded too).
-    setTimeout(setTrendDefault, 200);
+    setTimeout(() => {
+      setTrendDefault();
+      // Re-run after the chart repaints in 4w form.
+      setTimeout(stretchTrendSvgs, 100);
+    }, 200);
   }
 
   if (document.readyState === 'loading') {

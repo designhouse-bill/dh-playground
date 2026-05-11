@@ -151,6 +151,84 @@
     });
   }
 
+  // Re-render the trend SVG at a more compact aspect ratio so it fits
+  // legibly inside the summary card slot. The canonical renderer uses
+  // viewBox 880x280 (3.14:1) which, in a 1/3-page-wide card, renders only
+  // ~127px tall with ~4-5px text. We extract the data from the rendered
+  // .ep-trend-dot elements and re-emit a chart at 500x380 (1.32:1) with
+  // proportionally larger paddings and text — actual element sizes, not
+  // scale-stretching.
+  function rerenderTrendCompact(host) {
+    if (!host) return;
+    const dots = host.querySelectorAll('.ep-trend-dot');
+    if (!dots.length) return;
+    const data = Array.from(dots).map((d) => ({
+      week: d.getAttribute('data-week'),
+      val: parseFloat(d.getAttribute('data-val')),
+    }));
+    if (data.some((d) => isNaN(d.val))) return;
+
+    // Reuse existing axis label strings so formatting (e.g. "%", "K") is
+    // preserved.  text-anchor="end" identifies y-axis labels.
+    const yLabels = Array.from(host.querySelectorAll('svg text[text-anchor="end"]')).map((t) => t.textContent);
+    if (yLabels.length < 2) return;
+
+    // Pull the accent color from the existing line path stroke.
+    const line = host.querySelector('path[fill="none"][stroke]');
+    const accent = line ? line.getAttribute('stroke') : '#2563eb';
+
+    const W = 500, H = 380, pad = 50;
+    const vals = data.map((d) => d.val);
+    const yMax = Math.ceil(Math.max.apply(null, vals) * 1.15) || 1;
+    const ySteps = yLabels.length - 1;
+    const xs = data.map((_, i) => pad + (data.length > 1 ? i * (W - pad * 2) / (data.length - 1) : 0));
+    const ys = vals.map((v) => H - pad - (v / yMax) * (H - pad * 2));
+    const baseY = H - pad;
+    const lineD = xs.map((x, i) => (i ? 'L' : 'M') + x + ',' + ys[i]).join(' ');
+    const areaD = lineD + ' L' + xs[xs.length - 1] + ',' + baseY + ' L' + xs[0] + ',' + baseY + ' Z';
+    const gradId = host.id + '-grad-c';
+
+    let grid = '';
+    for (let i = 0; i <= ySteps; i++) {
+      const y = H - pad - (i / ySteps) * (H - pad * 2);
+      grid +=
+        '<line x1="' + pad + '" x2="' + (W - pad) + '" y1="' + y + '" y2="' + y + '" stroke="#e5e7eb"/>' +
+        '<text x="' + (pad - 8) + '" y="' + (y + 5) + '" font-size="14" fill="#6b7280" text-anchor="end">' + (yLabels[i] || '') + '</text>';
+    }
+
+    const xLbls = data.map((d, i) =>
+      '<text x="' + xs[i] + '" y="' + (H - 15) + '" font-size="14" fill="#6b7280" text-anchor="middle">' + d.week + '</text>'
+    ).join('');
+
+    const dotsSvg = xs.map((x, i) =>
+      '<circle class="ep-trend-dot" cx="' + x + '" cy="' + ys[i] + '" r="5" fill="#fff" stroke="' + accent + '" stroke-width="2.5" data-week="' + data[i].week + '" data-val="' + data[i].val + '"/>'
+    ).join('');
+
+    host.dataset.trendCompact = '1';
+    host.innerHTML =
+      '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto;display:block;">' +
+      '<defs><linearGradient id="' + gradId + '" x1="0" y1="0" x2="0" y2="1">' +
+      '<stop offset="0%" stop-color="' + accent + '" stop-opacity="0.18"/>' +
+      '<stop offset="100%" stop-color="' + accent + '" stop-opacity="0"/>' +
+      '</linearGradient></defs>' +
+      grid +
+      '<path d="' + areaD + '" fill="url(#' + gradId + ')" stroke="none"/>' +
+      '<path d="' + lineD + '" fill="none" stroke="' + accent + '" stroke-width="2.5"/>' +
+      dotsSvg + xLbls +
+      '</svg>';
+  }
+
+  function rerenderAllTrendsCompact() {
+    document.querySelectorAll('.ep-sub-pane[data-ep-sub-pane="trend"] [id$="-trend"]').forEach(rerenderTrendCompact);
+  }
+
+  function restoreCanonicalTrends() {
+    // Re-trigger the canonical renderer by clicking the currently active
+    // .ep-trend-range button. The renderer overwrites the host innerHTML
+    // with the natural 880x280 SVG suitable for the wider detail view.
+    document.querySelectorAll('.ep-sub-pane[data-ep-sub-pane="trend"] .ep-trend-range--active').forEach((btn) => btn.click());
+  }
+
 
   function ensureOverviewTab(pane) {
     const nav = pane.querySelector('.ep-sub-tabs');
@@ -233,10 +311,22 @@
     });
     interceptSubTabClicks();
     syncOverviewActive();
-    document.addEventListener('ux846:view-change', syncOverviewActive);
+    document.addEventListener('ux846:view-change', (e) => {
+      syncOverviewActive();
+      // Compact trend SVG in summary; canonical render in detail.
+      if (e.detail?.view === 'summary') {
+        setTimeout(rerenderAllTrendsCompact, 50);
+      } else {
+        setTimeout(restoreCanonicalTrends, 50);
+      }
+    });
     // Defer 4w default until canonical-shell-renderers has wired the
-    // toolbar (it runs on DOMContentLoaded too).
-    setTimeout(setTrendDefault, 200);
+    // toolbar (it runs on DOMContentLoaded too). After it paints, re-emit
+    // a compact-aspect SVG for the summary view.
+    setTimeout(() => {
+      setTrendDefault();
+      setTimeout(rerenderAllTrendsCompact, 100);
+    }, 200);
   }
 
   if (document.readyState === 'loading') {

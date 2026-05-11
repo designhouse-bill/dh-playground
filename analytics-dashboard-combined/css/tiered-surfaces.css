@@ -22,6 +22,16 @@ body[data-view="summary"] .perf-tab-pane.active:not([data-ep-pane="overview"]) {
   grid-auto-rows: 1fr;
 }
 
+/* The .ep-sub-tabs nav is also a grid child in summary view — span the
+   full row above the 3 cards, and let it size to content. */
+body[data-view="summary"] .perf-tab-pane.active:not([data-ep-pane="overview"]) > .ep-sub-tabs {
+  grid-column: 1 / -1;
+  grid-row: 1;
+}
+body[data-view="summary"] .perf-tab-pane.active:not([data-ep-pane="overview"]) > .section-card {
+  grid-row: 2;
+}
+
 .section-card {
   display: flex;
   flex-direction: column;

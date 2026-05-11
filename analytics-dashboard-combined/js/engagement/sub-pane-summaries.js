@@ -176,6 +176,42 @@
     nav.insertBefore(btn, nav.firstChild);
   }
 
+  // Active sub-tab state must reflect the current view. In summary the
+  // Overview tab is active; in detail the tab matching the active sub-pane
+  // is active (handled by existing engagement-page-app handler, this
+  // function only handles the summary side).
+  function syncOverviewActive() {
+    const isSummary = document.body.dataset.view !== 'detail';
+    document.querySelectorAll('.perf-tab-pane').forEach((pane) => {
+      if (pane.dataset.epPane === 'overview') return;
+      const nav = pane.querySelector('.ep-sub-tabs');
+      if (!nav) return;
+      const overview = nav.querySelector('[data-ep-sub="overview"]');
+      if (!overview) return;
+      if (isSummary) {
+        nav.querySelectorAll('.ep-sub-tab').forEach((t) => t.classList.remove('ep-sub-tab--active'));
+        overview.classList.add('ep-sub-tab--active');
+      } else {
+        overview.classList.remove('ep-sub-tab--active');
+      }
+    });
+  }
+
+  // Clicking a non-Overview sub-tab from summary view flips into detail.
+  // Existing engagement-page-app subtab handler still runs to toggle the
+  // active sub-pane.
+  function interceptSubTabClicks() {
+    document.addEventListener('click', (e) => {
+      const tab = e.target.closest('.ep-sub-tab');
+      if (!tab) return;
+      const sub = tab.dataset.epSub;
+      if (!sub || sub === 'overview' || sub === 'data') return;
+      if (window.UX846Surface?.getView() !== 'detail') {
+        window.UX846Surface?.setView('detail');
+      }
+    }, true);
+  }
+
   function renameDataTab(pane) {
     // The "Data" external link becomes "Data Grid" so it reads as a peer
     // alongside Overview / by Store / by Day / Time Trend.
@@ -204,6 +240,9 @@
       ensureOverviewTab(pane);
       renameDataTab(pane);
     });
+    interceptSubTabClicks();
+    syncOverviewActive();
+    document.addEventListener('ux846:view-change', syncOverviewActive);
     // Defer 4w default until canonical-shell-renderers has wired the
     // toolbar (it runs on DOMContentLoaded too).
     setTimeout(() => {

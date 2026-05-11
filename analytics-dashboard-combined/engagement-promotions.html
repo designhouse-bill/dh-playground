@@ -559,7 +559,7 @@
     <!-- ─── Metric: Sessions (fully wired demo) ─── -->
     <div class="perf-tab-pane" data-ep-pane="sessions">
       <!-- Decision 1: per-pane hero-stat removed; lifted to page-level. -->
-      <div class="ep-sub-tabs" data-tier="detail" role="tablist" aria-label="Sessions cuts">
+      <div class="ep-sub-tabs" role="tablist" aria-label="Sessions cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Sessions by Store</button>
         <button class="ep-sub-tab" data-ep-sub="day" role="tab">Sessions by Day</button>
         <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Sessions Time Trend</button>
@@ -598,7 +598,7 @@
     <!-- ─── Metric: Total Users (shell — populates w/ BigQuery user dimension) ─── -->
     <div class="perf-tab-pane" data-ep-pane="users">
       <!-- Decision 1: per-pane hero-stat removed; lifted to page-level. -->
-      <div class="ep-sub-tabs" data-tier="detail" role="tablist" aria-label="Users cuts">
+      <div class="ep-sub-tabs" role="tablist" aria-label="Users cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Users by Store</button>
         <button class="ep-sub-tab" data-ep-sub="day" role="tab">Users by Day</button>
         <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Users Time Trend</button>
@@ -631,7 +631,7 @@
     <!-- ─── Metric: Avg Session Duration ─── -->
     <div class="perf-tab-pane" data-ep-pane="duration">
       <!-- Decision 1: per-pane hero-stat removed; lifted to page-level. -->
-      <div class="ep-sub-tabs" data-tier="detail" role="tablist" aria-label="Duration cuts">
+      <div class="ep-sub-tabs" role="tablist" aria-label="Duration cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Duration by Store</button>
         <button class="ep-sub-tab" data-ep-sub="day" role="tab">Duration by Day</button>
         <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Duration Time Trend</button>
@@ -664,7 +664,7 @@
     <!-- ─── Metric: Card Engagement Events (Adds + Clicks + share/save/print roll-up) ─── -->
     <div class="perf-tab-pane" data-ep-pane="cardevents">
       <!-- Decision 1: per-pane hero-stat removed; lifted to page-level. -->
-      <div class="ep-sub-tabs" data-tier="detail" role="tablist" aria-label="Card Events cuts">
+      <div class="ep-sub-tabs" role="tablist" aria-label="Card Events cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Card Events by Store</button>
         <button class="ep-sub-tab" data-ep-sub="day" role="tab">Card Events by Day</button>
         <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Card Events Time Trend</button>
@@ -699,7 +699,7 @@
 
     <!-- ─── Metric: Coupons Engaged ─── -->
     <div class="perf-tab-pane" data-ep-pane="coupon">
-      <div class="ep-sub-tabs" data-tier="detail" role="tablist" aria-label="Coupon cuts">
+      <div class="ep-sub-tabs" role="tablist" aria-label="Coupon cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Coupons by Store</button>
         <button class="ep-sub-tab" data-ep-sub="day" role="tab">Coupons by Day</button>
         <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Coupons Time Trend</button>
@@ -734,7 +734,7 @@
 
     <!-- ─── Metric: Performance by Deal Type ─── -->
     <div class="perf-tab-pane" data-ep-pane="dealtype">
-      <div class="ep-sub-tabs" data-tier="detail" role="tablist" aria-label="Deal type cuts">
+      <div class="ep-sub-tabs" role="tablist" aria-label="Deal type cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Deal Types by Store</button>
         <button class="ep-sub-tab" data-ep-sub="day" role="tab">Deal Types by Day</button>
         <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Deal Types Time Trend</button>
@@ -906,7 +906,7 @@
        SCRIPTS
        ============================================================ -->
   <script src="js/shared/surface-controller.js?v=3"></script>
-  <script src="js/engagement/sub-pane-summaries.js?v=5"></script>
+  <script src="js/engagement/sub-pane-summaries.js?v=6"></script>
   <script src="js/data/engagement-promotions.js"></script>
   <script src="js/data/engagement-mock-data.js"></script>
   <script src="js/engagement/cache-manager.js"></script>

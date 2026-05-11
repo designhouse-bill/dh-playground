@@ -310,60 +310,60 @@
 
         </div><!-- /.ep-kpi-stack -->
 
-        <!-- Cell 5 (M) — Performance Score 2/3 + Depth of Engagement 1/3 (nested split inside one M cell). -->
-        <div class="ep-kpi-cell ep-kpi-cell--m" style="cursor:default;">
-          <div class="ep-perf-depth-split">
-            <!-- 2/3 — Performance Score (donut centered, legend below) -->
-            <a class="ep-perf-depth-split__col" href="engagement-grid.html?metric=performance" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
-              <div class="ep-kpi-cell__head">
-                <div>
-                  <div class="ep-kpi-cell__story">Performance Score</div>
-                  <div class="ep-kpi-cell__metric">Views · Clicks · Adds (point totals)</div>
-                </div>
+        <!-- Cell 5 — Performance Score + Depth of Engagement, split into TWO
+             individual .ep-kpi-cell cards. Outer container holds the 2/3 + 1/3
+             grid split via .ep-perf-depth-split. -->
+        <div class="ep-perf-depth-split ep-kpi-cell--m">
+          <!-- 2/3 — Performance Score (donut centered, legend below) -->
+          <a class="ep-kpi-cell ep-perf-depth-split__col" href="engagement-grid.html?metric=performance" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+            <div class="ep-kpi-cell__head">
+              <div>
+                <div class="ep-kpi-cell__story">Performance Score</div>
+                <div class="ep-kpi-cell__metric">Views · Clicks · Adds (point totals)</div>
               </div>
-              <div class="ep-kpi-cell__chart">
-                <div class="ep-perf-donut-wrap">
-                  <!-- v/c/a triad — canonical series palette (Views=v blue, Clicks=c amber, Adds=a green).
-                       RULE: section-color tinting NOT applied to v/c/a triad — see design-tokens.css. -->
-                  <div class="ep-perf-donut" style="background:conic-gradient(var(--series-v, #2196F3) 0% 56%, var(--series-c, #f59e0b) 56% 84%, var(--series-a, #22c55e) 84% 100%);" aria-hidden="true">
-                    <div class="ep-perf-donut__center">
-                      <span class="ep-perf-donut__center-val">142.8K</span>
-                      <span class="ep-perf-donut__center-lbl">total points</span>
-                    </div>
-                  </div>
-                  <div class="ep-perf-donut__legend">
-                    <div class="ep-perf-donut__legend-row" style="--swatch: var(--series-v, #2196F3);"><span>Views</span><strong>80,170</strong></div>
-                    <div class="ep-perf-donut__legend-row" style="--swatch: var(--series-c, #f59e0b);"><span>Clicks</span><strong>40,030</strong></div>
-                    <div class="ep-perf-donut__legend-row" style="--swatch: var(--series-a, #22c55e);"><span>Adds</span><strong>22,600</strong></div>
+            </div>
+            <div class="ep-kpi-cell__chart">
+              <div class="ep-perf-donut-wrap">
+                <!-- v/c/a triad — canonical series palette (Views=v blue, Clicks=c amber, Adds=a green).
+                     RULE: section-color tinting NOT applied to v/c/a triad — see design-tokens.css. -->
+                <div class="ep-perf-donut" style="background:conic-gradient(var(--series-v, #2196F3) 0% 56%, var(--series-c, #f59e0b) 56% 84%, var(--series-a, #22c55e) 84% 100%);" aria-hidden="true">
+                  <div class="ep-perf-donut__center">
+                    <span class="ep-perf-donut__center-val">142.8K</span>
+                    <span class="ep-perf-donut__center-lbl">total points</span>
                   </div>
                 </div>
-              </div>
-              <span class="ep-kpi-cell__view">Open Grid (point totals) <span class="material-symbols-outlined" >open_in_new</span></span>
-            </a>
-            <!-- 1/3 — Depth of Engagement (vertical bars by device) -->
-            <button class="ep-perf-depth-split__col" data-jump-to="duration" type="button" style="background:none;border:none;padding:0;text-align:left;cursor:pointer;">
-              <div class="ep-kpi-cell__head">
-                <div>
-                  <div class="ep-kpi-cell__story">Depth of engagement</div>
-                  <div class="ep-kpi-cell__metric">Avg Duration · device (GA4)</div>
-                </div>
-                <div style="text-align:right;">
-                  <div class="ep-kpi-cell__value">6m 8s</div>
-                  <div class="ep-kpi-cell__delta ep-kpi-cell__delta--down">▼ 1.5%</div>
+                <div class="ep-perf-donut__legend">
+                  <div class="ep-perf-donut__legend-row" style="--swatch: var(--series-v, #2196F3);"><span>Views</span><strong>80,170</strong></div>
+                  <div class="ep-perf-donut__legend-row" style="--swatch: var(--series-c, #f59e0b);"><span>Clicks</span><strong>40,030</strong></div>
+                  <div class="ep-perf-donut__legend-row" style="--swatch: var(--series-a, #22c55e);"><span>Adds</span><strong>22,600</strong></div>
                 </div>
               </div>
-              <div class="ep-kpi-cell__chart">
-                <!-- Duration section anchor: amber ladder by device usage rank. -->
-                <div class="ep-depth-vbars" aria-hidden="true">
-                  <div class="ep-depth-vbar"><span class="ep-depth-vbar__val">7m 12s</span><div class="ep-depth-vbar__fill" style="height:100%; --swatch: var(--section-duration, #d97706);"></div><span class="ep-depth-vbar__label">Mobile</span></div>
-                  <div class="ep-depth-vbar"><span class="ep-depth-vbar__val">5m 02s</span><div class="ep-depth-vbar__fill" style="height:70%; --swatch: color-mix(in srgb, var(--section-duration, #d97706) 70%, #fff);"></div><span class="ep-depth-vbar__label">Desktop</span></div>
-                  <div class="ep-depth-vbar"><span class="ep-depth-vbar__val">4m 31s</span><div class="ep-depth-vbar__fill" style="height:63%; --swatch: color-mix(in srgb, var(--section-duration, #d97706) 50%, #fff);"></div><span class="ep-depth-vbar__label">Tablet</span></div>
-                  <div class="ep-depth-vbar"><span class="ep-depth-vbar__val">3m 18s</span><div class="ep-depth-vbar__fill" style="height:46%; --swatch: color-mix(in srgb, var(--section-duration, #d97706) 30%, #fff);"></div><span class="ep-depth-vbar__label">Other</span></div>
-                </div>
+            </div>
+            <span class="ep-kpi-cell__view">Open Grid (point totals) <span class="material-symbols-outlined" >open_in_new</span></span>
+          </a>
+          <!-- 1/3 — Depth of Engagement (vertical bars by device) -->
+          <button class="ep-kpi-cell ep-perf-depth-split__col" data-jump-to="duration" type="button" style="text-align:left;">
+            <div class="ep-kpi-cell__head">
+              <div>
+                <div class="ep-kpi-cell__story">Depth of engagement</div>
+                <div class="ep-kpi-cell__metric">Avg Duration · device (GA4)</div>
               </div>
-              <span class="ep-kpi-cell__view">Open Duration <span class="material-symbols-outlined">chevron_right</span></span>
-            </button>
-          </div>
+              <div style="text-align:right;">
+                <div class="ep-kpi-cell__value">6m 8s</div>
+                <div class="ep-kpi-cell__delta ep-kpi-cell__delta--down">▼ 1.5%</div>
+              </div>
+            </div>
+            <div class="ep-kpi-cell__chart">
+              <!-- Duration section anchor: amber ladder by device usage rank. -->
+              <div class="ep-depth-vbars" aria-hidden="true">
+                <div class="ep-depth-vbar"><span class="ep-depth-vbar__val">7m 12s</span><div class="ep-depth-vbar__fill" style="height:100%; --swatch: var(--section-duration, #d97706);"></div><span class="ep-depth-vbar__label">Mobile</span></div>
+                <div class="ep-depth-vbar"><span class="ep-depth-vbar__val">5m 02s</span><div class="ep-depth-vbar__fill" style="height:70%; --swatch: color-mix(in srgb, var(--section-duration, #d97706) 70%, #fff);"></div><span class="ep-depth-vbar__label">Desktop</span></div>
+                <div class="ep-depth-vbar"><span class="ep-depth-vbar__val">4m 31s</span><div class="ep-depth-vbar__fill" style="height:63%; --swatch: color-mix(in srgb, var(--section-duration, #d97706) 50%, #fff);"></div><span class="ep-depth-vbar__label">Tablet</span></div>
+                <div class="ep-depth-vbar"><span class="ep-depth-vbar__val">3m 18s</span><div class="ep-depth-vbar__fill" style="height:46%; --swatch: color-mix(in srgb, var(--section-duration, #d97706) 30%, #fff);"></div><span class="ep-depth-vbar__label">Other</span></div>
+              </div>
+            </div>
+            <span class="ep-kpi-cell__view">Open Duration <span class="material-symbols-outlined">chevron_right</span></span>
+          </button>
         </div>
 
         <!-- Row 2 (M | M) — left stack {Card Events + Coupons} (minimized leap-offs),

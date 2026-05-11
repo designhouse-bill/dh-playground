@@ -163,6 +163,25 @@ body[data-advanced="off"] .ep-stacked-list > .ep-stacked-list__row:nth-of-type(n
    selection lives only in the Advanced/expanded view. */
 body[data-advanced="off"] .ep-trend-toolbar { display: none !important; }
 
+/* Performance Score + Depth of Engagement — split into two individual
+   .ep-kpi-cell cards. The legacy "__col + __col { border-left, padding-left }"
+   rule was meant to separate flush columns inside ONE card; now each col
+   IS its own bordered card, so suppress the inherited separator + padding
+   nudge.  Also force equal heights so the two cards visually rhyme. */
+.ep-perf-depth-split > .ep-kpi-cell.ep-perf-depth-split__col + .ep-kpi-cell.ep-perf-depth-split__col {
+  border-left-width: 1px;
+  padding-left: 20px;
+}
+
+.ep-perf-depth-split { align-items: stretch; }
+.ep-perf-depth-split > .ep-kpi-cell {
+  /* .ep-kpi-cell base sets grid-column:span 12 for the outer 12-col KPI
+     grid. Inside the inner 2fr/1fr split, override so each cell flows
+     into its own column instead of wrapping onto separate rows. */
+  grid-column: auto;
+  height: 100%;
+}
+
 body[data-advanced="off"] .ep-metric-filter { display: none !important; }
 
 body[data-advanced="off"] .ep-sub-pane[data-ep-sub-pane="data"] {

@@ -62,13 +62,20 @@ body[data-advanced="on"] .section-card {
   border-bottom: 1px solid var(--color-border, #e5e7eb);
 }
 
+.section-card__head-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
 .section-card__title {
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--color-text-secondary, #6b7280);
-  margin-bottom: 4px;
 }
 
 .section-card__stat {
@@ -84,15 +91,7 @@ body[data-advanced="on"] .section-card {
   margin-top: 3px;
 }
 
-/* ─── Section card footer (View all link / range chips) ─── */
-.section-card__footer {
-  margin-top: 6px;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
+/* ─── Section card link (top-right of header) ─── */
 .section-card__link {
   display: inline-flex;
   align-items: center;
@@ -105,6 +104,7 @@ body[data-advanced="on"] .section-card {
   padding: 0;
   cursor: pointer;
   font-family: inherit;
+  white-space: nowrap;
 }
 
 .section-card__link .material-symbols-outlined {
@@ -116,16 +116,19 @@ body[data-advanced="on"] .section-card {
   transform: translateX(3px);
 }
 
-/* Hide header + footer in Advanced — drilldown view doesn't need them. */
-body[data-advanced="on"] .section-card__header,
-body[data-advanced="on"] .section-card__footer { display: none; }
+/* Hide header in Advanced — drilldown view doesn't need it. */
+body[data-advanced="on"] .section-card__header { display: none; }
 
 /* ─── Standard-mode content trims ───
    by-Store list keeps top 5 rows; "Filter stores…" power-user input and
    the "data" placeholder sub-pane are out of scope for the summary view. */
-body[data-advanced="off"] .ep-stacked-list > .ep-stacked-list__row:nth-of-type(n+5) {
+body[data-advanced="off"] .ep-stacked-list > .ep-stacked-list__row:nth-of-type(n+6) {
   display: none;
 }
+
+/* Trend sub-pane: hide the range toolbar in Standard mode — range
+   selection lives only in the Advanced/expanded view. */
+body[data-advanced="off"] .ep-trend-toolbar { display: none !important; }
 
 body[data-advanced="off"] .ep-metric-filter { display: none !important; }
 

@@ -52,18 +52,6 @@
     return (btn?.textContent || subKey).trim();
   }
 
-  function buildHeader(title, finding) {
-    const header = document.createElement('div');
-    header.className = 'section-card__header';
-    header.innerHTML =
-      '<div class="section-card__title">' + title + '</div>' +
-      (finding
-        ? '<div class="section-card__stat">' + finding.stat + '</div>' +
-          '<div class="section-card__detail">' + finding.detail + '</div>'
-        : '');
-    return header;
-  }
-
   function jumpToSubTab(paneKey, subKey) {
     if (!window.UX846Surface) return;
     window.UX846Surface.setAdvanced(true);
@@ -73,24 +61,51 @@
     });
   }
 
-  function buildFooter(subPane, paneKey, subKey) {
+  function buildHeaderLink(paneKey, subKey, subPane) {
     if (subKey === 'store') {
-      // by-Store: suppress link when entity has 5 or fewer stores.
+      // Suppress when entity has 5 or fewer stores — nothing more to view.
       const totalRows = subPane.querySelectorAll('.ep-stacked-list__row').length;
-      if (totalRows > 0 && totalRows <= 4) return null;
-      const footer = document.createElement('div');
-      footer.className = 'section-card__footer';
-      const link = document.createElement('button');
-      link.type = 'button';
-      link.className = 'section-card__link';
-      link.innerHTML = 'View all <span class="material-symbols-outlined">arrow_forward</span>';
-      link.addEventListener('click', () => jumpToSubTab(paneKey, 'store'));
-      footer.appendChild(link);
-      return footer;
+      if (totalRows > 0 && totalRows <= 5) return { node: null, recheck: 'store' };
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'section-card__link';
+      btn.innerHTML = 'View all <span class="material-symbols-outlined">arrow_forward</span>';
+      btn.addEventListener('click', () => jumpToSubTab(paneKey, 'store'));
+      return { node: btn, recheck: 'store' };
     }
-    // Time Trend: no footer. Default 4w chart only; deeper range selection
-    // happens via the global Advanced toggle.
-    return null;
+    if (subKey === 'trend') {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'section-card__link';
+      btn.innerHTML = 'View more <span class="material-symbols-outlined">arrow_forward</span>';
+      btn.addEventListener('click', () => jumpToSubTab(paneKey, 'trend'));
+      return { node: btn };
+    }
+    return { node: null };
+  }
+
+  function buildHeader(title, finding, link) {
+    const header = document.createElement('div');
+    header.className = 'section-card__header';
+    const titleRow = document.createElement('div');
+    titleRow.className = 'section-card__head-row';
+    const titleEl = document.createElement('div');
+    titleEl.className = 'section-card__title';
+    titleEl.textContent = title;
+    titleRow.appendChild(titleEl);
+    if (link) titleRow.appendChild(link);
+    header.appendChild(titleRow);
+    if (finding) {
+      const stat = document.createElement('div');
+      stat.className = 'section-card__stat';
+      stat.textContent = finding.stat;
+      header.appendChild(stat);
+      const detail = document.createElement('div');
+      detail.className = 'section-card__detail';
+      detail.textContent = finding.detail;
+      header.appendChild(detail);
+    }
+    return header;
   }
 
   function wrapSubPane(subPane, paneKey) {
@@ -108,22 +123,32 @@
     const parentPane = subPane.closest('.perf-tab-pane');
     const title = parentPane ? findSubTabLabel(parentPane, subKey) : subKey;
     const finding = FINDINGS[paneKey]?.[subKey];
+    const linkResult = buildHeaderLink(paneKey, subKey, subPane);
 
-    card.appendChild(buildHeader(title, finding));
+    card.appendChild(buildHeader(title, finding, linkResult.node));
     card.appendChild(subPane);
 
-    const footer = buildFooter(subPane, paneKey, subKey);
-    if (footer) {
-      card.appendChild(footer);
-      // Re-check after async row renderers — drop the link if rows
-      // arrived later and the entity has ≤5 stores total.
-      if (subKey === 'store') {
-        setTimeout(() => {
-          const total = subPane.querySelectorAll('.ep-stacked-list__row').length;
-          if (total > 0 && total <= 5) footer.remove();
-        }, 800);
-      }
+    // Async row renderers may finish populating after wrap. Re-check the
+    // by-Store link visibility once they're done — drop it if total ≤5.
+    if (linkResult.recheck === 'store' && linkResult.node) {
+      setTimeout(() => {
+        const total = subPane.querySelectorAll('.ep-stacked-list__row').length;
+        if (total > 0 && total <= 5) linkResult.node.remove();
+      }, 800);
     }
+  }
+
+  // Force Trend chart to 4-week default in Standard.  The chart renderer
+  // reads the active .ep-trend-range button; click 4w once on init so the
+  // chart paints at the right range even though the toolbar is hidden in
+  // the summary card.
+  function setTrendDefault() {
+    document.querySelectorAll('.perf-tab-pane').forEach((pane) => {
+      const fourWeek = pane.querySelector('.ep-trend-range[data-range="4w"]');
+      if (fourWeek && !fourWeek.classList.contains('ep-trend-range--active')) {
+        fourWeek.click();
+      }
+    });
   }
 
   function paint() {
@@ -132,6 +157,9 @@
       if (!paneKey || paneKey === 'overview') return;
       pane.querySelectorAll('.ep-sub-pane').forEach((sp) => wrapSubPane(sp, paneKey));
     });
+    // Defer 4w default until canonical-shell-renderers has wired the
+    // toolbar (it runs on DOMContentLoaded too).
+    setTimeout(setTrendDefault, 200);
   }
 
   if (document.readyState === 'loading') {

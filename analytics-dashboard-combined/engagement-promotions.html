@@ -153,35 +153,29 @@
       <span class="ep-mvp-strip__text" style="margin-left:auto;"><strong>Phase 2:</strong> entry-point / source-medium (origin data deferred until reliable)</span>
     </div>
 
-    <!-- UX-846 Phase 3 — Advanced reveal divider. Shown only when toggle on. -->
-    <div class="ux846-advanced-divider" data-tier="advanced" role="note">
-      <span class="material-symbols-outlined">tune</span>
-      <span>More cuts of the same data.</span>
-    </div>
-
     <!-- MAX IA — tabs are METRICS, sub-tabs are DIMENSIONS.
          Underline-tab style ported from Distribution (.perf-tab from distribution.css):
          icon + label, transparent background, blue underline on active. -->
     <div class="perf-tabs" id="ep-perf-tabs" role="tablist">
-      <button class="perf-tab active" data-ep-tab="overview" role="tab" aria-selected="true" data-tier="standard">
+      <button class="perf-tab active" data-ep-tab="overview" role="tab" aria-selected="true">
         <span class="material-symbols-outlined">dashboard</span> Overview
       </button>
-      <button class="perf-tab" data-ep-tab="sessions" role="tab" data-tier="advanced">
+      <button class="perf-tab" data-ep-tab="sessions" role="tab">
         <span class="material-symbols-outlined">analytics</span> Sessions
       </button>
-      <button class="perf-tab" data-ep-tab="users" role="tab" data-tier="advanced">
+      <button class="perf-tab" data-ep-tab="users" role="tab">
         <span class="material-symbols-outlined">group</span> Total Users
       </button>
-      <button class="perf-tab" data-ep-tab="duration" role="tab" data-tier="advanced">
+      <button class="perf-tab" data-ep-tab="duration" role="tab">
         <span class="material-symbols-outlined">schedule</span> Duration
       </button>
-      <button class="perf-tab" data-ep-tab="cardevents" role="tab" data-tier="advanced">
+      <button class="perf-tab" data-ep-tab="cardevents" role="tab">
         <span class="material-symbols-outlined">ads_click</span> Card Events
       </button>
-      <button class="perf-tab" data-ep-tab="dealtype" role="tab" data-tier="advanced">
+      <button class="perf-tab" data-ep-tab="dealtype" role="tab">
         <span class="material-symbols-outlined">sell</span> Deal Types
       </button>
-      <button class="perf-tab" data-ep-tab="coupon" role="tab" data-tier="advanced">
+      <button class="perf-tab" data-ep-tab="coupon" role="tab">
         <span class="material-symbols-outlined">local_offer</span> Coupons
       </button>
     </div>
@@ -224,7 +218,7 @@
     </div>
 
     <!-- ─── Overview tab ─── -->
-    <div class="perf-tab-pane active" data-ep-pane="overview" data-tier="standard">
+    <div class="perf-tab-pane active" data-ep-pane="overview">
 
       <!-- Decision 5 (2026-05-06, polished 2026-05-06 evening) — mixed KPI grid.
            Layout: 12-col grid, M=span 6, L=span 12.
@@ -568,9 +562,9 @@
          ============================================================ -->
 
     <!-- ─── Metric: Sessions (fully wired demo) ─── -->
-    <div class="perf-tab-pane" data-ep-pane="sessions" data-tier="advanced">
+    <div class="perf-tab-pane" data-ep-pane="sessions">
       <!-- Decision 1: per-pane hero-stat removed; lifted to page-level. -->
-      <div class="ep-sub-tabs" role="tablist" aria-label="Sessions cuts">
+      <div class="ep-sub-tabs" data-tier="advanced" role="tablist" aria-label="Sessions cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Sessions by Store</button>
         <button class="ep-sub-tab" data-ep-sub="day" role="tab">Sessions by Day</button>
         <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Sessions Time Trend</button>
@@ -607,9 +601,9 @@
     </div>
 
     <!-- ─── Metric: Total Users (shell — populates w/ BigQuery user dimension) ─── -->
-    <div class="perf-tab-pane" data-ep-pane="users" data-tier="advanced">
+    <div class="perf-tab-pane" data-ep-pane="users">
       <!-- Decision 1: per-pane hero-stat removed; lifted to page-level. -->
-      <div class="ep-sub-tabs" role="tablist" aria-label="Users cuts">
+      <div class="ep-sub-tabs" data-tier="advanced" role="tablist" aria-label="Users cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Users by Store</button>
         <button class="ep-sub-tab" data-ep-sub="day" role="tab">Users by Day</button>
         <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Users Time Trend</button>
@@ -640,9 +634,9 @@
     </div>
 
     <!-- ─── Metric: Avg Session Duration ─── -->
-    <div class="perf-tab-pane" data-ep-pane="duration" data-tier="advanced">
+    <div class="perf-tab-pane" data-ep-pane="duration">
       <!-- Decision 1: per-pane hero-stat removed; lifted to page-level. -->
-      <div class="ep-sub-tabs" role="tablist" aria-label="Duration cuts">
+      <div class="ep-sub-tabs" data-tier="advanced" role="tablist" aria-label="Duration cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Duration by Store</button>
         <button class="ep-sub-tab" data-ep-sub="day" role="tab">Duration by Day</button>
         <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Duration Time Trend</button>
@@ -673,9 +667,9 @@
     </div>
 
     <!-- ─── Metric: Card Engagement Events (Adds + Clicks + share/save/print roll-up) ─── -->
-    <div class="perf-tab-pane" data-ep-pane="cardevents" data-tier="advanced">
+    <div class="perf-tab-pane" data-ep-pane="cardevents">
       <!-- Decision 1: per-pane hero-stat removed; lifted to page-level. -->
-      <div class="ep-sub-tabs" role="tablist" aria-label="Card Events cuts">
+      <div class="ep-sub-tabs" data-tier="advanced" role="tablist" aria-label="Card Events cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Card Events by Store</button>
         <button class="ep-sub-tab" data-ep-sub="day" role="tab">Card Events by Day</button>
         <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Card Events Time Trend</button>
@@ -709,8 +703,8 @@
     </div>
 
     <!-- ─── Metric: Coupons Engaged ─── -->
-    <div class="perf-tab-pane" data-ep-pane="coupon" data-tier="advanced">
-      <div class="ep-sub-tabs" role="tablist" aria-label="Coupon cuts">
+    <div class="perf-tab-pane" data-ep-pane="coupon">
+      <div class="ep-sub-tabs" data-tier="advanced" role="tablist" aria-label="Coupon cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Coupons by Store</button>
         <button class="ep-sub-tab" data-ep-sub="day" role="tab">Coupons by Day</button>
         <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Coupons Time Trend</button>
@@ -744,8 +738,8 @@
     </div>
 
     <!-- ─── Metric: Performance by Deal Type ─── -->
-    <div class="perf-tab-pane" data-ep-pane="dealtype" data-tier="advanced">
-      <div class="ep-sub-tabs" role="tablist" aria-label="Deal type cuts">
+    <div class="perf-tab-pane" data-ep-pane="dealtype">
+      <div class="ep-sub-tabs" data-tier="advanced" role="tablist" aria-label="Deal type cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Deal Types by Store</button>
         <button class="ep-sub-tab" data-ep-sub="day" role="tab">Deal Types by Day</button>
         <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Deal Types Time Trend</button>
@@ -777,84 +771,6 @@
         <div id="ep-dealtype-trend"></div>
       </div>
     </div>
-
-    <!-- UX-846 β-2 — Section Summary cards. Visible only in Standard mode
-         (data-tier="basic" hides when Advanced toggle is on).
-         Each card: sparkline + key stat + delta + jump-to-Advanced CTA.
-         Whole card is clickable; jump flips Advanced on and activates the
-         matching perf-tab. -->
-    <section class="ux846-section-summaries" data-tier="basic" aria-label="Section summaries">
-      <header class="ux846-section-summaries__intro">
-        <h2 class="ux846-section-summaries__title">Section Summaries</h2>
-        <p class="ux846-section-summaries__desc">Quick reads for each metric. Toggle Advanced for full cuts and sub-tabs.</p>
-      </header>
-      <div class="ux846-section-summaries__grid">
-        <button class="ux846-section-card" data-jump-tab="sessions" type="button">
-          <div class="ux846-section-card__head">
-            <span class="material-symbols-outlined">analytics</span>
-            <span class="ux846-section-card__title">Sessions</span>
-          </div>
-          <div class="ux846-section-card__chart" data-sparkline="sessions" aria-hidden="true"></div>
-          <div class="ux846-section-card__stat">
-            <span class="ux846-section-card__value" data-value="sessions">—</span>
-            <span class="ux846-section-card__delta" data-delta="sessions">—</span>
-          </div>
-          <span class="ux846-section-card__cta">Open in Advanced <span class="material-symbols-outlined">arrow_forward</span></span>
-        </button>
-
-        <button class="ux846-section-card" data-jump-tab="users" type="button">
-          <div class="ux846-section-card__head">
-            <span class="material-symbols-outlined">group</span>
-            <span class="ux846-section-card__title">Total Users</span>
-          </div>
-          <div class="ux846-section-card__chart" data-sparkline="users" aria-hidden="true"></div>
-          <div class="ux846-section-card__stat">
-            <span class="ux846-section-card__value" data-value="users">—</span>
-            <span class="ux846-section-card__delta" data-delta="users">—</span>
-          </div>
-          <span class="ux846-section-card__cta">Open in Advanced <span class="material-symbols-outlined">arrow_forward</span></span>
-        </button>
-
-        <button class="ux846-section-card" data-jump-tab="cardevents" type="button">
-          <div class="ux846-section-card__head">
-            <span class="material-symbols-outlined">ads_click</span>
-            <span class="ux846-section-card__title">Card Events</span>
-          </div>
-          <div class="ux846-section-card__chart" data-sparkline="cardevents" aria-hidden="true"></div>
-          <div class="ux846-section-card__stat">
-            <span class="ux846-section-card__value" data-value="cardevents">—</span>
-            <span class="ux846-section-card__delta" data-delta="cardevents">—</span>
-          </div>
-          <span class="ux846-section-card__cta">Open in Advanced <span class="material-symbols-outlined">arrow_forward</span></span>
-        </button>
-
-        <button class="ux846-section-card" data-jump-tab="coupon" type="button">
-          <div class="ux846-section-card__head">
-            <span class="material-symbols-outlined">confirmation_number</span>
-            <span class="ux846-section-card__title">Coupon</span>
-          </div>
-          <div class="ux846-section-card__chart" data-sparkline="coupon" aria-hidden="true"></div>
-          <div class="ux846-section-card__stat">
-            <span class="ux846-section-card__value" data-value="coupon">—</span>
-            <span class="ux846-section-card__delta" data-delta="coupon">—</span>
-          </div>
-          <span class="ux846-section-card__cta">Open in Advanced <span class="material-symbols-outlined">arrow_forward</span></span>
-        </button>
-
-        <button class="ux846-section-card" data-jump-tab="dealtype" type="button">
-          <div class="ux846-section-card__head">
-            <span class="material-symbols-outlined">sell</span>
-            <span class="ux846-section-card__title">Deal Type</span>
-          </div>
-          <div class="ux846-section-card__chart" data-sparkline="dealtype" aria-hidden="true"></div>
-          <div class="ux846-section-card__stat">
-            <span class="ux846-section-card__value" data-value="dealtype">—</span>
-            <span class="ux846-section-card__delta" data-delta="dealtype">—</span>
-          </div>
-          <span class="ux846-section-card__cta">Open in Advanced <span class="material-symbols-outlined">arrow_forward</span></span>
-        </button>
-      </div>
-    </section>
 
   </main>
 
@@ -995,7 +911,6 @@
        SCRIPTS
        ============================================================ -->
   <script src="js/shared/surface-controller.js?v=1"></script>
-  <script src="js/engagement/section-summaries.js?v=1"></script>
   <script src="js/data/engagement-promotions.js"></script>
   <script src="js/data/engagement-mock-data.js"></script>
   <script src="js/engagement/cache-manager.js"></script>

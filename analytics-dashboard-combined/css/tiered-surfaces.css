@@ -14,6 +14,23 @@
 body[data-advanced="off"] [data-tier="advanced"] { display: none !important; }
 body[data-advanced="on"]  [data-tier="basic"]    { display: none !important; }
 
+/* Standard mode — sub-panes stack vertically inside each metric pane.
+   Sub-tabs nav is hidden by the tier rule above (it's tagged advanced).
+   Every sub-pane becomes visible regardless of its --active state so the
+   user reads by-store + by-day + time-trend at once as a section summary. */
+body[data-advanced="off"] .ep-sub-pane {
+  display: block !important;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--color-border, #e5e7eb);
+}
+
+body[data-advanced="off"] .ep-sub-pane:first-of-type {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
 /* Advanced reveal divider — contextual hint above the perf-tabs strip when
    Advanced toggle is on. Hidden by the rule above when toggle is off. */
 .ux846-advanced-divider {

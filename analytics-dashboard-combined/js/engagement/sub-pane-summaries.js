@@ -54,7 +54,7 @@
 
   function jumpToSubTab(paneKey, subKey) {
     if (!window.UX846Surface) return;
-    window.UX846Surface.setAdvanced(true);
+    window.UX846Surface.setView('detail');
     requestAnimationFrame(() => {
       const pane = document.querySelector('[data-ep-pane="' + paneKey + '"]');
       pane?.querySelector('[data-ep-sub="' + subKey + '"]')?.click();
@@ -161,7 +161,7 @@
     btn.setAttribute('data-ep-sub', 'overview');
     btn.textContent = 'Overview';
     btn.addEventListener('click', () => {
-      if (window.UX846Surface) window.UX846Surface.setAdvanced(false);
+      if (window.UX846Surface) window.UX846Surface.setView('summary');
     });
     nav.insertBefore(btn, nav.firstChild);
   }

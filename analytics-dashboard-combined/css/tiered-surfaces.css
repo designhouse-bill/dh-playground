@@ -5,8 +5,8 @@
    Single source.  Do not duplicate in per-page CSS.
    ============================================================ */
 
-body[data-advanced="off"] [data-tier="advanced"] { display: none !important; }
-body[data-advanced="on"]  [data-tier="basic"]    { display: none !important; }
+body[data-view="summary"] [data-tier="detail"] { display: none !important; }
+body[data-view="detail"]  [data-tier="summary"]    { display: none !important; }
 
 
 /* ─── Standard mode: 3-up card grid per active metric pane ───
@@ -14,7 +14,7 @@ body[data-advanced="on"]  [data-tier="basic"]    { display: none !important; }
    hidden here.  Each sub-pane (by-store, by-day, time-trend) is wrapped
    by JS in a .section-card so the header + footer are siblings of
    .ep-sub-pane rather than children. */
-body[data-advanced="off"] .perf-tab-pane.active:not([data-ep-pane="overview"]) {
+body[data-view="summary"] .perf-tab-pane.active:not([data-ep-pane="overview"]) {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
@@ -36,7 +36,7 @@ body[data-advanced="off"] .perf-tab-pane.active:not([data-ep-pane="overview"]) {
    In Standard mode every sub-pane is visible (not just the --active one)
    so the user reads by-store + by-day + time-trend stacked across the row.
    Existing engagement CSS sets .ep-sub-pane { display:none } by default. */
-body[data-advanced="off"] .section-card > .ep-sub-pane {
+body[data-view="summary"] .section-card > .ep-sub-pane {
   display: block !important;
 }
 
@@ -52,7 +52,7 @@ body[data-advanced="off"] .section-card > .ep-sub-pane {
 /* In Advanced mode the wrapper collapses to a passthrough so the existing
    sub-pane behavior (one active at a time, sub-tabs nav visible) is
    unchanged. */
-body[data-advanced="on"] .section-card {
+body[data-view="detail"] .section-card {
   display: contents;
 }
 
@@ -118,18 +118,18 @@ body[data-advanced="on"] .section-card {
 }
 
 /* Hide header in Advanced — drilldown view doesn't need it. */
-body[data-advanced="on"] .section-card__header { display: none; }
+body[data-view="detail"] .section-card__header { display: none; }
 
 /* ─── Standard-mode content trims ───
    by-Store list keeps top 5 rows; "Filter stores…" power-user input and
    the "data" placeholder sub-pane are out of scope for the summary view. */
-body[data-advanced="off"] .ep-stacked-list > .ep-stacked-list__row:nth-of-type(n+6) {
+body[data-view="summary"] .ep-stacked-list > .ep-stacked-list__row:nth-of-type(n+6) {
   display: none;
 }
 
 /* Trend sub-pane: hide the range toolbar in Standard mode — range
    selection lives only in the Advanced/expanded view. */
-body[data-advanced="off"] .ep-trend-toolbar { display: none !important; }
+body[data-view="summary"] .ep-trend-toolbar { display: none !important; }
 
 /* Performance Score + Depth of Engagement — split into two individual
    .ep-kpi-cell cards. The legacy "__col + __col { border-left, padding-left }"
@@ -150,15 +150,15 @@ body[data-advanced="off"] .ep-trend-toolbar { display: none !important; }
   height: 100%;
 }
 
-body[data-advanced="off"] .ep-metric-filter { display: none !important; }
+body[data-view="summary"] .ep-metric-filter { display: none !important; }
 
-body[data-advanced="off"] .ep-sub-pane[data-ep-sub-pane="data"] {
+body[data-view="summary"] .ep-sub-pane[data-ep-sub-pane="data"] {
   display: none !important;
 }
 
 /* On narrower viewports collapse to single column. */
 @media (max-width: 720px) {
-  body[data-advanced="off"] .perf-tab-pane.active:not([data-ep-pane="overview"]) {
+  body[data-view="summary"] .perf-tab-pane.active:not([data-ep-pane="overview"]) {
     grid-template-columns: 1fr;
   }
 }

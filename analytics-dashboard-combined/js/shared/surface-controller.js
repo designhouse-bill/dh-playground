@@ -1,86 +1,72 @@
-// UX-846 Phase 1 — Surface controller.
-// Single source of truth for Standard/Advanced surface state.
-// URL param ?advanced=1 + localStorage + body[data-advanced] are projections.
+// Surface controller — single source of truth for the engagement section
+// view state. Two values:
+//   "summary"  — the 3-card overview layout (default).
+//   "detail"   — single sub-pane drilldown with .ep-sub-tabs nav visible.
+//
+// Drives body[data-view], persists in localStorage and the ?view= URL
+// param so deep links stay consistent.
 
 (function () {
-  const STORAGE_KEY = 'ux846.advanced';
-  const URL_PARAM = 'advanced';
-  const BODY_ATTR = 'data-advanced';
+  const STORAGE_KEY = 'ux846.view';
+  const URL_PARAM = 'view';
+  const BODY_ATTR = 'data-view';
+  const VALID = { summary: 1, detail: 1 };
 
   function readUrl() {
     const v = new URLSearchParams(window.location.search).get(URL_PARAM);
-    return v === '1' ? 'on' : v === '0' ? 'off' : null;
+    return VALID[v] ? v : null;
   }
 
   function readStorage() {
-    try { return localStorage.getItem(STORAGE_KEY); } catch { return null; }
+    try {
+      const v = localStorage.getItem(STORAGE_KEY);
+      return VALID[v] ? v : null;
+    } catch {
+      return null;
+    }
   }
 
-  function writeStorage(state) {
-    try { localStorage.setItem(STORAGE_KEY, state); } catch {}
+  function writeStorage(view) {
+    try { localStorage.setItem(STORAGE_KEY, view); } catch {}
   }
 
-  function syncUrl(state) {
+  function syncUrl(view) {
     const url = new URL(window.location.href);
-    if (state === 'on') url.searchParams.set(URL_PARAM, '1');
+    if (view === 'detail') url.searchParams.set(URL_PARAM, 'detail');
     else url.searchParams.delete(URL_PARAM);
     window.history.replaceState({}, '', url.toString());
   }
 
-  function applyBody(state) {
-    document.body.setAttribute(BODY_ATTR, state);
+  function applyBody(view) {
+    document.body.setAttribute(BODY_ATTR, view);
   }
 
-  function getAdvanced() {
-    return document.body.getAttribute(BODY_ATTR) === 'on';
+  function getView() {
+    return document.body.getAttribute(BODY_ATTR) || 'summary';
   }
 
-  function setAdvanced(on) {
-    const state = on ? 'on' : 'off';
-    applyBody(state);
-    writeStorage(state);
-    syncUrl(state);
-    document.dispatchEvent(new CustomEvent('ux846:advanced-change', { detail: { advanced: on } }));
-    refreshToggleUi();
+  function setView(view) {
+    if (!VALID[view]) return;
+    applyBody(view);
+    writeStorage(view);
+    syncUrl(view);
+    document.dispatchEvent(new CustomEvent('ux846:view-change', { detail: { view } }));
   }
 
-  function refreshToggleUi() {
-    const btn = document.getElementById('surface-toggle');
-    if (!btn) return;
-    const on = getAdvanced();
-    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-    btn.classList.toggle('is-on', on);
-  }
-
-  function resolveInitialState() {
-    const fromUrl = readUrl();
-    if (fromUrl) return fromUrl;
-    const fromStorage = readStorage();
-    if (fromStorage === 'on' || fromStorage === 'off') return fromStorage;
-    return 'off';
+  function resolveInitialView() {
+    return readUrl() || readStorage() || 'summary';
   }
 
   function init() {
-    applyBody(resolveInitialState());
-    // Toggle button injected by the shell partial. Wire it up if present.
+    applyBody(resolveInitialView());
+    // Switching metric perf-tabs always re-enters the section at the
+    // summary view, never at the deep sub-pane the user was last in.
     document.addEventListener('click', (e) => {
-      const btn = e.target.closest('#surface-toggle');
-      if (btn) {
-        setAdvanced(!getAdvanced());
-        return;
-      }
-      // Switching metric perf-tabs always re-enters the section at the
-      // summary view, never at the deep sub-pane the user was last in.
-      const perfTab = e.target.closest('.perf-tab');
-      if (perfTab) setAdvanced(false);
+      if (e.target.closest('.perf-tab')) setView('summary');
     });
-    // After chrome injection by shell-loader, re-sync button UI.
-    document.addEventListener('engagement-shell:loaded', refreshToggleUi);
-    document.addEventListener('ux846:chrome-ready', refreshToggleUi);
-    refreshToggleUi();
   }
 
-  window.UX846Surface = { getAdvanced, setAdvanced };
+  window.UX846Surface = { getView, setView };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

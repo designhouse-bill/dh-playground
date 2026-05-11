@@ -75,9 +75,20 @@
     document.dispatchEvent(new CustomEvent('engagement-grain:applied', { detail: { grain } }));
   }
 
+  // Shell-loader injects perf-tabs strip AFTER DOMContentLoaded on pages
+  // that use partials/engagement-tabs-shell.html. Re-run filterPanes once
+  // the shell has landed so grain-specific pane removal still applies.
+  function reapplyAfterShell() {
+    const grain = window.EngagementGrain?.currentGrain?.();
+    if (!grain) return;
+    const cfg = window.EngagementGrain?.configFor?.(grain);
+    if (cfg) filterPanes(cfg);
+  }
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
   }
+  document.addEventListener('engagement-shell:loaded', reapplyAfterShell);
 })();

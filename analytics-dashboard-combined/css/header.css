@@ -226,6 +226,49 @@
   margin: 0;
 }
 
+/* Grain Switcher — Circulars | Categories | Promotions
+   Mirrors view-modes pill pattern. Active state from body[data-grain]. */
+.grain-switcher {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-1);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-right: var(--space-3);
+}
+
+.grain-tab {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.grain-tab:hover {
+  background: var(--color-gray-100);
+  color: var(--color-text-primary);
+}
+
+.grain-tab.active {
+  background: var(--color-primary-50);
+  color: var(--color-primary-600);
+  font-weight: var(--font-weight-semibold);
+}
+
+.grain-tab .material-symbols-outlined {
+  font-size: 16px;
+}
+
 /* View Modes */
 .view-modes {
   display: flex;

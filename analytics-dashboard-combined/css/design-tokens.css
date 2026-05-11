@@ -247,6 +247,12 @@
   --section-duration-light:   #fef3c7;
   --section-cardevents:       #7c3aed;
   --section-cardevents-light: #f5f3ff;
+  --section-coupon:           #FFCD3E;
+  --section-coupon-light:     #fff8d6;
+  --section-coupon-ink:       #a16207;  /* WCAG-AA text/stroke variant — yellow #FFCD3E fails contrast on white. Use -ink for typography, borders, sparkline strokes. */
+  --section-dealtype:         #d3151b;
+  --section-dealtype-light:   #fde7e8;
+  --section-dealtype-ink:     #d3151b;  /* Red passes AA on white at this lightness — alias kept so consumers can call -ink uniformly across sections. */
 
   /* ========================================
      Canonical 3-color series palette (RULE — DO NOT OVERRIDE)

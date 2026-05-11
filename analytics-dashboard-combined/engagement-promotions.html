@@ -11,7 +11,7 @@
   <!-- CSS (in dependency order) -->
   <link rel="stylesheet" href="css/design-tokens.css">
   <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/analytics-architecture.css?v=20260506-decision5e">
+  <link rel="stylesheet" href="css/analytics-architecture.css?v=20260507-coupon-dealtype">
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
@@ -20,6 +20,7 @@
   <link rel="stylesheet" href="css/distribution.css">
 
   <link rel="stylesheet" href="css/engagement-canonical.css">
+  <link rel="stylesheet" href="css/tiered-surfaces.css?v=1">
 </head>
 <body>
 
@@ -84,6 +85,11 @@
       </div>
 
       <div class="topbar__actions">
+        <button class="ux846-advanced-toggle" id="ux846-advanced-toggle" type="button" aria-pressed="false" aria-label="Toggle advanced view">
+          <span class="material-symbols-outlined">tune</span>
+          <span class="ux846-advanced-toggle__label">Advanced</span>
+          <span class="ux846-advanced-toggle__state" aria-hidden="true"></span>
+        </button>
         <button class="header-share-btn" id="header-export-btn" title="Export current view as CSV with context header (date range, entity, active filters)">
           <span class="material-symbols-outlined">download</span>
           Export CSV
@@ -147,24 +153,36 @@
       <span class="ep-mvp-strip__text" style="margin-left:auto;"><strong>Phase 2:</strong> entry-point / source-medium (origin data deferred until reliable)</span>
     </div>
 
+    <!-- UX-846 Phase 3 — Advanced reveal divider. Shown only when toggle on. -->
+    <div class="ux846-advanced-divider" data-tier="advanced" role="note">
+      <span class="material-symbols-outlined">tune</span>
+      <span>More cuts of the same data.</span>
+    </div>
+
     <!-- MAX IA — tabs are METRICS, sub-tabs are DIMENSIONS.
          Underline-tab style ported from Distribution (.perf-tab from distribution.css):
          icon + label, transparent background, blue underline on active. -->
     <div class="perf-tabs" id="ep-perf-tabs" role="tablist">
-      <button class="perf-tab active" data-ep-tab="overview" role="tab" aria-selected="true">
+      <button class="perf-tab active" data-ep-tab="overview" role="tab" aria-selected="true" data-tier="standard">
         <span class="material-symbols-outlined">dashboard</span> Overview
       </button>
-      <button class="perf-tab" data-ep-tab="sessions" role="tab">
+      <button class="perf-tab" data-ep-tab="sessions" role="tab" data-tier="advanced">
         <span class="material-symbols-outlined">analytics</span> Sessions
       </button>
-      <button class="perf-tab" data-ep-tab="users" role="tab">
+      <button class="perf-tab" data-ep-tab="users" role="tab" data-tier="advanced">
         <span class="material-symbols-outlined">group</span> Total Users
       </button>
-      <button class="perf-tab" data-ep-tab="duration" role="tab">
-        <span class="material-symbols-outlined">schedule</span> Avg Session Duration
+      <button class="perf-tab" data-ep-tab="duration" role="tab" data-tier="advanced">
+        <span class="material-symbols-outlined">schedule</span> Duration
       </button>
-      <button class="perf-tab" data-ep-tab="cardevents" role="tab">
-        <span class="material-symbols-outlined">ads_click</span> Card Engagement Events
+      <button class="perf-tab" data-ep-tab="cardevents" role="tab" data-tier="advanced">
+        <span class="material-symbols-outlined">ads_click</span> Card Events
+      </button>
+      <button class="perf-tab" data-ep-tab="dealtype" role="tab" data-tier="advanced">
+        <span class="material-symbols-outlined">sell</span> Deal Types
+      </button>
+      <button class="perf-tab" data-ep-tab="coupon" role="tab" data-tier="advanced">
+        <span class="material-symbols-outlined">local_offer</span> Coupons
       </button>
     </div>
 
@@ -206,7 +224,7 @@
     </div>
 
     <!-- ─── Overview tab ─── -->
-    <div class="perf-tab-pane active" data-ep-pane="overview">
+    <div class="perf-tab-pane active" data-ep-pane="overview" data-tier="standard">
 
       <!-- Decision 5 (2026-05-06, polished 2026-05-06 evening) — mixed KPI grid.
            Layout: 12-col grid, M=span 6, L=span 12.
@@ -359,64 +377,117 @@
           </div>
         </div>
 
-        <!-- Row 2 (L, span 12) — Card Events standalone showcase.
-             Promoted from Entity-vs-Parent 4-col grid (rest of cols dropped:
-             Sessions/Users/Duration values just repeated charts above).
-             Card Events kept because its number wasn't shown elsewhere on
-             Overview AND its rich context (vs banner/brand, ranking, CTR)
-             is the section's most actionable signal. Cardevents purple. -->
-        <button class="ep-kpi-cell ep-kpi-cell--l" data-jump-to="cardevents" type="button">
+        <!-- Row 2 (M | M) — left stack {Card Events + Coupons} (minimized leap-offs),
+             right Deal Types (medium-detail ranked bars).
+             Restructured 2026-05-07: was 3× S in single row; promoted Deal Types to
+             right M so its ranking remains visible while Card Events + Coupons stay
+             condensed as 1-KPI leap-offs in the left M stack. -->
+        <div class="ep-kpi-stack">
+          <button class="ep-kpi-cell" data-jump-to="cardevents" type="button">
+            <div class="ep-kpi-cell__head">
+              <div>
+                <div class="ep-kpi-cell__story">Card events</div>
+                <div class="ep-kpi-cell__metric">vs banner avg</div>
+              </div>
+              <div style="text-align:right;">
+                <div class="ep-kpi-cell__value" style="color: var(--section-cardevents, #7c3aed);">271K</div>
+                <div class="ep-kpi-cell__delta ep-kpi-cell__delta--up">▲ 7.1% · +18% vs banner</div>
+              </div>
+            </div>
+            <span class="ep-kpi-cell__view">Open Card Events <span class="material-symbols-outlined">chevron_right</span></span>
+          </button>
+
+          <button class="ep-kpi-cell" data-jump-to="coupon" type="button">
+            <div class="ep-kpi-cell__head">
+              <div>
+                <div class="ep-kpi-cell__story">Coupon share</div>
+                <div class="ep-kpi-cell__metric">38 of 75 promotions</div>
+              </div>
+              <div style="text-align:right;">
+                <div class="ep-kpi-cell__value" style="color: var(--section-coupon-ink, #a16207);">15.5%</div>
+                <div class="ep-kpi-cell__delta ep-kpi-cell__delta--up">▲ 11.4% · 42K events</div>
+              </div>
+            </div>
+            <span class="ep-kpi-cell__view">Open Coupons <span class="material-symbols-outlined">chevron_right</span></span>
+          </button>
+        </div>
+
+        <!-- Right M — Deal Types ranked bars (top 5 by volume + tail note). -->
+        <button class="ep-kpi-cell ep-kpi-cell--m" data-jump-to="dealtype" type="button">
           <div class="ep-kpi-cell__head">
             <div>
-              <div class="ep-kpi-cell__story">Card Engagement Events</div>
-              <div class="ep-kpi-cell__metric">Brand: Acme · Banner: Acme East · Week 47</div>
+              <div class="ep-kpi-cell__story">Performance by deal type</div>
+              <div class="ep-kpi-cell__metric">Card events · used types only · Week 47</div>
             </div>
             <div style="text-align:right;">
-              <div class="ep-kpi-cell__value" style="color: var(--section-cardevents, #7c3aed);">271,298</div>
-              <div class="ep-kpi-cell__delta ep-kpi-cell__delta--up">▲ 7.1% vs last wk</div>
+              <div class="ep-kpi-cell__value" style="font-size:14px; font-weight:600;">Fixed Price</div>
+              <div class="ep-kpi-cell__delta" style="color: var(--section-dealtype-ink, #d3151b);">top · 38% share</div>
             </div>
           </div>
           <div class="ep-kpi-cell__chart" style="min-height:0;">
-            <div class="ep-cardevents-showcase">
-              <div class="ep-cardevents-showcase__deltas">
-                <div class="ep-cardevents-showcase__delta">
-                  <span class="ep-cardevents-showcase__delta-lbl">vs banner avg</span>
-                  <span class="ep-cardevents-showcase__delta-val ep-cardevents-showcase__delta-val--up">+18%</span>
+            <div class="ep-dealtype-rank" aria-label="Card events by deal type, top 5 by volume">
+              <div class="ep-dealtype-rank__row">
+                <span class="ep-dealtype-rank__lbl">Fixed Price</span>
+                <div class="ep-dealtype-rank__bar">
+                  <div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--v" style="width:62%;"></div>
+                  <div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--c" style="width:24%;"></div>
+                  <div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--a" style="width:14%;"></div>
                 </div>
-                <div class="ep-cardevents-showcase__delta">
-                  <span class="ep-cardevents-showcase__delta-lbl">vs brand avg</span>
-                  <span class="ep-cardevents-showcase__delta-val ep-cardevents-showcase__delta-val--up">+14%</span>
-                </div>
-                <div class="ep-cardevents-showcase__delta">
-                  <span class="ep-cardevents-showcase__delta-lbl">CTR (GA4 reach funnel)</span>
-                  <span class="ep-cardevents-showcase__delta-val">10.3%</span>
-                </div>
+                <span class="ep-dealtype-rank__val">103K</span>
+                <span class="ep-dealtype-rank__share">38%</span>
               </div>
-              <div class="ep-cardevents-showcase__bench-block">
-                <div class="ep-cardevents-showcase__bench" aria-hidden="true">
-                  <div class="ep-cardevents-showcase__bench-marker" style="left:88%;"></div>
+              <div class="ep-dealtype-rank__row">
+                <span class="ep-dealtype-rank__lbl">Buy X Get Y For Z</span>
+                <div class="ep-dealtype-rank__bar">
+                  <div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--v" style="width:55%;"></div>
+                  <div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--c" style="width:30%;"></div>
+                  <div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--a" style="width:15%;"></div>
                 </div>
-                <div class="ep-cardevents-showcase__bench-scale" aria-hidden="true"><span>Low</span><span>Avg</span><span>High</span></div>
-                <div class="ep-cardevents-showcase__rank">Top <strong>8%</strong> of <strong>77 stores</strong> · Week 47</div>
+                <span class="ep-dealtype-rank__val">61K</span>
+                <span class="ep-dealtype-rank__share">23%</span>
               </div>
-            </div>
-            <!-- Per-session density. Folded in from the standalone
-                 .ep-per-session-row footer below the grid (2026-05-06).
-                 Pairs naturally w/ Card Events totals — same 3 components
-                 (views/clicks/adds) at session-rate granularity. -->
-            <div class="ep-cardevents-showcase__density">
-              <span class="ep-cardevents-showcase__density-lbl">Per session</span>
-              <span class="ep-cardevents-showcase__density-metric"><strong>21.5</strong> card views</span>
-              <span class="ep-cardevents-showcase__density-sep">·</span>
-              <span class="ep-cardevents-showcase__density-metric"><strong>1.5</strong> card clicks</span>
-              <span class="ep-cardevents-showcase__density-sep">·</span>
-              <span class="ep-cardevents-showcase__density-metric"><strong>0.21</strong> adds to list</span>
+              <div class="ep-dealtype-rank__row">
+                <span class="ep-dealtype-rank__lbl">Amount Off</span>
+                <div class="ep-dealtype-rank__bar">
+                  <div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--v" style="width:60%;"></div>
+                  <div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--c" style="width:27%;"></div>
+                  <div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--a" style="width:13%;"></div>
+                </div>
+                <span class="ep-dealtype-rank__val">38K</span>
+                <span class="ep-dealtype-rank__share">14%</span>
+              </div>
+              <div class="ep-dealtype-rank__row">
+                <span class="ep-dealtype-rank__lbl"># for Price <em>(incl. # / Price)</em></span>
+                <div class="ep-dealtype-rank__bar">
+                  <div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--v" style="width:58%;"></div>
+                  <div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--c" style="width:28%;"></div>
+                  <div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--a" style="width:14%;"></div>
+                </div>
+                <span class="ep-dealtype-rank__val">30K</span>
+                <span class="ep-dealtype-rank__share">11%</span>
+              </div>
+              <div class="ep-dealtype-rank__row">
+                <span class="ep-dealtype-rank__lbl">Save Amount</span>
+                <div class="ep-dealtype-rank__bar">
+                  <div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--v" style="width:64%;"></div>
+                  <div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--c" style="width:22%;"></div>
+                  <div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--a" style="width:14%;"></div>
+                </div>
+                <span class="ep-dealtype-rank__val">23K</span>
+                <span class="ep-dealtype-rank__share">8%</span>
+              </div>
+              <div class="ep-dealtype-rank__legend">
+                <span class="ep-dealtype-rank__legend-item" style="--swatch: var(--series-v, #2196F3);">Views</span>
+                <span class="ep-dealtype-rank__legend-item" style="--swatch: var(--series-c, #f59e0b);">Clicks</span>
+                <span class="ep-dealtype-rank__legend-item" style="--swatch: var(--series-a, #22c55e);">Adds</span>
+                <span class="ep-dealtype-rank__legend-note">Top 5 of 7 used types · 7 of 11 enabled</span>
+              </div>
             </div>
           </div>
-          <span class="ep-kpi-cell__view">Open Card Events <span class="material-symbols-outlined">chevron_right</span></span>
+          <span class="ep-kpi-cell__view">Open Deal Types <span class="material-symbols-outlined">chevron_right</span></span>
         </button>
 
-        <!-- Row 3 (L, span 12) — Top Promotions chip strip. Moved to bottom 2026-05-06 evening
+        <!-- Row 5 (L, span 12) — Top Promotions chip strip. Moved to bottom 2026-05-06 evening
              so the rich Entity-vs-Parent block fills the higher-impact slot. -->
         <div class="ep-kpi-cell ep-kpi-cell--l" style="cursor:default;">
           <div class="ep-kpi-cell__head">
@@ -497,7 +568,7 @@
          ============================================================ -->
 
     <!-- ─── Metric: Sessions (fully wired demo) ─── -->
-    <div class="perf-tab-pane" data-ep-pane="sessions">
+    <div class="perf-tab-pane" data-ep-pane="sessions" data-tier="advanced">
       <!-- Decision 1: per-pane hero-stat removed; lifted to page-level. -->
       <div class="ep-sub-tabs" role="tablist" aria-label="Sessions cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Sessions by Store</button>
@@ -536,7 +607,7 @@
     </div>
 
     <!-- ─── Metric: Total Users (shell — populates w/ BigQuery user dimension) ─── -->
-    <div class="perf-tab-pane" data-ep-pane="users">
+    <div class="perf-tab-pane" data-ep-pane="users" data-tier="advanced">
       <!-- Decision 1: per-pane hero-stat removed; lifted to page-level. -->
       <div class="ep-sub-tabs" role="tablist" aria-label="Users cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Users by Store</button>
@@ -569,7 +640,7 @@
     </div>
 
     <!-- ─── Metric: Avg Session Duration ─── -->
-    <div class="perf-tab-pane" data-ep-pane="duration">
+    <div class="perf-tab-pane" data-ep-pane="duration" data-tier="advanced">
       <!-- Decision 1: per-pane hero-stat removed; lifted to page-level. -->
       <div class="ep-sub-tabs" role="tablist" aria-label="Duration cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Duration by Store</button>
@@ -602,7 +673,7 @@
     </div>
 
     <!-- ─── Metric: Card Engagement Events (Adds + Clicks + share/save/print roll-up) ─── -->
-    <div class="perf-tab-pane" data-ep-pane="cardevents">
+    <div class="perf-tab-pane" data-ep-pane="cardevents" data-tier="advanced">
       <!-- Decision 1: per-pane hero-stat removed; lifted to page-level. -->
       <div class="ep-sub-tabs" role="tablist" aria-label="Card Events cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Card Events by Store</button>
@@ -634,6 +705,76 @@
           </div>
         </div>
         <div id="ep-cardevents-trend"></div>
+      </div>
+    </div>
+
+    <!-- ─── Metric: Coupons Engaged ─── -->
+    <div class="perf-tab-pane" data-ep-pane="coupon" data-tier="advanced">
+      <div class="ep-sub-tabs" role="tablist" aria-label="Coupon cuts">
+        <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Coupons by Store</button>
+        <button class="ep-sub-tab" data-ep-sub="day" role="tab">Coupons by Day</button>
+        <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Coupons Time Trend</button>
+        <a class="ep-sub-tab ep-sub-tab--data" href="engagement-grid.html?filter=coupon" target="_blank" rel="noopener" role="tab">
+          <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">table_chart</span>
+          Data
+          <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;opacity:.55;">open_in_new</span>
+        </a>
+      </div>
+      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="store">
+        <div class="ep-stacked-list" id="ep-coupon-by-store"></div>
+        <div style="font-size:11px;color:#6b7280;margin-top:14px;border-top:1px solid #e5e7eb;padding-top:8px;">
+          <strong>Coupons Engaged</strong> = card events on promotions where <code>deal.type</code> ∈ {<code>coupon</code>, <code>coupon-v2</code>}. Combines store-issued (No Price) and vendor-issued coupons. Compare share vs non-coupon promotions to gauge coupon program lift.
+        </div>
+      </div>
+      <div class="ep-sub-pane" data-ep-sub-pane="day">
+        <div id="ep-coupon-by-day"></div>
+      </div>
+      <div class="ep-sub-pane" data-ep-sub-pane="trend">
+        <div class="ep-trend-toolbar">
+          <div class="ep-trend-toolbar__title">Time Trend <span style="font-weight:400;color:var(--color-text-secondary,#6b7280);font-size:12px;">— Coupon vs non-coupon card events per week</span></div>
+          <div class="ep-trend-ranges" role="group" aria-label="Trend range">
+            <button class="ep-trend-range" data-range="1w">1 Week</button>
+            <button class="ep-trend-range" data-range="4w">4 Week (Month)</button>
+            <button class="ep-trend-range ep-trend-range--active" data-range="13w">13 Week (Quarter)</button>
+            <button class="ep-trend-range" data-range="1y">1 Year</button>
+          </div>
+        </div>
+        <div id="ep-coupon-trend"></div>
+      </div>
+    </div>
+
+    <!-- ─── Metric: Performance by Deal Type ─── -->
+    <div class="perf-tab-pane" data-ep-pane="dealtype" data-tier="advanced">
+      <div class="ep-sub-tabs" role="tablist" aria-label="Deal type cuts">
+        <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Deal Types by Store</button>
+        <button class="ep-sub-tab" data-ep-sub="day" role="tab">Deal Types by Day</button>
+        <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Deal Types Time Trend</button>
+        <a class="ep-sub-tab ep-sub-tab--data" href="engagement-grid.html?groupBy=dealtype" target="_blank" rel="noopener" role="tab">
+          <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">table_chart</span>
+          Data
+          <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;opacity:.55;">open_in_new</span>
+        </a>
+      </div>
+      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="store">
+        <div class="ep-stacked-list" id="ep-dealtype-by-store"></div>
+        <div style="font-size:11px;color:#6b7280;margin-top:14px;border-top:1px solid #e5e7eb;padding-top:8px;">
+          <strong>Performance by Deal Type</strong> = card events grouped by <code>deal.type</code>. Only deal types present in the current cohort are charted (variable count per week). Source taxonomy: ISC <code>DealTypeEnum</code> — 12 enabled types (Fixed Price, BOGO, # for Price, # / Price, Amount Off, Save Amount, No Price, Vendor Coupon, Share Category, From X, Static, Video).
+        </div>
+      </div>
+      <div class="ep-sub-pane" data-ep-sub-pane="day">
+        <div id="ep-dealtype-by-day"></div>
+      </div>
+      <div class="ep-sub-pane" data-ep-sub-pane="trend">
+        <div class="ep-trend-toolbar">
+          <div class="ep-trend-toolbar__title">Time Trend <span style="font-weight:400;color:var(--color-text-secondary,#6b7280);font-size:12px;">— Card events per deal type per week</span></div>
+          <div class="ep-trend-ranges" role="group" aria-label="Trend range">
+            <button class="ep-trend-range" data-range="1w">1 Week</button>
+            <button class="ep-trend-range" data-range="4w">4 Week (Month)</button>
+            <button class="ep-trend-range ep-trend-range--active" data-range="13w">13 Week (Quarter)</button>
+            <button class="ep-trend-range" data-range="1y">1 Year</button>
+          </div>
+        </div>
+        <div id="ep-dealtype-trend"></div>
       </div>
     </div>
 
@@ -775,6 +916,7 @@
   <!-- ============================================================
        SCRIPTS
        ============================================================ -->
+  <script src="js/shared/surface-controller.js?v=1"></script>
   <script src="js/data/engagement-promotions.js"></script>
   <script src="js/data/engagement-mock-data.js"></script>
   <script src="js/engagement/cache-manager.js"></script>
@@ -809,7 +951,9 @@
       sessions:   { text: 'Sessions — 78,542 this week · cut by store / day / time trend' },
       users:      { text: 'Total Users — 54,011 this week · cut by store / day / time trend' },
       duration:   { text: 'Avg Session Duration — 368 ses · cut by store / day / time trend' },
-      cardevents: { text: 'Card Engagement Events — 271,298 this week · Adds + Clicks + share/save/print' }
+      cardevents: { text: 'Card Engagement Events — 271,298 this week · Adds + Clicks + share/save/print' },
+      coupon:     { text: 'Coupons Engaged — 42,180 card events on coupon promotions (38 of 75) · vs 229,118 non-coupon' },
+      dealtype:   { text: 'Deal Type — 7 of 11 enabled types used this week · Fixed Price leads at 38% share' }
     };
     function renderCohortNote(parts) {
       const icon = '<span class="material-symbols-outlined">info</span>';
@@ -850,7 +994,9 @@
       sessions:   { title: 'Sessions',             question: 'How are sessions distributed across stores, days, and weeks?', label: 'Sessions',     value: '78,542',  delta: '▲ 4.2% vs last wk',     deltaDir: 'up' },
       users:      { title: 'Total Users',          question: 'How many unique users engaged this week, and where are they?', label: 'Total Users',  value: '54,011',  delta: '▲ 2.8% vs last wk',     deltaDir: 'up' },
       duration:   { title: 'Avg Session Duration', question: 'How long are users spending on the circular per visit?',      label: 'Avg Session',  value: '6m 8s',   delta: '▼ 1.5% vs last wk',     deltaDir: 'down' },
-      cardevents: { title: 'Card Engagement Events', question: 'Which interactions are users taking on promotion cards?',   label: 'Card Events',  value: '271,298', delta: '▲ 7.1% vs last wk',     deltaDir: 'up' }
+      cardevents: { title: 'Card Engagement Events', question: 'Which interactions are users taking on promotion cards?',   label: 'Card Events',  value: '271,298', delta: '▲ 7.1% vs last wk',     deltaDir: 'up' },
+      coupon:     { title: 'Coupons Engaged',         question: 'How do coupon promotions compare to non-coupon promotions on card events?', label: 'Coupon Events', value: '42,180',  delta: '▲ 11.4% vs last wk',    deltaDir: 'up' },
+      dealtype:   { title: 'Performance by Deal Type', question: 'Which deal types are driving the most engagement this week?', label: 'Top Type · Share', value: 'Fixed · 38%', delta: '▲ 2.1pp vs last wk',    deltaDir: 'up' }
     };
     const heroTitleEl = document.getElementById('ep-hero-title');
     const heroQuestionEl = document.getElementById('ep-hero-question');
@@ -1213,6 +1359,62 @@
       { yMax: 35, ySteps: 5, yFmt: v => v.toFixed(0) + '%', note: 'Card events per week (% of cohort). Adds + Clicks + share/save/print roll-up.' }
     );
 
+    // ─── Coupons Engaged — store / day / trend ───────────────────────────
+    // Subset of cardevents filtered to deal.type ∈ {coupon, coupon-v2}.
+    // Volumes ≈ 15.5% of cardevents (42,180 of 271,298 this week).
+    renderStackedList('ep-coupon-by-store', [
+      { rank: 1, name: '#336 Hollywood, FL',    sub: '2,205 coupon events', adds: 745, clicks: 1055, other: 405 },
+      { rank: 2, name: '#508 Fort Myers, FL',   sub: '2,108 coupon events', adds: 698, clicks: 1010, other: 400 },
+      { rank: 3, name: '#195 Jacksonville, FL', sub: '2,036 coupon events', adds: 675, clicks:  978, other: 383 },
+      { rank: 4, name: '#2415 Tampa, FL',       sub: '1,962 coupon events', adds: 651, clicks:  946, other: 365 },
+      { rank: 5, name: '#2487 Sarasota, FL',    sub: '1,895 coupon events', adds: 628, clicks:  916, other: 351 },
+      { rank: 6, name: '#2288 Orlando, FL',     sub: '1,834 coupon events', adds: 605, clicks:  885, other: 344 },
+      { rank: 7, name: '#2247 Palm Coast, FL',  sub: '1,775 coupon events', adds: 590, clicks:  854, other: 331 },
+      { rank: 8, name: '#2545 The Villages, FL',sub: '1,720 coupon events', adds: 574, clicks:  830, other: 316 },
+      { rank: 9, name: '#319 Homestead, FL',    sub: '1,664 coupon events', adds: 555, clicks:  805, other: 304 }
+    ], [
+      { key: 'adds',   cls: 'a', label: 'Add to List' },
+      { key: 'clicks', cls: 'c', label: 'Card Click' },
+      { key: 'other',  cls: 'v', label: 'Card View / Share' }
+    ]);
+    renderDoWColumns('ep-coupon-by-day', [
+      { d: 'MON', n: 5050 }, { d: 'TUE', n: 5430 }, { d: 'WED', n: 5820 },
+      { d: 'THU', n: 6200 }, { d: 'FRI', n: 7110 }, { d: 'SAT', n: 6905 }, { d: 'SUN', n: 5665 }
+    ], { label: 'Coupon Events' });
+    renderTrend('ep-coupon-trend',
+      ['W40','W41','W42','W43','W44','W45','W46','W47','W48','W49','W50','W51','W52'],
+      [ 14, 14, 14, 15, 15, 15, 15, 16, 16, 6, 5, 5, 5 ],
+      { yMax: 20, ySteps: 4, yFmt: v => v.toFixed(0) + '%', note: 'Coupon events per week as % of cohort. Compare to non-coupon (~85%) for share-of-engagement trend.' }
+    );
+
+    // ─── Performance by Deal Type — store / day / trend ──────────────────
+    // Top 3 deal types (Fixed Price / BOGO / Other rollup) stacked per store.
+    // Tail rolled into "Other" for canonical 3-segment fit; full breakdown lives in Data sub-tab.
+    renderStackedList('ep-dealtype-by-store', [
+      { rank: 1, name: '#336 Hollywood, FL',    sub: 'Fixed 38% · BOGO 24% · Other 38%', adds: 5400, clicks: 3410, other: 5400 },
+      { rank: 2, name: '#508 Fort Myers, FL',   sub: 'Fixed 39% · BOGO 22% · Other 39%', adds: 5300, clicks: 2990, other: 5290 },
+      { rank: 3, name: '#195 Jacksonville, FL', sub: 'Fixed 36% · BOGO 25% · Other 39%', adds: 4720, clicks: 3280, other: 5120 },
+      { rank: 4, name: '#2415 Tampa, FL',       sub: 'Fixed 40% · BOGO 23% · Other 37%', adds: 5060, clicks: 2910, other: 4670 },
+      { rank: 5, name: '#2487 Sarasota, FL',    sub: 'Fixed 37% · BOGO 24% · Other 39%', adds: 4520, clicks: 2930, other: 4760 },
+      { rank: 6, name: '#2288 Orlando, FL',     sub: 'Fixed 38% · BOGO 22% · Other 40%', adds: 4490, clicks: 2600, other: 4730 },
+      { rank: 7, name: '#2247 Palm Coast, FL',  sub: 'Fixed 35% · BOGO 26% · Other 39%', adds: 4000, clicks: 2970, other: 4470 },
+      { rank: 8, name: '#2545 The Villages, FL',sub: 'Fixed 39% · BOGO 23% · Other 38%', adds: 4320, clicks: 2550, other: 4220 },
+      { rank: 9, name: '#319 Homestead, FL',    sub: 'Fixed 40% · BOGO 21% · Other 39%', adds: 4290, clicks: 2250, other: 4180 }
+    ], [
+      { key: 'adds',   cls: 'a', label: 'Fixed Price' },
+      { key: 'clicks', cls: 'c', label: 'BOGO' },
+      { key: 'other',  cls: 'v', label: 'Other (Save Amt · # for · Amt Off · …)' }
+    ]);
+    renderDoWColumns('ep-dealtype-by-day', [
+      { d: 'MON', n: 32500 }, { d: 'TUE', n: 35000 }, { d: 'WED', n: 37500 },
+      { d: 'THU', n: 40000 }, { d: 'FRI', n: 45800 }, { d: 'SAT', n: 44500 }, { d: 'SUN', n: 35998 }
+    ], { label: 'Card Events (all deal types)' });
+    renderTrend('ep-dealtype-trend',
+      ['W40','W41','W42','W43','W44','W45','W46','W47','W48','W49','W50','W51','W52'],
+      [ 38, 38, 37, 38, 39, 38, 38, 38, 39, 16, 14, 14, 14 ],
+      { yMax: 50, ySteps: 5, yFmt: v => v.toFixed(0) + '%', note: 'Top deal type (Fixed Price) share of card events per week. Per-type detail in Data sub-tab.' }
+    );
+
     // ─── Trend-range button wiring ────────────────────────────────────────
     (function wireTrendRanges() {
       const W52 = ['W01','W02','W03','W04','W05','W06','W07','W08','W09','W10','W11','W12','W13',
@@ -1251,6 +1453,22 @@
                  25,25,26,26,26,27,27,27,27,26,26,27,27,
                  28,28,28,28,28,27,27,27,27,12,11,11,11],
           opts: { yMax:35, ySteps:5, yFmt: v => v.toFixed(0)+'%', note:'Card events per week (% of cohort). Adds + Clicks + share/save/print roll-up.' }
+        },
+        'ep-coupon-trend': {
+          weeks: W52,
+          vals: [12,12,12,13,13,13,13,13,13,13,13,13,13,
+                 13,13,13,14,14,14,14,14,14,14,14,14,14,
+                 14,14,15,15,15,15,15,15,15,15,15,15,16,
+                 14,14,14,15,15,15,15,16,16, 6, 5, 5, 5],
+          opts: { yMax:20, ySteps:4, yFmt: v => v.toFixed(0)+'%', note:'Coupon events per week as % of cohort. Compare to non-coupon (~85%) for share-of-engagement trend.' }
+        },
+        'ep-dealtype-trend': {
+          weeks: W52,
+          vals: [37,37,37,37,38,38,38,38,38,38,38,38,38,
+                 38,38,38,38,38,39,39,38,38,38,38,38,38,
+                 38,38,38,38,38,38,39,39,38,38,38,38,38,
+                 38,38,37,38,39,38,38,38,39,16,14,14,14],
+          opts: { yMax:50, ySteps:5, yFmt: v => v.toFixed(0)+'%', note:'Top deal type (Fixed Price) share of card events per week.' }
         }
       };
       const rangeCounts = { '1w': 1, '4w': 4, '13w': 13, '1y': 52 };
@@ -1386,7 +1604,9 @@
         { paneKey: 'sessions',   storeHostId: 'ep-sessions-by-store',   label: 'Sessions' },
         { paneKey: 'users',      storeHostId: 'ep-users-by-store',      label: 'Total Users' },
         { paneKey: 'duration',   storeHostId: 'ep-duration-by-store',   label: 'Avg Session Duration' },
-        { paneKey: 'cardevents', storeHostId: 'ep-cardevents-by-store', label: 'Card Engagement Events' }
+        { paneKey: 'cardevents', storeHostId: 'ep-cardevents-by-store', label: 'Card Engagement Events' },
+        { paneKey: 'coupon',     storeHostId: 'ep-coupon-by-store',     label: 'Coupon Events' },
+        { paneKey: 'dealtype',   storeHostId: 'ep-dealtype-by-store',   label: 'Deal Type Events' }
       ];
 
       metricPanes.forEach(cfg => {

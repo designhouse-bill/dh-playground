@@ -1778,6 +1778,20 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
 }
 .dow-bar--peak { background: color-mix(in srgb, var(--section-color, var(--dow-bar-base)) 80%, #000); }
 
+/* Coupon pane DoW: dark surface w/ yellow bars + yellow labels.
+   Yellow #FFCD3E fails contrast on white but pops on dark slate.
+   Peak lightens (toward white) instead of the default darken — flips
+   the convention because the base color is already light. */
+[data-ep-pane="coupon"] [data-ep-sub-pane="day"] {
+  background: #1f2937;
+  border-radius: 8px;
+  padding: 16px;
+}
+[data-ep-pane="coupon"] [data-ep-sub-pane="day"] .dow-bar { background: var(--section-coupon, #FFCD3E); }
+[data-ep-pane="coupon"] [data-ep-sub-pane="day"] .dow-bar--peak { background: color-mix(in srgb, var(--section-coupon, #FFCD3E) 75%, #fff); }
+[data-ep-pane="coupon"] [data-ep-sub-pane="day"] .ep-dow-col > div:first-child { color: var(--section-coupon, #FFCD3E); }
+[data-ep-pane="coupon"] [data-ep-sub-pane="day"] .ep-dow-col > div:last-child { color: var(--section-coupon, #FFCD3E) !important; opacity: 0.75; }
+
 /* ── Creative icon (Phase 0b block 29, 2026-05-04) ──
    Migrated verbatim from distribution-shared.css. Distribution-only
    single-source; consumer js/distribution/distribution.js renderCreativeChip.
@@ -1972,3 +1986,50 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
   border-bottom: 1px solid var(--color-border, #e5e7eb);
 }
 
+/* ============================================================
+   Coupons Engaged — diverging horizontal "vs" bar.
+   Distinct chart type vs grid neighbours (donuts / vbars / chips).
+   Left side = coupon (rose, --section-coupon). Right = non-coupon
+   (slate neutral). Center axis line anchors comparison.
+   ============================================================ */
+.ep-diverge { display: flex; flex-direction: column; gap: 14px; padding: 8px 4px 4px; }
+.ep-diverge__row { display: grid; grid-template-columns: 1fr 1px 1fr; align-items: center; gap: 12px; }
+.ep-diverge__side { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; font-size: 13px; }
+.ep-diverge__side--left  { direction: ltr; }
+.ep-diverge__side--right { direction: ltr; }
+.ep-diverge__lbl { font-weight: 700; color: var(--p-text-color); white-space: nowrap; }
+.ep-diverge__val { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--p-text-color); white-space: nowrap; }
+.ep-diverge__val em { font-style: normal; font-weight: 500; color: var(--color-text-secondary); margin-left: 4px; font-size: 12px; }
+.ep-diverge__track { height: 22px; background: #f3f4f6; border-radius: 4px; overflow: hidden; position: relative; }
+.ep-diverge__side--left  .ep-diverge__track { display: flex; justify-content: flex-end; }
+.ep-diverge__side--right .ep-diverge__track { display: flex; justify-content: flex-start; }
+.ep-diverge__fill { height: 100%; transition: width .3s ease; }
+.ep-diverge__fill--left  { background: var(--section-coupon, #e11d48); border-radius: 4px 0 0 4px; }
+.ep-diverge__fill--right { background: #94a3b8; border-radius: 0 4px 4px 0; }
+.ep-diverge__axis { width: 1px; height: 38px; background: var(--p-text-color); opacity: .35; align-self: center; }
+.ep-diverge__sub { display: flex; flex-wrap: wrap; gap: 6px 10px; padding-top: 8px; border-top: 1px dashed var(--color-border, #e5e7eb); font-size: 12px; color: var(--color-text-secondary); }
+.ep-diverge__sub-item { font-variant-numeric: tabular-nums; }
+.ep-diverge__sub-item strong { color: var(--p-text-color); font-weight: 700; }
+.ep-diverge__sub-item em { font-style: normal; color: var(--color-text-muted, #94a3b8); margin-left: 2px; font-size: 11px; }
+.ep-diverge__sub-sep { color: var(--color-text-muted, #94a3b8); }
+
+/* ============================================================
+   Performance by Deal Type — ranked horizontal bars w/ stacked
+   v/c/a segments per row. Used-types-only (variable row count).
+   Canonical series palette inside segments (RULE — no override).
+   ============================================================ */
+.ep-dealtype-rank { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.ep-dealtype-rank__row { display: grid; grid-template-columns: minmax(160px, 1.4fr) minmax(140px, 3fr) auto auto; align-items: center; gap: 10px; font-size: 12px; }
+.ep-dealtype-rank__lbl { color: var(--p-text-color); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ep-dealtype-rank__lbl em { font-style: normal; font-weight: 400; color: var(--color-text-secondary); font-size: 11px; margin-left: 4px; }
+.ep-dealtype-rank__bar { display: flex; height: 12px; background: #f3f4f6; border-radius: 3px; overflow: hidden; }
+.ep-dealtype-rank__seg { height: 100%; transition: width .3s ease; }
+.ep-dealtype-rank__seg--v { background: var(--series-v, #2196F3); }
+.ep-dealtype-rank__seg--c { background: var(--series-c, #f59e0b); }
+.ep-dealtype-rank__seg--a { background: var(--series-a, #22c55e); }
+.ep-dealtype-rank__val { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--p-text-color); min-width: 48px; text-align: right; }
+.ep-dealtype-rank__share { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--section-dealtype-ink, var(--section-dealtype, #d3151b)); min-width: 36px; text-align: right; font-size: 11px; }
+.ep-dealtype-rank__legend { display: flex; flex-wrap: wrap; gap: 4px 14px; padding-top: 8px; margin-top: 4px; border-top: 1px dashed var(--color-border, #e5e7eb); font-size: 11px; color: var(--color-text-secondary); align-items: center; }
+.ep-dealtype-rank__legend-item { display: inline-flex; align-items: center; gap: 6px; }
+.ep-dealtype-rank__legend-item::before { content: ""; width: 10px; height: 10px; border-radius: 2px; background: var(--swatch, #e5e7eb); display: inline-block; }
+.ep-dealtype-rank__legend-note { margin-left: auto; font-style: italic; color: var(--color-text-muted, #94a3b8); }

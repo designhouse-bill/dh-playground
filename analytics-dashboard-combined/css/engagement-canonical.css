@@ -112,11 +112,13 @@
     .ep-trend-range--active { background: #1f2937; color: #fff; }
 
     /* ── Per-section accent colors (mirrors Distribution hero-stat pattern) ── */
-    [data-ep-pane="overview"]   { --section-color: var(--section-overview);   --section-color-light: var(--section-overview-light); }
-    [data-ep-pane="sessions"]   { --section-color: var(--section-sessions);   --section-color-light: var(--section-sessions-light); }
-    [data-ep-pane="users"]      { --section-color: var(--section-users);      --section-color-light: var(--section-users-light); }
-    [data-ep-pane="duration"]   { --section-color: var(--section-duration);   --section-color-light: var(--section-duration-light); }
-    [data-ep-pane="cardevents"] { --section-color: var(--section-cardevents); --section-color-light: var(--section-cardevents-light); }
+    [data-ep-pane="overview"]   { --section-color: var(--section-overview);   --section-color-light: var(--section-overview-light);   --section-color-ink: var(--section-overview); }
+    [data-ep-pane="sessions"]   { --section-color: var(--section-sessions);   --section-color-light: var(--section-sessions-light);   --section-color-ink: var(--section-sessions); }
+    [data-ep-pane="users"]      { --section-color: var(--section-users);      --section-color-light: var(--section-users-light);      --section-color-ink: var(--section-users); }
+    [data-ep-pane="duration"]   { --section-color: var(--section-duration);   --section-color-light: var(--section-duration-light);   --section-color-ink: var(--section-duration); }
+    [data-ep-pane="cardevents"] { --section-color: var(--section-cardevents); --section-color-light: var(--section-cardevents-light); --section-color-ink: var(--section-cardevents); }
+    [data-ep-pane="coupon"]     { --section-color: var(--section-coupon);     --section-color-light: var(--section-coupon-light);     --section-color-ink: var(--section-coupon-ink); }
+    [data-ep-pane="dealtype"]   { --section-color: var(--section-dealtype);   --section-color-light: var(--section-dealtype-light);   --section-color-ink: var(--section-dealtype-ink); }
 
     /* Page-level hero-stat — section-color tint reflects ACTIVE tab.
        JS sets .hero-stat[data-ep-active="<tab>"] in activateTab(). The
@@ -126,17 +128,22 @@
        so it reads as "no specific section selected".
        RULE: hero-stat bg + accent must always pair the section's
        light + base color tokens — defines the section visually. */
-    .hero-stat[data-ep-active="overview"]   { --section-color: var(--color-text-secondary, #6b7280); --section-color-light: #f3f4f6; }
-    .hero-stat[data-ep-active="sessions"]   { --section-color: var(--section-sessions);   --section-color-light: var(--section-sessions-light); }
-    .hero-stat[data-ep-active="users"]      { --section-color: var(--section-users);      --section-color-light: var(--section-users-light); }
-    .hero-stat[data-ep-active="duration"]   { --section-color: var(--section-duration);   --section-color-light: var(--section-duration-light); }
-    .hero-stat[data-ep-active="cardevents"] { --section-color: var(--section-cardevents); --section-color-light: var(--section-cardevents-light); }
+    .hero-stat[data-ep-active="overview"]   { --section-color: var(--color-text-secondary, #6b7280); --section-color-light: #f3f4f6; --section-color-ink: var(--color-text-secondary, #6b7280); }
+    .hero-stat[data-ep-active="sessions"]   { --section-color: var(--section-sessions);   --section-color-light: var(--section-sessions-light);   --section-color-ink: var(--section-sessions); }
+    .hero-stat[data-ep-active="users"]      { --section-color: var(--section-users);      --section-color-light: var(--section-users-light);      --section-color-ink: var(--section-users); }
+    .hero-stat[data-ep-active="duration"]   { --section-color: var(--section-duration);   --section-color-light: var(--section-duration-light);   --section-color-ink: var(--section-duration); }
+    .hero-stat[data-ep-active="cardevents"] { --section-color: var(--section-cardevents); --section-color-light: var(--section-cardevents-light); --section-color-ink: var(--section-cardevents); }
+    .hero-stat[data-ep-active="coupon"]     { --section-color: var(--section-coupon);     --section-color-light: var(--section-coupon-light);     --section-color-ink: var(--section-coupon-ink); }
+    .hero-stat[data-ep-active="dealtype"]   { --section-color: var(--section-dealtype);   --section-color-light: var(--section-dealtype-light);   --section-color-ink: var(--section-dealtype-ink); }
     .hero-stat[data-ep-active] {
       background-color: var(--section-color-light) !important;
     }
-    .hero-stat[data-ep-active] .narrative-header__title { color: var(--section-color); }
-    .hero-stat[data-ep-active] .stat-strip__item { border-left: 4px solid var(--section-color); }
-    .hero-stat[data-ep-active] .stat-strip__value { color: var(--section-color); }
+    /* Text + border use -ink (WCAG-AA variant) — fill bg uses -light. Splits the
+       fill color from the typographic color so yellow can ride bg cells while
+       text falls back to a darker amber. */
+    .hero-stat[data-ep-active] .narrative-header__title { color: var(--section-color-ink, var(--section-color)); }
+    .hero-stat[data-ep-active] .stat-strip__item { border-left: 4px solid var(--section-color-ink, var(--section-color)); }
+    .hero-stat[data-ep-active] .stat-strip__value { color: var(--section-color-ink, var(--section-color)); }
 
     /* Legacy duplicated rules — kept to avoid regressing other consumers
        that rely on .perf-tab-pane .hero-stat (none today, but defensive). */

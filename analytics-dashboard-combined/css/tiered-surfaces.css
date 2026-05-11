@@ -153,6 +153,10 @@ body[data-advanced="off"] .ep-stacked-list > .ep-stacked-list__row:nth-of-type(n
 /* Hide footer in Advanced — link / chips don't apply to single-pane view. */
 body[data-advanced="on"] .ux846-card-footer { display: none; }
 
+/* Hide the "Filter stores…" input in section summary view — Standard is a
+   read view, no filtering. Filter returns in Advanced. */
+body[data-advanced="off"] .ep-metric-filter { display: none !important; }
+
 /* The "data" sub-pane is a Data Grid placeholder, not a summary view.
    Hide it from the Standard 3-up so the row stays focused on
    by-store + by-day + time-trend. */

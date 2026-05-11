@@ -151,17 +151,35 @@
     });
   }
 
-  function injectBackToSummary(pane) {
-    if (pane.querySelector(':scope > .surface-back')) return;
-    const back = document.createElement('button');
-    back.type = 'button';
-    back.className = 'surface-back';
-    back.dataset.tier = 'advanced';
-    back.innerHTML = '<span class="material-symbols-outlined">arrow_back</span> Back to summary';
-    back.addEventListener('click', () => {
+  function ensureOverviewTab(pane) {
+    const nav = pane.querySelector('.ep-sub-tabs');
+    if (!nav || nav.querySelector('[data-ep-sub="overview"]')) return;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'ep-sub-tab';
+    btn.setAttribute('role', 'tab');
+    btn.setAttribute('data-ep-sub', 'overview');
+    btn.textContent = 'Overview';
+    btn.addEventListener('click', () => {
       if (window.UX846Surface) window.UX846Surface.setAdvanced(false);
     });
-    pane.insertBefore(back, pane.firstChild);
+    nav.insertBefore(btn, nav.firstChild);
+  }
+
+  function renameDataTab(pane) {
+    // The "Data" external link becomes "Data Grid" so it reads as a peer
+    // alongside Overview / by Store / by Day / Time Trend.
+    pane.querySelectorAll('.ep-sub-tab--data').forEach((el) => {
+      // Find the bare "Data" text node and rewrite it.
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+      let node;
+      while ((node = walker.nextNode())) {
+        if (node.nodeValue.trim() === 'Data') {
+          node.nodeValue = node.nodeValue.replace('Data', 'Data Grid');
+          break;
+        }
+      }
+    });
   }
 
   function paint() {
@@ -169,7 +187,8 @@
       const paneKey = pane.dataset.epPane;
       if (!paneKey || paneKey === 'overview') return;
       pane.querySelectorAll('.ep-sub-pane').forEach((sp) => wrapSubPane(sp, paneKey));
-      injectBackToSummary(pane);
+      ensureOverviewTab(pane);
+      renameDataTab(pane);
     });
     // Defer 4w default until canonical-shell-renderers has wired the
     // toolbar (it runs on DOMContentLoaded too).

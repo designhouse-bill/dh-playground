@@ -183,6 +183,10 @@
   }
 
   function paint() {
+    // Sweep any stale .surface-back elements lingering from a prior cached
+    // build. The Overview sub-tab replaces this affordance.
+    document.querySelectorAll('.surface-back').forEach((el) => el.remove());
+
     document.querySelectorAll('.perf-tab-pane').forEach((pane) => {
       const paneKey = pane.dataset.epPane;
       if (!paneKey || paneKey === 'overview') return;

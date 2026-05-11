@@ -79,9 +79,7 @@ body[data-advanced="on"] .section-card {
 
 /* ─── Section card footer (View all link / range chips) ─── */
 .section-card__footer {
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px solid var(--color-border, #e5e7eb);
+  margin-top: 6px;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -91,13 +89,13 @@ body[data-advanced="on"] .section-card {
 .section-card__link {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-size: 12px;
+  gap: 2px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--color-primary-600, #2196F3);
   background: none;
   border: none;
-  padding: 4px 0;
+  padding: 0;
   cursor: pointer;
   font-family: inherit;
 }
@@ -119,13 +117,13 @@ body[data-advanced="on"] .section-card {
 }
 
 .section-card__chip {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 500;
   color: var(--color-text-secondary, #6b7280);
   background: var(--p-surface-ground, #f8f9fa);
   border: 1px solid var(--color-border, #e5e7eb);
-  border-radius: 4px;
-  padding: 3px 8px;
+  border-radius: 3px;
+  padding: 2px 6px;
   cursor: pointer;
   font-family: inherit;
 }

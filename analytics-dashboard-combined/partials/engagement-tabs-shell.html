@@ -140,6 +140,14 @@
 
 </header>
 
+<!-- UX-846 Phase 3 — Advanced reveal divider.
+     Appears above perf-tabs strip only when body[data-advanced="on"].
+     Signals that the extra metric tabs are an advanced layer, not the default. -->
+<div class="ux846-advanced-divider" data-tier="advanced" role="note">
+  <span class="material-symbols-outlined">tune</span>
+  <span>More cuts of the same data.</span>
+</div>
+
 <!-- perf-tabs strip — 5 metric tabs (single-page deep-link via ?tab=X) +
      Data Grid which routes out to canonical Explore (engagement-grid.html).
      R2 (2026-05-06): sub-page files dropped; shell-loader.js parses ?tab=X. -->

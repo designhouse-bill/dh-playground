@@ -12,3 +12,24 @@
    ============================================================ */
 
 body[data-advanced="off"] [data-tier="advanced"] { display: none !important; }
+
+/* Advanced reveal divider — contextual hint above the perf-tabs strip when
+   Advanced toggle is on. Hidden by the rule above when toggle is off. */
+.ux846-advanced-divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  margin: 4px 0 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary, #6b7280);
+  background: var(--color-primary-50, #eff6ff);
+  border-left: 3px solid var(--color-primary-600, #2196F3);
+  border-radius: 4px;
+}
+
+.ux846-advanced-divider .material-symbols-outlined {
+  font-size: 16px;
+  color: var(--color-primary-600, #2196F3);
+}

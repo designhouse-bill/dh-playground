@@ -563,7 +563,7 @@
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Sessions by Store</button>
         <button class="ep-sub-tab" data-ep-sub="day" role="tab">Sessions by Day</button>
         <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Sessions Time Trend</button>
-        <a class="ep-sub-tab ep-sub-tab--data" href="engagement-grid.html" target="_blank" rel="noopener" role="tab" title="Opens the full data grid + preview panel from Original">
+        <a class="ep-sub-tab" data-ep-sub="data" href="engagement-grid.html" target="_blank" rel="noopener" role="tab" title="Opens the full data grid + preview panel from Original">
           <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">table_chart</span>
           Data
           <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;opacity:.55;">open_in_new</span>
@@ -602,7 +602,7 @@
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Users by Store</button>
         <button class="ep-sub-tab" data-ep-sub="day" role="tab">Users by Day</button>
         <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Users Time Trend</button>
-        <a class="ep-sub-tab ep-sub-tab--data" href="engagement-grid.html" target="_blank" rel="noopener" role="tab">
+        <a class="ep-sub-tab" data-ep-sub="data" href="engagement-grid.html" target="_blank" rel="noopener" role="tab">
           <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">table_chart</span>
           Data
           <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;opacity:.55;">open_in_new</span>
@@ -635,7 +635,7 @@
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Duration by Store</button>
         <button class="ep-sub-tab" data-ep-sub="day" role="tab">Duration by Day</button>
         <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Duration Time Trend</button>
-        <a class="ep-sub-tab ep-sub-tab--data" href="engagement-grid.html" target="_blank" rel="noopener" role="tab">
+        <a class="ep-sub-tab" data-ep-sub="data" href="engagement-grid.html" target="_blank" rel="noopener" role="tab">
           <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">table_chart</span>
           Data
           <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;opacity:.55;">open_in_new</span>
@@ -668,7 +668,7 @@
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Card Events by Store</button>
         <button class="ep-sub-tab" data-ep-sub="day" role="tab">Card Events by Day</button>
         <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Card Events Time Trend</button>
-        <a class="ep-sub-tab ep-sub-tab--data" href="engagement-grid.html" target="_blank" rel="noopener" role="tab">
+        <a class="ep-sub-tab" data-ep-sub="data" href="engagement-grid.html" target="_blank" rel="noopener" role="tab">
           <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">table_chart</span>
           Data
           <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;opacity:.55;">open_in_new</span>
@@ -703,7 +703,7 @@
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Coupons by Store</button>
         <button class="ep-sub-tab" data-ep-sub="day" role="tab">Coupons by Day</button>
         <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Coupons Time Trend</button>
-        <a class="ep-sub-tab ep-sub-tab--data" href="engagement-grid.html?filter=coupon" target="_blank" rel="noopener" role="tab">
+        <a class="ep-sub-tab" data-ep-sub="data" href="engagement-grid.html?filter=coupon" target="_blank" rel="noopener" role="tab">
           <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">table_chart</span>
           Data
           <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;opacity:.55;">open_in_new</span>
@@ -738,7 +738,7 @@
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="store" role="tab" aria-selected="true">Deal Types by Store</button>
         <button class="ep-sub-tab" data-ep-sub="day" role="tab">Deal Types by Day</button>
         <button class="ep-sub-tab" data-ep-sub="trend" role="tab">Deal Types Time Trend</button>
-        <a class="ep-sub-tab ep-sub-tab--data" href="engagement-grid.html?groupBy=dealtype" target="_blank" rel="noopener" role="tab">
+        <a class="ep-sub-tab" data-ep-sub="data" href="engagement-grid.html?groupBy=dealtype" target="_blank" rel="noopener" role="tab">
           <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">table_chart</span>
           Data
           <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;opacity:.55;">open_in_new</span>
@@ -906,7 +906,7 @@
        SCRIPTS
        ============================================================ -->
   <script src="js/shared/surface-controller.js?v=1"></script>
-  <script src="js/engagement/sub-pane-summaries.js?v=2"></script>
+  <script src="js/engagement/sub-pane-summaries.js?v=3"></script>
   <script src="js/data/engagement-promotions.js"></script>
   <script src="js/data/engagement-mock-data.js"></script>
   <script src="js/engagement/cache-manager.js"></script>
@@ -1174,7 +1174,7 @@
 
     // ─── Sub-tab switching (per metric pane) ─────────────────────────────
     document.querySelectorAll('.engagement-proposed .perf-tab-pane').forEach(pane => {
-      const subTabs = pane.querySelectorAll('.ep-sub-tab:not(.ep-sub-tab--data)');
+      const subTabs = pane.querySelectorAll('.ep-sub-tab:not([data-ep-sub="data"])');
       subTabs.forEach(st => {
         st.addEventListener('click', () => {
           currentSubTab = st.dataset.epSub;
@@ -1604,18 +1604,18 @@
         const reg  = window.epMetrics[cfg.storeHostId];
         if (!pane || !reg) return;
 
-        // 1) Convert <a class="ep-sub-tab--data"> to a real <button> sub-tab
-        const oldData = pane.querySelector('a.ep-sub-tab--data');
+        // 1) Convert <a data-ep-sub="data"> to a real <button> sub-tab
+        const oldData = pane.querySelector('a.ep-sub-tab[data-ep-sub="data"]');
         let dataBtn;
         if (oldData) {
           dataBtn = document.createElement('button');
-          dataBtn.className = 'ep-sub-tab ep-sub-tab--data';
+          dataBtn.className = 'ep-sub-tab';
           dataBtn.dataset.epSub = 'data';
           dataBtn.setAttribute('role', 'tab');
           dataBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">table_chart</span> Data';
           oldData.parentNode.replaceChild(dataBtn, oldData);
         } else {
-          dataBtn = pane.querySelector('button.ep-sub-tab--data');
+          dataBtn = pane.querySelector('button.ep-sub-tab[data-ep-sub="data"]');
         }
 
         // 2) Build inline data sub-pane

@@ -169,7 +169,7 @@
   function renameDataTab(pane) {
     // The "Data" external link becomes "Data Grid" so it reads as a peer
     // alongside Overview / by Store / by Day / Time Trend.
-    pane.querySelectorAll('.ep-sub-tab--data').forEach((el) => {
+    pane.querySelectorAll('.ep-sub-tab[data-ep-sub="data"]').forEach((el) => {
       // Find the bare "Data" text node and rewrite it.
       const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
       let node;

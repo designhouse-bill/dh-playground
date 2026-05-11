@@ -31,7 +31,14 @@ body[data-advanced="off"] .perf-tab-pane.active:not([data-ep-pane="overview"]) {
   height: 100%;
 }
 
-/* Sub-pane content stretches to fill the card body between header + footer. */
+/* Sub-pane content stretches to fill the card body between header + footer.
+   In Standard mode every sub-pane is visible (not just the --active one)
+   so the user reads by-store + by-day + time-trend stacked across the row.
+   Existing engagement CSS sets .ep-sub-pane { display:none } by default. */
+body[data-advanced="off"] .section-card > .ep-sub-pane {
+  display: block !important;
+}
+
 .section-card > .ep-sub-pane {
   flex: 1 1 auto;
   min-height: 0;

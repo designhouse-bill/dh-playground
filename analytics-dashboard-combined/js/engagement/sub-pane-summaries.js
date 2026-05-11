@@ -97,12 +97,23 @@
 
     if (subKey === 'store') {
       // by-Store: top 3 shown via CSS — link to full list in Advanced.
+      // Skip the link entirely when the entity has 3 or fewer stores
+      // (nothing more to view). Stacked-list rows are rendered async, so
+      // we re-check shortly after attach.
+      const totalRows = subPane.querySelectorAll('.ep-stacked-list__row').length;
+      if (totalRows > 0 && totalRows <= 3) return;
       const link = document.createElement('button');
       link.type = 'button';
       link.className = 'ux846-card-footer__link';
       link.innerHTML = 'View all <span class="material-symbols-outlined">arrow_forward</span>';
       link.addEventListener('click', () => jumpToSubTab(paneKey, 'store'));
       footer.appendChild(link);
+      // Re-check after renderers run so we hide the link if rows came in
+      // later and there's nothing past the top 3 to drill into.
+      setTimeout(() => {
+        const total = subPane.querySelectorAll('.ep-stacked-list__row').length;
+        if (total > 0 && total <= 3) footer.remove();
+      }, 800);
     } else if (subKey === 'trend') {
       // Time Trend: 4w default + range chips. Each chip flips Advanced
       // ON, activates the trend sub-tab, and sets the chosen range.

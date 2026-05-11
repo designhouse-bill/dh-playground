@@ -336,6 +336,15 @@
               <span class="percentile-badge__value percentile-badge__value--${perfClass}">${cat.percentile}%</span>
             </div>
           </td>
+          <td class="col-drill">
+            <button type="button" class="drill-btn"
+                    data-drill-to="promotion"
+                    data-drill-id="${cat.id}"
+                    data-drill-name="${core.escapeHtml(cat.name)}"
+                    aria-label="Drill into promotions for ${core.escapeHtml(cat.name)}">
+              <span class="material-symbols-outlined">arrow_forward</span>
+            </button>
+          </td>
         </tr>
       `;
     });
@@ -356,6 +365,7 @@
             ${getCategorySortableHeaderHTML('Added', 'atl', 'col-added')}
             ${getCategorySortableHeaderHTML('Performance', 'compositeScore', 'col-perf')}
             ${getCategorySortableHeaderHTML('%tile', 'percentile', 'col-percentile')}
+            <th class="col-drill" aria-label="Drill"></th>
           </tr>
         </thead>
         <tbody id="category-grid-body">

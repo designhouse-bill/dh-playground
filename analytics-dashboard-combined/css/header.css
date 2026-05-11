@@ -226,6 +226,59 @@
   margin: 0;
 }
 
+/* Grain Breadcrumb — appears above narrative-header when a drill param is in URL */
+.grain-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.grain-breadcrumb__sep {
+  color: var(--color-text-muted, #9ca3af);
+}
+
+.grain-breadcrumb__crumb--link {
+  color: var(--color-primary-600);
+  text-decoration: none;
+}
+
+.grain-breadcrumb__crumb--link:hover {
+  text-decoration: underline;
+}
+
+.grain-breadcrumb__crumb--current {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Drill button — last cell of primary entity grids (store-grid, category-grid) */
+.drill-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.drill-btn:hover {
+  background: var(--color-primary-50);
+  color: var(--color-primary-600);
+  border-color: var(--color-primary-200, #bfdbfe);
+}
+
+.drill-btn .material-symbols-outlined {
+  font-size: 18px;
+}
+
 /* Grain Switcher — Circulars | Categories | Promotions
    Mirrors view-modes pill pattern. Active state from body[data-grain]. */
 .grain-switcher {

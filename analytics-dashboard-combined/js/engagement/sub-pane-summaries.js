@@ -151,11 +151,25 @@
     });
   }
 
+  function injectBackToSummary(pane) {
+    if (pane.querySelector(':scope > .surface-back')) return;
+    const back = document.createElement('button');
+    back.type = 'button';
+    back.className = 'surface-back';
+    back.dataset.tier = 'advanced';
+    back.innerHTML = '<span class="material-symbols-outlined">arrow_back</span> Back to summary';
+    back.addEventListener('click', () => {
+      if (window.UX846Surface) window.UX846Surface.setAdvanced(false);
+    });
+    pane.insertBefore(back, pane.firstChild);
+  }
+
   function paint() {
     document.querySelectorAll('.perf-tab-pane').forEach((pane) => {
       const paneKey = pane.dataset.epPane;
       if (!paneKey || paneKey === 'overview') return;
       pane.querySelectorAll('.ep-sub-pane').forEach((sp) => wrapSubPane(sp, paneKey));
+      injectBackToSummary(pane);
     });
     // Defer 4w default until canonical-shell-renderers has wired the
     // toolbar (it runs on DOMContentLoaded too).

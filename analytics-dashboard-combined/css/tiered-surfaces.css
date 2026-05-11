@@ -8,6 +8,39 @@
 body[data-advanced="off"] [data-tier="advanced"] { display: none !important; }
 body[data-advanced="on"]  [data-tier="basic"]    { display: none !important; }
 
+/* "← Back to summary" affordance — injected at the top of each metric
+   pane by sub-pane-summaries.js. data-tier="advanced" keeps it hidden
+   in Standard. */
+.surface-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 0 12px;
+  padding: 6px 10px 6px 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary, #6b7280);
+  background: var(--p-surface-ground, #f8f9fa);
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.surface-back:hover {
+  color: var(--color-primary-600, #2196F3);
+  border-color: var(--color-primary-600, #2196F3);
+}
+
+.surface-back .material-symbols-outlined {
+  font-size: 16px;
+  transition: transform 0.15s;
+}
+
+.surface-back:hover .material-symbols-outlined {
+  transform: translateX(-2px);
+}
+
 /* ─── Standard mode: 3-up card grid per active metric pane ───
    Sub-tabs nav inside each metric pane is data-tier="advanced", so it's
    hidden here.  Each sub-pane (by-store, by-day, time-trend) is wrapped

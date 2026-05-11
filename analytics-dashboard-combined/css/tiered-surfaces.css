@@ -17,13 +17,13 @@ body[data-view="detail"]  [data-tier="summary"]    { display: none !important; }
 body[data-view="summary"] .perf-tab-pane.active:not([data-ep-pane="overview"]) {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* Row 1 — sub-tabs nav (auto height). Row 2 — 3 cards stretched equal. */
+  grid-template-rows: auto 1fr;
   gap: 16px;
   align-items: stretch;
-  grid-auto-rows: 1fr;
 }
 
-/* The .ep-sub-tabs nav is also a grid child in summary view — span the
-   full row above the 3 cards, and let it size to content. */
+/* The .ep-sub-tabs nav spans all 3 cols on its row. */
 body[data-view="summary"] .perf-tab-pane.active:not([data-ep-pane="overview"]) > .ep-sub-tabs {
   grid-column: 1 / -1;
   grid-row: 1;
@@ -141,17 +141,6 @@ body[data-view="summary"] .ep-stacked-list > .ep-stacked-list__row:nth-of-type(n
    selection lives only in the Advanced/expanded view. */
 body[data-view="summary"] .ep-trend-toolbar { display: none !important; }
 
-/* Make the trend chart fill the card height in summary view. SVG height
-   is set to 100% by JS and preserveAspectRatio flipped to "none" so it
-   stretches instead of letterboxing. */
-body[data-view="summary"] .ep-sub-pane[data-ep-sub-pane="trend"] [id$="-trend"] {
-  height: 300px;
-}
-body[data-view="summary"] .ep-sub-pane[data-ep-sub-pane="trend"] svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
 
 /* Performance Score + Depth of Engagement — split into two individual
    .ep-kpi-cell cards. The legacy "__col + __col { border-left, padding-left }"

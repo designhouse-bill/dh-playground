@@ -151,20 +151,6 @@
     });
   }
 
-  // Stretch trend SVGs vertically so they fill the taller card slot in
-  // summary view AND bump text font-size to compensate for the horizontal
-  // stretch (so X/Y labels read ~10px on screen instead of ~4-5px).
-  //
-  // Card width is roughly 1/3 of the page = X-stretch factor ~0.45. So
-  // setting font-size 22 in SVG user units renders as ~10px wide on
-  // screen. Y-stretch is ~0.8 so glyph height stays close to legible.
-  function stretchTrendSvgs() {
-    document.querySelectorAll('.ep-sub-pane[data-ep-sub-pane="trend"] svg').forEach((svg) => {
-      svg.setAttribute('preserveAspectRatio', 'none');
-      svg.style.height = '100%';
-      svg.querySelectorAll('text').forEach((t) => t.setAttribute('font-size', '22'));
-    });
-  }
 
   function ensureOverviewTab(pane) {
     const nav = pane.querySelector('.ep-sub-tabs');
@@ -250,11 +236,7 @@
     document.addEventListener('ux846:view-change', syncOverviewActive);
     // Defer 4w default until canonical-shell-renderers has wired the
     // toolbar (it runs on DOMContentLoaded too).
-    setTimeout(() => {
-      setTrendDefault();
-      // Re-run after the chart repaints in 4w form.
-      setTimeout(stretchTrendSvgs, 100);
-    }, 200);
+    setTimeout(setTrendDefault, 200);
   }
 
   if (document.readyState === 'loading') {

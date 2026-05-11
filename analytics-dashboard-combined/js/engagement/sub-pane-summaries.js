@@ -73,11 +73,72 @@
     subPane.insertBefore(header, subPane.firstChild);
   }
 
+  function jumpToSubTab(paneKey, subKey, rangeKey) {
+    if (!window.UX846Surface) return;
+    window.UX846Surface.setAdvanced(true);
+    requestAnimationFrame(() => {
+      const pane = document.querySelector('[data-ep-pane="' + paneKey + '"]');
+      const subTab = pane?.querySelector('[data-ep-sub="' + subKey + '"]');
+      subTab?.click();
+      if (rangeKey) {
+        const rangeBtn = pane?.querySelector('.ep-trend-range[data-range="' + rangeKey + '"]');
+        rangeBtn?.click();
+      }
+    });
+  }
+
+  function injectFooter(subPane, paneKey) {
+    if (subPane.querySelector('.ux846-card-footer')) return;
+    const subKey = subPane.dataset.epSubPane;
+    if (!subKey || subKey === 'data') return;
+
+    const footer = document.createElement('div');
+    footer.className = 'ux846-card-footer';
+
+    if (subKey === 'store') {
+      // by-Store: top 3 shown via CSS — link to full list in Advanced.
+      const link = document.createElement('button');
+      link.type = 'button';
+      link.className = 'ux846-card-footer__link';
+      link.innerHTML = 'View all <span class="material-symbols-outlined">arrow_forward</span>';
+      link.addEventListener('click', () => jumpToSubTab(paneKey, 'store'));
+      footer.appendChild(link);
+    } else if (subKey === 'trend') {
+      // Time Trend: 4w default + range chips. Each chip flips Advanced
+      // ON, activates the trend sub-tab, and sets the chosen range.
+      const ranges = [
+        { key: '1w',  label: '1 week' },
+        { key: '4w',  label: '4 week', active: true },
+        { key: '13w', label: '13 week' },
+        { key: '1y',  label: '1 year' },
+      ];
+      const chipsWrap = document.createElement('div');
+      chipsWrap.className = 'ux846-card-footer__chips';
+      ranges.forEach((r) => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'ux846-card-footer__chip' + (r.active ? ' is-active' : '');
+        chip.textContent = r.label;
+        chip.addEventListener('click', () => jumpToSubTab(paneKey, 'trend', r.key));
+        chipsWrap.appendChild(chip);
+      });
+      footer.appendChild(chipsWrap);
+    } else {
+      // by-Day: no footer (card matches Advanced — no further drill).
+      return;
+    }
+
+    subPane.appendChild(footer);
+  }
+
   function paint() {
     document.querySelectorAll('.perf-tab-pane').forEach((pane) => {
       const paneKey = pane.dataset.epPane;
       if (!paneKey || paneKey === 'overview') return;
-      pane.querySelectorAll('.ep-sub-pane').forEach((sp) => injectHeader(sp, paneKey));
+      pane.querySelectorAll('.ep-sub-pane').forEach((sp) => {
+        injectHeader(sp, paneKey);
+        injectFooter(sp, paneKey);
+      });
     });
   }
 

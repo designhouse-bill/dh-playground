@@ -17,20 +17,30 @@ body[data-advanced="on"]  [data-tier="basic"]    { display: none !important; }
 /* Standard mode — each active metric pane (Sessions, Users, etc.) lays out
    its sub-panes as a 3-column grid of cards instead of swapping one at a
    time via sub-tabs.  Sub-tabs nav itself is hidden via the tier rule
-   above.  Excludes the Overview pane (different composition). */
+   above.  Excludes the Overview pane (different composition).
+   Cards stretch to match each other's height. */
 body[data-advanced="off"] .perf-tab-pane.active:not([data-ep-pane="overview"]) {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
-  align-items: start;
+  align-items: stretch;
+  grid-auto-rows: 1fr;
 }
 
 body[data-advanced="off"] .ep-sub-pane {
-  display: block !important;
+  display: flex !important;
+  flex-direction: column;
   padding: 16px;
   background: var(--p-surface-card, #ffffff);
   border: 1px solid var(--color-border, #e5e7eb);
   border-radius: 8px;
+  height: 100%;
+}
+
+/* Body region between the header and the footer link fills the card. */
+body[data-advanced="off"] .ep-sub-pane > :not(.ux846-card-header):not(.ux846-card-footer) {
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 /* Hybrid card header — injected by js/engagement/sub-pane-summaries.js.
@@ -69,11 +79,79 @@ body[data-advanced="on"] .ux846-card-header {
   display: none;
 }
 
-/* by-Store stacked list truncates to top 5 rows in Standard (condensed
-   summary view). Full list reappears in Advanced. */
-body[data-advanced="off"] .ep-stacked-list > .ep-stacked-list__row:nth-of-type(n+6) {
+/* by-Store stacked list truncates to top 3 rows in Standard (condensed
+   summary view). Full list reappears in Advanced via the "View all" link. */
+body[data-advanced="off"] .ep-stacked-list > .ep-stacked-list__row:nth-of-type(n+4) {
   display: none;
 }
+
+/* Card footer — "View all" link / range chips. Sits at the bottom of
+   each Standard card via the flex column layout. */
+.ux846-card-footer {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-border, #e5e7eb);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ux846-card-footer__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-primary-600, #2196F3);
+  background: none;
+  border: none;
+  padding: 4px 0;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.ux846-card-footer__link .material-symbols-outlined {
+  font-size: 14px;
+  transition: transform 0.15s;
+}
+
+.ux846-card-footer__link:hover .material-symbols-outlined {
+  transform: translateX(3px);
+}
+
+.ux846-card-footer__chips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.ux846-card-footer__chip {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-secondary, #6b7280);
+  background: var(--p-surface-ground, #f8f9fa);
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 4px;
+  padding: 3px 8px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.ux846-card-footer__chip:hover {
+  border-color: var(--color-primary-600, #2196F3);
+  color: var(--color-primary-600, #2196F3);
+}
+
+.ux846-card-footer__chip.is-active {
+  background: var(--color-primary-50, #eff6ff);
+  border-color: var(--color-primary-600, #2196F3);
+  color: var(--color-primary-600, #2196F3);
+}
+
+/* Hide footer in Advanced — link / chips don't apply to single-pane view. */
+body[data-advanced="on"] .ux846-card-footer { display: none; }
 
 /* The "data" sub-pane is a Data Grid placeholder, not a summary view.
    Hide it from the Standard 3-up so the row stays focused on

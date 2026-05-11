@@ -1,19 +1,17 @@
-// UX-846 β-3 — Sub-pane summary headers (hybrid A+B).
+// Section summary cards — Standard mode 3-up.
 //
-// In Standard mode each .ep-sub-pane (rendered as a card) gets a header
-// injected at the top: title pulled from the matching sub-tab label, plus
-// a one-line "top finding" sentence. The existing viz stays below in
-// condensed form (CSS truncates by-store list to top 5).
+// Wraps each .ep-sub-pane in a .section-card container and adds a
+// "top finding" header and a footer (link or chips) as SIBLINGS of the
+// sub-pane, so the .ep-sub-pane element itself is untouched by our
+// chrome.
 //
-// Findings are synthetic placeholders for the MVP. A future pass reads
-// the same data source the sub-pane renderers use to compute real
-// extrema.
+// In Advanced mode the wrapper collapses to display:contents and the
+// sub-pane renders exactly as before.
 
 (function () {
   'use strict';
 
   // MVP synthetic findings keyed by data-ep-pane + data-ep-sub-pane.
-  // Real data wiring later — for now these prove the pattern.
   const FINDINGS = {
     sessions: {
       store: { stat: 'Acme #1234',  detail: '28% of sessions · ▲21% wow' },
@@ -54,23 +52,16 @@
     return (btn?.textContent || subKey).trim();
   }
 
-  function injectHeader(subPane, paneKey) {
-    if (subPane.querySelector('.ux846-card-header')) return; // idempotent
-    const subKey = subPane.dataset.epSubPane;
-    if (!subKey || subKey === 'data') return;
-    const finding = FINDINGS[paneKey]?.[subKey];
-    const parentPane = subPane.closest('.perf-tab-pane');
-    const title = parentPane ? findSubTabLabel(parentPane, subKey) : subKey;
-
+  function buildHeader(title, finding) {
     const header = document.createElement('div');
-    header.className = 'ux846-card-header';
+    header.className = 'section-card__header';
     header.innerHTML =
-      '<div class="ux846-card-header__title">' + title + '</div>' +
+      '<div class="section-card__title">' + title + '</div>' +
       (finding
-        ? '<div class="ux846-card-header__stat">' + finding.stat + '</div>' +
-          '<div class="ux846-card-header__detail">' + finding.detail + '</div>'
+        ? '<div class="section-card__stat">' + finding.stat + '</div>' +
+          '<div class="section-card__detail">' + finding.detail + '</div>'
         : '');
-    subPane.insertBefore(header, subPane.firstChild);
+    return header;
   }
 
   function jumpToSubTab(paneKey, subKey, rangeKey) {
@@ -87,36 +78,24 @@
     });
   }
 
-  function injectFooter(subPane, paneKey) {
-    if (subPane.querySelector('.ux846-card-footer')) return;
-    const subKey = subPane.dataset.epSubPane;
-    if (!subKey || subKey === 'data') return;
-
-    const footer = document.createElement('div');
-    footer.className = 'ux846-card-footer';
-
+  function buildFooter(subPane, paneKey, subKey) {
     if (subKey === 'store') {
-      // by-Store: top 5 shown via CSS — link to full list in Advanced.
-      // Skip the link entirely when the entity has 5 or fewer stores
-      // (nothing more to view). Stacked-list rows are rendered async, so
-      // we re-check shortly after attach.
+      // by-Store: suppress link when entity has 5 or fewer stores.
       const totalRows = subPane.querySelectorAll('.ep-stacked-list__row').length;
-      if (totalRows > 0 && totalRows <= 5) return;
+      if (totalRows > 0 && totalRows <= 5) return null;
+      const footer = document.createElement('div');
+      footer.className = 'section-card__footer';
       const link = document.createElement('button');
       link.type = 'button';
-      link.className = 'ux846-card-footer__link';
+      link.className = 'section-card__link';
       link.innerHTML = 'View all <span class="material-symbols-outlined">arrow_forward</span>';
       link.addEventListener('click', () => jumpToSubTab(paneKey, 'store'));
       footer.appendChild(link);
-      // Re-check after renderers run so we hide the link if rows came in
-      // later and there's nothing past the top 5 to drill into.
-      setTimeout(() => {
-        const total = subPane.querySelectorAll('.ep-stacked-list__row').length;
-        if (total > 0 && total <= 5) footer.remove();
-      }, 800);
-    } else if (subKey === 'trend') {
-      // Time Trend: 4w default + range chips. Each chip flips Advanced
-      // ON, activates the trend sub-tab, and sets the chosen range.
+      return footer;
+    }
+    if (subKey === 'trend') {
+      const footer = document.createElement('div');
+      footer.className = 'section-card__footer';
       const ranges = [
         { key: '1w',  label: '1 week' },
         { key: '4w',  label: '4 week', active: true },
@@ -124,32 +103,59 @@
         { key: '1y',  label: '1 year' },
       ];
       const chipsWrap = document.createElement('div');
-      chipsWrap.className = 'ux846-card-footer__chips';
+      chipsWrap.className = 'section-card__chips';
       ranges.forEach((r) => {
         const chip = document.createElement('button');
         chip.type = 'button';
-        chip.className = 'ux846-card-footer__chip' + (r.active ? ' is-active' : '');
+        chip.className = 'section-card__chip' + (r.active ? ' is-active' : '');
         chip.textContent = r.label;
         chip.addEventListener('click', () => jumpToSubTab(paneKey, 'trend', r.key));
         chipsWrap.appendChild(chip);
       });
       footer.appendChild(chipsWrap);
-    } else {
-      // by-Day: no footer (card matches Advanced — no further drill).
-      return;
+      return footer;
     }
+    return null;
+  }
 
-    subPane.appendChild(footer);
+  function wrapSubPane(subPane, paneKey) {
+    if (subPane.parentElement?.classList.contains('section-card')) return; // idempotent
+    const subKey = subPane.dataset.epSubPane;
+    if (!subKey || subKey === 'data') return;
+
+    const card = document.createElement('div');
+    card.className = 'section-card';
+    card.dataset.sectionCardSub = subKey;
+
+    const parent = subPane.parentNode;
+    parent.insertBefore(card, subPane);
+
+    const parentPane = subPane.closest('.perf-tab-pane');
+    const title = parentPane ? findSubTabLabel(parentPane, subKey) : subKey;
+    const finding = FINDINGS[paneKey]?.[subKey];
+
+    card.appendChild(buildHeader(title, finding));
+    card.appendChild(subPane);
+
+    const footer = buildFooter(subPane, paneKey, subKey);
+    if (footer) {
+      card.appendChild(footer);
+      // Re-check after async row renderers — drop the link if rows
+      // arrived later and the entity has ≤5 stores total.
+      if (subKey === 'store') {
+        setTimeout(() => {
+          const total = subPane.querySelectorAll('.ep-stacked-list__row').length;
+          if (total > 0 && total <= 5) footer.remove();
+        }, 800);
+      }
+    }
   }
 
   function paint() {
     document.querySelectorAll('.perf-tab-pane').forEach((pane) => {
       const paneKey = pane.dataset.epPane;
       if (!paneKey || paneKey === 'overview') return;
-      pane.querySelectorAll('.ep-sub-pane').forEach((sp) => {
-        injectHeader(sp, paneKey);
-        injectFooter(sp, paneKey);
-      });
+      pane.querySelectorAll('.ep-sub-pane').forEach((sp) => wrapSubPane(sp, paneKey));
     });
   }
 

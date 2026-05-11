@@ -45,7 +45,7 @@
   }
 
   function refreshToggleUi() {
-    const btn = document.getElementById('ux846-advanced-toggle');
+    const btn = document.getElementById('surface-toggle');
     if (!btn) return;
     const on = getAdvanced();
     btn.setAttribute('aria-pressed', on ? 'true' : 'false');
@@ -64,7 +64,7 @@
     applyBody(resolveInitialState());
     // Toggle button injected by the shell partial. Wire it up if present.
     document.addEventListener('click', (e) => {
-      const btn = e.target.closest('#ux846-advanced-toggle');
+      const btn = e.target.closest('#surface-toggle');
       if (!btn) return;
       setAdvanced(!getAdvanced());
     });

@@ -191,7 +191,7 @@
 }
 
 /* UX-846 Phase 1 — Advanced toggle in shared chrome. */
-.ux846-advanced-toggle {
+.surface-toggle {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -206,24 +206,24 @@
   transition: all 0.15s;
 }
 
-.ux846-advanced-toggle:hover {
+.surface-toggle:hover {
   color: var(--color-primary-600);
   border-color: var(--color-primary-600);
   background: var(--color-primary-50);
 }
 
-.ux846-advanced-toggle.is-on,
-.ux846-advanced-toggle[aria-pressed="true"] {
+.surface-toggle.is-on,
+.surface-toggle[aria-pressed="true"] {
   color: var(--color-primary-700, var(--color-primary-600));
   border-color: var(--color-primary-600);
   background: var(--color-primary-50);
 }
 
-.ux846-advanced-toggle .material-symbols-outlined {
+.surface-toggle .material-symbols-outlined {
   font-size: 18px;
 }
 
-.ux846-advanced-toggle__state::before {
+.surface-toggle__state::before {
   content: "Off";
   font-weight: 600;
   font-size: 11px;
@@ -232,7 +232,7 @@
   opacity: 0.7;
 }
 
-.ux846-advanced-toggle[aria-pressed="true"] .ux846-advanced-toggle__state::before {
+.surface-toggle[aria-pressed="true"] .surface-toggle__state::before {
   content: "On";
   opacity: 1;
 }

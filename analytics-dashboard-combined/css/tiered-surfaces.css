@@ -1,24 +1,18 @@
 /* ============================================================
-   UX-846 Tiered Surfaces — canonical visibility rule.
-   Single source for Standard/Advanced surface visibility.
+   Tiered Surfaces — Standard / Advanced visibility + section card
+   chrome for the engagement metric panes.
 
-   Phase 1 (2026-05-11): rule defined, no module yet carries
-     [data-tier="advanced"] — rule has zero visual effect.
-   Phase 2: modules retagged with data-tier="standard|advanced".
-     Toggle in shared chrome flips body[data-advanced] which
-     activates this rule.
-
-   Do not duplicate in per-page CSS.
+   Single source.  Do not duplicate in per-page CSS.
    ============================================================ */
 
 body[data-advanced="off"] [data-tier="advanced"] { display: none !important; }
 body[data-advanced="on"]  [data-tier="basic"]    { display: none !important; }
 
-/* Standard mode — each active metric pane (Sessions, Users, etc.) lays out
-   its sub-panes as a 3-column grid of cards instead of swapping one at a
-   time via sub-tabs.  Sub-tabs nav itself is hidden via the tier rule
-   above.  Excludes the Overview pane (different composition).
-   Cards stretch to match each other's height. */
+/* ─── Standard mode: 3-up card grid per active metric pane ───
+   Sub-tabs nav inside each metric pane is data-tier="advanced", so it's
+   hidden here.  Each sub-pane (by-store, by-day, time-trend) is wrapped
+   by JS in a .section-card so the header + footer are siblings of
+   .ep-sub-pane rather than children. */
 body[data-advanced="off"] .perf-tab-pane.active:not([data-ep-pane="overview"]) {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -27,8 +21,8 @@ body[data-advanced="off"] .perf-tab-pane.active:not([data-ep-pane="overview"]) {
   grid-auto-rows: 1fr;
 }
 
-body[data-advanced="off"] .ep-sub-pane {
-  display: flex !important;
+.section-card {
+  display: flex;
   flex-direction: column;
   padding: 16px;
   background: var(--p-surface-card, #ffffff);
@@ -37,21 +31,31 @@ body[data-advanced="off"] .ep-sub-pane {
   height: 100%;
 }
 
-/* Body region between the header and the footer link fills the card. */
-body[data-advanced="off"] .ep-sub-pane > :not(.ux846-card-header):not(.ux846-card-footer) {
+/* Sub-pane content stretches to fill the card body between header + footer. */
+.section-card > .ep-sub-pane {
   flex: 1 1 auto;
   min-height: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 0;
 }
 
-/* Hybrid card header — injected by js/engagement/sub-pane-summaries.js.
-   Sits above the existing condensed viz inside each card. */
-.ux846-card-header {
+/* In Advanced mode the wrapper collapses to a passthrough so the existing
+   sub-pane behavior (one active at a time, sub-tabs nav visible) is
+   unchanged. */
+body[data-advanced="on"] .section-card {
+  display: contents;
+}
+
+/* ─── Section card header (top-finding) ─── */
+.section-card__header {
   margin-bottom: 12px;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--color-border, #e5e7eb);
 }
 
-.ux846-card-header__title {
+.section-card__title {
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
@@ -60,34 +64,21 @@ body[data-advanced="off"] .ep-sub-pane > :not(.ux846-card-header):not(.ux846-car
   margin-bottom: 4px;
 }
 
-.ux846-card-header__stat {
+.section-card__stat {
   font-size: 18px;
   font-weight: 700;
   color: var(--p-text-color, #1f2937);
   line-height: 1.1;
 }
 
-.ux846-card-header__detail {
+.section-card__detail {
   font-size: 12px;
   color: var(--color-text-secondary, #6b7280);
   margin-top: 3px;
 }
 
-/* In Standard, header should NOT show inside Advanced mode (it's hidden
-   along with sub-tabs nav state changes — re-applied each toggle). */
-body[data-advanced="on"] .ux846-card-header {
-  display: none;
-}
-
-/* by-Store stacked list truncates to top 5 rows in Standard (condensed
-   summary view). Full list reappears in Advanced via the "View all" link. */
-body[data-advanced="off"] .ep-stacked-list > .ep-stacked-list__row:nth-of-type(n+6) {
-  display: none;
-}
-
-/* Card footer — "View all" link / range chips. Sits at the bottom of
-   each Standard card via the flex column layout. */
-.ux846-card-footer {
+/* ─── Section card footer (View all link / range chips) ─── */
+.section-card__footer {
   margin-top: 12px;
   padding-top: 10px;
   border-top: 1px solid var(--color-border, #e5e7eb);
@@ -97,7 +88,7 @@ body[data-advanced="off"] .ep-stacked-list > .ep-stacked-list__row:nth-of-type(n
   gap: 6px;
 }
 
-.ux846-card-footer__link {
+.section-card__link {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -111,23 +102,23 @@ body[data-advanced="off"] .ep-stacked-list > .ep-stacked-list__row:nth-of-type(n
   font-family: inherit;
 }
 
-.ux846-card-footer__link .material-symbols-outlined {
+.section-card__link .material-symbols-outlined {
   font-size: 14px;
   transition: transform 0.15s;
 }
 
-.ux846-card-footer__link:hover .material-symbols-outlined {
+.section-card__link:hover .material-symbols-outlined {
   transform: translateX(3px);
 }
 
-.ux846-card-footer__chips {
+.section-card__chips {
   display: inline-flex;
   flex-wrap: wrap;
   gap: 4px;
   margin-left: auto;
 }
 
-.ux846-card-footer__chip {
+.section-card__chip {
   font-size: 11px;
   font-weight: 500;
   color: var(--color-text-secondary, #6b7280);
@@ -139,190 +130,37 @@ body[data-advanced="off"] .ep-stacked-list > .ep-stacked-list__row:nth-of-type(n
   font-family: inherit;
 }
 
-.ux846-card-footer__chip:hover {
+.section-card__chip:hover {
   border-color: var(--color-primary-600, #2196F3);
   color: var(--color-primary-600, #2196F3);
 }
 
-.ux846-card-footer__chip.is-active {
+.section-card__chip.is-active {
   background: var(--color-primary-50, #eff6ff);
   border-color: var(--color-primary-600, #2196F3);
   color: var(--color-primary-600, #2196F3);
 }
 
-/* Hide footer in Advanced — link / chips don't apply to single-pane view. */
-body[data-advanced="on"] .ux846-card-footer { display: none; }
+/* Hide header + footer in Advanced — drilldown view doesn't need them. */
+body[data-advanced="on"] .section-card__header,
+body[data-advanced="on"] .section-card__footer { display: none; }
 
-/* Hide the "Filter stores…" input in section summary view — Standard is a
-   read view, no filtering. Filter returns in Advanced. */
+/* ─── Standard-mode content trims ───
+   by-Store list keeps top 5 rows; "Filter stores…" power-user input and
+   the "data" placeholder sub-pane are out of scope for the summary view. */
+body[data-advanced="off"] .ep-stacked-list > .ep-stacked-list__row:nth-of-type(n+6) {
+  display: none;
+}
+
 body[data-advanced="off"] .ep-metric-filter { display: none !important; }
 
-/* The "data" sub-pane is a Data Grid placeholder, not a summary view.
-   Hide it from the Standard 3-up so the row stays focused on
-   by-store + by-day + time-trend. */
 body[data-advanced="off"] .ep-sub-pane[data-ep-sub-pane="data"] {
   display: none !important;
 }
 
-/* On narrower viewports collapse to single column for readability. */
-@container (max-width: 720px) {
-  body[data-advanced="off"] .perf-tab-pane.active:not([data-ep-pane="overview"]) {
-    grid-template-columns: 1fr;
-  }
-}
+/* On narrower viewports collapse to single column. */
 @media (max-width: 720px) {
   body[data-advanced="off"] .perf-tab-pane.active:not([data-ep-pane="overview"]) {
     grid-template-columns: 1fr;
   }
-}
-
-/* Advanced reveal divider — contextual hint above the perf-tabs strip when
-   Advanced toggle is on. Hidden by the rule above when toggle is off. */
-.ux846-advanced-divider {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  margin: 4px 0 8px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--color-text-secondary, #6b7280);
-  background: var(--color-primary-50, #eff6ff);
-  border-left: 3px solid var(--color-primary-600, #2196F3);
-  border-radius: 4px;
-}
-
-.ux846-advanced-divider .material-symbols-outlined {
-  font-size: 16px;
-  color: var(--color-primary-600, #2196F3);
-}
-
-/* β-2 — Section Summary cards (Standard mode).
-   Stacks below the Overview pane content, gives Standard substance. */
-.ux846-section-summaries {
-  margin: 24px 0 16px;
-  padding: 20px 0 4px;
-  border-top: 1px solid var(--color-border, #e5e7eb);
-}
-
-.ux846-section-summaries__intro {
-  margin-bottom: 16px;
-}
-
-.ux846-section-summaries__title {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--p-text-color, #1f2937);
-  margin: 0 0 4px;
-}
-
-.ux846-section-summaries__desc {
-  font-size: 12px;
-  color: var(--color-text-secondary, #6b7280);
-  margin: 0;
-}
-
-.ux846-section-summaries__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 12px;
-}
-
-.ux846-section-card {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 14px;
-  background: var(--p-surface-card, #ffffff);
-  border: 1px solid var(--color-border, #e5e7eb);
-  border-radius: 8px;
-  cursor: pointer;
-  text-align: left;
-  font: inherit;
-  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
-}
-
-.ux846-section-card:hover {
-  border-color: var(--color-primary-600, #2196F3);
-  box-shadow: var(--p-shadow-md, 0 4px 6px -1px rgba(0,0,0,0.1));
-  transform: translateY(-1px);
-}
-
-.ux846-section-card:focus-visible {
-  outline: 2px solid var(--color-primary-600, #2196F3);
-  outline-offset: 2px;
-}
-
-.ux846-section-card__head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--color-text-secondary, #6b7280);
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.ux846-section-card__head .material-symbols-outlined {
-  font-size: 16px;
-}
-
-.ux846-section-card__title {
-  color: var(--p-text-color, #1f2937);
-  text-transform: none;
-  letter-spacing: 0;
-  font-size: 13px;
-}
-
-.ux846-section-card__chart {
-  height: 48px;
-  width: 100%;
-}
-
-.ux846-section-card__stat {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-}
-
-.ux846-section-card__value {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--p-text-color, #1f2937);
-  font-variant-numeric: tabular-nums;
-}
-
-.ux846-section-card__delta {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--color-text-secondary, #6b7280);
-  font-variant-numeric: tabular-nums;
-}
-
-.ux846-section-card__delta--up {
-  color: var(--p-green-500, #22c55e);
-}
-
-.ux846-section-card__delta--down {
-  color: var(--p-red-500, #ef4444);
-}
-
-.ux846-section-card__cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--color-primary-600, #2196F3);
-  margin-top: 2px;
-}
-
-.ux846-section-card__cta .material-symbols-outlined {
-  font-size: 14px;
-  transition: transform 0.15s;
-}
-
-.ux846-section-card:hover .ux846-section-card__cta .material-symbols-outlined {
-  transform: translateX(3px);
 }

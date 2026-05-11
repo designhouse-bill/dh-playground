@@ -177,7 +177,7 @@
     const line = host.querySelector('path[fill="none"][stroke]');
     const accent = line ? line.getAttribute('stroke') : '#2563eb';
 
-    const W = 500, H = 380, pad = 50;
+    const W = 500, H = 300, pad = 50;
     const vals = data.map((d) => d.val);
     const yMax = Math.ceil(Math.max.apply(null, vals) * 1.15) || 1;
     const ySteps = yLabels.length - 1;

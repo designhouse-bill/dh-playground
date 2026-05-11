@@ -21,7 +21,7 @@
   <link rel="stylesheet" href="css/engagement-canonical.css">
   <link rel="stylesheet" href="css/tiered-surfaces.css?v=1">
 </head>
-<body data-engagement-page="circulars" data-active-tab="overview">
+<body data-engagement-page="circulars" data-active-tab="overview" data-grain="circular">
 
 <!-- UX-846 Phase 1: chrome injected by shell-loader.js from partials/engagement-tabs-shell.html -->
 <div data-shell="engagement-tabs"></div>
@@ -533,6 +533,8 @@
        SCRIPTS
        ============================================================ -->
   <script src="js/engagement/shell-loader.js?v=2"></script>
+  <script src="js/engagement/engagement-grain-config.js?v=1"></script>
+  <script src="js/engagement/engagement-grain-init.js?v=1"></script>
   <script src="js/shared/surface-controller.js?v=3"></script>
   <script src="js/engagement/sub-pane-summaries.js?v=10"></script>
   <script src="js/vendor/echarts.min.js"></script>

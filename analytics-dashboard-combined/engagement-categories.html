@@ -21,7 +21,7 @@
   <link rel="stylesheet" href="css/engagement-canonical.css">
   <link rel="stylesheet" href="css/tiered-surfaces.css?v=1">
 </head>
-<body>
+<body data-grain="category">
 
 <div class="dh-top-bar">
   <div class="dh-top-bar__left">
@@ -678,6 +678,8 @@
   <!-- ============================================================
        SCRIPTS (dependency order)
        ============================================================ -->
+  <script src="js/engagement/engagement-grain-config.js?v=1"></script>
+  <script src="js/engagement/engagement-grain-init.js?v=1"></script>
   <script src="js/shared/surface-controller.js?v=3"></script>
   <script src="js/engagement/sub-pane-summaries.js?v=10"></script>
   <script src="js/vendor/echarts.min.js"></script>

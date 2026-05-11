@@ -116,36 +116,6 @@ body[data-advanced="on"] .section-card {
   transform: translateX(3px);
 }
 
-.section-card__chips {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin-left: auto;
-}
-
-.section-card__chip {
-  font-size: 10px;
-  font-weight: 500;
-  color: var(--color-text-secondary, #6b7280);
-  background: var(--p-surface-ground, #f8f9fa);
-  border: 1px solid var(--color-border, #e5e7eb);
-  border-radius: 3px;
-  padding: 2px 6px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.section-card__chip:hover {
-  border-color: var(--color-primary-600, #2196F3);
-  color: var(--color-primary-600, #2196F3);
-}
-
-.section-card__chip.is-active {
-  background: var(--color-primary-50, #eff6ff);
-  border-color: var(--color-primary-600, #2196F3);
-  color: var(--color-primary-600, #2196F3);
-}
-
 /* Hide header + footer in Advanced — drilldown view doesn't need them. */
 body[data-advanced="on"] .section-card__header,
 body[data-advanced="on"] .section-card__footer { display: none; }
@@ -153,7 +123,7 @@ body[data-advanced="on"] .section-card__footer { display: none; }
 /* ─── Standard-mode content trims ───
    by-Store list keeps top 5 rows; "Filter stores…" power-user input and
    the "data" placeholder sub-pane are out of scope for the summary view. */
-body[data-advanced="off"] .ep-stacked-list > .ep-stacked-list__row:nth-of-type(n+6) {
+body[data-advanced="off"] .ep-stacked-list > .ep-stacked-list__row:nth-of-type(n+5) {
   display: none;
 }
 

@@ -64,17 +64,12 @@
     return header;
   }
 
-  function jumpToSubTab(paneKey, subKey, rangeKey) {
+  function jumpToSubTab(paneKey, subKey) {
     if (!window.UX846Surface) return;
     window.UX846Surface.setAdvanced(true);
     requestAnimationFrame(() => {
       const pane = document.querySelector('[data-ep-pane="' + paneKey + '"]');
-      const subTab = pane?.querySelector('[data-ep-sub="' + subKey + '"]');
-      subTab?.click();
-      if (rangeKey) {
-        const rangeBtn = pane?.querySelector('.ep-trend-range[data-range="' + rangeKey + '"]');
-        rangeBtn?.click();
-      }
+      pane?.querySelector('[data-ep-sub="' + subKey + '"]')?.click();
     });
   }
 
@@ -82,7 +77,7 @@
     if (subKey === 'store') {
       // by-Store: suppress link when entity has 5 or fewer stores.
       const totalRows = subPane.querySelectorAll('.ep-stacked-list__row').length;
-      if (totalRows > 0 && totalRows <= 5) return null;
+      if (totalRows > 0 && totalRows <= 4) return null;
       const footer = document.createElement('div');
       footer.className = 'section-card__footer';
       const link = document.createElement('button');
@@ -93,28 +88,8 @@
       footer.appendChild(link);
       return footer;
     }
-    if (subKey === 'trend') {
-      const footer = document.createElement('div');
-      footer.className = 'section-card__footer';
-      const ranges = [
-        { key: '1w',  label: '1 week' },
-        { key: '4w',  label: '4 week', active: true },
-        { key: '13w', label: '13 week' },
-        { key: '1y',  label: '1 year' },
-      ];
-      const chipsWrap = document.createElement('div');
-      chipsWrap.className = 'section-card__chips';
-      ranges.forEach((r) => {
-        const chip = document.createElement('button');
-        chip.type = 'button';
-        chip.className = 'section-card__chip' + (r.active ? ' is-active' : '');
-        chip.textContent = r.label;
-        chip.addEventListener('click', () => jumpToSubTab(paneKey, 'trend', r.key));
-        chipsWrap.appendChild(chip);
-      });
-      footer.appendChild(chipsWrap);
-      return footer;
-    }
+    // Time Trend: no footer. Default 4w chart only; deeper range selection
+    // happens via the global Advanced toggle.
     return null;
   }
 

@@ -67,7 +67,7 @@
 
     <!-- perf-tabs strip lives in partials/engagement-tabs-shell.html (Phase 1 refactor) -->
 
-    <div class="perf-tab-pane active" data-ep-pane="overview">
+    <div class="perf-tab-pane active" data-ep-pane="overview" data-tier="standard">
       <div class="ep-kpi-grid" role="group" aria-label="Metric snapshot — donut breakdown">
         <button class="ep-kpi-card" data-jump-to="sessions" data-kpi="sessions" type="button">
           <span class="ep-kpi-card__label">Sessions</span>
@@ -151,7 +151,7 @@
          Tab activation via URL ?tab=X param parsed by shell-loader.js.
          data-grid tab routes to engagement-grid.html (canonical Explore surface). -->
 
-    <div class="perf-tab-pane" data-ep-pane="sessions">
+    <div class="perf-tab-pane" data-ep-pane="sessions" data-tier="advanced">
       <div class="hero-stat"><div class="narrative-header"><div class="narrative-header-left">
         <h2 class="narrative-header__title">Sessions</h2>
         <p class="narrative-header__question">How are sessions distributed across circulars, days, and weeks?</p>
@@ -166,7 +166,7 @@
       <div class="ep-sub-pane" data-ep-sub-pane="trend"><div id="ep-sessions-trend"></div></div>
     </div>
 
-    <div class="perf-tab-pane" data-ep-pane="users">
+    <div class="perf-tab-pane" data-ep-pane="users" data-tier="advanced">
       <div class="hero-stat"><div class="narrative-header"><div class="narrative-header-left">
         <h2 class="narrative-header__title">Total Users</h2>
         <p class="narrative-header__question">How many unique users engaged this week, and which circulars drove them?</p>
@@ -189,7 +189,7 @@
       <div class="ep-sub-pane" data-ep-sub-pane="trend"><div id="ep-users-trend"></div></div>
     </div>
 
-    <div class="perf-tab-pane" data-ep-pane="duration">
+    <div class="perf-tab-pane" data-ep-pane="duration" data-tier="advanced">
       <div class="hero-stat"><div class="narrative-header"><div class="narrative-header-left">
         <h2 class="narrative-header__title">Avg Session Duration</h2>
         <p class="narrative-header__question">How long are users spending on each circular?</p>
@@ -213,7 +213,7 @@
       <div class="ep-sub-pane" data-ep-sub-pane="trend"><div id="ep-duration-trend"></div></div>
     </div>
 
-    <div class="perf-tab-pane" data-ep-pane="cardevents">
+    <div class="perf-tab-pane" data-ep-pane="cardevents" data-tier="advanced">
       <div class="hero-stat"><div class="narrative-header"><div class="narrative-header-left">
         <h2 class="narrative-header__title">Card Engagement Events</h2>
         <p class="narrative-header__question">Which interactions are users taking on circular cards?</p>

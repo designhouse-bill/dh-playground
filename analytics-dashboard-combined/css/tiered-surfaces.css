@@ -145,7 +145,7 @@ body[data-view="summary"] .ep-trend-toolbar { display: none !important; }
    is set to 100% by JS and preserveAspectRatio flipped to "none" so it
    stretches instead of letterboxing. */
 body[data-view="summary"] .ep-sub-pane[data-ep-sub-pane="trend"] [id$="-trend"] {
-  height: 220px;
+  height: 300px;
 }
 body[data-view="summary"] .ep-sub-pane[data-ep-sub-pane="trend"] svg {
   display: block;

@@ -152,12 +152,17 @@
   }
 
   // Stretch trend SVGs vertically so they fill the taller card slot in
-  // summary view. Default viewBox is 880x280 with preserveAspectRatio=meet
-  // which letterboxes when forced taller — switch to "none" to stretch.
+  // summary view AND bump text font-size to compensate for the horizontal
+  // stretch (so X/Y labels read ~10px on screen instead of ~4-5px).
+  //
+  // Card width is roughly 1/3 of the page = X-stretch factor ~0.45. So
+  // setting font-size 22 in SVG user units renders as ~10px wide on
+  // screen. Y-stretch is ~0.8 so glyph height stays close to legible.
   function stretchTrendSvgs() {
     document.querySelectorAll('.ep-sub-pane[data-ep-sub-pane="trend"] svg').forEach((svg) => {
       svg.setAttribute('preserveAspectRatio', 'none');
       svg.style.height = '100%';
+      svg.querySelectorAll('text').forEach((t) => t.setAttribute('font-size', '22'));
     });
   }
 

@@ -65,8 +65,14 @@
     // Toggle button injected by the shell partial. Wire it up if present.
     document.addEventListener('click', (e) => {
       const btn = e.target.closest('#surface-toggle');
-      if (!btn) return;
-      setAdvanced(!getAdvanced());
+      if (btn) {
+        setAdvanced(!getAdvanced());
+        return;
+      }
+      // Switching metric perf-tabs always re-enters the section at the
+      // summary view, never at the deep sub-pane the user was last in.
+      const perfTab = e.target.closest('.perf-tab');
+      if (perfTab) setAdvanced(false);
     });
     // After chrome injection by shell-loader, re-sync button UI.
     document.addEventListener('engagement-shell:loaded', refreshToggleUi);

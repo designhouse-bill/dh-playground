@@ -79,9 +79,9 @@ body[data-advanced="on"] .ux846-card-header {
   display: none;
 }
 
-/* by-Store stacked list truncates to top 3 rows in Standard (condensed
+/* by-Store stacked list truncates to top 5 rows in Standard (condensed
    summary view). Full list reappears in Advanced via the "View all" link. */
-body[data-advanced="off"] .ep-stacked-list > .ep-stacked-list__row:nth-of-type(n+4) {
+body[data-advanced="off"] .ep-stacked-list > .ep-stacked-list__row:nth-of-type(n+6) {
   display: none;
 }
 

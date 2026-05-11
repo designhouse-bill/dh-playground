@@ -19,7 +19,8 @@ body[data-view="summary"] .perf-tab-pane.active:not([data-ep-pane="overview"]) {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   /* Row 1 — sub-tabs nav (auto height). Row 2 — 3 cards stretched equal. */
   grid-template-rows: auto 1fr;
-  gap: 16px;
+  column-gap: 16px;
+  row-gap: 8px;
   align-items: stretch;
 }
 
@@ -140,6 +141,12 @@ body[data-view="summary"] .ep-stacked-list > .ep-stacked-list__row:nth-of-type(n
 /* Trend sub-pane: hide the range toolbar in Standard mode — range
    selection lives only in the Advanced/expanded view. */
 body[data-view="summary"] .ep-trend-toolbar { display: none !important; }
+
+/* By-Day bar chart: bump from renderer default 240px to 260px in the
+   summary card. The renderer sets height:240px inline on the grid wrapper. */
+body[data-view="summary"] .ep-sub-pane[data-ep-sub-pane="day"] > [id$="-by-day"] > div {
+  height: 260px !important;
+}
 
 
 /* Performance Score + Depth of Engagement — split into two individual

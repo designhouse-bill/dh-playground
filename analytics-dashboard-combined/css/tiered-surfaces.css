@@ -1,0 +1,14 @@
+/* ============================================================
+   UX-846 Tiered Surfaces — canonical visibility rule.
+   Single source for Standard/Advanced surface visibility.
+
+   Phase 1 (2026-05-11): rule defined, no module yet carries
+     [data-tier="advanced"] — rule has zero visual effect.
+   Phase 2: modules retagged with data-tier="standard|advanced".
+     Toggle in shared chrome flips body[data-advanced] which
+     activates this rule.
+
+   Do not duplicate in per-page CSS.
+   ============================================================ */
+
+body[data-advanced="off"] [data-tier="advanced"] { display: none !important; }

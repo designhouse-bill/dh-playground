@@ -2288,3 +2288,17 @@ a.ep-store-rank__row:last-child { border-bottom: none; }
   z-index: 1000;
   pointer-events: none;
 }
+
+/* SVG donut variant (UX-846 Report mode 2026-05-12) — replaces conic-gradient
+   donut so each V/C/A slice is a separate hover target. */
+.ep-perf-donut-svg { width: 180px; height: 180px; display: block; }
+.ep-perf-donut-svg__slice { cursor: pointer; transition: filter .15s, transform .15s; transform-origin: 100px 100px; }
+.ep-perf-donut-svg__slice:hover { filter: brightness(1.08); }
+
+/* Pill-style legend (matches Total Users legend pattern). Labels only — numbers on hover. */
+.ep-perf-donut__legend--pills { display: flex; flex-wrap: wrap; gap: 4px 12px; justify-content: center; font-size: 11px; color: var(--color-text-secondary, #6b7280); }
+.ep-perf-donut__legend-pill { display: inline-flex; align-items: center; gap: 4px; }
+.ep-perf-donut__legend-dot { width: 8px; height: 8px; border-radius: 2px; background: var(--p-text-color-muted, #9ca3af); }
+.ep-perf-donut__legend-pill--views .ep-perf-donut__legend-dot { background: var(--series-v, #2196F3); }
+.ep-perf-donut__legend-pill--clicks .ep-perf-donut__legend-dot { background: var(--series-c, #f59e0b); }
+.ep-perf-donut__legend-pill--adds .ep-perf-donut__legend-dot { background: var(--series-a, #22c55e); }

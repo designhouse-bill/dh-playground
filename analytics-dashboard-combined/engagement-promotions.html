@@ -11,7 +11,7 @@
   <!-- CSS (in dependency order) -->
   <link rel="stylesheet" href="css/design-tokens.css">
   <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/analytics-architecture.css?v=20260507-coupon-dealtype">
+  <link rel="stylesheet" href="css/analytics-architecture.css?v=4">
   <link rel="stylesheet" href="css/header.css?v=3">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
@@ -377,7 +377,7 @@
              Restructured 2026-05-07: was 3× S in single row; promoted Deal Types to
              right M so its ranking remains visible while Card Events + Coupons stay
              condensed as 1-KPI leap-offs in the left M stack. -->
-        <div class="ep-kpi-stack">
+        <div class="ep-kpi-stack ep-kpi-stack--row">
           <button class="ep-kpi-cell" data-jump-to="cardevents" type="button">
             <div class="ep-kpi-cell__head">
               <div>
@@ -387,6 +387,15 @@
               <div style="text-align:right;">
                 <div class="ep-kpi-cell__value" style="color: var(--section-cardevents, #7c3aed);">271K</div>
                 <div class="ep-kpi-cell__delta ep-kpi-cell__delta--up">▲ 7.1% · +18% vs banner</div>
+              </div>
+            </div>
+            <div class="ep-mini-donut-wrap" data-tip="Card events: 271K · Banner avg: 230K · +41K above avg (+18%)">
+              <div class="ep-mini-donut" style="background:conic-gradient(var(--section-cardevents, #7c3aed) 0% 54%, var(--color-gray-200, #e5e7eb) 54% 100%);">
+                <span class="ep-mini-donut__center">+18%<br>vs avg</span>
+              </div>
+              <div class="ep-mini-donut__legend">
+                <div class="ep-mini-donut__legend-row"><span class="ep-mini-donut__legend-swatch" style="background:var(--section-cardevents, #7c3aed);"></span><span>This banner</span><strong style="margin-left:auto;">271K</strong></div>
+                <div class="ep-mini-donut__legend-row"><span class="ep-mini-donut__legend-swatch" style="background:var(--color-gray-200, #e5e7eb);"></span><span>Banner avg</span><strong style="margin-left:auto;">230K</strong></div>
               </div>
             </div>
             <span class="ep-kpi-cell__view">Open Card Events <span class="material-symbols-outlined">chevron_right</span></span>
@@ -401,6 +410,15 @@
               <div style="text-align:right;">
                 <div class="ep-kpi-cell__value" style="color: var(--section-coupon-ink, #a16207);">15.5%</div>
                 <div class="ep-kpi-cell__delta ep-kpi-cell__delta--up">▲ 11.4% · 42K events</div>
+              </div>
+            </div>
+            <div class="ep-mini-donut-wrap" data-tip="Coupons: 38 promos · Standard: 37 promos · 51% coupon">
+              <div class="ep-mini-donut" style="background:conic-gradient(var(--section-coupon-ink, #a16207) 0% 51%, var(--color-gray-200, #e5e7eb) 51% 100%);">
+                <span class="ep-mini-donut__center">38 / 75<br>promos</span>
+              </div>
+              <div class="ep-mini-donut__legend">
+                <div class="ep-mini-donut__legend-row"><span class="ep-mini-donut__legend-swatch" style="background:var(--section-coupon-ink, #a16207);"></span><span>Coupons</span><strong style="margin-left:auto;">38</strong></div>
+                <div class="ep-mini-donut__legend-row"><span class="ep-mini-donut__legend-swatch" style="background:var(--color-gray-200, #e5e7eb);"></span><span>Standard</span><strong style="margin-left:auto;">37</strong></div>
               </div>
             </div>
             <span class="ep-kpi-cell__view">Open Coupons <span class="material-symbols-outlined">chevron_right</span></span>

@@ -290,7 +290,6 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
   display: flex;
   align-items: center;
   gap: var(--space-5);
-  margin-top: var(--space-2);
   flex-wrap: wrap;
 }
 
@@ -454,7 +453,7 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
 .ep-sub-tabs {
   display: flex;
   gap: var(--space-2);
-  padding: 0 var(--space-6);
+  padding: 0 var(--space-6) 0 0;
   flex-wrap: wrap;
 }
 
@@ -615,8 +614,63 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
 .ep-kpi-cell--l { grid-column: span 12; }
 .ep-kpi-stack { grid-column: span 6; display: flex; flex-direction: column; gap: var(--space-4); }
 .ep-kpi-stack .ep-kpi-cell { grid-column: auto; }
+/* Row variant — children share width equally (UX-846 2026-05-12). */
+.ep-kpi-stack--row { flex-direction: row; }
+.ep-kpi-stack--row > .ep-kpi-cell { flex: 1 1 0; min-width: 0; }
 @media (max-width: 900px) {
   .ep-kpi-card, .ep-kpi-cell--m, .ep-kpi-cell--s, .ep-kpi-cell--l, .ep-kpi-stack { grid-column: span 12; }
+  .ep-kpi-stack--row { flex-direction: column; }
+}
+
+/* Mini 2-part donut used inside the Card Events + Coupon density cells. */
+.ep-mini-donut-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+.ep-mini-donut {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.ep-mini-donut::after {
+  content: '';
+  position: absolute;
+  inset: 14px;
+  background: var(--color-surface, #fff);
+  border-radius: 50%;
+}
+.ep-mini-donut__center {
+  position: relative;
+  z-index: 1;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-secondary, #6b7280);
+  text-align: center;
+  line-height: 1.1;
+}
+.ep-mini-donut__legend {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+}
+.ep-mini-donut__legend-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-text-secondary, #6b7280);
+}
+.ep-mini-donut__legend-row strong { color: var(--color-text-primary, #111827); font-weight: 600; }
+.ep-mini-donut__legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
 }
 
 /* Performance + Depth split: 2/3 donut block, 1/3 vertical-bars block, inside one M cell. */

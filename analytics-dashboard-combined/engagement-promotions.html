@@ -773,6 +773,66 @@
       </div>
     </div>
 
+    <!-- ============================================================
+         IN-DEV GRID — parity with Circulars + Categories (UX-846 2026-05-12).
+         Promotions had no grid panel below the canonical charts; cloning
+         the categories pattern with promotion-* ids and a small inline
+         mock renderer so the panel appears with real-looking rows.
+         ============================================================ -->
+    <section class="layout layout--categories" id="promotions-layout">
+      <section class="panel panel--category-grid" role="main" aria-label="Promotions">
+        <div class="panel-header panel-header--categories">
+          <div class="panel-header__left">
+            <div class="perf-tabs perf-tabs--base-layer" role="tablist" aria-label="Report base layer">
+              <a class="perf-tab" href="engagement-circulars.html" role="tab">
+                <span class="material-symbols-outlined">storefront</span> Circulars
+              </a>
+              <a class="perf-tab" href="engagement-categories.html" role="tab">
+                <span class="material-symbols-outlined">category</span> Categories
+              </a>
+              <a class="perf-tab active" href="engagement-promotions.html" role="tab" aria-selected="true">
+                <span class="material-symbols-outlined">local_offer</span> Promotions
+              </a>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="more-data-toggle">
+              <span class="toggle-slider"></span>
+            </label>
+            <span class="toggle-label">More Data</span>
+          </div>
+          <div class="panel-header__center">
+            <span class="showing-count">Total Promotions: <span id="promotion-showing-count">25</span></span>
+            <div class="topn-selector">
+              <select id="topn-select" class="topn-select">
+                <option value="25" selected>Show 25</option>
+                <option value="50">Show 50</option>
+                <option value="75">Show 75</option>
+              </select>
+            </div>
+          </div>
+          <div class="panel-header__right">
+            <button class="panel-action-btn" id="panel-export-btn"><span class="material-symbols-outlined">download</span> Export</button>
+            <button class="panel-action-btn" id="panel-print-btn"><span class="material-symbols-outlined">print</span> Print</button>
+            <button class="panel-action-btn" id="panel-share-btn"><span class="material-symbols-outlined">share</span> Share</button>
+          </div>
+        </div>
+        <div class="category-data-grid" id="promotion-data-grid"></div>
+        <div class="grid-footer">
+          <div class="grid-footer__left"></div>
+          <div class="grid-footer__center">
+            <div class="grid-pagination" id="grid-pagination">
+              <button class="grid-pagination__btn" disabled><span class="material-symbols-outlined">chevron_left</span></button>
+              <span class="grid-pagination__info">Page 1 of 3</span>
+              <button class="grid-pagination__btn"><span class="material-symbols-outlined">chevron_right</span></button>
+            </div>
+          </div>
+          <div class="grid-footer__right">
+            <span class="grid-range-info">1-25 of 75</span>
+          </div>
+        </div>
+      </section>
+    </section>
+
   </main>
 
 </div><!-- /#engagement-dashboard -->
@@ -2685,6 +2745,84 @@
       const daysLabel = daysRun === 1 ? 'day' : 'days';
       runStatsEl.innerHTML = '<span class="card-run-stats__text">Ran at ' + storeCount + ' stores · ' + daysRun + ' ' + daysLabel + '</span>';
     })();
+  })();
+  </script>
+
+  <script>
+  // Mock promotion grid renderer — mirrors the categories table shape so the
+  // panel reads as parity with cats/circs. Replace w/ base-promotions wiring
+  // in Angular conversion.
+  (function () {
+    'use strict';
+    const PROMOS = [
+      { name: 'Coca-Cola 12pk',         cat: 'Beverages',  v: 18234, c:  9120, a: 5210 },
+      { name: 'Tide Pods 81ct',         cat: 'Household',  v: 15310, c:  7480, a: 4310 },
+      { name: 'Pepperidge Farm Bread',  cat: 'Bakery',     v: 12940, c:  6470, a: 3720 },
+      { name: 'Nature Valley Bars',     cat: 'Snacks',     v: 10510, c:  5060, a: 2810 },
+      { name: "Boar's Head Deli",       cat: 'Deli',       v:  8420, c:  4180, a: 2340 },
+      { name: 'Driscolls Strawberries', cat: 'Produce',    v:  7980, c:  3910, a: 2210 },
+      { name: 'Tropicana OJ 89oz',      cat: 'Beverages',  v:  7420, c:  3650, a: 2050 },
+      { name: 'Bagel Bites Family',     cat: 'Frozen',     v:  6940, c:  3380, a: 1880 },
+      { name: 'Quaker Oats 18oz',       cat: 'Pantry',     v:  6310, c:  3120, a: 1740 },
+      { name: 'Heinz Ketchup 38oz',     cat: 'Pantry',     v:  5870, c:  2890, a: 1620 },
+      { name: 'Yoplait Yogurt Cups',    cat: 'Dairy',      v:  5440, c:  2680, a: 1480 },
+      { name: 'Bumble Bee Tuna 5oz',    cat: 'Pantry',     v:  5010, c:  2470, a: 1380 },
+      { name: 'Lays Classic Chips',     cat: 'Snacks',     v:  4710, c:  2310, a: 1290 },
+      { name: 'Eggo Waffles 24ct',      cat: 'Frozen',     v:  4380, c:  2150, a: 1190 },
+      { name: 'Folgers Coffee 30oz',    cat: 'Beverages',  v:  4020, c:  1980, a: 1100 },
+      { name: 'Kraft Mac & Cheese',     cat: 'Pantry',     v:  3760, c:  1840, a: 1020 },
+      { name: 'Skippy Peanut Butter',   cat: 'Pantry',     v:  3490, c:  1710, a:  950 },
+      { name: 'Cheerios 18oz',          cat: 'Cereal',     v:  3240, c:  1590, a:  880 },
+      { name: 'Hellmanns Mayo 30oz',    cat: 'Pantry',     v:  3010, c:  1470, a:  820 },
+      { name: 'Dasani Water 24pk',      cat: 'Beverages',  v:  2790, c:  1370, a:  760 },
+      { name: 'Oscar Mayer Bacon',      cat: 'Deli',       v:  2580, c:  1260, a:  700 },
+      { name: 'Pillsbury Crescents',    cat: 'Bakery',     v:  2380, c:  1170, a:  650 },
+      { name: 'Hershey Bars 6pk',       cat: 'Snacks',     v:  2190, c:  1080, a:  600 },
+      { name: 'Goldfish Crackers',      cat: 'Snacks',     v:  2010, c:   990, a:  550 },
+      { name: 'Glade Air Freshener',    cat: 'Household',  v:  1860, c:   910, a:  500 },
+    ];
+    const grid = document.getElementById('promotion-data-grid');
+    if (!grid) return;
+    const max = PROMOS[0].v + PROMOS[0].c + PROMOS[0].a;
+    const rows = PROMOS.map((p, i) => {
+      const perf = p.v + p.c + p.a;
+      const pct = Math.round(perf / max * 100);
+      const tile = Math.round(100 - (i / PROMOS.length) * 100);
+      return `
+        <tr>
+          <td class="col-num">${i + 1}</td>
+          <td class="col-category"><div class="cell-name">${p.name}<small style="display:block;color:var(--color-text-secondary,#6b7280);">${p.cat}</small></div></td>
+          <td class="col-views">${p.v.toLocaleString()}</td>
+          <td class="col-clicks">${p.c.toLocaleString()}</td>
+          <td class="col-added">${p.a.toLocaleString()}</td>
+          <td class="col-perf">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;height:6px;background:var(--color-gray-100,#f3f4f6);border-radius:3px;overflow:hidden;">
+                <div style="width:${pct}%;height:100%;background:var(--color-primary-500,#2196F3);"></div>
+              </div>
+              <span>${perf.toLocaleString()}</span>
+            </div>
+          </td>
+          <td class="col-percentile">${tile}</td>
+          <td></td>
+        </tr>`;
+    }).join('');
+    grid.innerHTML = `
+      <table class="category-grid-table data-table--sortable">
+        <thead>
+          <tr>
+            <th class="col-num">#</th>
+            <th class="col-category">Promotion</th>
+            <th class="col-views">Views</th>
+            <th class="col-clicks">Clicks</th>
+            <th class="col-added">Added</th>
+            <th class="col-perf">Performance</th>
+            <th class="col-percentile">%tile</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>`;
   })();
   </script>
 

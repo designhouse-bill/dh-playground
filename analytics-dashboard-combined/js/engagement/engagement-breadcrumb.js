@@ -22,6 +22,17 @@
     category: 'Categories',
     promotion: 'Promotions',
   };
+
+  // Active perf-tab → display label for the trailing crumb.
+  const TAB_LABEL = {
+    overview:    'Overview',
+    sessions:    'Sessions',
+    users:       'Total Users',
+    duration:    'Duration',
+    cardevents:  'Card Events',
+    dealtype:    'Deal Types',
+    coupon:      'Coupons',
+  };
   const GRAIN_PAGE = {
     circular: 'engagement-circulars.html',
     category: 'engagement-categories.html',
@@ -68,6 +79,9 @@
     const prior = document.querySelector('.grain-breadcrumb');
     if (prior) prior.remove();
 
+    const activeTab = document.querySelector('#ep-perf-tabs .perf-tab.active')?.dataset?.epTab;
+    const tabLabel = activeTab && activeTab !== 'overview' ? TAB_LABEL[activeTab] : null;
+
     const sep = '<span class="grain-breadcrumb__sep">›</span>';
     const crumbs = [
       '<span class="grain-breadcrumb__crumb">Engagement</span>',
@@ -83,7 +97,16 @@
         sep,
       );
     }
-    crumbs.push('<span class="grain-breadcrumb__crumb grain-breadcrumb__crumb--current">' + GRAIN_LABEL[grain] + '</span>');
+    // Grain crumb is current only when no perf-tab leaf is appended.
+    if (tabLabel) {
+      crumbs.push(
+        '<span class="grain-breadcrumb__crumb">' + GRAIN_LABEL[grain] + '</span>',
+        sep,
+        '<span class="grain-breadcrumb__crumb grain-breadcrumb__crumb--current">' + tabLabel + '</span>',
+      );
+    } else {
+      crumbs.push('<span class="grain-breadcrumb__crumb grain-breadcrumb__crumb--current">' + GRAIN_LABEL[grain] + '</span>');
+    }
 
     const nav = document.createElement('nav');
     nav.className = 'grain-breadcrumb';
@@ -92,10 +115,24 @@
     hero.parentNode.insertBefore(nav, hero);
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', render);
-  } else {
+  function boot() {
     render();
+    // Re-render after perf-tab clicks so the trailing crumb tracks the
+    // active metric. Delegated on document because each page wires its
+    // own tab click handler (canonical-shell-tabs.js for cats/circs,
+    // inline IIFE on promotions) — both paths share the .perf-tab class.
+    document.addEventListener('click', function (e) {
+      const tab = e.target.closest && e.target.closest('#ep-perf-tabs .perf-tab[data-ep-tab]');
+      if (!tab) return;
+      // Wait one frame so the handler that toggles .active runs first.
+      requestAnimationFrame(render);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
   }
   document.addEventListener('engagement-shell:loaded', render);
 })();

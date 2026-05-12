@@ -2129,6 +2129,9 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
 }
 
 .ep-report-overview .ep-kpi-cell {
+  /* Override legacy .ep-kpi-cell { grid-column: span 12 } so rows use their
+     own grid (4 / 3 / 2 cols) instead of forcing each cell full-width. */
+  grid-column: auto;
   background: var(--p-surface-card, #fff);
   border: 1px solid var(--p-surface-border, #e5e7eb);
   border-radius: var(--p-border-radius, 6px);

@@ -1,16 +1,16 @@
 /**
- * engagement-breadcrumb.js — UX-846 Step 3
+ * engagement-breadcrumb.js — UX-846 (revised 2026-05-12)
  *
- * Renders the cross-grain trail above the narrative-header when a drill
- * param is present in the URL.
+ * Renders the cross-grain trail ABOVE the hero-stat (sibling, not inside),
+ * on every Overview page. Trail always carries the base path; drill params
+ * insert the parent entity hop.
  *
- *   ?store=<id>     on Categories  → "Engagement › Circulars: <store> › Categories"
- *   ?category=<id>  on Promotions  → "Engagement › Categories: <category> › Promotions"
+ *   No drill:                "Engagement › Overviews › <Grain>"
+ *   ?store=<id>   on cats    "Engagement › Overviews › Circulars: <store> › Categories"
+ *   ?category=<id> on promos "Engagement › Overviews › Categories: <category> › Promotions"
  *
  * Drill source links keep ?pub & ?entity but strip the deeper drill key
  * so back-navigation lands one level up rather than re-drilling.
- *
- * No params → element stays hidden. Failing lookup → silently no-op.
  *
  * Angular mapping: Breadcrumb component reading ActivatedRoute.queryParamMap.
  */
@@ -44,10 +44,11 @@
   }
 
   function render() {
-    const host = document.querySelector('.narrative-header');
-    if (!host) return;
+    const hero = document.querySelector('.hero-stat');
+    if (!hero || !hero.parentNode) return;
     const params = new URLSearchParams(window.location.search);
     const grain = document.body.dataset.grain;
+    if (!grain) return;
 
     let parentGrain = null;
     let parentLabel = null;
@@ -66,21 +67,29 @@
     // Remove any prior render so re-runs stay idempotent.
     const prior = document.querySelector('.grain-breadcrumb');
     if (prior) prior.remove();
-    if (!parentGrain) return;
+
+    const sep = '<span class="grain-breadcrumb__sep">›</span>';
+    const crumbs = [
+      '<span class="grain-breadcrumb__crumb">Engagement</span>',
+      sep,
+      '<span class="grain-breadcrumb__crumb">Overviews</span>',
+      sep,
+    ];
+    if (parentGrain) {
+      crumbs.push(
+        '<a class="grain-breadcrumb__crumb grain-breadcrumb__crumb--link" href="' + parentHref(parentGrain, window.location.search, dropKeys) + '">' +
+          GRAIN_LABEL[parentGrain] + (parentLabel ? ': ' + parentLabel : '') +
+        '</a>',
+        sep,
+      );
+    }
+    crumbs.push('<span class="grain-breadcrumb__crumb grain-breadcrumb__crumb--current">' + GRAIN_LABEL[grain] + '</span>');
 
     const nav = document.createElement('nav');
     nav.className = 'grain-breadcrumb';
     nav.setAttribute('aria-label', 'Breadcrumb');
-    nav.innerHTML = [
-      '<span class="grain-breadcrumb__crumb">Engagement</span>',
-      '<span class="grain-breadcrumb__sep">›</span>',
-      '<a class="grain-breadcrumb__crumb grain-breadcrumb__crumb--link" href="' + parentHref(parentGrain, window.location.search, dropKeys) + '">',
-        GRAIN_LABEL[parentGrain] + (parentLabel ? ': ' + parentLabel : ''),
-      '</a>',
-      '<span class="grain-breadcrumb__sep">›</span>',
-      '<span class="grain-breadcrumb__crumb grain-breadcrumb__crumb--current">' + GRAIN_LABEL[grain] + '</span>',
-    ].join('');
-    host.parentNode.insertBefore(nav, host);
+    nav.innerHTML = crumbs.join('');
+    hero.parentNode.insertBefore(nav, hero);
   }
 
   if (document.readyState === 'loading') {

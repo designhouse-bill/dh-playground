@@ -50,8 +50,19 @@
       panes.forEach(function (p) {
         p.classList.toggle('active', p.dataset.epPane === target);
       });
+      // Drives the .hero-stat[data-ep-active="<tab>"] CSS rules — overview = gray,
+      // sessions/users/duration/cardevents = section color tint. Matches promotions.
+      var heroStatEl = document.getElementById('ep-page-hero-stat');
+      if (heroStatEl) heroStatEl.dataset.epActive = target;
       var targetPane = root.querySelector('[data-ep-pane="' + target + '"]');
       if (targetPane) applySubTab(targetPane, currentSubTab);
+    }
+
+    // Initial state — overview tint on load (otherwise hero-stat falls back to
+    // the default --hero-stat-bg / primary-50 blue from analytics-architecture.css).
+    var initialHero = document.getElementById('ep-page-hero-stat');
+    if (initialHero && !initialHero.dataset.epActive) {
+      initialHero.dataset.epActive = 'overview';
     }
 
     tabs.forEach(function (tab) {

@@ -403,7 +403,41 @@
     );
   }
 
+  // UX-846 Report mode 2026-05-12: duration-preset is the canonical chart-range
+  // selector (1 Week / 4 Week / 13 Week / 1 Year). Co-exists with the older
+  // .ep-trend-range buttons; both write into the same trendFull[] dataset.
+  function wireDurationPresets() {
+    var counts = { '1w': 1, '1m': 4, '4w': 4, '1q': 13, '13w': 13, '1y': 52 };
+    document.querySelectorAll('.duration-preset').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var strip = btn.closest('.duration-presets');
+        strip.querySelectorAll('.duration-preset').forEach(function (b) {
+          b.classList.remove('duration-preset--active');
+          b.setAttribute('aria-selected', 'false');
+        });
+        btn.classList.add('duration-preset--active');
+        btn.setAttribute('aria-selected', 'true');
+
+        var pane = btn.closest('.ep-sub-pane');
+        var host = pane && pane.querySelector('[id$="-trend"]');
+        if (!host) return;
+        var full = trendFull[host.id];
+        if (!full) return;
+
+        var n = counts[btn.dataset.duration] || 13;
+        var weeks = full.weeks.slice(-n);
+        var vals  = full.vals.slice(-n);
+        renderTrend(host.id,
+          weeks.length < 2 ? [weeks[0], weeks[0]] : weeks,
+          vals.length  < 2 ? [vals[0],  vals[0]]  : vals,
+          full.opts
+        );
+      });
+    });
+  }
+
   function wireTrendRanges() {
+    wireDurationPresets();
     var rangeCounts = { '1w': 1, '4w': 4, '13w': 13, '1y': 52 };
     document.querySelectorAll('.ep-trend-range').forEach(function (btn) {
       btn.addEventListener('click', function () {

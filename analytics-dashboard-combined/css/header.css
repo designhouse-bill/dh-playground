@@ -279,29 +279,9 @@
   font-size: 18px;
 }
 
-/* Section crumb — "Engagement › Overviews" — sits between dashboard-switcher
-   and grain-switcher (UX-846 2026-05-12). The grain tabs that follow ARE the
-   "Overviews" sub-nav (Circulars/Categories/Promotions). */
-.section-crumb {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  font-size: var(--font-size-sm);
-  color: var(--color-gray-500, #6b7280);
-  margin-right: var(--space-3);
-  white-space: nowrap;
-}
-.section-crumb strong {
-  color: var(--color-gray-900, #111827);
-  font-weight: 600;
-}
-.section-crumb__sep {
-  color: var(--color-gray-300, #d1d5db);
-  font-weight: 400;
-}
-
-/* Grain Switcher — Circulars | Categories | Promotions
-   Mirrors view-modes pill pattern. Active state from body[data-grain]. */
+/* Grain Switcher — Overviews | Circulars | Categories | Promotions
+   Mirrors view-modes pill pattern. Leading .grain-switcher__label is a
+   non-clickable group label (UX-846 2026-05-12). Active state from body[data-grain]. */
 .grain-switcher {
   display: flex;
   align-items: stretch;
@@ -310,6 +290,20 @@
   border-radius: var(--radius-lg);
   overflow: hidden;
   margin-right: var(--space-3);
+}
+
+.grain-switcher__label {
+  display: flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  background: var(--color-gray-50, #f9fafb);
+  border-right: 1px solid var(--color-gray-200);
+  white-space: nowrap;
+  cursor: default;
+  user-select: none;
 }
 
 .grain-tab {

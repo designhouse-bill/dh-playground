@@ -259,6 +259,15 @@
              25,25,26,26,26,27,27,27,27,26,26,27,27,
              28,28,28,28,28,27,27,27,27,12,11,11,11],
       opts: { yMax:35, ySteps:5, yFmt: function (v) { return v.toFixed(0)+'%'; }, note:'Card events per week (% of cohort). Adds + Clicks + share/save/print roll-up.' }
+    },
+    // UX-846 Report mode 2026-05-12: Performance Score = V/C/A composite (replaces cardevents pane).
+    'ep-performance-trend': {
+      weeks: W52,
+      vals: [110,112,114,116,118,120,122,124,126,128,130,132,134,
+             134,136,138,140,142,144,146,148,150,152,154,156,158,
+             158,160,162,164,166,168,170,172,174,176,178,180,182,
+             182,180,178,176,174,172,170,168,166,150,148,146,142],
+      opts: { yMax:200, ySteps:5, yFmt: function (v) { return v.toFixed(0)+'K'; }, note:'Performance Score (V/C/A composite, thousand-points per week).' }
     }
   };
 
@@ -370,6 +379,28 @@
     );
     var cardeventsHero = document.getElementById('ep-cardevents-hero-value');
     if (cardeventsHero) cardeventsHero.textContent = '271,298';
+
+    // Performance Score (UX-846 Report mode) — same V/C/A composite shape.
+    renderStackedList('ep-performance-by-store', [
+      { rank: 1, name: '#336 Hollywood, FL',     sub: '18.2K points', clicks: 7800, adds: 4100, other: 6300 },
+      { rank: 2, name: '#421 Pembroke Pines',    sub: '15.3K points', clicks: 6600, adds: 3500, other: 5200 },
+      { rank: 3, name: '#189 Aventura',          sub: '12.9K points', clicks: 5600, adds: 2900, other: 4400 },
+      { rank: 4, name: '#052 Miami Beach',       sub: '10.5K points', clicks: 4500, adds: 2400, other: 3600 },
+      { rank: 5, name: '#214 Boca Raton',        sub: '8.4K points',  clicks: 3700, adds: 1900, other: 2800 }
+    ], [
+      { key: 'clicks', cls: 'v', label: 'Views' },
+      { key: 'adds',   cls: 'c', label: 'Clicks' },
+      { key: 'other',  cls: 'a', label: 'Adds' }
+    ]);
+    renderDoWColumns('ep-performance-by-day', [
+      { d: 'MON', n: 18500 }, { d: 'TUE', n: 19200 }, { d: 'WED', n: 20800 },
+      { d: 'THU', n: 22400 }, { d: 'FRI', n: 24600 }, { d: 'SAT', n: 23800 }, { d: 'SUN', n: 13500 }
+    ], { label: 'Performance Score', tooltip: 'dark' });
+    var performanceOpts = Object.assign({}, trendFull['ep-performance-trend'].opts, { tooltip: 'dark' });
+    renderTrend('ep-performance-trend', W13,
+      [134,136,138,140,142,144,146,148,150,148,146,142,142],
+      performanceOpts
+    );
   }
 
   function wireTrendRanges() {

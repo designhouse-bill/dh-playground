@@ -11,7 +11,7 @@
   <!-- CSS -->
   <link rel="stylesheet" href="css/design-tokens.css">
   <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/analytics-architecture.css?v=5">
+  <link rel="stylesheet" href="css/analytics-architecture.css?v=6">
   <link rel="stylesheet" href="css/header.css?v=3">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
@@ -777,8 +777,10 @@
   <script src="js/engagement/engagement-url-sync.js?v=1"></script>
   <script src="js/engagement/engagement-drill.js?v=1"></script>
   <script src="js/engagement/engagement-breadcrumb.js?v=3"></script>
-  <script src="js/shared/surface-controller.js?v=3"></script>
-  <script src="js/engagement/sub-pane-summaries.js?v=11"></script>
+  <!-- UX-846 Report mode 2026-05-12: surface-controller + sub-pane-summaries
+       drove summary/detail flip + Overview sub-tab injection. Both removed
+       per plan (3 sub-tabs only, no surface flip). -->
+  <script>document.body.dataset.view = 'detail';</script>
   <script src="js/vendor/echarts.min.js"></script>
   <script src="js/shared/chart-colors.js"></script>
   <script src="js/data/engagement-promotions.js"></script>
@@ -792,7 +794,7 @@
   <script src="js/engagement/shared-perf-charts.js"></script>
   <script src="js/engagement/canonical-shell-tabs.js?v=5"></script>
   <script src="js/engagement/mock-metric-panes.js?v=2"></script>
-  <script src="js/engagement/canonical-shell-renderers.js?v=1"></script>
+  <script src="js/engagement/canonical-shell-renderers.js?v=3"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       if (window.CanonicalShellRenderers) {

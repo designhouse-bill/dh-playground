@@ -239,6 +239,8 @@
   /* Engagement section accent colors — same palette family (mid-saturation hues + very light tint) */
   --section-overview:         #4f46e5;
   --section-overview-light:   #eef2ff;
+  --section-performance:      #2196F3;
+  --section-performance-light:#e3f2fd;
   --section-sessions:         #2563eb;
   --section-sessions-light:   #eff6ff;
   --section-users:            #0891b2;

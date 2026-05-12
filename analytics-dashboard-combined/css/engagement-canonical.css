@@ -129,6 +129,7 @@
        RULE: hero-stat bg + accent must always pair the section's
        light + base color tokens — defines the section visually. */
     .hero-stat[data-ep-active="overview"]   { --section-color: var(--color-text-secondary, #6b7280); --section-color-light: #f3f4f6; --section-color-ink: var(--color-text-secondary, #6b7280); }
+    .hero-stat[data-ep-active="performance"] { --section-color: var(--section-performance); --section-color-light: var(--section-performance-light); --section-color-ink: var(--section-performance); }
     .hero-stat[data-ep-active="sessions"]   { --section-color: var(--section-sessions);   --section-color-light: var(--section-sessions-light);   --section-color-ink: var(--section-sessions); }
     .hero-stat[data-ep-active="users"]      { --section-color: var(--section-users);      --section-color-light: var(--section-users-light);      --section-color-ink: var(--section-users); }
     .hero-stat[data-ep-active="duration"]   { --section-color: var(--section-duration);   --section-color-light: var(--section-duration-light);   --section-color-ink: var(--section-duration); }

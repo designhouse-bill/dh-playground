@@ -7,7 +7,7 @@
  * Scope: pages with a wrapper element matching `.engagement-canonical`.
  * Hooks: data-ep-tab, data-ep-pane, data-ep-sub, data-ep-sub-pane, data-jump-to.
  *
- * Behavior mirrors engagement-promotions.html inline tab logic so
+ * Behavior mirrors engagement-report.html inline tab logic so
  * bare pages (categories/circulars/grid) get the same UX without duplicating it.
  */
 (function () {
@@ -19,7 +19,8 @@
     var tabBar = root.querySelector('#ep-perf-tabs') || document.querySelector('#ep-perf-tabs');
     var tabs = tabBar ? tabBar.querySelectorAll('.perf-tab') : [];
     var panes = root.querySelectorAll('.perf-tab-pane');
-    var currentSubTab = 'store';
+    // UX-846 Report mode 2026-05-12: Time Trend is default sub-tab per plan.
+    var currentSubTab = 'trend';
 
     function applySubTab(pane, key) {
       var subTabs = pane.querySelectorAll('.ep-sub-tab');
@@ -64,6 +65,19 @@
     if (initialHero && !initialHero.dataset.epActive) {
       initialHero.dataset.epActive = 'overview';
     }
+
+    // UX-846 Report mode 2026-05-12: parse ?tab=X on load so KPI tile
+     // hrefs (engagement-report.html?tab=performance) activate the pane.
+    try {
+      var urlTab = new URLSearchParams(window.location.search).get('tab');
+      if (urlTab) {
+        var match = Array.from(tabs).some(function (t) { return t.dataset.epTab === urlTab; });
+        if (match) {
+          document.body.dataset.activeTab = urlTab;
+          activateTab(urlTab);
+        }
+      }
+    } catch (_) {}
 
     tabs.forEach(function (tab) {
       tab.addEventListener('click', function () {

@@ -27,10 +27,8 @@ function epPage(file) {
 }
 
 const PAGES = [
-  epPage('engagement-promotions.html'),
-  epPage('engagement-categories.html'),
-  epPage('engagement-circulars.html'),
-  epPage('engagement-grid.html'),
+  epPage('engagement-report.html'),
+  epPage('engagement-explore.html'),
   { file: 'engagement-compare.html', tabAttr: null, tabs: [] },
   // Visitation: data-perf-tab top + view-toggle on By Store
   {

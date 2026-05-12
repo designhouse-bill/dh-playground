@@ -3,7 +3,7 @@
  *
  * Runtime fetch+inject for partials/engagement-tabs-shell.html.
  * Mount: <div data-shell="engagement-tabs"></div> placeholder in consumer page.
- * Active perf-tab: body[data-active-tab="overview|sessions|users|duration|cardevents|data-grid"].
+ * Active perf-tab: body[data-active-tab="overview|performance|users|sessions|duration (Report mode)"].
  *
  * After inject, dispatches `engagement-shell:loaded` on document so downstream
  * scripts (canonical-shell-tabs.js, header-slide.js, page-app) can wire up.

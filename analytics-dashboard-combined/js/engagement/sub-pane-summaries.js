@@ -230,20 +230,9 @@
   }
 
 
-  function ensureOverviewTab(pane) {
-    const nav = pane.querySelector('.ep-sub-tabs');
-    if (!nav || nav.querySelector('[data-ep-sub="overview"]')) return;
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'ep-sub-tab';
-    btn.setAttribute('role', 'tab');
-    btn.setAttribute('data-ep-sub', 'overview');
-    btn.textContent = 'Overview';
-    btn.addEventListener('click', () => {
-      if (window.UX846Surface) window.UX846Surface.setView('summary');
-    });
-    nav.insertBefore(btn, nav.firstChild);
-  }
+  // UX-846 Report mode 2026-05-12: Overview sub-tab removed per plan
+  // (each KPI pane = Time Trend / By Circular / By Day only).
+  function ensureOverviewTab(_pane) { /* no-op */ }
 
   // Active sub-tab state must reflect the current view. In summary the
   // Overview tab is active; in detail the tab matching the active sub-pane

@@ -1,6 +1,6 @@
 /**
  * GRID INQUIRY - Data Grid View for Analytics Dashboard
- * Page-specific logic for engagement-grid.html
+ * Page-specific logic for engagement-explore.html
  */
 
 (function() {

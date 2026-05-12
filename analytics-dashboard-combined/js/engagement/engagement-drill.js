@@ -21,9 +21,10 @@
 (function () {
   'use strict';
 
+  // UX-846 Report mode 2026-05-12: drill all targets → Explore prefiltered.
   const DRILL_TARGETS = {
-    category: { page: 'engagement-categories.html', paramKey: 'store',    parentGrain: 'circular' },
-    promotion: { page: 'engagement-promotions.html', paramKey: 'category', parentGrain: 'category' },
+    category: { page: 'engagement-explore.html', paramKey: 'store',    parentGrain: 'circular' },
+    promotion: { page: 'engagement-explore.html', paramKey: 'category', parentGrain: 'category' },
   };
 
   function onClick(event) {

@@ -1,8 +1,7 @@
 /**
  * engagement-page-app.js — Lightweight controller for standalone engagement pages.
  *
- * Replaces app.js on engagement-promotions.html, engagement-categories.html,
- * engagement-circulars.html, engagement-grid.html, and engagement-compare.html.
+ * Runs on engagement-report.html, engagement-explore.html, and engagement-compare.html.
  *
  * Handles: dashboard switcher navigation, brand/logo click → home,
  * and window resize for eCharts.

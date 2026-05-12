@@ -2,7 +2,7 @@
  * canonical-shell-renderers.js — UX-846 Phase 5e
  *
  * Shared sub-pane renderers for the canonical Engagement shell.
- * Source-extracted (zero-drift) from engagement-promotions.html
+ * Source-extracted (zero-drift) from engagement-report.html
  * inline factories so bare engagement pages (categories / circulars / grid)
  * render the same By Store / By Day / Time Trend visuals.
  *

@@ -553,7 +553,7 @@
     .ep-detail-strip { flex-wrap: wrap; }
     .ep-detail-strip__cell--metric .ep-detail-strip__value { color: var(--color-text, #1f2937); }
 
-    /* Ranked Table — preserves parity with Original engagement-promotions.html */
+    /* Ranked Table — preserves parity with Original engagement-report.html */
     .ep-ranked-table-wrap {
       background: #fff;
       border: 1px solid var(--color-border, #e5e7eb);

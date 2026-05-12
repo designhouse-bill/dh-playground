@@ -33,10 +33,11 @@
     dealtype:    'Deal Types',
     coupon:      'Coupons',
   };
+  // UX-846 Report mode 2026-05-12: 3 slice pages collapsed to single Report.
   const GRAIN_PAGE = {
-    circular: 'engagement-circulars.html',
-    category: 'engagement-categories.html',
-    promotion: 'engagement-promotions.html',
+    circular: 'engagement-report.html',
+    category: 'engagement-report.html',
+    promotion: 'engagement-report.html',
   };
 
   function lookupName(kind, id) {

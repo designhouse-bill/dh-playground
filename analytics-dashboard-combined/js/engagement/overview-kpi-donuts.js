@@ -1,7 +1,7 @@
 /* ============================================================
    overview-kpi-donuts.js — Phase 5a (UX-846, 2026-05-04)
    Renders 4 donut charts in the Overview 2×2 KPI grid on
-   engagement-circulars.html. Each cell breaks down its KPI by
+   engagement-report.html. Each cell breaks down its KPI by
    semantically meaningful segments. Center stat is provided
    inline by the HTML; donut shows distribution behind it.
    ============================================================ */
@@ -162,7 +162,7 @@
         }
         // R2 (2026-05-06): sub-pages dropped; deep-link via ?tab=X.
         if (['sessions','users','duration','cardevents'].indexOf(target) !== -1) {
-          window.location.href = 'engagement-circulars.html?tab=' + target;
+          window.location.href = 'engagement-report.html?tab=' + target;
         }
       });
     });

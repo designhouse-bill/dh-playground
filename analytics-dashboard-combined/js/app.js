@@ -139,7 +139,7 @@
         if (btn.dataset.dashboard === 'distribution') {
           window.location.href = 'distribution-visitation.html';
         } else if (btn.dataset.dashboard === 'engagement') {
-          window.location.href = 'engagement-promotions.html';
+          window.location.href = 'engagement-report.html';
         } else {
           switchDashboard(btn.dataset.dashboard);
         }
@@ -227,7 +227,7 @@
           return;
         }
         if (target === 'engagement') {
-          window.location.href = 'engagement-promotions.html';
+          window.location.href = 'engagement-report.html';
           return;
         }
         if (target) switchDashboard(target);
@@ -262,7 +262,7 @@
     // Hash routing: distribution pages link back as index.html#engagement
     // Redirect to standalone engagement page
     if (window.location.hash === '#engagement') {
-      window.location.href = 'engagement-promotions.html';
+      window.location.href = 'engagement-report.html';
       return;
     }
   });

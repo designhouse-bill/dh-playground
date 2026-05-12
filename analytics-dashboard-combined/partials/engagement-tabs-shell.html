@@ -1,12 +1,12 @@
 <!--
-  Engagement Tabs Shell — UX-846 Phase 1 (runtime fetch+inject)
+  Engagement Tabs Shell — UX-846 Report Mode (runtime fetch+inject)
   Fetched by js/engagement/shell-loader.js into <div data-shell="engagement-tabs"> placeholder.
-  Active tab = body[data-active-tab="overview|sessions|users|duration|cardevents|data-grid"].
+  Active tab = body[data-active-tab="overview|performance|users|sessions|duration"].
 
   Scope: entity-agnostic chrome only.
     - dh-top-bar
     - <header class="header"> (topbar + dashboard-switcher + view-modes + context-row)
-    - perf-tabs strip (6 tabs: overview / sessions / users / duration / cardevents / data-grid)
+    - perf-tabs strip (5 tabs: overview / performance / users / sessions / duration)
     - ep-detail-sidebar (closing chrome)
 
   NOT in shell (per-page inline):
@@ -62,25 +62,13 @@
 
     </div>
 
-    <nav class="grain-switcher" id="grain-switcher" aria-label="Overviews">
-      <span class="grain-switcher__label">Overviews</span>
-      <a class="grain-tab" data-grain-link="circular" href="engagement-circulars.html">
-        <span class="material-symbols-outlined">menu_book</span>
-        Circulars
-      </a>
-      <a class="grain-tab" data-grain-link="category" href="engagement-categories.html">
-        <span class="material-symbols-outlined">category</span>
-        Categories
-      </a>
-      <a class="grain-tab" data-grain-link="promotion" href="engagement-promotions.html">
-        <span class="material-symbols-outlined">sell</span>
-        Promotions
-      </a>
-    </nav>
-
-    <!-- View Modes (UX-846 2026-05-12: REPORT removed; the three grain tabs ARE the Overviews surface) -->
+    <!-- View Modes — main nav: Report / Explore Data / Compare (UX-846 Report mode 2026-05-12) -->
     <div class="view-modes" id="view-modes">
-      <a class="mode-btn mode-btn--outline" href="engagement-grid.html" aria-label="Explore data">
+      <a class="mode-btn mode-btn--outline" href="engagement-report.html" aria-label="Report">
+        <span class="material-symbols-outlined">monitoring</span>
+        Report
+      </a>
+      <a class="mode-btn mode-btn--outline" href="engagement-explore.html" aria-label="Explore data">
         <span class="material-symbols-outlined">table_chart</span>
         Explore Data
       </a>
@@ -148,37 +136,33 @@
 
 </header>
 
-<!-- perf-tabs strip — 5 metric tabs (single-page deep-link via ?tab=X) +
-     Data Grid which routes out to canonical Explore (engagement-grid.html).
-     R2 (2026-05-06): sub-page files dropped; shell-loader.js parses ?tab=X. -->
+<!-- perf-tabs strip — Report mode (UX-846 2026-05-12): Overview + 4 KPI panes.
+     Order = value-ranked: outcome → audience → activity → depth.
+     Single-page deep-link via ?tab=X; shell-loader.js parses it. -->
 <div class="perf-tabs" id="ep-perf-tabs" role="tablist">
-  <a class="perf-tab" data-ep-tab="overview" data-href="engagement-circulars.html" role="tab">
+  <a class="perf-tab" data-ep-tab="overview" data-href="engagement-report.html" role="tab">
     <span class="material-symbols-outlined">dashboard</span> Overview
   </a>
-  <a class="perf-tab" data-ep-tab="sessions" data-href="engagement-circulars.html?tab=sessions" role="tab">
-    <span class="material-symbols-outlined">analytics</span> Sessions
+  <a class="perf-tab" data-ep-tab="performance" data-href="engagement-report.html?tab=performance" role="tab">
+    <span class="material-symbols-outlined">trending_up</span> Performance Score
   </a>
-  <a class="perf-tab" data-ep-tab="users" data-href="engagement-circulars.html?tab=users" role="tab">
+  <a class="perf-tab" data-ep-tab="users" data-href="engagement-report.html?tab=users" role="tab">
     <span class="material-symbols-outlined">group</span> Total Users
   </a>
-  <a class="perf-tab" data-ep-tab="duration" data-href="engagement-circulars.html?tab=duration" role="tab">
-    <span class="material-symbols-outlined">schedule</span> Avg Session Duration
+  <a class="perf-tab" data-ep-tab="sessions" data-href="engagement-report.html?tab=sessions" role="tab">
+    <span class="material-symbols-outlined">analytics</span> Sessions
   </a>
-  <a class="perf-tab" data-ep-tab="cardevents" data-href="engagement-circulars.html?tab=cardevents" role="tab">
-    <span class="material-symbols-outlined">ads_click</span> Card Engagement Events
-  </a>
-  <a class="perf-tab" data-ep-tab="data-grid" data-href="engagement-grid.html" role="tab">
-    <span class="material-symbols-outlined">table_chart</span> Data Grid
+  <a class="perf-tab" data-ep-tab="duration" data-href="engagement-report.html?tab=duration" role="tab">
+    <span class="material-symbols-outlined">schedule</span> Avg Duration
   </a>
 </div>
 <!-- Decision 7 prototype — mobile collapse: native select mirrors Row 1 perf-tabs -->
 <select class="ep-section-select" id="ep-section-select" aria-label="Engagement section (mobile)">
   <option value="overview">Overview</option>
-  <option value="sessions">Sessions</option>
+  <option value="performance">Performance Score</option>
   <option value="users">Total Users</option>
-  <option value="duration">Avg Session Duration</option>
-  <option value="cardevents">Card Engagement Events</option>
-  <option value="data-grid">Data Grid</option>
+  <option value="sessions">Sessions</option>
+  <option value="duration">Avg Duration</option>
 </select>
 
 <!-- Right detail sidebar (DP8.2) — slides in on row/chip click. -->

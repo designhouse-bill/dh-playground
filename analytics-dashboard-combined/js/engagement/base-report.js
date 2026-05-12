@@ -1,6 +1,6 @@
 /**
  * BASE CIRCULARS - Stores View for Analytics Dashboard
- * Page-specific logic for engagement-circulars.html
+ * Page-specific logic for engagement-report.html
  *
  * Shows all stores with their aggregated metrics,
  * allowing drill-down to categories and promotions.
@@ -674,7 +674,7 @@
     setStoreEntityContext();
 
     core.saveState();
-    StateManager.navigateTo('engagement-categories.html', state, { storeId: state.selectedStoreId });
+    StateManager.navigateTo('engagement-explore.html', state, { storeId: state.selectedStoreId, grain: 'category' });
   }
 
   /**
@@ -690,7 +690,7 @@
     setStoreEntityContext();
 
     core.saveState();
-    StateManager.navigateTo('engagement-promotions.html', state, { storeId: state.selectedStoreId });
+    StateManager.navigateTo('engagement-explore.html', state, { storeId: state.selectedStoreId, grain: 'promotion' });
   }
 
   /**
@@ -706,8 +706,7 @@
     setStoreEntityContext();
 
     core.saveState();
-    // R2 (2026-05-06): data-grid sub-page dropped; route to canonical Explore surface.
-    StateManager.navigateTo('engagement-grid.html', state, { storeId: state.selectedStoreId });
+    StateManager.navigateTo('engagement-explore.html', state, { storeId: state.selectedStoreId });
   }
 
   /**

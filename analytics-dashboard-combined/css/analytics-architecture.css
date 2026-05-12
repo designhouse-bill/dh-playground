@@ -2205,9 +2205,12 @@ a.ep-store-rank__row:last-child { border-bottom: none; }
 /* Override legacy hardcoded swatch hex in .ep-perf-tooltip__dot--* to align
    tooltip dots with the canonical --series-* triad colors used by all
    stacked bars on the Report Overview. */
-.ep-perf-tooltip__dot--views { background: var(--series-v, #2196F3) !important; }
-.ep-perf-tooltip__dot--clicks { background: var(--series-c, #f59e0b) !important; }
-.ep-perf-tooltip__dot--adds { background: var(--series-a, #22c55e) !important; }
+.ep-perf-tooltip__dot--views,
+.ep-perf-tooltip__dot--v { background: var(--series-v, #2196F3) !important; }
+.ep-perf-tooltip__dot--clicks,
+.ep-perf-tooltip__dot--c { background: var(--series-c, #f59e0b) !important; }
+.ep-perf-tooltip__dot--adds,
+.ep-perf-tooltip__dot--a { background: var(--series-a, #22c55e) !important; }
 .ep-perf-tooltip__dot--n { background: var(--users-new, #06b6d4); }
 .ep-perf-tooltip__dot--r { background: var(--users-returning, #0e7490); }
 .ep-perf-tooltip__dot--e { background: var(--users-engaged, #155e75); }

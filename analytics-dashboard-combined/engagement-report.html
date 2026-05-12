@@ -11,7 +11,7 @@
   <!-- CSS -->
   <link rel="stylesheet" href="css/design-tokens.css?v=2">
   <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/analytics-architecture.css?v=15">
+  <link rel="stylesheet" href="css/analytics-architecture.css?v=16">
   <link rel="stylesheet" href="css/header.css?v=3">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
@@ -775,7 +775,7 @@
   <script src="js/engagement/shared-perf-charts.js"></script>
   <script src="js/engagement/canonical-shell-tabs.js?v=6"></script>
   <script src="js/engagement/mock-metric-panes.js?v=2"></script>
-  <script src="js/engagement/canonical-shell-renderers.js?v=4"></script>
+  <script src="js/engagement/canonical-shell-renderers.js?v=5"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       if (window.CanonicalShellRenderers) {
@@ -826,16 +826,28 @@
         }
         return html;
       }
-      document.querySelectorAll('[data-perf-hover]').forEach(function (el) {
-        el.addEventListener('mouseenter', function () {
-          var tip = R.ensurePerfTooltip({ tooltip: 'dark' });
-          tip.innerHTML = buildHTML(el);
-          tip.classList.add('ep-perf-tooltip--visible');
-        });
-        el.addEventListener('mousemove', R.positionPerfTooltip);
-        el.addEventListener('mouseleave', function () {
-          R.ensurePerfTooltip().classList.remove('ep-perf-tooltip--visible');
-        });
+      // Event delegation so dynamically rendered rows (renderStackedList output)
+      // pick up the hover without needing a rewire pass after each render.
+      var currentTarget = null;
+      document.addEventListener('mouseover', function (e) {
+        var el = e.target.closest('[data-perf-hover]');
+        if (el === currentTarget) return;
+        if (currentTarget) R.ensurePerfTooltip().classList.remove('ep-perf-tooltip--visible');
+        currentTarget = el;
+        if (!el) return;
+        var tip = R.ensurePerfTooltip({ tooltip: 'dark' });
+        tip.innerHTML = buildHTML(el);
+        tip.classList.add('ep-perf-tooltip--visible');
+      });
+      document.addEventListener('mousemove', function (e) {
+        if (currentTarget) R.positionPerfTooltip(e);
+      });
+      document.addEventListener('mouseout', function (e) {
+        if (!currentTarget) return;
+        var rel = e.relatedTarget;
+        if (rel && currentTarget.contains(rel)) return;
+        R.ensurePerfTooltip().classList.remove('ep-perf-tooltip--visible');
+        currentTarget = null;
       });
     }
   </script>

@@ -53,14 +53,30 @@
     window.epMetrics[hostId] = { rows: rows, segDefs: segDefs, totalFmt: totalFmt };
     var totals = rows.map(function (r) { return segDefs.reduce(function (s, d) { return s + (r[d.key] || 0); }, 0); });
     var max = Math.max.apply(null, totals);
+    // Pane key drives tooltip title ("Performance Score" / "Total Users" / etc).
+    var paneTitle = ({
+      'ep-performance-by-store': 'Performance Score',
+      'ep-sessions-by-store':    'Sessions',
+      'ep-users-by-store':       'Total Users',
+      'ep-duration-by-store':    'Avg Duration',
+      'ep-cardevents-by-store':  'Card Events'
+    })[hostId] || 'By Circular';
     host.innerHTML = rows.map(function (r, i) {
       var total = totals[i];
       var w = function (n) { return (n / max * 100).toFixed(1) + '%'; };
       var segs = segDefs.map(function (d) {
-        return '<div class="ep-stacked-list__seg ep-stacked-list__seg--' + d.cls + '" style="width:' + w(r[d.key]) + '" title="' + d.label + ': ' + (r[d.key] || 0).toLocaleString() + '"></div>';
+        return '<div class="ep-stacked-list__seg ep-stacked-list__seg--' + d.cls + '" style="width:' + w(r[d.key]) + '"></div>';
       }).join('');
+      // Build data-perf-rows JSON for dark hover overlay (matches the rest of Report).
+      var perfRows = segDefs.map(function (d) {
+        return { dot: d.cls, name: d.label, val: (r[d.key] || 0).toLocaleString() };
+      });
+      var perfRowsAttr = JSON.stringify(perfRows).replace(/"/g, '&quot;');
+      var totalLabel = (segDefs[0] && segDefs[0].label === 'Views') ? 'Total Score' : 'Total';
+      var perfTotal = JSON.stringify({ label: totalLabel, val: (totalFmt ? totalFmt(total) : total.toLocaleString()) }).replace(/"/g, '&quot;');
+      var title = paneTitle + ' · ' + r.name + ' · Week 47';
       return ''
-        + '<div class="ep-stacked-list__row">'
+        + '<div class="ep-stacked-list__row" data-perf-hover data-perf-title="' + title + '" data-perf-rows="' + perfRowsAttr + '" data-perf-total="' + perfTotal + '">'
         +   '<div class="ep-stacked-list__rank">' + r.rank + '</div>'
         +   '<div class="ep-stacked-list__name">' + r.name + (r.sub ? '<small>' + r.sub + '</small>' : '') + '</div>'
         +   '<div class="ep-stacked-list__bar">' + segs + '</div>'

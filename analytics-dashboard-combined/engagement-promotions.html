@@ -2783,11 +2783,16 @@
     ];
     const grid = document.getElementById('promotion-data-grid');
     if (!grid) return;
-    const max = PROMOS[0].v + PROMOS[0].c + PROMOS[0].a;
+    const maxPerf = PROMOS[0].v + PROMOS[0].c + PROMOS[0].a;
     const rows = PROMOS.map((p, i) => {
       const perf = p.v + p.c + p.a;
-      const pct = Math.round(perf / max * 100);
+      // Row's bar width scales to max performer; segments split V/C/A proportionally inside that bar.
+      const widthPct = perf / maxPerf * 100;
+      const vPct = p.v / perf * 100;
+      const cPct = p.c / perf * 100;
+      const aPct = p.a / perf * 100;
       const tile = Math.round(100 - (i / PROMOS.length) * 100);
+      const tip = `${p.name} — Views ${p.v.toLocaleString()} · Clicks ${p.c.toLocaleString()} · Adds ${p.a.toLocaleString()}`;
       return `
         <tr>
           <td class="col-num">${i + 1}</td>
@@ -2796,9 +2801,11 @@
           <td class="col-clicks">${p.c.toLocaleString()}</td>
           <td class="col-added">${p.a.toLocaleString()}</td>
           <td class="col-perf">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;height:6px;background:var(--color-gray-100,#f3f4f6);border-radius:3px;overflow:hidden;">
-                <div style="width:${pct}%;height:100%;background:var(--color-primary-500,#2196F3);"></div>
+            <div class="perf-vca" data-tip="${tip}" style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;height:8px;border-radius:4px;overflow:hidden;background:var(--color-gray-100,#f3f4f6);display:flex;">
+                <div class="perf-vca__seg perf-vca__seg--v" style="width:${widthPct * vPct / 100}%;background:var(--series-v,#2196F3);"></div>
+                <div class="perf-vca__seg perf-vca__seg--c" style="width:${widthPct * cPct / 100}%;background:var(--series-c,#f59e0b);"></div>
+                <div class="perf-vca__seg perf-vca__seg--a" style="width:${widthPct * aPct / 100}%;background:var(--series-a,#22c55e);"></div>
               </div>
               <span>${perf.toLocaleString()}</span>
             </div>
@@ -2816,13 +2823,35 @@
             <th class="col-views">Views</th>
             <th class="col-clicks">Clicks</th>
             <th class="col-added">Added</th>
-            <th class="col-perf">Performance</th>
+            <th class="col-perf">Performance <span style="display:inline-flex;gap:6px;font-weight:400;font-size:11px;color:var(--color-text-secondary,#6b7280);margin-left:6px;"><span style="display:inline-flex;align-items:center;gap:3px;"><span style="width:8px;height:8px;background:var(--series-v,#2196F3);border-radius:2px;"></span>V</span><span style="display:inline-flex;align-items:center;gap:3px;"><span style="width:8px;height:8px;background:var(--series-c,#f59e0b);border-radius:2px;"></span>C</span><span style="display:inline-flex;align-items:center;gap:3px;"><span style="width:8px;height:8px;background:var(--series-a,#22c55e);border-radius:2px;"></span>A</span></span></th>
             <th class="col-percentile">%tile</th>
             <th></th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
       </table>`;
+
+    // Dark hover tooltip — single positioned div, content sourced from data-tip.
+    const tip = document.createElement('div');
+    tip.className = 'chart-tooltip';
+    tip.style.cssText = 'position:fixed;z-index:9999;background:rgba(17,24,39,0.95);color:#fff;padding:6px 10px;border-radius:6px;font-size:12px;line-height:1.4;pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,0.3);max-width:280px;display:none;';
+    document.body.appendChild(tip);
+    grid.addEventListener('mouseover', (e) => {
+      const el = e.target.closest('[data-tip]');
+      if (!el) return;
+      tip.textContent = el.dataset.tip;
+      tip.style.display = 'block';
+    });
+    grid.addEventListener('mousemove', (e) => {
+      if (tip.style.display === 'block') {
+        tip.style.left = (e.clientX + 12) + 'px';
+        tip.style.top  = (e.clientY + 12) + 'px';
+      }
+    });
+    grid.addEventListener('mouseout', (e) => {
+      const el = e.target.closest('[data-tip]');
+      if (el) tip.style.display = 'none';
+    });
   })();
   </script>
 

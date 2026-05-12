@@ -150,28 +150,6 @@
 
 </header>
 
-<!-- perf-tabs strip — 5 metric tabs + Data Grid leap-off. -->
-<div class="perf-tabs" id="ep-perf-tabs" role="tablist">
-  <a class="perf-tab active" data-ep-tab="overview" href="engagement-circulars.html" role="tab" aria-selected="true">
-    <span class="material-symbols-outlined">dashboard</span> Overview
-  </a>
-  <a class="perf-tab" data-ep-tab="sessions" href="engagement-circulars.html?tab=sessions" role="tab">
-    <span class="material-symbols-outlined">analytics</span> Sessions
-  </a>
-  <a class="perf-tab" data-ep-tab="users" href="engagement-circulars.html?tab=users" role="tab">
-    <span class="material-symbols-outlined">group</span> Total Users
-  </a>
-  <a class="perf-tab" data-ep-tab="duration" href="engagement-circulars.html?tab=duration" role="tab">
-    <span class="material-symbols-outlined">schedule</span> Avg Session Duration
-  </a>
-  <a class="perf-tab" data-ep-tab="cardevents" href="engagement-circulars.html?tab=cardevents" role="tab">
-    <span class="material-symbols-outlined">ads_click</span> Card Engagement Events
-  </a>
-  <a class="perf-tab" data-ep-tab="data-grid" href="engagement-grid.html" role="tab">
-    <span class="material-symbols-outlined">table_chart</span> Data Grid
-  </a>
-</div>
-
 <!-- Right detail sidebar (DP8.2) — slides in on row/chip click. -->
 <aside class="ep-detail-sidebar" id="ep-detail-sidebar" role="complementary" aria-label="Details" aria-hidden="true">
   <div class="ep-detail-sidebar__header">
@@ -227,7 +205,27 @@
       </div>
     </div>
 
-    <!-- perf-tabs strip lives in partials/engagement-tabs-shell.html (Phase 1 refactor) -->
+    <!-- perf-tabs strip — 5 metric tabs + Data Grid leap-off. Under hero-stat per UX-846 2026-05-12. -->
+    <div class="perf-tabs" id="ep-perf-tabs" role="tablist">
+      <a class="perf-tab active" data-ep-tab="overview" href="engagement-circulars.html" role="tab" aria-selected="true">
+        <span class="material-symbols-outlined">dashboard</span> Overview
+      </a>
+      <a class="perf-tab" data-ep-tab="sessions" href="engagement-circulars.html?tab=sessions" role="tab">
+        <span class="material-symbols-outlined">analytics</span> Sessions
+      </a>
+      <a class="perf-tab" data-ep-tab="users" href="engagement-circulars.html?tab=users" role="tab">
+        <span class="material-symbols-outlined">group</span> Total Users
+      </a>
+      <a class="perf-tab" data-ep-tab="duration" href="engagement-circulars.html?tab=duration" role="tab">
+        <span class="material-symbols-outlined">schedule</span> Avg Session Duration
+      </a>
+      <a class="perf-tab" data-ep-tab="cardevents" href="engagement-circulars.html?tab=cardevents" role="tab">
+        <span class="material-symbols-outlined">ads_click</span> Card Engagement Events
+      </a>
+      <a class="perf-tab" data-ep-tab="data-grid" href="engagement-grid.html" role="tab">
+        <span class="material-symbols-outlined">table_chart</span> Data Grid
+      </a>
+    </div>
 
     <div class="perf-tab-pane active" data-ep-pane="overview">
 

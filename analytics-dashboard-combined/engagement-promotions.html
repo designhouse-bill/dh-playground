@@ -164,34 +164,11 @@
     <!-- MAX IA — tabs are METRICS, sub-tabs are DIMENSIONS.
          Underline-tab style ported from Distribution (.perf-tab from distribution.css):
          icon + label, transparent background, blue underline on active. -->
-    <div class="perf-tabs" id="ep-perf-tabs" role="tablist">
-      <button class="perf-tab active" data-ep-tab="overview" role="tab" aria-selected="true">
-        <span class="material-symbols-outlined">dashboard</span> Overview
-      </button>
-      <button class="perf-tab" data-ep-tab="sessions" role="tab">
-        <span class="material-symbols-outlined">analytics</span> Sessions
-      </button>
-      <button class="perf-tab" data-ep-tab="users" role="tab">
-        <span class="material-symbols-outlined">group</span> Total Users
-      </button>
-      <button class="perf-tab" data-ep-tab="duration" role="tab">
-        <span class="material-symbols-outlined">schedule</span> Duration
-      </button>
-      <button class="perf-tab" data-ep-tab="cardevents" role="tab">
-        <span class="material-symbols-outlined">ads_click</span> Card Events
-      </button>
-      <button class="perf-tab" data-ep-tab="dealtype" role="tab">
-        <span class="material-symbols-outlined">sell</span> Deal Types
-      </button>
-      <button class="perf-tab" data-ep-tab="coupon" role="tab">
-        <span class="material-symbols-outlined">local_offer</span> Coupons
-      </button>
-    </div>
-
     <!-- ============================================================
          Decision 1: page-level hero-stat shell. Distribution pattern
          (narrative-header left + stat-strip right). Updated by JS as
          active perf-tab changes — title, question, and hero KPI swap.
+         perf-tabs strip lives BELOW (UX-846 2026-05-12 — matches cats/circs).
          ============================================================ -->
     <div class="hero-stat" id="ep-page-hero-stat">
       <div class="narrative-header">
@@ -223,6 +200,33 @@
       <div class="stat-strip" id="ep-page-stat-strip">
         <!-- Populated by JS: hero KPI for active perf-tab (Sessions / Total Users / Duration / Card Events). Overview = blank placeholder per Decision 1. -->
       </div>
+    </div>
+
+    <!-- MAX IA — tabs are METRICS, sub-tabs are DIMENSIONS.
+         Underline-tab style ported from Distribution (.perf-tab from distribution.css):
+         icon + label, transparent background, blue underline on active. -->
+    <div class="perf-tabs" id="ep-perf-tabs" role="tablist">
+      <button class="perf-tab active" data-ep-tab="overview" role="tab" aria-selected="true">
+        <span class="material-symbols-outlined">dashboard</span> Overview
+      </button>
+      <button class="perf-tab" data-ep-tab="sessions" role="tab">
+        <span class="material-symbols-outlined">analytics</span> Sessions
+      </button>
+      <button class="perf-tab" data-ep-tab="users" role="tab">
+        <span class="material-symbols-outlined">group</span> Total Users
+      </button>
+      <button class="perf-tab" data-ep-tab="duration" role="tab">
+        <span class="material-symbols-outlined">schedule</span> Duration
+      </button>
+      <button class="perf-tab" data-ep-tab="cardevents" role="tab">
+        <span class="material-symbols-outlined">ads_click</span> Card Events
+      </button>
+      <button class="perf-tab" data-ep-tab="dealtype" role="tab">
+        <span class="material-symbols-outlined">sell</span> Deal Types
+      </button>
+      <button class="perf-tab" data-ep-tab="coupon" role="tab">
+        <span class="material-symbols-outlined">local_offer</span> Coupons
+      </button>
     </div>
 
     <!-- ─── Overview tab ─── -->

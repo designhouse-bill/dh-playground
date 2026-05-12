@@ -11,7 +11,7 @@
   <!-- CSS -->
   <link rel="stylesheet" href="css/design-tokens.css">
   <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/analytics-architecture.css?v=7">
+  <link rel="stylesheet" href="css/analytics-architecture.css?v=8">
   <link rel="stylesheet" href="css/header.css?v=3">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
@@ -228,9 +228,14 @@
                 <div class="ep-kpi-cell__delta ep-kpi-cell__delta--up">▲ 5.8%</div>
               </div>
             </div>
-            <div class="ep-kpi-cell__chart">
-              <div class="ep-perf-donut" style="background:conic-gradient(var(--series-v, #2196F3) 0% 56%, var(--series-c, #f59e0b) 56% 84%, var(--series-a, #22c55e) 84% 100%);" aria-hidden="true">
+            <div class="ep-kpi-cell__chart ep-kpi-cell__chart--perf">
+              <div class="ep-perf-donut" data-tip="Views 80,170 · Clicks 40,030 · Adds 22,600" style="background:conic-gradient(var(--series-v, #2196F3) 0% 56%, var(--series-c, #f59e0b) 56% 84%, var(--series-a, #22c55e) 84% 100%);">
                 <div class="ep-perf-donut__center"><span class="ep-perf-donut__center-val">142.8K</span><span class="ep-perf-donut__center-lbl">points</span></div>
+              </div>
+              <div class="ep-perf-donut__legend">
+                <div class="ep-perf-donut__legend-row" style="--swatch: var(--series-v, #2196F3);"><span class="ep-perf-donut__legend-sw"></span><span class="ep-perf-donut__legend-lbl">Views</span><strong class="ep-perf-donut__legend-val">80,170</strong></div>
+                <div class="ep-perf-donut__legend-row" style="--swatch: var(--series-c, #f59e0b);"><span class="ep-perf-donut__legend-sw"></span><span class="ep-perf-donut__legend-lbl">Clicks</span><strong class="ep-perf-donut__legend-val">40,030</strong></div>
+                <div class="ep-perf-donut__legend-row" style="--swatch: var(--series-a, #22c55e);"><span class="ep-perf-donut__legend-sw"></span><span class="ep-perf-donut__legend-lbl">Adds</span><strong class="ep-perf-donut__legend-val">22,600</strong></div>
               </div>
             </div>
             <span class="ep-kpi-cell__view">Open Performance Score <span class="material-symbols-outlined">chevron_right</span></span>
@@ -240,7 +245,7 @@
             <div class="ep-kpi-cell__head">
               <div>
                 <div class="ep-kpi-cell__story">Total Users</div>
-                <div class="ep-kpi-cell__metric">Unique users · Week 47</div>
+                <div class="ep-kpi-cell__metric">New + Returning + Engaged · Week 47</div>
               </div>
               <div style="text-align:right;">
                 <div class="ep-kpi-cell__value">12,460</div>
@@ -248,9 +253,10 @@
               </div>
             </div>
             <div class="ep-kpi-cell__chart">
-              <svg class="ep-kpi-spark" viewBox="0 0 120 40" preserveAspectRatio="none" aria-hidden="true">
-                <polyline fill="none" stroke="var(--section-users, #0891b2)" stroke-width="2" points="0,30 15,26 30,22 45,24 60,18 75,14 90,16 105,10 120,8"/>
-              </svg>
+              <div class="ep-mini-stack" data-tip="New 4,610 (37%) · Returning 5,230 (42%) · Engaged 2,620 (21%)">
+                <div class="ep-mini-stack__bar"><div class="ep-mini-stack__seg ep-mini-stack__seg--n" style="width:37%"></div><div class="ep-mini-stack__seg ep-mini-stack__seg--r" style="width:42%"></div><div class="ep-mini-stack__seg ep-mini-stack__seg--e" style="width:21%"></div></div>
+                <div class="ep-mini-stack__legend"><span class="ep-mini-stack__lbl ep-mini-stack__lbl--n">New 4,610</span><span class="ep-mini-stack__lbl ep-mini-stack__lbl--r">Returning 5,230</span><span class="ep-mini-stack__lbl ep-mini-stack__lbl--e">Engaged 2,620</span></div>
+              </div>
             </div>
             <span class="ep-kpi-cell__view">Open Total Users <span class="material-symbols-outlined">chevron_right</span></span>
           </a>
@@ -259,7 +265,7 @@
             <div class="ep-kpi-cell__head">
               <div>
                 <div class="ep-kpi-cell__story">Sessions</div>
-                <div class="ep-kpi-cell__metric">Total sessions · Week 47</div>
+                <div class="ep-kpi-cell__metric">Total sessions · Week 47 · by day</div>
               </div>
               <div style="text-align:right;">
                 <div class="ep-kpi-cell__value">78,542</div>
@@ -267,9 +273,15 @@
               </div>
             </div>
             <div class="ep-kpi-cell__chart">
-              <svg class="ep-kpi-spark" viewBox="0 0 120 40" preserveAspectRatio="none" aria-hidden="true">
-                <polyline fill="none" stroke="var(--section-sessions, #2196F3)" stroke-width="2" points="0,28 15,24 30,26 45,20 60,16 75,18 90,12 105,14 120,10"/>
-              </svg>
+              <div class="ep-mini-dow" aria-label="Sessions per day of week" data-tip="Peak: Sat 13.8K · Low: Tue 7.5K">
+                <div class="ep-mini-dow__col"><div class="ep-mini-dow__bar" style="height:62%"></div><span class="ep-mini-dow__lbl">M</span></div>
+                <div class="ep-mini-dow__col"><div class="ep-mini-dow__bar" style="height:48%"></div><span class="ep-mini-dow__lbl">T</span></div>
+                <div class="ep-mini-dow__col"><div class="ep-mini-dow__bar" style="height:55%"></div><span class="ep-mini-dow__lbl">W</span></div>
+                <div class="ep-mini-dow__col"><div class="ep-mini-dow__bar" style="height:71%"></div><span class="ep-mini-dow__lbl">T</span></div>
+                <div class="ep-mini-dow__col"><div class="ep-mini-dow__bar" style="height:88%"></div><span class="ep-mini-dow__lbl">F</span></div>
+                <div class="ep-mini-dow__col"><div class="ep-mini-dow__bar ep-mini-dow__bar--peak" style="height:96%"></div><span class="ep-mini-dow__lbl">S</span></div>
+                <div class="ep-mini-dow__col"><div class="ep-mini-dow__bar" style="height:42%"></div><span class="ep-mini-dow__lbl">S</span></div>
+              </div>
             </div>
             <span class="ep-kpi-cell__view">Open Sessions <span class="material-symbols-outlined">chevron_right</span></span>
           </a>
@@ -278,7 +290,7 @@
             <div class="ep-kpi-cell__head">
               <div>
                 <div class="ep-kpi-cell__story">Avg Duration</div>
-                <div class="ep-kpi-cell__metric">Per session · Week 47</div>
+                <div class="ep-kpi-cell__metric">Per session · by device</div>
               </div>
               <div style="text-align:right;">
                 <div class="ep-kpi-cell__value">6m 8s</div>
@@ -286,9 +298,11 @@
               </div>
             </div>
             <div class="ep-kpi-cell__chart">
-              <svg class="ep-kpi-spark" viewBox="0 0 120 40" preserveAspectRatio="none" aria-hidden="true">
-                <polyline fill="none" stroke="var(--section-duration, #d97706)" stroke-width="2" points="0,18 15,16 30,20 45,22 60,18 75,24 90,22 105,26 120,28"/>
-              </svg>
+              <div class="ep-mini-device" data-tip="Mobile 7m 12s · Desktop 5m 02s · Tablet 4m 31s">
+                <div class="ep-mini-device__row"><span class="ep-mini-device__lbl">Mobile</span><div class="ep-mini-device__bar"><div class="ep-mini-device__fill" style="width:100%"></div></div><span class="ep-mini-device__val">7m 12s</span></div>
+                <div class="ep-mini-device__row"><span class="ep-mini-device__lbl">Desktop</span><div class="ep-mini-device__bar"><div class="ep-mini-device__fill" style="width:70%"></div></div><span class="ep-mini-device__val">5m 02s</span></div>
+                <div class="ep-mini-device__row"><span class="ep-mini-device__lbl">Tablet</span><div class="ep-mini-device__bar"><div class="ep-mini-device__fill" style="width:63%"></div></div><span class="ep-mini-device__val">4m 31s</span></div>
+              </div>
             </div>
             <span class="ep-kpi-cell__view">Open Avg Duration <span class="material-symbols-outlined">chevron_right</span></span>
           </a>
@@ -307,12 +321,12 @@
               <a class="ep-top5-panel__viewall" href="engagement-explore.html?grain=circular">View all <span class="material-symbols-outlined">chevron_right</span></a>
             </div>
             <div class="ep-kpi-cell__chart" style="min-height:0;">
-              <div class="ep-store-rank">
-                <a class="ep-store-rank__row" href="engagement-explore.html?grain=circular&circular=336"><span class="ep-store-rank__lbl">#336 Hollywood</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:100%;"></div></div><span class="ep-store-rank__val">18.2K</span></a>
-                <a class="ep-store-rank__row" href="engagement-explore.html?grain=circular&circular=421"><span class="ep-store-rank__lbl">#421 Pembroke Pines</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:84%;"></div></div><span class="ep-store-rank__val">15.3K</span></a>
-                <a class="ep-store-rank__row" href="engagement-explore.html?grain=circular&circular=189"><span class="ep-store-rank__lbl">#189 Aventura</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:71%;"></div></div><span class="ep-store-rank__val">12.9K</span></a>
-                <a class="ep-store-rank__row" href="engagement-explore.html?grain=circular&circular=052"><span class="ep-store-rank__lbl">#052 Miami Beach</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:58%;"></div></div><span class="ep-store-rank__val">10.5K</span></a>
-                <a class="ep-store-rank__row" href="engagement-explore.html?grain=circular&circular=214"><span class="ep-store-rank__lbl">#214 Boca Raton</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:46%;"></div></div><span class="ep-store-rank__val">8.4K</span></a>
+              <div class="ep-top5-bar-list">
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=circular&circular=336" data-tip="#336 Hollywood · Views 10.2 · Clicks 5.1 · Adds 2.9 · Total 18.2K"><span class="ep-top5-bar-row__lbl">#336 Hollywood</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">18.2K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=circular&circular=421" data-tip="#421 Pembroke Pines · Views 8.6 · Clicks 4.3 · Adds 2.4 · Total 15.3K"><span class="ep-top5-bar-row__lbl">#421 Pembroke Pines</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">15.3K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=circular&circular=189" data-tip="#189 Aventura · Views 7.3 · Clicks 3.6 · Adds 2.0 · Total 12.9K"><span class="ep-top5-bar-row__lbl">#189 Aventura</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:57%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">12.9K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=circular&circular=052" data-tip="#052 Miami Beach · Views 5.9 · Clicks 3.0 · Adds 1.6 · Total 10.5K"><span class="ep-top5-bar-row__lbl">#052 Miami Beach</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:29%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:15%"></div></div><span class="ep-top5-bar-row__val">10.5K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=circular&circular=214" data-tip="#214 Boca Raton · Views 4.7 · Clicks 2.4 · Adds 1.3 · Total 8.4K"><span class="ep-top5-bar-row__lbl">#214 Boca Raton</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:29%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:15%"></div></div><span class="ep-top5-bar-row__val">8.4K</span></a>
               </div>
             </div>
           </div>
@@ -326,12 +340,12 @@
               <a class="ep-top5-panel__viewall" href="engagement-explore.html?grain=category">View all <span class="material-symbols-outlined">chevron_right</span></a>
             </div>
             <div class="ep-kpi-cell__chart" style="min-height:0;">
-              <div class="ep-store-rank">
-                <a class="ep-store-rank__row" href="engagement-explore.html?grain=category&category=produce"><span class="ep-store-rank__lbl">Produce</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:100%;"></div></div><span class="ep-store-rank__val">28.1K</span></a>
-                <a class="ep-store-rank__row" href="engagement-explore.html?grain=category&category=meat"><span class="ep-store-rank__lbl">Meat &amp; Seafood</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:88%;"></div></div><span class="ep-store-rank__val">24.7K</span></a>
-                <a class="ep-store-rank__row" href="engagement-explore.html?grain=category&category=dairy"><span class="ep-store-rank__lbl">Dairy</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:71%;"></div></div><span class="ep-store-rank__val">19.9K</span></a>
-                <a class="ep-store-rank__row" href="engagement-explore.html?grain=category&category=bakery"><span class="ep-store-rank__lbl">Bakery</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:60%;"></div></div><span class="ep-store-rank__val">16.8K</span></a>
-                <a class="ep-store-rank__row" href="engagement-explore.html?grain=category&category=pantry"><span class="ep-store-rank__lbl">Pantry</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:48%;"></div></div><span class="ep-store-rank__val">13.4K</span></a>
+              <div class="ep-top5-bar-list">
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=category&category=produce" data-tip="Produce · Views 15.8 · Clicks 7.9 · Adds 4.4 · Total 28.1K"><span class="ep-top5-bar-row__lbl">Produce</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">28.1K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=category&category=meat" data-tip="Meat & Seafood · Views 13.9 · Clicks 6.9 · Adds 3.9 · Total 24.7K"><span class="ep-top5-bar-row__lbl">Meat & Seafood</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">24.7K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=category&category=dairy" data-tip="Dairy · Views 11.2 · Clicks 5.6 · Adds 3.1 · Total 19.9K"><span class="ep-top5-bar-row__lbl">Dairy</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">19.9K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=category&category=bakery" data-tip="Bakery · Views 9.4 · Clicks 4.7 · Adds 2.7 · Total 16.8K"><span class="ep-top5-bar-row__lbl">Bakery</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">16.8K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=category&category=pantry" data-tip="Pantry · Views 7.5 · Clicks 3.8 · Adds 2.1 · Total 13.4K"><span class="ep-top5-bar-row__lbl">Pantry</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">13.4K</span></a>
               </div>
             </div>
           </div>
@@ -345,12 +359,12 @@
               <a class="ep-top5-panel__viewall" href="engagement-explore.html?grain=promotion">View all <span class="material-symbols-outlined">chevron_right</span></a>
             </div>
             <div class="ep-kpi-cell__chart" style="min-height:0;">
-              <div class="ep-store-rank">
-                <a class="ep-store-rank__row" href="engagement-explore.html?grain=promotion&promotion=p001"><span class="ep-store-rank__lbl">Avocados 3/$5</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:100%;"></div></div><span class="ep-store-rank__val">9.4K</span></a>
-                <a class="ep-store-rank__row" href="engagement-explore.html?grain=promotion&promotion=p002"><span class="ep-store-rank__lbl">Ribeye $9.99/lb</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:84%;"></div></div><span class="ep-store-rank__val">7.9K</span></a>
-                <a class="ep-store-rank__row" href="engagement-explore.html?grain=promotion&promotion=p003"><span class="ep-store-rank__lbl">Milk 2/$6</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:71%;"></div></div><span class="ep-store-rank__val">6.7K</span></a>
-                <a class="ep-store-rank__row" href="engagement-explore.html?grain=promotion&promotion=p004"><span class="ep-store-rank__lbl">Bagels BOGO</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:60%;"></div></div><span class="ep-store-rank__val">5.6K</span></a>
-                <a class="ep-store-rank__row" href="engagement-explore.html?grain=promotion&promotion=p005"><span class="ep-store-rank__lbl">Cereal $2.49</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:48%;"></div></div><span class="ep-store-rank__val">4.5K</span></a>
+              <div class="ep-top5-bar-list">
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=promotion&promotion=p001" data-tip="Avocados 3/$5 · Views 5.3 · Clicks 2.6 · Adds 1.5 · Total 9.4K"><span class="ep-top5-bar-row__lbl">Avocados 3/$5</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">9.4K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=promotion&promotion=p002" data-tip="Ribeye $9.99/lb · Views 4.4 · Clicks 2.2 · Adds 1.3 · Total 7.9K"><span class="ep-top5-bar-row__lbl">Ribeye $9.99/lb</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">7.9K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=promotion&promotion=p003" data-tip="Milk 2/$6 · Views 3.8 · Clicks 1.9 · Adds 1.0 · Total 6.7K"><span class="ep-top5-bar-row__lbl">Milk 2/$6</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:57%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:15%"></div></div><span class="ep-top5-bar-row__val">6.7K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=promotion&promotion=p004" data-tip="Bagels BOGO · Views 3.1 · Clicks 1.6 · Adds 0.9 · Total 5.6K"><span class="ep-top5-bar-row__lbl">Bagels BOGO</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:55%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:29%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">5.6K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=promotion&promotion=p005" data-tip="Cereal $2.49 · Views 2.5 · Clicks 1.3 · Adds 0.7 · Total 4.5K"><span class="ep-top5-bar-row__lbl">Cereal $2.49</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:29%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">4.5K</span></a>
               </div>
             </div>
           </div>
@@ -369,12 +383,12 @@
               <a class="ep-top5-panel__viewall" href="engagement-explore.html?metric=coupons">View all <span class="material-symbols-outlined">chevron_right</span></a>
             </div>
             <div class="ep-kpi-cell__chart" style="min-height:0;">
-              <div class="ep-store-rank">
-                <a class="ep-store-rank__row" href="engagement-explore.html?metric=coupons&coupon=c101"><span class="ep-store-rank__lbl">$2 off Tide Pods</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:100%;"></div></div><span class="ep-store-rank__val">3.1K</span></a>
-                <a class="ep-store-rank__row" href="engagement-explore.html?metric=coupons&coupon=c102"><span class="ep-store-rank__lbl">$1 off Cheerios</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:84%;"></div></div><span class="ep-store-rank__val">2.6K</span></a>
-                <a class="ep-store-rank__row" href="engagement-explore.html?metric=coupons&coupon=c103"><span class="ep-store-rank__lbl">BOGO Oreos</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:71%;"></div></div><span class="ep-store-rank__val">2.2K</span></a>
-                <a class="ep-store-rank__row" href="engagement-explore.html?metric=coupons&coupon=c104"><span class="ep-store-rank__lbl">$3 off Pampers</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:60%;"></div></div><span class="ep-store-rank__val">1.9K</span></a>
-                <a class="ep-store-rank__row" href="engagement-explore.html?metric=coupons&coupon=c105"><span class="ep-store-rank__lbl">$5 off $25 grocery</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:48%;"></div></div><span class="ep-store-rank__val">1.5K</span></a>
+              <div class="ep-top5-bar-list">
+                <a class="ep-top5-bar-row" href="engagement-explore.html?metric=coupons&coupon=c101" data-tip="$2 off Tide Pods: 3.1K"><span class="ep-top5-bar-row__lbl">$2 off Tide Pods</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--coupon"><div class="ep-top5-bar-row__seg" style="width:100%"></div></div><span class="ep-top5-bar-row__val">3.1K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?metric=coupons&coupon=c102" data-tip="$1 off Cheerios: 2.6K"><span class="ep-top5-bar-row__lbl">$1 off Cheerios</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--coupon"><div class="ep-top5-bar-row__seg" style="width:84%"></div></div><span class="ep-top5-bar-row__val">2.6K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?metric=coupons&coupon=c103" data-tip="BOGO Oreos: 2.2K"><span class="ep-top5-bar-row__lbl">BOGO Oreos</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--coupon"><div class="ep-top5-bar-row__seg" style="width:71%"></div></div><span class="ep-top5-bar-row__val">2.2K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?metric=coupons&coupon=c104" data-tip="$3 off Pampers: 1.9K"><span class="ep-top5-bar-row__lbl">$3 off Pampers</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--coupon"><div class="ep-top5-bar-row__seg" style="width:61%"></div></div><span class="ep-top5-bar-row__val">1.9K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?metric=coupons&coupon=c105" data-tip="$5 off $25 grocery: 1.5K"><span class="ep-top5-bar-row__lbl">$5 off $25 grocery</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--coupon"><div class="ep-top5-bar-row__seg" style="width:48%"></div></div><span class="ep-top5-bar-row__val">1.5K</span></a>
               </div>
             </div>
           </div>
@@ -388,12 +402,12 @@
               <a class="ep-top5-panel__viewall" href="engagement-explore.html?metric=pagenav">View all <span class="material-symbols-outlined">chevron_right</span></a>
             </div>
             <div class="ep-kpi-cell__chart" style="min-height:0;">
-              <div class="ep-store-rank">
-                <a class="ep-store-rank__row" href="engagement-explore.html?metric=pagenav&page=front"><span class="ep-store-rank__lbl">Front Page</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:100%;"></div></div><span class="ep-store-rank__val">14.2K</span></a>
-                <a class="ep-store-rank__row" href="engagement-explore.html?metric=pagenav&page=liquor"><span class="ep-store-rank__lbl">Liquor</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:74%;"></div></div><span class="ep-store-rank__val">10.5K</span></a>
-                <a class="ep-store-rank__row" href="engagement-explore.html?metric=pagenav&page=pdf"><span class="ep-store-rank__lbl">PDF View</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:58%;"></div></div><span class="ep-store-rank__val">8.2K</span></a>
-                <a class="ep-store-rank__row" href="engagement-explore.html?metric=pagenav&page=savings"><span class="ep-store-rank__lbl">Savings Hub</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:44%;"></div></div><span class="ep-store-rank__val">6.3K</span></a>
-                <a class="ep-store-rank__row" href="engagement-explore.html?metric=pagenav&page=recipes"><span class="ep-store-rank__lbl">Recipes</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:30%;"></div></div><span class="ep-store-rank__val">4.2K</span></a>
+              <div class="ep-top5-bar-list">
+                <a class="ep-top5-bar-row" href="engagement-explore.html?metric=pagenav&page=front" data-tip="Front Page: 14.2K"><span class="ep-top5-bar-row__lbl">Front Page</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--pagenav"><div class="ep-top5-bar-row__seg" style="width:100%"></div></div><span class="ep-top5-bar-row__val">14.2K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?metric=pagenav&page=liquor" data-tip="Liquor: 10.5K"><span class="ep-top5-bar-row__lbl">Liquor</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--pagenav"><div class="ep-top5-bar-row__seg" style="width:74%"></div></div><span class="ep-top5-bar-row__val">10.5K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?metric=pagenav&page=pdf" data-tip="PDF View: 8.2K"><span class="ep-top5-bar-row__lbl">PDF View</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--pagenav"><div class="ep-top5-bar-row__seg" style="width:58%"></div></div><span class="ep-top5-bar-row__val">8.2K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?metric=pagenav&page=savings" data-tip="Savings Hub: 6.3K"><span class="ep-top5-bar-row__lbl">Savings Hub</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--pagenav"><div class="ep-top5-bar-row__seg" style="width:44%"></div></div><span class="ep-top5-bar-row__val">6.3K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?metric=pagenav&page=recipes" data-tip="Recipes: 4.2K"><span class="ep-top5-bar-row__lbl">Recipes</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--pagenav"><div class="ep-top5-bar-row__seg" style="width:30%"></div></div><span class="ep-top5-bar-row__val">4.2K</span></a>
               </div>
             </div>
           </div>
@@ -491,104 +505,6 @@
       <div class="ep-sub-pane" data-ep-sub-pane="store"><div class="ep-stacked-list" id="ep-performance-by-store"></div></div>
       <div class="ep-sub-pane" data-ep-sub-pane="day"><div id="ep-performance-by-day"></div></div>
     </div>
-
-    <!-- ============================================================
-         EXISTING IN-DEV GRID — moved inside engagement-canonical (bottom slot).
-         Outer <main> demoted to <section> to avoid nested-main.
-         ============================================================ -->
-    <section class="layout layout--categories" id="circulars-layout">
-
-    <!-- Left Panel: Stores Grid -->
-    <section class="panel panel--category-grid" role="main" aria-label="Stores">
-      <div class="panel-header panel-header--categories">
-        <div class="panel-header__left">
-          <label class="toggle-switch">
-            <input type="checkbox" id="more-data-toggle">
-            <span class="toggle-slider"></span>
-          </label>
-          <span class="toggle-label">More Data</span>
-        </div>
-        <div class="panel-header__center">
-          <span class="showing-count">Total Stores: <span id="store-showing-count">0</span></span>
-          <div class="topn-selector">
-            <select id="topn-select" class="topn-select" onchange="changeTopN(this.value)">
-              <option value="25" selected>Show 25</option>
-              <option value="50">Show 50</option>
-              <option value="100">Show 100</option>
-              <option value="250">Show 250</option>
-              <option value="all">Show All</option>
-            </select>
-          </div>
-        </div>
-        <div class="panel-header__right">
-          <button class="panel-action-btn" id="panel-export-btn">
-            <span class="material-symbols-outlined">download</span>
-            Export
-          </button>
-          <button class="panel-action-btn" id="panel-print-btn">
-            <span class="material-symbols-outlined">print</span>
-            Print
-          </button>
-          <button class="panel-action-btn" id="panel-share-btn">
-            <span class="material-symbols-outlined">share</span>
-            Share
-          </button>
-        </div>
-      </div>
-      <div class="store-data-grid" id="store-data-grid">
-        <!-- Populated by JavaScript -->
-      </div>
-      <div class="grid-footer">
-        <div class="grid-footer__left"></div>
-        <div class="grid-footer__center">
-          <div class="grid-pagination" id="grid-pagination">
-            <button class="grid-pagination__btn" id="grid-prev-btn" onclick="prevPage()" disabled>
-              <span class="material-symbols-outlined">chevron_left</span>
-            </button>
-            <span class="grid-pagination__info" id="grid-page-info">Page 1 of 1</span>
-            <button class="grid-pagination__btn" id="grid-next-btn" onclick="nextPage()" disabled>
-              <span class="material-symbols-outlined">chevron_right</span>
-            </button>
-          </div>
-        </div>
-        <div class="grid-footer__right">
-          <span class="grid-footer__range" id="grid-range-info">1-25 of 0</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- Right Panel: Store Detail -->
-    <aside class="panel panel--right panel--collapsed" id="store-detail-panel" role="complementary" aria-label="Store details">
-      <div class="panel-header">
-        <h2 class="panel-title">Store Details</h2>
-        <button class="panel-close" onclick="closeStoreDetail()" aria-label="Close details">
-          <span class="material-symbols-outlined">close</span>
-        </button>
-      </div>
-      <div class="store-detail-content" id="store-detail-content">
-        <!-- Populated by JavaScript -->
-      </div>
-      <div class="detail-footer" id="store-detail-footer">
-        <button class="detail-action-btn" onclick="viewStoreCategories()">
-          <span class="material-symbols-outlined">category</span>
-          View Categories
-        </button>
-        <button class="detail-action-btn" onclick="viewStorePromotions()">
-          <span class="material-symbols-outlined">local_offer</span>
-          View Promotions
-        </button>
-        <button class="detail-action-btn" onclick="openStoreInquiry()">
-          <span class="material-symbols-outlined">table_chart</span>
-          Grid Inquiry
-        </button>
-        <button class="detail-action-btn" onclick="compareStore()">
-          <span class="material-symbols-outlined">compare</span>
-          Compare
-        </button>
-      </div>
-    </aside>
-
-    </section>
 
   </main>
 

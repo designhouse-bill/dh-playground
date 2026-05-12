@@ -2167,3 +2167,106 @@ a.ep-store-rank__row {
 }
 a.ep-store-rank__row:hover { background: var(--p-surface-hover, #f3f4f6); }
 a.ep-store-rank__row:last-child { border-bottom: none; }
+
+/* ============================================================
+   Report Overview — KPI tile mini-charts (UX-846 Report mode 2026-05-12)
+   ============================================================ */
+
+/* Performance Score donut + legend layout inside KPI tile */
+.ep-kpi-cell__chart--perf { display: grid; grid-template-columns: auto 1fr; gap: var(--space-3, .75rem); align-items: center; }
+.ep-kpi-cell__chart--perf .ep-perf-donut { width: 110px; height: 110px; position: relative; border-radius: 50%; }
+.ep-kpi-cell__chart--perf .ep-perf-donut::before { content: ""; position: absolute; inset: 22px; background: var(--p-surface-card, #fff); border-radius: 50%; }
+.ep-kpi-cell__chart--perf .ep-perf-donut__center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-variant-numeric: tabular-nums; z-index: 1; }
+.ep-kpi-cell__chart--perf .ep-perf-donut__center-val { font-weight: 700; font-size: 16px; color: var(--p-text-color, #1f2937); }
+.ep-kpi-cell__chart--perf .ep-perf-donut__center-lbl { font-size: 10px; color: var(--color-text-secondary, #6b7280); }
+.ep-perf-donut__legend { display: flex; flex-direction: column; gap: 6px; font-size: 11px; }
+.ep-perf-donut__legend-row { display: grid; grid-template-columns: 10px 1fr auto; gap: 6px; align-items: center; padding: 2px 4px; border-radius: 3px; transition: background .15s; }
+.ep-perf-donut__legend-row:hover { background: var(--p-surface-hover, #f3f4f6); }
+.ep-perf-donut__legend-sw { width: 10px; height: 10px; background: var(--swatch); border-radius: 2px; }
+.ep-perf-donut__legend-lbl { color: var(--p-text-color, #1f2937); font-weight: 500; }
+.ep-perf-donut__legend-val { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--p-text-color, #1f2937); }
+.ep-perf-donut[data-tip]:hover { filter: brightness(1.05); }
+
+/* Mini stacked horizontal bar (Users tile) — N/R/E additivity */
+.ep-mini-stack { display: flex; flex-direction: column; gap: 8px; }
+.ep-mini-stack__bar { display: flex; height: 28px; background: var(--color-gray-100, #f3f4f6); border-radius: 4px; overflow: hidden; }
+.ep-mini-stack__seg { height: 100%; transition: filter .15s; }
+.ep-mini-stack__seg:hover { filter: brightness(1.1); }
+.ep-mini-stack__seg--n { background: var(--users-new, #06b6d4); }
+.ep-mini-stack__seg--r { background: var(--users-returning, #0e7490); }
+.ep-mini-stack__seg--e { background: var(--users-engaged, #155e75); }
+.ep-mini-stack__legend { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 11px; color: var(--color-text-secondary, #6b7280); }
+.ep-mini-stack__lbl { display: inline-flex; align-items: center; gap: 4px; font-variant-numeric: tabular-nums; }
+.ep-mini-stack__lbl::before { content: ""; width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+.ep-mini-stack__lbl--n::before { background: var(--users-new, #06b6d4); }
+.ep-mini-stack__lbl--r::before { background: var(--users-returning, #0e7490); }
+.ep-mini-stack__lbl--e::before { background: var(--users-engaged, #155e75); }
+
+/* Mini DoW columns (Sessions tile) */
+.ep-mini-dow { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; align-items: end; height: 88px; }
+.ep-mini-dow__col { display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: end; }
+.ep-mini-dow__bar { width: 100%; background: var(--section-sessions, #2196F3); border-radius: 3px 3px 0 0; min-height: 4px; transition: filter .15s; }
+.ep-mini-dow__col:hover .ep-mini-dow__bar { filter: brightness(1.1); }
+.ep-mini-dow__bar--peak { background: color-mix(in srgb, var(--section-sessions, #2196F3) 80%, #000); }
+.ep-mini-dow__lbl { font-size: 10px; color: var(--color-text-secondary, #6b7280); }
+
+/* Mini device bars (Avg Duration tile) */
+.ep-mini-device { display: flex; flex-direction: column; gap: 6px; font-size: 11px; }
+.ep-mini-device__row { display: grid; grid-template-columns: 56px 1fr auto; gap: 8px; align-items: center; }
+.ep-mini-device__lbl { color: var(--color-text-secondary, #6b7280); }
+.ep-mini-device__bar { height: 14px; background: var(--color-gray-100, #f3f4f6); border-radius: 3px; overflow: hidden; }
+.ep-mini-device__fill { height: 100%; background: var(--section-duration, #d97706); border-radius: 3px; transition: filter .15s; }
+.ep-mini-device__row:hover .ep-mini-device__fill { filter: brightness(1.1); }
+.ep-mini-device__val { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--p-text-color, #1f2937); }
+
+/* Top-5 bar rows (Row 2 + 3 panels) */
+.ep-top5-bar-list { display: flex; flex-direction: column; gap: 4px; }
+.ep-top5-bar-row { display: grid; grid-template-columns: minmax(120px, 1.4fr) minmax(140px, 3fr) auto; gap: 10px; align-items: center; padding: 6px 8px; font-size: 12px; color: inherit; text-decoration: none; border-radius: 4px; transition: background .15s; }
+.ep-top5-bar-row:hover { background: var(--p-surface-hover, #f3f4f6); }
+.ep-top5-bar-row__lbl { color: var(--p-text-color, #1f2937); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ep-top5-bar-row__val { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--p-text-color, #1f2937); }
+.ep-top5-bar-row__bar { display: flex; height: 14px; background: var(--color-gray-100, #f3f4f6); border-radius: 3px; overflow: hidden; }
+.ep-top5-bar-row__seg { height: 100%; transition: filter .15s; }
+
+/* V/C/A variant — atomic-hierarchy panels (Circulars / Categories / Promotions) */
+.ep-top5-bar-row__bar--vca .ep-top5-bar-row__seg--v { background: var(--series-v, #2196F3); }
+.ep-top5-bar-row__bar--vca .ep-top5-bar-row__seg--c { background: var(--series-c, #f59e0b); }
+.ep-top5-bar-row__bar--vca .ep-top5-bar-row__seg--a { background: var(--series-a, #22c55e); }
+.ep-top5-bar-row:hover .ep-top5-bar-row__seg { filter: brightness(1.1); }
+
+/* Coupon variant — yellow */
+.ep-top5-bar-row__bar--coupon .ep-top5-bar-row__seg { background: var(--section-coupon-ink, #a16207); }
+
+/* Page-nav variant — dark gray */
+.ep-top5-bar-row__bar--pagenav .ep-top5-bar-row__seg { background: var(--color-gray-700, #374151); }
+
+/* Tooltip on [data-tip] — simple CSS tooltip (covers Perf donut + Top-5 rows + mini-charts) */
+[data-tip] { position: relative; }
+[data-tip]:hover::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1f2937;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  z-index: 1000;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+}
+[data-tip]:hover::before {
+  content: "";
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: #1f2937;
+  z-index: 1000;
+  pointer-events: none;
+}

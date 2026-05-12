@@ -51,10 +51,9 @@
       panes.forEach(function (p) {
         p.classList.toggle('active', p.dataset.epPane === target);
       });
-      // Drives the .hero-stat[data-ep-active="<tab>"] CSS rules — overview = gray,
-      // sessions/users/duration/cardevents = section color tint. Matches promotions.
-      var heroStatEl = document.getElementById('ep-page-hero-stat');
-      if (heroStatEl) heroStatEl.dataset.epActive = target;
+      // UX-846 Report mode 2026-05-12: page-level hero-stat stays neutral (gray).
+      // Per-pane .hero-stat[data-ep-active="<key>"] is hardcoded in markup and
+      // owns the section color tint for its KPI sub-section.
       var targetPane = root.querySelector('[data-ep-pane="' + target + '"]');
       if (targetPane) applySubTab(targetPane, currentSubTab);
     }

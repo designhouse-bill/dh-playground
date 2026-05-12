@@ -202,7 +202,7 @@
        Per-tile [data-jump-to=...] hover section colors remain above (lines 140-143). */
 
     /* PHASE B — patterns ported from Original (filter / hover tooltip / clickable row / inline data table) */
-    .ep-metric-filter { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--color-border, #e5e7eb); border-radius: 6px; background: #fff; margin: 0 0 var(--space-3); }
+    .ep-metric-filter { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--color-border, #e5e7eb); border-radius: 6px; background: #fff; margin: var(--space-3) 0; }
     .ep-metric-filter__icon { color: var(--color-text-secondary, #6b7280); display: inline-flex; }
     .ep-metric-filter__input { border: 0; outline: 0; flex: 1; font-size: 13px; background: transparent; color: var(--color-text, #1f2937); }
     .ep-metric-filter__clear { background: none; border: 0; padding: 2px; cursor: pointer; color: var(--color-text-secondary, #6b7280); display: none; }
@@ -745,3 +745,11 @@
       margin-right: 8px;
     }
     .ep-points-key .material-symbols-outlined { font-size: 13px; }
+
+/* Context-row gradient parity (UX-846 2026-05-12) — all 3 Overview pages
+   get the dark gradient that categories already had. Earlier cascade was
+   landing on header.css's light gradient on Circulars + Promotions; this
+   rule lands last and pins the look. */
+body[data-grain] .context-row {
+  background: linear-gradient(180deg, var(--color-gray-600), var(--color-gray-300));
+}

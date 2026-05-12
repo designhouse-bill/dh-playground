@@ -1119,8 +1119,6 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
   padding: var(--space-2) var(--space-6);
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-gray-50);
 }
 
 .ep-circular-info__num {

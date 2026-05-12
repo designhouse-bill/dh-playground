@@ -2186,9 +2186,22 @@ a.ep-store-rank__row:last-child { border-bottom: none; }
 .ep-perf-donut__legend--horizontal .ep-perf-donut__legend-row { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 6px; border-radius: 4px; transition: background .15s; }
 .ep-perf-donut__legend--horizontal .ep-perf-donut__legend-row:hover { background: var(--p-surface-hover, #f3f4f6); }
 .ep-perf-donut__legend--horizontal .ep-perf-donut__legend-sw { width: 100%; height: 4px; border-radius: 2px; }
-.ep-perf-donut__legend-row--views .ep-perf-donut__legend-sw { background: #4272D8; }
-.ep-perf-donut__legend-row--clicks .ep-perf-donut__legend-sw { background: #B8D64D; }
-.ep-perf-donut__legend-row--adds .ep-perf-donut__legend-sw { background: #937DF8; }
+.ep-perf-donut__legend-row--views .ep-perf-donut__legend-sw { background: var(--series-v, #2196F3); }
+.ep-perf-donut__legend-row--clicks .ep-perf-donut__legend-sw { background: var(--series-c, #f59e0b); }
+.ep-perf-donut__legend-row--adds .ep-perf-donut__legend-sw { background: var(--series-a, #22c55e); }
+/* Override legacy hardcoded swatch hex in .ep-perf-tooltip__dot--* to align
+   tooltip dots with the canonical --series-* triad colors used by all
+   stacked bars on the Report Overview. */
+.ep-perf-tooltip__dot--views { background: var(--series-v, #2196F3) !important; }
+.ep-perf-tooltip__dot--clicks { background: var(--series-c, #f59e0b) !important; }
+.ep-perf-tooltip__dot--adds { background: var(--series-a, #22c55e) !important; }
+.ep-perf-tooltip__dot--n { background: var(--users-new, #06b6d4); }
+.ep-perf-tooltip__dot--r { background: var(--users-returning, #0e7490); }
+.ep-perf-tooltip__dot--e { background: var(--users-engaged, #155e75); }
+.ep-perf-tooltip__dot--day { background: var(--section-sessions, #2196F3); }
+.ep-perf-tooltip__dot--device { background: var(--section-duration, #d97706); }
+.ep-perf-tooltip__dot--coupon { background: var(--section-coupon-ink, #a16207); }
+.ep-perf-tooltip__dot--pagenav { background: var(--color-gray-700, #374151); }
 .ep-perf-donut__legend--horizontal .ep-perf-donut__legend-lbl { color: var(--color-text-secondary, #6b7280); font-size: 10px; text-transform: uppercase; letter-spacing: .04em; font-weight: 600; }
 .ep-perf-donut__legend--horizontal .ep-perf-donut__legend-val { font-variant-numeric: tabular-nums; font-weight: 700; font-size: 15px; color: var(--p-text-color, #1f2937); }
 

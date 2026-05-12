@@ -11,7 +11,7 @@
   <!-- CSS -->
   <link rel="stylesheet" href="css/design-tokens.css">
   <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/analytics-architecture.css?v=9">
+  <link rel="stylesheet" href="css/analytics-architecture.css?v=10">
   <link rel="stylesheet" href="css/header.css?v=3">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
@@ -229,7 +229,7 @@
               </div>
             </div>
             <div class="ep-kpi-cell__chart ep-kpi-cell__chart--perf">
-              <div class="ep-perf-donut ep-perf-donut--lg" id="ep-perf-overview-donut" data-perf-views="80170" data-perf-clicks="40030" data-perf-adds="22600" data-perf-title="Performance Score · Week 47" style="background:conic-gradient(#4272D8 0% 56%, #B8D64D 56% 84%, #937DF8 84% 100%);">
+              <div class="ep-perf-donut ep-perf-donut--lg" id="ep-perf-overview-donut" data-perf-hover data-perf-views="80170" data-perf-clicks="40030" data-perf-adds="22600" data-perf-title="Performance Score · Week 47" style="background:conic-gradient(var(--series-v, #2196F3) 0% 56%, var(--series-c, #f59e0b) 56% 84%, var(--series-a, #22c55e) 84% 100%);">
                 <div class="ep-perf-donut__center"><span class="ep-perf-donut__center-val">142.8K</span><span class="ep-perf-donut__center-lbl">points</span></div>
               </div>
               <div class="ep-perf-donut__legend ep-perf-donut__legend--horizontal">
@@ -253,7 +253,7 @@
               </div>
             </div>
             <div class="ep-kpi-cell__chart">
-              <div class="ep-mini-stack" data-tip="New 4,610 (37%) · Returning 5,230 (42%) · Engaged 2,620 (21%)">
+              <div class="ep-mini-stack" data-perf-hover data-perf-title="Total Users · Week 47" data-perf-rows='[{"dot":"n","name":"New","val":"4,610","score":"37%"},{"dot":"r","name":"Returning","val":"5,230","score":"42%"},{"dot":"e","name":"Engaged","val":"2,620","score":"21%"}]' data-perf-total='{"label":"Total Users","val":"12,460"}'>
                 <div class="ep-mini-stack__bar"><div class="ep-mini-stack__seg ep-mini-stack__seg--n" style="width:37%"></div><div class="ep-mini-stack__seg ep-mini-stack__seg--r" style="width:42%"></div><div class="ep-mini-stack__seg ep-mini-stack__seg--e" style="width:21%"></div></div>
                 <div class="ep-mini-stack__legend"><span class="ep-mini-stack__lbl ep-mini-stack__lbl--n">New 4,610</span><span class="ep-mini-stack__lbl ep-mini-stack__lbl--r">Returning 5,230</span><span class="ep-mini-stack__lbl ep-mini-stack__lbl--e">Engaged 2,620</span></div>
               </div>
@@ -273,7 +273,7 @@
               </div>
             </div>
             <div class="ep-kpi-cell__chart">
-              <div class="ep-mini-dow" aria-label="Sessions per day of week" data-tip="Peak: Sat 13.8K · Low: Tue 7.5K">
+              <div class="ep-mini-dow" aria-label="Sessions per day of week" data-perf-hover data-perf-title="Sessions · Week 47" data-perf-rows='[{"dot":"day","name":"Mon","val":"9,840"},{"dot":"day","name":"Tue","val":"7,510"},{"dot":"day","name":"Wed","val":"8,620"},{"dot":"day","name":"Thu","val":"11,180"},{"dot":"day","name":"Fri","val":"13,810"},{"dot":"day","name":"Sat","val":"15,050"},{"dot":"day","name":"Sun","val":"6,580"}]' data-perf-total='{"label":"Total Sessions","val":"78,542"}'>
                 <div class="ep-mini-dow__col"><div class="ep-mini-dow__bar" style="height:62%"></div><span class="ep-mini-dow__lbl">M</span></div>
                 <div class="ep-mini-dow__col"><div class="ep-mini-dow__bar" style="height:48%"></div><span class="ep-mini-dow__lbl">T</span></div>
                 <div class="ep-mini-dow__col"><div class="ep-mini-dow__bar" style="height:55%"></div><span class="ep-mini-dow__lbl">W</span></div>
@@ -298,7 +298,7 @@
               </div>
             </div>
             <div class="ep-kpi-cell__chart">
-              <div class="ep-mini-device" data-tip="Mobile 7m 12s · Desktop 5m 02s · Tablet 4m 31s">
+              <div class="ep-mini-device" data-perf-hover data-perf-title="Avg Duration · Week 47" data-perf-rows='[{"dot":"device","name":"Mobile","val":"7m 12s"},{"dot":"device","name":"Desktop","val":"5m 02s"},{"dot":"device","name":"Tablet","val":"4m 31s"}]' data-perf-total='{"label":"Avg Duration","val":"6m 08s"}'>
                 <div class="ep-mini-device__row"><span class="ep-mini-device__lbl">Mobile</span><div class="ep-mini-device__bar"><div class="ep-mini-device__fill" style="width:100%"></div></div><span class="ep-mini-device__val">7m 12s</span></div>
                 <div class="ep-mini-device__row"><span class="ep-mini-device__lbl">Desktop</span><div class="ep-mini-device__bar"><div class="ep-mini-device__fill" style="width:70%"></div></div><span class="ep-mini-device__val">5m 02s</span></div>
                 <div class="ep-mini-device__row"><span class="ep-mini-device__lbl">Tablet</span><div class="ep-mini-device__bar"><div class="ep-mini-device__fill" style="width:63%"></div></div><span class="ep-mini-device__val">4m 31s</span></div>
@@ -322,11 +322,11 @@
             </div>
             <div class="ep-kpi-cell__chart" style="min-height:0;">
               <div class="ep-top5-bar-list">
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=circular&circular=336" data-tip="#336 Hollywood · Views 10.2 · Clicks 5.1 · Adds 2.9 · Total 18.2K"><span class="ep-top5-bar-row__lbl">#336 Hollywood</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">18.2K</span></a>
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=circular&circular=421" data-tip="#421 Pembroke Pines · Views 8.6 · Clicks 4.3 · Adds 2.4 · Total 15.3K"><span class="ep-top5-bar-row__lbl">#421 Pembroke Pines</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">15.3K</span></a>
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=circular&circular=189" data-tip="#189 Aventura · Views 7.3 · Clicks 3.6 · Adds 2.0 · Total 12.9K"><span class="ep-top5-bar-row__lbl">#189 Aventura</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:57%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">12.9K</span></a>
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=circular&circular=052" data-tip="#052 Miami Beach · Views 5.9 · Clicks 3.0 · Adds 1.6 · Total 10.5K"><span class="ep-top5-bar-row__lbl">#052 Miami Beach</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:29%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:15%"></div></div><span class="ep-top5-bar-row__val">10.5K</span></a>
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=circular&circular=214" data-tip="#214 Boca Raton · Views 4.7 · Clicks 2.4 · Adds 1.3 · Total 8.4K"><span class="ep-top5-bar-row__lbl">#214 Boca Raton</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:29%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:15%"></div></div><span class="ep-top5-bar-row__val">8.4K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=circular&circular=336" data-perf-hover data-perf-views="10200" data-perf-clicks="5100" data-perf-adds="2900" data-perf-title="#336 Hollywood"><span class="ep-top5-bar-row__lbl">#336 Hollywood</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">18.2K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=circular&circular=421" data-perf-hover data-perf-views="8600" data-perf-clicks="4300" data-perf-adds="2400" data-perf-title="#421 Pembroke Pines"><span class="ep-top5-bar-row__lbl">#421 Pembroke Pines</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">15.3K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=circular&circular=189" data-perf-hover data-perf-views="7300" data-perf-clicks="3600" data-perf-adds="2000" data-perf-title="#189 Aventura"><span class="ep-top5-bar-row__lbl">#189 Aventura</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:57%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">12.9K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=circular&circular=052" data-perf-hover data-perf-views="5900" data-perf-clicks="3000" data-perf-adds="1600" data-perf-title="#052 Miami Beach"><span class="ep-top5-bar-row__lbl">#052 Miami Beach</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:29%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:15%"></div></div><span class="ep-top5-bar-row__val">10.5K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=circular&circular=214" data-perf-hover data-perf-views="4700" data-perf-clicks="2400" data-perf-adds="1300" data-perf-title="#214 Boca Raton"><span class="ep-top5-bar-row__lbl">#214 Boca Raton</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:29%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:15%"></div></div><span class="ep-top5-bar-row__val">8.4K</span></a>
               </div>
             </div>
           </div>
@@ -341,11 +341,11 @@
             </div>
             <div class="ep-kpi-cell__chart" style="min-height:0;">
               <div class="ep-top5-bar-list">
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=category&category=produce" data-tip="Produce · Views 15.8 · Clicks 7.9 · Adds 4.4 · Total 28.1K"><span class="ep-top5-bar-row__lbl">Produce</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">28.1K</span></a>
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=category&category=meat" data-tip="Meat & Seafood · Views 13.9 · Clicks 6.9 · Adds 3.9 · Total 24.7K"><span class="ep-top5-bar-row__lbl">Meat & Seafood</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">24.7K</span></a>
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=category&category=dairy" data-tip="Dairy · Views 11.2 · Clicks 5.6 · Adds 3.1 · Total 19.9K"><span class="ep-top5-bar-row__lbl">Dairy</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">19.9K</span></a>
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=category&category=bakery" data-tip="Bakery · Views 9.4 · Clicks 4.7 · Adds 2.7 · Total 16.8K"><span class="ep-top5-bar-row__lbl">Bakery</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">16.8K</span></a>
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=category&category=pantry" data-tip="Pantry · Views 7.5 · Clicks 3.8 · Adds 2.1 · Total 13.4K"><span class="ep-top5-bar-row__lbl">Pantry</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">13.4K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=category&category=produce" data-perf-hover data-perf-views="15800" data-perf-clicks="7900" data-perf-adds="4400" data-perf-title="Produce"><span class="ep-top5-bar-row__lbl">Produce</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">28.1K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=category&category=meat" data-perf-hover data-perf-views="13900" data-perf-clicks="6900" data-perf-adds="3900" data-perf-title="Meat &amp; Seafood"><span class="ep-top5-bar-row__lbl">Meat &amp; Seafood</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">24.7K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=category&category=dairy" data-perf-hover data-perf-views="11200" data-perf-clicks="5600" data-perf-adds="3100" data-perf-title="Dairy"><span class="ep-top5-bar-row__lbl">Dairy</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">19.9K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=category&category=bakery" data-perf-hover data-perf-views="9400" data-perf-clicks="4700" data-perf-adds="2700" data-perf-title="Bakery"><span class="ep-top5-bar-row__lbl">Bakery</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">16.8K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=category&category=pantry" data-perf-hover data-perf-views="7500" data-perf-clicks="3800" data-perf-adds="2100" data-perf-title="Pantry"><span class="ep-top5-bar-row__lbl">Pantry</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">13.4K</span></a>
               </div>
             </div>
           </div>
@@ -360,11 +360,11 @@
             </div>
             <div class="ep-kpi-cell__chart" style="min-height:0;">
               <div class="ep-top5-bar-list">
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=promotion&promotion=p001" data-tip="Avocados 3/$5 · Views 5.3 · Clicks 2.6 · Adds 1.5 · Total 9.4K"><span class="ep-top5-bar-row__lbl">Avocados 3/$5</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">9.4K</span></a>
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=promotion&promotion=p002" data-tip="Ribeye $9.99/lb · Views 4.4 · Clicks 2.2 · Adds 1.3 · Total 7.9K"><span class="ep-top5-bar-row__lbl">Ribeye $9.99/lb</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">7.9K</span></a>
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=promotion&promotion=p003" data-tip="Milk 2/$6 · Views 3.8 · Clicks 1.9 · Adds 1.0 · Total 6.7K"><span class="ep-top5-bar-row__lbl">Milk 2/$6</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:57%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:15%"></div></div><span class="ep-top5-bar-row__val">6.7K</span></a>
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=promotion&promotion=p004" data-tip="Bagels BOGO · Views 3.1 · Clicks 1.6 · Adds 0.9 · Total 5.6K"><span class="ep-top5-bar-row__lbl">Bagels BOGO</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:55%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:29%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">5.6K</span></a>
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=promotion&promotion=p005" data-tip="Cereal $2.49 · Views 2.5 · Clicks 1.3 · Adds 0.7 · Total 4.5K"><span class="ep-top5-bar-row__lbl">Cereal $2.49</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:29%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">4.5K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=promotion&promotion=p001" data-perf-hover data-perf-views="5300" data-perf-clicks="2600" data-perf-adds="1500" data-perf-title="Avocados 3/$5"><span class="ep-top5-bar-row__lbl">Avocados 3/$5</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">9.4K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=promotion&promotion=p002" data-perf-hover data-perf-views="4400" data-perf-clicks="2200" data-perf-adds="1300" data-perf-title="Ribeye $9.99/lb"><span class="ep-top5-bar-row__lbl">Ribeye $9.99/lb</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">7.9K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=promotion&promotion=p003" data-perf-hover data-perf-views="3800" data-perf-clicks="1900" data-perf-adds="1000" data-perf-title="Milk 2/$6"><span class="ep-top5-bar-row__lbl">Milk 2/$6</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:57%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:15%"></div></div><span class="ep-top5-bar-row__val">6.7K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=promotion&promotion=p004" data-perf-hover data-perf-views="3100" data-perf-clicks="1600" data-perf-adds="900" data-perf-title="Bagels BOGO"><span class="ep-top5-bar-row__lbl">Bagels BOGO</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:55%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:29%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">5.6K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=promotion&promotion=p005" data-perf-hover data-perf-views="2500" data-perf-clicks="1300" data-perf-adds="700" data-perf-title="Cereal $2.49"><span class="ep-top5-bar-row__lbl">Cereal $2.49</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:29%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">4.5K</span></a>
               </div>
             </div>
           </div>
@@ -719,32 +719,58 @@
         wireOverviewDonutHover();
       }
     });
-    // Wire ep-perf-tooltip dark hover to the Overview Performance Score donut.
-    // Mirrors the canonical V/C/A breakdown pattern used elsewhere in the dashboard.
+    // Generic ep-perf-tooltip dark hover for any element with [data-perf-hover].
+    // Two modes:
+    //   1) V/C/A composite: data-perf-views/clicks/adds (raw point totals) →
+    //      auto-builds Views ×1, Clicks ×5, Adds ×20 rows + Total Score row.
+    //   2) Generic: data-perf-rows='[{"dot":"n","name":"New","val":4610}, ...]'
+    //      + data-perf-total='{"label":"Total Users","val":12460}'.
+    // Used by Performance Score donut, all Top-5 row anchors, and the
+    // Users/Sessions/Duration tiles. Mirrors the canonical chart hover
+    // pattern from canonical-shell-renderers.js.
     function wireOverviewDonutHover() {
-      var donut = document.getElementById('ep-perf-overview-donut');
-      if (!donut || !window.CanonicalShellRenderers) return;
       var R = window.CanonicalShellRenderers;
-      var v = +donut.dataset.perfViews || 0;
-      var c = +donut.dataset.perfClicks || 0;
-      var a = +donut.dataset.perfAdds || 0;
-      // V/C/A weights match canonical score formula: 1 / 5 / 20 points per interaction.
-      var vInter = v, cInter = Math.round(c / 5), aInter = Math.round(a / 20);
-      var total = v + c + a;
-      var title = donut.dataset.perfTitle || 'Performance Score';
-      donut.addEventListener('mouseenter', function () {
-        var tip = R.ensurePerfTooltip({ tooltip: 'dark' });
-        tip.innerHTML =
-          '<div class="ep-perf-tooltip__title">' + title + '</div>'
-          + '<div class="ep-perf-tooltip__row"><span class="ep-perf-tooltip__dot ep-perf-tooltip__dot--views"></span><span class="ep-perf-tooltip__name">Views <span class="ep-perf-tooltip__score">×1</span></span><span class="ep-perf-tooltip__val">' + vInter.toLocaleString() + '</span><span class="ep-perf-tooltip__score">' + v.toLocaleString() + '</span></div>'
-          + '<div class="ep-perf-tooltip__row"><span class="ep-perf-tooltip__dot ep-perf-tooltip__dot--clicks"></span><span class="ep-perf-tooltip__name">Clicks <span class="ep-perf-tooltip__score">×5</span></span><span class="ep-perf-tooltip__val">' + cInter.toLocaleString() + '</span><span class="ep-perf-tooltip__score">' + c.toLocaleString() + '</span></div>'
-          + '<div class="ep-perf-tooltip__row"><span class="ep-perf-tooltip__dot ep-perf-tooltip__dot--adds"></span><span class="ep-perf-tooltip__name">Adds <span class="ep-perf-tooltip__score">×20</span></span><span class="ep-perf-tooltip__val">' + aInter.toLocaleString() + '</span><span class="ep-perf-tooltip__score">' + a.toLocaleString() + '</span></div>'
-          + '<div class="ep-perf-tooltip__total"><span>Score</span><span>' + total.toLocaleString() + '</span></div>';
-        tip.classList.add('ep-perf-tooltip--visible');
-      });
-      donut.addEventListener('mousemove', R.positionPerfTooltip);
-      donut.addEventListener('mouseleave', function () {
-        R.ensurePerfTooltip().classList.remove('ep-perf-tooltip--visible');
+      if (!R) return;
+      function buildHTML(el) {
+        var title = el.dataset.perfTitle || '';
+        var html = '<div class="ep-perf-tooltip__title">' + title + '</div>';
+        if (el.dataset.perfRows) {
+          var rows = JSON.parse(el.dataset.perfRows);
+          rows.forEach(function (r) {
+            html += '<div class="ep-perf-tooltip__row">'
+              + '<span class="ep-perf-tooltip__dot ep-perf-tooltip__dot--' + (r.dot || '') + '"></span>'
+              + '<span class="ep-perf-tooltip__name">' + r.name + (r.weight ? ' <span class="ep-perf-tooltip__score">' + r.weight + '</span>' : '') + '</span>'
+              + '<span class="ep-perf-tooltip__val">' + (r.val || '') + '</span>'
+              + (r.score != null ? '<span class="ep-perf-tooltip__score">' + r.score + '</span>' : '')
+              + '</div>';
+          });
+          if (el.dataset.perfTotal) {
+            var t = JSON.parse(el.dataset.perfTotal);
+            html += '<div class="ep-perf-tooltip__total"><span>' + t.label + '</span><span>' + t.val + '</span></div>';
+          }
+        } else {
+          var v = +el.dataset.perfViews || 0;
+          var c = +el.dataset.perfClicks || 0;
+          var a = +el.dataset.perfAdds || 0;
+          var vInter = v, cInter = Math.round(c / 5), aInter = Math.round(a / 20);
+          html +=
+            '<div class="ep-perf-tooltip__row"><span class="ep-perf-tooltip__dot ep-perf-tooltip__dot--views"></span><span class="ep-perf-tooltip__name">Views <span class="ep-perf-tooltip__score">×1</span></span><span class="ep-perf-tooltip__val">' + vInter.toLocaleString() + '</span><span class="ep-perf-tooltip__score">' + v.toLocaleString() + '</span></div>'
+            + '<div class="ep-perf-tooltip__row"><span class="ep-perf-tooltip__dot ep-perf-tooltip__dot--clicks"></span><span class="ep-perf-tooltip__name">Clicks <span class="ep-perf-tooltip__score">×5</span></span><span class="ep-perf-tooltip__val">' + cInter.toLocaleString() + '</span><span class="ep-perf-tooltip__score">' + c.toLocaleString() + '</span></div>'
+            + '<div class="ep-perf-tooltip__row"><span class="ep-perf-tooltip__dot ep-perf-tooltip__dot--adds"></span><span class="ep-perf-tooltip__name">Adds <span class="ep-perf-tooltip__score">×20</span></span><span class="ep-perf-tooltip__val">' + aInter.toLocaleString() + '</span><span class="ep-perf-tooltip__score">' + a.toLocaleString() + '</span></div>'
+            + '<div class="ep-perf-tooltip__total"><span>Total Score</span><span>' + (v + c + a).toLocaleString() + '</span></div>';
+        }
+        return html;
+      }
+      document.querySelectorAll('[data-perf-hover]').forEach(function (el) {
+        el.addEventListener('mouseenter', function () {
+          var tip = R.ensurePerfTooltip({ tooltip: 'dark' });
+          tip.innerHTML = buildHTML(el);
+          tip.classList.add('ep-perf-tooltip--visible');
+        });
+        el.addEventListener('mousemove', R.positionPerfTooltip);
+        el.addEventListener('mouseleave', function () {
+          R.ensurePerfTooltip().classList.remove('ep-perf-tooltip--visible');
+        });
       });
     }
   </script>

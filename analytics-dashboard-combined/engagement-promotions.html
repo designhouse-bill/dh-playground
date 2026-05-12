@@ -146,20 +146,9 @@
     </div>
   </header>
 
-  <main class="engagement-proposed" id="engagement-proposed">
+<div id="engagement-dashboard">
 
-    <!-- ============================================================
-         Decision 1 (2026-05-06): perf-tabs ABOVE Distribution-pattern
-         hero-stat. Each tab swaps the hero KPI in the stat-strip.
-         Page-level hero-stat is the single source — per-pane hero-stats
-         removed.
-         ============================================================ -->
-    <!-- T7 — MVP Phase 1 scope strip (Apr 29 Max meeting). Phase 2 deferred metrics flagged below. -->
-    <div class="ep-mvp-strip">
-      <span class="ep-mvp-strip__badge"><span class="material-symbols-outlined" style="font-size:13px;">flag</span> MVP Phase 1</span>
-      <span class="ep-mvp-strip__text"><strong>Locked:</strong> Sessions · Total Users · Avg Session Duration · Card Engagement Events (Add to List / Card Click / Card View / Share) · Events per Session · breakdowns by week + by store</span>
-      <span class="ep-mvp-strip__text" style="margin-left:auto;"><strong>Phase 2:</strong> entry-point / source-medium (origin data deferred until reliable)</span>
-    </div>
+  <main class="engagement-canonical engagement-proposed" id="engagement-proposed">
 
     <!-- MAX IA — tabs are METRICS, sub-tabs are DIMENSIONS.
          Underline-tab style ported from Distribution (.perf-tab from distribution.css):
@@ -785,6 +774,8 @@
     </div>
 
   </main>
+
+</div><!-- /#engagement-dashboard -->
 
   <!-- Right Detail panel — canonical .detail-panel shell (css/detail-panel.css) -->
   <aside class="detail-panel" id="detail-panel" role="complementary" aria-label="Promotion details" aria-hidden="true">

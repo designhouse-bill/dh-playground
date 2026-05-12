@@ -164,6 +164,19 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
   margin: 2px 0 0 0;
 }
 
+/* Inline wrapper for additivity-pills + cohort-note (UX-846 Report mode 2026-05-12).
+   Side-by-side row; wraps on narrow widths so the cohort pill drops below
+   when needed. */
+.narrative-header__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+  margin-top: var(--space-2);
+}
+.narrative-header__meta > .ep-additivity,
+.narrative-header__meta > .ep-cohort-note { margin: 0; flex: 0 0 auto; white-space: nowrap; }
+
 /* ============================================================
    stat-strip — hero metric strip (project-wide)
    Phase 0b migrated 2026-05-04 from distribution.css (3851-3968).

@@ -11,7 +11,7 @@
   <!-- CSS -->
   <link rel="stylesheet" href="css/design-tokens.css?v=2">
   <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/analytics-architecture.css?v=13">
+  <link rel="stylesheet" href="css/analytics-architecture.css?v=15">
   <link rel="stylesheet" href="css/header.css?v=3">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
@@ -431,7 +431,8 @@
       <div class="hero-stat" data-ep-active="sessions"><div class="narrative-header"><div class="narrative-header-left">
         <h2 class="narrative-header__title">Sessions</h2>
         <p class="narrative-header__question">How are sessions distributed across circulars, days, and weeks?</p>
-        <span class="ep-cohort-note">
+        <div class="narrative-header__meta">
+          <span class="ep-cohort-note">
             <span class="material-symbols-outlined">info</span>
             <span class="ep-cohort-note__label">Cohort:</span>
             <span class="ep-cohort-note__count">27 circulars</span>
@@ -440,6 +441,7 @@
             <span class="ep-cohort-note__sep">·</span>
             <span class="ep-cohort-note__period">Week 47</span>
           </span>
+        </div>
       </div></div></div>
       <div class="ep-sub-tabs" role="tablist" aria-label="Sessions cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="trend" role="tab" aria-selected="true">Time Trend</button>
@@ -461,7 +463,8 @@
       <div class="hero-stat" data-ep-active="users"><div class="narrative-header"><div class="narrative-header-left">
         <h2 class="narrative-header__title">Total Users</h2>
         <p class="narrative-header__question">How many unique users engaged this week, and which circulars drove them?</p>
-        <p class="ep-additivity" aria-label="Total Users is the sum of New, Returning, and Engaged users">
+        <div class="narrative-header__meta">
+          <p class="ep-additivity" aria-label="Total Users is the sum of New, Returning, and Engaged users">
           <span class="ep-additivity__lbl">Of the total:</span>
           <span class="ep-additivity__pill ep-additivity__pill--n">New</span>
           <span class="ep-additivity__plus">+</span>
@@ -469,7 +472,7 @@
           <span class="ep-additivity__plus">+</span>
           <span class="ep-additivity__pill ep-additivity__pill--e">Engaged</span>
         </p>
-        <span class="ep-cohort-note">
+          <span class="ep-cohort-note">
             <span class="material-symbols-outlined">info</span>
             <span class="ep-cohort-note__label">Cohort:</span>
             <span class="ep-cohort-note__count">27 circulars</span>
@@ -478,6 +481,7 @@
             <span class="ep-cohort-note__sep">·</span>
             <span class="ep-cohort-note__period">Week 47</span>
           </span>
+        </div>
       </div></div></div>
       <div class="ep-sub-tabs" role="tablist" aria-label="Users cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="trend" role="tab" aria-selected="true">Time Trend</button>
@@ -500,7 +504,8 @@
         <h2 class="narrative-header__title">Avg Session Duration</h2>
         <p class="narrative-header__question">How long are users spending on each circular?</p>
         <p class="narrative-header__value" id="ep-duration-hero-value">—</p>
-        <p class="ep-additivity" aria-label="Avg Session Duration is the weighted average across New, Returning, and Engaged users">
+        <div class="narrative-header__meta">
+          <p class="ep-additivity" aria-label="Avg Session Duration is the weighted average across New, Returning, and Engaged users">
           <span class="ep-additivity__lbl">Of the avg:</span>
           <span class="ep-additivity__pill ep-additivity__pill--n">New</span>
           <span class="ep-additivity__plus">+</span>
@@ -508,7 +513,7 @@
           <span class="ep-additivity__plus">+</span>
           <span class="ep-additivity__pill ep-additivity__pill--e">Engaged</span>
         </p>
-        <span class="ep-cohort-note">
+          <span class="ep-cohort-note">
             <span class="material-symbols-outlined">info</span>
             <span class="ep-cohort-note__label">Cohort:</span>
             <span class="ep-cohort-note__count">27 circulars</span>
@@ -517,6 +522,7 @@
             <span class="ep-cohort-note__sep">·</span>
             <span class="ep-cohort-note__period">Week 47</span>
           </span>
+        </div>
       </div></div></div>
       <div class="ep-sub-tabs" role="tablist" aria-label="Duration cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="trend" role="tab" aria-selected="true">Time Trend</button>
@@ -538,7 +544,8 @@
       <div class="hero-stat" data-ep-active="performance"><div class="narrative-header"><div class="narrative-header-left">
         <h2 class="narrative-header__title">Performance Score</h2>
         <p class="narrative-header__question">How is the Views/Clicks/Adds composite trending?</p>
-        <p class="ep-additivity" aria-label="Performance Score is the sum of Views, Clicks, and Adds (point totals)">
+        <div class="narrative-header__meta">
+          <p class="ep-additivity" aria-label="Performance Score is the sum of Views, Clicks, and Adds (point totals)">
           <span class="ep-additivity__lbl">Of the total:</span>
           <span class="ep-additivity__pill ep-additivity__pill--n">Views</span>
           <span class="ep-additivity__plus">+</span>
@@ -546,7 +553,7 @@
           <span class="ep-additivity__plus">+</span>
           <span class="ep-additivity__pill ep-additivity__pill--e">Adds</span>
         </p>
-        <span class="ep-cohort-note">
+          <span class="ep-cohort-note">
             <span class="material-symbols-outlined">info</span>
             <span class="ep-cohort-note__label">Cohort:</span>
             <span class="ep-cohort-note__count">27 circulars</span>
@@ -555,6 +562,7 @@
             <span class="ep-cohort-note__sep">·</span>
             <span class="ep-cohort-note__period">Week 47</span>
           </span>
+        </div>
       </div></div></div>
       <div class="ep-sub-tabs" role="tablist" aria-label="Performance cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="trend" role="tab" aria-selected="true">Time Trend</button>

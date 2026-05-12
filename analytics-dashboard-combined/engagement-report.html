@@ -11,7 +11,7 @@
   <!-- CSS -->
   <link rel="stylesheet" href="css/design-tokens.css">
   <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/analytics-architecture.css?v=8">
+  <link rel="stylesheet" href="css/analytics-architecture.css?v=9">
   <link rel="stylesheet" href="css/header.css?v=3">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
@@ -229,13 +229,13 @@
               </div>
             </div>
             <div class="ep-kpi-cell__chart ep-kpi-cell__chart--perf">
-              <div class="ep-perf-donut" data-tip="Views 80,170 · Clicks 40,030 · Adds 22,600" style="background:conic-gradient(var(--series-v, #2196F3) 0% 56%, var(--series-c, #f59e0b) 56% 84%, var(--series-a, #22c55e) 84% 100%);">
+              <div class="ep-perf-donut ep-perf-donut--lg" id="ep-perf-overview-donut" data-perf-views="80170" data-perf-clicks="40030" data-perf-adds="22600" data-perf-title="Performance Score · Week 47" style="background:conic-gradient(#4272D8 0% 56%, #B8D64D 56% 84%, #937DF8 84% 100%);">
                 <div class="ep-perf-donut__center"><span class="ep-perf-donut__center-val">142.8K</span><span class="ep-perf-donut__center-lbl">points</span></div>
               </div>
-              <div class="ep-perf-donut__legend">
-                <div class="ep-perf-donut__legend-row" style="--swatch: var(--series-v, #2196F3);"><span class="ep-perf-donut__legend-sw"></span><span class="ep-perf-donut__legend-lbl">Views</span><strong class="ep-perf-donut__legend-val">80,170</strong></div>
-                <div class="ep-perf-donut__legend-row" style="--swatch: var(--series-c, #f59e0b);"><span class="ep-perf-donut__legend-sw"></span><span class="ep-perf-donut__legend-lbl">Clicks</span><strong class="ep-perf-donut__legend-val">40,030</strong></div>
-                <div class="ep-perf-donut__legend-row" style="--swatch: var(--series-a, #22c55e);"><span class="ep-perf-donut__legend-sw"></span><span class="ep-perf-donut__legend-lbl">Adds</span><strong class="ep-perf-donut__legend-val">22,600</strong></div>
+              <div class="ep-perf-donut__legend ep-perf-donut__legend--horizontal">
+                <div class="ep-perf-donut__legend-row ep-perf-donut__legend-row--views"><span class="ep-perf-donut__legend-sw"></span><span class="ep-perf-donut__legend-lbl">Views</span><strong class="ep-perf-donut__legend-val">80,170</strong></div>
+                <div class="ep-perf-donut__legend-row ep-perf-donut__legend-row--clicks"><span class="ep-perf-donut__legend-sw"></span><span class="ep-perf-donut__legend-lbl">Clicks</span><strong class="ep-perf-donut__legend-val">40,030</strong></div>
+                <div class="ep-perf-donut__legend-row ep-perf-donut__legend-row--adds"><span class="ep-perf-donut__legend-sw"></span><span class="ep-perf-donut__legend-lbl">Adds</span><strong class="ep-perf-donut__legend-val">22,600</strong></div>
               </div>
             </div>
             <span class="ep-kpi-cell__view">Open Performance Score <span class="material-symbols-outlined">chevron_right</span></span>
@@ -716,8 +716,37 @@
       if (window.CanonicalShellRenderers) {
         window.CanonicalShellRenderers.renderDefaultPlaceholders();
         window.CanonicalShellRenderers.wireTrendRanges();
+        wireOverviewDonutHover();
       }
     });
+    // Wire ep-perf-tooltip dark hover to the Overview Performance Score donut.
+    // Mirrors the canonical V/C/A breakdown pattern used elsewhere in the dashboard.
+    function wireOverviewDonutHover() {
+      var donut = document.getElementById('ep-perf-overview-donut');
+      if (!donut || !window.CanonicalShellRenderers) return;
+      var R = window.CanonicalShellRenderers;
+      var v = +donut.dataset.perfViews || 0;
+      var c = +donut.dataset.perfClicks || 0;
+      var a = +donut.dataset.perfAdds || 0;
+      // V/C/A weights match canonical score formula: 1 / 5 / 20 points per interaction.
+      var vInter = v, cInter = Math.round(c / 5), aInter = Math.round(a / 20);
+      var total = v + c + a;
+      var title = donut.dataset.perfTitle || 'Performance Score';
+      donut.addEventListener('mouseenter', function () {
+        var tip = R.ensurePerfTooltip({ tooltip: 'dark' });
+        tip.innerHTML =
+          '<div class="ep-perf-tooltip__title">' + title + '</div>'
+          + '<div class="ep-perf-tooltip__row"><span class="ep-perf-tooltip__dot ep-perf-tooltip__dot--views"></span><span class="ep-perf-tooltip__name">Views <span class="ep-perf-tooltip__score">×1</span></span><span class="ep-perf-tooltip__val">' + vInter.toLocaleString() + '</span><span class="ep-perf-tooltip__score">' + v.toLocaleString() + '</span></div>'
+          + '<div class="ep-perf-tooltip__row"><span class="ep-perf-tooltip__dot ep-perf-tooltip__dot--clicks"></span><span class="ep-perf-tooltip__name">Clicks <span class="ep-perf-tooltip__score">×5</span></span><span class="ep-perf-tooltip__val">' + cInter.toLocaleString() + '</span><span class="ep-perf-tooltip__score">' + c.toLocaleString() + '</span></div>'
+          + '<div class="ep-perf-tooltip__row"><span class="ep-perf-tooltip__dot ep-perf-tooltip__dot--adds"></span><span class="ep-perf-tooltip__name">Adds <span class="ep-perf-tooltip__score">×20</span></span><span class="ep-perf-tooltip__val">' + aInter.toLocaleString() + '</span><span class="ep-perf-tooltip__score">' + a.toLocaleString() + '</span></div>'
+          + '<div class="ep-perf-tooltip__total"><span>Score</span><span>' + total.toLocaleString() + '</span></div>';
+        tip.classList.add('ep-perf-tooltip--visible');
+      });
+      donut.addEventListener('mousemove', R.positionPerfTooltip);
+      donut.addEventListener('mouseleave', function () {
+        R.ensurePerfTooltip().classList.remove('ep-perf-tooltip--visible');
+      });
+    }
   </script>
   <script src="js/engagement/base-report.js?v=2"></script>
   <script src="js/engagement/overview-kpi-donuts.js?v=3"></script>

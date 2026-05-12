@@ -2172,20 +2172,25 @@ a.ep-store-rank__row:last-child { border-bottom: none; }
    Report Overview — KPI tile mini-charts (UX-846 Report mode 2026-05-12)
    ============================================================ */
 
-/* Performance Score donut + legend layout inside KPI tile */
-.ep-kpi-cell__chart--perf { display: grid; grid-template-columns: auto 1fr; gap: var(--space-3, .75rem); align-items: center; }
-.ep-kpi-cell__chart--perf .ep-perf-donut { width: 110px; height: 110px; position: relative; border-radius: 50%; }
-.ep-kpi-cell__chart--perf .ep-perf-donut::before { content: ""; position: absolute; inset: 22px; background: var(--p-surface-card, #fff); border-radius: 50%; }
-.ep-kpi-cell__chart--perf .ep-perf-donut__center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-variant-numeric: tabular-nums; z-index: 1; }
-.ep-kpi-cell__chart--perf .ep-perf-donut__center-val { font-weight: 700; font-size: 16px; color: var(--p-text-color, #1f2937); }
-.ep-kpi-cell__chart--perf .ep-perf-donut__center-lbl { font-size: 10px; color: var(--color-text-secondary, #6b7280); }
-.ep-perf-donut__legend { display: flex; flex-direction: column; gap: 6px; font-size: 11px; }
-.ep-perf-donut__legend-row { display: grid; grid-template-columns: 10px 1fr auto; gap: 6px; align-items: center; padding: 2px 4px; border-radius: 3px; transition: background .15s; }
-.ep-perf-donut__legend-row:hover { background: var(--p-surface-hover, #f3f4f6); }
-.ep-perf-donut__legend-sw { width: 10px; height: 10px; background: var(--swatch); border-radius: 2px; }
-.ep-perf-donut__legend-lbl { color: var(--p-text-color, #1f2937); font-weight: 500; }
-.ep-perf-donut__legend-val { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--p-text-color, #1f2937); }
-.ep-perf-donut[data-tip]:hover { filter: brightness(1.05); }
+/* Performance Score donut + horizontal legend (UX-846 Report mode 2026-05-12).
+   Bigger donut, legend below as 3 equal columns. Hover uses ep-perf-tooltip
+   dark pattern (canonical V/C/A hover from other dashboard areas). */
+.ep-kpi-cell__chart--perf { display: flex; flex-direction: column; align-items: center; gap: var(--space-3, .75rem); }
+.ep-kpi-cell__chart--perf .ep-perf-donut--lg { width: 180px; height: 180px; position: relative; border-radius: 50%; cursor: pointer; transition: filter .15s; }
+.ep-kpi-cell__chart--perf .ep-perf-donut--lg:hover { filter: brightness(1.05); }
+.ep-kpi-cell__chart--perf .ep-perf-donut--lg::before { content: ""; position: absolute; inset: 38px; background: var(--p-surface-card, #fff); border-radius: 50%; }
+.ep-kpi-cell__chart--perf .ep-perf-donut__center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-variant-numeric: tabular-nums; z-index: 1; pointer-events: none; }
+.ep-kpi-cell__chart--perf .ep-perf-donut__center-val { font-weight: 700; font-size: 22px; color: var(--p-text-color, #1f2937); }
+.ep-kpi-cell__chart--perf .ep-perf-donut__center-lbl { font-size: 11px; color: var(--color-text-secondary, #6b7280); }
+.ep-perf-donut__legend--horizontal { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; width: 100%; }
+.ep-perf-donut__legend--horizontal .ep-perf-donut__legend-row { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 6px; border-radius: 4px; transition: background .15s; }
+.ep-perf-donut__legend--horizontal .ep-perf-donut__legend-row:hover { background: var(--p-surface-hover, #f3f4f6); }
+.ep-perf-donut__legend--horizontal .ep-perf-donut__legend-sw { width: 100%; height: 4px; border-radius: 2px; }
+.ep-perf-donut__legend-row--views .ep-perf-donut__legend-sw { background: #4272D8; }
+.ep-perf-donut__legend-row--clicks .ep-perf-donut__legend-sw { background: #B8D64D; }
+.ep-perf-donut__legend-row--adds .ep-perf-donut__legend-sw { background: #937DF8; }
+.ep-perf-donut__legend--horizontal .ep-perf-donut__legend-lbl { color: var(--color-text-secondary, #6b7280); font-size: 10px; text-transform: uppercase; letter-spacing: .04em; font-weight: 600; }
+.ep-perf-donut__legend--horizontal .ep-perf-donut__legend-val { font-variant-numeric: tabular-nums; font-weight: 700; font-size: 15px; color: var(--p-text-color, #1f2937); }
 
 /* Mini stacked horizontal bar (Users tile) — N/R/E additivity */
 .ep-mini-stack { display: flex; flex-direction: column; gap: 8px; }

@@ -62,7 +62,12 @@
 
     </div>
 
-    <nav class="grain-switcher" id="grain-switcher" aria-label="Grain">
+    <!-- Section crumb (UX-846 2026-05-12): the three grain tabs below are sub-views of "Overviews". -->
+    <div class="section-crumb" aria-label="Section">
+      Engagement <span class="section-crumb__sep">›</span> <strong>Overviews</strong>
+    </div>
+
+    <nav class="grain-switcher" id="grain-switcher" aria-label="Overviews">
       <a class="grain-tab" data-grain-link="circular" href="engagement-circulars.html">
         <span class="material-symbols-outlined">menu_book</span>
         Circulars
@@ -77,18 +82,15 @@
       </a>
     </nav>
 
+    <!-- View Modes (UX-846 2026-05-12: REPORT removed; the three grain tabs ARE the Overviews surface) -->
     <div class="view-modes" id="view-modes">
-      <a class="mode-btn mode-btn--primary active" href="engagement-circulars.html" aria-label="Report view">
-        <span class="material-symbols-outlined">view_list</span>
-        REPORT
-      </a>
-      <a class="mode-btn mode-btn--outline" href="engagement-grid.html" aria-label="Explore view">
+      <a class="mode-btn mode-btn--outline" href="engagement-grid.html" aria-label="Explore data">
         <span class="material-symbols-outlined">table_chart</span>
-        EXPLORE
+        Explore Data
       </a>
       <a class="mode-btn mode-btn--outline" href="engagement-compare.html" aria-label="Comparison view">
         <span class="material-symbols-outlined">compare</span>
-        COMPARE
+        Compare
       </a>
     </div>
 

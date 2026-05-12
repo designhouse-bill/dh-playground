@@ -73,82 +73,216 @@
     <!-- perf-tabs strip lives in partials/engagement-tabs-shell.html (Phase 1 refactor) -->
 
     <div class="perf-tab-pane active" data-ep-pane="overview">
-      <div class="ep-kpi-grid" role="group" aria-label="Metric snapshot — donut breakdown">
-        <button class="ep-kpi-card" data-jump-to="sessions" data-kpi="sessions" type="button">
-          <span class="ep-kpi-card__label">Sessions</span>
-          <div class="ep-kpi-card__chart">
-            <div class="ep-kpi-card__donut" id="ep-kpi-donut-sessions" aria-hidden="true"></div>
-            <div class="ep-kpi-card__center">
-              <span class="ep-kpi-card__value">78,542</span>
-              <span class="ep-kpi-card__delta ep-kpi-card__delta--up">▲ 4.2% vs last wk</span>
+
+      <!-- Circulars grain — mixed KPI grid (Decision 2026-05-12).
+           Mirrors Promotions overview structure; cells reframed per grain.
+           - Coupon density: 38 of 75 promos across 27 circulars.
+           - Top performers: Top 5 circulars (drill to engagement-categories.html?store=). -->
+      <div class="ep-kpi-grid" role="group" aria-label="Circulars Overview — mixed KPI grid">
+
+        <div class="ep-kpi-stack">
+
+        <button class="ep-kpi-cell" data-jump-to="sessions" type="button">
+          <div class="ep-kpi-cell__head">
+            <div>
+              <div class="ep-kpi-cell__story">When engagement happens</div>
+              <div class="ep-kpi-cell__metric">Sessions by day of week</div>
+            </div>
+            <div style="text-align:right;">
+              <div class="ep-kpi-cell__value">78,542</div>
+              <div class="ep-kpi-cell__delta ep-kpi-cell__delta--up">▲ 4.2% vs last wk</div>
             </div>
           </div>
-          <ul class="ep-kpi-card__legend" id="ep-kpi-legend-sessions" aria-label="Sessions breakdown"></ul>
-          <span class="ep-kpi-card__view">Open Sessions<span class="material-symbols-outlined">chevron_right</span></span>
+          <div class="ep-kpi-cell__chart">
+            <div class="ep-dow-bars" aria-hidden="true">
+              <div class="ep-dow-bar"><div class="ep-dow-bar__fill" style="height:62%"></div><div class="ep-dow-bar__label">M</div></div>
+              <div class="ep-dow-bar"><div class="ep-dow-bar__fill" style="height:48%"></div><div class="ep-dow-bar__label">T</div></div>
+              <div class="ep-dow-bar"><div class="ep-dow-bar__fill" style="height:55%"></div><div class="ep-dow-bar__label">W</div></div>
+              <div class="ep-dow-bar"><div class="ep-dow-bar__fill" style="height:71%"></div><div class="ep-dow-bar__label">T</div></div>
+              <div class="ep-dow-bar"><div class="ep-dow-bar__fill" style="height:88%"></div><div class="ep-dow-bar__label">F</div></div>
+              <div class="ep-dow-bar ep-dow-bar--peak"><div class="ep-dow-bar__fill" style="height:96%"></div><div class="ep-dow-bar__label">S</div></div>
+              <div class="ep-dow-bar"><div class="ep-dow-bar__fill" style="height:42%"></div><div class="ep-dow-bar__label">S</div></div>
+            </div>
+          </div>
+          <span class="ep-kpi-cell__view">Open Sessions <span class="material-symbols-outlined">chevron_right</span></span>
         </button>
 
-        <button class="ep-kpi-card" data-jump-to="users" data-kpi="users" type="button">
-          <span class="ep-kpi-card__label">Total Users</span>
-          <div class="ep-kpi-card__chart">
-            <div class="ep-kpi-card__donut" id="ep-kpi-donut-users" aria-hidden="true"></div>
-            <div class="ep-kpi-card__center">
-              <span class="ep-kpi-card__value">54,011</span>
-              <span class="ep-kpi-card__delta ep-kpi-card__delta--up">▲ 2.8% vs last wk</span>
+        <button class="ep-kpi-cell" data-jump-to="users" data-jump-sub="store" type="button">
+          <div class="ep-kpi-cell__head">
+            <div>
+              <div class="ep-kpi-cell__story">Audience reach</div>
+              <div class="ep-kpi-cell__metric">Total Users across 27 circulars (by store) · Week 47</div>
+            </div>
+            <div style="text-align:right;">
+              <div class="ep-kpi-cell__value" style="font-size:14px; font-weight:600;">#336 Hollywood, FL</div>
+              <div class="ep-kpi-cell__delta" style="color: var(--section-users, #0891b2);">2,210 top circular</div>
             </div>
           </div>
-          <ul class="ep-kpi-card__legend" id="ep-kpi-legend-users" aria-label="Users breakdown"></ul>
-          <p class="ep-additivity" aria-label="Total Users is the sum of New, Returning, and Engaged users">
-            <span class="ep-additivity__lbl">Of the total:</span>
-            <span class="ep-additivity__pill ep-additivity__pill--n">New</span>
-            <span class="ep-additivity__plus">+</span>
-            <span class="ep-additivity__pill ep-additivity__pill--r">Returning</span>
-            <span class="ep-additivity__plus">+</span>
-            <span class="ep-additivity__pill ep-additivity__pill--e">Engaged</span>
-          </p>
-          <span class="ep-kpi-card__view">Open Users<span class="material-symbols-outlined">chevron_right</span></span>
+          <div class="ep-kpi-cell__chart">
+            <div class="ep-store-rank ep-store-rank--users" aria-label="Top 5 circulars by Total Users for Week 47">
+              <div class="ep-store-rank__row"><span class="ep-store-rank__lbl">#336 Hollywood</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:100%;"></div></div><span class="ep-store-rank__val">2.2K</span></div>
+              <div class="ep-store-rank__row"><span class="ep-store-rank__lbl">#421 Pembroke Pines</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:91%;"></div></div><span class="ep-store-rank__val">2.0K</span></div>
+              <div class="ep-store-rank__row"><span class="ep-store-rank__lbl">#189 Aventura</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:84%;"></div></div><span class="ep-store-rank__val">1.9K</span></div>
+              <div class="ep-store-rank__row"><span class="ep-store-rank__lbl">#052 Miami Beach</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:78%;"></div></div><span class="ep-store-rank__val">1.7K</span></div>
+              <div class="ep-store-rank__row"><span class="ep-store-rank__lbl">#214 Boca Raton</span><div class="ep-store-rank__bar"><div class="ep-store-rank__fill" style="width:72%;"></div></div><span class="ep-store-rank__val">1.6K</span></div>
+              <div class="ep-store-rank__tail"><span class="ep-store-rank__tail-lbl">+ 22 more circulars</span><span class="ep-store-rank__tail-val">+ 44.6K (83%)</span></div>
+            </div>
+          </div>
+          <span class="ep-kpi-cell__view">Open Users by Circular <span class="material-symbols-outlined">chevron_right</span></span>
         </button>
 
-        <button class="ep-kpi-card" data-jump-to="duration" data-kpi="duration" type="button">
-          <span class="ep-kpi-card__label">Average Session Duration</span>
-          <div class="ep-kpi-card__chart">
-            <div class="ep-kpi-card__donut" id="ep-kpi-donut-duration" aria-hidden="true"></div>
-            <div class="ep-kpi-card__center">
-              <span class="ep-kpi-card__value">6<span class="ep-kpi-card__unit">min</span> 8<span class="ep-kpi-card__unit">sec</span></span>
-              <span class="ep-kpi-card__delta ep-kpi-card__delta--down">▼ 1.5% vs last wk</span>
-            </div>
-          </div>
-          <ul class="ep-kpi-card__legend" id="ep-kpi-legend-duration" aria-label="Duration breakdown"></ul>
-          <p class="ep-additivity" aria-label="Avg Session Duration is the weighted average across New, Returning, and Engaged users">
-            <span class="ep-additivity__lbl">Of the avg:</span>
-            <span class="ep-additivity__pill ep-additivity__pill--n">New</span>
-            <span class="ep-additivity__plus">+</span>
-            <span class="ep-additivity__pill ep-additivity__pill--r">Returning</span>
-            <span class="ep-additivity__plus">+</span>
-            <span class="ep-additivity__pill ep-additivity__pill--e">Engaged</span>
-          </p>
-          <span class="ep-kpi-card__view">Open Duration<span class="material-symbols-outlined">chevron_right</span></span>
-        </button>
+        </div><!-- /.ep-kpi-stack -->
 
-        <button class="ep-kpi-card" data-jump-to="cardevents" data-kpi="cardevents" type="button">
-          <span class="ep-kpi-card__label">Card Engagement Events</span>
-          <div class="ep-kpi-card__chart">
-            <div class="ep-kpi-card__donut" id="ep-kpi-donut-cardevents" aria-hidden="true"></div>
-            <div class="ep-kpi-card__center">
-              <span class="ep-kpi-card__value">271,298</span>
-              <span class="ep-kpi-card__delta ep-kpi-card__delta--up">▲ 7.1% vs last wk</span>
+        <div class="ep-perf-depth-split ep-kpi-cell--m">
+          <a class="ep-kpi-cell ep-perf-depth-split__col" href="engagement-grid.html?metric=performance" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+            <div class="ep-kpi-cell__head">
+              <div>
+                <div class="ep-kpi-cell__story">Performance Score</div>
+                <div class="ep-kpi-cell__metric">Views · Clicks · Adds (point totals · all 27 circulars)</div>
+              </div>
+            </div>
+            <div class="ep-kpi-cell__chart">
+              <div class="ep-perf-donut-wrap">
+                <div class="ep-perf-donut" style="background:conic-gradient(var(--series-v, #2196F3) 0% 56%, var(--series-c, #f59e0b) 56% 84%, var(--series-a, #22c55e) 84% 100%);" aria-hidden="true">
+                  <div class="ep-perf-donut__center"><span class="ep-perf-donut__center-val">142.8K</span><span class="ep-perf-donut__center-lbl">total points</span></div>
+                </div>
+                <div class="ep-perf-donut__legend">
+                  <div class="ep-perf-donut__legend-row" style="--swatch: var(--series-v, #2196F3);"><span>Views</span><strong>80,170</strong></div>
+                  <div class="ep-perf-donut__legend-row" style="--swatch: var(--series-c, #f59e0b);"><span>Clicks</span><strong>40,030</strong></div>
+                  <div class="ep-perf-donut__legend-row" style="--swatch: var(--series-a, #22c55e);"><span>Adds</span><strong>22,600</strong></div>
+                </div>
+              </div>
+            </div>
+            <span class="ep-kpi-cell__view">Open Grid (point totals) <span class="material-symbols-outlined">open_in_new</span></span>
+          </a>
+          <button class="ep-kpi-cell ep-perf-depth-split__col" data-jump-to="duration" type="button" style="text-align:left;">
+            <div class="ep-kpi-cell__head">
+              <div>
+                <div class="ep-kpi-cell__story">Depth of engagement</div>
+                <div class="ep-kpi-cell__metric">Avg Duration · device (GA4)</div>
+              </div>
+              <div style="text-align:right;">
+                <div class="ep-kpi-cell__value">6m 8s</div>
+                <div class="ep-kpi-cell__delta ep-kpi-cell__delta--down">▼ 1.5%</div>
+              </div>
+            </div>
+            <div class="ep-kpi-cell__chart">
+              <div class="ep-depth-vbars" aria-hidden="true">
+                <div class="ep-depth-vbar"><span class="ep-depth-vbar__val">7m 12s</span><div class="ep-depth-vbar__fill" style="height:100%; --swatch: var(--section-duration, #d97706);"></div><span class="ep-depth-vbar__label">Mobile</span></div>
+                <div class="ep-depth-vbar"><span class="ep-depth-vbar__val">5m 02s</span><div class="ep-depth-vbar__fill" style="height:70%; --swatch: color-mix(in srgb, var(--section-duration, #d97706) 70%, #fff);"></div><span class="ep-depth-vbar__label">Desktop</span></div>
+                <div class="ep-depth-vbar"><span class="ep-depth-vbar__val">4m 31s</span><div class="ep-depth-vbar__fill" style="height:63%; --swatch: color-mix(in srgb, var(--section-duration, #d97706) 50%, #fff);"></div><span class="ep-depth-vbar__label">Tablet</span></div>
+                <div class="ep-depth-vbar"><span class="ep-depth-vbar__val">3m 18s</span><div class="ep-depth-vbar__fill" style="height:46%; --swatch: color-mix(in srgb, var(--section-duration, #d97706) 30%, #fff);"></div><span class="ep-depth-vbar__label">Other</span></div>
+              </div>
+            </div>
+            <span class="ep-kpi-cell__view">Open Duration <span class="material-symbols-outlined">chevron_right</span></span>
+          </button>
+        </div>
+
+        <div class="ep-kpi-stack">
+          <button class="ep-kpi-cell" data-jump-to="cardevents" type="button">
+            <div class="ep-kpi-cell__head">
+              <div>
+                <div class="ep-kpi-cell__story">Card events</div>
+                <div class="ep-kpi-cell__metric">vs all-circular avg</div>
+              </div>
+              <div style="text-align:right;">
+                <div class="ep-kpi-cell__value" style="color: var(--section-cardevents, #7c3aed);">271K</div>
+                <div class="ep-kpi-cell__delta ep-kpi-cell__delta--up">▲ 7.1% · +18% vs avg</div>
+              </div>
+            </div>
+            <span class="ep-kpi-cell__view">Open Card Events <span class="material-symbols-outlined">chevron_right</span></span>
+          </button>
+
+          <a class="ep-kpi-cell" href="engagement-grid.html?metric=coupons" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+            <div class="ep-kpi-cell__head">
+              <div>
+                <div class="ep-kpi-cell__story">Coupon density</div>
+                <div class="ep-kpi-cell__metric">38 of 75 promotions across 27 circulars</div>
+              </div>
+              <div style="text-align:right;">
+                <div class="ep-kpi-cell__value" style="color: var(--section-coupon-ink, #a16207);">15.5%</div>
+                <div class="ep-kpi-cell__delta ep-kpi-cell__delta--up">▲ 11.4% · 42K events</div>
+              </div>
+            </div>
+            <span class="ep-kpi-cell__view">Open Grid (coupons) <span class="material-symbols-outlined">open_in_new</span></span>
+          </a>
+        </div>
+
+        <a class="ep-kpi-cell ep-kpi-cell--m" href="engagement-grid.html?metric=dealtype" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+          <div class="ep-kpi-cell__head">
+            <div>
+              <div class="ep-kpi-cell__story">Performance by deal type</div>
+              <div class="ep-kpi-cell__metric">Card events · used types only · all 27 circulars · Week 47</div>
+            </div>
+            <div style="text-align:right;">
+              <div class="ep-kpi-cell__value" style="font-size:14px; font-weight:600;">Fixed Price</div>
+              <div class="ep-kpi-cell__delta" style="color: var(--section-dealtype-ink, #d3151b);">top · 38% share</div>
             </div>
           </div>
-          <ul class="ep-kpi-card__legend" id="ep-kpi-legend-cardevents" aria-label="Card events breakdown"></ul>
-          <p class="ep-additivity" aria-label="Card Engagement Events totals roll up Card Clicks, Add to List, and Card View / Share">
-            <span class="ep-additivity__lbl">Of the total:</span>
-            <span class="ep-additivity__pill ep-additivity__pill--n">Card Click</span>
-            <span class="ep-additivity__plus">+</span>
-            <span class="ep-additivity__pill ep-additivity__pill--r">Add to List</span>
-            <span class="ep-additivity__plus">+</span>
-            <span class="ep-additivity__pill ep-additivity__pill--e">Card View / Share</span>
-          </p>
-          <span class="ep-kpi-card__view">Open Card Events<span class="material-symbols-outlined">chevron_right</span></span>
-        </button>
+          <div class="ep-kpi-cell__chart" style="min-height:0;">
+            <div class="ep-dealtype-rank" aria-label="Card events by deal type, top 5 by volume">
+              <div class="ep-dealtype-rank__row"><span class="ep-dealtype-rank__lbl">Fixed Price</span><div class="ep-dealtype-rank__bar"><div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--v" style="width:62%;"></div><div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--c" style="width:24%;"></div><div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--a" style="width:14%;"></div></div><span class="ep-dealtype-rank__val">103K</span><span class="ep-dealtype-rank__share">38%</span></div>
+              <div class="ep-dealtype-rank__row"><span class="ep-dealtype-rank__lbl">Buy X Get Y For Z</span><div class="ep-dealtype-rank__bar"><div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--v" style="width:55%;"></div><div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--c" style="width:30%;"></div><div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--a" style="width:15%;"></div></div><span class="ep-dealtype-rank__val">61K</span><span class="ep-dealtype-rank__share">23%</span></div>
+              <div class="ep-dealtype-rank__row"><span class="ep-dealtype-rank__lbl">Amount Off</span><div class="ep-dealtype-rank__bar"><div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--v" style="width:60%;"></div><div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--c" style="width:27%;"></div><div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--a" style="width:13%;"></div></div><span class="ep-dealtype-rank__val">38K</span><span class="ep-dealtype-rank__share">14%</span></div>
+              <div class="ep-dealtype-rank__row"><span class="ep-dealtype-rank__lbl"># for Price</span><div class="ep-dealtype-rank__bar"><div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--v" style="width:58%;"></div><div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--c" style="width:28%;"></div><div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--a" style="width:14%;"></div></div><span class="ep-dealtype-rank__val">30K</span><span class="ep-dealtype-rank__share">11%</span></div>
+              <div class="ep-dealtype-rank__row"><span class="ep-dealtype-rank__lbl">Save Amount</span><div class="ep-dealtype-rank__bar"><div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--v" style="width:64%;"></div><div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--c" style="width:22%;"></div><div class="ep-dealtype-rank__seg ep-dealtype-rank__seg--a" style="width:14%;"></div></div><span class="ep-dealtype-rank__val">23K</span><span class="ep-dealtype-rank__share">8%</span></div>
+              <div class="ep-dealtype-rank__legend">
+                <span class="ep-dealtype-rank__legend-item" style="--swatch: var(--series-v, #2196F3);">Views</span>
+                <span class="ep-dealtype-rank__legend-item" style="--swatch: var(--series-c, #f59e0b);">Clicks</span>
+                <span class="ep-dealtype-rank__legend-item" style="--swatch: var(--series-a, #22c55e);">Adds</span>
+                <span class="ep-dealtype-rank__legend-note">Top 5 of 7 used types · 7 of 11 enabled</span>
+              </div>
+            </div>
+          </div>
+          <span class="ep-kpi-cell__view">Open Grid (deal types) <span class="material-symbols-outlined">open_in_new</span></span>
+        </a>
+
+        <!-- Top performers: Top 5 circulars. Click drills to engagement-categories.html?store=<id>. -->
+        <div class="ep-kpi-cell ep-kpi-cell--l" style="cursor:default;">
+          <div class="ep-kpi-cell__head">
+            <div>
+              <div class="ep-kpi-cell__story">Top performers</div>
+              <div class="ep-kpi-cell__metric">Top 5 circulars · Card Engagement Events · Week 47</div>
+            </div>
+            <a href="engagement-grid.html?grain=circular" class="ep-kpi-cell__view" style="margin-top:0; padding-top:0; border-top:none;">
+              View all circulars <span class="material-symbols-outlined">chevron_right</span>
+            </a>
+          </div>
+          <div class="ep-kpi-cell__chart" style="min-height:0;">
+            <div class="ep-topn-chips" role="list" aria-label="Top 5 circulars by Card Engagement Events">
+              <a class="creative-chip" href="engagement-categories.html?store=store-336" role="listitem" title="#336 Hollywood — drill to categories">
+                <div class="creative-chip__header"><div class="creative-chip__thumb"><span class="creative-chip__thumb-initials">336</span></div><span class="creative-chip__rank">1</span></div>
+                <span class="creative-chip__name">#336 Hollywood, FL</span>
+                <span class="creative-chip__meta">8 categories · 75 promotions</span>
+                <span class="creative-chip__value">18.2K<span class="creative-chip__value-lbl">Card events</span></span>
+              </a>
+              <a class="creative-chip" href="engagement-categories.html?store=store-421" role="listitem" title="#421 Pembroke Pines — drill to categories">
+                <div class="creative-chip__header"><div class="creative-chip__thumb"><span class="creative-chip__thumb-initials">421</span></div><span class="creative-chip__rank">2</span></div>
+                <span class="creative-chip__name">#421 Pembroke Pines</span>
+                <span class="creative-chip__meta">8 categories · 75 promotions</span>
+                <span class="creative-chip__value">15.3K<span class="creative-chip__value-lbl">Card events</span></span>
+              </a>
+              <a class="creative-chip" href="engagement-categories.html?store=store-189" role="listitem" title="#189 Aventura — drill to categories">
+                <div class="creative-chip__header"><div class="creative-chip__thumb"><span class="creative-chip__thumb-initials">189</span></div><span class="creative-chip__rank">3</span></div>
+                <span class="creative-chip__name">#189 Aventura</span>
+                <span class="creative-chip__meta">8 categories · 72 promotions</span>
+                <span class="creative-chip__value">12.9K<span class="creative-chip__value-lbl">Card events</span></span>
+              </a>
+              <a class="creative-chip" href="engagement-categories.html?store=store-052" role="listitem" title="#052 Miami Beach — drill to categories">
+                <div class="creative-chip__header"><div class="creative-chip__thumb"><span class="creative-chip__thumb-initials">052</span></div><span class="creative-chip__rank">4</span></div>
+                <span class="creative-chip__name">#052 Miami Beach</span>
+                <span class="creative-chip__meta">8 categories · 75 promotions</span>
+                <span class="creative-chip__value">10.5K<span class="creative-chip__value-lbl">Card events</span></span>
+              </a>
+              <a class="creative-chip" href="engagement-categories.html?store=store-214" role="listitem" title="#214 Boca Raton — drill to categories">
+                <div class="creative-chip__header"><div class="creative-chip__thumb"><span class="creative-chip__thumb-initials">214</span></div><span class="creative-chip__rank">5</span></div>
+                <span class="creative-chip__name">#214 Boca Raton</span>
+                <span class="creative-chip__meta">8 categories · 70 promotions</span>
+                <span class="creative-chip__value">8.4K<span class="creative-chip__value-lbl">Card events</span></span>
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 

@@ -11,11 +11,11 @@
   <!-- CSS (in dependency order) -->
   <link rel="stylesheet" href="css/design-tokens.css">
   <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/analytics-architecture.css">
-  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/analytics-architecture.css?v=20">
+  <link rel="stylesheet" href="css/header.css?v=5">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/engagement.css">
+  <link rel="stylesheet" href="css/engagement.css?v=11">
 </head>
 <body>
 
@@ -131,15 +131,6 @@
               <span class="material-symbols-outlined">corporate_fare</span>
               <span class="btn-text">Select Entity</span>
             </button>
-            <div class="compare-filter">
-              <label for="daysFilterA">Days:</label>
-              <select id="daysFilterA" class="days-filter" onchange="ComparePage.setDaysFilter('A', this.value)">
-                <option value="all">All Days</option>
-                <option value="7">7 Days</option>
-                <option value="3">3 Days</option>
-                <option value="1">1 Day</option>
-              </select>
-            </div>
             <button class="context-btn context-btn--empty" data-target="A" data-type="category" onclick="ComparePage.openCategoryPicker('A')" id="context-a-category" style="display: none;">
               <span class="material-symbols-outlined">category</span>
               <span class="btn-text">Select Category</span>
@@ -171,15 +162,6 @@
               <span class="material-symbols-outlined">corporate_fare</span>
               <span class="btn-text">Select Entity</span>
             </button>
-            <div class="compare-filter">
-              <label for="daysFilterB">Days:</label>
-              <select id="daysFilterB" class="days-filter" onchange="ComparePage.setDaysFilter('B', this.value)">
-                <option value="all">All Days</option>
-                <option value="7">7 Days</option>
-                <option value="3">3 Days</option>
-                <option value="1">1 Day</option>
-              </select>
-            </div>
             <button class="context-btn context-btn--empty" data-target="B" data-type="category" onclick="ComparePage.openCategoryPicker('B')" id="context-b-category" style="display: none;">
               <span class="material-symbols-outlined">category</span>
               <span class="btn-text">Select Category</span>

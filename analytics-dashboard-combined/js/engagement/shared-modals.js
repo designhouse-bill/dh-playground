@@ -319,6 +319,15 @@ const DashboardModals = (() => {
     renderGroupList(searchValue);
   }
 
+  /**
+   * Logo thumbnail for a Brand / SubBrand row — same pattern as the admin
+   * header's .dh-top-bar__node-icon (dark gray square + image icon). In
+   * production this slot receives the node's actual logo from Node Manager.
+   */
+  function entityLogo(_name) {
+    return '<span class="tree-logo" aria-hidden="true"><span class="material-symbols-outlined">image</span></span>';
+  }
+
   function renderEntityTree(searchQuery = '') {
     const tbody = document.getElementById('entity-tree-body');
     if (!tbody || typeof MockData === 'undefined' || !MockData.entities) return;
@@ -374,6 +383,7 @@ const DashboardModals = (() => {
                 <button class="tree-toggle ${isBrandExpanded ? '' : 'collapsed'}" onclick="DashboardModals.toggleTreeRow('${brand.id}', event)">
                   <span class="material-symbols-outlined">expand_more</span>
                 </button>
+                ${entityLogo(brand.name)}
                 <span>${core.escapeHtml(brand.name)}</span>
               </div>
             </td>
@@ -409,6 +419,7 @@ const DashboardModals = (() => {
                   <button class="tree-toggle ${isSubExpanded ? '' : 'collapsed'}" onclick="DashboardModals.toggleTreeRow('${subBrand.id}', event)">
                     <span class="material-symbols-outlined">expand_more</span>
                   </button>
+                  ${entityLogo(subBrand.name)}
                   <span>${core.escapeHtml(subBrand.name)}</span>
                 </div>
               </td>

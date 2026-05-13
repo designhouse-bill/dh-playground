@@ -741,7 +741,7 @@ body.app-mode-grid .view-search {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-4) var(--space-4) var(--space-4) var(--space-4);
+  padding: var(--space-2);
   background-color: var(--color-gray-50);
   border-bottom: 1px solid var(--color-border);
   flex-shrink: 0;
@@ -752,7 +752,7 @@ body.app-mode-grid .view-search {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-3) var(--space-4);
+  /* padding: var(--space-3) var(--space-4); */
   background-color: white;
 }
 
@@ -4122,6 +4122,25 @@ body:not(.comparison-active) .detail-comparison {
   padding: var(--space-1) var(--space-2);
 }
 
+/* Brand / SubBrand logo thumbnail — mirrors the admin header's
+   .dh-top-bar__node-icon (dark gray square with image placeholder icon).
+   In production this receives the node's logo from Node Manager. */
+.tree-name-cell .tree-logo {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: #5a5a5c;
+  color: #9a9a9c;
+}
+.tree-name-cell .tree-logo .material-symbols-outlined {
+  font-size: 16px;
+}
+
 /* .tree-toggle / .tree-toggle-placeholder moved to css/analytics-architecture.css
    (Phase 0b block 17, 2026-05-04). */
 
@@ -4830,48 +4849,9 @@ body:not(.comparison-active) .detail-comparison {
   overflow: hidden;
 }
 
-/* Layer Tabs (legacy - keeping for compare page) */
-.compare-layer-tabs {
-  display: flex;
-  gap: 0;
-  border-bottom: 1px solid var(--color-border);
-  padding: 0 var(--space-6);
-  background-color: var(--color-surface);
-}
-
-.compare-layer-tabs button,
-.compare-layer-tabs a {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-6);
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  border-bottom: 3px solid transparent;
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  transition: all var(--transition-fast);
-}
-
-.compare-layer-tabs a .material-symbols-outlined {
-  font-size: 18px;
-}
-
-.compare-layer-tabs button:hover,
-.compare-layer-tabs a:hover {
-  color: var(--color-text-primary);
-  background-color: var(--color-gray-50);
-}
-
-.compare-layer-tabs button.active,
-.compare-layer-tabs a.active {
-  border-bottom-color: var(--color-primary-500);
-  color: var(--color-primary-600);
-  font-weight: var(--font-weight-semibold);
-}
+/* .compare-layer-tabs rules removed — canonical .perf-tabs.perf-tabs--filled
+   in analytics-architecture.css owns the styling. The class is retained on
+   the wrapper as a hook for ComparePage.updateLayerTabs() selector. */
 
 /* BASE Layer Dropdown */
 .base-dropdown {
@@ -4993,12 +4973,18 @@ body:not(.comparison-active) .detail-comparison {
   position: sticky;
   top: 0;
   z-index: 10;
+  flex: 1;
+  width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-6);
   padding: var(--space-4) var(--space-6);
+  max-width: 1600px;
+  min-width: 1200px;
+  margin: 0 auto;
   background: linear-gradient(180deg, var(--color-gray-100), var(--color-gray-50));
   border-bottom: 2px solid var(--color-border);
+  box-sizing: border-box;
 }
 
 .context-column {
@@ -5048,6 +5034,13 @@ body:not(.comparison-active) .detail-comparison {
   flex: 1;
   flex-wrap: wrap;
 }
+/* Match the dashboard-wide rule from .context-row: Entity before Date Range.
+   HTML order kept as date → entity → category → promotion; flex `order`
+   flips date and entity visually on both Panel A and Panel B. */
+.context-selectors .context-btn[data-type="entity"]    { order: 1; }
+.context-selectors .context-btn[data-type="date"]      { order: 2; }
+.context-selectors .context-btn[data-type="category"]  { order: 3; }
+.context-selectors .context-btn[data-type="promotion"] { order: 4; }
 
 .context-btn {
   display: inline-flex;
@@ -5148,12 +5141,14 @@ body:not(.comparison-active) .detail-comparison {
 /* Compare Results Container */
 .compare-results-container {
   flex: 1;
+  width: 100%;
   overflow-y: auto;
   padding: var(--space-6);
   background-color: var(--color-background);
   max-width: 1600px;
   min-width: 1200px;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 /* Compare Grid - Two Column Layout */
@@ -6153,6 +6148,35 @@ body:not(.comparison-active) .detail-comparison {
   color: var(--color-text-tertiary);
   font-weight: var(--font-weight-semibold);
   margin-bottom: 3px;
+}
+
+/* =========================================================================
+   RESPONSIVE — Compare page (1200 / 1024 / 768 / 480)
+   NOTE: nested under #engagement-dashboard {...} wrapper above so the
+   specificity matches the page's other Compare rules (line 4953-onwards).
+   ========================================================================= */
+
+/* ≤ 1024px: drop the 1200px min-width that forced horizontal scroll on
+   tablet/landscape. Bar + results container shrink to fit the viewport. */
+@media (max-width: 1024px) {
+  .compare-context-bar,
+  .compare-results-container {
+    min-width: 0;
+  }
+}
+
+/* ≤ 900px: stack A above B (bar columns and grid cells become single col). */
+@media (max-width: 900px) {
+  .compare-context-bar,
+  .compare-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ≤ 480px: tighten padding so cards have more usable width on phones. */
+@media (max-width: 480px) {
+  .compare-context-bar { padding: var(--space-3) var(--space-3); }
+  .compare-results-container { padding: var(--space-3); }
 }
 
 }

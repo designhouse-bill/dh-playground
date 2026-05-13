@@ -11,14 +11,14 @@
   <!-- CSS -->
   <link rel="stylesheet" href="css/design-tokens.css?v=2">
   <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/analytics-architecture.css?v=17">
-  <link rel="stylesheet" href="css/header.css?v=3">
+  <link rel="stylesheet" href="css/analytics-architecture.css?v=22">
+  <link rel="stylesheet" href="css/header.css?v=5">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/engagement.css">
+  <link rel="stylesheet" href="css/engagement.css?v=11">
   <!-- Pulled in for perf-tabs / creative-chips / stat-strip / section-panel-header rules -->
   <link rel="stylesheet" href="css/distribution.css">
-  <link rel="stylesheet" href="css/engagement-canonical.css?v=3">
+  <link rel="stylesheet" href="css/engagement-canonical.css?v=10">
   <link rel="stylesheet" href="css/tiered-surfaces.css?v=1">
 </head>
 <body data-engagement-page="report" data-active-tab="overview">
@@ -74,7 +74,7 @@
 
     <!-- Main nav: Report / Explore Data / Compare (UX-846 Report mode 2026-05-12) -->
     <div class="view-modes" id="view-modes">
-      <a href="engagement-report.html" class="mode-btn mode-btn--outline mode-btn--active" aria-label="Report" aria-current="page">
+      <a href="engagement-report.html" class="mode-btn mode-btn--outline active" aria-label="Report" aria-current="page">
         <span class="material-symbols-outlined">monitoring</span>
         Report
       </a>
@@ -147,7 +147,7 @@
        CANONICAL ENGAGEMENT SHELL — UX-846 Phase 5c
        Source: partials/canonical-engagement-shell.html
        ============================================================ -->
-  <main class="engagement-canonical engagement-proposed" id="engagement-canonical">
+  <main class="engagement-canonical engagement-surface" id="engagement-canonical">
 
     <!-- Page-level hero-stat shell — same structure as engagement-promotions
          (narrative-header left + stat-strip right). Title / question /
@@ -209,8 +209,10 @@
 
           <a class="ep-kpi-cell ep-kpi-cell--equal" href="engagement-report.html?tab=performance" data-jump-to="performance">
             <div class="ep-kpi-cell__head">
+              <div class="ep-kpi-cell__title">
+                <h3 class="ep-kpi-cell__story">Performance Score</h3>
+              </div>
               <div>
-                <div class="ep-kpi-cell__story">Performance Score</div>
                 <div class="ep-kpi-cell__metric">V/C/A composite · Week 47</div>
               </div>
               <div style="text-align:right;">
@@ -235,8 +237,10 @@
 
           <a class="ep-kpi-cell ep-kpi-cell--equal" href="engagement-report.html?tab=users" data-jump-to="users">
             <div class="ep-kpi-cell__head">
+              <div class="ep-kpi-cell__title">
+                <h3 class="ep-kpi-cell__story">Total Users</h3>
+              </div>
               <div>
-                <div class="ep-kpi-cell__story">Total Users</div>
                 <div class="ep-kpi-cell__metric">New + Returning + Engaged · Week 47</div>
               </div>
               <div style="text-align:right;">
@@ -259,8 +263,10 @@
 
           <a class="ep-kpi-cell ep-kpi-cell--equal" href="engagement-report.html?tab=sessions" data-jump-to="sessions">
             <div class="ep-kpi-cell__head">
+              <div class="ep-kpi-cell__title">
+                <h3 class="ep-kpi-cell__story">Sessions</h3>
+              </div>
               <div>
-                <div class="ep-kpi-cell__story">Sessions</div>
                 <div class="ep-kpi-cell__metric">Total · Week 47 · by day</div>
               </div>
               <div style="text-align:right;">
@@ -284,8 +290,10 @@
 
           <a class="ep-kpi-cell ep-kpi-cell--equal" href="engagement-report.html?tab=duration" data-jump-to="duration">
             <div class="ep-kpi-cell__head">
+              <div class="ep-kpi-cell__title">
+                <h3 class="ep-kpi-cell__story">Avg Duration</h3>
+              </div>
               <div>
-                <div class="ep-kpi-cell__story">Avg Duration</div>
                 <div class="ep-kpi-cell__metric">Per session · device share</div>
               </div>
               <div style="text-align:right;">
@@ -311,8 +319,10 @@
 
           <div class="ep-kpi-cell ep-top5-panel">
             <div class="ep-kpi-cell__head">
+              <div class="ep-kpi-cell__title">
+                <h3 class="ep-kpi-cell__story">Top Circulars</h3>
+              </div>
               <div>
-                <div class="ep-kpi-cell__story">Top Circulars</div>
                 <div class="ep-kpi-cell__metric">By Performance Score · Top 5 of 27</div>
               </div>
               <a class="ep-top5-panel__viewall" href="engagement-explore.html?grain=circular">View all <span class="material-symbols-outlined">chevron_right</span></a>
@@ -330,8 +340,10 @@
 
           <div class="ep-kpi-cell ep-top5-panel">
             <div class="ep-kpi-cell__head">
+              <div class="ep-kpi-cell__title">
+                <h3 class="ep-kpi-cell__story">Top Categories</h3>
+              </div>
               <div>
-                <div class="ep-kpi-cell__story">Top Categories</div>
                 <div class="ep-kpi-cell__metric">By Performance Score · Top 5 of 8</div>
               </div>
               <a class="ep-top5-panel__viewall" href="engagement-explore.html?grain=category">View all <span class="material-symbols-outlined">chevron_right</span></a>
@@ -349,8 +361,10 @@
 
           <div class="ep-kpi-cell ep-top5-panel">
             <div class="ep-kpi-cell__head">
+              <div class="ep-kpi-cell__title">
+                <h3 class="ep-kpi-cell__story">Top Promotions</h3>
+              </div>
               <div>
-                <div class="ep-kpi-cell__story">Top Promotions</div>
                 <div class="ep-kpi-cell__metric">By Performance Score · Top 5 of 75</div>
               </div>
               <a class="ep-top5-panel__viewall" href="engagement-explore.html?grain=promotion">View all <span class="material-symbols-outlined">chevron_right</span></a>
@@ -373,8 +387,10 @@
 
           <div class="ep-kpi-cell ep-top5-panel">
             <div class="ep-kpi-cell__head">
+              <div class="ep-kpi-cell__title">
+                <h3 class="ep-kpi-cell__story">Top Coupon Clips</h3>
+              </div>
               <div>
-                <div class="ep-kpi-cell__story">Top Coupon Clips</div>
                 <div class="ep-kpi-cell__metric">By clips · combo cards rolled in · Week 47</div>
               </div>
               <a class="ep-top5-panel__viewall" href="engagement-explore.html?metric=coupons">View all <span class="material-symbols-outlined">chevron_right</span></a>
@@ -392,8 +408,10 @@
 
           <div class="ep-kpi-cell ep-top5-panel">
             <div class="ep-kpi-cell__head">
+              <div class="ep-kpi-cell__title">
+                <h3 class="ep-kpi-cell__story">Top Page Navigation</h3>
+              </div>
               <div>
-                <div class="ep-kpi-cell__story">Top Page Navigation</div>
                 <div class="ep-kpi-cell__metric">In-circular page hits · Week 47</div>
               </div>
               <a class="ep-top5-panel__viewall" href="engagement-explore.html?metric=pagenav">View all <span class="material-symbols-outlined">chevron_right</span></a>

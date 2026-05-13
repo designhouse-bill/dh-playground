@@ -48,16 +48,40 @@
 
     /* Wrapper for the proposed engagement surface — gives perf-tabs / chips
        breathing room without colliding w/ engagement.css panels. */
-    .engagement-proposed {
-      max-width: 1480px;
+    .engagement-surface {
+      max-width: 1200px;
       margin: 0 auto;
-      padding: var(--space-2) var(--space-6);
+      padding: var(--space-2) var(--space-6) 0;
       display: flex;
       flex-direction: column;
       gap: var(--space-2);
+      box-sizing: border-box;
     }
-    .engagement-proposed .perf-tab-pane { display: none; }
-    .engagement-proposed .perf-tab-pane.active { display: block; }
+    .engagement-surface .perf-tab-pane { display: none; }
+    .engagement-surface .perf-tab-pane.active { display: block; }
+
+    /* Base sub-pages render their handoff markup inside .engagement-handoff-scope.
+       Align that wrapper (and its children) to the same outer box as .engagement-surface
+       so the Base/Grid perf-tabs strip, the panel-header filter chrome, and the data
+       grid below all share the same left/right edges. */
+    .engagement-handoff-scope {
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 0 var(--space-6);
+      box-sizing: border-box;
+    }
+    /* Force the handoff panel-header to stretch full panel width and align
+       its inner content with the data grid below. The original handoff CSS
+       lets a max-width (1480px) + auto margin collapse the header to ~22.9px
+       inset on either side; stretch + reset + zero padding restores edge
+       alignment with the Base/Grid perf-tabs above and the data rows below. */
+    .engagement-handoff-scope .panel-header--categories,
+    .engagement-handoff-scope .panel-header--promotions {
+      align-self: stretch !important;
+      max-width: none !important;
+      margin: 0 !important;
+    }
 
     /* Base perf-tabs / perf-tab / .active — moved to analytics-architecture.css (Phase 0, 2026-05-04).
        Per-section accent overrides for #ep-perf-tabs .perf-tab[...] active states stay below. */
@@ -170,12 +194,26 @@
     .stat-strip__context-line { display: block; }
     .stat-strip__context-line strong { color: var(--color-text, #1f2937); font-weight: 600; }
 
-    /* perf-tab active reflects target pane's section color */
-    #ep-perf-tabs .perf-tab[data-ep-tab="overview"].active   { color: var(--section-overview);   border-bottom-color: var(--section-overview); }
-    #ep-perf-tabs .perf-tab[data-ep-tab="sessions"].active   { color: var(--section-sessions);   border-bottom-color: var(--section-sessions); }
-    #ep-perf-tabs .perf-tab[data-ep-tab="users"].active      { color: var(--section-users);      border-bottom-color: var(--section-users); }
-    #ep-perf-tabs .perf-tab[data-ep-tab="duration"].active   { color: var(--section-duration);   border-bottom-color: var(--section-duration); }
-    #ep-perf-tabs .perf-tab[data-ep-tab="cardevents"].active { color: var(--section-cardevents); border-bottom-color: var(--section-cardevents); }
+    /* Bind each perf-tab to its section color tokens. Icon shows full color
+       at all times; active state also tints the background with the light
+       variant and applies the full color to text + bottom border. */
+    #ep-perf-tabs .perf-tab[data-ep-tab="overview"]    { --section-color: var(--section-overview);    --section-color-light: var(--section-overview-light); }
+    #ep-perf-tabs .perf-tab[data-ep-tab="performance"] { --section-color: var(--section-performance); --section-color-light: var(--section-performance-light); }
+    #ep-perf-tabs .perf-tab[data-ep-tab="users"]       { --section-color: var(--section-users);       --section-color-light: var(--section-users-light); }
+    #ep-perf-tabs .perf-tab[data-ep-tab="sessions"]    { --section-color: var(--section-sessions);    --section-color-light: var(--section-sessions-light); }
+    #ep-perf-tabs .perf-tab[data-ep-tab="duration"]    { --section-color: var(--section-duration);    --section-color-light: var(--section-duration-light); }
+    #ep-perf-tabs .perf-tab[data-ep-tab="cardevents"]  { --section-color: var(--section-cardevents);  --section-color-light: var(--section-cardevents-light); }
+
+    #ep-perf-tabs .perf-tab .material-symbols-outlined { color: var(--section-color); }
+    /* Hover state — 40% of --section-color-light for a subtle pre-active hint. */
+    #ep-perf-tabs .perf-tab:not(.active):hover {
+      background-color: color-mix(in srgb, var(--section-color-light) 40%, transparent);
+    }
+    #ep-perf-tabs .perf-tab.active {
+      background-color: var(--section-color-light);
+      color: var(--section-color);
+      border-bottom-color: var(--section-color);
+    }
 
     /* Sub-tab active uses the parent pane's --section-color */
     .perf-tab-pane .ep-sub-tab--active { background: var(--section-color-light); border-color: var(--section-color); color: var(--section-color); }

@@ -441,6 +441,13 @@ a.dashboard-switcher__item {
   background: linear-gradient(180deg, var(--color-gray-50), var(--color-surface));
 }
 
+/* Dashboard-wide rule: Entity comes BEFORE Date Range in the .context-row.
+   HTML order kept as date → entity → filters; flex `order` flips date and
+   entity visually so every analytics page renders Entity | Date Range. */
+.context-row #entity-selector { order: 1; }
+.context-row #date-selector   { order: 2; }
+.context-row .filter-group    { order: 3; }
+
 /* Context Cards (Date & Entity) */
 .context-card {
   display: flex;
@@ -717,3 +724,42 @@ a.dashboard-switcher__item {
 
 /* Hide Original/Proposed/Proposed-Max version toggle (audit baseline = Proposed Max only). Markup retained for non-UI reference. */
 .view-version-toggle { display: none !important; }
+
+
+/* =========================================================================
+   RESPONSIVE — page chrome (1024 / 768 / 480)
+   ========================================================================= */
+
+/* ≤ 1024px: wrap the .topbar onto two rows when brand + dashboard switcher +
+   view-modes + share can't all fit. Each chunk keeps its own layout. */
+@media (max-width: 1024px) {
+  .topbar {
+    flex-wrap: wrap;
+    row-gap: var(--space-3);
+  }
+  .topbar__left { flex: 1 1 auto; min-width: 0; }
+  .view-modes,
+  #view-modes { flex: 1 1 100%; justify-content: flex-start; }
+  .topbar__actions { flex: 0 0 auto; }
+}
+
+/* ≤ 768px: hide the User label in the dh-top-bar to free space. Logout button
+   stays visible (icon + label). Date/entity context cards stack to single col. */
+@media (max-width: 768px) {
+  .dh-top-bar__user-label { display: none; }
+  .context-row {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+  }
+  .context-row .context-card { width: 100%; }
+}
+
+/* ≤ 480px: drop the change-button text + user label entirely so the brand
+   strip fits within phone width without truncation. */
+@media (max-width: 480px) {
+  .dh-top-bar__change-btn { font-size: 0; padding: 0.5rem; }
+  .dh-top-bar__change-btn .material-symbols-outlined { font-size: 20px; }
+  .dh-top-bar__user { display: none; }
+  .dh-top-bar__logout span:not(.material-symbols-outlined) { display: none; }
+  .topbar { padding: var(--space-3); }
+}

@@ -714,8 +714,14 @@ const DashboardCore = (() => {
 
     state.appMode = activeMode;
 
-    // Update mode buttons
+    // Update mode buttons. Links that explicitly declare `aria-current="page"`
+    // in markup keep their static .active state (used by Report + Explore Data
+    // main-nav links which don't use data-mode).
     document.querySelectorAll('.mode-btn').forEach(btn => {
+      if (btn.getAttribute('aria-current') === 'page') {
+        btn.classList.add('active');
+        return;
+      }
       const mode = btn.dataset.mode;
       if (mode === activeMode) {
         btn.classList.add('active');

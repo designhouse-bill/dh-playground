@@ -116,7 +116,11 @@ const ComparePage = (function() {
   function restoreCompareState() {
     const savedCompare = state.compareMode;
     if (savedCompare) {
-      currentLayer = savedCompare.layer || 'circulars';
+      // Always land on Circulars; stored A/B context (week/entity) is still
+      // honored so users don't lose their selected periods/entities on reload.
+      // Only an explicit ?layer= URL param can switch to Categories/Promotions
+      // (handled below).
+      currentLayer = 'circulars';
       if (savedCompare.contextA) {
         Object.assign(contextA, savedCompare.contextA);
       }
@@ -205,6 +209,11 @@ const ComparePage = (function() {
       contextA.entityCount = state.currentEntity.count || MockData?.entities?.stores?.length || 0;
     }
 
+    // Apply Compare landing defaults: A = most recent week, B = previous week.
+    // Both contexts always populated (entity = All Stores) so the page never
+    // lands with an empty Panel B.
+    applyCompareDefaults();
+
     // Update layer tabs
     updateLayerTabs();
 
@@ -213,6 +222,45 @@ const ComparePage = (function() {
 
     // Show Panel B prompt if Panel A is complete but Panel B is not
     updatePanelBPrompt();
+  }
+
+  /**
+   * Ensure A + B contexts are populated on first landing.
+   * A defaults to the most recent week, B to the week before A.
+   * Entity defaults to All Stores on both.
+   */
+  function applyCompareDefaults() {
+    const weeks = MockData?.weeks || [];
+    if (!weeks.length) return;
+
+    const mostRecent = weeks[weeks.length - 1];
+    const previous = weeks[weeks.length - 2] || weeks[weeks.length - 1];
+    const totalStores = MockData?.entities?.stores?.length || 0;
+
+    function ensureContext(ctx, week) {
+      if (!ctx.weekId) {
+        ctx.weekId = week.id;
+        ctx.weekLabel = week.label;
+        ctx.weekRange = week.dateRange;
+      }
+      if (!ctx.entityId) {
+        ctx.entityId = 'all';
+        ctx.entityName = 'All Stores';
+        ctx.entityLevel = 'all';
+        ctx.entityCount = totalStores;
+      }
+    }
+
+    ensureContext(contextA, mostRecent);
+    ensureContext(contextB, previous);
+
+    // If A and B happened to coincide (only one week available, or restored
+    // state put them on the same week with B empty), nudge B one week back.
+    if (contextB.weekId === contextA.weekId && previous.id !== mostRecent.id) {
+      contextB.weekId = previous.id;
+      contextB.weekLabel = previous.label;
+      contextB.weekRange = previous.dateRange;
+    }
   }
 
   /**
@@ -781,10 +829,12 @@ const ComparePage = (function() {
     const totalDays = 7;
     const isPartial = daysRun < totalDays;
     const star = isPartial ? '★ ' : '';
-    let label = `${star}${ctx.weekLabel} (${daysRun} of ${totalDays} days)`;
-    if (ctx.entityCount) {
-      label += ` · (${ctx.entityCount} of ${ctx.entityCount} locations)`;
-    }
+    // "(N of N days)" + "(N of N locations)" suffixes dropped per design.
+    // Replace with the actual date range (start - end with year) for context.
+    // Star prefix still flags partial weeks visually.
+    let label = `${star}${ctx.weekLabel}`;
+    const range = ctx.weekRange || week?.dateRange;
+    if (range) label += ` · ${range}`;
     return label;
   }
 

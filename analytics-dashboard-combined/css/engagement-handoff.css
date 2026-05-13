@@ -1183,7 +1183,7 @@ body.app-mode-grid .view-search {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-3) var(--space-4);
+  padding: 0;
   background-color: white;
 }
 

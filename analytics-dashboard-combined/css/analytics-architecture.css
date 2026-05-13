@@ -297,7 +297,6 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
    ============================================================ */
 
 .hero-stat {
-  background: var(--hero-stat-bg);
   border-radius: var(--radius-xl);
   padding: var(--space-2) var(--space-2) var(--space-2) var(--space-5);
   display: flex;
@@ -726,8 +725,54 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
 }
 .ep-kpi-cell:hover { border-color: var(--color-border-hover); box-shadow: var(--shadow-sm); }
 .ep-kpi-cell:focus-visible { outline: 2px solid var(--p-primary-color, #2196F3); outline-offset: 2px; }
-.ep-kpi-cell__head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); min-height: 44px; }
-.ep-kpi-cell__story { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--color-text-secondary); }
+
+/* Per-cell section-color binding — drives the title bullet + hover border on
+   clickable KPI cards. Map data-jump-to → existing --section-* tokens. */
+.ep-kpi-cell[data-jump-to="performance"] { --section-color: var(--section-performance); }
+.ep-kpi-cell[data-jump-to="users"]       { --section-color: var(--section-users); }
+.ep-kpi-cell[data-jump-to="sessions"]    { --section-color: var(--section-sessions); }
+.ep-kpi-cell[data-jump-to="duration"]    { --section-color: var(--section-duration); }
+.ep-kpi-cell.ep-top5-panel               { --section-color: var(--section-overview); }
+
+/* Hover state on cells that ARE the link (a.ep-kpi-cell with data-jump-to)
+   uses the section color as the border tint. Non-link top-5 cells keep
+   the existing neutral hover. */
+a.ep-kpi-cell:hover { border-color: var(--section-color, var(--color-border-hover)); }
+/* Head is a grid so the new title row (.ep-kpi-cell__title) can span full
+   width while the metric/value (or "View all" link) sit side by side below. */
+.ep-kpi-cell__head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-3);
+  min-height: 44px;
+}
+.ep-kpi-cell__title {
+  grid-column: 1 / -1;
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+}
+.ep-kpi-cell__story {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--color-text-secondary);
+  line-height: 1.3;
+}
+.ep-kpi-cell__story::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--section-color, var(--color-text-muted));
+  flex-shrink: 0;
+}
 .ep-kpi-cell__metric { font-size: 13px; color: var(--color-text-secondary); margin-top: 2px; }
 .ep-kpi-cell__value { font-size: 26px; font-weight: 800; color: var(--p-text-color); line-height: 1.05; font-variant-numeric: tabular-nums; }
 .ep-kpi-cell__delta { font-size: 12px; font-weight: 600; }
@@ -1137,20 +1182,23 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
 .ep-detail-sidebar {
   position: fixed;
   top: 0;
-  right: 0;
+  /* Resting state parks the panel fully off-canvas without using
+     transform:translateX(100%), which would still extend
+     documentElement.scrollWidth past the viewport and force horizontal
+     scroll on Report/Compare at narrow widths. */
+  right: calc(-1 * var(--detail-panel-width) - 16px);
   bottom: 0;
   width: var(--detail-panel-width);
   max-width: 92vw;
   background: var(--p-surface-card);
   border-left: 1px solid var(--color-border);
   box-shadow: -8px 0 24px -8px rgba(0, 0, 0, 0.08);
-  transform: translateX(100%);
-  transition: transform 0.22s ease;
+  transition: right 0.22s ease;
   z-index: 60;
   display: flex;
   flex-direction: column;
 }
-.ep-detail-sidebar--open { transform: translateX(0); }
+.ep-detail-sidebar--open { right: 0; }
 
 .ep-detail-sidebar__header {
   position: sticky;
@@ -1423,10 +1471,6 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
 .th-sortable:hover .th-sort-icon,
 .th-sort--active .th-sort-icon {
   color: var(--color-primary-600);
-}
-
-.th-sort--active {
-  background-color: var(--color-primary-50) !important;
 }
 
 .th-sort--active .th-label {
@@ -2325,3 +2369,33 @@ a.ep-store-rank__row:last-child { border-bottom: none; }
 /* UX-846 Report mode 2026-05-12: .duration-presets / .duration-preset styles
    moved (this duplicate block removed). Canonical rules at line 1295+ —
    shared with distribution-visitation.html. */
+
+
+/* =========================================================================
+   RESPONSIVE — Report + Compare breakpoints (1200 / 1024 / 768 / 600 / 480)
+   Auditing on Engagement Report + Compare identified:
+   - Report KPI grid is hardcoded 4-col → step down at narrow widths.
+   - Compare context-bar / results-container min-width 1200 forces overflow.
+   - dh-top-bar + .topbar truncate user/share/view-modes below 1024.
+   - Promotion Details sidebar fixed 400px → full-screen drawer ≤ 600.
+   ========================================================================= */
+
+/* Report Overview KPI rows — @container was silently inert (no container-type
+   declared on parent). Backstop with @media at the same anchors. */
+@media (max-width: 1024px) {
+  .ep-report-overview__row--kpi   { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+  .ep-report-overview__row--kpi   { grid-template-columns: 1fr; }
+  .ep-report-overview__row--top5,
+  .ep-report-overview__row--asks  { grid-template-columns: 1fr; }
+}
+
+/* Promotion Details sidebar → full-screen drawer on phone */
+@media (max-width: 600px) {
+  .ep-detail-sidebar {
+    width: 100vw;
+    max-width: 100vw;
+  }
+}
+

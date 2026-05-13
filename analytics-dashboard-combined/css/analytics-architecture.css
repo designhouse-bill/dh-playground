@@ -1153,10 +1153,14 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
 .ep-detail-sidebar--open { transform: translateX(0); }
 
 .ep-detail-sidebar__header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: var(--space-4) var(--space-5);
+  background: var(--p-surface-card);
   border-bottom: 1px solid var(--color-border);
 }
 .ep-detail-sidebar__title {
@@ -1191,6 +1195,7 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
   flex-direction: column;
   gap: var(--space-4);
 }
+
 .ep-detail-sidebar__name {
   font-size: var(--font-size-lg);
   font-weight: 700;

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Engagement — Explore Data | Analytics Dashboard</title>
+  <title>Engagement — Explore (Base) | Analytics Dashboard</title>
 
   <!-- Google Material Symbols -->
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
@@ -11,12 +11,14 @@
   <!-- CSS -->
   <link rel="stylesheet" href="css/design-tokens.css">
   <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/analytics-architecture.css?v=5">
+  <link rel="stylesheet" href="css/analytics-architecture.css">
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
   <link rel="stylesheet" href="css/engagement.css">
   <link rel="stylesheet" href="css/engagement-canonical.css?v=2">
+  <!-- Handoff (bf32ea5) Base CSS, @scope'd under .engagement-handoff-scope (only applies inside Base pane) -->
+  <link rel="stylesheet" href="css/engagement-handoff.css">
 </head>
 <body>
 
@@ -153,31 +155,44 @@
        ============================================================ -->
   <main class="engagement-canonical engagement-proposed" id="engagement-canonical">
 
+
   </main>
 
-  <!-- DP8.2: Detail sidebar slides in on grid row click -->
-  <aside class="ep-detail-sidebar" id="ep-detail-sidebar" role="complementary" aria-label="Promotion details" aria-hidden="true">
-    <div class="ep-detail-sidebar__header">
-      <span class="ep-detail-sidebar__title">Promotion Details</span>
-      <button class="ep-detail-sidebar__close" id="ep-detail-sidebar-close" aria-label="Close details">
-        <span class="material-symbols-outlined">close</span>
-      </button>
-    </div>
-    <div class="ep-detail-sidebar__body" id="ep-detail-sidebar-body"></div>
-  </aside>
 
   <!-- ============================================================
-       GRID — canonical Phase 5d data grid (also byte-identical
-       to handoff bf32ea5 `<main class="layout layout--grid">`)
+       BASE — frozen original handoff (bf32ea5 engagement-circulars.html)
+       Markup byte-identical; styles scoped via .engagement-handoff-scope @scope.
        ============================================================ -->
-  <main class="layout layout--grid" id="grid-layout">
-    <section class="panel panel--grid-full" role="main" aria-label="Data Grid">
-      <div class="grid-controls">
-        <div class="grid-controls__left"></div>
-        <div class="grid-controls__center">
-          <span class="showing-count">Total Promotions: <span id="grid-record-count">0</span></span>
+  <div class="engagement-handoff-scope">
+  <main class="layout layout--categories" id="circulars-layout">
+
+    <section class="panel panel--category-grid" role="main" aria-label="Stores">
+      <div class="panel-header panel-header--categories">
+        <div class="panel-header__left">
+          <div class="perf-tabs perf-tabs--filled" id="ep-base-sub-tabs" role="tablist" aria-label="Base layer">
+            <a class="perf-tab active" href="engagement-explore-base.html" data-ep-sub="circulars" role="tab" aria-selected="true" aria-current="page">
+              <span class="material-symbols-outlined">store</span>
+              Circulars
+            </a>
+            <a class="perf-tab" href="engagement-explore-base-categories.html" data-ep-sub="categories" role="tab" aria-selected="false">
+              <span class="material-symbols-outlined">category</span>
+              Categories
+            </a>
+            <a class="perf-tab" href="engagement-explore-base-promotions.html" data-ep-sub="promotions" role="tab" aria-selected="false">
+              <span class="material-symbols-outlined">local_offer</span>
+              Promotions
+            </a>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="more-data-toggle">
+            <span class="toggle-slider"></span>
+          </label>
+          <span class="toggle-label">More Data</span>
+        </div>
+        <div class="panel-header__center">
+          <span class="showing-count">Total Stores: <span id="store-showing-count">0</span></span>
           <div class="topn-selector">
-            <select id="grid-topn-select" class="topn-select" onchange="changeGridRowsPerPage(this.value)">
+            <select id="topn-select" class="topn-select" onchange="changeTopN(this.value)">
               <option value="25" selected>Show 25</option>
               <option value="50">Show 50</option>
               <option value="100">Show 100</option>
@@ -186,56 +201,71 @@
             </select>
           </div>
         </div>
-        <div class="grid-controls__right">
-          <button class="panel-action-btn" id="grid-export-btn" onclick="exportGridToCSV()" aria-label="Export to CSV">
+        <div class="panel-header__right">
+          <button class="panel-action-btn" id="panel-export-btn">
             <span class="material-symbols-outlined">download</span>
-            Export CSV
+            Export
           </button>
-          <div class="grid-columns-toggle">
-            <button class="panel-action-btn" id="grid-columns-btn" aria-label="Toggle column visibility">
-              <span class="material-symbols-outlined">view_column</span>
-              Columns
-              <span class="material-symbols-outlined">expand_more</span>
-            </button>
-            <div class="grid-columns-dropdown" id="grid-columns-dropdown">
-              <div class="grid-columns-dropdown__header">
-                <span>Show/Hide Columns</span>
-                <button class="grid-columns-reset" onclick="resetGridColumns()">Reset</button>
-              </div>
-              <div class="grid-columns-dropdown__list" id="grid-columns-list"></div>
-            </div>
-          </div>
+          <button class="panel-action-btn" id="panel-print-btn">
+            <span class="material-symbols-outlined">print</span>
+            Print
+          </button>
+          <button class="panel-action-btn" id="panel-share-btn">
+            <span class="material-symbols-outlined">share</span>
+            Share
+          </button>
         </div>
       </div>
-      <div class="grid-table-wrapper" id="grid-table-wrapper">
-        <table class="grid-table" id="grid-data-table">
-          <thead id="grid-table-head"></thead>
-          <tbody id="grid-table-body"></tbody>
-        </table>
-      </div>
+      <div class="store-data-grid" id="store-data-grid"></div>
       <div class="grid-footer">
-        <div class="grid-footer__left">
-          <span class="grid-footer__label">View</span>
-          <select class="grid-rows-select" id="grid-rows-select" onchange="changeGridRowsPerPage(this.value)">
-            <option value="25">25</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-          <span class="grid-footer__label">rows per page</span>
-        </div>
+        <div class="grid-footer__left"></div>
         <div class="grid-footer__center">
-          <div class="grid-pagination" id="grid-pagination">
-            <button class="grid-pagination__btn" id="grid-prev-btn" onclick="gridPrevPage()" disabled><span class="material-symbols-outlined">chevron_left</span></button>
-            <span class="grid-pagination__info" id="grid-page-info">Page 1 of 1</span>
-            <button class="grid-pagination__btn" id="grid-next-btn" onclick="gridNextPage()" disabled><span class="material-symbols-outlined">chevron_right</span></button>
+          <div class="grid-pagination" id="base-grid-pagination">
+            <button class="grid-pagination__btn" id="base-grid-prev-btn" onclick="prevPage()" disabled>
+              <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+            <span class="grid-pagination__info" id="base-grid-page-info">Page 1 of 1</span>
+            <button class="grid-pagination__btn" id="base-grid-next-btn" onclick="nextPage()" disabled>
+              <span class="material-symbols-outlined">chevron_right</span>
+            </button>
           </div>
         </div>
         <div class="grid-footer__right">
-          <span class="grid-footer__range" id="grid-range-info">1-25 of 0</span>
+          <span class="grid-footer__range" id="base-grid-range-info">1-25 of 0</span>
         </div>
       </div>
     </section>
+
+    <aside class="panel panel--right panel--collapsed" id="store-detail-panel" role="complementary" aria-label="Store details">
+      <div class="panel-header">
+        <h2 class="panel-title">Store Details</h2>
+        <button class="panel-close" onclick="closeStoreDetail()" aria-label="Close details">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="store-detail-content" id="store-detail-content"></div>
+      <div class="detail-footer" id="store-detail-footer">
+        <button class="detail-action-btn" onclick="viewStoreCategories()">
+          <span class="material-symbols-outlined">category</span>
+          View Categories
+        </button>
+        <button class="detail-action-btn" onclick="viewStorePromotions()">
+          <span class="material-symbols-outlined">local_offer</span>
+          View Promotions
+        </button>
+        <button class="detail-action-btn" onclick="openStoreInquiry()">
+          <span class="material-symbols-outlined">table_chart</span>
+          Grid Inquiry
+        </button>
+        <button class="detail-action-btn" onclick="compareStore()">
+          <span class="material-symbols-outlined">compare</span>
+          Compare
+        </button>
+      </div>
+    </aside>
+
   </main>
+  </div><!-- /.engagement-handoff-scope -->
 
   <!-- ============================================================
        MODALS
@@ -437,119 +467,10 @@
       }
     });
   </script>
-  <script src="js/engagement/explore-inquiry.js"></script>
+  <!-- Handoff (bf32ea5) Base renderer — DOMs into Base markup IDs (base-grid-* paginator, store-* elements) -->
+  <script src="js/engagement/base-circulars-handoff.js"></script>
   <script src="js/header-slide.js"></script>
   <script src="js/engagement/engagement-page-app.js"></script>
-
-  <!-- Phase 5d: Detail sidebar slide-in on grid row click (DP8.2) -->
-  <script>
-    (function () {
-      var sidebar = document.getElementById('ep-detail-sidebar');
-      var body = document.getElementById('ep-detail-sidebar-body');
-      var closeBtn = document.getElementById('ep-detail-sidebar-close');
-      var tableBody = document.getElementById('grid-table-body');
-      if (!sidebar || !tableBody || !body || !closeBtn) return;
-
-      function headerLabel(th, fallback) {
-        if (!th) return fallback;
-        var lbl = th.querySelector('.th-label');
-        if (lbl) return lbl.textContent.trim();
-        var clone = th.cloneNode(true);
-        clone.querySelectorAll('.material-symbols-outlined, select').forEach(function (n) { n.remove(); });
-        return clone.textContent.trim();
-      }
-
-      function metricCard(label, valueHtml, hero) {
-        var cls = 'ep-detail-sidebar__metric' + (hero ? ' ep-detail-sidebar__metric--hero' : '');
-        return '<div class="' + cls + '">'
-          + '<div class="ep-detail-sidebar__metric-label">' + label + '</div>'
-          + '<div class="ep-detail-sidebar__metric-value">' + valueHtml + '</div>'
-          + '</div>';
-      }
-
-      function openSidebar(row) {
-        var cells = row.querySelectorAll('td');
-        var headers = document.querySelectorAll('#grid-table-head th');
-        var data = {};
-        cells.forEach(function (cell, i) {
-          data[headerLabel(headers[i], 'Col ' + i)] = cell;
-        });
-
-        // Extract pieces from Promotion cell (thumb, name)
-        var promoCell = data['Promotion'];
-        var thumbImg = promoCell?.querySelector('img.table-thumb, img');
-        var nameText = promoCell?.querySelector('.table-title')?.textContent.trim() || '';
-        var variantsHtml = promoCell?.querySelector('.variants-badge')?.outerHTML || '';
-
-        // Phase 5d canonical structure (mirrors Top Promotions chip sidebar):
-        //   header row (thumb + name/cat/subtitle) → 2×2 hero metric grid →
-        //   Performance Score section (3-col grid + total) → footer buttons.
-        var html = '';
-
-        // Block 1: Header row
-        html += '<div style="display:flex; align-items:center; gap:12px;">';
-        if (thumbImg) {
-          html += '<img src="' + thumbImg.src + '" alt="" style="width:64px; height:64px; border-radius:6px; object-fit:cover; flex-shrink:0;">';
-        }
-        html += '<div style="flex:1; min-width:0;">';
-        if (nameText) html += '<h3 class="ep-detail-sidebar__name">' + nameText + '</h3>';
-        var sub = [];
-        if (data['Category']) sub.push(data['Category'].innerHTML);
-        if (data['Deal']) sub.push(data['Deal'].innerHTML);
-        if (sub.length) html += '<p class="ep-detail-sidebar__cat">' + sub.join(' &middot; ') + '</p>';
-        if (variantsHtml) html += '<p class="ep-detail-sidebar__cat" style="margin-top:4px;">' + variantsHtml + '</p>';
-        html += '</div>';
-        html += '</div>';
-
-        // Block 2: Hero 2×2 metric grid — Performance (hero) + Views/Clicks/Added
-        var perfValue = data['Performance']?.textContent.trim() || '—';
-        html += '<div class="ep-detail-sidebar__metric-grid">';
-        html += metricCard('Performance', perfValue, true);
-        ['Views', 'Clicks', 'Added'].forEach(function (k) {
-          if (data[k]) html += metricCard(k, data[k].textContent.trim());
-        });
-        html += '</div>';
-
-        // Block 3: Performance Score section — 3-col grid + total caption
-        var v = data['Views']?.textContent.trim();
-        var c = data['Clicks']?.textContent.trim();
-        var a = data['Added']?.textContent.trim();
-        if (v && c && a) {
-          html += '<div>';
-          html += '<div class="ep-detail-sidebar__section-label">Performance Score (point totals)</div>';
-          html += '<div class="ep-detail-sidebar__metric-grid" style="grid-template-columns:repeat(3, 1fr);">';
-          html += metricCard('Views &times;1', v);
-          html += metricCard('Clicks &times;5', c);
-          html += metricCard('Adds &times;20', a);
-          html += '</div>';
-          html += '<p class="ep-detail-sidebar__cat" style="margin-top:8px;"><strong>' + perfValue + '</strong> total Performance Score points</p>';
-          html += '</div>';
-        }
-
-        // Block 4: Footer buttons
-        html += '<div style="display:flex; gap:8px; margin-top:auto;">';
-        html += '<a class="ep-detail-sidebar__btn" href="engagement-compare.html">';
-        html += '<span class="material-symbols-outlined">compare</span> Compare';
-        html += '</a>';
-        html += '</div>';
-
-        body.innerHTML = html;
-        sidebar.classList.add('ep-detail-sidebar--open');
-        sidebar.setAttribute('aria-hidden', 'false');
-      }
-
-      function closeSidebar() {
-        sidebar.classList.remove('ep-detail-sidebar--open');
-        sidebar.setAttribute('aria-hidden', 'true');
-      }
-
-      tableBody.addEventListener('click', function (e) {
-        var row = e.target.closest('tr');
-        if (row && tableBody.contains(row)) openSidebar(row);
-      });
-      closeBtn.addEventListener('click', closeSidebar);
-    })();
-  </script>
 
 </body>
 </html>

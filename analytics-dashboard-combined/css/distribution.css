@@ -4860,3 +4860,114 @@ body[data-dist-page] .narrative-header__title {
   padding: var(--space-4);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
 }
+
+/* ════════════════════════════════════════════════════════════════
+   Distribution Overview landing (Phase 1a — UX-846 05/19 PDF p.2)
+   distribution-traffic.html repurposed as Overview. 5 sample cards
+   linking into Paid Media / Observed Visits / Observed Demographics.
+   ════════════════════════════════════════════════════════════════ */
+
+.hero-stat--overview {
+  margin-bottom: var(--space-5, 1.25rem);
+}
+
+.dist-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4, 1rem);
+  margin-top: var(--space-4, 1rem);
+}
+@container (max-width: 900px) {
+  .dist-overview-grid { grid-template-columns: 1fr; }
+}
+
+.dist-overview-card {
+  display: block;
+  background: #fff;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 12px;
+  padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 160ms ease, transform 160ms ease, border-color 160ms ease;
+}
+.dist-overview-card:hover {
+  border-color: #c7d2fe;
+  box-shadow: 0 6px 18px -4px rgba(33, 150, 243, 0.18);
+  transform: translateY(-1px);
+}
+.dist-overview-card:focus-visible {
+  outline: 2px solid var(--series-v, #2196F3);
+  outline-offset: 2px;
+}
+
+.dist-overview-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--space-3, 0.75rem);
+  gap: var(--space-3, 0.75rem);
+}
+.dist-overview-card__title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+.dist-overview-card__source {
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ── Bar-list (Click-by-Store, Impressions-by-Creative, Age) ──── */
+.overview-bar-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.ovbar {
+  display: grid;
+  grid-template-columns: 140px 1fr auto;
+  align-items: center;
+  gap: var(--space-3, 0.75rem);
+  font-size: 0.8125rem;
+  color: #374151;
+}
+.ovbar__label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ovbar__track {
+  position: relative;
+  height: 10px;
+  background: #f3f4f6;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.ovbar__fill {
+  display: block;
+  height: 100%;
+  border-radius: 5px;
+}
+.ovbar__stack {
+  display: flex;
+  height: 100%;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.ovbar__seg { display: block; height: 100%; }
+.ovbar__value {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8125rem;
+  color: #1f2937;
+  white-space: nowrap;
+}
+
+.overview-bar-list--age .ovbar { grid-template-columns: 60px 1fr auto; }
+
+.overview-chart { width: 100%; }

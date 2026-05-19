@@ -18,9 +18,9 @@
   <link rel="stylesheet" href="css/header.css?v=5">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/distribution.css?v=29">
+  <link rel="stylesheet" href="css/distribution.css?v=30">
 </head>
-<body data-dist-page="traffic">
+<body data-dist-page="overview">
 
   <div class="dh-top-bar">
     <div class="dh-top-bar__left">
@@ -68,19 +68,20 @@
           </div>
         </div>
 
-        <!-- Distribution Section Tabs -->
+        <!-- Distribution Section Tabs (Max 05/19 PDF order: Paid Media | Observed Visits | Observed Demographics).
+             None active here — this file is now the Distribution Overview landing. -->
         <div class="dist-section-tabs" id="dist-section-tabs">
-          <a class="dist-tab" href="distribution-visitation.html">
-            <span class="material-symbols-outlined">store</span>
-            Observed Store Visits
-          </a>
           <a class="dist-tab" href="distribution-media.html">
             <span class="material-symbols-outlined">campaign</span>
-            Media Buy
+            Paid Media
           </a>
-          <a class="dist-tab active" href="distribution-traffic.html">
-            <span class="material-symbols-outlined">trending_up</span>
-            Traffic Share
+          <a class="dist-tab" href="distribution-visitation.html">
+            <span class="material-symbols-outlined">store</span>
+            Observed Visits
+          </a>
+          <a class="dist-tab" href="distribution-demographics.html">
+            <span class="material-symbols-outlined">groups</span>
+            Observed Demographics
           </a>
         </div>
 
@@ -133,166 +134,76 @@
   </header>
 
   <!-- ============================================================
-       SECTION 3: Traffic Share Shift
+       DISTRIBUTION OVERVIEW / LANDING
+       Per Max 05/19 PDF page 2. Samples headline widgets from each
+       of the 3 destination tabs (Paid Media / Observed Visits /
+       Observed Demographics). Fixture data — surface fidelity only.
        ============================================================ -->
   <main>
-    <section class="dist-section active" id="section-traffic">
+    <section class="dist-section active" id="section-overview">
 
-      <!-- Hero stat: narrative left + single hero metric right, matches Visitation pattern -->
-      <div class="hero-stat">
+      <!-- Hero / narrative -->
+      <div class="hero-stat hero-stat--overview">
         <div class="narrative-header">
-         <div class="narrative-header__left">
-          <h4 class="narrative-header__section">Distribution</h4>
-          <h1 class="narrative-header__title">Traffic Share</h1>
-          <h2 class="narrative-header__question">How does our observed visitation compare to competitors?</h2>
+          <div class="narrative-header__left">
+            <h4 class="narrative-header__section">Distribution</h4>
+            <h1 class="narrative-header__title">Overview</h1>
+            <h2 class="narrative-header__question">How is our distribution performing across channels?</h2>
           </div>
           <div class="narrative-header__text">
-            <p class="narrative-header__subtitle">Observed visitation across the market, regardless of media exposure<br><em><span id="subtitle-entity-traffic">Ideal Media Lab</span>, <span id="subtitle-date-traffic">Week 2 (Jan 7, 2026 – Jan 13, 2026)</span></em></p>
-            <div class="card-run-stats"><span class="card-run-stats__text">Ran at 27 stores · 7 days</span></div>
-            <span class="ep-cohort-note" id="dist-cohort-note-traffic">
-              <span class="material-symbols-outlined">info</span>
-              <span class="ep-cohort-note__label">Cohort:</span>
-              <span class="ep-cohort-note__count">27 stores</span>
-              <span class="ep-cohort-note__sep">·</span>
-              <span class="ep-cohort-note__scope">Brand</span>
-              <span class="ep-cohort-note__sep">·</span>
-              <span class="ep-cohort-note__period">Week 2</span>
-            </span>
+            <p class="narrative-header__subtitle">Headline metrics from Paid Media, Observed Visits, and Observed Demographics.<br><em><span id="subtitle-entity-overview">Ideal Media Lab</span>, <span id="subtitle-date-overview">Week 47 (Nov 17 – Nov 23, 2026)</span></em></p>
+            <div class="card-run-stats"><span class="card-run-stats__text">27 stores · 7 days</span></div>
           </div>
-        </div>
-        <div class="stat-strip" id="traffic-insight-strip">
-          <!-- Populated by JS: Share %, Change pp, Outperforming count -->
         </div>
       </div>
 
-      <!-- Narrative slot (phase 2, gated by FEATURES.narrative) -->
-      <div class="insight-banner" data-narrative-section="traffic" hidden></div>
-
       <!-- ═══════════════════════════════════════════════
-           Phase 4: Traffic Share main perf-tabs.
-           6 tabs per plan DP4.2=B. Overview pane preserves the
-           existing IA verbatim so the page stays renderable;
-           subsequent checkpoints move pieces into right panes.
+           Overview landing card grid — 05/19 PDF page 2.
+           5 sample widgets, each linking into its destination tab.
+           Fixture data, surface-fidelity spike only.
            ═══════════════════════════════════════════════ -->
-      <div class="perf-tabs" id="ts-perf-tabs" role="tablist">
-        <button class="perf-tab active" data-ts-tab="overview" role="tab" aria-selected="true">
-          <span class="material-symbols-outlined">dashboard</span> Overview
-        </button>
-        <button class="perf-tab" data-ts-tab="compare" role="tab" aria-selected="false">
-          <span class="material-symbols-outlined">map</span> Performance Map
-        </button>
-        <button class="perf-tab" data-ts-tab="trend" role="tab" aria-selected="false">
-          <span class="material-symbols-outlined">show_chart</span> Crossover Trend
-        </button>
-        <button class="perf-tab" data-ts-tab="data" role="tab" aria-selected="false">
-          <span class="material-symbols-outlined">table_chart</span> Data
-        </button>
-      </div>
+      <div class="dist-overview-grid">
 
-      <div class="perf-tab-pane active" data-ts-pane="overview">
-
-      <!-- Competitive Crossover: 5 + All Other -->
-      <div class="chart-card">
-        <div class="chart-card__header">
-          <div>
-            <h3 class="panel-label">Competitive Crossover</h3>
-            <p class="panel-subtitle">Top 5 competitors + All Other — where our media-exposed visitors also shop</p>
+        <a class="dist-overview-card" href="distribution-media.html" data-card="click-by-store">
+          <div class="dist-overview-card__head">
+            <h3 class="dist-overview-card__title">Click – by Store</h3>
+            <span class="dist-overview-card__source">Paid Media</span>
           </div>
-          <div class="chart-card__header-right">
-            <div class="duration-presets" id="crossover-period-presets">
-              <button class="duration-preset" data-period="1w">1 Week</button>
-              <button class="duration-preset active" data-period="1m">4 Week <span class="duration-preset__sub">(Month)</span></button>
-              <button class="duration-preset" data-period="1q">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
-              <button class="duration-preset" data-period="1y">1 Year</button>
-            </div>
-          </div>
-        </div>
-        <div id="chart-crossover" style="height: 360px;"></div>
-        <div class="crossover-detail" id="crossover-detail"></div>
-      </div>
+          <ol class="overview-bar-list" id="overview-click-by-store"></ol>
+        </a>
 
-      </div><!-- /Overview pane -->
-
-      <!-- ═══════════════════════════════════════════════
-           Compare Map pane (UX-846 traffic-compare-map-merge plan).
-           Replaces By Store + By Competitor. Phase A+B: shared
-           leaderboard + map (Our Stores only); Store/Competitor toggle
-           swaps leaderboard data source. Phase C wires competitor
-           markers; Phase D wires bidirectional sync. ════════════════ -->
-      <div class="perf-tab-pane" data-ts-pane="compare">
-        <div class="traffic-perf-panel">
-          <div class="traffic-perf-body">
-            <div class="traffic-perf-table-wrap">
-              <div class="traffic-perf-header">
-                <div class="traffic-perf-header__left">
-                  <h3 class="panel-label" id="compare-panel-label">Store Performance</h3>
-                  <p class="panel-subtitle" id="compare-panel-subtitle">Traffic share by store — click a row to focus on the map</p>
-                </div>
-                <div class="view-toggle" id="compare-source-toggle" role="tablist" aria-label="Leaderboard source">
-                  <button type="button" class="view-toggle__btn active" data-compare-source="ours" role="tab" aria-selected="true">
-                    <span class="material-symbols-outlined">store</span> Store
-                  </button>
-                  <button type="button" class="view-toggle__btn" data-compare-source="competitors" role="tab" aria-selected="false">
-                    <span class="material-symbols-outlined">compare_arrows</span> Competitor
-                  </button>
-                </div>
-              </div>
-              <div class="leaderboard-table" id="leaderboard-table-compare"></div>
-            </div>
-            <div class="traffic-perf-map-wrap">
-              <div id="store-map-compare-pane" style="height: 100%; min-height: 480px; border-radius: 8px;"></div>
-              <div class="map-ring-legend" id="ring-legend-compare" style="display:none; position:absolute; top:12px; right:12px; z-index:800;">
-                <div class="map-ring-legend__item"><span class="map-ring-legend__circle map-ring-legend__circle--1"></span>1 mi</div>
-                <div class="map-ring-legend__item"><span class="map-ring-legend__circle map-ring-legend__circle--3"></span>3 mi</div>
-                <div class="map-ring-legend__item"><span class="map-ring-legend__circle map-ring-legend__circle--5"></span>5 mi</div>
-              </div>
-              <button class="map-reset-btn" id="traffic-map-reset-btn-compare" title="Reset map view">
-                <span class="material-symbols-outlined">zoom_out_map</span> Reset
-              </button>
-              <div class="map-layer-legend" id="layer-legend-compare" aria-label="Map layers">
-                <div class="map-layer-legend__item">
-                  <span class="map-layer-legend__swatch map-layer-legend__swatch--store"></span>
-                  Our stores
-                </div>
-                <div class="map-layer-legend__item">
-                  <span class="map-layer-legend__swatch map-layer-legend__swatch--comp"></span>
-                  Competitors
-                </div>
-              </div>
-            </div>
+        <a class="dist-overview-card" href="distribution-media.html" data-card="impressions-by-creative">
+          <div class="dist-overview-card__head">
+            <h3 class="dist-overview-card__title">Impressions – by Creative</h3>
+            <span class="dist-overview-card__source">Paid Media</span>
           </div>
-        </div>
-      </div>
+          <ol class="overview-bar-list overview-bar-list--vca" id="overview-impressions-by-creative"></ol>
+        </a>
 
-      <div class="perf-tab-pane" data-ts-pane="trend">
-        <!-- Crossover Trend (Phase 4 step 2: moved from Overview) -->
-        <div class="chart-card">
-          <div class="chart-card__header">
-            <div>
-              <h3 class="panel-label">Crossover Trend</h3>
-              <p class="panel-subtitle">Among visitors attributed to paid media</p>
-            </div>
-            <div class="chart-card__header-right">
-              <div class="view-toggle view-toggle--compact" id="crossover-trend-metric">
-                <button class="view-toggle__btn active" data-trend-metric="share">Share %</button>
-                <button class="view-toggle__btn" data-trend-metric="volume">Visits</button>
-              </div>
-              <div class="duration-presets" id="crossover-trend-presets">
-                <button class="duration-preset" data-period="1w">1 Week</button>
-                <button class="duration-preset active" data-period="1m">4 Week <span class="duration-preset__sub">(Month)</span></button>
-                <button class="duration-preset" data-period="1q">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
-                <button class="duration-preset" data-period="1y">1 Year</button>
-              </div>
-            </div>
+        <a class="dist-overview-card" href="distribution-media.html" data-card="ctr-by-day">
+          <div class="dist-overview-card__head">
+            <h3 class="dist-overview-card__title">CTR – by Day</h3>
+            <span class="dist-overview-card__source">Paid Media</span>
           </div>
-          <div id="chart-crossover-trend" style="height: 280px;"></div>
-        </div>
-      </div>
-      <div class="perf-tab-pane" data-ts-pane="data">
-        <div class="dist-pane-toolbar">
-          <span class="dist-pane-toolbar__label">All Locations — ranked by traffic share</span>
-        </div>
-        <div id="ts-data-grid"></div>
+          <div class="overview-chart" id="overview-ctr-by-day" style="height: 200px;"></div>
+        </a>
+
+        <a class="dist-overview-card" href="distribution-visitation.html" data-card="visit-frequency">
+          <div class="dist-overview-card__head">
+            <h3 class="dist-overview-card__title">Visit Frequency</h3>
+            <span class="dist-overview-card__source">Observed Visits</span>
+          </div>
+          <div class="overview-chart" id="overview-visit-frequency" style="height: 220px;"></div>
+        </a>
+
+        <a class="dist-overview-card" href="distribution-demographics.html" data-card="age-distribution">
+          <div class="dist-overview-card__head">
+            <h3 class="dist-overview-card__title">Age Distribution</h3>
+            <span class="dist-overview-card__source">Observed Demographics</span>
+          </div>
+          <ol class="overview-bar-list overview-bar-list--age" id="overview-age-distribution"></ol>
+        </a>
+
       </div>
 
     </section>
@@ -326,6 +237,192 @@
 
   <script src="js/header-slide.js"></script>
   <script src="js/distribution/distribution-page-app.js?v=13"></script>
+
+  <!-- ════════════════════════════════════════════════════════════
+       Distribution Overview landing — fixture init (Phase 1a).
+       Surface-fidelity only. Replace with real data later.
+       ════════════════════════════════════════════════════════════ -->
+  <script>
+  (function () {
+    'use strict';
+
+    var SERIES = { v: '#2196F3', c: '#f59e0b', a: '#22c55e' };
+
+    // ── Card 1 — Click – by Store (top 7, horizontal bars) ─────────
+    var clickByStore = [
+      { store: 'Chicago Loop',        clicks: 110023 },
+      { store: 'Cambridge Central',   clicks: 109276 },
+      { store: 'Orland Park',         clicks: 109079 },
+      { store: 'Walnut Creek',        clicks: 108744 },
+      { store: 'Spokane Downtown',    clicks: 108600 },
+      { store: 'Sacramento Downtown', clicks: 107675 },
+      { store: 'Tampa Heights',       clicks: 106912 }
+    ];
+
+    // ── Card 2 — Impressions – by Creative (V/C/A stacked horizontal) ─
+    // Each row sums to ~144k. Three segments per V/C/A palette.
+    var impressionsByCreative = [
+      { creative: "Lay's Chips Family",      v: 70000, c: 45000, a: 29782 },
+      { creative: 'Coffee K-Cups',           v: 71000, c: 44000, a: 29630 },
+      { creative: 'Prime Ribeye 16oz',       v: 70500, c: 44500, a: 29554 },
+      { creative: 'Organic Strawberries',    v: 69800, c: 44900, a: 29557 },
+      { creative: 'Ground Beef 80/20',       v: 70200, c: 44800, a: 29118 },
+      { creative: 'Energy Drinks',           v: 69900, c: 44700, a: 29410 },
+      { creative: 'Croissants',              v: 69500, c: 44800, a: 29695 },
+      { creative: 'Chicken Broth',           v: 69200, c: 44900, a: 29823 },
+      { creative: 'Mushrooms',               v: 69100, c: 44800, a: 30008 },
+      { creative: 'Italian Sausage Links',   v: 69400, c: 44600, a: 29904 }
+    ];
+
+    // ── Card 3 — CTR – by Day (Mon–Sun column chart w/ totals) ─────
+    var ctrByDay = [
+      { day: 'MON', total: 1820, ctr: 0.80 },
+      { day: 'TUE', total: 1965, ctr: 0.82 },
+      { day: 'WED', total: 2104, ctr: 0.83 },
+      { day: 'THU', total: 2240, ctr: 0.85 },
+      { day: 'FRI', total: 2812, ctr: 0.91 },
+      { day: 'SAT', total: 2604, ctr: 0.88 },
+      { day: 'SUN', total: 1873, ctr: 0.79 }
+    ];
+
+    // ── Card 4 — Visit Frequency (donut, 10,704 total) ─────────────
+    var visitFrequency = [
+      { name: 'New',       value: 4250, color: SERIES.v },
+      { name: 'Returning', value: 3100, color: SERIES.c },
+      { name: 'Loyal',     value: 3354, color: SERIES.a }
+    ];
+    var visitFreqTotal = 10704;
+
+    // ── Card 5 — Age Distribution (horizontal bars w/ % + count) ───
+    var agePalette = ['#3b82f6', '#f97316', '#84cc16', '#06b6d4', '#f59e0b', '#06b6d4', '#a855f7'];
+    var ageDistribution = [
+      { bucket: '18-24', pct: 8,  count: 866  },
+      { bucket: '25-34', pct: 18, count: 1948 },
+      { bucket: '35-44', pct: 22, count: 2381 },
+      { bucket: '45-54', pct: 20, count: 2164 },
+      { bucket: '55-64', pct: 16, count: 1732 },
+      { bucket: '65-74', pct: 10, count: 1082 },
+      { bucket: '75+',   pct: 6,  count: 649  }
+    ];
+
+    // ── Renderers ──────────────────────────────────────────────────
+
+    function fmtNum(n) { return n.toLocaleString('en-US'); }
+
+    function renderClickByStore() {
+      var el = document.getElementById('overview-click-by-store');
+      if (!el) return;
+      var max = Math.max.apply(null, clickByStore.map(function (r) { return r.clicks; }));
+      el.innerHTML = clickByStore.map(function (r) {
+        var w = (r.clicks / max) * 100;
+        return '<li class="ovbar"><span class="ovbar__label">' + r.store + '</span>' +
+               '<span class="ovbar__track"><span class="ovbar__fill" style="width:' + w.toFixed(1) + '%; background:' + SERIES.v + ';"></span></span>' +
+               '<span class="ovbar__value">' + fmtNum(r.clicks) + '</span></li>';
+      }).join('');
+    }
+
+    function renderImpressionsByCreative() {
+      var el = document.getElementById('overview-impressions-by-creative');
+      if (!el) return;
+      var max = Math.max.apply(null, impressionsByCreative.map(function (r) { return r.v + r.c + r.a; }));
+      el.innerHTML = impressionsByCreative.map(function (r) {
+        var total = r.v + r.c + r.a;
+        var w = (total / max) * 100;
+        var vw = (r.v / total) * 100;
+        var cw = (r.c / total) * 100;
+        var aw = (r.a / total) * 100;
+        return '<li class="ovbar"><span class="ovbar__label">' + r.creative + '</span>' +
+               '<span class="ovbar__track"><span class="ovbar__stack" style="width:' + w.toFixed(1) + '%;">' +
+                 '<span class="ovbar__seg" style="width:' + vw.toFixed(1) + '%; background:' + SERIES.v + ';"></span>' +
+                 '<span class="ovbar__seg" style="width:' + cw.toFixed(1) + '%; background:' + SERIES.c + ';"></span>' +
+                 '<span class="ovbar__seg" style="width:' + aw.toFixed(1) + '%; background:' + SERIES.a + ';"></span>' +
+               '</span></span>' +
+               '<span class="ovbar__value">' + fmtNum(total) + '</span></li>';
+      }).join('');
+    }
+
+    function renderCtrByDay() {
+      if (typeof echarts === 'undefined') return;
+      var el = document.getElementById('overview-ctr-by-day');
+      if (!el) return;
+      var chart = echarts.init(el);
+      chart.setOption({
+        grid: { top: 36, right: 12, bottom: 28, left: 12, containLabel: true },
+        xAxis: {
+          type: 'category',
+          data: ctrByDay.map(function (d) { return d.day; }),
+          axisLine: { show: false },
+          axisTick: { show: false },
+          axisLabel: { color: '#6b7280', fontSize: 11 }
+        },
+        yAxis: { type: 'value', show: false },
+        series: [{
+          type: 'bar',
+          data: ctrByDay.map(function (d) { return d.total; }),
+          itemStyle: { color: SERIES.v, borderRadius: [3, 3, 0, 0] },
+          barWidth: 28,
+          label: {
+            show: true, position: 'top', color: '#1f2937', fontSize: 11, fontWeight: 600,
+            formatter: function (p) { return fmtNum(p.value); }
+          }
+        }],
+        tooltip: { trigger: 'axis', formatter: function (p) {
+          var d = ctrByDay[p[0].dataIndex];
+          return d.day + '<br/>Total: ' + fmtNum(d.total) + '<br/>CTR: ' + d.ctr.toFixed(2) + '%';
+        }}
+      });
+    }
+
+    function renderVisitFrequency() {
+      if (typeof echarts === 'undefined') return;
+      var el = document.getElementById('overview-visit-frequency');
+      if (!el) return;
+      var chart = echarts.init(el);
+      chart.setOption({
+        legend: { bottom: 0, itemWidth: 10, itemHeight: 10, textStyle: { color: '#6b7280', fontSize: 11 } },
+        series: [{
+          type: 'pie',
+          radius: ['55%', '78%'],
+          center: ['50%', '45%'],
+          avoidLabelOverlap: false,
+          label: { show: false },
+          labelLine: { show: false },
+          data: visitFrequency.map(function (d) {
+            return { name: d.name, value: d.value, itemStyle: { color: d.color } };
+          })
+        }],
+        graphic: [{
+          type: 'group',
+          left: 'center', top: '38%',
+          children: [
+            { type: 'text', style: { text: fmtNum(visitFreqTotal), fill: '#1f2937', font: 'bold 22px sans-serif', textAlign: 'center' }, top: 0 },
+            { type: 'text', style: { text: 'Total Visits', fill: '#6b7280', font: '11px sans-serif', textAlign: 'center' }, top: 28 }
+          ]
+        }]
+      });
+    }
+
+    function renderAgeDistribution() {
+      var el = document.getElementById('overview-age-distribution');
+      if (!el) return;
+      var max = Math.max.apply(null, ageDistribution.map(function (r) { return r.pct; }));
+      el.innerHTML = ageDistribution.map(function (r, i) {
+        var w = (r.pct / max) * 100;
+        return '<li class="ovbar"><span class="ovbar__label">' + r.bucket + '</span>' +
+               '<span class="ovbar__track"><span class="ovbar__fill" style="width:' + w.toFixed(1) + '%; background:' + agePalette[i] + ';"></span></span>' +
+               '<span class="ovbar__value"><strong>' + r.pct + '%</strong> · ' + fmtNum(r.count) + '</span></li>';
+      }).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      renderClickByStore();
+      renderImpressionsByCreative();
+      renderCtrByDay();
+      renderVisitFrequency();
+      renderAgeDistribution();
+    });
+  })();
+  </script>
 
 </body>
 </html>

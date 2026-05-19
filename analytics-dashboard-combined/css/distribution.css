@@ -5357,3 +5357,89 @@ body[data-dist-page] .narrative-header__title {
 .pm-store-tbl tbody tr[data-perf-hover]:hover .pm-store-bar__track {
   box-shadow: 0 0 0 1px rgba(33, 150, 243, 0.35);
 }
+
+/* ── Paid Media > by Creative — thumbnail + clickable rows ──── */
+.pm-variant-thumb-cell {
+  width: 64px;
+  padding: 8px 6px !important;
+}
+.pm-variant-thumb-cell svg {
+  display: block;
+  border-radius: 4px;
+}
+#pm-variant-panels tbody tr[data-pm-creative] { cursor: pointer; }
+#pm-variant-panels tbody tr.is-selected {
+  background: rgba(33, 150, 243, 0.08) !important;
+  box-shadow: inset 3px 0 0 var(--series-v, #2196F3);
+}
+
+/* ── Creative Detail panel body content ──────────────────────── */
+.pm-detail-hero {
+  width: 100%;
+  aspect-ratio: 280 / 200;
+  background: var(--color-gray-100, #f3f4f6);
+  border-radius: var(--radius-lg, 12px);
+  overflow: hidden;
+  margin-bottom: var(--space-4, 1rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pm-detail-hero svg { width: 100%; height: 100%; border-radius: var(--radius-lg, 12px); }
+.pm-detail-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 4px;
+}
+.pm-detail-sub {
+  font-size: 0.8125rem;
+  color: #9ca3af;
+  margin-bottom: var(--space-3, 0.75rem);
+}
+.pm-detail-tags {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-4, 1rem);
+}
+.pm-detail-tag {
+  font-size: 0.75rem;
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 2px 10px;
+  border-radius: 10px;
+}
+.pm-detail-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3, 0.75rem);
+  margin-bottom: var(--space-4, 1rem);
+}
+.pm-detail-metric {
+  background: #f9fafb;
+  border: 1px solid #f3f4f6;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.pm-detail-metric__label {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b7280;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.pm-detail-metric__val {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1f2937;
+  font-variant-numeric: tabular-nums;
+}
+.pm-detail-note {
+  font-size: 0.6875rem;
+  color: #9ca3af;
+  font-style: italic;
+  line-height: 1.5;
+}

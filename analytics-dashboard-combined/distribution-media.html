@@ -142,11 +142,11 @@
         <div class="narrative-header">
           <div class="narrative-header__left">
           <h4 class="narrative-header__section">Distribution</h4>
-          <h1 class="narrative-header__title">Media Buy</h1>
+          <h1 class="narrative-header__title">Paid Media</h1>
           <h2 class="narrative-header__question">How efficiently is our ad spend being delivered?</h2>
           </div>
           <div class="narrative-header__text">
-            <p class="narrative-header__subtitle">Campaign delivery, creative performance, and budget metrics<br><em><span id="subtitle-entity-media">Ideal Media Lab</span>, <span id="subtitle-date-media">Week 2 (Jan 7, 2026 – Jan 13, 2026)</span></em></p>
+            <p class="narrative-header__subtitle">Pulse delivery — impressions, clicks, CTR — by store, creative, and time.<br><em><span id="subtitle-entity-media">Ideal Media Lab</span>, <span id="subtitle-date-media">Week 47 (Nov 17 – Nov 23, 2026)</span></em></p>
             <div class="card-run-stats"><span class="card-run-stats__text">Ran at 27 stores · 7 days</span></div>
             <span class="ep-cohort-note" id="dist-cohort-note-media">
               <span class="material-symbols-outlined">info</span>
@@ -168,227 +168,94 @@
       <div class="insight-banner" data-narrative-section="media" hidden></div>
 
       <!-- ═══════════════════════════════════════════════
-           Decision 7 prototype — Row 1 perf-tabs (Section nav, lines-bottom).
-           Switches between Observed Visits / Off-Platform Ranking sections.
-           Variant Panels promotion deferred (still nested in Ranking).
+           Paid Media — 3 inner tabs (Max 05/19 PDF pages 3-5).
+           by Store · by Creative · Time trend
            ═══════════════════════════════════════════════ -->
-      <div class="perf-tabs perf-tabs--section" id="mb-section-tabs" role="tablist" aria-label="Media Buy section">
-        <button class="perf-tab active" data-mb-section-tab="observed-visits" role="tab" aria-selected="true">
-          <span class="material-symbols-outlined">storefront</span> Observed Visits
+      <div class="perf-tabs perf-tabs--filled" id="pm-perf-tabs" role="tablist" aria-label="Paid Media view">
+        <button class="perf-tab active" data-pm-tab="store" role="tab" aria-selected="true">
+          <span class="material-symbols-outlined">store</span> by Store
         </button>
-        <button class="perf-tab" data-mb-section-tab="ranking" role="tab" aria-selected="false">
-          <span class="material-symbols-outlined">leaderboard</span> Off-Platform Ranking
+        <button class="perf-tab" data-pm-tab="creative" role="tab" aria-selected="false">
+          <span class="material-symbols-outlined">image</span> by Creative
         </button>
-        <button class="perf-tab" data-mb-section-tab="variants" role="tab" aria-selected="false">
-          <span class="material-symbols-outlined">grid_view</span> Variant Panels
+        <button class="perf-tab" data-pm-tab="trend" role="tab" aria-selected="false">
+          <span class="material-symbols-outlined">show_chart</span> Time trend
         </button>
       </div>
-      <!-- Mobile collapse: native select mirrors Row 1 -->
-      <select class="mb-section-select" id="mb-section-select" aria-label="Media Buy section (mobile)">
-        <option value="observed-visits" selected>Observed Visits</option>
-        <option value="ranking">Off-Platform Ranking</option>
-        <option value="variants">Variant Panels</option>
-      </select>
 
-      <!-- ═══════════════════════════════════════════════
-           LEVEL 3: Media-attributed Visits (Apr 28 plan #1)
-           Split per Max ask: Store Visitation surface stays;
-           media-attributed slice lives here next to spend/CTR/conv.
-           Aggregation: by store × week × campaign group (NOT by
-           creative — visit data isn't creative-attributed).
-           ═══════════════════════════════════════════════ -->
-
-      <section class="media-visits-section dist-section-pane active" data-mb-section="observed-visits">
-        <header class="section-panel-header ">
-          <h2 class="section-panel-header__title">Observed visits attributed to media spend</h2>
-          <p class="section-panel-header__question">Which media drove store visits this week?</p>
-          <p class="section-panel-header__subtitle">Visits joined to media buy by store × week. Creative-level visits not available in source data — see Observed Store Visits tab for crossover detail.</p>
-        </header>
-
-        <!-- Phase 3 step 2 — canonical perf-tabs. By Creative skipped: visit
-             data isn't creative-attributed (see footnote).
-             Decision 7 prototype: Row 2 = filled-pill style. -->
-        <div class="perf-tabs perf-tabs--filled" id="media-visits-tabs" role="tablist">
-          <button class="perf-tab active" data-mv-tab="overview" role="tab" aria-selected="true">
-            <span class="material-symbols-outlined">dashboard</span> Overview
-          </button>
-          <button class="perf-tab" data-mv-tab="store" role="tab" aria-selected="false">
-            <span class="material-symbols-outlined">store</span> By Store
-          </button>
-          <button class="perf-tab" data-mv-tab="trendovertime" role="tab" aria-selected="false">
-            <span class="material-symbols-outlined">trending_up</span> Trend Over Time
-          </button>
-        </div>
-
-        <div class="perf-tab-pane active" data-mv-pane="overview">
-          <div class="media-visits-stats" id="media-visits-stats">
-            <!-- Populated by JS: total visits, visits-per-$, top-driving campaign -->
-          </div>
-        </div>
-        <div class="perf-tab-pane" data-mv-pane="store">
-          <div class="media-visits-panel">
-            <div class="media-visits-panel__label">Visits by Store — joined to spend</div>
-            <div class="media-visits-by-store-scroll" style="max-height:320px; overflow-y:auto;">
-              <div id="media-visits-by-store"></div>
+      <!-- ── Pane: by Store ──────────────────────────────────────── -->
+      <div class="perf-tab-pane active" data-pm-pane="store">
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <div>
+              <h3 class="panel-label">Click Through Rate</h3>
+              <p class="panel-subtitle">Ranked stores — bar reflects selected metric. CTR%, Clicks, and Impressions available via the toggle.</p>
             </div>
-          </div>
-        </div>
-        <div class="perf-tab-pane" data-mv-pane="trendovertime">
-          <div class="chart-card">
-            <div class="chart-card__header">
-              <div>
-                <h3 class="panel-label">Attributed Visits Over Time</h3>
-                <p class="panel-subtitle">Each bar = observed visits attributed to media for the period. Spend overlay joined on store × week.</p>
-              </div>
-              <div class="chart-card__header-right">
-                <div class="duration-presets" id="media-visits-trend-ranges" role="tablist" aria-label="Time range">
-                  <button class="duration-preset" data-mv-range="1w">1 Week</button>
-                  <button class="duration-preset" data-mv-range="1m">4 Week <span class="duration-preset__sub">(Month)</span></button>
-                  <button class="duration-preset duration-preset--active" data-mv-range="1q">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
-                  <button class="duration-preset" data-mv-range="1y">1 Year</button>
-                </div>
+            <div class="chart-card__header-right">
+              <div class="view-toggle view-toggle--compact" id="pm-store-metric-toggle" role="tablist" aria-label="Metric">
+                <button type="button" class="view-toggle__btn active" data-pm-metric="ctr" role="tab" aria-selected="true">CTR</button>
+                <button type="button" class="view-toggle__btn" data-pm-metric="clicks" role="tab" aria-selected="false">Clicks</button>
+                <button type="button" class="view-toggle__btn" data-pm-metric="impressions" role="tab" aria-selected="false">Impressions</button>
               </div>
             </div>
-            <div id="media-visits-trend-chart" style="height:320px;"></div>
           </div>
-        </div>
-
-        <p class="media-visits-footnote">
-          <span class="material-symbols-outlined">info</span>
-          Source: panel-tracked <strong>observed visits</strong> joined to Pulse spend on store × week. Directional — not a census. No creative attribution at this layer — for competitive crossover and frequency-bucket detail, see <a href="distribution-visitation.html">Observed Store Visits</a>.
-        </p>
-      </section><!-- /.media-visits-section -->
-            <section class="media-visits-section dist-section-pane" data-mb-section="ranking">
-        <header class="section-panel-header ">
-          <h2 class="section-panel-header__title">Off-Platform Media Performance Ranking</h2>
-          <p class="section-panel-header__question">Which creatives, stores, and weeks delivered the strongest off-platform media performance?</p>
-          <p class="section-panel-header__subtitle">Delivery metrics from Pulse — impressions, clicks, CTR — ranked by cut. Does NOT include attributed visits; see Observed Visits attributed to media spend for outcome metrics.</p>
-        </header>
-      <div class="perf-tabs perf-tabs--filled" id="mb-perf-tabs" role="tablist">
-        <button class="perf-tab active" data-mb-tab="overview" role="tab" aria-selected="true">
-          <span class="material-symbols-outlined">dashboard</span> Overview
-        </button>
-        <button class="perf-tab" data-mb-tab="store" role="tab" aria-selected="false">
-          <span class="material-symbols-outlined">store</span> By Store
-        </button>
-        <button class="perf-tab" data-mb-tab="creative" role="tab" aria-selected="false">
-          <span class="material-symbols-outlined">image</span> By Creative
-        </button>
-        <button class="perf-tab" data-mb-tab="trend" role="tab" aria-selected="false">
-          <span class="material-symbols-outlined">show_chart</span> By Week
-        </button>
-        <button class="perf-tab" data-mb-tab="data" role="tab" aria-selected="false">
-          <span class="material-symbols-outlined">table_chart</span> Data
-        </button>
-      </div>
-            <!-- Performance Ranking divider -->
-
-
-      <div class="perf-tab-pane active" data-mb-pane="overview">
-
-
-
-      <!-- Creative List: horizontal carousel of variant cards -->
-      <div class="creative-list" id="creative-list"></div>
-
-      <!-- Inline creative detail panel — replaces the slide-in sidebar.
-           Populated by renderCreativeDetailSidebar() when a chip is clicked.
-           "All Media Campaigns" chip resets to placeholder. -->
-      <div class="creative-inline-detail" id="creative-inline-detail">
-        <div class="creative-inline-detail__body" id="creative-inline-detail-body">
-          <div class="creative-inline-detail__placeholder">Select a promotion above to see details, or All Media Campaigns for the full set.</div>
+          <div class="pm-store-table" id="pm-store-table"></div>
         </div>
       </div>
-      </div><!-- /Overview pane -->
 
-      <div class="perf-tab-pane" data-mb-pane="store">
-        <div class="dist-pane-toolbar">
-          <span class="dist-pane-toolbar__label">Per-store delivery — ranked by visits.</span>
-          <span class="dist-pane-toolbar__spacer" style="flex:1"></span>
-          <div class="view-toggle" id="mb-store-mode" role="tablist" aria-label="Store view mode">
-            <button type="button" class="view-toggle__btn active" data-mb-store-mode="bar" role="tab" aria-selected="true">
-              <span class="material-symbols-outlined">bar_chart</span> Bar
-            </button>
-            <button type="button" class="view-toggle__btn" data-mb-store-mode="data" role="tab" aria-selected="false">
-              <span class="material-symbols-outlined">table_rows</span> Data
-            </button>
-            <button type="button" class="view-toggle__btn" data-mb-store-mode="trend" role="tab" aria-selected="false">
-              <span class="material-symbols-outlined">show_chart</span> Trend
-            </button>
-          </div>
-        </div>
-        <div id="mb-store-content"><!-- Filled by renderMediaBuyByStorePane() --></div>
-      </div>
-      <div class="perf-tab-pane" data-mb-pane="creative">
-        <div class="creative-chips creative-chips--scroll" id="mb-creative-chips" role="tablist" aria-label="Creative selector">
-          <!-- Filled by renderMediaBuyByCreativePane() — All + per-creative chips. -->
-        </div>
-        <div class="dist-hero-band" id="mb-creative-hero">
-          <!-- Filled by renderMediaBuyByCreativePane() — active creative name + key metrics. -->
-        </div>
-        <div class="dist-2col" id="mb-creative-2col">
-          <!-- Filled by renderMediaBuyByCreativePane() — left: store list, right: detail tiles. -->
-        </div>
-      </div>
-      <div class="perf-tab-pane" data-mb-pane="trend">
-        <div class="dist-pane-toolbar">
-          <span class="dist-pane-toolbar__label">Delivery over time — Impressions, Clicks, CTR, CPV by week.</span>
-          <span class="dist-pane-toolbar__spacer" style="flex:1"></span>
-          <div class="duration-presets" id="mb-trend-ranges" role="tablist" aria-label="Time range">
-            <button type="button" class="duration-preset" data-mb-range="1w">1 Week</button>
-            <button type="button" class="duration-preset" data-mb-range="4w">4 Week <span class="duration-preset__sub">(Month)</span></button>
-            <button type="button" class="duration-preset duration-preset--active" data-mb-range="13w">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
-            <button type="button" class="duration-preset" data-mb-range="1y">1 Year</button>
-          </div>
-        </div>
-        <div id="mb-trend-chart" style="height:420px;"></div>
-      </div>
-      <div class="perf-tab-pane" data-mb-pane="data">
-        <div class="dist-pane-toolbar">
-          <span class="dist-pane-toolbar__label">Per-creative metric grid — sortable, exportable.</span>
-        </div>
-        <div class="dist-tree-data-grid" id="mb-data-grid"></div>
-      </div>
-      </section><!-- /.media-visits-section (ranking) -->
-
-      <!-- ═══════════════════════════════════════════════
-           Decision 7 prototype — Variant Panels promoted to Row 1 section
-           (was orphan Detailed Breakdown grid nested in Ranking).
-           ═══════════════════════════════════════════════ -->
-      <section class="media-visits-section dist-section-pane" data-mb-section="variants">
-        <header class="section-panel-header ">
-          <h2 class="section-panel-header__title">Variant Panels</h2>
-          <p class="section-panel-header__question">How does each creative variant compare across the full metric set?</p>
-          <p class="section-panel-header__subtitle">Detailed breakdown grid — every creative × every metric. Sortable, exportable. Toggle More Data for secondary metrics.</p>
-        </header>
-
-        <div id="variant-panels" class="dist-tree-data-grid">
-          <div class="dist-tree-header">
-            <label class="toggle-switch">
-              <input type="checkbox" id="dist-more-data-toggle">
-              <span class="toggle-slider"></span>
-            </label>
-            <span class="toggle-label">More Data</span>
-            <div class="dist-tree-actions">
-              <button class="dist-tree-action-btn" id="dist-export-btn" title="Export">
-                <span class="material-symbols-outlined">download</span> Export
-              </button>
-              <button class="dist-tree-action-btn" id="dist-print-btn" title="Print">
-                <span class="material-symbols-outlined">print</span> Print
-              </button>
-              <button class="dist-tree-action-btn" id="dist-share-btn" title="Share">
-                <span class="material-symbols-outlined">share</span> Share
-              </button>
+      <!-- ── Pane: by Creative (VARIANT PANELS) ─────────────────── -->
+      <div class="perf-tab-pane" data-pm-pane="creative">
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <div>
+              <h3 class="panel-label">VARIANT PANELS</h3>
+              <p class="panel-subtitle">How does each creative variant compare across the full metric set?<br><span class="panel-subtitle__muted">Detailed breakdown grid — every creative × every metric. Sortable, exportable.</span></p>
+            </div>
+            <div class="chart-card__header-right">
+              <div class="dist-tree-actions">
+                <!-- STUB: inert in spike — wired in Angular -->
+                <button class="dist-tree-action-btn" id="pm-export-btn" title="Export"><span class="material-symbols-outlined">download</span> Export</button>
+                <button class="dist-tree-action-btn" id="pm-print-btn" title="Print"><span class="material-symbols-outlined">print</span> Print</button>
+                <button class="dist-tree-action-btn" id="pm-share-btn" title="Share"><span class="material-symbols-outlined">share</span> Share</button>
+              </div>
             </div>
           </div>
-          <div class="dist-tree-table-wrap">
-            <table class="dist-tree-table">
-              <thead id="dist-tree-head"></thead>
-              <tbody id="dist-tree-body"></tbody>
-            </table>
+          <div class="dist-tree-data-grid" id="pm-variant-panels">
+            <div class="dist-tree-table-wrap">
+              <table class="dist-tree-table">
+                <thead id="pm-variant-head"></thead>
+                <tbody id="pm-variant-body"></tbody>
+              </table>
+            </div>
           </div>
         </div>
-      </section><!-- /.media-visits-section (variants) -->
+      </div>
+
+      <!-- ── Pane: Time trend ───────────────────────────────────── -->
+      <div class="perf-tab-pane" data-pm-pane="trend">
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <div>
+              <h3 class="panel-label">OFF-PLATFORM MEDIA PERFORMANCE RANKING</h3>
+              <p class="panel-subtitle">Which creatives, stores, and weeks delivered the strongest off-platform media performance?<br><span class="panel-subtitle__muted">Delivery metrics from Pulse — impressions, clicks, CTR — ranked by cut. Does NOT include attributed visits; see Observed Visits for outcome metrics.</span></p>
+            </div>
+            <div class="chart-card__header-right">
+              <div class="duration-presets" id="pm-trend-ranges" role="tablist" aria-label="Time range">
+                <button type="button" class="duration-preset" data-pm-range="1w">1 Week</button>
+                <button type="button" class="duration-preset" data-pm-range="4w">4 Week <span class="duration-preset__sub">(Month)</span></button>
+                <button type="button" class="duration-preset duration-preset--active" data-pm-range="13w">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
+                <button type="button" class="duration-preset" data-pm-range="1y">1 Year</button>
+              </div>
+            </div>
+          </div>
+          <div id="pm-trend-chart" style="height:380px;"></div>
+          <div class="pm-series-pills" id="pm-series-pills" role="group" aria-label="Series">
+            <button type="button" class="pm-series-pill active" data-pm-series="impressions" style="--pill-color:#2196F3;">Impressions</button>
+            <button type="button" class="pm-series-pill active" data-pm-series="clicks" style="--pill-color:#ef4444;">Clicks</button>
+            <button type="button" class="pm-series-pill active" data-pm-series="ctr" style="--pill-color:#22c55e;">Click Through Rate</button>
+          </div>
+        </div>
+      </div>
 
     </section>
 
@@ -424,6 +291,253 @@
 
   <script src="js/header-slide.js"></script>
   <script src="js/distribution/distribution-page-app.js?v=13"></script>
+
+  <!-- ════════════════════════════════════════════════════════════
+       Paid Media — fixture init (Phase 1b).
+       Surface-fidelity only. Independent of distribution.js render
+       fns (those expect older DOM IDs and will no-op gracefully).
+       ════════════════════════════════════════════════════════════ -->
+  <script>
+  (function () {
+    'use strict';
+
+    var SERIES = { impressions: '#2196F3', clicks: '#ef4444', ctr: '#22c55e' };
+
+    // ── Tab switcher ──────────────────────────────────────────────
+    function initTabs() {
+      var tabs  = document.querySelectorAll('#pm-perf-tabs .perf-tab');
+      var panes = document.querySelectorAll('.perf-tab-pane[data-pm-pane]');
+      tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          var target = tab.dataset.pmTab;
+          tabs.forEach(function (t) {
+            var on = t === tab;
+            t.classList.toggle('active', on);
+            t.setAttribute('aria-selected', String(on));
+          });
+          panes.forEach(function (p) {
+            p.classList.toggle('active', p.dataset.pmPane === target);
+          });
+          // Resize ECharts when entering trend pane (chart may have rendered while hidden)
+          if (target === 'trend' && window._pmTrendChart) window._pmTrendChart.resize();
+        });
+      });
+    }
+
+    // ── By Store fixture ──────────────────────────────────────────
+    // ~20 stores per 05/19 PDF page 3. Bar reflects selected metric.
+    var storeRows = [
+      { rank: 1,  store: 'store-336',  ctr: 26488, clicks: 0.86, impressions: 392820 },
+      { rank: 2,  store: 'store-2288', ctr: 24916, clicks: 0.85, impressions: 724096 },
+      { rank: 3,  store: 'store-508',  ctr: 24379, clicks: 0.85, impressions: 37577 },
+      { rank: 4,  store: 'store-2487', ctr: 23704, clicks: 0.85, impressions: 47999 },
+      { rank: 5,  store: 'store-2415', ctr: 22846, clicks: 0.84, impressions: 33850 },
+      { rank: 6,  store: 'store-319',  ctr: 21983, clicks: 0.81, impressions: 305608 },
+      { rank: 7,  store: 'store-726',  ctr: 21971, clicks: 0.82, impressions: 305745 },
+      { rank: 8,  store: 'store-2509', ctr: 21124, clicks: 0.81, impressions: 40066 },
+      { rank: 9,  store: 'store-518',  ctr: 19565, clicks: 0.82, impressions: 31735 },
+      { rank: 10, store: 'store-705',  ctr: 18463, clicks: 0.77, impressions: 116366 },
+      { rank: 11, store: 'store-195',  ctr: 17557, clicks: 0.87, impressions: 23390 },
+      { rank: 12, store: 'store-2399', ctr: 17501, clicks: 0.89, impressions: 27265 },
+      { rank: 13, store: 'store-2474', ctr: 17223, clicks: 0.87, impressions: 25094 },
+      { rank: 14, store: 'store-2495', ctr: 17051, clicks: 0.88, impressions: 25612 },
+      { rank: 15, store: 'store-86',   ctr: 16231, clicks: 0.88, impressions: 22578 },
+      { rank: 16, store: 'store-2482', ctr: 16184, clicks: 0.97, impressions: 24659 },
+      { rank: 17, store: 'store-2480', ctr: 15960, clicks: 0.88, impressions: 24887 },
+      { rank: 18, store: 'store-711',  ctr: 15957, clicks: 0.88, impressions: 237043 },
+      { rank: 19, store: 'store-2545', ctr: 15837, clicks: 0.88, impressions: 25783 }
+    ];
+    // Note: 05/19 PDF page 3 column shapes are stylized. For spike fidelity
+    // these fixture rows preserve the column intent: bar = primary metric,
+    // adjacent columns show secondary metrics. Treating "ctr" col as a raw
+    // value here; rendering layer formats per metric.
+
+    function fmtNum(n) { return n.toLocaleString('en-US'); }
+    function fmtPct(n) { return n.toFixed(2) + '%'; }
+    function fmtMoney(n) { return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+    function renderStoreTable(metric) {
+      var el = document.getElementById('pm-store-table');
+      if (!el) return;
+      var vals = storeRows.map(function (r) {
+        if (metric === 'ctr')         return r.ctr;
+        if (metric === 'clicks')      return r.clicks * 1000; // scale CTR% display
+        return r.impressions;
+      });
+      var max = Math.max.apply(null, vals);
+      var rowsHtml = storeRows.map(function (r, i) {
+        var w = (vals[i] / max) * 100;
+        var primary = metric === 'ctr' ? fmtNum(r.ctr)
+                    : metric === 'clicks' ? fmtPct(r.clicks)
+                    : fmtNum(r.impressions);
+        return '<tr>' +
+          '<td class="pm-store-rank">#' + r.rank + '</td>' +
+          '<td class="pm-store-name">' + r.store + '</td>' +
+          '<td class="pm-store-bar"><span class="pm-store-bar__track"><span class="pm-store-bar__fill" style="width:' + w.toFixed(1) + '%;"></span></span></td>' +
+          '<td class="pm-store-val">' + primary + '</td>' +
+          '<td class="pm-store-val">' + fmtPct(r.clicks) + '</td>' +
+          '<td class="pm-store-val">' + fmtMoney(r.impressions) + '</td>' +
+          '</tr>';
+      }).join('');
+      el.innerHTML =
+        '<table class="pm-store-tbl">' +
+          '<thead><tr><th></th><th>Store</th><th></th><th>' + metric.toUpperCase() + '</th><th>CTR</th><th>Spend</th></tr></thead>' +
+          '<tbody>' + rowsHtml + '</tbody>' +
+        '</table>';
+    }
+
+    function initStoreMetricToggle() {
+      var btns = document.querySelectorAll('#pm-store-metric-toggle .view-toggle__btn');
+      btns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          btns.forEach(function (b) {
+            var on = b === btn;
+            b.classList.toggle('active', on);
+            b.setAttribute('aria-selected', String(on));
+          });
+          renderStoreTable(btn.dataset.pmMetric);
+        });
+      });
+    }
+
+    // ── By Creative — VARIANT PANELS fixture ──────────────────────
+    var creativeRows = [
+      { num: 1, name: 'Holiday Banner', sub: 'Central FL',  type: 'JPEG',  stores: 12, ctr: 0.85, clicks: 3793, cpc: 6.28, imp: 264.15, cpm: 30.98, spend: 23826.00 },
+      { num: 2, name: 'BOGO Produce',   sub: 'North FL',    type: 'GIF',   stores: 10, ctr: 0.84, clicks: 3187, cpc: 1.90, imp: 85.54,  cpm: 10.14, spend: 6063.00 },
+      { num: 3, name: 'Holiday Steak',  sub: 'South FL',    type: 'GIF',   stores: 6,  ctr: 0.92, clicks: 1987, cpc: 9.50, imp: 399.98, cpm: 43.34, spend: 18681.00 },
+      { num: 4, name: 'Value Pack',     sub: 'Harveys',     type: 'JPEG',  stores: 7,  ctr: 0.78, clicks: 1620, cpc: 4.06, imp: 179.02, cpm: 23.00, spend: 6578.00 },
+      { num: 5, name: 'YouTube Pre-Roll', sub: 'Holiday',   type: 'VIDEO', stores: 10, ctr: 0.71, clicks: 876,  cpc: 10.60, imp: 295.24, cpm: 41.83, spend: 9286.00 },
+      { num: 6, name: '0424 Sullys 320x50 Template', sub: '', type: 'GIF', stores: 1,  ctr: 1.16, clicks: 3,    cpc: 1.67, imp: 3.86,   cpm: 0.33,  spend: 5.00 },
+      { num: 7, name: '0424 Sullys 300x250 Template', sub: '', type: 'GIF', stores: 1, ctr: 1.16, clicks: 3,    cpc: 1.67, imp: 3.86,   cpm: 0.33,  spend: 5.00 },
+      { num: 8, name: '0424 Berlin 320x50 Template', sub: '', type: 'GIF',  stores: 1, ctr: 0.00, clicks: 0,    cpc: 0.00, imp: 0.00,   cpm: 0.00,  spend: 1.00 }
+    ];
+    var typeColor = { JPEG: '#fce7f3', GIF: '#fef3c7', VIDEO: '#fde68a' };
+
+    function renderVariantPanels() {
+      var head = document.getElementById('pm-variant-head');
+      var body = document.getElementById('pm-variant-body');
+      if (!head || !body) return;
+      head.innerHTML =
+        '<tr>' +
+          '<th>#</th>' +
+          '<th>Creative</th>' +
+          '<th>Type</th>' +
+          '<th class="num">Stores</th>' +
+          '<th class="num">CTR</th>' +
+          '<th class="num">Clicks</th>' +
+          '<th class="num">Impressions</th>' +
+          '<th class="num">Spend</th>' +
+        '</tr>';
+      body.innerHTML = creativeRows.map(function (r) {
+        return '<tr>' +
+          '<td><span class="pm-variant-num">' + r.num + '</span></td>' +
+          '<td>' +
+            '<div class="pm-variant-name">' + r.name + '</div>' +
+            (r.sub ? '<div class="pm-variant-sub">' + r.sub + '</div>' : '') +
+          '</td>' +
+          '<td><span class="pm-variant-type" style="background:' + typeColor[r.type] + ';">' + r.type + '</span></td>' +
+          '<td class="num">' + r.stores + '</td>' +
+          '<td class="num">' + fmtPct(r.ctr) + '</td>' +
+          '<td class="num">' + fmtNum(r.clicks) + '</td>' +
+          '<td class="num">$' + r.imp.toFixed(2) + '</td>' +
+          '<td class="num">$' + r.spend.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    // ── Time trend — 3-series line, CTR on secondary axis ────────
+    var trendWeeks = ['Week 40','Week 41','Week 42','Week 43','Week 44','Week 45','Week 46','Week 47','Week 48','Week 49','Week 50','Week 51','Week 52'];
+    var trendImpressions = [380000,378000,392000,385000,388000,390000,395000,400000,396000,300000,360000,355000,360000];
+    var trendClicks      = [350000,340000,355000,348000,352000,345000,350000,355000,360000,340000,355000,355000,360000];
+    var trendCtr         = [0.85,0.86,0.88,0.87,0.88,0.89,0.90,0.91,0.92,0.94,0.93,0.92,0.92];
+
+    var activeSeries = { impressions: true, clicks: true, ctr: true };
+
+    function buildTrendOptions() {
+      var series = [];
+      if (activeSeries.impressions) series.push({
+        name: 'Impressions', type: 'line', smooth: true, yAxisIndex: 0,
+        data: trendImpressions,
+        itemStyle: { color: SERIES.impressions }, lineStyle: { color: SERIES.impressions, width: 2 },
+        symbol: 'circle', symbolSize: 6
+      });
+      if (activeSeries.clicks) series.push({
+        name: 'Clicks', type: 'line', smooth: true, yAxisIndex: 0,
+        data: trendClicks,
+        itemStyle: { color: SERIES.clicks }, lineStyle: { color: SERIES.clicks, width: 2 },
+        symbol: 'circle', symbolSize: 6
+      });
+      if (activeSeries.ctr) series.push({
+        name: 'CTR', type: 'line', smooth: true, yAxisIndex: 1,
+        data: trendCtr,
+        itemStyle: { color: SERIES.ctr }, lineStyle: { color: SERIES.ctr, width: 2 },
+        symbol: 'circle', symbolSize: 6
+      });
+      return {
+        grid: { left: 56, right: 60, top: 24, bottom: 48 },
+        tooltip: { trigger: 'axis' },
+        legend: { show: false },
+        xAxis: {
+          type: 'category', data: trendWeeks,
+          axisLabel: { color: '#6b7280', fontSize: 11 },
+          axisLine: { lineStyle: { color: '#e5e7eb' } }
+        },
+        yAxis: [
+          { type: 'value', name: 'Volume', position: 'left',
+            axisLabel: { color: '#6b7280', fontSize: 11, formatter: function (v) { return (v >= 1000) ? (v / 1000) + 'k' : v; } },
+            splitLine: { lineStyle: { color: '#f3f4f6' } },
+            nameTextStyle: { color: '#6b7280', fontSize: 11 } },
+          { type: 'value', name: 'Rate', position: 'right', min: 0, max: 6,
+            axisLabel: { color: '#6b7280', fontSize: 11, formatter: '{value}' },
+            splitLine: { show: false },
+            nameTextStyle: { color: '#6b7280', fontSize: 11 } }
+        ],
+        series: series
+      };
+    }
+
+    function renderTrendChart() {
+      if (typeof echarts === 'undefined') return;
+      var el = document.getElementById('pm-trend-chart');
+      if (!el) return;
+      window._pmTrendChart = echarts.init(el);
+      window._pmTrendChart.setOption(buildTrendOptions());
+    }
+
+    function initSeriesPills() {
+      var pills = document.querySelectorAll('#pm-series-pills .pm-series-pill');
+      pills.forEach(function (pill) {
+        pill.addEventListener('click', function () {
+          var key = pill.dataset.pmSeries;
+          activeSeries[key] = !activeSeries[key];
+          pill.classList.toggle('active', activeSeries[key]);
+          if (window._pmTrendChart) window._pmTrendChart.setOption(buildTrendOptions(), true);
+        });
+      });
+    }
+
+    function initRangePresets() {
+      var btns = document.querySelectorAll('#pm-trend-ranges .duration-preset');
+      btns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          btns.forEach(function (b) { b.classList.remove('duration-preset--active'); });
+          btn.classList.add('duration-preset--active');
+          // Spike: range selection visual only — data unchanged.
+        });
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      initTabs();
+      renderStoreTable('ctr');
+      initStoreMetricToggle();
+      renderVariantPanels();
+      renderTrendChart();
+      initSeriesPills();
+      initRangePresets();
+    });
+  })();
+  </script>
 
 </body>
 </html>

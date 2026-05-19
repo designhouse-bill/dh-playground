@@ -4992,3 +4992,153 @@ body[data-dist-page] .narrative-header__title {
 .dh-stub__body { margin: 0; font-size: 0.875rem; line-height: 1.6; }
 .dh-stub__body a { color: var(--series-v, #2196F3); text-decoration: none; }
 .dh-stub__body a:hover { text-decoration: underline; }
+
+/* ════════════════════════════════════════════════════════════════
+   Paid Media (Phase 1b — UX-846 05/19 PDF p.3-5)
+   3 inner tabs: by Store · by Creative · Time trend
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── chart-card subtitle muted variant ──────────────────────── */
+.panel-subtitle__muted { color: #9ca3af; font-size: 0.8125rem; }
+
+/* ── By Store ranked table ──────────────────────────────────── */
+.pm-store-table {
+  margin-top: var(--space-3, 0.75rem);
+}
+.pm-store-tbl {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+.pm-store-tbl thead th {
+  font-weight: 600;
+  color: #6b7280;
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.pm-store-tbl tbody tr {
+  border-bottom: 1px solid #f3f4f6;
+}
+.pm-store-tbl tbody tr:hover {
+  background: #f9fafb;
+}
+.pm-store-tbl td {
+  padding: 8px 12px;
+  vertical-align: middle;
+}
+.pm-store-rank {
+  color: #9ca3af;
+  font-variant-numeric: tabular-nums;
+  width: 48px;
+}
+.pm-store-name {
+  color: #374151;
+  white-space: nowrap;
+  width: 120px;
+}
+.pm-store-bar {
+  width: auto;
+}
+.pm-store-bar__track {
+  display: block;
+  position: relative;
+  height: 8px;
+  background: #f3f4f6;
+  border-radius: 4px;
+  overflow: hidden;
+  min-width: 200px;
+}
+.pm-store-bar__fill {
+  display: block;
+  height: 100%;
+  background: var(--series-v, #2196F3);
+  border-radius: 4px;
+}
+.pm-store-val {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: #1f2937;
+  white-space: nowrap;
+  width: 90px;
+}
+
+/* ── By Creative — VARIANT PANELS grid ──────────────────────── */
+#pm-variant-panels .dist-tree-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+  margin-top: var(--space-3, 0.75rem);
+}
+#pm-variant-panels thead th {
+  font-weight: 600;
+  color: #6b7280;
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid #e5e7eb;
+  text-transform: uppercase;
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+}
+#pm-variant-panels thead th.num,
+#pm-variant-panels tbody td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+#pm-variant-panels tbody td {
+  padding: 10px 12px;
+  vertical-align: middle;
+  border-bottom: 1px solid #f3f4f6;
+  color: #1f2937;
+}
+#pm-variant-panels tbody tr:hover { background: #f9fafb; }
+
+.pm-variant-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--series-a, #22c55e);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.pm-variant-name { font-weight: 500; color: #1f2937; }
+.pm-variant-sub  { font-size: 0.75rem; color: #9ca3af; }
+.pm-variant-type {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #92400e;
+}
+
+/* ── Time trend — series pills below chart ──────────────────── */
+.pm-series-pills {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-3, 0.75rem);
+  margin-top: var(--space-3, 0.75rem);
+}
+.pm-series-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 18px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: var(--pill-color, #2196F3);
+  color: #fff;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  opacity: 1;
+  transition: opacity 160ms ease, transform 100ms ease;
+}
+.pm-series-pill:not(.active) {
+  opacity: 0.35;
+}
+.pm-series-pill:hover { transform: translateY(-1px); }

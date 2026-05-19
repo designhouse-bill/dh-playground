@@ -5443,3 +5443,103 @@ body[data-dist-page] .narrative-header__title {
   font-style: italic;
   line-height: 1.5;
 }
+
+/* ── Creative Detail panel — sections, store table, meta, links ── */
+.pm-detail-section {
+  margin-top: var(--space-5, 1.25rem);
+  padding-top: var(--space-4, 1rem);
+  border-top: 1px solid #f3f4f6;
+}
+.pm-detail-section__title {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+  font-weight: 700;
+  margin: 0 0 var(--space-3, 0.75rem);
+}
+
+/* Store performance mini-table */
+.pm-detail-stores {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+}
+.pm-detail-stores thead th {
+  font-weight: 600;
+  color: #9ca3af;
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 1px solid #f3f4f6;
+  text-transform: uppercase;
+  font-size: 0.625rem;
+  letter-spacing: 0.04em;
+}
+.pm-detail-stores thead th.num,
+.pm-detail-stores tbody td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.pm-detail-stores tbody td {
+  padding: 6px 8px;
+  border-bottom: 1px solid #f9fafb;
+  color: #374151;
+}
+.pm-detail-stores__row.is-top {
+  background: rgba(34, 197, 94, 0.06);
+  font-weight: 600;
+  color: #1f2937;
+}
+.pm-detail-stores__top {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 0 6px;
+  border-radius: 8px;
+  background: var(--series-a, #22c55e);
+  color: #fff;
+  font-size: 0.5625rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+}
+
+/* Asset metadata */
+.pm-detail-meta { display: grid; gap: 6px; }
+.pm-detail-meta__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-3, 0.75rem);
+  font-size: 0.8125rem;
+  padding: 4px 0;
+  border-bottom: 1px dashed #f3f4f6;
+}
+.pm-detail-meta__label { color: #6b7280; }
+.pm-detail-meta__val   { color: #1f2937; font-weight: 500; }
+
+/* Action links */
+.pm-detail-links {
+  display: grid;
+  gap: 6px;
+}
+.pm-detail-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: #f9fafb;
+  border: 1px solid #f3f4f6;
+  color: var(--series-v, #2196F3);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.pm-detail-link:hover {
+  background: rgba(33, 150, 243, 0.06);
+  border-color: rgba(33, 150, 243, 0.2);
+}
+.pm-detail-link .material-symbols-outlined {
+  font-size: 18px;
+}

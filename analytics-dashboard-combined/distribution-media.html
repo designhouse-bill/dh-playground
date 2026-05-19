@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="css/header.css?v=5">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/distribution.css?v=36">
+  <link rel="stylesheet" href="css/distribution.css?v=37">
 </head>
 <body data-dist-page="media">
 
@@ -487,6 +487,48 @@
       deriveCreative(7, '0424 Sullys 300x250 Template','',          'GIF',    1, 1.16, 3,    19.3),
       deriveCreative(8, '0424 Berlin 320x50 Template', '',          'GIF',    1, 0.00, 0,    0.0)
     ];
+
+    // Asset metadata. Dimensions inferred from name where present;
+    // campaign type uses Jungle Jim's classification (Regular /
+    // Infrequent / Retargeting / META / Competitive).
+    var creativeMeta = {
+      1: { dimensions: '728×90',   campaign: 'Regular Customers',  flightStart: 'Nov 17, 2026', flightEnd: 'Nov 23, 2026' },
+      2: { dimensions: '300×250',  campaign: 'Infrequent Customers', flightStart: 'Nov 17, 2026', flightEnd: 'Nov 23, 2026' },
+      3: { dimensions: '300×250',  campaign: 'Regular Customers',  flightStart: 'Nov 17, 2026', flightEnd: 'Nov 23, 2026' },
+      4: { dimensions: '728×90',   campaign: 'Retargeting',        flightStart: 'Nov 10, 2026', flightEnd: 'Nov 23, 2026' },
+      5: { dimensions: '1920×1080',campaign: 'META & Competitors', flightStart: 'Nov 17, 2026', flightEnd: 'Nov 23, 2026' },
+      6: { dimensions: '320×50',   campaign: 'Regular Customers',  flightStart: 'Nov 17, 2026', flightEnd: 'Nov 23, 2026' },
+      7: { dimensions: '300×250',  campaign: 'Regular Customers',  flightStart: 'Nov 17, 2026', flightEnd: 'Nov 23, 2026' },
+      8: { dimensions: '320×50',   campaign: 'Regular Customers',  flightStart: 'Nov 17, 2026', flightEnd: 'Nov 23, 2026' }
+    };
+
+    // Per-creative store breakdown — synthetic allocation across
+    // real WinnDixie store IDs (the same pool used by storeRows).
+    // Top performer gets ~25-35% of impressions; remainder follows
+    // a smooth decay so the table feels real.
+    function deriveStoreBreakdown(creative) {
+      // Pool of real WD store IDs from earlier storeRows.
+      var pool = storeRows.map(function (s) { return s.store; });
+      var n = Math.max(1, Math.min(creative.stores, pool.length));
+      var stores = pool.slice(0, n);
+      // Allocate impressions descending. Top store ~28%; tail ~3-5%.
+      var weights = stores.map(function (_, i) {
+        return Math.max(0.03, 0.28 * Math.pow(0.78, i));
+      });
+      var sumW = weights.reduce(function (a, b) { return a + b; }, 0);
+      return stores.map(function (store, i) {
+        var share = weights[i] / sumW;
+        var impressions = Math.round(creative.impressions * share);
+        var ctrJitter = +(creative.ctr + (Math.sin(i * 1.7) * 0.08)).toFixed(2);
+        var ctr = Math.max(0.05, ctrJitter);
+        var clicks = Math.round(impressions * ctr / 100);
+        var spend = Math.round(creative.spend * share * 100) / 100;
+        return {
+          rank: i + 1, store: store,
+          impressions: impressions, clicks: clicks, ctr: ctr, spend: spend
+        };
+      });
+    }
     var typeColor = { JPEG: '#fce7f3', GIF: '#fef3c7', VIDEO: '#fde68a' };
 
     // Per-creative thumbnail. Real assets not in spike — generate
@@ -549,12 +591,69 @@
       if (!body) return;
       var cpc = creative.clicks ? creative.spend / creative.clicks : 0;
       var cpm = creative.impressions ? (creative.spend / creative.impressions) * 1000 : 0;
+      var meta = creativeMeta[creative.num] || {};
+      var stores = deriveStoreBreakdown(creative);
+
       function metric(label, val) {
         return '<div class="pm-detail-metric">' +
           '<div class="pm-detail-metric__label">' + label + '</div>' +
           '<div class="pm-detail-metric__val">' + val + '</div>' +
         '</div>';
       }
+      function metaRow(label, val) {
+        return '<div class="pm-detail-meta__row">' +
+          '<span class="pm-detail-meta__label">' + label + '</span>' +
+          '<span class="pm-detail-meta__val">' + val + '</span>' +
+        '</div>';
+      }
+      function section(title, content) {
+        return '<div class="pm-detail-section">' +
+          '<h4 class="pm-detail-section__title">' + title + '</h4>' +
+          content +
+        '</div>';
+      }
+
+      var storesTableHtml =
+        '<table class="pm-detail-stores">' +
+          '<thead><tr>' +
+            '<th>#</th><th>Store</th>' +
+            '<th class="num">Impressions</th>' +
+            '<th class="num">CTR</th>' +
+            '<th class="num">Spend</th>' +
+          '</tr></thead>' +
+          '<tbody>' +
+          stores.map(function (s) {
+            var top = s.rank === 1 ? ' is-top' : '';
+            return '<tr class="pm-detail-stores__row' + top + '">' +
+              '<td>' + s.rank + '</td>' +
+              '<td>' + s.store + (s.rank === 1 ? ' <span class="pm-detail-stores__top">TOP</span>' : '') + '</td>' +
+              '<td class="num">' + fmtNum(s.impressions) + '</td>' +
+              '<td class="num">' + fmtPct(s.ctr) + '</td>' +
+              '<td class="num">' + fmtMoney(s.spend) + '</td>' +
+            '</tr>';
+          }).join('') +
+          '</tbody>' +
+        '</table>';
+
+      var metaHtml =
+        metaRow('Dimensions',  meta.dimensions || '—') +
+        metaRow('Campaign',    meta.campaign   || '—') +
+        metaRow('Flight',      (meta.flightStart || '—') + ' → ' + (meta.flightEnd || '—')) +
+        metaRow('Type',        creative.type);
+
+      var linksHtml =
+        '<div class="pm-detail-links">' +
+          '<a class="pm-detail-link" href="#" data-action="view-asset">' +
+            '<span class="material-symbols-outlined">image</span> View asset' +
+          '</a>' +
+          '<a class="pm-detail-link" href="#" data-action="view-campaign">' +
+            '<span class="material-symbols-outlined">campaign</span> View campaign' +
+          '</a>' +
+          '<a class="pm-detail-link" href="#" data-action="export">' +
+            '<span class="material-symbols-outlined">download</span> Export' +
+          '</a>' +
+        '</div>';
+
       body.innerHTML =
         '<div class="pm-detail-hero">' + thumbSvg(creative, 280) + '</div>' +
         '<div class="pm-detail-title">' + creative.name + '</div>' +
@@ -571,6 +670,9 @@
           metric('CPC',         fmtMoney(cpc)) +
           metric('CPM',         fmtMoney(cpm)) +
         '</div>' +
+        section('Store performance', storesTableHtml) +
+        section('Asset metadata', '<div class="pm-detail-meta">' + metaHtml + '</div>') +
+        section('Actions', linksHtml) +
         '<div class="pm-detail-note">Source: Pulse delivery — Wk 47 (Nov 17 – 23, 2026). Real creative assets land when adapter wires production data.</div>';
     }
 

@@ -325,42 +325,54 @@
     }
 
     // ── By Store fixture ──────────────────────────────────────────
-    // 19 stores per 05/19 PDF page 3. Plausible weekly values:
-    //   impressions: 15K–90K  (typical local-store retail digital)
-    //   ctr:         0.7–1.0% (industry-typical display CTR)
-    //   clicks    = impressions × ctr/100
-    //   spend     = impressions / 1000 × CPM (CPM $4–$8)
-    // Bar reflects the active metric; table shows the active metric
-    // value + CTR + Spend alongside.
-    function deriveRow(rank, store, impressions, ctrPct, cpm) {
+    // Real store IDs sourced from SEG Black Friday & P2D Campaign
+    // Performance Overview deck (docs_support_requirements/
+    // distribution-tab/SEG ... .pptx, slides 36-38) cross-referenced
+    // with WD Group Analysis xlsx (Greenberg).
+    //
+    // Per-store paid-media spend derived from SEG campaign totals:
+    //   Black Friday: $400,000 / 5 wks / 136 stores ≈ $588 avg
+    //   Print-to-Digital: $18,349.46 / wk / 20 stores ≈ $917 avg
+    //   Red tier   = +10% ($646 BF / $1,009 P2D)
+    //   Amber tier = neutral
+    //   Green tier = -10% ($529 BF / $825 P2D)
+    // CPM assumed $10 (industry-typical display). Impressions and
+    // clicks back-derived: impressions = spend × 1000 / CPM;
+    // clicks = impressions × CTR/100.
+    function deriveRow(rank, store, tier, spend, ctrPct, cpm) {
+      var impressions = Math.round(spend / cpm * 1000);
       return {
-        rank: rank, store: store,
+        rank: rank, store: store, tier: tier,
         impressions: impressions,
         clicks: Math.round(impressions * ctrPct / 100),
         ctr: ctrPct,
-        spend: Math.round(impressions / 1000 * cpm * 100) / 100
+        spend: spend
       };
     }
     var storeRows = [
-      deriveRow(1,  'store-336',  88200, 0.96, 6.20),
-      deriveRow(2,  'store-2288', 82900, 0.93, 5.90),
-      deriveRow(3,  'store-508',  81100, 0.92, 6.40),
-      deriveRow(4,  'store-2487', 78900, 0.90, 5.80),
-      deriveRow(5,  'store-2415', 76000, 0.88, 6.10),
-      deriveRow(6,  'store-319',  73200, 0.87, 5.70),
-      deriveRow(7,  'store-726',  73100, 0.86, 7.20),
-      deriveRow(8,  'store-2509', 70300, 0.85, 5.50),
-      deriveRow(9,  'store-518',  65100, 0.85, 5.40),
-      deriveRow(10, 'store-705',  61400, 0.82, 6.90),
-      deriveRow(11, 'store-195',  58400, 0.82, 5.20),
-      deriveRow(12, 'store-2399', 58200, 0.81, 5.30),
-      deriveRow(13, 'store-2474', 57300, 0.80, 5.10),
-      deriveRow(14, 'store-2495', 56700, 0.79, 5.60),
-      deriveRow(15, 'store-86',   54000, 0.78, 5.00),
-      deriveRow(16, 'store-2482', 53800, 0.77, 4.80),
-      deriveRow(17, 'store-2480', 53100, 0.76, 5.40),
-      deriveRow(18, 'store-711',  53000, 0.75, 4.70),
-      deriveRow(19, 'store-2545', 52600, 0.74, 4.60)
+      // Top growth stores (per SEG slide 36 — biggest market-share gains, Red tier)
+      deriveRow(1,  'WinnDixie 726',  'Red',   1009, 0.96, 10),
+      deriveRow(2,  'WinnDixie 381',  'Red',   1009, 0.93, 10),
+      deriveRow(3,  'WinnDixie 336',  'Red',    980, 0.92, 10),
+      deriveRow(4,  'WinnDixie 2437', 'Red',    955, 0.91, 10),
+      deriveRow(5,  'WinnDixie 2288', 'Red',    917, 0.90, 10),
+      // Mid-tier growth (Amber)
+      deriveRow(6,  'WinnDixie 711',  'Amber',  917, 0.88, 10),
+      deriveRow(7,  'WinnDixie 493',  'Amber',  900, 0.87, 10),
+      deriveRow(8,  'WinnDixie 358',  'Amber',  880, 0.86, 10),
+      deriveRow(9,  'WinnDixie 2568', 'Amber',  870, 0.85, 10),
+      deriveRow(10, 'WinnDixie 2448', 'Amber',  860, 0.84, 10),
+      // Neutral / steady (per SEG slide 37)
+      deriveRow(11, 'WinnDixie 436',  'Amber',  830, 0.83, 10),
+      deriveRow(12, 'WinnDixie 123',  'Amber',  820, 0.82, 10),
+      deriveRow(13, 'WinnDixie 2423', 'Amber',  810, 0.81, 10),
+      deriveRow(14, 'WinnDixie 2269', 'Amber',  800, 0.80, 10),
+      deriveRow(15, 'WinnDixie 349',  'Amber',  790, 0.79, 10),
+      deriveRow(16, 'WinnDixie 481',  'Green',  825, 0.78, 10),
+      deriveRow(17, 'WinnDixie 343',  'Green',  825, 0.77, 10),
+      // Opportunity stores (per SEG slide 38 — declining share, Green tier)
+      deriveRow(18, 'WinnDixie 267',  'Green',  825, 0.76, 10),
+      deriveRow(19, 'WinnDixie 86',   'Green',  825, 0.75, 10)
     ];
 
     function fmtNum(n) { return n.toLocaleString('en-US'); }

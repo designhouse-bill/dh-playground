@@ -325,32 +325,43 @@
     }
 
     // ── By Store fixture ──────────────────────────────────────────
-    // ~20 stores per 05/19 PDF page 3. Bar reflects selected metric.
+    // 19 stores per 05/19 PDF page 3. Plausible weekly values:
+    //   impressions: 15K–90K  (typical local-store retail digital)
+    //   ctr:         0.7–1.0% (industry-typical display CTR)
+    //   clicks    = impressions × ctr/100
+    //   spend     = impressions / 1000 × CPM (CPM $4–$8)
+    // Bar reflects the active metric; table shows the active metric
+    // value + CTR + Spend alongside.
+    function deriveRow(rank, store, impressions, ctrPct, cpm) {
+      return {
+        rank: rank, store: store,
+        impressions: impressions,
+        clicks: Math.round(impressions * ctrPct / 100),
+        ctr: ctrPct,
+        spend: Math.round(impressions / 1000 * cpm * 100) / 100
+      };
+    }
     var storeRows = [
-      { rank: 1,  store: 'store-336',  ctr: 26488, clicks: 0.86, impressions: 392820 },
-      { rank: 2,  store: 'store-2288', ctr: 24916, clicks: 0.85, impressions: 724096 },
-      { rank: 3,  store: 'store-508',  ctr: 24379, clicks: 0.85, impressions: 37577 },
-      { rank: 4,  store: 'store-2487', ctr: 23704, clicks: 0.85, impressions: 47999 },
-      { rank: 5,  store: 'store-2415', ctr: 22846, clicks: 0.84, impressions: 33850 },
-      { rank: 6,  store: 'store-319',  ctr: 21983, clicks: 0.81, impressions: 305608 },
-      { rank: 7,  store: 'store-726',  ctr: 21971, clicks: 0.82, impressions: 305745 },
-      { rank: 8,  store: 'store-2509', ctr: 21124, clicks: 0.81, impressions: 40066 },
-      { rank: 9,  store: 'store-518',  ctr: 19565, clicks: 0.82, impressions: 31735 },
-      { rank: 10, store: 'store-705',  ctr: 18463, clicks: 0.77, impressions: 116366 },
-      { rank: 11, store: 'store-195',  ctr: 17557, clicks: 0.87, impressions: 23390 },
-      { rank: 12, store: 'store-2399', ctr: 17501, clicks: 0.89, impressions: 27265 },
-      { rank: 13, store: 'store-2474', ctr: 17223, clicks: 0.87, impressions: 25094 },
-      { rank: 14, store: 'store-2495', ctr: 17051, clicks: 0.88, impressions: 25612 },
-      { rank: 15, store: 'store-86',   ctr: 16231, clicks: 0.88, impressions: 22578 },
-      { rank: 16, store: 'store-2482', ctr: 16184, clicks: 0.97, impressions: 24659 },
-      { rank: 17, store: 'store-2480', ctr: 15960, clicks: 0.88, impressions: 24887 },
-      { rank: 18, store: 'store-711',  ctr: 15957, clicks: 0.88, impressions: 237043 },
-      { rank: 19, store: 'store-2545', ctr: 15837, clicks: 0.88, impressions: 25783 }
+      deriveRow(1,  'store-336',  88200, 0.96, 6.20),
+      deriveRow(2,  'store-2288', 82900, 0.93, 5.90),
+      deriveRow(3,  'store-508',  81100, 0.92, 6.40),
+      deriveRow(4,  'store-2487', 78900, 0.90, 5.80),
+      deriveRow(5,  'store-2415', 76000, 0.88, 6.10),
+      deriveRow(6,  'store-319',  73200, 0.87, 5.70),
+      deriveRow(7,  'store-726',  73100, 0.86, 7.20),
+      deriveRow(8,  'store-2509', 70300, 0.85, 5.50),
+      deriveRow(9,  'store-518',  65100, 0.85, 5.40),
+      deriveRow(10, 'store-705',  61400, 0.82, 6.90),
+      deriveRow(11, 'store-195',  58400, 0.82, 5.20),
+      deriveRow(12, 'store-2399', 58200, 0.81, 5.30),
+      deriveRow(13, 'store-2474', 57300, 0.80, 5.10),
+      deriveRow(14, 'store-2495', 56700, 0.79, 5.60),
+      deriveRow(15, 'store-86',   54000, 0.78, 5.00),
+      deriveRow(16, 'store-2482', 53800, 0.77, 4.80),
+      deriveRow(17, 'store-2480', 53100, 0.76, 5.40),
+      deriveRow(18, 'store-711',  53000, 0.75, 4.70),
+      deriveRow(19, 'store-2545', 52600, 0.74, 4.60)
     ];
-    // Note: 05/19 PDF page 3 column shapes are stylized. For spike fidelity
-    // these fixture rows preserve the column intent: bar = primary metric,
-    // adjacent columns show secondary metrics. Treating "ctr" col as a raw
-    // value here; rendering layer formats per metric.
 
     function fmtNum(n) { return n.toLocaleString('en-US'); }
     function fmtPct(n) { return n.toFixed(2) + '%'; }
@@ -359,29 +370,24 @@
     function renderStoreTable(metric) {
       var el = document.getElementById('pm-store-table');
       if (!el) return;
-      var vals = storeRows.map(function (r) {
-        if (metric === 'ctr')         return r.ctr;
-        if (metric === 'clicks')      return r.clicks * 1000; // scale CTR% display
-        return r.impressions;
-      });
+      var vals = storeRows.map(function (r) { return r[metric]; });
       var max = Math.max.apply(null, vals);
+      var fmtActive = metric === 'ctr' ? fmtPct : fmtNum;
+      var activeLabel = metric === 'ctr' ? 'CTR' : (metric === 'clicks' ? 'Clicks' : 'Impressions');
       var rowsHtml = storeRows.map(function (r, i) {
         var w = (vals[i] / max) * 100;
-        var primary = metric === 'ctr' ? fmtNum(r.ctr)
-                    : metric === 'clicks' ? fmtPct(r.clicks)
-                    : fmtNum(r.impressions);
         return '<tr>' +
           '<td class="pm-store-rank">#' + r.rank + '</td>' +
           '<td class="pm-store-name">' + r.store + '</td>' +
           '<td class="pm-store-bar"><span class="pm-store-bar__track"><span class="pm-store-bar__fill" style="width:' + w.toFixed(1) + '%;"></span></span></td>' +
-          '<td class="pm-store-val">' + primary + '</td>' +
-          '<td class="pm-store-val">' + fmtPct(r.clicks) + '</td>' +
-          '<td class="pm-store-val">' + fmtMoney(r.impressions) + '</td>' +
+          '<td class="pm-store-val pm-store-val--primary">' + fmtActive(r[metric]) + '</td>' +
+          '<td class="pm-store-val">' + fmtPct(r.ctr) + '</td>' +
+          '<td class="pm-store-val">' + fmtMoney(r.spend) + '</td>' +
           '</tr>';
       }).join('');
       el.innerHTML =
         '<table class="pm-store-tbl">' +
-          '<thead><tr><th></th><th>Store</th><th></th><th>' + metric.toUpperCase() + '</th><th>CTR</th><th>Spend</th></tr></thead>' +
+          '<thead><tr><th></th><th>Store</th><th></th><th>' + activeLabel + '</th><th>CTR</th><th>Spend</th></tr></thead>' +
           '<tbody>' + rowsHtml + '</tbody>' +
         '</table>';
     }
@@ -401,15 +407,29 @@
     }
 
     // ── By Creative — VARIANT PANELS fixture ──────────────────────
+    // Derived consistently: impressions = clicks ÷ (ctr/100);
+    // spend = impressions/1000 × CPM. CPM ranges ~$10–$50 (digital
+    // display + video). Values mirror the relative magnitudes from
+    // 05/19 PDF page 4 but normalised so columns are internally
+    // consistent (raw impressions count, not CPM mis-labelled).
+    function deriveCreative(num, name, sub, type, stores, ctrPct, clicks, cpm) {
+      var impressions = ctrPct > 0 ? Math.round(clicks / (ctrPct / 100)) : 0;
+      return {
+        num: num, name: name, sub: sub, type: type, stores: stores,
+        ctr: ctrPct, clicks: clicks,
+        impressions: impressions,
+        spend: Math.round(impressions / 1000 * cpm * 100) / 100
+      };
+    }
     var creativeRows = [
-      { num: 1, name: 'Holiday Banner', sub: 'Central FL',  type: 'JPEG',  stores: 12, ctr: 0.85, clicks: 3793, cpc: 6.28, imp: 264.15, cpm: 30.98, spend: 23826.00 },
-      { num: 2, name: 'BOGO Produce',   sub: 'North FL',    type: 'GIF',   stores: 10, ctr: 0.84, clicks: 3187, cpc: 1.90, imp: 85.54,  cpm: 10.14, spend: 6063.00 },
-      { num: 3, name: 'Holiday Steak',  sub: 'South FL',    type: 'GIF',   stores: 6,  ctr: 0.92, clicks: 1987, cpc: 9.50, imp: 399.98, cpm: 43.34, spend: 18681.00 },
-      { num: 4, name: 'Value Pack',     sub: 'Harveys',     type: 'JPEG',  stores: 7,  ctr: 0.78, clicks: 1620, cpc: 4.06, imp: 179.02, cpm: 23.00, spend: 6578.00 },
-      { num: 5, name: 'YouTube Pre-Roll', sub: 'Holiday',   type: 'VIDEO', stores: 10, ctr: 0.71, clicks: 876,  cpc: 10.60, imp: 295.24, cpm: 41.83, spend: 9286.00 },
-      { num: 6, name: '0424 Sullys 320x50 Template', sub: '', type: 'GIF', stores: 1,  ctr: 1.16, clicks: 3,    cpc: 1.67, imp: 3.86,   cpm: 0.33,  spend: 5.00 },
-      { num: 7, name: '0424 Sullys 300x250 Template', sub: '', type: 'GIF', stores: 1, ctr: 1.16, clicks: 3,    cpc: 1.67, imp: 3.86,   cpm: 0.33,  spend: 5.00 },
-      { num: 8, name: '0424 Berlin 320x50 Template', sub: '', type: 'GIF',  stores: 1, ctr: 0.00, clicks: 0,    cpc: 0.00, imp: 0.00,   cpm: 0.00,  spend: 1.00 }
+      deriveCreative(1, 'Holiday Banner',             'Central FL', 'JPEG',  12, 0.85, 3793, 50.0),
+      deriveCreative(2, 'BOGO Produce',               'North FL',   'GIF',   10, 0.84, 3187, 16.0),
+      deriveCreative(3, 'Holiday Steak',              'South FL',   'GIF',    6, 0.92, 1987, 86.0),
+      deriveCreative(4, 'Value Pack',                 'Harveys',    'JPEG',   7, 0.78, 1620, 31.7),
+      deriveCreative(5, 'YouTube Pre-Roll',           'Holiday',    'VIDEO', 10, 0.71, 876,  75.2),
+      deriveCreative(6, '0424 Sullys 320x50 Template', '',          'GIF',    1, 1.16, 3,    19.3),
+      deriveCreative(7, '0424 Sullys 300x250 Template','',          'GIF',    1, 1.16, 3,    19.3),
+      deriveCreative(8, '0424 Berlin 320x50 Template', '',          'GIF',    1, 0.00, 0,    0.0)
     ];
     var typeColor = { JPEG: '#fce7f3', GIF: '#fef3c7', VIDEO: '#fde68a' };
 
@@ -439,8 +459,8 @@
           '<td class="num">' + r.stores + '</td>' +
           '<td class="num">' + fmtPct(r.ctr) + '</td>' +
           '<td class="num">' + fmtNum(r.clicks) + '</td>' +
-          '<td class="num">$' + r.imp.toFixed(2) + '</td>' +
-          '<td class="num">$' + r.spend.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>' +
+          '<td class="num">' + fmtNum(r.impressions) + '</td>' +
+          '<td class="num">' + fmtMoney(r.spend) + '</td>' +
         '</tr>';
       }).join('');
     }

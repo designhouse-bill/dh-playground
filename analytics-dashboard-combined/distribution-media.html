@@ -252,7 +252,6 @@
           <div class="pm-series-pills" id="pm-series-pills" role="group" aria-label="Series">
             <button type="button" class="pm-series-pill active" data-pm-series="impressions" style="--pill-color:#2196F3;">Impressions</button>
             <button type="button" class="pm-series-pill active" data-pm-series="clicks" style="--pill-color:#ef4444;">Clicks</button>
-            <button type="button" class="pm-series-pill active" data-pm-series="ctr" style="--pill-color:#22c55e;">Click Through Rate</button>
           </div>
         </div>
       </div>
@@ -511,42 +510,73 @@
       }).join('');
     }
 
-    // ── Time trend — 3-series line, CTR on secondary axis ────────
-    // Internally consistent: clicks = impressions × ctr/100.
-    // With real ratios, Clicks plots tiny vs Impressions on the
-    // primary Volume axis — that's the truth. CTR rides the
-    // secondary "Rate" axis (0–6%) per 05/19 PDF page 5.
-    var trendWeeks = ['Week 40','Week 41','Week 42','Week 43','Week 44','Week 45','Week 46','Week 47','Week 48','Week 49','Week 50','Week 51','Week 52'];
-    var trendImpressions = [380000,378000,392000,385000,388000,390000,395000,400000,396000,300000,360000,355000,360000];
-    var trendCtr         = [0.85,0.86,0.88,0.87,0.88,0.89,0.90,0.91,0.92,0.94,0.93,0.92,0.92];
-    var trendClicks      = trendImpressions.map(function (imp, i) {
-      return Math.round(imp * trendCtr[i] / 100);
+    // ── Time trend — dual-axis line (Impressions + Clicks) ──────
+    // CTR removed from chart series (rate + counts on one axis is
+    // bad viz; CTR persists in hover overlay as a data point).
+    // 52-week dataset supports 1W / 4W / 13W / 1Y range toggles.
+    //
+    // 13-week realistic core (Wk 40–52): impressions 300K–400K,
+    // CTR 0.85–0.94%. 39 synthetic precursor weeks (Wk 1–39) at
+    // similar magnitudes complete the year.
+    var trendCore = {
+      weeks:       ['Week 40','Week 41','Week 42','Week 43','Week 44','Week 45','Week 46','Week 47','Week 48','Week 49','Week 50','Week 51','Week 52'],
+      impressions: [380000,378000,392000,385000,388000,390000,395000,400000,396000,300000,360000,355000,360000],
+      ctr:         [0.85,0.86,0.88,0.87,0.88,0.89,0.90,0.91,0.92,0.94,0.93,0.92,0.92]
+    };
+    function synthYearStart() {
+      // Wk 1–39: oscillate around 385K imp, CTR ~0.88% with mild noise.
+      var weeks = [], impressions = [], ctr = [];
+      for (var i = 1; i <= 39; i++) {
+        var jitter = Math.sin(i * 0.45) * 15000;
+        weeks.push('Week ' + i);
+        impressions.push(Math.round(385000 + jitter));
+        ctr.push(+(0.88 + Math.sin(i * 0.35) * 0.05).toFixed(2));
+      }
+      return { weeks: weeks, impressions: impressions, ctr: ctr };
+    }
+    var yearStart = synthYearStart();
+    var trendYearWeeks       = yearStart.weeks.concat(trendCore.weeks);
+    var trendYearImpressions = yearStart.impressions.concat(trendCore.impressions);
+    var trendYearCtr         = yearStart.ctr.concat(trendCore.ctr);
+    var trendYearClicks      = trendYearImpressions.map(function (imp, i) {
+      return Math.round(imp * trendYearCtr[i] / 100);
     });
 
-    var activeSeries = { impressions: true, clicks: true, ctr: true };
+    var activeSeries = { impressions: true, clicks: true };
+    var trendRange = '13w';
+
+    function sliceTrend() {
+      var n = trendYearWeeks.length;
+      var count = trendRange === '1w'  ? 1
+               : trendRange === '4w'  ? 4
+               : trendRange === '13w' ? 13
+               : n; // 1y
+      var start = n - count;
+      return {
+        weeks:       trendYearWeeks.slice(start),
+        impressions: trendYearImpressions.slice(start),
+        clicks:      trendYearClicks.slice(start),
+        ctr:         trendYearCtr.slice(start)
+      };
+    }
 
     function buildTrendOptions() {
+      var d = sliceTrend();
       var series = [];
       if (activeSeries.impressions) series.push({
         name: 'Impressions', type: 'line', smooth: true, yAxisIndex: 0,
-        data: trendImpressions,
+        data: d.impressions,
         itemStyle: { color: SERIES.impressions }, lineStyle: { color: SERIES.impressions, width: 2 },
         symbol: 'circle', symbolSize: 6
       });
       if (activeSeries.clicks) series.push({
-        name: 'Clicks', type: 'line', smooth: true, yAxisIndex: 0,
-        data: trendClicks,
+        name: 'Clicks', type: 'line', smooth: true, yAxisIndex: 1,
+        data: d.clicks,
         itemStyle: { color: SERIES.clicks }, lineStyle: { color: SERIES.clicks, width: 2 },
         symbol: 'circle', symbolSize: 6
       });
-      if (activeSeries.ctr) series.push({
-        name: 'CTR', type: 'line', smooth: true, yAxisIndex: 1,
-        data: trendCtr,
-        itemStyle: { color: SERIES.ctr }, lineStyle: { color: SERIES.ctr, width: 2 },
-        symbol: 'circle', symbolSize: 6
-      });
       return {
-        grid: { left: 56, right: 60, top: 24, bottom: 48 },
+        grid: { left: 56, right: 64, top: 24, bottom: 48 },
         tooltip: {
           trigger: 'axis',
           backgroundColor: '#1f2937',
@@ -555,31 +585,38 @@
           padding: [10, 12],
           textStyle: { color: '#fff', fontFamily: 'inherit', fontSize: 12 },
           formatter: function (params) {
+            var idx = params[0].dataIndex;
+            var ctrVal = d.ctr[idx];
             var html = '<div style="font-weight:700; margin-bottom:6px; font-size:13px; color:#fff;">' + params[0].name + '</div>';
             params.forEach(function (p) {
-              var v = p.seriesName === 'CTR' ? p.value.toFixed(2) + '%' : p.value.toLocaleString();
               html += '<div style="display:flex; align-items:center; gap:10px; min-width:220px; margin-top:2px;">' +
                 '<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:' + p.color + ';"></span>' +
                 '<span style="flex:1; color:rgba(255,255,255,0.9);">' + p.seriesName + '</span>' +
-                '<span style="font-weight:600; font-variant-numeric:tabular-nums; color:#fff;">' + v + '</span>' +
+                '<span style="font-weight:600; font-variant-numeric:tabular-nums; color:#fff;">' + p.value.toLocaleString() + '</span>' +
                 '</div>';
             });
+            // CTR persists in the overlay (not as chart series)
+            html += '<div style="display:flex; align-items:center; gap:10px; min-width:220px; margin-top:2px;">' +
+              '<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:' + SERIES.ctr + ';"></span>' +
+              '<span style="flex:1; color:rgba(255,255,255,0.9);">CTR</span>' +
+              '<span style="font-weight:600; font-variant-numeric:tabular-nums; color:#fff;">' + ctrVal.toFixed(2) + '%</span>' +
+              '</div>';
             return html;
           }
         },
         legend: { show: false },
         xAxis: {
-          type: 'category', data: trendWeeks,
+          type: 'category', data: d.weeks,
           axisLabel: { color: '#6b7280', fontSize: 11 },
           axisLine: { lineStyle: { color: '#e5e7eb' } }
         },
         yAxis: [
-          { type: 'value', name: 'Volume', position: 'left',
+          { type: 'value', name: 'Impressions', position: 'left',
             axisLabel: { color: '#6b7280', fontSize: 11, formatter: function (v) { return (v >= 1000) ? (v / 1000) + 'k' : v; } },
             splitLine: { lineStyle: { color: '#f3f4f6' } },
             nameTextStyle: { color: '#6b7280', fontSize: 11 } },
-          { type: 'value', name: 'Rate', position: 'right', min: 0, max: 6,
-            axisLabel: { color: '#6b7280', fontSize: 11, formatter: '{value}' },
+          { type: 'value', name: 'Clicks', position: 'right',
+            axisLabel: { color: '#6b7280', fontSize: 11, formatter: function (v) { return (v >= 1000) ? (v / 1000) + 'k' : v; } },
             splitLine: { show: false },
             nameTextStyle: { color: '#6b7280', fontSize: 11 } }
         ],
@@ -592,7 +629,7 @@
       var el = document.getElementById('pm-trend-chart');
       if (!el) return;
       window._pmTrendChart = echarts.init(el);
-      window._pmTrendChart.setOption(buildTrendOptions());
+      window._pmTrendChart.setOption(buildTrendOptions(), true);
     }
 
     function initSeriesPills() {
@@ -600,6 +637,8 @@
       pills.forEach(function (pill) {
         pill.addEventListener('click', function () {
           var key = pill.dataset.pmSeries;
+          // CTR pill is informational only (no chart series). Skip toggle.
+          if (key === 'ctr') return;
           activeSeries[key] = !activeSeries[key];
           pill.classList.toggle('active', activeSeries[key]);
           if (window._pmTrendChart) window._pmTrendChart.setOption(buildTrendOptions(), true);
@@ -613,7 +652,8 @@
         btn.addEventListener('click', function () {
           btns.forEach(function (b) { b.classList.remove('duration-preset--active'); });
           btn.classList.add('duration-preset--active');
-          // Spike: range selection visual only — data unchanged.
+          trendRange = btn.dataset.pmRange;
+          if (window._pmTrendChart) window._pmTrendChart.setOption(buildTrendOptions(), true);
         });
       });
     }

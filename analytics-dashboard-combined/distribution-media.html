@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="css/header.css?v=5">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/distribution.css?v=34">
+  <link rel="stylesheet" href="css/distribution.css?v=35">
 </head>
 <body data-dist-page="media">
 
@@ -382,24 +382,58 @@
     function renderStoreTable(metric) {
       var el = document.getElementById('pm-store-table');
       if (!el) return;
+      // Always show 4 metric columns; active one is highlighted and
+      // drives the bar magnitude. No duplicate columns.
       var vals = storeRows.map(function (r) { return r[metric]; });
       var max = Math.max.apply(null, vals);
-      var fmtActive = metric === 'ctr' ? fmtPct : fmtNum;
-      var activeLabel = metric === 'ctr' ? 'CTR' : (metric === 'clicks' ? 'Clicks' : 'Impressions');
+      var NATIONAL_CTR_AVG = 0.10; // Chaffey 2024
       var rowsHtml = storeRows.map(function (r, i) {
         var w = (vals[i] / max) * 100;
-        return '<tr>' +
+        var cpc = r.clicks ? r.spend / r.clicks : 0;
+        var cpm = r.impressions ? (r.spend / r.impressions) * 1000 : 0;
+        var vsNatl = (r.ctr / NATIONAL_CTR_AVG).toFixed(1) + '× nat. avg';
+        // data-perf-* attributes drive canonical dark hover tooltip
+        var perfTitle = r.store + (r.tier ? ' · ' + r.tier + ' tier' : '') + ' · Wk 47 (Nov 17 – 23, 2026)';
+        var perfRows = [
+          { dot: 'impressions', name: 'Impressions',   val: fmtNum(r.impressions) },
+          { dot: 'clicks',      name: 'Clicks',        val: fmtNum(r.clicks) },
+          { dot: 'ctr',         name: 'CTR',           val: fmtPct(r.ctr), score: vsNatl },
+          { dot: 'cpc',         name: 'CPC',           val: fmtMoney(cpc) },
+          { dot: 'cpm',         name: 'CPM',           val: fmtMoney(cpm) }
+        ];
+        var perfTotal = { label: 'Spend', val: fmtMoney(r.spend) };
+        var rowsAttr  = JSON.stringify(perfRows).replace(/"/g, '&quot;');
+        var totalAttr = JSON.stringify(perfTotal).replace(/"/g, '&quot;');
+        function cell(col, content) {
+          var active = col === metric ? ' pm-store-val--active' : '';
+          return '<td class="pm-store-val' + active + '">' + content + '</td>';
+        }
+        return '<tr data-perf-hover' +
+            ' data-perf-title="' + perfTitle + '"' +
+            ' data-perf-rows="' + rowsAttr + '"' +
+            ' data-perf-total="' + totalAttr + '">' +
           '<td class="pm-store-rank">#' + r.rank + '</td>' +
           '<td class="pm-store-name">' + r.store + '</td>' +
           '<td class="pm-store-bar"><span class="pm-store-bar__track"><span class="pm-store-bar__fill" style="width:' + w.toFixed(1) + '%;"></span></span></td>' +
-          '<td class="pm-store-val pm-store-val--primary">' + fmtActive(r[metric]) + '</td>' +
-          '<td class="pm-store-val">' + fmtPct(r.ctr) + '</td>' +
+          cell('impressions', fmtNum(r.impressions)) +
+          cell('clicks',      fmtNum(r.clicks)) +
+          cell('ctr',         fmtPct(r.ctr)) +
           '<td class="pm-store-val">' + fmtMoney(r.spend) + '</td>' +
           '</tr>';
       }).join('');
+      function head(col, label) {
+        var active = col === metric ? ' pm-store-th--active' : '';
+        return '<th class="pm-store-th' + active + '">' + label + '</th>';
+      }
       el.innerHTML =
         '<table class="pm-store-tbl">' +
-          '<thead><tr><th></th><th>Store</th><th></th><th>' + activeLabel + '</th><th>CTR</th><th>Spend</th></tr></thead>' +
+          '<thead><tr>' +
+            '<th></th><th>Store</th><th></th>' +
+            head('impressions', 'Impressions') +
+            head('clicks',      'Clicks') +
+            head('ctr',         'CTR') +
+            '<th>Spend</th>' +
+          '</tr></thead>' +
           '<tbody>' + rowsHtml + '</tbody>' +
         '</table>';
     }
@@ -578,10 +612,83 @@
       });
     }
 
+    // ── Dark hover tooltip (canonical pattern, self-contained) ───
+    var DOT_COLOR = {
+      impressions: SERIES.impressions,
+      clicks:      SERIES.clicks,
+      ctr:         SERIES.ctr,
+      cpc:         '#94a3b8',
+      cpm:         '#94a3b8'
+    };
+    function ensureDarkTooltip() {
+      var t = document.getElementById('pm-dark-tooltip');
+      if (t) return t;
+      t = document.createElement('div');
+      t.id = 'pm-dark-tooltip';
+      t.className = 'ov-tooltip ov-tooltip--dark';
+      document.body.appendChild(t);
+      return t;
+    }
+    function positionTooltip(e, tip) {
+      var rect = tip.getBoundingClientRect();
+      var x = e.clientX + 14, y = e.clientY + 14;
+      if (x + rect.width  > window.innerWidth  - 8) x = e.clientX - rect.width  - 14;
+      if (y + rect.height > window.innerHeight - 8) y = e.clientY - rect.height - 14;
+      tip.style.left = x + 'px';
+      tip.style.top  = y + 'px';
+    }
+    function buildTooltipHTML(el) {
+      var title = el.getAttribute('data-perf-title') || '';
+      var rows  = JSON.parse(el.getAttribute('data-perf-rows') || '[]');
+      var total = JSON.parse(el.getAttribute('data-perf-total') || '{}');
+      var rowsHtml = rows.map(function (r) {
+        var dot = DOT_COLOR[r.dot] || '#94a3b8';
+        var score = r.score ? '<span class="ov-tooltip__score">' + r.score + '</span>' : '';
+        return '<div class="ov-tooltip__row">' +
+          '<span class="ov-tooltip__dot" style="background:' + dot + ';"></span>' +
+          '<span class="ov-tooltip__name">' + r.name + '</span>' +
+          score +
+          '<span class="ov-tooltip__val">' + r.val + '</span>' +
+        '</div>';
+      }).join('');
+      var totalRow = total && total.label ? (
+        '<div class="ov-tooltip__total">' +
+          '<span class="ov-tooltip__name">' + total.label + '</span>' +
+          '<span class="ov-tooltip__val">' + total.val + '</span>' +
+        '</div>'
+      ) : '';
+      return '<div class="ov-tooltip__title">' + title + '</div>' + rowsHtml + totalRow;
+    }
+    function initHoverDelegate() {
+      var current = null;
+      document.addEventListener('mouseover', function (e) {
+        var el = e.target.closest('[data-perf-hover]');
+        if (el === current) return;
+        var tip = ensureDarkTooltip();
+        if (current) tip.classList.remove('ov-tooltip--visible');
+        current = el;
+        if (!el) return;
+        tip.innerHTML = buildTooltipHTML(el);
+        tip.classList.add('ov-tooltip--visible');
+        positionTooltip(e, tip);
+      });
+      document.addEventListener('mousemove', function (e) {
+        if (current) positionTooltip(e, ensureDarkTooltip());
+      });
+      document.addEventListener('mouseout', function (e) {
+        if (!current) return;
+        var rel = e.relatedTarget;
+        if (rel && current.contains(rel)) return;
+        ensureDarkTooltip().classList.remove('ov-tooltip--visible');
+        current = null;
+      });
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
       initTabs();
       renderStoreTable('ctr');
       initStoreMetricToggle();
+      initHoverDelegate();
       renderVariantPanels();
       renderTrendChart();
       initSeriesPills();

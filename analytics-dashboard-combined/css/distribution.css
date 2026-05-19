@@ -5342,3 +5342,18 @@ body[data-dist-page] .narrative-header__title {
 .ov-store-row[data-perf-hover]:hover .ov-store-bar__track {
   box-shadow: 0 0 0 1px rgba(33, 150, 243, 0.35);
 }
+
+/* ── Paid Media > by Store — active metric column highlight ──── */
+.pm-store-th--active {
+  color: var(--series-v, #2196F3) !important;
+  font-weight: 700;
+}
+.pm-store-val--active {
+  font-weight: 700;
+  color: #1f2937;
+  background: rgba(33, 150, 243, 0.06);
+}
+.pm-store-tbl tbody tr[data-perf-hover] { cursor: default; }
+.pm-store-tbl tbody tr[data-perf-hover]:hover .pm-store-bar__track {
+  box-shadow: 0 0 0 1px rgba(33, 150, 243, 0.35);
+}

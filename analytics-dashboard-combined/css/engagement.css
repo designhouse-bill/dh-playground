@@ -6228,3 +6228,52 @@ body:not(.comparison-active) .detail-comparison {
   color: #1f2937;
   font-weight: 600;
 }
+
+/* ════════════════════════════════════════════════════════════════
+   Phase 3c (UX-846): device-share strip
+   Compact device-cut for Sessions + Total Users by Store widgets
+   (Avg Duration already carries .ep-mini-device — full pattern).
+   Single 100%-stacked bar + 4-segment legend below.
+   ════════════════════════════════════════════════════════════════ */
+.ep-device-strip {
+  margin-top: var(--space-2, 0.5rem);
+  padding-top: var(--space-2, 0.5rem);
+  border-top: 1px dashed #e5e7eb;
+}
+.ep-device-strip__bar {
+  display: flex;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #f3f4f6;
+}
+.ep-device-strip__seg { display: block; height: 100%; }
+.ep-device-strip__seg--mobile  { background: var(--series-v, #2196F3); }
+.ep-device-strip__seg--desktop { background: var(--series-c, #f59e0b); }
+.ep-device-strip__seg--tablet  { background: var(--series-a, #22c55e); }
+.ep-device-strip__seg--other   { background: #94a3b8; }
+
+.ep-device-strip__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px var(--space-3, 0.75rem);
+  margin-top: 6px;
+  font-size: 0.6875rem;
+  color: #6b7280;
+}
+.ep-device-strip__lbl {
+  display: inline-flex;
+  align-items: center;
+}
+.ep-device-strip__lbl::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+.ep-device-strip__lbl--mobile::before  { background: var(--series-v, #2196F3); }
+.ep-device-strip__lbl--desktop::before { background: var(--series-c, #f59e0b); }
+.ep-device-strip__lbl--tablet::before  { background: var(--series-a, #22c55e); }
+.ep-device-strip__lbl--other::before   { background: #94a3b8; }

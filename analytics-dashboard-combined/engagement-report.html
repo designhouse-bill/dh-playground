@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="css/header.css?v=5">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/engagement.css?v=12">
+  <link rel="stylesheet" href="css/engagement.css?v=13">
   <!-- Pulled in for perf-tabs / creative-chips / stat-strip / section-panel-header rules -->
   <link rel="stylesheet" href="css/distribution.css">
   <link rel="stylesheet" href="css/engagement-canonical.css?v=10">
@@ -279,6 +279,21 @@
                   <span class="ep-users-by-store__val">604</span>
                 </li>
               </ol>
+              <!-- Phase 3c (UX-846): device-share strip (Max 05/14) -->
+              <div class="ep-device-strip" data-perf-hover data-perf-title="Users by Device · Week 47" data-perf-rows='[{"dot":"device","name":"Mobile","val":"8,598","score":"69%"},{"dot":"device","name":"Desktop","val":"2,367","score":"19%"},{"dot":"device","name":"Tablet","val":"1,121","score":"9%"},{"dot":"device","name":"Other","val":"374","score":"3%"}]' data-perf-total='{"label":"Total Users","val":"12,460"}'>
+                <div class="ep-device-strip__bar">
+                  <span class="ep-device-strip__seg ep-device-strip__seg--mobile"  style="width:69%"></span>
+                  <span class="ep-device-strip__seg ep-device-strip__seg--desktop" style="width:19%"></span>
+                  <span class="ep-device-strip__seg ep-device-strip__seg--tablet"  style="width:9%"></span>
+                  <span class="ep-device-strip__seg ep-device-strip__seg--other"   style="width:3%"></span>
+                </div>
+                <div class="ep-device-strip__legend">
+                  <span class="ep-device-strip__lbl ep-device-strip__lbl--mobile">Mobile · 69%</span>
+                  <span class="ep-device-strip__lbl ep-device-strip__lbl--desktop">Desktop · 19%</span>
+                  <span class="ep-device-strip__lbl ep-device-strip__lbl--tablet">Tablet · 9%</span>
+                  <span class="ep-device-strip__lbl ep-device-strip__lbl--other">Other · 3%</span>
+                </div>
+              </div>
             </div>
             <span class="ep-kpi-cell__view">Open Total Users <span class="material-symbols-outlined">chevron_right</span></span>
           </a>
@@ -305,6 +320,21 @@
                 <div class="ep-mini-dow__col" data-perf-hover data-perf-title="Sessions · Week 47" data-perf-rows='[{"dot":"day","name":"Friday, Nov 21","val":"13,810"}]'><div class="ep-mini-dow__bar" style="height:88%"></div><span class="ep-mini-dow__lbl">F</span></div>
                 <div class="ep-mini-dow__col" data-perf-hover data-perf-title="Sessions · Week 47" data-perf-rows='[{"dot":"day","name":"Saturday, Nov 22","val":"15,050"}]'><div class="ep-mini-dow__bar ep-mini-dow__bar--peak" style="height:96%"></div><span class="ep-mini-dow__lbl">S</span></div>
                 <div class="ep-mini-dow__col" data-perf-hover data-perf-title="Sessions · Week 47" data-perf-rows='[{"dot":"day","name":"Sunday, Nov 23","val":"6,580"}]'><div class="ep-mini-dow__bar" style="height:42%"></div><span class="ep-mini-dow__lbl">S</span></div>
+              </div>
+              <!-- Phase 3c (UX-846): device-share strip (Max 05/14) -->
+              <div class="ep-device-strip" data-perf-hover data-perf-title="Sessions by Device · Week 47" data-perf-rows='[{"dot":"device","name":"Mobile","val":"54,200","score":"69%"},{"dot":"device","name":"Desktop","val":"14,800","score":"19%"},{"dot":"device","name":"Tablet","val":"7,300","score":"9%"},{"dot":"device","name":"Other","val":"2,242","score":"3%"}]' data-perf-total='{"label":"Total Sessions","val":"78,542"}'>
+                <div class="ep-device-strip__bar">
+                  <span class="ep-device-strip__seg ep-device-strip__seg--mobile"  style="width:69%"></span>
+                  <span class="ep-device-strip__seg ep-device-strip__seg--desktop" style="width:19%"></span>
+                  <span class="ep-device-strip__seg ep-device-strip__seg--tablet"  style="width:9%"></span>
+                  <span class="ep-device-strip__seg ep-device-strip__seg--other"   style="width:3%"></span>
+                </div>
+                <div class="ep-device-strip__legend">
+                  <span class="ep-device-strip__lbl ep-device-strip__lbl--mobile">Mobile · 69%</span>
+                  <span class="ep-device-strip__lbl ep-device-strip__lbl--desktop">Desktop · 19%</span>
+                  <span class="ep-device-strip__lbl ep-device-strip__lbl--tablet">Tablet · 9%</span>
+                  <span class="ep-device-strip__lbl ep-device-strip__lbl--other">Other · 3%</span>
+                </div>
               </div>
             </div>
             <span class="ep-kpi-cell__view">Open Sessions <span class="material-symbols-outlined">chevron_right</span></span>

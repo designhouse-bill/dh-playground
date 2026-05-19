@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="css/header.css?v=5">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/distribution.css?v=31">
+  <link rel="stylesheet" href="css/distribution.css?v=33">
 </head>
 <body data-dist-page="visitation">
 
@@ -142,11 +142,11 @@
         <div class="narrative-header">
         <div class="narrative-header__left">
           <h4 class="narrative-header__section">Distribution</h4>
-          <h1 class="narrative-header__title">Observed Store Visits</h1>
+          <h1 class="narrative-header__title">Observed Visits</h1>
           <h2 class="narrative-header__question">Are our media campaigns driving store visits?</h2>
         </div>
           <div class="narrative-header__text">
-            <p class="narrative-header__subtitle">Visitors attributed to paid media exposure<br><em><span id="subtitle-entity-visitation">Ideal Media Lab</span>, <span id="subtitle-date-visitation">Week 2 (Jan 7, 2026 – Jan 13, 2026)</span></em></p>
+            <p class="narrative-header__subtitle">Panel-tracked visits attributed to paid media, segmented by 30-day visit frequency.<br><em><span id="subtitle-entity-visitation">Ideal Media Lab</span>, <span id="subtitle-date-visitation">Week 2 (Jan 7, 2026 – Jan 13, 2026)</span></em></p>
             <div class="card-run-stats"><span class="card-run-stats__text">Ran at 27 stores · 7 days</span></div>
             <span class="ep-cohort-note" id="dist-cohort-note-visitation">
               <span class="material-symbols-outlined">info</span>
@@ -167,332 +167,90 @@
       <!-- Narrative slot (phase 2, gated by FEATURES.narrative) -->
       <div class="insight-banner" data-narrative-section="visitation" hidden></div>
 
-      <!-- ════════════════════════════════════════════════════════════
-           Decision 7 Row 1 — Section nav (Visitation, plan v2.12).
-           Default lines-bottom .perf-tabs styling (no --filled modifier).
-           Mobile (≤640px): perf-tabs hide, .vis-section-select shows.
-           Deep-link: ?section=overview|performance|demographics.
-           ════════════════════════════════════════════════════════════ -->
-      <div class="perf-tabs perf-tabs--section" id="vis-section-tabs" role="tablist" aria-label="Visitation sections">
-        <button class="perf-tab active" data-vis-section-tab="overview" aria-selected="true" type="button">
-          <span class="material-symbols-outlined">dashboard</span> Overview
+      <!-- ═══════════════════════════════════════════════
+           Observed Visits — 3 inner tabs (Max 05/19 PDF pages 6-8).
+           By Store · Time Trend · by Competitor
+           Segments use Greenberg's visit-frequency buckets:
+             0 prev visits  = New      (blue, --series-v)
+             1-3 prev visits = Returning (amber, --series-c)
+             4+ prev visits = Loyal    (green, --series-a)
+           ═══════════════════════════════════════════════ -->
+      <div class="perf-tabs perf-tabs--filled" id="ov-perf-tabs" role="tablist" aria-label="Observed Visits view">
+        <button class="perf-tab active" data-ov-tab="store" role="tab" aria-selected="true">
+          <span class="material-symbols-outlined">store</span> By Store
         </button>
-        <button class="perf-tab" data-vis-section-tab="performance" aria-selected="false" type="button">
-          <span class="material-symbols-outlined">store</span> Store Performance
+        <button class="perf-tab" data-ov-tab="trend" role="tab" aria-selected="false">
+          <span class="material-symbols-outlined">trending_up</span> Time Trend
         </button>
-        <button class="perf-tab" data-vis-section-tab="demographics" aria-selected="false" type="button">
-          <span class="material-symbols-outlined">groups</span> Demographics
-        </button>
-      </div>
-      <select class="vis-section-select" id="vis-section-select" aria-label="Select visitation section">
-        <option value="overview">Overview</option>
-        <option value="performance">Store Performance</option>
-        <option value="demographics">Demographics</option>
-      </select>
-
-      <!-- ═══ Section pane: Overview (Composition + Trend Row 2) ═══ -->
-      <section class="dist-section-pane active" data-vis-section="overview">
-
-      <!-- Overview Row 2: Composition (snapshot) vs Trend (over time).
-           Upgraded from .perf-subtabs to .perf-tabs.perf-tabs--filled
-           (Decision 7 Row 2 styling) per plan v2.12. -->
-      <div class="tabset">
-      <div class="tabset__tabs perf-tabs perf-tabs--filled" id="visitation-view-toggle">
-        <button class="perf-tab active" data-view="current">
-          <span class="material-symbols-outlined">donut_large</span> Composition
-        </button>
-        <button class="perf-tab" data-view="trend">
-          <span class="material-symbols-outlined">trending_up</span> Trend
+        <button class="perf-tab" data-ov-tab="competitor" role="tab" aria-selected="false">
+          <span class="material-symbols-outlined">compare_arrows</span> by Competitor
         </button>
       </div>
-      <div class="tabset__body">
 
-      <!-- ═══ Current View (snapshot) — donut + segment cards ═══ -->
-      <div class="visitation-view visitation-view--current active" id="visitation-current">
-        <div class="chart-card visitation-current-panel">
-          <div class="visitation-composition-row">
-            <div class="visitation-donut-card">
-              <div class="chart-card__header">
-                <h3 class="panel-label">Visit Frequency</h3>
-              </div>
-              <div id="chart-visit-donut" style="height: 320px;"></div>
+      <!-- ── Pane: By Store ──────────────────────────────────────── -->
+      <div class="perf-tab-pane active" data-ov-pane="store">
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <div>
+              <h3 class="panel-label">Visits by Store</h3>
+              <p class="panel-subtitle">Per-store visit volume, segmented by 30-day visit frequency.<br><span class="panel-subtitle__muted">New = 0 previous visits · Returning = 1–3 · Loyal = 4+</span></p>
             </div>
-            <div class="visitation-segment-card">
-              <div class="chart-card__header">
-                <div>
-                  <h3 class="panel-label">Segment Breakdown</h3>
-                  <p class="panel-subtitle">Click a donut segment to highlight — volume and trend per shopper type</p>
-                </div>
+            <div class="chart-card__header-right">
+              <div class="ov-legend">
+                <button type="button" class="ov-legend-pill ov-legend-pill--new active" data-ov-series="new" style="--pill-color:#2196F3;">New</button>
+                <button type="button" class="ov-legend-pill ov-legend-pill--returning active" data-ov-series="returning" style="--pill-color:#f59e0b;">Returning</button>
+                <button type="button" class="ov-legend-pill ov-legend-pill--loyal active" data-ov-series="loyal" style="--pill-color:#22c55e;">Loyal</button>
               </div>
-              <div class="segment-detail-cards" id="segment-detail-cards"></div>
             </div>
           </div>
+          <div class="ov-store-list" id="ov-store-list"></div>
         </div>
       </div>
 
-      <!-- ═══ Trend View (over time) — stacked bars with duration presets ═══ -->
-      <div class="visitation-view visitation-view--trend" id="visitation-trend">
+      <!-- ── Pane: Time Trend ───────────────────────────────────── -->
+      <div class="perf-tab-pane" data-ov-pane="trend">
         <div class="chart-card">
           <div class="chart-card__header">
             <div>
               <h3 class="panel-label">Visit Frequency Over Time</h3>
-              <p class="panel-subtitle" id="frequency-subtitle">Each bar = total observed visits across all <span id="freq-store-count">35</span> stores for that <span id="freq-bucket-label">day</span>, stacked by shopper type. Panel-tracked — directional, not a census.</p>
+              <p class="panel-subtitle">Each bar = total observed visits across all stores for that week, stacked by frequency segment.<br><span class="panel-subtitle__muted">Panel-tracked — directional, not a census.</span></p>
             </div>
             <div class="chart-card__header-right">
-              <div class="duration-presets" id="duration-presets">
-                <button class="duration-preset active" data-duration="1w">1 Week</button>
-                <button class="duration-preset" data-duration="1m">4 Week <span class="duration-preset__sub">(Month)</span></button>
-                <button class="duration-preset" data-duration="1q">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
-                <button class="duration-preset" data-duration="1y">1 Year</button>
-              </div>
-              <div class="year-granularity" id="year-granularity" style="display:none;">
-                <button class="year-gran-btn active" data-gran="quarter">by quarter</button>
-                <button class="year-gran-btn" data-gran="month">by month</button>
-              </div>
-              <div class="chart-legend" id="frequency-legend">
-                <span class="legend-item"><span class="legend-dot" style="background: #4272D8;"></span>New Shoppers</span>
-                <span class="legend-item"><span class="legend-dot" style="background: #F59E0B;"></span>Returning</span>
-                <span class="legend-item"><span class="legend-dot" style="background: #10B981;"></span>Loyal</span>
+              <div class="duration-presets" id="ov-trend-ranges" role="tablist" aria-label="Time range">
+                <button type="button" class="duration-preset" data-ov-range="4w">4 Week <span class="duration-preset__sub">(Month)</span></button>
+                <button type="button" class="duration-preset duration-preset--active" data-ov-range="8w">8 week</button>
+                <button type="button" class="duration-preset" data-ov-range="13w">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
               </div>
             </div>
           </div>
-          <div id="chart-frequency" style="height: 300px;"></div>
+          <div id="ov-trend-chart" style="height:380px;"></div>
         </div>
       </div>
 
-      </div><!-- /.tabset__body -->
-      </div><!-- /.tabset (Composition/Trend) -->
-
-      </section><!-- /.dist-section-pane[data-vis-section="overview"] -->
-
-      <!-- ═══ Section pane: Store Performance ═══ -->
-      <section class="dist-section-pane" data-vis-section="performance">
-
-      <!-- Store Performance section row.
-           Internal .perf-tabs (Overview/Store/Creative/Day) acts as Row 2.
-           Per plan v2.12 — Row 2 styling unchanged this phase (cross-section
-           Row 2 parity = follow-up). -->
-      <section class="section-row section-row--performance">
-        <header class="section-panel-header section-panel-header--with-stat">
-          <div>
-            <h2 class="section-panel-header__title">Store Performance</h2>
-            <p class="section-panel-header__question">Which stores are driving the most visits?</p>
-            <p class="section-panel-header__subtitle">Per-store visitation from media-attributed shoppers<br><em><span id="subtitle-entity-perf">Ideal Media Lab</span>, <span id="subtitle-date-perf">Week 2 (Jan 7, 2026 – Jan 13, 2026)</span></em></p>
-          </div>
-          <div class="stat-strip" id="store-perf-stat-strip"></div>
-        </header>
-        <div class="store-perf-section" id="store-perf-section">
-          <!-- Plan item 3 (Apr 17): By Store / By Creative / By Day tab set.
-               Map removed — Bill committed to Max "store performance no map."
-               Charts + data grid tell the story; distance not central here.
-               Code for map kept in v2 as breadcrumb (revive if user testing
-               shows geography matters). -->
-          <div class="perf-tabs" id="perf-tabs">
-            <button class="perf-tab active" data-perf-tab="overview">
-              <span class="material-symbols-outlined">dashboard</span> Overview
-            </button>
-            <button class="perf-tab" data-perf-tab="store">
-              <span class="material-symbols-outlined">store</span> By Store
-            </button>
-            <button class="perf-tab" data-perf-tab="creative">
-              <span class="material-symbols-outlined">image</span> By Creative
-            </button>
-            <button class="perf-tab" data-perf-tab="day">
-              <span class="material-symbols-outlined">calendar_view_week</span> By Day
-            </button>
-          </div>
-
-          <!-- ─── Overview tab (default) ─── -->
-          <div class="perf-tab-pane active" data-perf-pane="overview">
-            <!-- Apr 28 plan #4: jump button to Media Buy. Bill @06:31:
-                 "maybe we should definitely have a jump button for here into
-                 the media buy or something." Crossover acknowledged but avoid
-                 duplication — this surface stays the standalone visitation
-                 story; CTR/conv/VCR/spend live on Media Buy. -->
-            <div class="perf-overview-jump-row">
-              <a class="perf-overview-jump" href="distribution-media.html">
-                <span class="perf-overview-jump__label">Looking for CTR · Conversions · VCR · Spend?</span>
-                <span class="perf-overview-jump__action">
-                  Jump to Media Buy
-                  <span class="material-symbols-outlined">arrow_forward</span>
-                </span>
-              </a>
+      <!-- ── Pane: by Competitor (Crossover Trend) ──────────────── -->
+      <div class="perf-tab-pane" data-ov-pane="competitor">
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <div>
+              <h3 class="panel-label">Crossover Trend</h3>
+              <p class="panel-subtitle">Among visitors attributed to paid media — where do they also shop?<br><span class="panel-subtitle__muted">Up to 4 rolled-up competitors + "All Others". Source: Greenberg cross-shopping panel.</span></p>
             </div>
-            <div class="perf-overview-grid">
-              <div class="perf-overview-panel">
-                <div class="perf-overview-panel__label">By Creative — Observed Visits</div>
-                <div id="perf-overview-creative" style="height:160px;"></div>
+            <div class="chart-card__header-right">
+              <div class="view-toggle view-toggle--compact" id="ov-comp-metric" role="tablist" aria-label="Metric">
+                <button type="button" class="view-toggle__btn active" data-ov-comp="share" role="tab" aria-selected="true">Share %</button>
+                <button type="button" class="view-toggle__btn" data-ov-comp="visits" role="tab" aria-selected="false">Visits</button>
               </div>
-              <div class="perf-overview-panel">
-                <div class="perf-overview-panel__label">By Store — Top Stores</div>
-                <div id="perf-overview-stores" class="ov-donut-host"></div>
-              </div>
-              <div class="perf-overview-panel">
-                <div class="perf-overview-panel__label">Day of Week — All Creatives</div>
-                <div id="perf-overview-dow" style="height:160px;"></div>
+              <div class="duration-presets" id="ov-comp-ranges" role="tablist" aria-label="Time range">
+                <button type="button" class="duration-preset" data-ov-comp-range="4w">4 Week <span class="duration-preset__sub">(Month)</span></button>
+                <button type="button" class="duration-preset duration-preset--active" data-ov-comp-range="8w">8 week</button>
+                <button type="button" class="duration-preset" data-ov-comp-range="13w">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
               </div>
             </div>
           </div>
-
-          <!-- ─── By Store tab ─── -->
-          <div class="perf-tab-pane" data-perf-pane="store">
-            <div class="store-perf-header store-perf-header--left">
-              <div class="store-perf-actions">
-                <div class="view-toggle view-toggle--compact" id="perf-view-toggle">
-                  <button class="view-toggle__btn active" data-perf-view="bar">Bar View</button>
-                  <button class="view-toggle__btn" data-perf-view="data">Data View</button>
-                  <!-- Apr 28 plan #3: per-store Trend Over Time -->
-                  <button class="view-toggle__btn" data-perf-view="trend">Trend Over Time</button>
-                </div>
-                <!-- Duration presets only meaningful in Trend view -->
-                <div class="duration-presets duration-presets--compact" id="perf-store-duration-presets" hidden>
-                  <button class="duration-preset" data-duration="1w">1 Week</button>
-                  <button class="duration-preset active" data-duration="4w">4 Week <span class="duration-preset__sub">(Month)</span></button>
-                  <button class="duration-preset" data-duration="13w">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
-                  <button class="duration-preset" data-duration="1y">1 Year</button>
-                </div>
-                <span class="store-perf-more-data" id="store-perf-more-wrap" style="display:none;">
-                  <label class="toggle-switch">
-                    <input type="checkbox" id="store-perf-more-toggle">
-                    <span class="toggle-slider"></span>
-                  </label>
-                  <span class="toggle-label">More Data</span>
-                </span>
-              </div>
-              <div>
-                <p class="panel-subtitle" id="perf-store-subtitle">Horizontal bars — one row per store, sorted by visits descending.</p>
-              </div>
-            </div>
-            <div class="store-perf-body store-perf-body--full">
-              <div class="store-perf-table-wrap store-perf-table-wrap--full">
-                <div class="store-perf-bar-view active" id="store-perf-bar-view"></div>
-                <div class="store-perf-data-view" id="store-perf-data-view">
-                  <table class="store-perf-table">
-                    <thead id="store-perf-head"></thead>
-                    <tbody id="store-perf-body"></tbody>
-                  </table>
-                </div>
-                <!-- Apr 28 plan #3: trend chart — one line per store across time buckets -->
-                <div class="store-perf-trend-view" id="store-perf-trend-view" hidden>
-                  <div id="store-perf-trend-chart" style="height:420px;"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- ─── By Creative tab ─── -->
-          <div class="perf-tab-pane" data-perf-pane="creative">
-            <!-- Visual chip selector — one per creative -->
-            <div class="creative-chips" id="creative-chips"></div>
-            <!-- Selected creative header: thumb + meta + stat strip -->
-            <div class="creative-detail-header" id="creative-detail-header"></div>
-            <!-- 2-col: store breakdown (left) + day-of-week (right) -->
-            <div class="creative-detail-cols">
-              <div class="creative-detail-col creative-detail-col--stores">
-                <div class="creative-detail-col__label" id="creative-stores-label">Visits by Store</div>
-                <div class="bar-scroll-wrap"><div id="perf-creative-bars"></div></div>
-              </div>
-              <div class="creative-detail-col creative-detail-col--dow">
-                <div class="creative-detail-col__label" id="creative-dow-label">Day of Week Pattern</div>
-                <div id="dow-type-toggles-creative" class="visitor-type-toggles"></div>
-                <div id="perf-creative-dow" style="height:260px;"></div>
-              </div>
-            </div>
-            <!-- Time-of-day heatmap removed: VA file is daily-grain, no hourly data ever expected. Day-of-week pattern (left) covers the same need. -->
-
-          </div>
-
-          <!-- ─── By Day tab ─── -->
-          <div class="perf-tab-pane" data-perf-pane="day">
-            <!-- Day chip selector -->
-            <div class="creative-chips" id="day-chips"></div>
-            <!-- Summary / selected-day header -->
-            <div class="creative-detail-header" id="day-detail-header"></div>
-            <!-- 2-col: store breakdown (left) + day of week (right) -->
-            <div class="creative-detail-cols">
-              <div class="creative-detail-col creative-detail-col--stores">
-                <div class="creative-detail-col__label" id="day-stores-label">Visits by Store — All Creatives</div>
-                <div class="bar-scroll-wrap"><div id="perf-day-stores"></div></div>
-              </div>
-              <div class="creative-detail-col creative-detail-col--dow">
-                <div class="creative-detail-col__label" id="day-dow-label">Day of Week Pattern — All Creatives</div>
-                <div id="dow-type-toggles-day" class="visitor-type-toggles"></div>
-                <div id="perf-day-bars" style="height:260px;"></div>
-              </div>
-            </div>
-            <!-- Time-of-day heatmap removed: VA file is daily-grain, no hourly data ever expected. -->
-
-          </div>
+          <div id="ov-comp-chart" style="height:340px;"></div>
+          <div class="ov-comp-detail" id="ov-comp-detail"></div>
         </div>
-      </section>
-
-      </section><!-- /.dist-section-pane[data-vis-section="performance"] -->
-
-      <!-- ═══ Section pane: Demographics ═══ -->
-      <section class="dist-section-pane" data-vis-section="demographics">
-
-      <!-- Demographics section row.
-           Internal .perf-subtabs (Current/Trend) acts as Row 2 — markup
-           unchanged this phase per plan v2.12. -->
-      <section class="section-row section-row--demographics">
-        <header class="section-panel-header">
-          <h2 class="section-panel-header__title">Demographics</h2>
-          <p class="section-panel-header__question">Who are our attributed shoppers?</p>
-          <p class="section-panel-header__subtitle">Demographic profile of <span id="demo-visitor-count">10,822</span> visitors<br><em><span id="demo-entity-name">Ideal Media Lab</span>, <span id="demo-date-range">Week 2 (Jan 7–13, 2026)</span></em></p>
-        </header>
-        <div class="demographics-section">
-          <!-- Mirrors the Visitation tabset (Current Composition / Trend Over
-               Time). Duration presets sit on the right of the tab bar and are
-               hidden in Current view (no time axis to bucket). -->
-          <div class="tabset demo-tabset">
-            <div class="demo-tabset__header">
-              <div class="tabset__tabs perf-subtabs" id="demo-view-toggle">
-                <button class="perf-subtab active" data-demo-view="current">
-                  <span class="material-symbols-outlined">donut_large</span> Current Composition
-                </button>
-                <button class="perf-subtab" data-demo-view="trend">
-                  <span class="material-symbols-outlined">trending_up</span> Trend Over Time
-                </button>
-              </div>
-              <div class="duration-presets demo-tabset__presets" id="demo-duration-presets">
-                <button class="duration-preset" data-duration="1w">1 Week</button>
-                <button class="duration-preset active" data-duration="4w">4 Week <span class="duration-preset__sub">(Month)</span></button>
-                <button class="duration-preset" data-duration="13w">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
-                <button class="duration-preset" data-duration="1y">1 Year</button>
-              </div>
-            </div>
-            <div class="tabset__body">
-              <!-- Card-strip toggle (Apr 28 plan #2): mirrors Store Performance > By Creative.
-                   "All Demographics" default = show 8-card grid; pick a single card =
-                   single full-width chart. Saves vertical space; one story at a time. -->
-              <div class="creative-chips demo-chips" id="demo-chips" role="tablist" aria-label="Demographic dimension"></div>
-
-              <!-- Single-category view (hidden when "All" selected) -->
-              <div class="demo-single-view" id="demo-single-view" hidden>
-                <div class="demo-single-view__header">
-                  <h4 class="demo-single-view__title" id="demo-single-title">Age Distribution</h4>
-                  <p class="demo-single-view__sub" id="demo-single-sub">Share of visitors by age bracket</p>
-                </div>
-                <div id="chart-demo-single" style="height:340px;"></div>
-              </div>
-
-              <!-- All-Demographics grid view (default) -->
-              <div class="demo-charts-grid" id="demo-charts-grid">
-                <div class="demo-chart-card"><h4 class="demo-chart-title">Age Distribution</h4><div id="chart-demo-age-v" style="height: 200px;"></div></div>
-                <div class="demo-chart-card"><h4 class="demo-chart-title">Gender</h4><div id="chart-demo-gender-v" style="height: 200px;"></div></div>
-                <div class="demo-chart-card"><h4 class="demo-chart-title">Household Income</h4><div id="chart-demo-income-v" style="height: 200px;"></div></div>
-                <div class="demo-chart-card"><h4 class="demo-chart-title">Presence of Children</h4><div id="chart-demo-children-v" style="height: 200px;"></div></div>
-                <div class="demo-chart-card"><h4 class="demo-chart-title">Household Size</h4><div id="chart-demo-hhsize-v" style="height: 200px;"></div></div>
-                <div class="demo-chart-card"><h4 class="demo-chart-title">Homeowner Status</h4><div id="chart-demo-homeowner-v" style="height: 200px;"></div></div>
-                <div class="demo-chart-card"><h4 class="demo-chart-title">Net Worth</h4><div id="chart-demo-networth-v" style="height: 200px;"></div></div>
-                <div class="demo-chart-card"><h4 class="demo-chart-title">Marital Status</h4><div id="chart-demo-marital-v" style="height: 200px;"></div></div>
-              </div>
-            </div><!-- /.tabset__body -->
-          </div><!-- /.tabset.demo-tabset -->
-        </div>
-      </section>
-
-      </section><!-- /.dist-section-pane[data-vis-section="demographics"] -->
+      </div>
 
     </section>
 
@@ -525,6 +283,338 @@
 
   <script src="js/header-slide.js"></script>
   <script src="js/distribution/distribution-page-app.js?v=13"></script>
+
+  <!-- ════════════════════════════════════════════════════════════
+       Observed Visits — fixture init (Phase 1c).
+       Real data sources:
+       - Per-store visits + share%: WD Group Analysis xlsx
+         (Greenberg, Rankings sheet — 20 stores, Wk 2 Jan 7-13)
+       - 5-week visit totals: WD xlsx Full Summary (wk3→wk2)
+       - Cross-shopping competitors + freq mix: Jungle Jim's META
+         & Competitors PDF (page 2, cross-shopping panel)
+       New/Returning/Loyal segmentation maps to Greenberg's
+       0 / 1-3 / 4+ previous-visits buckets (30-day window).
+       ════════════════════════════════════════════════════════════ -->
+  <script>
+  (function () {
+    'use strict';
+    var COLORS = { new: '#2196F3', returning: '#f59e0b', loyal: '#22c55e' };
+
+    // ── Tab switcher ──────────────────────────────────────────────
+    function initTabs() {
+      var tabs  = document.querySelectorAll('#ov-perf-tabs .perf-tab');
+      var panes = document.querySelectorAll('.perf-tab-pane[data-ov-pane]');
+      tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          var target = tab.dataset.ovTab;
+          tabs.forEach(function (t) {
+            var on = t === tab;
+            t.classList.toggle('active', on);
+            t.setAttribute('aria-selected', String(on));
+          });
+          panes.forEach(function (p) {
+            p.classList.toggle('active', p.dataset.ovPane === target);
+          });
+          if (target === 'trend' && window._ovTrendChart) window._ovTrendChart.resize();
+          if (target === 'competitor' && window._ovCompChart) window._ovCompChart.resize();
+        });
+      });
+    }
+
+    // ── By Store fixture (real WD store visits + share%) ─────────
+    // N/R/L splits derived from share% — higher share = more loyal.
+    function splitByShare(visits, share) {
+      var pct;
+      if (share > 0.7)      pct = [0.40, 0.30, 0.30];
+      else if (share > 0.5) pct = [0.50, 0.30, 0.20];
+      else if (share > 0.3) pct = [0.55, 0.30, 0.15];
+      else                  pct = [0.65, 0.25, 0.10];
+      return {
+        new:       Math.round(visits * pct[0]),
+        returning: Math.round(visits * pct[1]),
+        loyal:     Math.round(visits * pct[2])
+      };
+    }
+    function deriveStore(rank, store, visits, share) {
+      var s = splitByShare(visits, share);
+      return { rank: rank, store: store, visits: visits, share: share,
+               new: s.new, returning: s.returning, loyal: s.loyal };
+    }
+    var storeData = [
+      deriveStore(1,  'WinnDixie 481',  3580, 0.464),
+      deriveStore(2,  'WinnDixie 436',  2146, 0.424),
+      deriveStore(3,  'WinnDixie 123',  1394, 0.491),
+      deriveStore(4,  'WinnDixie 726',  1274, 0.821),
+      deriveStore(5,  'WinnDixie 711',   932, 0.485),
+      deriveStore(6,  'WinnDixie 2437',  889, 0.641),
+      deriveStore(7,  'WinnDixie 493',   819, 0.504),
+      deriveStore(8,  'WinnDixie 2288',  728, 0.567),
+      deriveStore(9,  'WinnDixie 349',   694, 0.568),
+      deriveStore(10, 'WinnDixie 381',   619, 0.711),
+      deriveStore(11, 'WinnDixie 2448',  582, 0.439),
+      deriveStore(12, 'WinnDixie 2269',  575, 0.387),
+      deriveStore(13, 'WinnDixie 2568',  464, 0.347),
+      deriveStore(14, 'WinnDixie 267',   403, 0.475),
+      deriveStore(15, 'WinnDixie 2423',  390, 0.417),
+      deriveStore(16, 'WinnDixie 343',   304, 0.534),
+      deriveStore(17, 'WinnDixie 336',   199, 0.544),
+      deriveStore(18, 'WinnDixie 2556',  193, 0.207),
+      deriveStore(19, 'WinnDixie 86',     42, 0.225),
+      deriveStore(20, 'WinnDixie 358',    17, 0.850)
+    ];
+
+    var activeSeries = { new: true, returning: true, loyal: true };
+
+    function fmtNum(n) { return n.toLocaleString('en-US'); }
+    function fmtPct(p) { return (p * 100).toFixed(0) + '%'; }
+
+    function renderStoreList() {
+      var el = document.getElementById('ov-store-list');
+      if (!el) return;
+      var maxVisits = storeData[0].visits;
+      el.innerHTML = storeData.map(function (r) {
+        var totalActive = (activeSeries.new ? r.new : 0) +
+                          (activeSeries.returning ? r.returning : 0) +
+                          (activeSeries.loyal ? r.loyal : 0);
+        var w = (totalActive / maxVisits) * 100;
+        var pctNew = (totalActive ? r.new / totalActive : 0);
+        var newPctOfStore = r.new / r.visits;
+        var segs = '';
+        if (activeSeries.new)       segs += '<span class="ov-seg" style="width:' + ((r.new       / totalActive) * 100).toFixed(1) + '%; background:' + COLORS.new       + ';"></span>';
+        if (activeSeries.returning) segs += '<span class="ov-seg" style="width:' + ((r.returning / totalActive) * 100).toFixed(1) + '%; background:' + COLORS.returning + ';"></span>';
+        if (activeSeries.loyal)     segs += '<span class="ov-seg" style="width:' + ((r.loyal     / totalActive) * 100).toFixed(1) + '%; background:' + COLORS.loyal     + ';"></span>';
+        return '<div class="ov-store-row">' +
+          '<div class="ov-store-rank">' + r.rank + '</div>' +
+          '<div class="ov-store-meta"><div class="ov-store-name">' + r.store + '</div>' +
+            '<div class="ov-store-sub">' + fmtPct(newPctOfStore) + ' new</div></div>' +
+          '<div class="ov-store-bar"><div class="ov-store-bar__track" style="width:' + w.toFixed(1) + '%;">' + segs + '</div></div>' +
+          '<div class="ov-store-visits">' + fmtNum(r.visits) + '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    function initStoreLegend() {
+      document.querySelectorAll('.ov-legend-pill').forEach(function (pill) {
+        pill.addEventListener('click', function () {
+          var key = pill.dataset.ovSeries;
+          activeSeries[key] = !activeSeries[key];
+          pill.classList.toggle('active', activeSeries[key]);
+          renderStoreList();
+        });
+      });
+    }
+
+    // ── Time Trend fixture (real WD 5-week + 3 synthetic precursors) ─
+    // Real Greenberg totals: Wk49 (synth) → Wk2 (real).
+    // Real range: wk3=28942, wk4=25182, wk5=21680, wk1=38060, wk2=32488
+    // Mapped: Wk49=28942 (Dec 10-16), Wk50=25182, Wk51=21680, Wk52=38060,
+    //         Wk1=32488. Precursor Wks 46-48 synthesized (~30-35K trend).
+    // Each week split 55% new / 30% returning / 15% loyal (blended).
+    function splitWeek(total) {
+      return {
+        new:       Math.round(total * 0.55),
+        returning: Math.round(total * 0.30),
+        loyal:     Math.round(total * 0.15)
+      };
+    }
+    var trendTotals = [
+      { label: 'Wk 46', total: 30100, synth: true },
+      { label: 'Wk 47', total: 31800, synth: true },
+      { label: 'Wk 48', total: 29400, synth: true },
+      { label: 'Wk 49', total: 28942, synth: false },
+      { label: 'Wk 50', total: 25182, synth: false },
+      { label: 'Wk 51', total: 21680, synth: false },
+      { label: 'Wk 52', total: 38060, synth: false },
+      { label: 'Wk 1',  total: 32488, synth: false }
+    ];
+    var trendData = trendTotals.map(function (w) {
+      var s = splitWeek(w.total);
+      return { label: w.label, new: s.new, returning: s.returning, loyal: s.loyal };
+    });
+
+    function renderTrendChart() {
+      if (typeof echarts === 'undefined') return;
+      var el = document.getElementById('ov-trend-chart');
+      if (!el) return;
+      window._ovTrendChart = echarts.init(el);
+      window._ovTrendChart.setOption({
+        grid: { left: 56, right: 24, top: 24, bottom: 48 },
+        legend: { show: false },
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+        xAxis: {
+          type: 'category',
+          data: trendData.map(function (d) { return d.label; }),
+          axisLabel: { color: '#6b7280', fontSize: 11 },
+          axisLine: { lineStyle: { color: '#e5e7eb' } }
+        },
+        yAxis: {
+          type: 'value',
+          axisLabel: { color: '#6b7280', fontSize: 11,
+                       formatter: function (v) { return (v >= 1000) ? (v / 1000) + 'k' : v; } },
+          splitLine: { lineStyle: { color: '#f3f4f6' } }
+        },
+        series: [
+          { name: 'New',       type: 'bar', stack: 'visits', data: trendData.map(function (d) { return d.new; }),       itemStyle: { color: COLORS.new } },
+          { name: 'Returning', type: 'bar', stack: 'visits', data: trendData.map(function (d) { return d.returning; }), itemStyle: { color: COLORS.returning } },
+          { name: 'Loyal',     type: 'bar', stack: 'visits', data: trendData.map(function (d) { return d.loyal; }),     itemStyle: { color: COLORS.loyal } }
+        ]
+      });
+    }
+
+    function initTrendRanges() {
+      document.querySelectorAll('#ov-trend-ranges .duration-preset').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          document.querySelectorAll('#ov-trend-ranges .duration-preset').forEach(function (b) { b.classList.remove('duration-preset--active'); });
+          btn.classList.add('duration-preset--active');
+          // Spike: visual-only toggle; data range unchanged.
+        });
+      });
+    }
+
+    // ── by Competitor (Crossover Trend) — real JJ cross-shopping ─
+    // Source: Jungle Jim's META & Competitors PDF, page 2.
+    // Walmart 47% / Kroger 25% / Meijer 12% / ALDI 8% / All Others 8%.
+    // Rolled-up "All Others" = Gordon (4%) + Grocery Outlet (2%) + Fresh Market (2%).
+    var compNames = ['Walmart', 'Kroger', 'Meijer', 'ALDI', 'All Others'];
+    var compColors = {
+      'Walmart':    '#dc2626',
+      'Kroger':     '#ea580c',
+      'Meijer':     '#7c3aed',
+      'ALDI':       '#0891b2',
+      'All Others': '#94a3b8'
+    };
+    var compShareCurrent = { Walmart: 0.47, Kroger: 0.25, Meijer: 0.12, ALDI: 0.08, 'All Others': 0.08 };
+    var compVisitsCurrent = { Walmart: 4413, Kroger: 2326, Meijer: 1116, ALDI: 758, 'All Others': 805 };
+    var compFreqMix = {
+      Walmart:     { new: 0.90, returning: 0.07, loyal: 0.03 },
+      Kroger:      { new: 0.89, returning: 0.08, loyal: 0.03 },
+      Meijer:      { new: 0.88, returning: 0.08, loyal: 0.04 },
+      ALDI:        { new: 0.89, returning: 0.08, loyal: 0.03 },
+      'All Others':{ new: 0.92, returning: 0.07, loyal: 0.01 }
+    };
+    // 8-week share trend — back-derive jitter from current values.
+    var compWeeks = ['Wk 46','Wk 47','Wk 48','Wk 49','Wk 50','Wk 51','Wk 52','Wk 1'];
+    var compTrend = compNames.map(function (name) {
+      var base = compShareCurrent[name];
+      // Mild ±10% jitter over time, ending at the real current value.
+      var series = compWeeks.map(function (_, i) {
+        var offset = (Math.sin(i * 1.1 + name.length) * 0.08) * base;
+        var v = i === compWeeks.length - 1 ? base : base + offset;
+        return Math.max(0.02, v);
+      });
+      return { name: name, data: series };
+    });
+
+    var compMetricMode = 'share';
+
+    function buildCompOptions() {
+      var seriesData = compTrend.map(function (s) {
+        var data = compMetricMode === 'share'
+          ? s.data.map(function (v) { return +(v * 100).toFixed(1); })
+          : s.data.map(function (v) {
+              // approximate weekly visits from share trend
+              return Math.round(v * compVisitsCurrent[s.name] / compShareCurrent[s.name]);
+            });
+        return {
+          name: s.name, type: 'line', smooth: true, symbol: 'circle', symbolSize: 6,
+          data: data,
+          itemStyle: { color: compColors[s.name] },
+          lineStyle: { color: compColors[s.name], width: 2 }
+        };
+      });
+      return {
+        grid: { left: 56, right: 24, top: 24, bottom: 56 },
+        tooltip: { trigger: 'axis' },
+        legend: { bottom: 0, textStyle: { color: '#6b7280', fontSize: 11 },
+                  itemWidth: 10, itemHeight: 10 },
+        xAxis: { type: 'category', data: compWeeks,
+                 axisLabel: { color: '#6b7280', fontSize: 11 },
+                 axisLine: { lineStyle: { color: '#e5e7eb' } } },
+        yAxis: { type: 'value',
+                 axisLabel: { color: '#6b7280', fontSize: 11,
+                              formatter: compMetricMode === 'share'
+                                ? function (v) { return v + '%'; }
+                                : function (v) { return (v >= 1000) ? (v / 1000) + 'k' : v; } },
+                 splitLine: { lineStyle: { color: '#f3f4f6' } } },
+        series: seriesData
+      };
+    }
+
+    function renderCompChart() {
+      if (typeof echarts === 'undefined') return;
+      var el = document.getElementById('ov-comp-chart');
+      if (!el) return;
+      window._ovCompChart = echarts.init(el);
+      window._ovCompChart.setOption(buildCompOptions(), true);
+    }
+
+    function renderCompDetail() {
+      var el = document.getElementById('ov-comp-detail');
+      if (!el) return;
+      var rowsHtml = compNames.map(function (name) {
+        var share = compShareCurrent[name];
+        var visits = compVisitsCurrent[name];
+        var mix = compFreqMix[name];
+        return '<tr>' +
+          '<td><span class="ov-comp-dot" style="background:' + compColors[name] + ';"></span> ' + name + '</td>' +
+          '<td class="num">' + (share * 100).toFixed(1) + '%</td>' +
+          '<td class="num">' + fmtNum(visits) + '</td>' +
+          '<td class="num">' + (mix.new       * 100).toFixed(0) + '%</td>' +
+          '<td class="num">' + (mix.returning * 100).toFixed(0) + '%</td>' +
+          '<td class="num">' + (mix.loyal     * 100).toFixed(0) + '%</td>' +
+        '</tr>';
+      }).join('');
+      el.innerHTML =
+        '<div class="ov-comp-detail__title">Cross-shopping detail — current week</div>' +
+        '<table class="ov-comp-table"><thead><tr>' +
+          '<th>Competitor</th>' +
+          '<th class="num">Share %</th>' +
+          '<th class="num">Visits</th>' +
+          '<th class="num">0 visits</th>' +
+          '<th class="num">1-3 visits</th>' +
+          '<th class="num">4+ visits</th>' +
+        '</tr></thead><tbody>' + rowsHtml + '</tbody></table>' +
+        '<div class="ov-comp-detail__note">Source: panel-tracked cross-shopping (Greenberg). 0 / 1-3 / 4+ visits refer to past-30-day visitation frequency at the competitor.</div>';
+    }
+
+    function initCompMetric() {
+      var btns = document.querySelectorAll('#ov-comp-metric .view-toggle__btn');
+      btns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          btns.forEach(function (b) {
+            var on = b === btn;
+            b.classList.toggle('active', on);
+            b.setAttribute('aria-selected', String(on));
+          });
+          compMetricMode = btn.dataset.ovComp;
+          if (window._ovCompChart) window._ovCompChart.setOption(buildCompOptions(), true);
+        });
+      });
+    }
+
+    function initCompRanges() {
+      document.querySelectorAll('#ov-comp-ranges .duration-preset').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          document.querySelectorAll('#ov-comp-ranges .duration-preset').forEach(function (b) { b.classList.remove('duration-preset--active'); });
+          btn.classList.add('duration-preset--active');
+          // Spike: visual-only.
+        });
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      initTabs();
+      renderStoreList();
+      initStoreLegend();
+      renderTrendChart();
+      initTrendRanges();
+      renderCompChart();
+      renderCompDetail();
+      initCompMetric();
+      initCompRanges();
+    });
+  })();
+  </script>
 
 </body>
 </html>

@@ -5142,3 +5142,138 @@ body[data-dist-page] .narrative-header__title {
   opacity: 0.35;
 }
 .pm-series-pill:hover { transform: translateY(-1px); }
+
+/* ════════════════════════════════════════════════════════════════
+   Observed Visits (Phase 1c — UX-846 05/19 PDF p.6-8)
+   3 inner tabs: By Store · Time Trend · by Competitor
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Series-pill legend (shared with Paid Media series pills) ─── */
+.ov-legend {
+  display: flex;
+  gap: var(--space-2, 0.5rem);
+}
+.ov-legend-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: var(--pill-color, #2196F3);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 160ms ease;
+}
+.ov-legend-pill:not(.active) { opacity: 0.35; }
+
+/* ── By Store list (per-store stacked horizontal bar) ─────────── */
+.ov-store-list {
+  display: grid;
+  gap: 8px;
+  margin-top: var(--space-3, 0.75rem);
+}
+.ov-store-row {
+  display: grid;
+  grid-template-columns: 32px 140px 1fr 80px;
+  align-items: center;
+  gap: var(--space-3, 0.75rem);
+  font-size: 0.8125rem;
+  padding: 6px 8px;
+  border-bottom: 1px solid #f3f4f6;
+}
+.ov-store-row:hover { background: #f9fafb; }
+.ov-store-rank {
+  color: #9ca3af;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.ov-store-meta {
+  display: flex;
+  flex-direction: column;
+}
+.ov-store-name { color: #1f2937; font-weight: 500; }
+.ov-store-sub  { color: #9ca3af; font-size: 0.6875rem; }
+.ov-store-bar {
+  display: flex;
+  align-items: center;
+}
+.ov-store-bar__track {
+  display: flex;
+  height: 14px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #f3f4f6;
+}
+.ov-seg {
+  display: block;
+  height: 100%;
+}
+.ov-store-visits {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: #1f2937;
+  font-weight: 500;
+}
+
+/* ── by Competitor detail table + Crossover Trend ────────────── */
+.ov-comp-detail {
+  margin-top: var(--space-4, 1rem);
+}
+.ov-comp-detail__title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: var(--space-2, 0.5rem);
+}
+.ov-comp-detail__note {
+  font-size: 0.6875rem;
+  color: #9ca3af;
+  margin-top: var(--space-2, 0.5rem);
+  font-style: italic;
+}
+.ov-comp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+.ov-comp-table thead th {
+  font-weight: 600;
+  color: #6b7280;
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid #e5e7eb;
+  text-transform: uppercase;
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+}
+.ov-comp-table thead th.num,
+.ov-comp-table tbody td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.ov-comp-table tbody td {
+  padding: 8px 12px;
+  vertical-align: middle;
+  border-bottom: 1px solid #f3f4f6;
+  color: #1f2937;
+}
+.ov-comp-table tbody tr:hover { background: #f9fafb; }
+
+.ov-comp-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+/* Allow Observed Visits panes' chart-card to span full width */
+[data-ov-pane] .chart-card__header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 0.75rem);
+  flex-wrap: wrap;
+}

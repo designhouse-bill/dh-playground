@@ -570,13 +570,13 @@
         symbol: 'circle', symbolSize: 6
       });
       if (activeSeries.clicks) series.push({
-        name: 'Clicks', type: 'line', smooth: true, yAxisIndex: 1,
+        name: 'Clicks', type: 'line', smooth: true, yAxisIndex: 0,
         data: d.clicks,
         itemStyle: { color: SERIES.clicks }, lineStyle: { color: SERIES.clicks, width: 2 },
         symbol: 'circle', symbolSize: 6
       });
       return {
-        grid: { left: 56, right: 64, top: 24, bottom: 48 },
+        grid: { left: 56, right: 24, top: 24, bottom: 48 },
         tooltip: {
           trigger: 'axis',
           backgroundColor: '#1f2937',
@@ -610,16 +610,12 @@
           axisLabel: { color: '#6b7280', fontSize: 11 },
           axisLine: { lineStyle: { color: '#e5e7eb' } }
         },
-        yAxis: [
-          { type: 'value', name: 'Impressions', position: 'left',
-            axisLabel: { color: '#6b7280', fontSize: 11, formatter: function (v) { return (v >= 1000) ? (v / 1000) + 'k' : v; } },
-            splitLine: { lineStyle: { color: '#f3f4f6' } },
-            nameTextStyle: { color: '#6b7280', fontSize: 11 } },
-          { type: 'value', name: 'Clicks', position: 'right',
-            axisLabel: { color: '#6b7280', fontSize: 11, formatter: function (v) { return (v >= 1000) ? (v / 1000) + 'k' : v; } },
-            splitLine: { show: false },
-            nameTextStyle: { color: '#6b7280', fontSize: 11 } }
-        ],
+        yAxis: {
+          type: 'value', name: 'Volume', position: 'left',
+          axisLabel: { color: '#6b7280', fontSize: 11, formatter: function (v) { return (v >= 1000) ? (v / 1000) + 'k' : v; } },
+          splitLine: { lineStyle: { color: '#f3f4f6' } },
+          nameTextStyle: { color: '#6b7280', fontSize: 11 }
+        },
         series: series
       };
     }

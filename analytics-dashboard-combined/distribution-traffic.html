@@ -366,10 +366,20 @@
             formatter: function (p) { return fmtNum(p.value); }
           }
         }],
-        tooltip: { trigger: 'axis', formatter: function (p) {
-          var d = ctrByDay[p[0].dataIndex];
-          return d.day + '<br/>Total: ' + fmtNum(d.total) + '<br/>CTR: ' + d.ctr.toFixed(2) + '%';
-        }}
+        tooltip: {
+          trigger: 'axis',
+          backgroundColor: '#1f2937',
+          borderColor: 'rgba(255,255,255,0.08)',
+          borderWidth: 1,
+          padding: [10, 12],
+          textStyle: { color: '#fff', fontFamily: 'inherit', fontSize: 12 },
+          formatter: function (p) {
+            var d = ctrByDay[p[0].dataIndex];
+            return '<div style="font-weight:700; margin-bottom:6px; font-size:13px; color:#fff;">' + d.day + '</div>' +
+              '<div style="display:flex; gap:10px; min-width:160px;"><span style="flex:1; color:rgba(255,255,255,0.9);">Total</span><span style="font-weight:600; font-variant-numeric:tabular-nums; color:#fff;">' + fmtNum(d.total) + '</span></div>' +
+              '<div style="display:flex; gap:10px; min-width:160px; margin-top:2px;"><span style="flex:1; color:rgba(255,255,255,0.9);">CTR</span><span style="font-weight:600; font-variant-numeric:tabular-nums; color:#fff;">' + d.ctr.toFixed(2) + '%</span></div>';
+          }
+        }
       });
     }
 

@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="css/design-tokens.css?v=2">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/analytics-architecture.css?v=22">
-  <link rel="stylesheet" href="css/header.css?v=5">
+  <link rel="stylesheet" href="css/header.css?v=6">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
   <link rel="stylesheet" href="css/engagement.css?v=14">
@@ -89,6 +89,13 @@
     </div>
 
     <div class="topbar__actions">
+      <!-- Phase 4 (UX-846): Alternate Print View stub.
+           AGNE gating revenue on this — Max 05.14.
+           Real template lives in UX-864 POC; href="#" until wired. -->
+      <a class="header-print-btn" id="header-print-btn" href="#" title="Alternate Print View (single template)" aria-label="Open Alternate Print View">
+        <span class="material-symbols-outlined">print</span>
+        Print View
+      </a>
       <button class="header-share-btn" id="header-share-btn">
         <span class="material-symbols-outlined">share</span>
         Share

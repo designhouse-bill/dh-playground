@@ -5543,3 +5543,181 @@ body[data-dist-page] .narrative-header__title {
 .pm-detail-link .material-symbols-outlined {
   font-size: 18px;
 }
+
+/* ════════════════════════════════════════════════════════════════
+   Observed Demographics (Phase 1d — UX-846 05/19 PDF p.9-11)
+   3 inner tabs: Current · By Store · Time Trend
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Current pane — 2-col grid of 8 demographic widgets ───────── */
+.od-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4, 1rem);
+  margin-top: var(--space-3, 0.75rem);
+}
+@container (max-width: 900px) {
+  .od-grid { grid-template-columns: 1fr; }
+}
+.od-card {
+  background: #fff;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 12px;
+  padding: var(--space-4, 1rem);
+}
+.od-card__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  margin-bottom: var(--space-3, 0.75rem);
+}
+.od-card__icon {
+  font-size: 18px;
+  color: #6b7280;
+}
+.od-card__title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #1f2937;
+  flex: 1;
+}
+.od-card__sub {
+  font-size: 0.6875rem;
+  color: #9ca3af;
+}
+.od-card__body { min-height: 120px; }
+
+/* ── Bar-list widget (Age, HH Income, HH Size, Net Worth) ────── */
+.od-barlist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.od-barlist__row {
+  display: grid;
+  grid-template-columns: 80px 1fr 56px 64px;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8125rem;
+  color: #374151;
+  padding: 3px 0;
+  border-radius: 4px;
+}
+.od-barlist__row:hover { background: #f9fafb; }
+.od-barlist__label { color: #6b7280; font-size: 0.75rem; }
+.od-barlist__track {
+  position: relative;
+  height: 10px;
+  background: #f3f4f6;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.od-barlist__fill {
+  display: block;
+  height: 100%;
+  border-radius: 5px;
+}
+.od-barlist__pct {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: #1f2937;
+}
+.od-barlist__count {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: #9ca3af;
+  font-size: 0.6875rem;
+}
+
+/* ── Donut widget (Gender, Children, Homeowner, Marital) ─────── */
+.od-card--donut .od-card__body { min-height: 220px; }
+.od-donut__center {
+  position: absolute;
+  top: 30%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  pointer-events: none;
+}
+.od-donut__pct {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  line-height: 1;
+}
+.od-donut__label {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 2px;
+}
+.od-donut__legend {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-3, 0.75rem);
+  margin-top: var(--space-2, 0.5rem);
+  flex-wrap: wrap;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+.od-donut__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.od-donut__legend-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* ── Tile-row selector (By Store + Time Trend) ──────────────── */
+.od-tile-row {
+  display: flex;
+  gap: var(--space-2, 0.5rem);
+  flex-wrap: wrap;
+  padding: var(--space-3, 0.75rem) 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+.od-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 96px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 8px;
+  background: #fff;
+  color: #6b7280;
+  cursor: pointer;
+  transition: border-color 120ms ease, background 120ms ease, color 120ms ease;
+}
+.od-tile:hover {
+  border-color: rgba(33, 150, 243, 0.4);
+  color: #1f2937;
+}
+.od-tile.is-active {
+  background: rgba(33, 150, 243, 0.08);
+  border-color: var(--series-v, #2196F3);
+  color: #1f2937;
+}
+.od-tile__icon {
+  font-size: 20px;
+  margin-bottom: 4px;
+  color: inherit;
+}
+.od-tile__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+}
+.od-tile__sub {
+  font-size: 0.625rem;
+  color: #9ca3af;
+  margin-top: 2px;
+}
+.od-tile.is-active .od-tile__sub { color: var(--series-v, #2196F3); }

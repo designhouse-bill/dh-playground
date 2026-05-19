@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="css/header.css?v=5">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/distribution.css?v=37">
+  <link rel="stylesheet" href="css/distribution.css?v=38">
 </head>
 <body data-dist-page="demographics">
 
@@ -141,21 +141,89 @@
         </div>
       </div>
 
-      <div class="dh-stub">
-        <span class="material-symbols-outlined dh-stub__icon">construction</span>
-        <h3 class="dh-stub__title">Coming in Phase 1d</h3>
-        <p class="dh-stub__body">
-          Observed Demographics will land in Phase 1d of the 05/19 update.<br>
-          Inner tabs: <strong>Current · By Store · Time Trend</strong>.<br>
-          See <a href="distribution-traffic.html">Overview</a> for the Age Distribution preview card.
-        </p>
+      <!-- ═══════════════════════════════════════════════
+           Observed Demographics — 3 inner tabs (Max 05/19 PDF p.9-11).
+           Current · By Store · Time Trend
+           ═══════════════════════════════════════════════ -->
+      <div class="perf-tabs perf-tabs--filled" id="od-perf-tabs" role="tablist" aria-label="Observed Demographics view">
+        <button class="perf-tab active" data-od-tab="current" role="tab" aria-selected="true">
+          <span class="material-symbols-outlined">dashboard</span> Current
+        </button>
+        <button class="perf-tab" data-od-tab="store" role="tab" aria-selected="false">
+          <span class="material-symbols-outlined">store</span> By Store
+        </button>
+        <button class="perf-tab" data-od-tab="trend" role="tab" aria-selected="false">
+          <span class="material-symbols-outlined">trending_up</span> Time Trend
+        </button>
+      </div>
+
+      <!-- ── Pane: Current (no dimension toggle; all 8 at once) ─── -->
+      <div class="perf-tab-pane active" data-od-pane="current">
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <div>
+              <h3 class="panel-label">DEMOGRAPHICS</h3>
+              <p class="panel-subtitle">Who are our attributed shoppers? Demographic profile of <strong>10,822 visitors</strong>.<br><span class="panel-subtitle__muted">Ideal Media Lab · Week 20 (May 13 – May 19, 2026)</span></p>
+            </div>
+          </div>
+          <div class="od-grid" id="od-grid">
+            <!-- 2-col grid populated by JS. Alternating bars + donuts
+                 per 05/19 PDF page 9 layout rule. -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Pane: By Store ──────────────────────────────────────── -->
+      <div class="perf-tab-pane" data-od-pane="store">
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <div>
+              <h3 class="panel-label">By Store</h3>
+              <p class="panel-subtitle">Demographic profile of attributed shoppers — per store.<br><span class="panel-subtitle__muted">Select a dimension below; chart shows 100%-stacked composition per store.</span></p>
+            </div>
+          </div>
+          <div class="od-tile-row" id="od-tile-row-store" role="tablist" aria-label="Dimension"></div>
+          <div id="od-store-chart" style="height:560px; margin-top:var(--space-3,0.75rem);"></div>
+        </div>
+      </div>
+
+      <!-- ── Pane: Time Trend ───────────────────────────────────── -->
+      <div class="perf-tab-pane" data-od-pane="trend">
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <div>
+              <h3 class="panel-label">Time Trend</h3>
+              <p class="panel-subtitle">Demographic mix over time — weekly stacked composition for the selected dimension.</p>
+            </div>
+            <div class="chart-card__header-right">
+              <div class="duration-presets" id="od-trend-ranges" role="tablist" aria-label="Time range">
+                <button type="button" class="duration-preset" data-od-range="4w">4 Week <span class="duration-preset__sub">(Month)</span></button>
+                <button type="button" class="duration-preset" data-od-range="8w">8 week</button>
+                <button type="button" class="duration-preset duration-preset--active" data-od-range="13w">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
+              </div>
+            </div>
+          </div>
+          <div class="od-tile-row" id="od-tile-row-trend" role="tablist" aria-label="Dimension"></div>
+          <div id="od-trend-chart" style="height:380px; margin-top:var(--space-3,0.75rem);"></div>
+        </div>
       </div>
 
     </section>
   </main>
 
+  <script src="js/vendor/echarts.min.js"></script>
+
+  <!-- ════════════════════════════════════════════════════════════
+       Observed Demographics — fixture init (Phase 1d).
+       Real data source: UNGROUPED Demographic Report — 11.28.25 to
+       12.31.25 (docs_support_requirements/distribution-tab/).
+       Foot-traffic panel-tracked profile across attributed shoppers.
+       ════════════════════════════════════════════════════════════ -->
   <script>
   (function () {
+    'use strict';
+
+    // ── Header dashboard switcher (carry-over from stub) ─────────
     var dropdown = document.getElementById('performance-type-dropdown');
     var menu     = document.getElementById('dashboard-menu');
     if (dropdown && menu) {
@@ -178,6 +246,437 @@
       brand.style.cursor = 'pointer';
       brand.addEventListener('click', function () { window.location.href = 'index.html'; });
     }
+
+    // ── Real fixture data (UNGROUPED Demographic Report) ─────────
+    var DIMENSIONS = [
+      { key: 'age',       label: 'Age',                  icon: 'cake',          buckets: 6, kind: 'bar',
+        cats:  ['18-24','25-34','35-44','45-54','55-64','65+'],
+        pct:   [5, 18, 15, 16, 17, 29] },
+      { key: 'gender',    label: 'Gender',               icon: 'wc',            buckets: 2, kind: 'donut',
+        cats:  ['Female','Male'],
+        pct:   [53, 47] },
+      { key: 'income',    label: 'Household Income',     icon: 'attach_money',  buckets: 7, kind: 'bar',
+        cats:  ['$1-$19K','$20-$34K','$35-$49K','$50-$64K','$65-$149K','$150-$249K','$250K+'],
+        pct:   [12, 13, 18, 12, 37, 6, 2] },
+      { key: 'children',  label: 'Presence of Children', icon: 'child_care',    buckets: 2, kind: 'donut',
+        cats:  ['No','Yes'],
+        pct:   [69, 31] },
+      { key: 'hhsize',    label: 'Household Size',       icon: 'group',         buckets: 9, kind: 'bar',
+        cats:  ['1','2','3','4','5','6','7','8','9'],
+        pct:   [32, 21, 14, 13, 10, 6, 3, 1, 0] },
+      { key: 'homeowner', label: 'Homeowner Status',     icon: 'home',          buckets: 2, kind: 'donut',
+        cats:  ['Homeowner','Renter'],
+        pct:   [69, 31] },
+      { key: 'networth',  label: 'Net Worth',            icon: 'savings',       buckets: 5, kind: 'bar',
+        cats:  ['$1-$4K','$5-$24K','$25-$99K','$100-$499K','$500K+'],
+        pct:   [33, 8, 21, 28, 10] },
+      { key: 'marital',   label: 'Marital Status',       icon: 'favorite',      buckets: 2, kind: 'donut',
+        cats:  ['Married','Single'],
+        pct:   [57, 43] }
+    ];
+    var TOTAL_VISITORS = 10822;
+    // Color rotations
+    var BAR_PALETTE   = ['#3b82f6','#f97316','#22c55e','#06b6d4','#f59e0b','#a855f7','#ec4899','#10b981','#64748b'];
+    var DONUT_PALETTE = ['#3b82f6','#f97316','#22c55e'];
+
+    function fmtNum(n) { return n.toLocaleString('en-US'); }
+    function visitorsFor(pct) { return Math.round(TOTAL_VISITORS * pct / 100); }
+
+    // ── Tab switcher ─────────────────────────────────────────────
+    function initTabs() {
+      var tabs  = document.querySelectorAll('#od-perf-tabs .perf-tab');
+      var panes = document.querySelectorAll('.perf-tab-pane[data-od-pane]');
+      tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          var target = tab.dataset.odTab;
+          tabs.forEach(function (t) {
+            var on = t === tab;
+            t.classList.toggle('active', on);
+            t.setAttribute('aria-selected', String(on));
+          });
+          panes.forEach(function (p) {
+            p.classList.toggle('active', p.dataset.odPane === target);
+          });
+          // Resize ECharts when entering pane (built while hidden)
+          if (target === 'store' && window._odStoreChart) window._odStoreChart.resize();
+          if (target === 'trend' && window._odTrendChart) window._odTrendChart.resize();
+        });
+      });
+    }
+
+    // ── Current pane: 8 widgets, alternating bars + donuts ───────
+    // Per 05/19 PDF page 9: 2-col grid, mix bars & donuts so we
+    // don't cluster all bars on one side, all donuts on the other.
+    function renderCurrent() {
+      var grid = document.getElementById('od-grid');
+      if (!grid) return;
+      // Alternate columns: left starts bar, right starts donut,
+      // each col continues to alternate.
+      var leftOrder  = ['age', 'gender',   'income', 'children'];
+      var rightOrder = ['hhsize', 'marital', 'networth', 'homeowner'];
+      var order = [];
+      for (var i = 0; i < 4; i++) {
+        order.push(DIMENSIONS.find(function (d) { return d.key === leftOrder[i]; }));
+        order.push(DIMENSIONS.find(function (d) { return d.key === rightOrder[i]; }));
+      }
+      grid.innerHTML = order.map(function (dim) {
+        return '<div class="od-card od-card--' + dim.kind + '" data-dim="' + dim.key + '">' +
+          '<div class="od-card__head">' +
+            '<span class="material-symbols-outlined od-card__icon">' + dim.icon + '</span>' +
+            '<span class="od-card__title">' + dim.label.toUpperCase() + '</span>' +
+            '<span class="od-card__sub">' + dim.buckets + ' bucket' + (dim.buckets === 1 ? '' : 's') + '</span>' +
+          '</div>' +
+          '<div class="od-card__body" id="od-card-' + dim.key + '"></div>' +
+        '</div>';
+      }).join('');
+      // Now render each widget into its body
+      order.forEach(function (dim) {
+        if (dim.kind === 'bar') renderBarsWidget(dim);
+        else                    renderDonutWidget(dim);
+      });
+    }
+
+    function renderBarsWidget(dim) {
+      var el = document.getElementById('od-card-' + dim.key);
+      if (!el) return;
+      var max = Math.max.apply(null, dim.pct);
+      el.innerHTML = '<ol class="od-barlist">' +
+        dim.cats.map(function (label, i) {
+          var p = dim.pct[i];
+          var w = max ? (p / max) * 100 : 0;
+          var visitors = visitorsFor(p);
+          var perfRows = [
+            { name: dim.label + ': ' + label, val: p + '%' },
+            { name: 'Visitors',               val: fmtNum(visitors) }
+          ];
+          var rowsAttr  = JSON.stringify(perfRows).replace(/"/g, '&quot;');
+          var totalAttr = JSON.stringify({ label: 'Total Profile', val: fmtNum(TOTAL_VISITORS) }).replace(/"/g, '&quot;');
+          return '<li class="od-barlist__row" data-perf-hover' +
+              ' data-perf-title="' + dim.label + ' · ' + label + '"' +
+              ' data-perf-rows="' + rowsAttr + '"' +
+              ' data-perf-total="' + totalAttr + '"' +
+              ' data-perf-color="' + BAR_PALETTE[i % BAR_PALETTE.length] + '">' +
+            '<span class="od-barlist__label">' + label + '</span>' +
+            '<span class="od-barlist__track"><span class="od-barlist__fill" style="width:' + w.toFixed(1) + '%; background:' + BAR_PALETTE[i % BAR_PALETTE.length] + ';"></span></span>' +
+            '<span class="od-barlist__pct"><strong>' + p + '%</strong></span>' +
+            '<span class="od-barlist__count">' + fmtNum(visitors) + '</span>' +
+          '</li>';
+        }).join('') +
+      '</ol>';
+    }
+
+    function renderDonutWidget(dim) {
+      var el = document.getElementById('od-card-' + dim.key);
+      if (!el || typeof echarts === 'undefined') return;
+      var holder = document.createElement('div');
+      holder.style.height = '180px';
+      holder.style.position = 'relative';
+      el.innerHTML = '';
+      el.appendChild(holder);
+
+      var chart = echarts.init(holder);
+      var data = dim.cats.map(function (label, i) {
+        return {
+          name: label,
+          value: dim.pct[i],
+          itemStyle: { color: DONUT_PALETTE[i % DONUT_PALETTE.length] }
+        };
+      });
+      chart.setOption({
+        tooltip: {
+          trigger: 'item',
+          backgroundColor: '#1f2937',
+          borderColor: 'rgba(255,255,255,0.08)',
+          borderWidth: 1,
+          padding: [10, 12],
+          textStyle: { color: '#fff', fontFamily: 'inherit', fontSize: 12 },
+          formatter: function (p) {
+            var visitors = visitorsFor(p.value);
+            return '<div style="font-weight:700; font-size:13px; color:#fff; margin-bottom:6px;">' + dim.label + ' · ' + p.name + '</div>' +
+              '<div style="display:flex; gap:10px; min-width:200px;"><span style="flex:1; color:rgba(255,255,255,0.9);">Share</span><span style="font-weight:600; color:#fff; font-variant-numeric:tabular-nums;">' + p.value + '%</span></div>' +
+              '<div style="display:flex; gap:10px; min-width:200px; margin-top:2px;"><span style="flex:1; color:rgba(255,255,255,0.9);">Visitors</span><span style="font-weight:600; color:#fff; font-variant-numeric:tabular-nums;">' + fmtNum(visitors) + '</span></div>';
+          }
+        },
+        series: [{
+          type: 'pie',
+          radius: ['55%', '78%'],
+          center: ['50%', '45%'],
+          avoidLabelOverlap: false,
+          label: { show: false },
+          labelLine: { show: false },
+          data: data
+        }]
+      });
+      // Center label
+      var center = document.createElement('div');
+      center.className = 'od-donut__center';
+      center.innerHTML =
+        '<div class="od-donut__pct">' + dim.pct[0] + '%</div>' +
+        '<div class="od-donut__label">' + dim.cats[0] + '</div>';
+      holder.appendChild(center);
+
+      // Build a manual legend below the donut
+      var legend = document.createElement('div');
+      legend.className = 'od-donut__legend';
+      legend.innerHTML = dim.cats.map(function (label, i) {
+        return '<span class="od-donut__legend-item">' +
+          '<span class="od-donut__legend-dot" style="background:' + DONUT_PALETTE[i % DONUT_PALETTE.length] + ';"></span>' +
+          label + ' · ' + dim.pct[i] + '%' +
+        '</span>';
+      }).join('');
+      el.appendChild(legend);
+    }
+
+    // ── Tile-row selector (shared by By Store + Time Trend) ──────
+    function renderTileRow(rowId, currentKey, onSelect) {
+      var row = document.getElementById(rowId);
+      if (!row) return;
+      row.innerHTML = DIMENSIONS.map(function (d) {
+        var active = d.key === currentKey ? ' is-active' : '';
+        return '<button type="button" class="od-tile' + active + '" data-od-dim="' + d.key + '" role="tab" aria-selected="' + (d.key === currentKey) + '">' +
+          '<span class="material-symbols-outlined od-tile__icon">' + d.icon + '</span>' +
+          '<span class="od-tile__label">' + d.label + '</span>' +
+          '<span class="od-tile__sub">' + d.buckets + ' buckets</span>' +
+        '</button>';
+      }).join('');
+      row.querySelectorAll('.od-tile').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          row.querySelectorAll('.od-tile').forEach(function (b) {
+            b.classList.remove('is-active');
+            b.setAttribute('aria-selected', 'false');
+          });
+          btn.classList.add('is-active');
+          btn.setAttribute('aria-selected', 'true');
+          onSelect(btn.dataset.odDim);
+        });
+      });
+    }
+
+    // ── By Store pane (100%-stacked horizontal bars per store) ──
+    var STORES = [
+      'WinnDixie 481','WinnDixie 436','WinnDixie 123','WinnDixie 726',
+      'WinnDixie 711','WinnDixie 2437','WinnDixie 493','WinnDixie 2288',
+      'WinnDixie 349','WinnDixie 381','WinnDixie 2448','WinnDixie 2269'
+    ];
+    var currentStoreDim = 'age';
+
+    function jitterPct(basePct, jitter) {
+      // Vary each bucket by ±jitter, re-normalize to sum=100.
+      var raw = basePct.map(function (p) { return Math.max(0, p + (Math.random() * 2 - 1) * jitter); });
+      var sum = raw.reduce(function (a, b) { return a + b; }, 0);
+      return raw.map(function (v) { return +(v / sum * 100).toFixed(1); });
+    }
+
+    function renderStoreChart(dimKey) {
+      if (typeof echarts === 'undefined') return;
+      var dim = DIMENSIONS.find(function (d) { return d.key === dimKey; });
+      var el = document.getElementById('od-store-chart');
+      if (!dim || !el) return;
+      if (!window._odStoreChart) window._odStoreChart = echarts.init(el);
+      // Build per-store buckets with mild jitter so stores differ
+      var storeBuckets = STORES.map(function () { return jitterPct(dim.pct, 6); });
+      var series = dim.cats.map(function (cat, ci) {
+        return {
+          name: cat,
+          type: 'bar',
+          stack: 'composition',
+          data: storeBuckets.map(function (row) { return row[ci]; }),
+          itemStyle: { color: BAR_PALETTE[ci % BAR_PALETTE.length] }
+        };
+      });
+      window._odStoreChart.setOption({
+        grid: { left: 120, right: 24, top: 24, bottom: 40 },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { type: 'shadow' },
+          backgroundColor: '#1f2937',
+          borderColor: 'rgba(255,255,255,0.08)',
+          borderWidth: 1,
+          padding: [10, 12],
+          textStyle: { color: '#fff', fontFamily: 'inherit', fontSize: 12 },
+          formatter: function (params) {
+            var html = '<div style="font-weight:700; font-size:13px; color:#fff; margin-bottom:6px;">' + params[0].name + '<br>' + dim.label + '</div>';
+            params.forEach(function (p) {
+              html += '<div style="display:flex; align-items:center; gap:10px; min-width:220px; margin-top:2px;">' +
+                '<span style="display:inline-block; width:8px; height:8px; border-radius:2px; background:' + p.color + ';"></span>' +
+                '<span style="flex:1; color:rgba(255,255,255,0.9);">' + p.seriesName + '</span>' +
+                '<span style="font-weight:600; font-variant-numeric:tabular-nums; color:#fff;">' + p.value.toFixed(1) + '%</span>' +
+                '</div>';
+            });
+            return html;
+          }
+        },
+        legend: { bottom: 0, textStyle: { color: '#6b7280', fontSize: 11 }, itemWidth: 10, itemHeight: 10 },
+        xAxis: {
+          type: 'value', max: 100,
+          axisLabel: { color: '#6b7280', fontSize: 11, formatter: '{value}%' },
+          splitLine: { lineStyle: { color: '#f3f4f6' } }
+        },
+        yAxis: {
+          type: 'category',
+          data: STORES,
+          axisLabel: { color: '#374151', fontSize: 12 },
+          axisLine: { lineStyle: { color: '#e5e7eb' } }
+        },
+        series: series
+      }, true);
+    }
+
+    // ── Time Trend pane (stacked column by week) ─────────────────
+    var currentTrendDim = 'age';
+    var trendRange = '13w';
+
+    function renderTrendChart() {
+      if (typeof echarts === 'undefined') return;
+      var dim = DIMENSIONS.find(function (d) { return d.key === currentTrendDim; });
+      var el = document.getElementById('od-trend-chart');
+      if (!dim || !el) return;
+      if (!window._odTrendChart) window._odTrendChart = echarts.init(el);
+      var n = trendRange === '4w' ? 4 : trendRange === '8w' ? 8 : 13;
+      var weeks = [];
+      for (var w = n; w >= 1; w--) weeks.push('Wk ' + (21 - w));
+      // Slight week-over-week jitter
+      var weekBuckets = weeks.map(function () { return jitterPct(dim.pct, 4); });
+      var series = dim.cats.map(function (cat, ci) {
+        return {
+          name: cat,
+          type: 'bar',
+          stack: 'composition',
+          data: weekBuckets.map(function (row) { return row[ci]; }),
+          itemStyle: { color: BAR_PALETTE[ci % BAR_PALETTE.length] }
+        };
+      });
+      window._odTrendChart.setOption({
+        grid: { left: 56, right: 24, top: 24, bottom: 48 },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { type: 'shadow' },
+          backgroundColor: '#1f2937',
+          borderColor: 'rgba(255,255,255,0.08)',
+          borderWidth: 1,
+          padding: [10, 12],
+          textStyle: { color: '#fff', fontFamily: 'inherit', fontSize: 12 },
+          formatter: function (params) {
+            var html = '<div style="font-weight:700; font-size:13px; color:#fff; margin-bottom:6px;">' + params[0].name + ' · ' + dim.label + '</div>';
+            params.forEach(function (p) {
+              html += '<div style="display:flex; align-items:center; gap:10px; min-width:220px; margin-top:2px;">' +
+                '<span style="display:inline-block; width:8px; height:8px; border-radius:2px; background:' + p.color + ';"></span>' +
+                '<span style="flex:1; color:rgba(255,255,255,0.9);">' + p.seriesName + '</span>' +
+                '<span style="font-weight:600; font-variant-numeric:tabular-nums; color:#fff;">' + p.value.toFixed(1) + '%</span>' +
+                '</div>';
+            });
+            return html;
+          }
+        },
+        legend: { bottom: 0, textStyle: { color: '#6b7280', fontSize: 11 }, itemWidth: 10, itemHeight: 10 },
+        xAxis: {
+          type: 'category', data: weeks,
+          axisLabel: { color: '#6b7280', fontSize: 11 },
+          axisLine: { lineStyle: { color: '#e5e7eb' } }
+        },
+        yAxis: {
+          type: 'value', max: 100,
+          axisLabel: { color: '#6b7280', fontSize: 11, formatter: '{value}%' },
+          splitLine: { lineStyle: { color: '#f3f4f6' } }
+        },
+        series: series
+      }, true);
+    }
+
+    function initTrendRanges() {
+      document.querySelectorAll('#od-trend-ranges .duration-preset').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          document.querySelectorAll('#od-trend-ranges .duration-preset').forEach(function (b) { b.classList.remove('duration-preset--active'); });
+          btn.classList.add('duration-preset--active');
+          trendRange = btn.dataset.odRange;
+          renderTrendChart();
+        });
+      });
+    }
+
+    // ── Dark hover tooltip (for Current pane bar rows) ───────────
+    function ensureDarkTooltip() {
+      var t = document.getElementById('od-dark-tooltip');
+      if (t) return t;
+      t = document.createElement('div');
+      t.id = 'od-dark-tooltip';
+      t.className = 'ov-tooltip ov-tooltip--dark';
+      document.body.appendChild(t);
+      return t;
+    }
+    function positionTooltip(e, tip) {
+      var rect = tip.getBoundingClientRect();
+      var x = e.clientX + 14, y = e.clientY + 14;
+      if (x + rect.width  > window.innerWidth  - 8) x = e.clientX - rect.width  - 14;
+      if (y + rect.height > window.innerHeight - 8) y = e.clientY - rect.height - 14;
+      tip.style.left = x + 'px';
+      tip.style.top  = y + 'px';
+    }
+    function buildTooltipHTML(el) {
+      var title = el.getAttribute('data-perf-title') || '';
+      var rows  = JSON.parse(el.getAttribute('data-perf-rows') || '[]');
+      var total = JSON.parse(el.getAttribute('data-perf-total') || '{}');
+      var color = el.getAttribute('data-perf-color') || '#94a3b8';
+      var rowsHtml = rows.map(function (r, i) {
+        return '<div class="ov-tooltip__row">' +
+          (i === 0 ? '<span class="ov-tooltip__dot" style="background:' + color + ';"></span>' : '<span class="ov-tooltip__dot" style="background:transparent;"></span>') +
+          '<span class="ov-tooltip__name">' + r.name + '</span>' +
+          '<span class="ov-tooltip__val">' + r.val + '</span>' +
+        '</div>';
+      }).join('');
+      var totalRow = total && total.label ? (
+        '<div class="ov-tooltip__total">' +
+          '<span class="ov-tooltip__name">' + total.label + '</span>' +
+          '<span class="ov-tooltip__val">' + total.val + '</span>' +
+        '</div>'
+      ) : '';
+      return '<div class="ov-tooltip__title">' + title + '</div>' + rowsHtml + totalRow;
+    }
+    function initHoverDelegate() {
+      var current = null;
+      document.addEventListener('mouseover', function (e) {
+        var el = e.target.closest('[data-perf-hover]');
+        if (el === current) return;
+        var tip = ensureDarkTooltip();
+        if (current) tip.classList.remove('ov-tooltip--visible');
+        current = el;
+        if (!el) return;
+        tip.innerHTML = buildTooltipHTML(el);
+        tip.classList.add('ov-tooltip--visible');
+        positionTooltip(e, tip);
+      });
+      document.addEventListener('mousemove', function (e) {
+        if (current) positionTooltip(e, ensureDarkTooltip());
+      });
+      document.addEventListener('mouseout', function (e) {
+        if (!current) return;
+        var rel = e.relatedTarget;
+        if (rel && current.contains(rel)) return;
+        ensureDarkTooltip().classList.remove('ov-tooltip--visible');
+        current = null;
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      initTabs();
+      renderCurrent();
+      renderTileRow('od-tile-row-store', currentStoreDim, function (dim) {
+        currentStoreDim = dim;
+        renderStoreChart(dim);
+      });
+      renderStoreChart(currentStoreDim);
+      renderTileRow('od-tile-row-trend', currentTrendDim, function (dim) {
+        currentTrendDim = dim;
+        renderTrendChart();
+      });
+      renderTrendChart();
+      initTrendRanges();
+      initHoverDelegate();
+      window.addEventListener('resize', function () {
+        if (window._odStoreChart) window._odStoreChart.resize();
+        if (window._odTrendChart) window._odTrendChart.resize();
+      });
+    });
   })();
   </script>
 

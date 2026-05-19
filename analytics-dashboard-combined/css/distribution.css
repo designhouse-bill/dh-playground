@@ -5277,3 +5277,68 @@ body[data-dist-page] .narrative-header__title {
   gap: var(--space-3, 0.75rem);
   flex-wrap: wrap;
 }
+
+/* ── Dark hover tooltip (mirrors canonical .ep-perf-tooltip--dark) ── */
+.ov-tooltip {
+  position: fixed;
+  z-index: 9999;
+  min-width: 220px;
+  max-width: 320px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+  pointer-events: none;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+  display: none;
+}
+.ov-tooltip--visible { display: block; }
+.ov-tooltip--dark    { background: #1f2937; color: #fff; }
+
+.ov-tooltip__title {
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 8px;
+  color: #fff;
+}
+.ov-tooltip__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 2px;
+}
+.ov-tooltip__row + .ov-tooltip__row { margin-top: 4px; }
+.ov-tooltip__dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.ov-tooltip__name  { flex: 1; color: rgba(255, 255, 255, 0.9); }
+.ov-tooltip__score {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.ov-tooltip__val {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+}
+.ov-tooltip__total {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  font-weight: 700;
+}
+.ov-tooltip__total .ov-tooltip__name { color: #fff; }
+
+/* Hover cue on store row */
+.ov-store-row[data-perf-hover] { cursor: default; }
+.ov-store-row[data-perf-hover]:hover .ov-store-bar__track {
+  box-shadow: 0 0 0 1px rgba(33, 150, 243, 0.35);
+}

@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="css/header.css?v=5">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/distribution.css?v=33">
+  <link rel="stylesheet" href="css/distribution.css?v=34">
 </head>
 <body data-dist-page="visitation">
 
@@ -377,13 +377,25 @@
                           (activeSeries.returning ? r.returning : 0) +
                           (activeSeries.loyal ? r.loyal : 0);
         var w = (totalActive / maxVisits) * 100;
-        var pctNew = (totalActive ? r.new / totalActive : 0);
         var newPctOfStore = r.new / r.visits;
         var segs = '';
         if (activeSeries.new)       segs += '<span class="ov-seg" style="width:' + ((r.new       / totalActive) * 100).toFixed(1) + '%; background:' + COLORS.new       + ';"></span>';
         if (activeSeries.returning) segs += '<span class="ov-seg" style="width:' + ((r.returning / totalActive) * 100).toFixed(1) + '%; background:' + COLORS.returning + ';"></span>';
         if (activeSeries.loyal)     segs += '<span class="ov-seg" style="width:' + ((r.loyal     / totalActive) * 100).toFixed(1) + '%; background:' + COLORS.loyal     + ';"></span>';
-        return '<div class="ov-store-row">' +
+        // data-perf-* attributes drive canonical dark hover tooltip
+        var perfTitle = r.store + ' · Wk 2 (Jan 7 – 13, 2026)';
+        var perfRows = [
+          { dot: 'new',       name: 'New',       val: fmtNum(r.new),       score: ((r.new       / r.visits) * 100).toFixed(0) + '%' },
+          { dot: 'returning', name: 'Returning', val: fmtNum(r.returning), score: ((r.returning / r.visits) * 100).toFixed(0) + '%' },
+          { dot: 'loyal',     name: 'Loyal',     val: fmtNum(r.loyal),     score: ((r.loyal     / r.visits) * 100).toFixed(0) + '%' }
+        ];
+        var perfTotal = { label: 'Total Visits', val: fmtNum(r.visits) };
+        var rowsAttr  = JSON.stringify(perfRows).replace(/"/g, '&quot;');
+        var totalAttr = JSON.stringify(perfTotal).replace(/"/g, '&quot;');
+        return '<div class="ov-store-row" data-perf-hover' +
+            ' data-perf-title="' + perfTitle + '"' +
+            ' data-perf-rows="' + rowsAttr + '"' +
+            ' data-perf-total="' + totalAttr + '">' +
           '<div class="ov-store-rank">' + r.rank + '</div>' +
           '<div class="ov-store-meta"><div class="ov-store-name">' + r.store + '</div>' +
             '<div class="ov-store-sub">' + fmtPct(newPctOfStore) + ' new</div></div>' +
@@ -391,6 +403,75 @@
           '<div class="ov-store-visits">' + fmtNum(r.visits) + '</div>' +
         '</div>';
       }).join('');
+    }
+
+    // ── Dark hover tooltip (mirrors canonical .ep-perf-tooltip--dark) ─
+    // Self-contained: canonical-shell-renderers.js isn't loaded on this
+    // page. Markup matches engagement-canonical pattern so style is
+    // consistent across analytics dashboard charts.
+    function ensureDarkTooltip() {
+      var t = document.getElementById('ov-dark-tooltip');
+      if (t) return t;
+      t = document.createElement('div');
+      t.id = 'ov-dark-tooltip';
+      t.className = 'ov-tooltip ov-tooltip--dark';
+      document.body.appendChild(t);
+      return t;
+    }
+    function positionTooltip(e, tip) {
+      var rect = tip.getBoundingClientRect();
+      var x = e.clientX + 14, y = e.clientY + 14;
+      if (x + rect.width  > window.innerWidth  - 8) x = e.clientX - rect.width  - 14;
+      if (y + rect.height > window.innerHeight - 8) y = e.clientY - rect.height - 14;
+      tip.style.left = x + 'px';
+      tip.style.top  = y + 'px';
+    }
+    function buildTooltipHTML(el) {
+      var title = el.getAttribute('data-perf-title') || '';
+      var rows  = JSON.parse(el.getAttribute('data-perf-rows') || '[]');
+      var total = JSON.parse(el.getAttribute('data-perf-total') || '{}');
+      var dotMap = { new: COLORS.new, returning: COLORS.returning, loyal: COLORS.loyal };
+      var rowsHtml = rows.map(function (r) {
+        var dot = dotMap[r.dot] || '#94a3b8';
+        var score = r.score ? '<span class="ov-tooltip__score">' + r.score + '</span>' : '';
+        return '<div class="ov-tooltip__row">' +
+          '<span class="ov-tooltip__dot" style="background:' + dot + ';"></span>' +
+          '<span class="ov-tooltip__name">' + r.name + '</span>' +
+          score +
+          '<span class="ov-tooltip__val">' + r.val + '</span>' +
+        '</div>';
+      }).join('');
+      var totalRow = total && total.label ? (
+        '<div class="ov-tooltip__total">' +
+          '<span class="ov-tooltip__name">' + total.label + '</span>' +
+          '<span class="ov-tooltip__val">' + total.val + '</span>' +
+        '</div>'
+      ) : '';
+      return '<div class="ov-tooltip__title">' + title + '</div>' + rowsHtml + totalRow;
+    }
+    function initHoverDelegate() {
+      var current = null;
+      document.addEventListener('mouseover', function (e) {
+        var el = e.target.closest('[data-perf-hover]');
+        if (el === current) return;
+        var tip = ensureDarkTooltip();
+        if (current) tip.classList.remove('ov-tooltip--visible');
+        current = el;
+        if (!el) return;
+        tip.innerHTML = buildTooltipHTML(el);
+        tip.classList.add('ov-tooltip--visible');
+        positionTooltip(e, tip);
+      });
+      document.addEventListener('mousemove', function (e) {
+        if (current) positionTooltip(e, ensureDarkTooltip());
+      });
+      document.addEventListener('mouseout', function (e) {
+        if (!current) return;
+        var rel = e.relatedTarget;
+        if (rel && current.contains(rel)) return;
+        ensureDarkTooltip().classList.remove('ov-tooltip--visible');
+        current = null;
+      });
     }
 
     function initStoreLegend() {
@@ -440,7 +521,34 @@
       window._ovTrendChart.setOption({
         grid: { left: 56, right: 24, top: 24, bottom: 48 },
         legend: { show: false },
-        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { type: 'shadow' },
+          backgroundColor: '#ffffff',
+          borderColor: '#e5e7eb',
+          borderWidth: 1,
+          padding: [10, 12],
+          textStyle: { color: '#0f172a', fontFamily: 'inherit', fontSize: 12 },
+          formatter: function (params) {
+            var html = '<div style="font-weight:700; margin-bottom:6px; font-size:13px;">' + params[0].name + '</div>';
+            var total = 0;
+            params.forEach(function (p) { total += p.value; });
+            params.forEach(function (p) {
+              var pct = total ? ((p.value / total) * 100).toFixed(0) + '%' : '0%';
+              html += '<div style="display:flex; align-items:center; gap:10px; min-width:200px; margin-top:2px;">' +
+                '<span style="display:inline-block; width:8px; height:8px; border-radius:2px; background:' + p.color + ';"></span>' +
+                '<span style="flex:1;">' + p.seriesName + '</span>' +
+                '<span style="color:#6b7280; font-size:11px;">' + pct + '</span>' +
+                '<span style="font-weight:600; font-variant-numeric:tabular-nums;">' + p.value.toLocaleString() + '</span>' +
+                '</div>';
+            });
+            html += '<div style="display:flex; align-items:center; gap:10px; margin-top:8px; padding-top:6px; border-top:1px solid #e5e7eb;">' +
+              '<span style="flex:1; font-weight:700;">Total Visits</span>' +
+              '<span style="font-weight:700; font-variant-numeric:tabular-nums;">' + total.toLocaleString() + '</span>' +
+              '</div>';
+            return html;
+          }
+        },
         xAxis: {
           type: 'category',
           data: trendData.map(function (d) { return d.label; }),
@@ -524,7 +632,26 @@
       });
       return {
         grid: { left: 56, right: 24, top: 24, bottom: 56 },
-        tooltip: { trigger: 'axis' },
+        tooltip: {
+          trigger: 'axis',
+          backgroundColor: '#ffffff',
+          borderColor: '#e5e7eb',
+          borderWidth: 1,
+          padding: [10, 12],
+          textStyle: { color: '#0f172a', fontFamily: 'inherit', fontSize: 12 },
+          formatter: function (params) {
+            var html = '<div style="font-weight:700; margin-bottom:6px; font-size:13px;">' + params[0].name + '</div>';
+            var suffix = compMetricMode === 'share' ? '%' : '';
+            params.forEach(function (p) {
+              html += '<div style="display:flex; align-items:center; gap:10px; min-width:220px; margin-top:2px;">' +
+                '<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:' + p.color + ';"></span>' +
+                '<span style="flex:1;">' + p.seriesName + '</span>' +
+                '<span style="font-weight:600; font-variant-numeric:tabular-nums;">' + p.value.toLocaleString() + suffix + '</span>' +
+                '</div>';
+            });
+            return html;
+          }
+        },
         legend: { bottom: 0, textStyle: { color: '#6b7280', fontSize: 11 },
                   itemWidth: 10, itemHeight: 10 },
         xAxis: { type: 'category', data: compWeeks,
@@ -606,6 +733,7 @@
       initTabs();
       renderStoreList();
       initStoreLegend();
+      initHoverDelegate();
       renderTrendChart();
       initTrendRanges();
       renderCompChart();

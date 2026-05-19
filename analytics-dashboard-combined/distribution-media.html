@@ -512,10 +512,16 @@
     }
 
     // ── Time trend — 3-series line, CTR on secondary axis ────────
+    // Internally consistent: clicks = impressions × ctr/100.
+    // With real ratios, Clicks plots tiny vs Impressions on the
+    // primary Volume axis — that's the truth. CTR rides the
+    // secondary "Rate" axis (0–6%) per 05/19 PDF page 5.
     var trendWeeks = ['Week 40','Week 41','Week 42','Week 43','Week 44','Week 45','Week 46','Week 47','Week 48','Week 49','Week 50','Week 51','Week 52'];
     var trendImpressions = [380000,378000,392000,385000,388000,390000,395000,400000,396000,300000,360000,355000,360000];
-    var trendClicks      = [350000,340000,355000,348000,352000,345000,350000,355000,360000,340000,355000,355000,360000];
     var trendCtr         = [0.85,0.86,0.88,0.87,0.88,0.89,0.90,0.91,0.92,0.94,0.93,0.92,0.92];
+    var trendClicks      = trendImpressions.map(function (imp, i) {
+      return Math.round(imp * trendCtr[i] / 100);
+    });
 
     var activeSeries = { impressions: true, clicks: true, ctr: true };
 

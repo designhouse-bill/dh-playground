@@ -6180,3 +6180,51 @@ body:not(.comparison-active) .detail-comparison {
 }
 
 }
+
+/* ════════════════════════════════════════════════════════════════
+   Phase 3a (UX-846): Total Users by Store widget
+   Replaces legacy "Total Users" New/Returning/Engaged stack per
+   Max 05/14 + Gemini decision (GA can't reconcile N/R/E).
+   ════════════════════════════════════════════════════════════════ */
+.ep-users-by-store {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+.ep-users-by-store__row {
+  display: grid;
+  grid-template-columns: 110px 1fr 56px;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.75rem;
+  color: #374151;
+  padding: 2px 0;
+}
+.ep-users-by-store__row:hover { background: rgba(33, 150, 243, 0.04); border-radius: 4px; }
+.ep-users-by-store__name {
+  color: #6b7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ep-users-by-store__track {
+  position: relative;
+  height: 8px;
+  background: #f3f4f6;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.ep-users-by-store__fill {
+  display: block;
+  height: 100%;
+  background: var(--series-v, #2196F3);
+  border-radius: 4px;
+}
+.ep-users-by-store__val {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: #1f2937;
+  font-weight: 600;
+}

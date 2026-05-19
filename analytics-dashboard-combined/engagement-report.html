@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="css/header.css?v=5">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/engagement.css?v=11">
+  <link rel="stylesheet" href="css/engagement.css?v=12">
   <!-- Pulled in for perf-tabs / creative-chips / stat-strip / section-panel-header rules -->
   <link rel="stylesheet" href="css/distribution.css">
   <link rel="stylesheet" href="css/engagement-canonical.css?v=10">
@@ -235,13 +235,16 @@
             <span class="ep-kpi-cell__view">Open Performance Score <span class="material-symbols-outlined">chevron_right</span></span>
           </a>
 
+          <!-- Phase 3a (UX-846): replaced legacy "Total Users (N/R/E split)"
+               with "Total Users by Store" per Max 05/14 + Gemini decision.
+               GA can't reconcile N/R/E for this widget — slice by store. -->
           <a class="ep-kpi-cell ep-kpi-cell--equal" href="engagement-report.html?tab=users" data-jump-to="users">
             <div class="ep-kpi-cell__head">
               <div class="ep-kpi-cell__title">
-                <h3 class="ep-kpi-cell__story">Total Users</h3>
+                <h3 class="ep-kpi-cell__story">Total Users by Store</h3>
               </div>
               <div>
-                <div class="ep-kpi-cell__metric">New + Returning + Engaged · Week 47</div>
+                <div class="ep-kpi-cell__metric">Total · Week 47 · top stores</div>
               </div>
               <div style="text-align:right;">
                 <div class="ep-kpi-cell__value">12,460</div>
@@ -249,14 +252,33 @@
               </div>
             </div>
             <div class="ep-kpi-cell__chart">
-              <div class="ep-mini-stack">
-                <div class="ep-mini-stack__bar">
-                  <div class="ep-mini-stack__seg ep-mini-stack__seg--n" data-perf-hover data-perf-title="Total Users · Week 47" data-perf-rows='[{"dot":"n","name":"New","val":"4,610","score":"37%"}]' style="width:37%"></div>
-                  <div class="ep-mini-stack__seg ep-mini-stack__seg--r" data-perf-hover data-perf-title="Total Users · Week 47" data-perf-rows='[{"dot":"r","name":"Returning","val":"5,230","score":"42%"}]' style="width:42%"></div>
-                  <div class="ep-mini-stack__seg ep-mini-stack__seg--e" data-perf-hover data-perf-title="Total Users · Week 47" data-perf-rows='[{"dot":"e","name":"Engaged","val":"2,620","score":"21%"}]' style="width:21%"></div>
-                </div>
-                <div class="ep-mini-stack__legend"><span class="ep-mini-stack__lbl ep-mini-stack__lbl--n">New</span><span class="ep-mini-stack__lbl ep-mini-stack__lbl--r">Returning</span><span class="ep-mini-stack__lbl ep-mini-stack__lbl--e">Engaged</span></div>
-              </div>
+              <ol class="ep-users-by-store">
+                <li class="ep-users-by-store__row" data-perf-hover data-perf-title="WinnDixie 481 · Week 47" data-perf-rows='[{"name":"Users","val":"1,524"}]' data-perf-total='{"label":"Total Users","val":"12,460"}'>
+                  <span class="ep-users-by-store__name">WinnDixie 481</span>
+                  <span class="ep-users-by-store__track"><span class="ep-users-by-store__fill" style="width:100%;"></span></span>
+                  <span class="ep-users-by-store__val">1,524</span>
+                </li>
+                <li class="ep-users-by-store__row" data-perf-hover data-perf-title="WinnDixie 436 · Week 47" data-perf-rows='[{"name":"Users","val":"1,218"}]' data-perf-total='{"label":"Total Users","val":"12,460"}'>
+                  <span class="ep-users-by-store__name">WinnDixie 436</span>
+                  <span class="ep-users-by-store__track"><span class="ep-users-by-store__fill" style="width:80%;"></span></span>
+                  <span class="ep-users-by-store__val">1,218</span>
+                </li>
+                <li class="ep-users-by-store__row" data-perf-hover data-perf-title="WinnDixie 123 · Week 47" data-perf-rows='[{"name":"Users","val":"924"}]' data-perf-total='{"label":"Total Users","val":"12,460"}'>
+                  <span class="ep-users-by-store__name">WinnDixie 123</span>
+                  <span class="ep-users-by-store__track"><span class="ep-users-by-store__fill" style="width:61%;"></span></span>
+                  <span class="ep-users-by-store__val">924</span>
+                </li>
+                <li class="ep-users-by-store__row" data-perf-hover data-perf-title="WinnDixie 726 · Week 47" data-perf-rows='[{"name":"Users","val":"748"}]' data-perf-total='{"label":"Total Users","val":"12,460"}'>
+                  <span class="ep-users-by-store__name">WinnDixie 726</span>
+                  <span class="ep-users-by-store__track"><span class="ep-users-by-store__fill" style="width:49%;"></span></span>
+                  <span class="ep-users-by-store__val">748</span>
+                </li>
+                <li class="ep-users-by-store__row" data-perf-hover data-perf-title="WinnDixie 711 · Week 47" data-perf-rows='[{"name":"Users","val":"604"}]' data-perf-total='{"label":"Total Users","val":"12,460"}'>
+                  <span class="ep-users-by-store__name">WinnDixie 711</span>
+                  <span class="ep-users-by-store__track"><span class="ep-users-by-store__fill" style="width:40%;"></span></span>
+                  <span class="ep-users-by-store__val">604</span>
+                </li>
+              </ol>
             </div>
             <span class="ep-kpi-cell__view">Open Total Users <span class="material-symbols-outlined">chevron_right</span></span>
           </a>

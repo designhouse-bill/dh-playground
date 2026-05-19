@@ -4971,3 +4971,24 @@ body[data-dist-page] .narrative-header__title {
 .overview-bar-list--age .ovbar { grid-template-columns: 60px 1fr auto; }
 
 .overview-chart { width: 100%; }
+
+/* Stub placeholder block (Phase 1d not yet built) */
+.dh-stub {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-8, 2rem);
+  background: #fff;
+  border: 1px dashed var(--color-border, #e5e7eb);
+  border-radius: 12px;
+  margin-top: var(--space-4, 1rem);
+  color: #6b7280;
+  min-height: 240px;
+}
+.dh-stub__icon { font-size: 40px; color: #9ca3af; margin-bottom: var(--space-3, 0.75rem); }
+.dh-stub__title { margin: 0 0 var(--space-2, 0.5rem); color: #1f2937; font-size: 1.125rem; font-weight: 600; }
+.dh-stub__body { margin: 0; font-size: 0.875rem; line-height: 1.6; }
+.dh-stub__body a { color: var(--series-v, #2196F3); text-decoration: none; }
+.dh-stub__body a:hover { text-decoration: underline; }

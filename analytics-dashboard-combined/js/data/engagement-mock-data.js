@@ -472,7 +472,6 @@ const MockData = (() => {
           id: record.category.toLowerCase().replace(/\s+/g, '-'),
           name: record.category,
           promotionCount: 0,
-          civ: 0,
           cc: 0,
           addToListCount: 0,
           views: 0,
@@ -487,13 +486,12 @@ const MockData = (() => {
       }
 
       const cat = byCategory[record.category];
-      cat.civ += record.civ;
       cat.cc += record.cc;
       cat.addToListCount += record.addToListCount;
-      cat.views += record.views || record.civ;
+      cat.views += record.views;
       cat.clicks += record.clicks || record.cc;
       cat.adds += record.adds || record.addToListCount;
-      cat.inViewScore += record.inViewScore || (record.civ * 1);
+      cat.inViewScore += record.inViewScore || (record.views * 1);
       cat.clickScore += record.clickScore || (record.cc * 5);
       cat.addToListScore += record.addToListScore || (record.addToListCount * 20);
       cat.totalScore += record.totalScore || (record.inViewScore + record.clickScore + record.addToListScore) || 0;
@@ -547,7 +545,6 @@ const MockData = (() => {
           isParent: record.isParent || false,
           parentPromoId: record.parentPromoId || null,
           childCount: record.childCount || 0,
-          civ: 0,
           cc: 0,
           addToListCount: 0,
           views: 0,
@@ -562,13 +559,12 @@ const MockData = (() => {
       }
 
       const promo = promoMap[record.promotionId];
-      promo.civ += record.civ;
       promo.cc += record.cc;
       promo.addToListCount += record.addToListCount;
-      promo.views += record.views || record.civ;
+      promo.views += record.views;
       promo.clicks += record.clicks || record.cc;
       promo.adds += record.adds || record.addToListCount;
-      promo.inViewScore += record.inViewScore || (record.civ * 1);
+      promo.inViewScore += record.inViewScore || (record.views * 1);
       promo.clickScore += record.clickScore || (record.cc * 5);
       promo.addToListScore += record.addToListScore || (record.addToListCount * 20);
       promo.totalScore += record.totalScore || (record.inViewScore + record.clickScore + record.addToListScore) || 0;
@@ -583,7 +579,6 @@ const MockData = (() => {
 
       if (child && parent) {
         // Add child metrics to parent
-        parent.civ += child.civ;
         parent.cc += child.cc;
         parent.addToListCount += child.addToListCount;
         parent.views += child.views;
@@ -801,7 +796,6 @@ const MockData = (() => {
           brandName: store.brandName,
           size: store.size || 'medium',
           logo: `https://ui-avatars.com/api/?name=${encodeURIComponent(store.name)}&background=4F46E5&color=fff&size=80`,
-          civ: 0,
           cc: 0,
           addToListCount: 0,
           views: 0,
@@ -822,13 +816,12 @@ const MockData = (() => {
       records.forEach(record => {
         if (storeMetrics[record.storeId]) {
           const store = storeMetrics[record.storeId];
-          store.civ += record.civ;
           store.cc += record.cc;
           store.addToListCount += record.addToListCount;
-          store.views += record.views || record.civ;
+          store.views += record.views;
           store.clicks += record.clicks || record.cc;
           store.adds += record.adds || record.addToListCount;
-          store.inViewScore += record.inViewScore || (record.civ * 1);
+          store.inViewScore += record.inViewScore || (record.views * 1);
           store.clickScore += record.clickScore || (record.cc * 5);
           store.addToListScore += record.addToListScore || (record.addToListCount * 20);
           store.totalScore += record.totalScore || (record.inViewScore + record.clickScore + record.addToListScore) || 0;

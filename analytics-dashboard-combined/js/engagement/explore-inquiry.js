@@ -15,7 +15,7 @@
     { key: 'dealType', label: 'Deal', type: 'deal', sortable: true, sticky: false, visible: true, filterable: true, filterType: 'deal' },
     { key: 'daysRun', label: 'Days', type: 'days', sortable: true, sticky: false, visible: true, filterable: true, filterType: 'days' },
     { key: 'originalPosition', label: 'Orig. Pos.', type: 'position', sortable: true, sticky: false, visible: false },
-    { key: 'civ', label: 'Views', type: 'number', sortable: true, sticky: false, visible: true },
+    { key: 'views', label: 'Views', type: 'number', sortable: true, sticky: false, visible: true },
     { key: 'cc', label: 'Clicks', type: 'number', sortable: true, sticky: false, visible: true },
     { key: 'addToListCount', label: 'Added', type: 'number', sortable: true, sticky: false, visible: true },
     { key: 'totalScore', label: 'Performance', type: 'performance', sortable: true, sticky: false, visible: true },
@@ -480,12 +480,12 @@
         cellClass += ' col-perf table-performance';
         const chartId = `perf-chart-grid-${promo.id}`;
         // Show points total (views×1 + clicks×5 + adds×20), not raw interaction count.
-        const pointsTotal = (promo.civ || 0) * 1 + (promo.cc || 0) * 5 + (promo.addToListCount || 0) * 20;
+        const pointsTotal = (promo.views || 0) * 1 + (promo.cc || 0) * 5 + (promo.addToListCount || 0) * 20;
         displayValue = `
           <div class="perf-chart-container">
             <div class="perf-chart" id="${chartId}"
                  data-name="${core.escapeHtml(promo.name || '')}"
-                 data-views="${promo.civ || 0}"
+                 data-views="${promo.views || 0}"
                  data-clicks="${promo.cc || 0}"
                  data-adds="${promo.addToListCount || 0}"
                  data-composite="${promo.totalScore || 0}">
@@ -748,7 +748,7 @@
       return [
         `"${(promo.name || '').replace(/"/g, '""')}"`,
         `"${(promo.categoryName || '').replace(/"/g, '""')}"`,
-        promo.civ || 0,
+        promo.views || 0,
         promo.cc || 0,
         promo.addToListCount || 0,
         promo.daysRun || 7,

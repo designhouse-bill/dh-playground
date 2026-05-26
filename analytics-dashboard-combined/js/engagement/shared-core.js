@@ -34,7 +34,7 @@ const DashboardCore = (() => {
     { key: 'name', label: 'Promotion', type: 'promotion', sortable: true, sticky: true, visible: true },
     { key: 'categoryName', label: 'Category', type: 'category', sortable: true, sticky: false, visible: true },
     { key: 'dealType', label: 'Deal Type', type: 'deal', sortable: true, sticky: false, visible: true },
-    { key: 'civ', label: 'CIV', type: 'currency', sortable: true, sticky: false, visible: true },
+    { key: 'views', label: 'CIV', type: 'currency', sortable: true, sticky: false, visible: true },
     { key: 'cc', label: 'CC', type: 'number', sortable: true, sticky: false, visible: true },
     { key: 'addToListCount', label: 'ATL', type: 'currency', sortable: true, sticky: false, visible: true },
     { key: 'percentile', label: 'Percentile', type: 'number', sortable: true, sticky: false, visible: true },
@@ -599,9 +599,9 @@ const DashboardCore = (() => {
           valA = (a.dealType || '').toLowerCase();
           valB = (b.dealType || '').toLowerCase();
           break;
-        case 'civ':
-          valA = a.civ || 0;
-          valB = b.civ || 0;
+        case 'views':
+          valA = a.views || 0;
+          valB = b.views || 0;
           break;
         case 'cc':
           valA = a.cc || 0;
@@ -648,9 +648,9 @@ const DashboardCore = (() => {
           valA = a.promotionCount || 0;
           valB = b.promotionCount || 0;
           break;
-        case 'civ':
-          valA = a.civ || 0;
-          valB = b.civ || 0;
+        case 'views':
+          valA = a.views || 0;
+          valB = b.views || 0;
           break;
         case 'cc':
           valA = a.cc || 0;

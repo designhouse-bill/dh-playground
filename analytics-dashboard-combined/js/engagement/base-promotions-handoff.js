@@ -410,7 +410,7 @@
     }
 
     // Calculate max values for bar charts
-    const maxCiv = Math.max(...state.filteredPromotions.map(p => p.civ));
+    const maxCiv = Math.max(...state.filteredPromotions.map(p => p.views));
     const maxCc = Math.max(...state.filteredPromotions.map(p => p.cc));
     const maxAtl = Math.max(...state.filteredPromotions.map(p => p.addToListCount));
     const maxValues = { maxCiv, maxCc, maxAtl };
@@ -465,7 +465,7 @@
           <p class="promo-card__meta">${core.escapeHtml(promo.categoryName)}</p>
           <div class="promo-card__stats">
             <div class="promo-stat">
-              <span class="promo-stat__value">${core.formatNumber(promo.civ)}</span>
+              <span class="promo-stat__value">${core.formatNumber(promo.views)}</span>
               <span class="promo-stat__label">Views</span>
             </div>
             <div class="promo-stat">
@@ -578,7 +578,7 @@
       // More Data columns (Deal, Views, Clicks, Added)
       const moreDataCells = showMoreData ? `
           <td class="col-deal"><span class="promo-deal">${core.escapeHtml(promo.dealType)}</span></td>
-          <td class="col-views">${core.formatNumber(promo.civ)}</td>
+          <td class="col-views">${core.formatNumber(promo.views)}</td>
           <td class="col-clicks">${core.formatNumber(promo.cc)}</td>
           <td class="col-added">${core.formatNumber(promo.addToListCount)}</td>
       ` : '';
@@ -610,7 +610,7 @@
             <div class="perf-chart-container">
               <div class="perf-chart" id="perf-chart-promo-${promo.id}"
                    data-name="${core.escapeHtml(promo.name)}"
-                   data-views="${promo.civ || 0}"
+                   data-views="${promo.views || 0}"
                    data-clicks="${promo.cc || 0}"
                    data-adds="${promo.addToListCount || 0}"
                    data-composite="${promo.totalScore || 0}">
@@ -635,7 +635,7 @@
     // More Data headers (Deal, Views, Clicks, Added)
     const moreDataHeaders = showMoreData ? `
             ${getPromoSortableHeaderHTML('Deal', 'dealType', 'col-deal', 'dealType')}
-            ${getPromoSortableHeaderHTML('Views', 'civ', 'col-views')}
+            ${getPromoSortableHeaderHTML('Views', 'views', 'col-views')}
             ${getPromoSortableHeaderHTML('Clicks', 'cc', 'col-clicks')}
             ${getPromoSortableHeaderHTML('Added', 'addToListCount', 'col-added')}
     ` : '';
@@ -963,7 +963,7 @@
     const detailContent = document.getElementById('detail-content');
     if (!detailContent) return;
 
-    const ctr = ((promo.cc / promo.civ) * 100).toFixed(1);
+    const ctr = ((promo.cc / promo.views) * 100).toFixed(1);
 
     // Get chart colors from DashboardCore
     const colors = core.getChartColors();
@@ -1035,8 +1035,8 @@
         <div class="detail-kpis">
           <div class="detail-kpi">
             <div class="kpi-value">
-              <span class="kpi-weighted">${core.formatNumber(promo.civ * 1)}</span>
-              <span class="kpi-raw">(${core.formatNumber(promo.civ)} - raw)</span>
+              <span class="kpi-weighted">${core.formatNumber(promo.views * 1)}</span>
+              <span class="kpi-raw">(${core.formatNumber(promo.views)} - raw)</span>
             </div>
             <div class="kpi-label">Card in View</div>
           </div>
@@ -1097,7 +1097,7 @@
     const chart = echarts.init(container);
 
     // Get metrics from promotion
-    const views = promo.civ || 0;
+    const views = promo.views || 0;
     const clicks = promo.cc || 0;
     const added = promo.addToListCount || 0;
 

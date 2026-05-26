@@ -276,14 +276,14 @@
               </div>
             </div>
           </td>
-          <td class="col-views">${core.formatNumber(store.civ)}</td>
+          <td class="col-views">${core.formatNumber(store.views)}</td>
           <td class="col-clicks">${core.formatNumber(store.cc)}</td>
           <td class="col-added">${core.formatNumber(store.addToListCount)}</td>
           <td class="col-perf">
             <div class="perf-chart-container">
               <div class="perf-chart" id="perf-chart-store-${store.id}"
                    data-name="${core.escapeHtml(store.name)}"
-                   data-views="${store.civ || 0}"
+                   data-views="${store.views || 0}"
                    data-clicks="${store.cc || 0}"
                    data-adds="${store.addToListCount || 0}"
                    data-composite="${store.totalScore || 0}">
@@ -310,7 +310,7 @@
           <tr>
             <th class="col-num">#</th>
             ${getStoreSortableHeaderHTML('Store', 'name', 'col-store', 'text')}
-            ${getStoreSortableHeaderHTML('Views', 'civ', 'col-views')}
+            ${getStoreSortableHeaderHTML('Views', 'views', 'col-views')}
             ${getStoreSortableHeaderHTML('Clicks', 'cc', 'col-clicks')}
             ${getStoreSortableHeaderHTML('Added', 'addToListCount', 'col-added')}
             ${getStoreSortableHeaderHTML('Performance', 'totalScore', 'col-perf')}
@@ -569,7 +569,7 @@
       <div class="store-metrics">
         <div class="store-metric">
           <div class="store-metric__label">Views</div>
-          <div class="store-metric__value">${core.formatNumber(store.civ)}</div>
+          <div class="store-metric__value">${core.formatNumber(store.views)}</div>
         </div>
         <div class="store-metric">
           <div class="store-metric__label">Clicks</div>

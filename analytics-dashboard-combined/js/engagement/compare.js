@@ -966,7 +966,7 @@ const ComparePage = (function() {
     const promotions = MockData.getUniquePromotions(records);
 
     // Calculate totals from context-specific data
-    const totalCIV = promotions.reduce((sum, p) => sum + (p.civ || 0), 0);
+    const totalCIV = promotions.reduce((sum, p) => sum + (p.views || 0), 0);
     const totalCC = promotions.reduce((sum, p) => sum + (p.cc || 0), 0);
     const totalATL = promotions.reduce((sum, p) => sum + (p.addToListCount || 0), 0);
 
@@ -993,7 +993,7 @@ const ComparePage = (function() {
 
       Object.keys(storeRecordsMap).forEach(storeId => {
         const storePromos = MockData.getUniquePromotions(storeRecordsMap[storeId]);
-        const storeCIV = storePromos.reduce((sum, p) => sum + (p.civ || 0), 0);
+        const storeCIV = storePromos.reduce((sum, p) => sum + (p.views || 0), 0);
         const storeCC = storePromos.reduce((sum, p) => sum + (p.cc || 0), 0);
         const storeATL = storePromos.reduce((sum, p) => sum + (p.addToListCount || 0), 0);
         const storeScore = Math.round((storeCIV * 0.4 + storeCC * 10 + storeATL * 15) / 100);
@@ -1023,7 +1023,7 @@ const ComparePage = (function() {
       logo: entityLogo,
       metrics: {
         engagementScore: totalEngagementScore,
-        civ: totalCIV,
+        views: totalCIV,
         cc: totalCC,
         addToListCount: totalATL,
         percentile: entityPercentile,
@@ -1073,7 +1073,7 @@ const ComparePage = (function() {
       image: categoryImage,
       metrics: {
         engagementScore: category.totalScore || 0,
-        civ: category.civ || 0,
+        views: category.views || 0,
         cc: category.cc || 0,
         addToListCount: category.addToListCount || 0,
         percentile: category.percentile || 0,
@@ -1109,7 +1109,7 @@ const ComparePage = (function() {
       image: promo.heroImage || promo.thumbImage || '',
       metrics: {
         engagementScore: promo.totalScore || 0,
-        civ: promo.civ || 0,
+        views: promo.views || 0,
         cc: promo.cc || 0,
         addToListCount: promo.addToListCount || 0,
         percentile: promo.percentile || 0,
@@ -1190,7 +1190,7 @@ const ComparePage = (function() {
         <div class="compare-col-label compare-col-label--${col}">${col.toUpperCase()}</div>
         ${renderPercentileRow(metrics.percentile, metrics.engagementScore, showVariance, percentileA, metrics, chartId, ctx)}
         <div class="compare-mini-cards">
-          ${renderMiniCard('Views', formatNumber(metrics.civ), metricsA.civ, metrics.civ, showVariance)}
+          ${renderMiniCard('Views', formatNumber(metrics.views), metricsA.views, metrics.views, showVariance)}
           ${renderMiniCard('Clicks', formatNumber(metrics.cc), metricsA.cc, metrics.cc, showVariance)}
           ${renderMiniCard('Adds', formatNumber(metrics.addToListCount), metricsA.addToListCount, metrics.addToListCount, showVariance)}
           ${renderMiniCard('Stores', formatNumber(metrics.storeCount), metricsA.storeCount, metrics.storeCount, showVariance)}
@@ -1218,7 +1218,7 @@ const ComparePage = (function() {
         <h3 class="compare-hero__title">${core.escapeHtml(data.name)}</h3>
         ${renderPercentileRow(metrics.percentile, metrics.engagementScore, showVariance, percentileA, metrics, chartId, ctx)}
         <div class="compare-mini-cards">
-          ${renderMiniCard('Views', formatNumber(metrics.civ), metricsA.civ, metrics.civ, showVariance)}
+          ${renderMiniCard('Views', formatNumber(metrics.views), metricsA.views, metrics.views, showVariance)}
           ${renderMiniCard('Clicks', formatNumber(metrics.cc), metricsA.cc, metrics.cc, showVariance)}
           ${renderMiniCard('Adds', formatNumber(metrics.addToListCount), metricsA.addToListCount, metrics.addToListCount, showVariance)}
           ${renderMiniCard('Promotions', formatNumber(metrics.promotionCount), metricsA.promotionCount, metrics.promotionCount, showVariance)}
@@ -1251,7 +1251,7 @@ const ComparePage = (function() {
         </div>
         ${renderPercentileRow(metrics.percentile, metrics.engagementScore, showVariance, percentileA, metrics, chartId, ctx)}
         <div class="compare-mini-cards">
-          ${renderMiniCard('Views', formatNumber(metrics.civ), metricsA.civ, metrics.civ, showVariance)}
+          ${renderMiniCard('Views', formatNumber(metrics.views), metricsA.views, metrics.views, showVariance)}
           ${renderMiniCard('Clicks', formatNumber(metrics.cc), metricsA.cc, metrics.cc, showVariance)}
           ${renderMiniCard('Adds', formatNumber(metrics.addToListCount), metricsA.addToListCount, metrics.addToListCount, showVariance)}
           ${renderMiniCard('Deal Type', metrics.dealType || '-', metricsA.dealType, metrics.dealType, showVariance, true)}
@@ -1352,13 +1352,13 @@ const ComparePage = (function() {
     }
 
     // If metrics are provided, render eCharts bar, otherwise fallback to simple bar
-    if (metrics && metrics.civ !== undefined) {
+    if (metrics && metrics.views !== undefined) {
       return `
         <div class="detail-percentile-row">
           <div class="perf-chart-container" style="flex: 1;">
             <div class="perf-chart" id="${uniqueId}"
                  data-name=""
-                 data-views="${metrics.civ || 0}"
+                 data-views="${metrics.views || 0}"
                  data-clicks="${metrics.cc || 0}"
                  data-adds="${metrics.addToListCount || 0}"
                  data-composite="${score || 0}">

@@ -576,7 +576,7 @@ const PerfCharts = (() => {
 
   /**
    * Calculate max values from data array
-   * @param {Array} dataArray - Array of items with views, cc, addToListCount properties
+   * @param {Array} dataArray - Array of items with views, clicks, addToListCount properties
    */
   function calculateMaxValues(dataArray) {
     maxValues = {
@@ -588,7 +588,7 @@ const PerfCharts = (() => {
 
     dataArray.forEach(item => {
       const views = item.views || 0;
-      const clicks = item.cc || 0;
+      const clicks = item.clicks || 0;
       const adds = item.addToListCount || 0;
       const total = views + clicks + adds;
 

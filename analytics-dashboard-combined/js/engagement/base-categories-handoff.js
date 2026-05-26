@@ -316,14 +316,14 @@
             </div>
           </td>
           <td class="col-views">${core.formatNumber(cat.views)}</td>
-          <td class="col-clicks">${core.formatNumber(cat.cc)}</td>
+          <td class="col-clicks">${core.formatNumber(cat.clicks)}</td>
           <td class="col-added">${core.formatNumber(cat.addToListCount)}</td>
           <td class="col-perf">
             <div class="perf-chart-container">
               <div class="perf-chart" id="perf-chart-cat-${cat.id}"
                    data-name="${core.escapeHtml(cat.name)}"
                    data-views="${cat.views || 0}"
-                   data-clicks="${cat.cc || 0}"
+                   data-clicks="${cat.clicks || 0}"
                    data-adds="${cat.addToListCount || 0}"
                    data-composite="${cat.totalScore || 0}">
               </div>
@@ -352,7 +352,7 @@
             <th class="col-num">#</th>
             ${getCategorySortableHeaderHTML('Category', 'name', 'col-category', 'text')}
             ${getCategorySortableHeaderHTML('Views', 'views', 'col-views')}
-            ${getCategorySortableHeaderHTML('Clicks', 'cc', 'col-clicks')}
+            ${getCategorySortableHeaderHTML('Clicks', 'clicks', 'col-clicks')}
             ${getCategorySortableHeaderHTML('Added', 'addToListCount', 'col-added')}
             ${getCategorySortableHeaderHTML('Performance', 'totalScore', 'col-perf')}
             ${getCategorySortableHeaderHTML('%tile', 'percentile', 'col-percentile')}
@@ -547,7 +547,7 @@
         </div>
         <div class="category-metric">
           <div class="category-metric__label">Clicks</div>
-          <div class="category-metric__value">${core.formatNumber(category.cc)}</div>
+          <div class="category-metric__value">${core.formatNumber(category.clicks)}</div>
         </div>
         <div class="category-metric">
           <div class="category-metric__label">Added to List</div>

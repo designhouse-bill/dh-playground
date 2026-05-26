@@ -1,3 +1,7 @@
+// Field names match ISC PromotionTableDto (canonical, shipped on Analytics-Dashboard-Duplo-Main).
+// Display strings retain product language ("Coupon In View", "Coupon Clips", "Add To List") in HTML.
+// See: ~/.claude/plans/UX-846-prereq-playground-mock-data-rename.md
+
 /**
  * Mock Data for Analytics Dashboard v7
  * Dynamic data with multi-week, multi-entity support
@@ -472,7 +476,6 @@ const MockData = (() => {
           id: record.category.toLowerCase().replace(/\s+/g, '-'),
           name: record.category,
           promotionCount: 0,
-          cc: 0,
           addToListCount: 0,
           views: 0,
           clicks: 0,
@@ -486,13 +489,12 @@ const MockData = (() => {
       }
 
       const cat = byCategory[record.category];
-      cat.cc += record.cc;
       cat.addToListCount += record.addToListCount;
       cat.views += record.views;
-      cat.clicks += record.clicks || record.cc;
+      cat.clicks += record.clicks;
       cat.adds += record.adds || record.addToListCount;
       cat.inViewScore += record.inViewScore || (record.views * 1);
-      cat.clickScore += record.clickScore || (record.cc * 5);
+      cat.clickScore += record.clickScore || (record.clicks * 5);
       cat.addToListScore += record.addToListScore || (record.addToListCount * 20);
       cat.totalScore += record.totalScore || (record.inViewScore + record.clickScore + record.addToListScore) || 0;
       cat.promotionIds.add(record.promotionId);
@@ -545,7 +547,6 @@ const MockData = (() => {
           isParent: record.isParent || false,
           parentPromoId: record.parentPromoId || null,
           childCount: record.childCount || 0,
-          cc: 0,
           addToListCount: 0,
           views: 0,
           clicks: 0,
@@ -559,13 +560,12 @@ const MockData = (() => {
       }
 
       const promo = promoMap[record.promotionId];
-      promo.cc += record.cc;
       promo.addToListCount += record.addToListCount;
       promo.views += record.views;
-      promo.clicks += record.clicks || record.cc;
+      promo.clicks += record.clicks;
       promo.adds += record.adds || record.addToListCount;
       promo.inViewScore += record.inViewScore || (record.views * 1);
-      promo.clickScore += record.clickScore || (record.cc * 5);
+      promo.clickScore += record.clickScore || (record.clicks * 5);
       promo.addToListScore += record.addToListScore || (record.addToListCount * 20);
       promo.totalScore += record.totalScore || (record.inViewScore + record.clickScore + record.addToListScore) || 0;
       promo.storeCount++;
@@ -579,7 +579,6 @@ const MockData = (() => {
 
       if (child && parent) {
         // Add child metrics to parent
-        parent.cc += child.cc;
         parent.addToListCount += child.addToListCount;
         parent.views += child.views;
         parent.clicks += child.clicks;
@@ -796,7 +795,6 @@ const MockData = (() => {
           brandName: store.brandName,
           size: store.size || 'medium',
           logo: `https://ui-avatars.com/api/?name=${encodeURIComponent(store.name)}&background=4F46E5&color=fff&size=80`,
-          cc: 0,
           addToListCount: 0,
           views: 0,
           clicks: 0,
@@ -816,13 +814,12 @@ const MockData = (() => {
       records.forEach(record => {
         if (storeMetrics[record.storeId]) {
           const store = storeMetrics[record.storeId];
-          store.cc += record.cc;
           store.addToListCount += record.addToListCount;
           store.views += record.views;
-          store.clicks += record.clicks || record.cc;
+          store.clicks += record.clicks;
           store.adds += record.adds || record.addToListCount;
           store.inViewScore += record.inViewScore || (record.views * 1);
-          store.clickScore += record.clickScore || (record.cc * 5);
+          store.clickScore += record.clickScore || (record.clicks * 5);
           store.addToListScore += record.addToListScore || (record.addToListCount * 20);
           store.totalScore += record.totalScore || (record.inViewScore + record.clickScore + record.addToListScore) || 0;
           store.promotionIds.add(record.promotionId);
@@ -858,9 +855,9 @@ const MockData = (() => {
       currentWeek: { id: 'week-48', label: 'Week 48', dateRange: 'Nov 25 - Dec 1, 2025' },
       previousWeek: { id: 'week-47', label: 'Week 47', dateRange: 'Nov 18 - Nov 24, 2025' },
       overallMetrics: {
-        totalCIV: { current: 0, previous: 0, change: 0, changeType: 'stable' },
-        totalCC: { current: 0, previous: 0, change: 0, changeType: 'stable' },
-        totalATL: { current: 0, previous: 0, change: 0, changeType: 'stable' }
+        totalViews: { current: 0, previous: 0, change: 0, changeType: 'stable' },
+        totalClicks: { current: 0, previous: 0, change: 0, changeType: 'stable' },
+        totalAddToListCount: { current: 0, previous: 0, change: 0, changeType: 'stable' }
       },
       categoryMetrics: [],
       trendSummary: { topGainers: [], topDecliners: [], insights: [] }

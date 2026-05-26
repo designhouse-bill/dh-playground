@@ -966,13 +966,13 @@ const ComparePage = (function() {
     const promotions = MockData.getUniquePromotions(records);
 
     // Calculate totals from context-specific data
-    const totalCIV = promotions.reduce((sum, p) => sum + (p.views || 0), 0);
-    const totalCC = promotions.reduce((sum, p) => sum + (p.cc || 0), 0);
-    const totalATL = promotions.reduce((sum, p) => sum + (p.addToListCount || 0), 0);
+    const totalViews = promotions.reduce((sum, p) => sum + (p.views || 0), 0);
+    const totalClicks = promotions.reduce((sum, p) => sum + (p.clicks || 0), 0);
+    const totalAddToListCount = promotions.reduce((sum, p) => sum + (p.addToListCount || 0), 0);
 
     // Calculate a meaningful engagement score based on totals
     // Using the same formula as composite score but for totals
-    const totalEngagementScore = Math.round((totalCIV * 0.4 + totalCC * 10 + totalATL * 15) / 100);
+    const totalEngagementScore = Math.round((totalViews * 0.4 + totalClicks * 10 + totalAddToListCount * 15) / 100);
 
     // Calculate percentile by comparing against all stores for this week
     // This gives a meaningful ranking that changes with different contexts
@@ -993,10 +993,10 @@ const ComparePage = (function() {
 
       Object.keys(storeRecordsMap).forEach(storeId => {
         const storePromos = MockData.getUniquePromotions(storeRecordsMap[storeId]);
-        const storeCIV = storePromos.reduce((sum, p) => sum + (p.views || 0), 0);
-        const storeCC = storePromos.reduce((sum, p) => sum + (p.cc || 0), 0);
-        const storeATL = storePromos.reduce((sum, p) => sum + (p.addToListCount || 0), 0);
-        const storeScore = Math.round((storeCIV * 0.4 + storeCC * 10 + storeATL * 15) / 100);
+        const storeViews = storePromos.reduce((sum, p) => sum + (p.views || 0), 0);
+        const storeClicks = storePromos.reduce((sum, p) => sum + (p.clicks || 0), 0);
+        const storeAddToListCount = storePromos.reduce((sum, p) => sum + (p.addToListCount || 0), 0);
+        const storeScore = Math.round((storeViews * 0.4 + storeClicks * 10 + storeAddToListCount * 15) / 100);
         storeScores.push({ storeId, score: storeScore });
       });
 
@@ -1023,9 +1023,9 @@ const ComparePage = (function() {
       logo: entityLogo,
       metrics: {
         engagementScore: totalEngagementScore,
-        views: totalCIV,
-        cc: totalCC,
-        addToListCount: totalATL,
+        views: totalViews,
+        clicks: totalClicks,
+        addToListCount: totalAddToListCount,
         percentile: entityPercentile,
         promotionCount: promotions.length,
         categoryCount: categories.length,
@@ -1074,7 +1074,7 @@ const ComparePage = (function() {
       metrics: {
         engagementScore: category.totalScore || 0,
         views: category.views || 0,
-        cc: category.cc || 0,
+        clicks: category.clicks || 0,
         addToListCount: category.addToListCount || 0,
         percentile: category.percentile || 0,
         promotionCount: category.promotionCount || 0
@@ -1110,7 +1110,7 @@ const ComparePage = (function() {
       metrics: {
         engagementScore: promo.totalScore || 0,
         views: promo.views || 0,
-        cc: promo.cc || 0,
+        clicks: promo.clicks || 0,
         addToListCount: promo.addToListCount || 0,
         percentile: promo.percentile || 0,
         dealType: promo.dealType || '',
@@ -1191,7 +1191,7 @@ const ComparePage = (function() {
         ${renderPercentileRow(metrics.percentile, metrics.engagementScore, showVariance, percentileA, metrics, chartId, ctx)}
         <div class="compare-mini-cards">
           ${renderMiniCard('Views', formatNumber(metrics.views), metricsA.views, metrics.views, showVariance)}
-          ${renderMiniCard('Clicks', formatNumber(metrics.cc), metricsA.cc, metrics.cc, showVariance)}
+          ${renderMiniCard('Clicks', formatNumber(metrics.clicks), metricsA.clicks, metrics.clicks, showVariance)}
           ${renderMiniCard('Adds', formatNumber(metrics.addToListCount), metricsA.addToListCount, metrics.addToListCount, showVariance)}
           ${renderMiniCard('Stores', formatNumber(metrics.storeCount), metricsA.storeCount, metrics.storeCount, showVariance)}
           ${renderMiniCard('Categories', formatNumber(metrics.categoryCount), metricsA.categoryCount, metrics.categoryCount, showVariance)}
@@ -1219,7 +1219,7 @@ const ComparePage = (function() {
         ${renderPercentileRow(metrics.percentile, metrics.engagementScore, showVariance, percentileA, metrics, chartId, ctx)}
         <div class="compare-mini-cards">
           ${renderMiniCard('Views', formatNumber(metrics.views), metricsA.views, metrics.views, showVariance)}
-          ${renderMiniCard('Clicks', formatNumber(metrics.cc), metricsA.cc, metrics.cc, showVariance)}
+          ${renderMiniCard('Clicks', formatNumber(metrics.clicks), metricsA.clicks, metrics.clicks, showVariance)}
           ${renderMiniCard('Adds', formatNumber(metrics.addToListCount), metricsA.addToListCount, metrics.addToListCount, showVariance)}
           ${renderMiniCard('Promotions', formatNumber(metrics.promotionCount), metricsA.promotionCount, metrics.promotionCount, showVariance)}
         </div>
@@ -1252,7 +1252,7 @@ const ComparePage = (function() {
         ${renderPercentileRow(metrics.percentile, metrics.engagementScore, showVariance, percentileA, metrics, chartId, ctx)}
         <div class="compare-mini-cards">
           ${renderMiniCard('Views', formatNumber(metrics.views), metricsA.views, metrics.views, showVariance)}
-          ${renderMiniCard('Clicks', formatNumber(metrics.cc), metricsA.cc, metrics.cc, showVariance)}
+          ${renderMiniCard('Clicks', formatNumber(metrics.clicks), metricsA.clicks, metrics.clicks, showVariance)}
           ${renderMiniCard('Adds', formatNumber(metrics.addToListCount), metricsA.addToListCount, metrics.addToListCount, showVariance)}
           ${renderMiniCard('Deal Type', metrics.dealType || '-', metricsA.dealType, metrics.dealType, showVariance, true)}
           ${renderMiniCard('Orig. Price', formatCurrency(metrics.originalPrice), metricsA.originalPrice, metrics.originalPrice, showVariance)}
@@ -1359,7 +1359,7 @@ const ComparePage = (function() {
             <div class="perf-chart" id="${uniqueId}"
                  data-name=""
                  data-views="${metrics.views || 0}"
-                 data-clicks="${metrics.cc || 0}"
+                 data-clicks="${metrics.clicks || 0}"
                  data-adds="${metrics.addToListCount || 0}"
                  data-composite="${score || 0}">
             </div>

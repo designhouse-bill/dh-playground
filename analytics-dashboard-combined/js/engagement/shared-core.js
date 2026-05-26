@@ -35,7 +35,7 @@ const DashboardCore = (() => {
     { key: 'categoryName', label: 'Category', type: 'category', sortable: true, sticky: false, visible: true },
     { key: 'dealType', label: 'Deal Type', type: 'deal', sortable: true, sticky: false, visible: true },
     { key: 'views', label: 'CIV', type: 'currency', sortable: true, sticky: false, visible: true },
-    { key: 'cc', label: 'CC', type: 'number', sortable: true, sticky: false, visible: true },
+    { key: 'clicks', label: 'Clicks', type: 'number', sortable: true, sticky: false, visible: true },
     { key: 'addToListCount', label: 'ATL', type: 'currency', sortable: true, sticky: false, visible: true },
     { key: 'percentile', label: 'Percentile', type: 'number', sortable: true, sticky: false, visible: true },
     { key: 'totalScore', label: 'Performance', type: 'performance', sortable: true, sticky: false, visible: true },
@@ -603,9 +603,9 @@ const DashboardCore = (() => {
           valA = a.views || 0;
           valB = b.views || 0;
           break;
-        case 'cc':
-          valA = a.cc || 0;
-          valB = b.cc || 0;
+        case 'clicks':
+          valA = a.clicks || 0;
+          valB = b.clicks || 0;
           break;
         case 'addToListCount':
           valA = a.addToListCount || 0;
@@ -652,9 +652,9 @@ const DashboardCore = (() => {
           valA = a.views || 0;
           valB = b.views || 0;
           break;
-        case 'cc':
-          valA = a.cc || 0;
-          valB = b.cc || 0;
+        case 'clicks':
+          valA = a.clicks || 0;
+          valB = b.clicks || 0;
           break;
         case 'addToListCount':
           valA = a.addToListCount || 0;

@@ -2457,3 +2457,58 @@ body[data-dist-page] .perf-tabs .perf-tab.active {
 .view-toggle__btn + .view-toggle__btn {
   border-left: 0;
 }
+
+/* ============================================================
+   UX-846 δ4 narrative-header meta block (2026-05-26)
+   Authority: analytics-page-header-canonical.md
+   Stack: section / title / question / entity-line / date-line
+   Cohort pill is singular per page (F4/ER4).
+   Kills page-header .stat-strip (F1 expanded).
+   ============================================================ */
+
+.narrative-header__entity-line {
+  margin: 6px 0 4px;
+  font-size: 15px;
+  color: var(--dh-text-1, var(--color-text-primary, #1a1a1a));
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.narrative-header__date-line {
+  margin: 0;
+  font-size: 15px;
+  color: var(--dh-text-1, var(--color-text-primary, #1a1a1a));
+  font-weight: 400;
+}
+
+.ep-cohort-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--dh-surface-2, var(--color-surface-2, #fff));
+  border: 1px solid var(--dh-border, var(--color-border, #d6d3c4));
+  font-size: 12.5px;
+  color: var(--dh-text-2, var(--color-text-secondary, #3a3a3a));
+  font-weight: 500;
+}
+.ep-cohort-pill .material-symbols-outlined {
+  font-size: 15px;
+  color: var(--dh-text-3, var(--color-text-tertiary, #777));
+  cursor: help;
+}
+.ep-cohort-pill strong {
+  font-weight: 600;
+}
+
+/* Kill page-header .stat-strip per F1-expanded (perf-tabs primary nav).
+   Selector restricted to .narrative-header context — hero-stat sub-pane
+   strips (P17) untouched. */
+.narrative-header .stat-strip,
+.narrative-header__right .stat-strip {
+  display: none;
+}

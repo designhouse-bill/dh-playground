@@ -228,33 +228,37 @@
   --p-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
   --p-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
 
-  /* Section accent colors (R4 / Item 19b) */
-  --section-visitation:       #f59e0b;
-  --section-visitation-light: #fef3c7;
-  --section-media:            #6b7302;
+  /* Section accent colors (UX-846 AA-safe palette — locked 2026-05-26)
+     Every --section-X base passes WCAG AA ≥4.5:1 with white text.
+     No --section-X-ink token needed (white-on-base is always safe).
+     -ink aliases retained as identity (point at base) for existing consumers. */
+  --section-visitation:       #9F1239; /* rose (was amber #f59e0b — failed AA on white) */
+  --section-visitation-light: #fff1f2;
+  --section-media:            #6b7302; /* olive — passes AA, unchanged */
   --section-media-light:      #f4f7e0;
-  --section-traffic:          #1b7f88;
+  --section-traffic:          #1b7f88; /* teal — passes AA, unchanged */
   --section-traffic-light:    #e4f4f5;
+  --section-demographics:     #475569; /* slate (UX-846 2026-05-26 — distinct from traffic/media/visit) */
+  --section-demographics-light: #f1f5f9;
 
-  /* Engagement section accent colors — same palette family (mid-saturation hues + very light tint) */
-  --section-overview:         #4f46e5;
-  --section-overview-light:   #eef2ff;
-  --section-performance:      #2196F3;
-  --section-performance-light:#e3f2fd;
-  --section-sessions:         #2563eb;
+  --section-overview:         #6B7280; /* neutral gray per section-color-tinting-rule pin */
+  --section-overview-light:   #f3f4f6;
+  --section-performance:      #1E3A8A; /* indigo-900 (was #2196F3 — collided w/ --series-v + failed AA) */
+  --section-performance-light:#eef2ff;
+  --section-sessions:         #2563eb; /* blue — passes AA, unchanged */
   --section-sessions-light:   #eff6ff;
-  --section-users:            #0891b2;
+  --section-users:            #155E75; /* cyan-800 (was teal #0891b2 — failed AA) */
   --section-users-light:      #ecfeff;
-  --section-duration:         #d97706;
-  --section-duration-light:   #fef3c7;
-  --section-cardevents:       #7c3aed;
+  --section-duration:         #9A3412; /* orange-dark (was #d97706 — failed AA) */
+  --section-duration-light:   #fff7ed;
+  --section-cardevents:       #7c3aed; /* violet — passes AA, unchanged */
   --section-cardevents-light: #f5f3ff;
-  --section-coupon:           #FFCD3E;
-  --section-coupon-light:     #fff8d6;
-  --section-coupon-ink:       #a16207;  /* WCAG-AA text/stroke variant — yellow #FFCD3E fails contrast on white. Use -ink for typography, borders, sparkline strokes. */
-  --section-dealtype:         #d3151b;
-  --section-dealtype-light:   #fde7e8;
-  --section-dealtype-ink:     #d3151b;  /* Red passes AA on white at this lightness — alias kept so consumers can call -ink uniformly across sections. */
+  --section-coupon:           #86198F; /* fuchsia (was yellow #FFCD3E — yellow cannot pass AA on white) */
+  --section-coupon-light:     #fdf4ff;
+  --section-coupon-ink:       #86198F; /* alias = base (legacy consumers in css/analytics-architecture.css) */
+  --section-dealtype:         #15803D; /* forest green (was red #d3151b — semantic conflict w/ error/destructive) */
+  --section-dealtype-light:   #f0fdf4;
+  --section-dealtype-ink:     #15803D; /* alias = base */
 
   /* ========================================
      Canonical 3-color series palette (RULE — DO NOT OVERRIDE)

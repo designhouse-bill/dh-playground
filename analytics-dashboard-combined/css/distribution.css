@@ -3813,9 +3813,14 @@ body[data-dist-page="media"] {
   --section-color:       var(--section-media);
   --section-color-light: var(--section-media-light);
 }
-body[data-dist-page="traffic"] {
+body[data-dist-page="traffic"],
+body[data-dist-page="overview"] {
   --section-color:       var(--section-traffic);
   --section-color-light: var(--section-traffic-light);
+}
+body[data-dist-page="demographics"] {
+  --section-color:       var(--section-demographics);
+  --section-color-light: var(--section-demographics-light);
 }
 
 /* Active tab pill: section color */

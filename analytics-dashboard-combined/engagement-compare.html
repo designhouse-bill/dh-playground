@@ -42,7 +42,7 @@
   <!-- ============================================================
        HEADER
        ============================================================ -->
-  <header class="header">
+  <header class="header header--engagement">
 
     <div class="topbar">
       <div class="topbar__left">
@@ -94,6 +94,45 @@
         </button>
       </div>
     </div>
+
+    <!-- ░░░ CANONICAL .context-row · partials/canonical-context-row.html ░░░ -->
+    <!-- Compare uses page-level .context-row to show + edit Context A (the primary driver).
+         Per-B-deviation chips remain inside .compare-context-bar below. -->
+    <div class="context-row" data-canon="context-row-v1">
+      <button class="context-card context-card--date" id="date-selector" aria-label="Select date range for Context A" onclick="ComparePage.openDatePicker('A')">
+        <div class="card-label">Date Range</div>
+        <div class="card-row">
+          <div class="card-icon">
+            <span class="material-symbols-outlined">calendar_month</span>
+          </div>
+          <div class="card-content">
+            <div class="card-value" id="context-date-value">Week 47</div>
+            <div class="card-sub" id="context-date-sub">Nov 18–24, 2025</div>
+          </div>
+          <span class="card-arrow">
+            <span class="material-symbols-outlined">expand_more</span>
+          </span>
+        </div>
+      </button>
+
+      <button class="context-card" id="entity-selector" aria-label="Select entity for Context A" onclick="ComparePage.openEntityPicker('A')">
+        <div class="card-label">Entity</div>
+        <div class="card-row">
+          <div class="card-icon card-icon--entity">
+            <span class="material-symbols-outlined">corporate_fare</span>
+          </div>
+          <div class="card-content">
+            <div class="card-breadcrumb" id="context-entity-breadcrumb">ALL STORES</div>
+            <div class="card-value" id="context-entity-value">All Brands</div>
+            <div class="card-sub" id="context-entity-sub">27 locations</div>
+          </div>
+          <span class="card-arrow">
+            <span class="material-symbols-outlined">expand_more</span>
+          </span>
+        </div>
+      </button>
+    </div>
+    <!-- ░░░ END .context-row ░░░ -->
 
   </header>
 

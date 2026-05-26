@@ -93,8 +93,8 @@
       </div>
     </div>
 
-    <!-- Context Row -->
-    <div class="context-row">
+    <!-- ░░░ CANONICAL .context-row · partials/canonical-context-row.html ░░░ -->
+    <div class="context-row" data-canon="context-row-v1">
       <button class="context-card context-card--date" id="date-selector" aria-label="Select date range">
         <div class="card-label">Date Range</div>
         <div class="card-row">
@@ -128,6 +128,7 @@
         </div>
       </button>
     </div>
+    <!-- ░░░ END .context-row ░░░ -->
 
   </header>
 
@@ -175,7 +176,7 @@
              1-3 prev visits = Returning (amber, --series-c)
              4+ prev visits = Loyal    (green, --series-a)
            ═══════════════════════════════════════════════ -->
-      <div class="perf-tabs perf-tabs--filled" id="ov-perf-tabs" role="tablist" aria-label="Observed Visits view">
+      <div class="perf-tabs" id="ov-perf-tabs" role="tablist" aria-label="Observed Visits view">
         <button class="perf-tab active" data-ov-tab="store" role="tab" aria-selected="true">
           <span class="material-symbols-outlined">store</span> By Store
         </button>
@@ -218,7 +219,7 @@
             <div class="chart-card__header-right">
               <div class="duration-presets" id="ov-trend-ranges" role="tablist" aria-label="Time range">
                 <button type="button" class="duration-preset" data-ov-range="4w">4 Week <span class="duration-preset__sub">(Month)</span></button>
-                <button type="button" class="duration-preset duration-preset--active" data-ov-range="8w">8 week</button>
+                <button type="button" class="duration-preset duration-preset--active" data-ov-range="8w">8 Week</button>
                 <button type="button" class="duration-preset" data-ov-range="13w">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
               </div>
             </div>

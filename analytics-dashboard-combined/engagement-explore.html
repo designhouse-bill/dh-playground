@@ -43,7 +43,7 @@
   <!-- ============================================================
        HEADER
        ============================================================ -->
-  <header class="header">
+  <header class="header header--engagement">
 
     <div class="topbar">
       <div class="topbar__left">
@@ -97,8 +97,8 @@
       </div>
     </div>
 
-    <!-- Context Row -->
-    <div class="context-row">
+    <!-- ░░░ CANONICAL .context-row · partials/canonical-context-row.html ░░░ -->
+    <div class="context-row" data-canon="context-row-v1">
 
       <button class="context-card context-card--date" id="date-selector" aria-label="Select date range">
         <div class="card-label">Date Range</div>
@@ -133,6 +133,7 @@
         </div>
       </button>
 
+      <!-- Explore-only extension: .filter-group · see partial header -->
       <div class="filter-group">
         <div class="filter-label">Filters</div>
         <div class="filter-chips" id="filter-chips">
@@ -144,6 +145,7 @@
       </div>
 
     </div>
+    <!-- ░░░ END .context-row ░░░ -->
 
   </header>
 

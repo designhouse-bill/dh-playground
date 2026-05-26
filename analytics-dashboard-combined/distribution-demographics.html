@@ -88,7 +88,8 @@
       </div>
     </div>
 
-    <div class="context-row">
+    <!-- ░░░ CANONICAL .context-row · partials/canonical-context-row.html ░░░ -->
+    <div class="context-row" data-canon="context-row-v1">
       <button class="context-card context-card--date" id="date-selector" aria-label="Select date range">
         <div class="card-label">Date Range</div>
         <div class="card-row">
@@ -96,8 +97,8 @@
             <span class="material-symbols-outlined">calendar_month</span>
           </div>
           <div class="card-content">
-            <div class="card-value">Week 47</div>
-            <div class="card-sub">Nov 17 – Nov 23, 2026</div>
+            <div class="card-value" id="context-date-value">Week 47</div>
+            <div class="card-sub" id="context-date-sub">Nov 17 – Nov 23, 2026</div>
           </div>
           <span class="card-arrow">
             <span class="material-symbols-outlined">expand_more</span>
@@ -112,9 +113,9 @@
             <span class="material-symbols-outlined">corporate_fare</span>
           </div>
           <div class="card-content">
-            <div class="card-breadcrumb">RETAILER</div>
-            <div class="card-value">Ideal Media Lab</div>
-            <div class="card-sub">All brands · All stores</div>
+            <div class="card-breadcrumb" id="context-entity-breadcrumb">RETAILER</div>
+            <div class="card-value" id="context-entity-value">Ideal Media Lab</div>
+            <div class="card-sub" id="context-entity-sub">All brands · All stores</div>
           </div>
           <span class="card-arrow">
             <span class="material-symbols-outlined">expand_more</span>
@@ -122,6 +123,7 @@
         </div>
       </button>
     </div>
+    <!-- ░░░ END .context-row ░░░ -->
 
   </header>
 
@@ -145,7 +147,7 @@
            Observed Demographics — 3 inner tabs (Max 05/19 PDF p.9-11).
            Current · By Store · Time Trend
            ═══════════════════════════════════════════════ -->
-      <div class="perf-tabs perf-tabs--filled" id="od-perf-tabs" role="tablist" aria-label="Observed Demographics view">
+      <div class="perf-tabs" id="od-perf-tabs" role="tablist" aria-label="Observed Demographics view">
         <button class="perf-tab active" data-od-tab="current" role="tab" aria-selected="true">
           <span class="material-symbols-outlined">dashboard</span> Current
         </button>

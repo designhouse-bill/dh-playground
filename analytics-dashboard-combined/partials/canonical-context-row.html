@@ -1,0 +1,81 @@
+<!--
+  Canonical .context-row — UX-846 (locked 2026-05-26)
+  Source-of-truth markup for the date + entity selector row at the top of EVERY analytics surface.
+
+  Authority: memory pin `analytics-context-row-canonical.md`
+  Punchlist row: F3 (filter-strip placement consistency)
+
+  This file is the REFERENCE. Each active HTML page below MUST inline a block matching
+  this structure between the CANONICAL/END marker comments. Per-page content (date value,
+  entity name, breadcrumb scope) varies; structure does not.
+
+  Active surfaces (10):
+    distribution-traffic.html, distribution-media.html,
+    distribution-visitation.html, distribution-demographics.html,
+    engagement-report.html, engagement-explore.html, engagement-explore-base.html,
+    engagement-explore-base-categories.html, engagement-explore-base-promotions.html,
+    engagement-compare.html
+
+  Slot contract:
+    header.header.header--{distribution|engagement}
+      > div.topbar  (brand + nav)
+      > [CANONICAL .context-row marker block — actual markup below]
+      > /header
+  (narrative-header lives OUTSIDE header, AFTER it)
+
+  Note on visual order:
+    CSS in css/header.css applies `order: 1` to #entity-selector and `order: 2`
+    to #date-selector, so on screen the user sees Entity LEFT, Date RIGHT.
+    DOM order is date-then-entity (preserved here for source readability and
+    aria/tab-index intent: date is the simpler concept first).
+
+  Modal divergence: known unresolved seam — distribution builds modals in JS
+  (DistributionModals.js), engagement uses inline HTML (#date-picker-modal, #entity-picker-modal),
+  compare runs its own ComparePage.openDatePicker. Unification deferred to the Angular port
+  (see analytics-context-row-canonical.md "Implementation approach" → option 3). The .context-row
+  markup is locked here regardless of which modal opens behind it.
+
+  Allowed extension — Explore pages only:
+    A third child `.filter-group` may sit AFTER the entity button on Explore Data pages
+    (engagement-explore.html and engagement-explore-base*.html) for the Add Filter chips row.
+    Engagement-report removed it per the 2026-05-12 Report-mode decision. Distribution pages
+    do not carry filters. The filter-group is a sibling concern that piggybacks on the same
+    flex container today; on the Angular port it should move out to its own row below.
+-->
+
+<!-- ░░░ CANONICAL .context-row · partials/canonical-context-row.html ░░░ -->
+<div class="context-row" data-canon="context-row-v1">
+  <button class="context-card context-card--date" id="date-selector" aria-label="Select date range">
+    <div class="card-label">Date Range</div>
+    <div class="card-row">
+      <div class="card-icon">
+        <span class="material-symbols-outlined">calendar_month</span>
+      </div>
+      <div class="card-content">
+        <div class="card-value" id="context-date-value">Week 47</div>
+        <div class="card-sub" id="context-date-sub">Nov 17 – Nov 23, 2026</div>
+      </div>
+      <span class="card-arrow">
+        <span class="material-symbols-outlined">expand_more</span>
+      </span>
+    </div>
+  </button>
+
+  <button class="context-card" id="entity-selector" aria-label="Select entity">
+    <div class="card-label">Entity</div>
+    <div class="card-row">
+      <div class="card-icon card-icon--entity">
+        <span class="material-symbols-outlined">corporate_fare</span>
+      </div>
+      <div class="card-content">
+        <div class="card-breadcrumb" id="context-entity-breadcrumb">RETAILER</div>
+        <div class="card-value" id="context-entity-value">Ideal Media Lab</div>
+        <div class="card-sub" id="context-entity-sub">All brands · All stores</div>
+      </div>
+      <span class="card-arrow">
+        <span class="material-symbols-outlined">expand_more</span>
+      </span>
+    </div>
+  </button>
+</div>
+<!-- ░░░ END .context-row ░░░ -->

@@ -2399,3 +2399,61 @@ a.ep-store-rank__row:last-child { border-bottom: none; }
   }
 }
 
+
+/* ============================================================
+   UX-846 Tier 1 lock (2026-05-26)
+   Authority: ~/.claude/projects/-Users-billklingensmith-Code/memory/topics/
+              analytics-page-header-canonical.md
+   Locks: perf-tab visual contract, view-toggle borderless,
+          flush-with-chart-card (single-card panes).
+   Wins by load order (appended after all previous .perf-tab rules).
+   ============================================================ */
+
+/* All perf-tab states share top border-radius (constant shape, fill changes per state) */
+.perf-tabs .perf-tab {
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* Active = solid section color, white text/icon (palette guarantees AA on white) */
+.perf-tabs .perf-tab.active,
+body[data-dist-page] .perf-tabs .perf-tab.active {
+  background: var(--section-color, var(--p-primary-color));
+  color: #fff;
+  border-color: transparent;
+  border-bottom-color: var(--section-color, var(--p-primary-color));
+  box-shadow: none;
+}
+.perf-tabs .perf-tab.active .material-symbols-outlined {
+  color: #fff;
+}
+
+/* Hover non-active = 20% section wash (color-mix) */
+.perf-tabs .perf-tab:not(.active):hover {
+  background: color-mix(in srgb, var(--section-color, var(--p-primary-color)) 20%, transparent);
+  color: var(--color-text-primary);
+}
+
+/* Flush with chart-card: only when pane has exactly one .chart-card child.
+   Absorbs the parent .dist-section row-gap: 8px and squares the card's
+   top corners so the active tab and the card form one tabbed surface. */
+.dist-section .perf-tab-pane.active:has(> .chart-card:only-child) {
+  margin-top: -8px;
+}
+.dist-section .perf-tab-pane.active:has(> .chart-card:only-child) > .chart-card {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+/* .view-toggle borderless (both PILL canonical and SEGMENTED override) */
+.view-toggle {
+  border: 0;
+}
+.view-toggle__btn {
+  border: 0;
+}
+.view-toggle__btn + .view-toggle__btn {
+  border-left: 0;
+}

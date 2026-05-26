@@ -968,7 +968,7 @@ const ComparePage = (function() {
     // Calculate totals from context-specific data
     const totalCIV = promotions.reduce((sum, p) => sum + (p.civ || 0), 0);
     const totalCC = promotions.reduce((sum, p) => sum + (p.cc || 0), 0);
-    const totalATL = promotions.reduce((sum, p) => sum + (p.atl || 0), 0);
+    const totalATL = promotions.reduce((sum, p) => sum + (p.addToListCount || 0), 0);
 
     // Calculate a meaningful engagement score based on totals
     // Using the same formula as composite score but for totals
@@ -995,7 +995,7 @@ const ComparePage = (function() {
         const storePromos = MockData.getUniquePromotions(storeRecordsMap[storeId]);
         const storeCIV = storePromos.reduce((sum, p) => sum + (p.civ || 0), 0);
         const storeCC = storePromos.reduce((sum, p) => sum + (p.cc || 0), 0);
-        const storeATL = storePromos.reduce((sum, p) => sum + (p.atl || 0), 0);
+        const storeATL = storePromos.reduce((sum, p) => sum + (p.addToListCount || 0), 0);
         const storeScore = Math.round((storeCIV * 0.4 + storeCC * 10 + storeATL * 15) / 100);
         storeScores.push({ storeId, score: storeScore });
       });
@@ -1025,7 +1025,7 @@ const ComparePage = (function() {
         engagementScore: totalEngagementScore,
         civ: totalCIV,
         cc: totalCC,
-        atl: totalATL,
+        addToListCount: totalATL,
         percentile: entityPercentile,
         promotionCount: promotions.length,
         categoryCount: categories.length,
@@ -1075,7 +1075,7 @@ const ComparePage = (function() {
         engagementScore: category.totalScore || 0,
         civ: category.civ || 0,
         cc: category.cc || 0,
-        atl: category.atl || 0,
+        addToListCount: category.addToListCount || 0,
         percentile: category.percentile || 0,
         promotionCount: category.promotionCount || 0
       }
@@ -1111,7 +1111,7 @@ const ComparePage = (function() {
         engagementScore: promo.totalScore || 0,
         civ: promo.civ || 0,
         cc: promo.cc || 0,
-        atl: promo.atl || 0,
+        addToListCount: promo.addToListCount || 0,
         percentile: promo.percentile || 0,
         dealType: promo.dealType || '',
         cardSize: promo.cardSize || '',
@@ -1192,7 +1192,7 @@ const ComparePage = (function() {
         <div class="compare-mini-cards">
           ${renderMiniCard('Views', formatNumber(metrics.civ), metricsA.civ, metrics.civ, showVariance)}
           ${renderMiniCard('Clicks', formatNumber(metrics.cc), metricsA.cc, metrics.cc, showVariance)}
-          ${renderMiniCard('Adds', formatNumber(metrics.atl), metricsA.atl, metrics.atl, showVariance)}
+          ${renderMiniCard('Adds', formatNumber(metrics.addToListCount), metricsA.addToListCount, metrics.addToListCount, showVariance)}
           ${renderMiniCard('Stores', formatNumber(metrics.storeCount), metricsA.storeCount, metrics.storeCount, showVariance)}
           ${renderMiniCard('Categories', formatNumber(metrics.categoryCount), metricsA.categoryCount, metrics.categoryCount, showVariance)}
           ${renderMiniCard('Promotions', formatNumber(metrics.promotionCount), metricsA.promotionCount, metrics.promotionCount, showVariance)}
@@ -1220,7 +1220,7 @@ const ComparePage = (function() {
         <div class="compare-mini-cards">
           ${renderMiniCard('Views', formatNumber(metrics.civ), metricsA.civ, metrics.civ, showVariance)}
           ${renderMiniCard('Clicks', formatNumber(metrics.cc), metricsA.cc, metrics.cc, showVariance)}
-          ${renderMiniCard('Adds', formatNumber(metrics.atl), metricsA.atl, metrics.atl, showVariance)}
+          ${renderMiniCard('Adds', formatNumber(metrics.addToListCount), metricsA.addToListCount, metrics.addToListCount, showVariance)}
           ${renderMiniCard('Promotions', formatNumber(metrics.promotionCount), metricsA.promotionCount, metrics.promotionCount, showVariance)}
         </div>
       </div>`;
@@ -1253,7 +1253,7 @@ const ComparePage = (function() {
         <div class="compare-mini-cards">
           ${renderMiniCard('Views', formatNumber(metrics.civ), metricsA.civ, metrics.civ, showVariance)}
           ${renderMiniCard('Clicks', formatNumber(metrics.cc), metricsA.cc, metrics.cc, showVariance)}
-          ${renderMiniCard('Adds', formatNumber(metrics.atl), metricsA.atl, metrics.atl, showVariance)}
+          ${renderMiniCard('Adds', formatNumber(metrics.addToListCount), metricsA.addToListCount, metrics.addToListCount, showVariance)}
           ${renderMiniCard('Deal Type', metrics.dealType || '-', metricsA.dealType, metrics.dealType, showVariance, true)}
           ${renderMiniCard('Orig. Price', formatCurrency(metrics.originalPrice), metricsA.originalPrice, metrics.originalPrice, showVariance)}
           ${renderMiniCard('Sale Price', formatCurrency(metrics.salePrice), metricsA.salePrice, metrics.salePrice, showVariance)}
@@ -1360,7 +1360,7 @@ const ComparePage = (function() {
                  data-name=""
                  data-views="${metrics.civ || 0}"
                  data-clicks="${metrics.cc || 0}"
-                 data-adds="${metrics.atl || 0}"
+                 data-adds="${metrics.addToListCount || 0}"
                  data-composite="${score || 0}">
             </div>
           </div>

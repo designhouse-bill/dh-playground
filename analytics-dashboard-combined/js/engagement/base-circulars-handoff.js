@@ -278,14 +278,14 @@
           </td>
           <td class="col-views">${core.formatNumber(store.civ)}</td>
           <td class="col-clicks">${core.formatNumber(store.cc)}</td>
-          <td class="col-added">${core.formatNumber(store.atl)}</td>
+          <td class="col-added">${core.formatNumber(store.addToListCount)}</td>
           <td class="col-perf">
             <div class="perf-chart-container">
               <div class="perf-chart" id="perf-chart-store-${store.id}"
                    data-name="${core.escapeHtml(store.name)}"
                    data-views="${store.civ || 0}"
                    data-clicks="${store.cc || 0}"
-                   data-adds="${store.atl || 0}"
+                   data-adds="${store.addToListCount || 0}"
                    data-composite="${store.totalScore || 0}">
               </div>
               <span class="perf-chart__value">${core.formatNumber(store.totalScore)}</span>
@@ -312,7 +312,7 @@
             ${getStoreSortableHeaderHTML('Store', 'name', 'col-store', 'text')}
             ${getStoreSortableHeaderHTML('Views', 'civ', 'col-views')}
             ${getStoreSortableHeaderHTML('Clicks', 'cc', 'col-clicks')}
-            ${getStoreSortableHeaderHTML('Added', 'atl', 'col-added')}
+            ${getStoreSortableHeaderHTML('Added', 'addToListCount', 'col-added')}
             ${getStoreSortableHeaderHTML('Performance', 'totalScore', 'col-perf')}
             ${getStoreSortableHeaderHTML('Days', 'daysRun', 'col-days')}
             ${getStoreSortableHeaderHTML('%tile', 'percentile', 'col-percentile')}
@@ -577,7 +577,7 @@
         </div>
         <div class="store-metric">
           <div class="store-metric__label">Added to List</div>
-          <div class="store-metric__value">${core.formatNumber(store.atl)}</div>
+          <div class="store-metric__value">${core.formatNumber(store.addToListCount)}</div>
         </div>
         <div class="store-metric">
           <div class="store-metric__label">Percentile</div>

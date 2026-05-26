@@ -17,7 +17,7 @@
     { key: 'originalPosition', label: 'Orig. Pos.', type: 'position', sortable: true, sticky: false, visible: false },
     { key: 'civ', label: 'Views', type: 'number', sortable: true, sticky: false, visible: true },
     { key: 'cc', label: 'Clicks', type: 'number', sortable: true, sticky: false, visible: true },
-    { key: 'atl', label: 'Added', type: 'number', sortable: true, sticky: false, visible: true },
+    { key: 'addToListCount', label: 'Added', type: 'number', sortable: true, sticky: false, visible: true },
     { key: 'totalScore', label: 'Performance', type: 'performance', sortable: true, sticky: false, visible: true },
     { key: 'percentile', label: '%ile', type: 'percentile', sortable: true, sticky: false, visible: true },
     // Additional promotion fields (hidden by default)
@@ -480,14 +480,14 @@
         cellClass += ' col-perf table-performance';
         const chartId = `perf-chart-grid-${promo.id}`;
         // Show points total (views×1 + clicks×5 + adds×20), not raw interaction count.
-        const pointsTotal = (promo.civ || 0) * 1 + (promo.cc || 0) * 5 + (promo.atl || 0) * 20;
+        const pointsTotal = (promo.civ || 0) * 1 + (promo.cc || 0) * 5 + (promo.addToListCount || 0) * 20;
         displayValue = `
           <div class="perf-chart-container">
             <div class="perf-chart" id="${chartId}"
                  data-name="${core.escapeHtml(promo.name || '')}"
                  data-views="${promo.civ || 0}"
                  data-clicks="${promo.cc || 0}"
-                 data-adds="${promo.atl || 0}"
+                 data-adds="${promo.addToListCount || 0}"
                  data-composite="${promo.totalScore || 0}">
             </div>
             <span class="perf-chart__value">${core.formatNumber(pointsTotal)}</span>
@@ -750,7 +750,7 @@
         `"${(promo.categoryName || '').replace(/"/g, '""')}"`,
         promo.civ || 0,
         promo.cc || 0,
-        promo.atl || 0,
+        promo.addToListCount || 0,
         promo.daysRun || 7,
         promo.originalPosition || '',
         promo.startDate || '',

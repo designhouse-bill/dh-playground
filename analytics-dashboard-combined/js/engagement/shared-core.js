@@ -36,7 +36,7 @@ const DashboardCore = (() => {
     { key: 'dealType', label: 'Deal Type', type: 'deal', sortable: true, sticky: false, visible: true },
     { key: 'civ', label: 'CIV', type: 'currency', sortable: true, sticky: false, visible: true },
     { key: 'cc', label: 'CC', type: 'number', sortable: true, sticky: false, visible: true },
-    { key: 'atl', label: 'ATL', type: 'currency', sortable: true, sticky: false, visible: true },
+    { key: 'addToListCount', label: 'ATL', type: 'currency', sortable: true, sticky: false, visible: true },
     { key: 'percentile', label: 'Percentile', type: 'number', sortable: true, sticky: false, visible: true },
     { key: 'totalScore', label: 'Performance', type: 'performance', sortable: true, sticky: false, visible: true },
     { key: 'cardSize', label: 'Card Size', type: 'text', sortable: true, sticky: false, visible: false },
@@ -607,9 +607,9 @@ const DashboardCore = (() => {
           valA = a.cc || 0;
           valB = b.cc || 0;
           break;
-        case 'atl':
-          valA = a.atl || 0;
-          valB = b.atl || 0;
+        case 'addToListCount':
+          valA = a.addToListCount || 0;
+          valB = b.addToListCount || 0;
           break;
         case 'percentile':
           valA = a.percentile || 0;
@@ -656,9 +656,9 @@ const DashboardCore = (() => {
           valA = a.cc || 0;
           valB = b.cc || 0;
           break;
-        case 'atl':
-          valA = a.atl || 0;
-          valB = b.atl || 0;
+        case 'addToListCount':
+          valA = a.addToListCount || 0;
+          valB = b.addToListCount || 0;
           break;
         case 'percentile':
           valA = a.percentile || 0;

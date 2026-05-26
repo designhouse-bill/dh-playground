@@ -412,7 +412,7 @@
     // Calculate max values for bar charts
     const maxCiv = Math.max(...state.filteredPromotions.map(p => p.civ));
     const maxCc = Math.max(...state.filteredPromotions.map(p => p.cc));
-    const maxAtl = Math.max(...state.filteredPromotions.map(p => p.atl));
+    const maxAtl = Math.max(...state.filteredPromotions.map(p => p.addToListCount));
     const maxValues = { maxCiv, maxCc, maxAtl };
 
     // Render cards
@@ -473,7 +473,7 @@
               <span class="promo-stat__label">Clicks</span>
             </div>
             <div class="promo-stat">
-              <span class="promo-stat__value">${core.formatNumber(promo.atl)}</span>
+              <span class="promo-stat__value">${core.formatNumber(promo.addToListCount)}</span>
               <span class="promo-stat__label">Added</span>
             </div>
           </div>
@@ -580,7 +580,7 @@
           <td class="col-deal"><span class="promo-deal">${core.escapeHtml(promo.dealType)}</span></td>
           <td class="col-views">${core.formatNumber(promo.civ)}</td>
           <td class="col-clicks">${core.formatNumber(promo.cc)}</td>
-          <td class="col-added">${core.formatNumber(promo.atl)}</td>
+          <td class="col-added">${core.formatNumber(promo.addToListCount)}</td>
       ` : '';
 
       // Generate variants badge HTML if this is a parent with children
@@ -612,7 +612,7 @@
                    data-name="${core.escapeHtml(promo.name)}"
                    data-views="${promo.civ || 0}"
                    data-clicks="${promo.cc || 0}"
-                   data-adds="${promo.atl || 0}"
+                   data-adds="${promo.addToListCount || 0}"
                    data-composite="${promo.totalScore || 0}">
               </div>
               <span class="perf-chart__value">${core.formatNumber(promo.totalScore)}</span>
@@ -637,7 +637,7 @@
             ${getPromoSortableHeaderHTML('Deal', 'dealType', 'col-deal', 'dealType')}
             ${getPromoSortableHeaderHTML('Views', 'civ', 'col-views')}
             ${getPromoSortableHeaderHTML('Clicks', 'cc', 'col-clicks')}
-            ${getPromoSortableHeaderHTML('Added', 'atl', 'col-added')}
+            ${getPromoSortableHeaderHTML('Added', 'addToListCount', 'col-added')}
     ` : '';
 
     // Toggle more-data-enabled class on container
@@ -1049,8 +1049,8 @@
           </div>
           <div class="detail-kpi">
             <div class="kpi-value">
-              <span class="kpi-weighted">${core.formatNumber(promo.atl * 20)}</span>
-              <span class="kpi-raw">(${core.formatNumber(promo.atl)} - raw)</span>
+              <span class="kpi-weighted">${core.formatNumber(promo.addToListCount * 20)}</span>
+              <span class="kpi-raw">(${core.formatNumber(promo.addToListCount)} - raw)</span>
             </div>
             <div class="kpi-label">Add to List</div>
           </div>
@@ -1099,7 +1099,7 @@
     // Get metrics from promotion
     const views = promo.civ || 0;
     const clicks = promo.cc || 0;
-    const added = promo.atl || 0;
+    const added = promo.addToListCount || 0;
 
     // Get colors from CSS variables
     const colors = core.getChartColors();

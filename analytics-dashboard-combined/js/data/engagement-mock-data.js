@@ -478,10 +478,10 @@ const MockData = (() => {
           views: 0,
           clicks: 0,
           adds: 0,
-          viewsScore: 0,
-          clicksScore: 0,
-          addsScore: 0,
-          compositeScore: 0,
+          inViewScore: 0,
+          clickScore: 0,
+          addToListScore: 0,
+          totalScore: 0,
           promotionIds: new Set()
         };
       }
@@ -493,10 +493,10 @@ const MockData = (() => {
       cat.views += record.views || record.civ;
       cat.clicks += record.clicks || record.cc;
       cat.adds += record.adds || record.atl;
-      cat.viewsScore += record.viewsScore || (record.civ * 1);
-      cat.clicksScore += record.clicksScore || (record.cc * 5);
-      cat.addsScore += record.addsScore || (record.atl * 20);
-      cat.compositeScore += record.compositeScore || (record.viewsScore + record.clicksScore + record.addsScore) || 0;
+      cat.inViewScore += record.inViewScore || (record.civ * 1);
+      cat.clickScore += record.clickScore || (record.cc * 5);
+      cat.addToListScore += record.addToListScore || (record.atl * 20);
+      cat.totalScore += record.totalScore || (record.inViewScore + record.clickScore + record.addToListScore) || 0;
       cat.promotionIds.add(record.promotionId);
     });
 
@@ -506,7 +506,7 @@ const MockData = (() => {
       return cat;
     });
 
-    categories.sort((a, b) => b.compositeScore - a.compositeScore);
+    categories.sort((a, b) => b.totalScore - a.totalScore);
     categories.forEach((cat, idx) => {
       cat.percentile = Math.round(100 - (idx / categories.length) * 100);
     });
@@ -553,10 +553,10 @@ const MockData = (() => {
           views: 0,
           clicks: 0,
           adds: 0,
-          viewsScore: 0,
-          clicksScore: 0,
-          addsScore: 0,
-          compositeScore: 0,
+          inViewScore: 0,
+          clickScore: 0,
+          addToListScore: 0,
+          totalScore: 0,
           storeCount: 0
         };
       }
@@ -568,10 +568,10 @@ const MockData = (() => {
       promo.views += record.views || record.civ;
       promo.clicks += record.clicks || record.cc;
       promo.adds += record.adds || record.atl;
-      promo.viewsScore += record.viewsScore || (record.civ * 1);
-      promo.clicksScore += record.clicksScore || (record.cc * 5);
-      promo.addsScore += record.addsScore || (record.atl * 20);
-      promo.compositeScore += record.compositeScore || (record.viewsScore + record.clicksScore + record.addsScore) || 0;
+      promo.inViewScore += record.inViewScore || (record.civ * 1);
+      promo.clickScore += record.clickScore || (record.cc * 5);
+      promo.addToListScore += record.addToListScore || (record.atl * 20);
+      promo.totalScore += record.totalScore || (record.inViewScore + record.clickScore + record.addToListScore) || 0;
       promo.storeCount++;
     });
 
@@ -589,17 +589,17 @@ const MockData = (() => {
         parent.views += child.views;
         parent.clicks += child.clicks;
         parent.adds += child.adds;
-        parent.viewsScore += child.viewsScore;
-        parent.clicksScore += child.clicksScore;
-        parent.addsScore += child.addsScore;
-        parent.compositeScore += child.compositeScore;
+        parent.inViewScore += child.inViewScore;
+        parent.clickScore += child.clickScore;
+        parent.addToListScore += child.addToListScore;
+        parent.totalScore += child.totalScore;
       }
     });
 
     // Filter out child promotions - only show parents and standalone promotions
     const promotions = Object.values(promoMap).filter(p => !p.parentPromoId);
 
-    promotions.sort((a, b) => b.compositeScore - a.compositeScore);
+    promotions.sort((a, b) => b.totalScore - a.totalScore);
     promotions.forEach((p, idx) => {
       p.percentile = Math.round(100 - (idx / promotions.length) * 100);
     });
@@ -807,10 +807,10 @@ const MockData = (() => {
           views: 0,
           clicks: 0,
           adds: 0,
-          viewsScore: 0,
-          clicksScore: 0,
-          addsScore: 0,
-          compositeScore: 0,
+          inViewScore: 0,
+          clickScore: 0,
+          addToListScore: 0,
+          totalScore: 0,
           promotionCount: 0,
           categoryCount: 0,
           promotionIds: new Set(),
@@ -828,10 +828,10 @@ const MockData = (() => {
           store.views += record.views || record.civ;
           store.clicks += record.clicks || record.cc;
           store.adds += record.adds || record.atl;
-          store.viewsScore += record.viewsScore || (record.civ * 1);
-          store.clicksScore += record.clicksScore || (record.cc * 5);
-          store.addsScore += record.addsScore || (record.atl * 20);
-          store.compositeScore += record.compositeScore || (record.viewsScore + record.clicksScore + record.addsScore) || 0;
+          store.inViewScore += record.inViewScore || (record.civ * 1);
+          store.clickScore += record.clickScore || (record.cc * 5);
+          store.addToListScore += record.addToListScore || (record.atl * 20);
+          store.totalScore += record.totalScore || (record.inViewScore + record.clickScore + record.addToListScore) || 0;
           store.promotionIds.add(record.promotionId);
           store.categoryIds.add(record.category);
         }
@@ -847,7 +847,7 @@ const MockData = (() => {
       });
 
       // Sort by composite score and calculate percentiles
-      stores.sort((a, b) => b.compositeScore - a.compositeScore);
+      stores.sort((a, b) => b.totalScore - a.totalScore);
       stores.forEach((store, idx) => {
         store.percentile = Math.round(100 - (idx / stores.length) * 100);
       });

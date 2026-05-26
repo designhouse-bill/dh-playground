@@ -43,7 +43,7 @@
     // Initialize circulars-specific state
     state.selectedStoreId = state.selectedStoreId || null;
     state.activeStore = state.activeStore || null;
-    state.storeSortColumn = state.storeSortColumn || 'compositeScore';
+    state.storeSortColumn = state.storeSortColumn || 'totalScore';
     state.storeSortDirection = state.storeSortDirection || 'desc';
     state.topN = state.topN || 25;
 
@@ -250,11 +250,11 @@
     }
 
     // Calculate max composite score for performance bars
-    const maxScore = Math.max(...allStores.map(s => s.compositeScore || 0));
+    const maxScore = Math.max(...allStores.map(s => s.totalScore || 0));
 
     const rows = stores.map((store, index) => {
       const isSelected = state.selectedStoreId === store.id;
-      const perfPercent = maxScore > 0 ? ((store.compositeScore || 0) / maxScore * 100) : 0;
+      const perfPercent = maxScore > 0 ? ((store.totalScore || 0) / maxScore * 100) : 0;
       const perfClass = store.percentile >= 75 ? 'high' : store.percentile >= 50 ? 'medium' : 'low';
       const globalIndex = pageInfo.start + index;
 
@@ -286,9 +286,9 @@
                    data-views="${store.civ || 0}"
                    data-clicks="${store.cc || 0}"
                    data-adds="${store.atl || 0}"
-                   data-composite="${store.compositeScore || 0}">
+                   data-composite="${store.totalScore || 0}">
               </div>
-              <span class="perf-chart__value">${core.formatNumber(store.compositeScore)}</span>
+              <span class="perf-chart__value">${core.formatNumber(store.totalScore)}</span>
             </div>
           </td>
           <td class="col-days">${store.daysRun || 7}</td>
@@ -313,7 +313,7 @@
             ${getStoreSortableHeaderHTML('Views', 'civ', 'col-views')}
             ${getStoreSortableHeaderHTML('Clicks', 'cc', 'col-clicks')}
             ${getStoreSortableHeaderHTML('Added', 'atl', 'col-added')}
-            ${getStoreSortableHeaderHTML('Performance', 'compositeScore', 'col-perf')}
+            ${getStoreSortableHeaderHTML('Performance', 'totalScore', 'col-perf')}
             ${getStoreSortableHeaderHTML('Days', 'daysRun', 'col-days')}
             ${getStoreSortableHeaderHTML('%tile', 'percentile', 'col-percentile')}
           </tr>
@@ -405,13 +405,13 @@
           ${options}
         </select>
       `;
-    } else if (column === 'compositeScore' && typeof PerfCharts !== 'undefined') {
+    } else if (column === 'totalScore' && typeof PerfCharts !== 'undefined') {
       // Performance metric dropdown
       filterHTML = PerfCharts.getDropdownHTML();
     }
 
     // Add info button for Performance column
-    const infoButtonHTML = (column === 'compositeScore' && typeof DashboardFilters !== 'undefined')
+    const infoButtonHTML = (column === 'totalScore' && typeof DashboardFilters !== 'undefined')
       ? DashboardFilters.getMetricsKeyButtonHTML()
       : '';
 

@@ -482,7 +482,7 @@
               <div class="perf-bar__track perf-bar__track--${perfClass}">
                 <div class="perf-bar__fill perf-bar__fill--${perfClass}" style="width: ${performanceWidth}%"></div>
               </div>
-              <span class="perf-bar__value">${promo.compositeScore || Math.round(performanceWidth)}</span>
+              <span class="perf-bar__value">${promo.totalScore || Math.round(performanceWidth)}</span>
             </div>
           </div>
         </div>
@@ -566,12 +566,12 @@
       return;
     }
 
-    const maxScore = Math.max(...allDisplayPromotions.map(p => p.compositeScore || 0));
+    const maxScore = Math.max(...allDisplayPromotions.map(p => p.totalScore || 0));
     const showMoreData = state.promoMoreDataEnabled || false;
 
     const rows = pagePromotions.map((promo, index) => {
       const isActive = state.activePromotion === promo.id;
-      const perfPercent = maxScore > 0 ? ((promo.compositeScore || 0) / maxScore * 100) : 0;
+      const perfPercent = maxScore > 0 ? ((promo.totalScore || 0) / maxScore * 100) : 0;
       const perfClass = promo.percentile >= 75 ? 'high' : promo.percentile >= 50 ? 'medium' : 'low';
       const globalIndex = pageInfo.start + index;
 
@@ -613,9 +613,9 @@
                    data-views="${promo.civ || 0}"
                    data-clicks="${promo.cc || 0}"
                    data-adds="${promo.atl || 0}"
-                   data-composite="${promo.compositeScore || 0}">
+                   data-composite="${promo.totalScore || 0}">
               </div>
-              <span class="perf-chart__value">${core.formatNumber(promo.compositeScore)}</span>
+              <span class="perf-chart__value">${core.formatNumber(promo.totalScore)}</span>
             </div>
           </td>
           <td class="col-percentile">${core.getPercentileBadgeHTML(promo.percentile)}</td>
@@ -651,7 +651,7 @@
             ${getPromoSortableHeaderHTML('Promotion', 'name', 'col-promo', 'text')}
             ${getPromoSortableHeaderHTML('Category', 'categoryName', 'col-category', 'category')}
             ${moreDataHeaders}
-            ${getPromoSortableHeaderHTML('Performance', 'compositeScore', 'col-perf')}
+            ${getPromoSortableHeaderHTML('Performance', 'totalScore', 'col-perf')}
             ${getPromoSortableHeaderHTML('%tile', 'percentile', 'col-percentile')}
             <th class="col-actions">Actions</th>
           </tr>
@@ -729,13 +729,13 @@
           ${options}
         </select>
       `;
-    } else if (column === 'compositeScore' && typeof PerfCharts !== 'undefined') {
+    } else if (column === 'totalScore' && typeof PerfCharts !== 'undefined') {
       // Performance metric dropdown
       filterHTML = PerfCharts.getDropdownHTML();
     }
 
     // Add info button for Performance column
-    const infoButtonHTML = (column === 'compositeScore' && typeof DashboardFilters !== 'undefined')
+    const infoButtonHTML = (column === 'totalScore' && typeof DashboardFilters !== 'undefined')
       ? DashboardFilters.getMetricsKeyButtonHTML()
       : '';
 
@@ -1027,7 +1027,7 @@
           <div class="percentile-bar" style="background-color: ${barColor}22;">
             <div class="percentile-bar-fill" style="width: ${promo.percentile}%; background-color: ${barColor};"></div>
           </div>
-          <span class="percentile-score">${promo.compositeScore}</span>
+          <span class="percentile-score">${promo.totalScore}</span>
           <img src="./assets/chart-bar.svg" alt="Percentile" class="percentile-icon">
           <span class="percentile-value percentile-value--${getPercentileVariant(promo.percentile)}">${promo.percentile}%</span>
         </div>

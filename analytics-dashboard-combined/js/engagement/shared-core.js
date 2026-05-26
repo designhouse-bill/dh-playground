@@ -38,7 +38,7 @@ const DashboardCore = (() => {
     { key: 'cc', label: 'CC', type: 'number', sortable: true, sticky: false, visible: true },
     { key: 'atl', label: 'ATL', type: 'currency', sortable: true, sticky: false, visible: true },
     { key: 'percentile', label: 'Percentile', type: 'number', sortable: true, sticky: false, visible: true },
-    { key: 'compositeScore', label: 'Performance', type: 'performance', sortable: true, sticky: false, visible: true },
+    { key: 'totalScore', label: 'Performance', type: 'performance', sortable: true, sticky: false, visible: true },
     { key: 'cardSize', label: 'Card Size', type: 'text', sortable: true, sticky: false, visible: false },
     { key: 'originalPrice', label: 'Original Price', type: 'currency', sortable: true, sticky: false, visible: false },
     { key: 'salePrice', label: 'Sale Price', type: 'currency', sortable: true, sticky: false, visible: false },
@@ -664,9 +664,9 @@ const DashboardCore = (() => {
           valA = a.percentile || 0;
           valB = b.percentile || 0;
           break;
-        case 'compositeScore':
-          valA = a.compositeScore || 0;
-          valB = b.compositeScore || 0;
+        case 'totalScore':
+          valA = a.totalScore || 0;
+          valB = b.totalScore || 0;
           break;
         default:
           valA = a[column] || 0;

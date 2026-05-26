@@ -18,7 +18,7 @@
     { key: 'civ', label: 'Views', type: 'number', sortable: true, sticky: false, visible: true },
     { key: 'cc', label: 'Clicks', type: 'number', sortable: true, sticky: false, visible: true },
     { key: 'atl', label: 'Added', type: 'number', sortable: true, sticky: false, visible: true },
-    { key: 'compositeScore', label: 'Performance', type: 'performance', sortable: true, sticky: false, visible: true },
+    { key: 'totalScore', label: 'Performance', type: 'performance', sortable: true, sticky: false, visible: true },
     { key: 'percentile', label: '%ile', type: 'percentile', sortable: true, sticky: false, visible: true },
     // Additional promotion fields (hidden by default)
     { key: 'unit', label: 'Unit', type: 'text', sortable: true, sticky: false, visible: false },
@@ -313,7 +313,7 @@
     tableHead.innerHTML = `<tr>${columns.map(col => renderGridHeaderCell(col)).join('')}</tr>`;
 
     // Calculate max score for performance bars
-    const maxScore = Math.max(...data.map(p => p.compositeScore || 0), 1);
+    const maxScore = Math.max(...data.map(p => p.totalScore || 0), 1);
 
     // Render body
     if (data.length === 0) {
@@ -488,7 +488,7 @@
                  data-views="${promo.civ || 0}"
                  data-clicks="${promo.cc || 0}"
                  data-adds="${promo.atl || 0}"
-                 data-composite="${promo.compositeScore || 0}">
+                 data-composite="${promo.totalScore || 0}">
             </div>
             <span class="perf-chart__value">${core.formatNumber(pointsTotal)}</span>
           </div>
@@ -755,7 +755,7 @@
         promo.originalPosition || '',
         promo.startDate || '',
         promo.endDate || '',
-        promo.compositeScore || 0,
+        promo.totalScore || 0,
         promo.percentile || 0
       ].join(',');
     });

@@ -1072,7 +1072,7 @@ const ComparePage = (function() {
       name: category.name,
       image: categoryImage,
       metrics: {
-        engagementScore: category.compositeScore || 0,
+        engagementScore: category.totalScore || 0,
         civ: category.civ || 0,
         cc: category.cc || 0,
         atl: category.atl || 0,
@@ -1108,7 +1108,7 @@ const ComparePage = (function() {
       categoryName: promo.categoryName || promo.category || '',
       image: promo.heroImage || promo.thumbImage || '',
       metrics: {
-        engagementScore: promo.compositeScore || 0,
+        engagementScore: promo.totalScore || 0,
         civ: promo.civ || 0,
         cc: promo.cc || 0,
         atl: promo.atl || 0,

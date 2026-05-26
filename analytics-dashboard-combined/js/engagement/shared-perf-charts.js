@@ -44,12 +44,12 @@ const PerfCharts = (() => {
   /**
    * Calculate the display value based on selected metrics
    * @param {Object} data - { views, clicks, adds }
-   * @param {number} compositeScore - The composite score to show when "All" is selected
+   * @param {number} totalScore - The composite score to show when "All" is selected
    * @returns {number} The value to display
    */
-  function getMetricDisplayValue(data, compositeScore) {
+  function getMetricDisplayValue(data, totalScore) {
     if (selectedMetrics.includes('all')) {
-      return compositeScore;
+      return totalScore;
     }
 
     let total = 0;
@@ -71,12 +71,12 @@ const PerfCharts = (() => {
         clicks: parseInt(container.dataset.clicks, 10) || 0,
         adds: parseInt(container.dataset.adds, 10) || 0
       };
-      const compositeScore = parseInt(container.dataset.composite, 10) || 0;
+      const totalScore = parseInt(container.dataset.composite, 10) || 0;
 
       // Find sibling value span
       const valueSpan = container.parentElement.querySelector('.perf-chart__value');
       if (valueSpan) {
-        valueSpan.textContent = formatNumber(getMetricDisplayValue(data, compositeScore));
+        valueSpan.textContent = formatNumber(getMetricDisplayValue(data, totalScore));
       }
     });
   }
@@ -253,10 +253,10 @@ const PerfCharts = (() => {
             html += `<div style="font-weight:600;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.2);color:#fff;">${entityName}</div>`;
           }
 
-          const viewsScore  = views * 1;
-          const clicksScore = clicks * 5;
-          const addsScore   = adds * 20;
-          const totalScore  = viewsScore + clicksScore + addsScore;
+          const inViewScore  = views * 1;
+          const clickScore = clicks * 5;
+          const addToListScore   = adds * 20;
+          const totalScore  = inViewScore + clickScore + addToListScore;
 
           // Column headers
           html += `<div style="display:flex;align-items:center;color:rgba(255,255,255,0.5);font-size:10px;margin-bottom:5px;padding-left:18px;">
@@ -266,9 +266,9 @@ const PerfCharts = (() => {
           </div>`;
 
           const rows = [
-            { name: 'Views',  value: views,  score: viewsScore,  color: METRIC_COLORS.views,  weight: '×1'  },
-            { name: 'Clicks', value: clicks, score: clicksScore, color: METRIC_COLORS.clicks, weight: '×5'  },
-            { name: 'Adds',   value: adds,   score: addsScore,   color: METRIC_COLORS.adds,   weight: '×20' }
+            { name: 'Views',  value: views,  score: inViewScore,  color: METRIC_COLORS.views,  weight: '×1'  },
+            { name: 'Clicks', value: clicks, score: clickScore, color: METRIC_COLORS.clicks, weight: '×5'  },
+            { name: 'Adds',   value: adds,   score: addToListScore,   color: METRIC_COLORS.adds,   weight: '×20' }
           ];
 
           rows.forEach(row => {

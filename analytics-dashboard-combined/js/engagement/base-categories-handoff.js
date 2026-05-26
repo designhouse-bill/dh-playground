@@ -295,11 +295,11 @@
     }
 
     // Calculate max composite score for performance bars
-    const maxScore = Math.max(...allDisplayCategories.map(c => c.compositeScore || 0));
+    const maxScore = Math.max(...allDisplayCategories.map(c => c.totalScore || 0));
 
     const rows = pageCategories.map((cat, index) => {
       const isSelected = state.selectedCategoryId === cat.id;
-      const perfPercent = maxScore > 0 ? ((cat.compositeScore || 0) / maxScore * 100) : 0;
+      const perfPercent = maxScore > 0 ? ((cat.totalScore || 0) / maxScore * 100) : 0;
       const perfClass = cat.percentile >= 75 ? 'high' : cat.percentile >= 50 ? 'medium' : 'low';
       const globalIndex = pageInfo.start + index;
 
@@ -325,9 +325,9 @@
                    data-views="${cat.civ || 0}"
                    data-clicks="${cat.cc || 0}"
                    data-adds="${cat.atl || 0}"
-                   data-composite="${cat.compositeScore || 0}">
+                   data-composite="${cat.totalScore || 0}">
               </div>
-              <span class="perf-chart__value">${core.formatNumber(cat.compositeScore)}</span>
+              <span class="perf-chart__value">${core.formatNumber(cat.totalScore)}</span>
             </div>
           </td>
           <td class="col-percentile">
@@ -354,7 +354,7 @@
             ${getCategorySortableHeaderHTML('Views', 'civ', 'col-views')}
             ${getCategorySortableHeaderHTML('Clicks', 'cc', 'col-clicks')}
             ${getCategorySortableHeaderHTML('Added', 'atl', 'col-added')}
-            ${getCategorySortableHeaderHTML('Performance', 'compositeScore', 'col-perf')}
+            ${getCategorySortableHeaderHTML('Performance', 'totalScore', 'col-perf')}
             ${getCategorySortableHeaderHTML('%tile', 'percentile', 'col-percentile')}
           </tr>
         </thead>
@@ -405,13 +405,13 @@
           </button>
         </div>
       `;
-    } else if (column === 'compositeScore' && typeof PerfCharts !== 'undefined') {
+    } else if (column === 'totalScore' && typeof PerfCharts !== 'undefined') {
       // Performance metric dropdown
       filterHTML = PerfCharts.getDropdownHTML();
     }
 
     // Add info button for Performance column
-    const infoButtonHTML = (column === 'compositeScore' && typeof DashboardFilters !== 'undefined')
+    const infoButtonHTML = (column === 'totalScore' && typeof DashboardFilters !== 'undefined')
       ? DashboardFilters.getMetricsKeyButtonHTML()
       : '';
 

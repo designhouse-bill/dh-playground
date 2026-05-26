@@ -639,7 +639,7 @@
       min-width: 240px;
     }
     /* Stacked Performance bar — parity w/ Original PerfCharts (eCharts).
-       Three segments: viewsScore (blue) / clicksScore (green) / addsScore (purple).
+       Three segments: inViewScore (blue) / clickScore (green) / addToListScore (purple).
        Same colors as `shared-perf-charts.js` METRIC_COLORS. */
     .ep-perf-stacked {
       display: flex;

@@ -5130,14 +5130,18 @@ body[data-dist-page] .narrative-header__title {
   color: #92400e;
 }
 
-/* ── Time trend — series pills inside chart-card__header-right
-       (TT3 canonical: series-pills before duration-presets) ───── */
-.pm-series-pills {
+/* ============================================================
+   .series-pill — canonical chart-series toggle pill.
+   (P7, 2026-05-27: unified from .pm-series-pill + .ov-legend-pill.)
+   Inactive = 35% opacity, active = full. Hover lift on touchable
+   surfaces. Color driven by inline `--pill-color` var.
+   ============================================================ */
+.series-pills {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2, 0.5rem);
 }
-.pm-series-pill {
+.series-pill {
   display: inline-flex;
   align-items: center;
   padding: 4px 12px;
@@ -5153,35 +5157,21 @@ body[data-dist-page] .narrative-header__title {
   opacity: 1;
   transition: opacity 160ms ease, transform 100ms ease;
 }
-.pm-series-pill:not(.active) {
-  opacity: 0.35;
-}
-.pm-series-pill:hover { transform: translateY(-1px); }
+.series-pill:not(.active) { opacity: 0.35; }
+.series-pill:hover { transform: translateY(-1px); }
 
 /* ════════════════════════════════════════════════════════════════
    Observed Visits (Phase 1c — UX-846 05/19 PDF p.6-8)
    3 inner tabs: By Store · Time Trend · by Competitor
    ════════════════════════════════════════════════════════════════ */
 
-/* ── Series-pill legend (shared with Paid Media series pills) ─── */
+/* .ov-legend container — now uses .series-pill children
+   (P7 unification, 2026-05-27). Container kept for OV-specific
+   layout flex; pill style comes from canonical .series-pill above. */
 .ov-legend {
   display: flex;
   gap: var(--space-2, 0.5rem);
 }
-.ov-legend-pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 14px;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  background: var(--pill-color, #2196F3);
-  color: #fff;
-  font-size: 0.75rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: opacity 160ms ease;
-}
-.ov-legend-pill:not(.active) { opacity: 0.35; }
 
 /* ── By Store list (per-store stacked horizontal bar) ─────────── */
 .ov-store-list {

@@ -186,7 +186,7 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
 
 .stat-strip {
   border-radius: var(--radius-10);
-  padding: var(--space-3) var(--space-3);
+  padding: 0 var(--space-3);
   display: flex;
   align-items: stretch;
   gap: var(--space-3);
@@ -248,6 +248,7 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
   display: flex;
   align-items: baseline;
   gap: 6px;
+  flex-direction: column;
 }
 
 .stat-strip__value {
@@ -299,10 +300,12 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
 .hero-stat {
   border-radius: var(--radius-xl);
   padding: var(--space-3) var(--space-2) var(--space-3) var(--space-4);
+  margin-bottom: var(--space-2);
   display: flex;
   align-items: center;
   gap: var(--space-5);
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  flex-direction: row;
 }
 
 .hero-stat > .narrative-header {
@@ -823,7 +826,9 @@ a.ep-kpi-cell:hover { border-color: var(--section-color, var(--color-border-hove
   margin-top: auto;
   padding-top: var(--space-3);
   border-top: 1px solid var(--color-border, #e5e7eb);
+  text-decoration: none;
 }
+a.ep-kpi-cell__view:hover { text-decoration: underline; }
 .ep-kpi-cell__view .material-symbols-outlined { font-size: 16px; }
 
 /* Cell 1 — DoW bar (Sessions) */
@@ -2243,29 +2248,20 @@ a.ep-kpi-cell:hover { border-color: var(--section-color, var(--color-border-hove
 a.ep-kpi-cell:hover,
 button.ep-kpi-cell:hover { border-color: var(--p-primary-color, #2196F3); box-shadow: var(--p-shadow-sm, 0 1px 2px rgba(0,0,0,.06)); }
 
-.ep-top5-panel__viewall {
-  display: inline-flex; align-items: center; gap: 2px;
-  font-size: 12px; font-weight: 600;
-  color: var(--p-primary-color, #2196F3); text-decoration: none;
-  white-space: nowrap;
-}
-.ep-top5-panel__viewall:hover { text-decoration: underline; }
-
 /* ============================================================
-   PN1: full-panel click. Any .ep-top5-panel that contains a
-   `.ep-top5-panel__viewall[href]` becomes clickable; inner
-   anchors/buttons keep their own click semantics. Arrow icon
-   already present in `__viewall` satisfies PN2.
+   PN1: panel-hover affordance. .ep-top5-panel that contains a
+   `.ep-kpi-cell__view[href]` (the bottom-pinned "Open X →" link)
+   gets a hover border/shadow so the whole card reads as clickable.
+   Inner anchors/buttons keep their own click semantics.
    ============================================================ */
-.ep-top5-panel:has(.ep-top5-panel__viewall) {
-  cursor: pointer;
+.ep-top5-panel:has(a.ep-kpi-cell__view) {
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
-.ep-top5-panel:has(.ep-top5-panel__viewall):hover {
+.ep-top5-panel:has(a.ep-kpi-cell__view):hover {
   border-color: var(--p-primary-color, #2196F3);
   box-shadow: var(--p-shadow-md, 0 4px 6px -1px rgba(0,0,0,.08));
 }
-.ep-top5-panel:has(.ep-top5-panel__viewall):focus-visible {
+.ep-top5-panel:has(a.ep-kpi-cell__view):focus-visible {
   outline: 2px solid var(--p-primary-color, #2196F3);
   outline-offset: 2px;
 }
@@ -2426,13 +2422,10 @@ a.ep-store-rank__row:last-child { border-bottom: none; }
   white-space: nowrap;
 }
 
-/* Very narrow: stack "View all" below subtitle so neither truncates. */
+/* Very narrow: let metric subtitle wrap (header no longer holds a viewall link). */
 @container top5 (max-width: 240px) {
   .ep-top5-panel .ep-kpi-cell__head {
     grid-template-columns: 1fr;
-  }
-  .ep-top5-panel .ep-top5-panel__viewall {
-    justify-self: start;
   }
   .ep-top5-panel .ep-kpi-cell__metric {
     white-space: normal;

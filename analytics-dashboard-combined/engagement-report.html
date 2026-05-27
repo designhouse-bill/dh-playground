@@ -11,7 +11,7 @@
   <!-- CSS -->
   <link rel="stylesheet" href="css/design-tokens.css?v=5">
   <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/analytics-architecture.css?v=27">
+  <link rel="stylesheet" href="css/analytics-architecture.css?v=28">
   <link rel="stylesheet" href="css/header.css?v=7">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
@@ -368,7 +368,6 @@
               <div>
                 <div class="ep-kpi-cell__metric">By Performance Score · Top 5 of 27</div>
               </div>
-              <a class="ep-top5-panel__viewall" href="engagement-explore.html?grain=circular">View all <span class="material-symbols-outlined">chevron_right</span></a>
             </div>
             <div class="ep-kpi-cell__chart" style="min-height:0;">
               <div class="ep-top5-bar-list">
@@ -379,6 +378,7 @@
                 <a class="ep-top5-bar-row" href="engagement-explore.html?grain=circular&circular=214" data-perf-hover data-perf-views="4700" data-perf-clicks="2400" data-perf-adds="1300" data-perf-title="#214 Boca Raton"><span class="ep-top5-bar-row__lbl">#214 Boca Raton</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:29%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:15%"></div></div><span class="ep-top5-bar-row__val">8.4K</span></a>
               </div>
             </div>
+            <a class="ep-kpi-cell__view" href="engagement-explore.html?grain=circular">Open Top Stores <span class="material-symbols-outlined">chevron_right</span></a>
           </div>
 
           <div class="ep-kpi-cell ep-top5-panel">
@@ -389,7 +389,6 @@
               <div>
                 <div class="ep-kpi-cell__metric">By Performance Score · Top 5 of 8</div>
               </div>
-              <a class="ep-top5-panel__viewall" href="engagement-explore.html?grain=category">View all <span class="material-symbols-outlined">chevron_right</span></a>
             </div>
             <div class="ep-kpi-cell__chart" style="min-height:0;">
               <div class="ep-top5-bar-list">
@@ -400,6 +399,7 @@
                 <a class="ep-top5-bar-row" href="engagement-explore.html?grain=category&category=pantry" data-perf-hover data-perf-views="7500" data-perf-clicks="3800" data-perf-adds="2100" data-perf-title="Pantry"><span class="ep-top5-bar-row__lbl">Pantry</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">13.4K</span></a>
               </div>
             </div>
+            <a class="ep-kpi-cell__view" href="engagement-explore.html?grain=category">Open Top Categories <span class="material-symbols-outlined">chevron_right</span></a>
           </div>
 
           <div class="ep-kpi-cell ep-top5-panel">
@@ -410,7 +410,6 @@
               <div>
                 <div class="ep-kpi-cell__metric">By Performance Score · Top 5 of 75</div>
               </div>
-              <a class="ep-top5-panel__viewall" href="engagement-explore.html?grain=promotion">View all <span class="material-symbols-outlined">chevron_right</span></a>
             </div>
             <div class="ep-kpi-cell__chart" style="min-height:0;">
               <div class="ep-top5-bar-list">
@@ -421,6 +420,7 @@
                 <a class="ep-top5-bar-row" href="engagement-explore.html?grain=promotion&promotion=p005" data-perf-hover data-perf-views="2500" data-perf-clicks="1300" data-perf-adds="700" data-perf-title="Cereal $2.49"><span class="ep-top5-bar-row__lbl">Cereal $2.49</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:29%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">4.5K</span></a>
               </div>
             </div>
+            <a class="ep-kpi-cell__view" href="engagement-explore.html?grain=promotion">Open Top Promotions <span class="material-symbols-outlined">chevron_right</span></a>
           </div>
 
         </div>
@@ -791,13 +791,13 @@
       }
       wirePanelClick();
     });
-    // PN1/PN2: any .ep-top5-panel containing a .ep-top5-panel__viewall[href]
-    // becomes fully clickable. Inner anchors (.ep-top5-bar-row, the viewall
-    // link itself) preserve their own click semantics — we delegate via
-    // e.target.closest('a, button').
+    // PN1/PN2: any .ep-top5-panel containing a bottom-pinned
+    // a.ep-kpi-cell__view[href] becomes fully clickable. Inner anchors
+    // (.ep-top5-bar-row, the __view link itself) preserve their own click
+    // semantics — we delegate via e.target.closest('a, button').
     function wirePanelClick() {
       document.querySelectorAll('.ep-top5-panel').forEach(function (panel) {
-        var viewall = panel.querySelector('.ep-top5-panel__viewall[href]');
+        var viewall = panel.querySelector('a.ep-kpi-cell__view[href]');
         if (!viewall) return;
         var story = panel.querySelector('.ep-kpi-cell__story');
         panel.setAttribute('tabindex', '0');

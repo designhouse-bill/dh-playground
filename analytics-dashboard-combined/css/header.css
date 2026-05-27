@@ -460,7 +460,7 @@ a.dashboard-switcher__item {
   display: flex;
   align-items: stretch;
   gap: var(--space-3);
-  padding: var(--space-4) var(--space-5);
+  padding: var(--space-2) var(--space-4);
   background: linear-gradient(180deg, var(--color-gray-50), var(--color-surface));
 }
 

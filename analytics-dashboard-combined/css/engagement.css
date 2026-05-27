@@ -6150,12 +6150,41 @@ body:not(.comparison-active) .detail-comparison {
   }
 }
 
-/* ≤ 480px: tighten padding so cards have more usable width on phones. */
-@media (max-width: 480px) {
-  .compare-context-bar { padding: var(--space-3) var(--space-3); }
+/* ≤ 640px: phone fixes — wrap chrome strips, let cells shrink below
+   intrinsic content min-size, allow detail-percentile-row to wrap so chart
+   doesn't lock cell width. */
+@media (max-width: 640px) {
+  .compare-context-bar { padding: var(--space-3); }
   .compare-results-container { padding: var(--space-3); }
-}
 
+  /* Grid cells: shrink below their content's min-content (echarts perf-chart
+     reports 336px which locked the track at 558px). */
+  .compare-cell { min-width: 0; padding: var(--space-3); }
+  .compare-cell > * { min-width: 0; }
+
+  /* Percentile row: chart + score + icon + value no longer nowrap-locked. */
+  .compare-cell .detail-percentile-row { flex-wrap: wrap; }
+  .compare-cell .perf-chart-container { flex: 1 1 100%; min-width: 0; }
+
+  /* Mode strip (Report/Explore/Compare) — wrap onto two lines instead of
+     overflowing past 414. */
+  .view-modes { flex-wrap: wrap; }
+
+  /* Layer tabs (Stores/Categories/Promotions) — horizontal scroll instead of
+     overflow; cleaner than wrap for a 3-button perf-tab. */
+  .compare-layer-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .compare-layer-tabs::-webkit-scrollbar { display: none; }
+  .compare-layer-tabs button,
+  .compare-layer-tabs a { flex-shrink: 0; }
+
+  /* Context column (dual-entity Compare): let label wrap, Copy button drops
+     onto its own line instead of being cut off the right edge. */
+  .context-column { flex-wrap: wrap; }
+  .copy-context-btn { margin-left: 0; }
 }
 
 /* ════════════════════════════════════════════════════════════════

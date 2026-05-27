@@ -176,15 +176,16 @@
           <h2 class="narrative-header__question" id="ep-hero-question">How is engagement performing this week?</h2>
         </div>
         <div class="narrative-header__text">
-          <p class="narrative-header__entity-line">
-            <strong><span id="subtitle-entity-engagement">All Brands</span></strong>
+          <!-- F2 (UX-846, 2026-05-27): single-sentence header pattern.
+               Template: "{entity} — This ran at {n} of {total} stores for {Week N} ({date range})" -->
+          <p class="narrative-header__sentence">
+            <strong><span id="subtitle-entity-engagement">All Brands</span></strong> — This ran at
             <span class="ep-cohort-pill" id="engagement-cohort-pill">
               <span class="material-symbols-outlined" title="Cohort: subset of stores included in this metric">info</span>
-              Ran at <strong><span class="ep-cohort-pill__count">27 of 27 stores</span></strong>
+              <strong class="ep-cohort-pill__count">27 of 27 stores</strong>
             </span>
-          </p>
-          <p class="narrative-header__date-line">
-            <strong><span id="subtitle-date-week-engagement">Week 47</span></strong> <em>(<span id="subtitle-date-range-engagement">Nov 18 – Nov 24, 2025</span>)</em>
+            for <strong><span id="subtitle-date-week-engagement">Week 47</span></strong>
+            <em>(<span id="subtitle-date-range-engagement">Nov 18 – Nov 24, 2025</span>)</em>
           </p>
         </div>
       </div>

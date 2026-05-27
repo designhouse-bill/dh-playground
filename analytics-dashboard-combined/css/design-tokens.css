@@ -86,6 +86,20 @@
   --color-error-500: #ef4444;
   --color-error-600: #dc2626;
 
+  /* PC1 (UX-846, 2026-05-27): semantic delta tokens for ▲/▼ indicators.
+     Distinct from success/error so up-vs-down stays purely about direction,
+     not a positive/negative judgment (e.g. CPV down = good = green). */
+  --color-accent-success: #16a34a;  /* ▲ "up" deltas */
+  --color-accent-danger:  #dc2626;  /* ▼ "down" deltas */
+
+  /* RD3 (UX-846, 2026-05-27): canonical chart-height token set.
+     Heights are absolute; only widths flex (per Guiding Principle §3).
+     ECharts containers must pick one of these — no inline heights. */
+  --chart-h-sm: 200px;  /* sparkline, mini chart, donut companion */
+  --chart-h-md: 280px;  /* default time-trend, bar, line */
+  --chart-h-lg: 360px;  /* featured chart, multi-series with legend below */
+  --chart-h-xl: 480px;  /* hero / showcase chart */
+
   /* Metric Colors */
   --color-views: #4272D8;      /* Blue */
   --color-clicks: #B8D64D;     /* Green */

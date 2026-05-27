@@ -3074,17 +3074,10 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     const entityName = getEntityLabel();
     const lastIdx = trend.length - 1;
 
-    // Plan item 12 (Apr 17): CTR line + Visits bar.
-    // Max: "the line could be the click-through rate. Maybe store visits as
-    // the bar." Bar stays visits (volume); line swaps from Share % to CTR
-    // (efficiency). Mock CTR per week — deterministic sin-based drift so the
-    // trend reads plausibly without real campaign data wired in yet.
-    const ctrs = trend.map(function(w, i) {
-      var base = 0.95;
-      var drift = Math.sin(i * 0.9 + 0.3) * 0.22;
-      var mediaBoost = w.retailer_visits > 12000 ? 0.08 : 0;
-      return parseFloat((base + drift + mediaBoost).toFixed(2));
-    });
+    // TT1 (UX-846, 2026-05-27): CTR series removed from this chart.
+    // Prior "Plan item 12 (Apr 17)" mock CTR computation dropped — Visits
+    // bar only. CTR belongs in a separate single-axis time-trend with TT2
+    // metric toggle if needed.
 
     // Current week highlight background
     const markAreaData = lastIdx >= 0 ? [[
@@ -3103,11 +3096,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
           }
           html += '<br>';
           params.forEach(function(p) {
-            if (p.seriesType === 'bar') {
-              html += p.marker + ' ' + p.seriesName + ': ' + p.value.toLocaleString() + '<br>';
-            } else {
-              html += p.marker + ' ' + p.seriesName + ': ' + p.value + '%<br>';
-            }
+            html += p.marker + ' ' + p.seriesName + ': ' + p.value.toLocaleString() + '<br>';
           });
           return html;
         }
@@ -3127,28 +3116,20 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
           }
         }
       },
-      yAxis: [
-        {
-          type: 'value',
-          name: 'Visits',
-          nameTextStyle: { fontSize: 10, color: '#9ca3af' },
-          axisLabel: { formatter: function(val) { return (val / 1000).toFixed(0) + 'K'; } }
-        },
-        {
-          type: 'value',
-          name: 'CTR %',
-          nameTextStyle: { fontSize: 10, color: '#3B82F6' },
-          min: 0,
-          max: 2,
-          axisLabel: { formatter: '{value}%', color: '#3B82F6' },
-          splitLine: { show: false }
-        }
-      ],
+      // TT1 (UX-846, 2026-05-27): dual-axis killed. CTR line dropped from
+      // this chart — CTR scale (0-2%) flattened against Visits (thousands)
+      // per Bill 00:07:11 ("things look like a flat line"). CTR available
+      // via separate metric toggle (TT2 pattern, Commit E).
+      yAxis: {
+        type: 'value',
+        name: 'Visits',
+        nameTextStyle: { fontSize: 10, color: '#9ca3af' },
+        axisLabel: { formatter: function(val) { return (val / 1000).toFixed(0) + 'K'; } }
+      },
       series: [
         {
           name: entityName,
           type: 'bar',
-          yAxisIndex: 0,
           data: trend.map(function(w, i) {
             return {
               value: w.retailer_visits,
@@ -3166,42 +3147,16 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         {
           name: 'Competitors',
           type: 'bar',
-          yAxisIndex: 0,
           data: trend.map(function(w) {
             return {
               value: w.comp_visits,
               itemStyle: { color: ChartColors.gray, borderRadius: [3, 3, 0, 0] }
             };
           })
-        },
-        {
-          name: 'CTR %',
-          type: 'line',
-          yAxisIndex: 1,
-          data: ctrs.map(function(v, i) {
-            return { value: v, symbolSize: i === lastIdx ? 12 : 6 };
-          }),
-          smooth: true,
-          lineStyle: { color: '#3B82F6', width: 2.5 },
-          itemStyle: { color: '#3B82F6' },
-          z: 10
         }
-      ],
-      graphic: (function() {
-        var avgCtr = ctrs.reduce(function(s, v) { return s + v; }, 0) / ctrs.length;
-        var ctrDelta = ctrs[lastIdx] - ctrs[0];
-        return [{
-          type: 'text',
-          left: 'center',
-          top: 10,
-          style: {
-            text: 'Avg CTR: ' + avgCtr.toFixed(2) + '% · ' + (ctrDelta >= 0 ? '+' : '') + ctrDelta.toFixed(2) + 'pp over campaign',
-            fill: ctrDelta >= 0 ? ChartColors.green : '#ef4444',
-            fontSize: 12,
-            fontWeight: 600
-          }
-        }];
-      })()
+      ]
+      // TT1 (UX-846, 2026-05-27): "Avg CTR" graphic dropped — chart no
+      // longer surfaces CTR data after dual-axis kill.
     });
   }
 
@@ -3312,40 +3267,11 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     });
   }
 
-  function updateTrafficCombinedChart() {
-    var chart = charts.trafficCombined;
-    if (!chart) return;
-    var trend = D.trafficShareMetrics.trend;
-    var isVolume = _trafficChartView === 'volume';
-
-    // Show/hide the CTR line + right y-axis (plan item 12).
-    chart.setOption({
-      yAxis: [
-        {}, // left axis unchanged
-        {
-          show: !isVolume,
-          type: 'value',
-          name: isVolume ? '' : 'CTR %',
-          nameTextStyle: { fontSize: 10, color: '#3B82F6' },
-          min: isVolume ? undefined : 0,
-          max: isVolume ? undefined : 2,
-          axisLabel: { show: !isVolume, formatter: '{value}%', color: '#3B82F6' },
-          splitLine: { show: false }
-        }
-      ],
-      series: [
-        {}, // retailer bars unchanged
-        {}, // competitor bars unchanged
-        {
-          // share line: visible in share mode, hidden in volume mode
-          lineStyle: { opacity: isVolume ? 0 : 1 },
-          itemStyle: { opacity: isVolume ? 0 : 1 },
-          label: { show: false },
-          silent: isVolume
-        }
-      ]
-    });
-  }
+  // TT1 (UX-846, 2026-05-27): no-op stub. Prior responsibility was toggling
+  // the CTR right-axis between volume/share modes. Dual-axis killed —
+  // chart is single-axis Visits-only. Kept as a stub for callers; wire a
+  // TT2 metric toggle here when CTR/CPV/Spend variants are reintroduced.
+  function updateTrafficCombinedChart() { /* no-op since TT1 */ }
 
   // initVolumeChart removed — merged into initTrafficCombinedChart()
 
@@ -5987,32 +5913,30 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     function paint(range) {
       var series = sliceFor(range);
       var weeks = series.map(function(w) { return D.getWeekLabel(w.week); });
+      // TT1 (UX-846, 2026-05-27): dual-axis killed. CTR + CPV (rate-axis)
+      // dropped; volume-axis Impressions + Clicks retained. Rate metrics
+      // belong in a separate single-axis chart with TT2 metric toggle.
       _mbTrendChart.setOption({
         legend: {
-          data: ['Impressions', 'Clicks', 'CTR', 'CPV'],
+          data: ['Impressions', 'Clicks'],
           bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8,
           textStyle: { fontSize: 11, color: '#6b7280' }
         },
-        grid: { left: 50, right: 60, top: 30, bottom: 40, containLabel: true },
+        grid: { left: 50, right: 30, top: 30, bottom: 40, containLabel: true },
         tooltip: chartTooltipDark(),
         xAxis: {
           type: 'category', data: weeks,
           axisLabel: { fontSize: 11, color: '#6b7280' },
           axisLine: { lineStyle: { color: '#e5e7eb' } }
         },
-        yAxis: [
-          { type: 'value', position: 'left', name: 'Volume', nameTextStyle: { fontSize: 10, color: '#9ca3af' },
-            axisLabel: { fontSize: 10, color: '#6b7280', formatter: function(v) { return (v / 1000).toFixed(0) + 'k'; } },
-            splitLine: { lineStyle: { color: '#f3f4f6' } } },
-          { type: 'value', position: 'right', name: 'Rate', nameTextStyle: { fontSize: 10, color: '#9ca3af' },
-            axisLabel: { fontSize: 10, color: '#6b7280' },
-            splitLine: { show: false } }
-        ],
+        yAxis: {
+          type: 'value', name: 'Volume', nameTextStyle: { fontSize: 10, color: '#9ca3af' },
+          axisLabel: { fontSize: 10, color: '#6b7280', formatter: function(v) { return (v / 1000).toFixed(0) + 'k'; } },
+          splitLine: { lineStyle: { color: '#f3f4f6' } }
+        },
         series: [
           { name: 'Impressions', type: 'line', smooth: true, lineStyle: { width: 2, color: '#3B82F6' }, itemStyle: { color: '#3B82F6' }, symbolSize: 6, data: series.map(function(w) { return w.impressions; }) },
-          { name: 'Clicks',      type: 'line', smooth: true, lineStyle: { width: 2, color: '#22c55e' }, itemStyle: { color: '#22c55e' }, symbolSize: 6, data: series.map(function(w) { return w.clicks; }) },
-          { name: 'CTR',         type: 'line', smooth: true, yAxisIndex: 1, lineStyle: { width: 2, color: '#6366f1' }, itemStyle: { color: '#6366f1' }, symbolSize: 6, data: series.map(function(w) { return w.ctr; }) },
-          { name: 'CPV',         type: 'line', smooth: true, yAxisIndex: 1, lineStyle: { width: 2, color: '#ef4444' }, itemStyle: { color: '#ef4444' }, symbolSize: 6, data: series.map(function(w) { return w.cost_per_visit; }) }
+          { name: 'Clicks',      type: 'line', smooth: true, lineStyle: { width: 2, color: '#22c55e' }, itemStyle: { color: '#22c55e' }, symbolSize: 6, data: series.map(function(w) { return w.clicks; }) }
         ]
       });
     }
@@ -6572,26 +6496,24 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     }
 
     // Visits by week — static current-campaign-window chart.
+    // TT1 (UX-846, 2026-05-27): dual-axis killed. Spend line (right axis)
+    // dropped; Observed visits bars only. Spend belongs in its own chart
+    // with TT2 metric toggle.
     function renderByWeekChart(byWeekEl) {
       var weeks = ['Wk 51', 'Wk 52', 'Wk 1', 'Wk 2'];
       var visits = [14200, 16800, 17350, 18420];
-      var spend = [11900, 12300, 12700, 12850];
       var ch2 = echarts.init(byWeekEl);
       ch2.setOption({
-        grid: { left: 50, right: 60, top: 30, bottom: 40, containLabel: true },
-        legend: { data: ['Observed visits', 'Spend ($)'], bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { fontSize: 11, color: '#6b7280' } },
+        grid: { left: 50, right: 30, top: 30, bottom: 40, containLabel: true },
+        legend: { data: ['Observed visits'], bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { fontSize: 11, color: '#6b7280' } },
         xAxis: { type: 'category', data: weeks, axisLabel: { fontSize: 11, color: '#6b7280' }, axisLine: { lineStyle: { color: '#e5e7eb' } } },
-        yAxis: [
-          { type: 'value', position: 'left', name: 'Observed visits', nameTextStyle: { fontSize: 10, color: '#9ca3af' },
-            axisLabel: { fontSize: 10, color: '#6b7280', formatter: function(v) { return (v/1000).toFixed(0) + 'k'; } },
-            splitLine: { lineStyle: { color: '#f3f4f6' } } },
-          { type: 'value', position: 'right', name: 'Spend ($)', nameTextStyle: { fontSize: 10, color: '#9ca3af' },
-            axisLabel: { fontSize: 10, color: '#6b7280', formatter: function(v) { return '$' + (v/1000).toFixed(0) + 'k'; } },
-            splitLine: { show: false } }
-        ],
+        yAxis: {
+          type: 'value', name: 'Observed visits', nameTextStyle: { fontSize: 10, color: '#9ca3af' },
+          axisLabel: { fontSize: 10, color: '#6b7280', formatter: function(v) { return (v/1000).toFixed(0) + 'k'; } },
+          splitLine: { lineStyle: { color: '#f3f4f6' } }
+        },
         series: [
-          { name: 'Observed visits', type: 'bar', barMaxWidth: 36, itemStyle: { color: '#4272D8', borderRadius: [3, 3, 0, 0] }, data: visits },
-          { name: 'Spend ($)', type: 'line', smooth: true, yAxisIndex: 1, lineStyle: { width: 2, color: '#E07850' }, itemStyle: { color: '#E07850' }, symbolSize: 6, data: spend }
+          { name: 'Observed visits', type: 'bar', barMaxWidth: 36, itemStyle: { color: '#4272D8', borderRadius: [3, 3, 0, 0] }, data: visits }
         ],
         tooltip: chartTooltipDark()
       });
@@ -6599,17 +6521,18 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
 
     // Trend Over Time — duration-preset driven (1W/4W/13W/1Y).
     // Mirrors Visitation page's Trend Over Time architecture.
+    // TT1 (UX-846, 2026-05-27): dual-axis killed. Spend line dropped;
+    // Visits bars only. Spend belongs in its own chart with TT2 toggle.
     function renderTrendOverTimeChart(trendEl) {
       var fullSeries = (function() {
         var out = [];
-        var baseVisits = 12000, baseSpend = 10500;
+        var baseVisits = 12000;
         for (var i = 0; i < 52; i++) {
           var growth = 1 + i * 0.012;
           var noise = 1 + (Math.sin(i * 0.7) * 0.08);
           out.push({
             label: 'Wk ' + (((i + 1 - 1) % 52) + 1),
-            visits: Math.round(baseVisits * growth * noise),
-            spend:  Math.round(baseSpend  * growth * (1 + Math.cos(i * 0.5) * 0.05))
+            visits: Math.round(baseVisits * growth * noise)
           });
         }
         return out;
@@ -6622,20 +6545,16 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       function paint(r) {
         var s = sliceFor(r);
         ch3.setOption({
-          grid: { left: 50, right: 60, top: 30, bottom: 40, containLabel: true },
-          legend: { data: ['Observed visits', 'Spend ($)'], bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { fontSize: 11, color: '#6b7280' } },
+          grid: { left: 50, right: 30, top: 30, bottom: 40, containLabel: true },
+          legend: { data: ['Observed visits'], bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { fontSize: 11, color: '#6b7280' } },
           xAxis: { type: 'category', data: s.map(function(w) { return w.label; }), axisLabel: { fontSize: 11, color: '#6b7280' }, axisLine: { lineStyle: { color: '#e5e7eb' } } },
-          yAxis: [
-            { type: 'value', position: 'left', name: 'Observed visits', nameTextStyle: { fontSize: 10, color: '#9ca3af' },
-              axisLabel: { fontSize: 10, color: '#6b7280', formatter: function(v) { return (v/1000).toFixed(0) + 'k'; } },
-              splitLine: { lineStyle: { color: '#f3f4f6' } } },
-            { type: 'value', position: 'right', name: 'Spend ($)', nameTextStyle: { fontSize: 10, color: '#9ca3af' },
-              axisLabel: { fontSize: 10, color: '#6b7280', formatter: function(v) { return '$' + (v/1000).toFixed(0) + 'k'; } },
-              splitLine: { show: false } }
-          ],
+          yAxis: {
+            type: 'value', name: 'Observed visits', nameTextStyle: { fontSize: 10, color: '#9ca3af' },
+            axisLabel: { fontSize: 10, color: '#6b7280', formatter: function(v) { return (v/1000).toFixed(0) + 'k'; } },
+            splitLine: { lineStyle: { color: '#f3f4f6' } }
+          },
           series: [
-            { name: 'Observed visits', type: 'bar', barMaxWidth: 36, itemStyle: { color: '#4272D8', borderRadius: [3, 3, 0, 0] }, data: s.map(function(w) { return w.visits; }) },
-            { name: 'Spend ($)', type: 'line', smooth: true, yAxisIndex: 1, lineStyle: { width: 2, color: '#E07850' }, itemStyle: { color: '#E07850' }, symbolSize: 6, data: s.map(function(w) { return w.spend; }) }
+            { name: 'Observed visits', type: 'bar', barMaxWidth: 36, itemStyle: { color: '#4272D8', borderRadius: [3, 3, 0, 0] }, data: s.map(function(w) { return w.visits; }) }
           ],
           tooltip: chartTooltipDark()
         }, true);

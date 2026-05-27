@@ -812,8 +812,8 @@ a.ep-kpi-cell:hover { border-color: var(--section-color, var(--color-border-hove
 .ep-kpi-cell__metric { font-size: 13px; color: var(--color-text-secondary); margin-top: 2px; }
 .ep-kpi-cell__value { font-size: 26px; font-weight: 800; color: var(--p-text-color); line-height: 1.05; font-variant-numeric: tabular-nums; }
 .ep-kpi-cell__delta { font-size: 12px; font-weight: 600; }
-.ep-kpi-cell__delta--up { color: #16a34a; }
-.ep-kpi-cell__delta--down { color: #dc2626; }
+.ep-kpi-cell__delta--up { color: var(--color-accent-success); }
+.ep-kpi-cell__delta--down { color: var(--color-accent-danger); }
 .ep-kpi-cell__chart { flex: 1; min-height: 120px; display: flex; flex-direction: column; justify-content: center; }
 /* Jump button — bottom-pinned, divider above, consistent across all cells */
 .ep-kpi-cell__view {
@@ -940,12 +940,12 @@ a.ep-kpi-cell:hover { border-color: var(--section-color, var(--color-border-hove
 .ep-cardevents-showcase__delta:last-child { border-bottom: none; }
 .ep-cardevents-showcase__delta-lbl { font-size: 12px; color: var(--color-text-secondary); }
 .ep-cardevents-showcase__delta-val { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--p-text-color); }
-.ep-cardevents-showcase__delta-val--up   { color: #16a34a; }
-.ep-cardevents-showcase__delta-val--down { color: #dc2626; }
+.ep-cardevents-showcase__delta-val--up   { color: var(--color-accent-success); }
+.ep-cardevents-showcase__delta-val--down { color: var(--color-accent-danger); }
 .ep-cardevents-showcase__bench-block { display: flex; flex-direction: column; gap: 6px; }
 .ep-cardevents-showcase__bench {
   position: relative; height: 12px; border-radius: 6px;
-  background: linear-gradient(90deg, color-mix(in srgb, #dc2626 25%, transparent) 0%, #f1f5f9 50%, color-mix(in srgb, #16a34a 30%, transparent) 100%);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--color-accent-danger) 25%, transparent) 0%, #f1f5f9 50%, color-mix(in srgb, var(--color-accent-success) 30%, transparent) 100%);
 }
 .ep-cardevents-showcase__bench-marker {
   position: absolute; top: -4px; width: 6px; height: 20px; border-radius: 3px;
@@ -1005,13 +1005,13 @@ a.ep-kpi-cell:hover { border-color: var(--section-color, var(--color-border-hove
 .ep-entity-compare__delta { display: flex; justify-content: space-between; gap: 8px; }
 .ep-entity-compare__delta-lbl { color: var(--color-text-secondary); font-size: 11px; }
 .ep-entity-compare__delta-val { font-weight: 700; }
-.ep-entity-compare__delta-val--up   { color: #16a34a; }
-.ep-entity-compare__delta-val--down { color: #dc2626; }
+.ep-entity-compare__delta-val--up   { color: var(--color-accent-success); }
+.ep-entity-compare__delta-val--down { color: var(--color-accent-danger); }
 
 /* Benchmark bar — gradient from low (red) → mid (gray) → high (green); marker = entity position. */
 .ep-entity-compare__bench {
   position: relative; height: 8px; border-radius: 4px;
-  background: linear-gradient(90deg, color-mix(in srgb, #dc2626 30%, transparent) 0%, #f1f5f9 50%, color-mix(in srgb, #16a34a 35%, transparent) 100%);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--color-accent-danger) 30%, transparent) 0%, #f1f5f9 50%, color-mix(in srgb, var(--color-accent-success) 35%, transparent) 100%);
   margin-top: 4px;
 }
 .ep-entity-compare__bench-marker {
@@ -1124,8 +1124,8 @@ a.ep-kpi-cell:hover { border-color: var(--section-color, var(--color-border-hove
   font-weight: var(--font-weight-semibold);
 }
 
-.ep-kpi-card__delta--up   { color: var(--color-accent-success, #16a34a); }
-.ep-kpi-card__delta--down { color: var(--color-accent-danger, #dc2626); }
+.ep-kpi-card__delta--up   { color: var(--color-accent-success); }
+.ep-kpi-card__delta--down { color: var(--color-accent-danger); }
 
 .ep-kpi-card__legend {
   list-style: none;
@@ -2597,22 +2597,19 @@ body[data-dist-page] .perf-tabs .perf-tab.active {
    Kills page-header .stat-strip (F1 expanded).
    ============================================================ */
 
-.narrative-header__entity-line {
-  margin: 6px 0 4px;
+/* F2 (UX-846, 2026-05-27): single-sentence header pattern replaces the
+   former __entity-line + __date-line two-row layout. Cohort pill sits
+   inline inside the sentence. Wraps cleanly on narrow widths. */
+.narrative-header__sentence {
+  margin: 6px 0 0;
   font-size: 15px;
   color: var(--dh-text-1, var(--color-text-primary, #1a1a1a));
   font-weight: 400;
+  line-height: 1.7;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
   flex-wrap: wrap;
-}
-
-.narrative-header__date-line {
-  margin: 0;
-  font-size: 15px;
-  color: var(--dh-text-1, var(--color-text-primary, #1a1a1a));
-  font-weight: 400;
 }
 
 .ep-cohort-pill {

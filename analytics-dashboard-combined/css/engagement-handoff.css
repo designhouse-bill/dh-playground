@@ -1435,7 +1435,7 @@ body.app-mode-grid .view-search {
 
 .category-percentile--high { color: #15803d; }
 .category-percentile--medium { color: #c2410c; }
-.category-percentile--low { color: #dc2626; }
+.category-percentile--low { color: var(--color-accent-danger); }
 
 .category-item.active .category-percentile {
   color: white;
@@ -1582,7 +1582,7 @@ body.app-mode-grid .view-search {
 
 .percentile-badge__value--low {
   background-color: #FDE7E6;
-  color: #dc2626;
+  color: var(--color-accent-danger);
 }
 
 .promo-card__title {
@@ -2539,7 +2539,7 @@ body.app-mode-grid .view-search {
 
 .detail-percentile-row .percentile-value--low {
   background-color: #FDE7E6;
-  color: #dc2626;
+  color: var(--color-accent-danger);
 }
 
 .detail-percentile-row .percentile-score {
@@ -3697,7 +3697,7 @@ body.app-mode-grid .view-search {
 }
 
 .comparison-arrow--down {
-  color: #dc2626;
+  color: var(--color-accent-danger);
 }
 
 .comparison-arrow--stable {

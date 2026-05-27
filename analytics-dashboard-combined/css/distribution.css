@@ -5129,23 +5129,25 @@ body[data-dist-page] .narrative-header__title {
   color: #92400e;
 }
 
-/* ── Time trend — series pills below chart ──────────────────── */
+/* ── Time trend — series pills inside chart-card__header-right
+       (TT3 canonical: series-pills before duration-presets) ───── */
 .pm-series-pills {
-  display: flex;
-  justify-content: center;
-  gap: var(--space-3, 0.75rem);
-  margin-top: var(--space-3, 0.75rem);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
 }
 .pm-series-pill {
   display: inline-flex;
   align-items: center;
-  padding: 6px 18px;
+  padding: 4px 12px;
+  min-height: 28px;
   border: 1px solid transparent;
   border-radius: 6px;
   background: var(--pill-color, #2196F3);
   color: #fff;
-  font-size: 0.8125rem;
-  font-weight: 500;
+  font-family: inherit;
+  font-size: var(--font-size-12);
+  font-weight: var(--font-weight-medium);
   cursor: pointer;
   opacity: 1;
   transition: opacity 160ms ease, transform 100ms ease;

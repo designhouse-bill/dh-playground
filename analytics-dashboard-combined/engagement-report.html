@@ -362,17 +362,20 @@
         <!-- Row 2: 3 atomic-hierarchy Top-5 panels. Ranked by Performance Score. Row click → Explore prefiltered. -->
         <div class="ep-report-overview__row ep-report-overview__row--top5">
 
-          <div class="ep-kpi-cell ep-top5-panel" data-href="engagement-explore.html?grain=circular">
+          <!-- PHASE 0 (UX-846): data-driven render against MockData.v1.getAggregate().
+               Rows below are placeholder until DOMContentLoaded fires; render
+               function replaces them on initial load + on every dashboard:dataRefresh. -->
+          <div id="ep-top-stores-panel" class="ep-kpi-cell ep-top5-panel" data-href="engagement-explore.html?grain=circular">
             <div class="ep-kpi-cell__head">
               <div class="ep-kpi-cell__title">
                 <h3 class="ep-kpi-cell__story">Top Stores</h3>
               </div>
               <div>
-                <div class="ep-kpi-cell__metric">By Performance Score · Top 5 of 27</div>
+                <div id="ep-top-stores-metric" class="ep-kpi-cell__metric">By Performance Score · Top 5 of 27</div>
               </div>
             </div>
             <div class="ep-kpi-cell__chart" style="min-height:0;">
-              <div class="ep-top5-bar-list">
+              <div id="ep-top-stores-list" class="ep-top5-bar-list">
                 <a class="ep-top5-bar-row" href="engagement-explore-base.html?store=store-501" data-perf-hover data-perf-views="10200" data-perf-clicks="5100" data-perf-adds="2900" data-perf-title="#501 Center City (Acme)"><span class="ep-top5-bar-row__lbl">#501 Center City (Acme)</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">18.2K</span></a>
                 <a class="ep-top5-bar-row" href="engagement-explore-base.html?store=store-301" data-perf-hover data-perf-views="8600" data-perf-clicks="4300" data-perf-adds="2400" data-perf-title="#301 Sacramento (Albertsons)"><span class="ep-top5-bar-row__lbl">#301 Sacramento (Albertsons)</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">15.3K</span></a>
                 <a class="ep-top5-bar-row" href="engagement-explore-base.html?store=store-107" data-perf-hover data-perf-views="7300" data-perf-clicks="3600" data-perf-adds="2000" data-perf-title="#107 San Jose (Safeway)"><span class="ep-top5-bar-row__lbl">#107 San Jose (Safeway)</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:57%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">12.9K</span></a>
@@ -804,6 +807,8 @@
   <script src="js/engagement/canonical-shell-tabs.js?v=12"></script>
   <script src="js/engagement/mock-metric-panes.js?v=2"></script>
   <script src="js/engagement/canonical-shell-renderers.js?v=6"></script>
+  <!-- PHASE 0 (UX-846): MockData v1 stub. Spec: ~/.claude/plans/UX-846/UX-846-DATA-LAYER-SCHEMA.md -->
+  <script src="js/data/mock-data-v1/index.js?v=1"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       if (window.CanonicalShellRenderers) {
@@ -812,7 +817,52 @@
         wireOverviewDonutHover();
       }
       wirePanelClick();
+      // Phase 0 dry-run: data-driven Top Stores render
+      renderTopStoresFromAggregate();
     });
+    // Phase 0 (UX-846): re-render Top Stores on context change.
+    document.addEventListener('dashboard:dataRefresh', renderTopStoresFromAggregate);
+
+    function renderTopStoresFromAggregate() {
+      if (!window.MockData || !window.MockData.v1) return;
+      const ctx = window.MockData.v1.currentContext();
+      const agg = window.MockData.v1.getAggregate(ctx);
+      const rows = (agg && agg.engagement && agg.engagement.topStores) || [];
+
+      const list = document.getElementById('ep-top-stores-list');
+      const metric = document.getElementById('ep-top-stores-metric');
+      if (!list) return;
+
+      // Use DocumentFragment to avoid layout thrash on repeated re-renders.
+      const frag = document.createDocumentFragment();
+      const max = Math.max.apply(null, rows.map(r => r.value));
+      rows.forEach(function (row) {
+        const a = document.createElement('a');
+        a.className = 'ep-top5-bar-row';
+        a.href = row.href;
+        a.setAttribute('data-perf-hover', '');
+        a.setAttribute('data-perf-title', row.label);
+        // Bar widths from VCA proportions (Phase 1 will tighten this — Phase 0 just proves the wire).
+        const widthPct = Math.round((row.value / max) * 100);
+        a.innerHTML =
+          '<span class="ep-top5-bar-row__lbl">' + row.label + '</span>' +
+          '<div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca">' +
+            '<div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:' + Math.round(row.vca.viewsProportion * widthPct) + '%"></div>' +
+            '<div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:' + Math.round(row.vca.clicksProportion * widthPct) + '%"></div>' +
+            '<div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:' + Math.round(row.vca.addsProportion * widthPct) + '%"></div>' +
+          '</div>' +
+          '<span class="ep-top5-bar-row__val">' + formatK(row.value) + '</span>';
+        frag.appendChild(a);
+      });
+      list.replaceChildren(frag);
+      if (metric && agg.entity) {
+        metric.textContent = 'By Performance Score · Top 5 of ' + agg.entity.storeCount;
+      }
+    }
+    function formatK(n) {
+      if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+      return String(n);
+    }
     // PN1/PN2: any .ep-top5-panel[data-href] becomes fully clickable. The
     // bottom-pinned `.ep-kpi-cell__view` span is the visual affordance; the
     // panel's `data-href` is the navigation target. Inner anchors/buttons

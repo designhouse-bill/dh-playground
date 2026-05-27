@@ -54,7 +54,6 @@
       padding: var(--space-2) var(--space-6) 0;
       display: flex;
       flex-direction: column;
-      gap: var(--space-2);
       box-sizing: border-box;
     }
     .engagement-surface .perf-tab-pane { display: none; }
@@ -166,7 +165,10 @@
     /* Text + border use -ink (WCAG-AA variant) — fill bg uses -light. Splits the
        fill color from the typographic color so yellow can ride bg cells while
        text falls back to a darker amber. */
-    .hero-stat[data-ep-active] .narrative-header__title { color: var(--section-color-ink, var(--section-color)); }
+    /* UX-846 2026-05-27: prefix with body[data-app-mode] to outrank
+       analytics-architecture.css mode-color rule (specificity 0,2,3).
+       Per-tab section color must win on page hero h1. */
+    body[data-app-mode] .hero-stat[data-ep-active] .narrative-header__title { color: var(--section-color-ink, var(--section-color)); }
     .hero-stat[data-ep-active] .stat-strip__item { border-left: 4px solid var(--section-color-ink, var(--section-color)); }
     .hero-stat[data-ep-active] .stat-strip__value { color: var(--section-color-ink, var(--section-color)); }
 

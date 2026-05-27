@@ -85,7 +85,6 @@
 .dist-section {
   display: none; /* hidden until tab activates it */
   flex-direction: column;
-  gap: var(--space-2);
   max-width: 1200px;
   width: 100%;
   margin-left: auto;
@@ -1416,16 +1415,13 @@
 .chart-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-radius: 0  0 var(--radius-lg) var(--radius-lg);
   padding: var(--space-5);
+  margin-bottom: 64px;
 }
 
-.chart-card__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--space-4);
-}
+/* .chart-card__header canonical rule lives at line ~3957 (flex + space-between
+   + flex-wrap + gap). Earlier duplicate removed UX-846 2026-05-27. */
 
 .panel-label {
   font-size: var(--font-size-lg);
@@ -1798,7 +1794,9 @@
 }
 
 .view-toggle__btn.active {
-  background: var(--color-gray-900);
+  /* UX-846 2026-05-27: slate (#475569) so view-toggle doesn't visually
+     compete with duration-presets (also active = dark). */
+  background: #475569;
   color: white;
 }
 
@@ -3955,10 +3953,65 @@ body[data-dist-page] .narrative-header__title {
 
 .chart-card__header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: var(--space-2);
+}
+
+/* UX-846 2026-05-27 (engagement parity, consolidated chart-card per page section):
+   Header row = sub-tabs left + duration-presets right (matches engagement).
+   Extra controls sit in a separate row below header via .chart-card__controls. */
+.dist-section > .chart-card > .chart-card__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+}
+
+/* UX-846 2026-05-27: title row — panel-label/subtitle on the left,
+   sub-tab-scoped controls (e.g. ov-comp-metric) right-aligned. */
+.dist-section > .chart-card > .chart-card__title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.dist-section > .chart-card > .chart-card__title-row > .chart-card__title-block {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Narrow widths (<640px): stack title-row so panel-label gets full width
+   instead of being squeezed into a tall narrow column by space-between. */
+@media (max-width: 640px) {
+  .dist-section > .chart-card > .chart-card__title-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  /* Same treatment for chart-card__header — sub-tabs above presets. */
+  .dist-section > .chart-card > .chart-card__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* When .chart-card__controls contains a chip-carousel row as its only
+   payload, let it span full width so the carousel paging triggers on
+   overflow rather than wrapping. */
+.dist-section > .chart-card > .chart-card__controls > .creative-chips-row {
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+/* Active sub-tab uses section color (mirrors engagement's
+   .perf-tab-pane .ep-sub-tab--active rule in engagement-canonical.css). */
+.dist-section > .chart-card .ep-sub-tab--active {
+  background: var(--section-color-light);
+  border-color: var(--section-color);
+  color: var(--section-color);
 }
 
 /* ============================================================
@@ -4881,7 +4934,7 @@ body[data-dist-page] .narrative-header__title {
    ════════════════════════════════════════════════════════════════ */
 
 .hero-stat--overview {
-  margin-bottom: var(--space-5, 1.25rem);
+  margin-bottom: var(--space-2);
 }
 
 .dist-overview-grid {
@@ -5171,6 +5224,8 @@ body[data-dist-page] .narrative-header__title {
 .ov-legend {
   display: flex;
   gap: var(--space-2, 0.5rem);
+  /* UX-846 2026-05-27: right-align inside .chart-card__controls flex row. */
+  margin-left: auto;
 }
 
 /* ── By Store list (per-store stacked horizontal bar) ─────────── */
@@ -5210,10 +5265,13 @@ body[data-dist-page] .narrative-header__title {
   border-radius: 4px;
   overflow: hidden;
   background: #f3f4f6;
+  /* UX-846 2026-05-27: smooth width transition when legend pills toggle. */
+  transition: width 280ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 .ov-seg {
   display: block;
   height: 100%;
+  transition: width 280ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 .ov-store-visits {
   text-align: right;
@@ -5223,6 +5281,10 @@ body[data-dist-page] .narrative-header__title {
 }
 
 /* ── by Competitor detail table + Crossover Trend ────────────── */
+/* UX-846 2026-05-27: scroll horizontally at narrow widths — 6-col table
+   exceeds phone viewport, scroll preserves data over collapsing it. */
+.ov-comp-detail { overflow-x: auto; }
+.ov-comp-table { min-width: 480px; }
 .ov-comp-detail {
   margin-top: var(--space-4, 1rem);
 }
@@ -5265,6 +5327,33 @@ body[data-dist-page] .narrative-header__title {
   color: #1f2937;
 }
 .ov-comp-table tbody tr:hover { background: #f9fafb; }
+
+/* UX-846 2026-05-27: expandable cross-shopping rows.
+   Parent rows clickable; chevron rotates on expand. Child rows indented. */
+.ov-comp-row--parent { cursor: pointer; }
+.ov-comp-toggle {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin-right: 4px;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  vertical-align: middle;
+}
+.ov-comp-chev {
+  font-size: 18px;
+  color: var(--color-text-secondary, #6b7280);
+  transition: transform 160ms ease;
+}
+.ov-comp-row--parent[aria-expanded="true"] .ov-comp-chev { transform: rotate(90deg); }
+.ov-comp-count {
+  color: var(--color-text-tertiary, #9ca3af);
+  font-size: 12px;
+  margin-left: 4px;
+}
+.ov-comp-row--child td { background: var(--p-surface-ground, #f8f9fa); font-size: 13px; }
+.ov-comp-row--child td.ov-comp-store { padding-left: 48px; color: var(--color-text-secondary, #374151); }
 
 .ov-comp-dot {
   display: inline-block;
@@ -5561,7 +5650,10 @@ body[data-dist-page] .narrative-header__title {
   gap: var(--space-4, 1rem);
   margin-top: var(--space-3, 0.75rem);
 }
-@container (max-width: 900px) {
+/* UX-846 2026-05-27: @container needs container-type on ancestor; none
+   declared here, so the query never fired. Convert to @media so narrow
+   phones get a single column instead of 2 cramped 154px cells. */
+@media (max-width: 640px) {
   .od-grid { grid-template-columns: 1fr; }
 }
 .od-card {

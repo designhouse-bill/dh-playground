@@ -22,6 +22,27 @@
     // UX-846 Report mode 2026-05-12: Time Trend is default sub-tab per plan.
     var currentSubTab = 'trend';
 
+    // UX-846 2026-05-27: page-level hero-stat swaps title/question/color per
+    // active perf-tab (mirrors Distribution one-hero pattern). Replaces the
+    // per-pane .hero-stat blocks that previously owned section identity.
+    var HERO_COPY = {
+      overview:    { title: 'Overview',             q: 'How is engagement performing this week?' },
+      performance: { title: 'Performance Score',    q: 'How is the Views/Clicks/Adds composite trending?' },
+      users:       { title: 'Total Users',          q: 'How many unique users engaged this week, and which stores drove them?' },
+      sessions:    { title: 'Sessions',             q: 'How are sessions distributed across stores, days, and weeks?' },
+      duration:    { title: 'Avg Session Duration', q: 'How long are users spending on each store?' }
+    };
+    var pageHero = document.getElementById('ep-page-hero-stat');
+    var heroTitle = document.getElementById('ep-hero-title');
+    var heroQuestion = document.getElementById('ep-hero-question');
+    function updatePageHero(target) {
+      var copy = HERO_COPY[target];
+      if (!copy || !pageHero) return;
+      pageHero.dataset.epActive = target;
+      if (heroTitle) heroTitle.textContent = copy.title;
+      if (heroQuestion) heroQuestion.textContent = copy.q;
+    }
+
     function applySubTab(pane, key) {
       var subTabs = pane.querySelectorAll('.ep-sub-tab');
       var subPanes = pane.querySelectorAll('.ep-sub-pane');
@@ -40,6 +61,10 @@
         subTabs[0].setAttribute('aria-selected', 'true');
         if (subPanes[0]) subPanes[0].classList.add('ep-sub-pane--active');
       }
+      // Toggle header-right controls scoped to specific sub-tab (e.g. duration-presets[data-show-on-sub="trend"]).
+      pane.querySelectorAll('[data-show-on-sub]').forEach(function (el) {
+        el.style.display = (el.dataset.showOnSub === key) ? '' : 'none';
+      });
     }
 
     function activateTab(target) {
@@ -51,19 +76,13 @@
       panes.forEach(function (p) {
         p.classList.toggle('active', p.dataset.epPane === target);
       });
-      // UX-846 Report mode 2026-05-12: page-level hero-stat stays neutral (gray).
-      // Per-pane .hero-stat[data-ep-active="<key>"] is hardcoded in markup and
-      // owns the section color tint for its KPI sub-section.
+      updatePageHero(target);
       var targetPane = root.querySelector('[data-ep-pane="' + target + '"]');
       if (targetPane) applySubTab(targetPane, currentSubTab);
     }
 
-    // Initial state — overview tint on load (otherwise hero-stat falls back to
-    // the default --hero-stat-bg / primary-50 blue from analytics-architecture.css).
-    var initialHero = document.getElementById('ep-page-hero-stat');
-    if (initialHero && !initialHero.dataset.epActive) {
-      initialHero.dataset.epActive = 'overview';
-    }
+    // Initial state — overview tint + copy on load.
+    updatePageHero('overview');
 
     // UX-846 Report mode 2026-05-12: parse ?tab=X on load so KPI tile
      // hrefs (engagement-report.html?tab=performance) activate the pane.

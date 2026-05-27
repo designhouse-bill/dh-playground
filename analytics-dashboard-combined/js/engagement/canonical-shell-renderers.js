@@ -434,8 +434,10 @@
         btn.classList.add('duration-preset--active');
         btn.setAttribute('aria-selected', 'true');
 
-        var pane = btn.closest('.ep-sub-pane');
-        var host = pane && pane.querySelector('[id$="-trend"]');
+        // Presets now live in chart-card__header (sibling of ep-sub-panes), not inside trend pane.
+        // Walk up to the perf-tab-pane and find the trend host within it.
+        var card = btn.closest('.perf-tab-pane') || btn.closest('.chart-card');
+        var host = card && card.querySelector('[id$="-trend"]');
         if (!host) return;
         var full = trendFull[host.id];
         if (!full) return;

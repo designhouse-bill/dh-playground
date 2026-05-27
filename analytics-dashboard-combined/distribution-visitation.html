@@ -1,4 +1,10 @@
 <!DOCTYPE html>
+<!--
+  DATA SOURCE TRACKER (UX-846): every field on this page (mock vs real
+  source vs derived) + proposed API endpoints is catalogued in
+  ~/.claude/plans/UX-846/UX-846-distribution-data-source-tracker.md
+  Update the tracker when adding new panels or migrating MOCK → REAL.
+-->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -17,7 +23,7 @@
   <link rel="stylesheet" href="css/header.css?v=7">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/distribution.css?v=44">
+  <link rel="stylesheet" href="css/distribution.css?v=55">
 </head>
 <body data-dist-page="visitation">
 
@@ -146,21 +152,25 @@
           <h1 class="narrative-header__title">Observed Visits</h1>
           <h2 class="narrative-header__question">Are our media campaigns driving store visits?</h2>
         </div>
-          <div class="narrative-header__text">
-            <!-- F2 (UX-846, 2026-05-27): single-sentence header pattern.
-                 Template: "{entity} — This ran at {n} of {total} stores for {Week N} ({date range})" -->
-            <p class="narrative-header__sentence">
-              <strong><span id="subtitle-entity-visitation">Ideal Media Lab</span></strong> — This ran at
-              <span class="ep-cohort-pill" id="dist-cohort-note-visitation">
-                <span class="material-symbols-outlined" title="Cohort: subset of stores included in this metric">info</span>
-                <strong class="ep-cohort-pill__count">27 of 83 stores</strong>
-              </span>
-              for <strong><span id="subtitle-date-week-visitation">Week 2</span></strong>
-              <em>(<span id="subtitle-date-range-visitation">Jan 7, 2026 – Jan 13, 2026</span>)</em>
-            </p>
+        </div>
+          <!-- F3 (UX-846, 2026-05-27): hero-stat stat-strip shell (sibling of .narrative-header). -->
+          <div class="stat-strip" id="dist-visitation-stat-strip">
+            <div class="stat-strip__cards">
+              <div class="stat-strip__item">
+                <div class="stat-strip__value-row">
+                  <p class="narrative-header__sentence">
+                    This ran at
+                    <span class="ep-cohort-pill" id="dist-cohort-note-visitation">                      <strong class="ep-cohort-pill__count">27 of 83 stores</strong>
+                    </span></p>
+                    <p><strong><span id="subtitle-date-week-visitation">Week 2</span></strong>
+                      <em>(<span id="subtitle-date-range-visitation">Jan 7, 2026 – Jan 13, 2026</span>)</em>
+                    </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      <!-- /.hero-stat -->
 
       <!-- Narrative slot (phase 2, gated by FEATURES.narrative) -->
       <div class="insight-banner" data-narrative-section="visitation" hidden></div>
@@ -173,86 +183,68 @@
              1-3 prev visits = Returning (amber, --series-c)
              4+ prev visits = Loyal    (green, --series-a)
            ═══════════════════════════════════════════════ -->
-      <div class="perf-tabs" id="ov-perf-tabs" role="tablist" aria-label="Observed Visits view">
-        <button class="perf-tab active" data-ov-tab="store" role="tab" aria-selected="true">
-          <span class="material-symbols-outlined">store</span> By Store
-        </button>
-        <button class="perf-tab" data-ov-tab="trend" role="tab" aria-selected="false">
-          <span class="material-symbols-outlined">trending_up</span> Time Trend
-        </button>
-        <button class="perf-tab" data-ov-tab="competitor" role="tab" aria-selected="false">
-          <span class="material-symbols-outlined">compare_arrows</span> by Competitor
-        </button>
-      </div>
-
-      <!-- ── Pane: By Store ──────────────────────────────────────── -->
-      <div class="perf-tab-pane active" data-ov-pane="store">
-        <div class="chart-card">
-          <div class="chart-card__header">
-            <div class="chart-card__header-left">
-              <h3 class="panel-label">Visits by Store</h3>
-              <p class="panel-subtitle">Per-store visit volume, segmented by 30-day visit frequency.<br><span class="panel-subtitle__muted">New = 0 previous visits · Returning = 1–3 · Loyal = 4+</span></p>
-            </div>
-            <div class="chart-card__header-right">
-              <div class="ov-legend">
-                <button type="button" class="series-pill ov-series--new active" data-ov-series="new" style="--pill-color:#2196F3;">New</button>
-                <button type="button" class="series-pill ov-series--returning active" data-ov-series="returning" style="--pill-color:#f59e0b;">Returning</button>
-                <button type="button" class="series-pill ov-series--loyal active" data-ov-series="loyal" style="--pill-color:#22c55e;">Loyal</button>
-              </div>
+      <div class="chart-card" id="ov-chart-card">
+        <div class="chart-card__header">
+          <div class="chart-card__header-left">
+            <div class="ep-sub-tabs" id="ov-perf-tabs" role="tablist" aria-label="Observed Visits view">
+              <button class="ep-sub-tab ep-sub-tab--active" data-dist-sub="trend" role="tab" aria-selected="true">Time Trend</button>
+              <button class="ep-sub-tab" data-dist-sub="store" role="tab" aria-selected="false">By Store</button>
+              <button class="ep-sub-tab" data-dist-sub="competitor" role="tab" aria-selected="false">by Competitor</button>
             </div>
           </div>
-          <div class="ov-store-list" id="ov-store-list"></div>
+          <div class="chart-card__header-right">
+            <div class="duration-presets" id="ov-trend-ranges" role="tablist" aria-label="Time range" data-show-on-sub="trend">
+              <button type="button" class="duration-preset" data-ov-range="4w">4 Week <span class="duration-preset__sub">(Month)</span></button>
+              <button type="button" class="duration-preset duration-preset--active" data-ov-range="8w">8 Week</button>
+              <button type="button" class="duration-preset" data-ov-range="13w">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
+            </div>
+            <div class="duration-presets" id="ov-comp-ranges" role="tablist" aria-label="Time range" data-show-on-sub="competitor">
+              <button type="button" class="duration-preset" data-ov-comp-range="4w">4 Week <span class="duration-preset__sub">(Month)</span></button>
+              <button type="button" class="duration-preset duration-preset--active" data-ov-comp-range="8w">8 Week</button>
+              <button type="button" class="duration-preset" data-ov-comp-range="13w">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <!-- ── Pane: Time Trend ───────────────────────────────────── -->
-      <div class="perf-tab-pane" data-ov-pane="trend">
-        <div class="chart-card">
-          <div class="chart-card__header">
-            <div class="chart-card__header-left">
-              <h3 class="panel-label">Visit Frequency Over Time</h3>
-              <p class="panel-subtitle">Each bar = total observed visits across all stores for that week, stacked by frequency segment.<br><span class="panel-subtitle__muted">Panel-tracked — directional, not a census.</span></p>
-            </div>
-            <div class="chart-card__header-right">
-              <div class="duration-presets" id="ov-trend-ranges" role="tablist" aria-label="Time range">
-                <button type="button" class="duration-preset" data-ov-range="4w">4 Week <span class="duration-preset__sub">(Month)</span></button>
-                <button type="button" class="duration-preset duration-preset--active" data-ov-range="8w">8 Week</button>
-                <button type="button" class="duration-preset" data-ov-range="13w">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
-              </div>
-            </div>
+        <!-- Controls row — extras beyond sub-tabs + duration-presets. -->
+        <div class="chart-card__controls">
+          <div class="ov-legend" data-show-on-sub="store">
+            <button type="button" class="series-pill ov-series--new active" data-ov-series="new" style="--pill-color:#2196F3;">New</button>
+            <button type="button" class="series-pill ov-series--returning active" data-ov-series="returning" style="--pill-color:#f59e0b;">Returning</button>
+            <button type="button" class="series-pill ov-series--loyal active" data-ov-series="loyal" style="--pill-color:#22c55e;">Loyal</button>
           </div>
+          <div class="creative-chips-row" id="ov-store-chips-row" data-show-on-sub="competitor">
+            <button type="button" class="creative-chip creative-chip--all creative-chip--active" id="ov-store-all-chip" data-ov-store="All Stores" aria-pressed="true" title="All Stores">
+              <div class="creative-chip__header">
+                <div class="creative-chip__thumb"><span class="material-symbols-outlined">grid_view</span></div>
+                <span class="creative-chip__rank creative-chip__rank--all">All</span>
+              </div>
+              <span class="creative-chip__name">All Stores</span>
+              <span class="creative-chip__meta">Combined view</span>
+            </button>
+            <div class="creative-chips creative-chips--scroll" id="ov-store-chips-strip"></div>
+          </div>
+        </div>
+
+        <!-- Title row — panel-label left, sub-tab-scoped controls right. -->
+        <div class="chart-card__title-row">
+          <div class="chart-card__title-block">
+            <h3 class="panel-label" id="ov-panel-title">Visit Frequency Over Time</h3>
+            <p class="panel-subtitle" id="ov-panel-subtitle">Each bar = total observed visits across all stores for that week, stacked by frequency segment.<br><span class="panel-subtitle__muted">Panel-tracked — directional, not a census.</span></p>
+          </div>
+          <div class="view-toggle view-toggle--compact" id="ov-comp-metric" role="tablist" aria-label="Metric" data-show-on-sub="competitor">
+            <button type="button" class="view-toggle__btn active" data-ov-comp="share" role="tab" aria-selected="true">Share %</button>
+            <button type="button" class="view-toggle__btn" data-ov-comp="visits" role="tab" aria-selected="false">Visits</button>
+          </div>
+        </div>
+
+        <div class="ep-sub-pane ep-sub-pane--active" data-dist-sub-pane="trend">
           <div id="ov-trend-chart" style="height:380px;"></div>
         </div>
-      </div>
-
-      <!-- ── Pane: by Competitor (Crossover Trend) ──────────────── -->
-      <div class="perf-tab-pane" data-ov-pane="competitor">
-        <div class="chart-card">
-          <div class="chart-card__header">
-            <div class="chart-card__header-left">
-              <h3 class="panel-label">Crossover Trend</h3>
-              <p class="panel-subtitle">Among visitors attributed to paid media — where do they also shop?<br><span class="panel-subtitle__muted">Up to 4 rolled-up competitors + "All Others". Source: Greenberg cross-shopping panel.</span></p>
-            </div>
-            <div class="chart-card__header-right">
-              <div class="ov-store-dropdown" data-ov-store-dropdown>
-                <button type="button" class="ov-store-dropdown__btn" aria-haspopup="true" aria-expanded="false" aria-label="Store filter">
-                  <span class="material-symbols-outlined ov-store-dropdown__icon">store</span>
-                  <span class="ov-store-dropdown__label" data-ov-store-label>All Stores</span>
-                  <span class="material-symbols-outlined ov-store-dropdown__chev">expand_more</span>
-                </button>
-                <div class="ov-store-dropdown__menu" role="menu" hidden id="ov-store-dropdown-menu"></div>
-              </div>
-              <div class="view-toggle view-toggle--compact" id="ov-comp-metric" role="tablist" aria-label="Metric">
-                <button type="button" class="view-toggle__btn active" data-ov-comp="share" role="tab" aria-selected="true">Share %</button>
-                <button type="button" class="view-toggle__btn" data-ov-comp="visits" role="tab" aria-selected="false">Visits</button>
-              </div>
-              <div class="duration-presets" id="ov-comp-ranges" role="tablist" aria-label="Time range">
-                <button type="button" class="duration-preset" data-ov-comp-range="4w">4 Week <span class="duration-preset__sub">(Month)</span></button>
-                <button type="button" class="duration-preset duration-preset--active" data-ov-comp-range="8w">8 Week</button>
-                <button type="button" class="duration-preset" data-ov-comp-range="13w">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
-              </div>
-            </div>
-          </div>
+        <div class="ep-sub-pane" data-dist-sub-pane="store">
+          <div class="ov-store-list" id="ov-store-list"></div>
+        </div>
+        <div class="ep-sub-pane" data-dist-sub-pane="competitor">
           <div id="ov-comp-chart" style="height:340px;"></div>
           <div class="ov-comp-detail" id="ov-comp-detail"></div>
         </div>
@@ -306,25 +298,56 @@
     'use strict';
     var COLORS = { new: '#2196F3', returning: '#f59e0b', loyal: '#22c55e' };
 
-    // ── Tab switcher ──────────────────────────────────────────────
+    // ── Sub-tab switcher (UX-846 2026-05-27, engagement parity) ──
+    var PANEL_COPY = {
+      trend: {
+        title: 'Visit Frequency Over Time',
+        sub: 'Each bar = total observed visits across all stores for that week, stacked by frequency segment.<br><span class="panel-subtitle__muted">Panel-tracked — directional, not a census.</span>'
+      },
+      store: {
+        title: 'Visits by Store',
+        sub: 'Per-store visit volume, segmented by 30-day visit frequency.<br><span class="panel-subtitle__muted">New = 0 previous visits · Returning = 1–3 · Loyal = 4+</span>'
+      },
+      competitor: {
+        title: 'Crossover Trend',
+        sub: 'Among visitors attributed to paid media — where do they also shop?<br><span class="panel-subtitle__muted">Up to 4 rolled-up competitors + "All Others". Source: Greenberg cross-shopping panel.</span>'
+      }
+    };
     function initTabs() {
-      var tabs  = document.querySelectorAll('#ov-perf-tabs .perf-tab');
-      var panes = document.querySelectorAll('.perf-tab-pane[data-ov-pane]');
-      tabs.forEach(function (tab) {
-        tab.addEventListener('click', function () {
-          var target = tab.dataset.ovTab;
-          tabs.forEach(function (t) {
-            var on = t === tab;
-            t.classList.toggle('active', on);
-            t.setAttribute('aria-selected', String(on));
-          });
-          panes.forEach(function (p) {
-            p.classList.toggle('active', p.dataset.ovPane === target);
-          });
-          if (target === 'trend' && window._ovTrendChart) window._ovTrendChart.resize();
-          if (target === 'competitor' && window._ovCompChart) window._ovCompChart.resize();
+      var card  = document.getElementById('ov-chart-card');
+      var tabs  = card.querySelectorAll('#ov-perf-tabs .ep-sub-tab');
+      var panes = card.querySelectorAll('.ep-sub-pane[data-dist-sub-pane]');
+      var title = document.getElementById('ov-panel-title');
+      var subtitle = document.getElementById('ov-panel-subtitle');
+      function activate(target) {
+        tabs.forEach(function (t) {
+          var on = t.dataset.distSub === target;
+          t.classList.toggle('ep-sub-tab--active', on);
+          t.setAttribute('aria-selected', String(on));
         });
+        panes.forEach(function (p) {
+          p.classList.toggle('ep-sub-pane--active', p.dataset.distSubPane === target);
+        });
+        card.querySelectorAll('[data-show-on-sub]').forEach(function (el) {
+          el.style.display = (el.dataset.showOnSub === target) ? '' : 'none';
+        });
+        var copy = PANEL_COPY[target];
+        if (copy) {
+          if (title) title.textContent = copy.title;
+          if (subtitle) subtitle.innerHTML = copy.sub;
+        }
+        if (target === 'trend' && window._ovTrendChart) window._ovTrendChart.resize();
+        if (target === 'competitor' && window._ovCompChart) window._ovCompChart.resize();
+        // Refresh chip-carousel page calc when strip becomes visible.
+        if (target === 'competitor') {
+          var strip = document.getElementById('ov-store-chips-strip');
+          if (strip && window.ChipCarousel && ChipCarousel.refresh) ChipCarousel.refresh(strip);
+        }
+      }
+      tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () { activate(tab.dataset.distSub); });
       });
+      activate('trend');
     }
 
     // ── By Store fixture (real WD store visits + share%) ─────────
@@ -374,41 +397,73 @@
     function fmtNum(n) { return n.toLocaleString('en-US'); }
     function fmtPct(p) { return (p * 100).toFixed(0) + '%'; }
 
-    function renderStoreList() {
-      var el = document.getElementById('ov-store-list');
-      if (!el) return;
+    // UX-846 2026-05-27: first render builds DOM with all 3 segments always
+    // present (data-seg). Subsequent legend toggles update style.width in
+    // place so CSS transition animates between states (no DOM rebuild).
+    var _storeListBuilt = false;
+    function storeMetrics() {
       var maxVisits = storeData[0].visits;
-      el.innerHTML = storeData.map(function (r) {
+      return storeData.map(function (r) {
         var totalActive = (activeSeries.new ? r.new : 0) +
                           (activeSeries.returning ? r.returning : 0) +
                           (activeSeries.loyal ? r.loyal : 0);
-        var w = (totalActive / maxVisits) * 100;
-        var newPctOfStore = r.new / r.visits;
-        var segs = '';
-        if (activeSeries.new)       segs += '<span class="ov-seg" style="width:' + ((r.new       / totalActive) * 100).toFixed(1) + '%; background:' + COLORS.new       + ';"></span>';
-        if (activeSeries.returning) segs += '<span class="ov-seg" style="width:' + ((r.returning / totalActive) * 100).toFixed(1) + '%; background:' + COLORS.returning + ';"></span>';
-        if (activeSeries.loyal)     segs += '<span class="ov-seg" style="width:' + ((r.loyal     / totalActive) * 100).toFixed(1) + '%; background:' + COLORS.loyal     + ';"></span>';
-        // data-perf-* attributes drive canonical dark hover tooltip
-        var perfTitle = r.store + ' · Wk 2 (Jan 7 – 13, 2026)';
-        var perfRows = [
-          { dot: 'new',       name: 'New',       val: fmtNum(r.new),       score: ((r.new       / r.visits) * 100).toFixed(0) + '%' },
-          { dot: 'returning', name: 'Returning', val: fmtNum(r.returning), score: ((r.returning / r.visits) * 100).toFixed(0) + '%' },
-          { dot: 'loyal',     name: 'Loyal',     val: fmtNum(r.loyal),     score: ((r.loyal     / r.visits) * 100).toFixed(0) + '%' }
-        ];
-        var perfTotal = { label: 'Total Visits', val: fmtNum(r.visits) };
-        var rowsAttr  = JSON.stringify(perfRows).replace(/"/g, '&quot;');
-        var totalAttr = JSON.stringify(perfTotal).replace(/"/g, '&quot;');
-        return '<div class="ov-store-row" data-perf-hover' +
-            ' data-perf-title="' + perfTitle + '"' +
-            ' data-perf-rows="' + rowsAttr + '"' +
-            ' data-perf-total="' + totalAttr + '">' +
-          '<div class="ov-store-rank">' + r.rank + '</div>' +
-          '<div class="ov-store-meta"><div class="ov-store-name">' + r.store + '</div>' +
-            '<div class="ov-store-sub">' + fmtPct(newPctOfStore) + ' new</div></div>' +
-          '<div class="ov-store-bar"><div class="ov-store-bar__track" style="width:' + w.toFixed(1) + '%;">' + segs + '</div></div>' +
-          '<div class="ov-store-visits">' + fmtNum(r.visits) + '</div>' +
-        '</div>';
-      }).join('');
+        return {
+          row: r,
+          trackW: (totalActive / maxVisits) * 100,
+          segs: {
+            new:       activeSeries.new       && totalActive ? (r.new       / totalActive) * 100 : 0,
+            returning: activeSeries.returning && totalActive ? (r.returning / totalActive) * 100 : 0,
+            loyal:     activeSeries.loyal     && totalActive ? (r.loyal     / totalActive) * 100 : 0
+          }
+        };
+      });
+    }
+    function renderStoreList() {
+      var el = document.getElementById('ov-store-list');
+      if (!el) return;
+      var metrics = storeMetrics();
+      if (!_storeListBuilt) {
+        el.innerHTML = metrics.map(function (m) {
+          var r = m.row;
+          var perfTitle = r.store + ' · Wk 2 (Jan 7 – 13, 2026)';
+          var perfRows = [
+            { dot: 'new',       name: 'New',       val: fmtNum(r.new),       score: ((r.new       / r.visits) * 100).toFixed(0) + '%' },
+            { dot: 'returning', name: 'Returning', val: fmtNum(r.returning), score: ((r.returning / r.visits) * 100).toFixed(0) + '%' },
+            { dot: 'loyal',     name: 'Loyal',     val: fmtNum(r.loyal),     score: ((r.loyal     / r.visits) * 100).toFixed(0) + '%' }
+          ];
+          var perfTotal = { label: 'Total Visits', val: fmtNum(r.visits) };
+          var rowsAttr  = JSON.stringify(perfRows).replace(/"/g, '&quot;');
+          var totalAttr = JSON.stringify(perfTotal).replace(/"/g, '&quot;');
+          return '<div class="ov-store-row" data-perf-hover' +
+              ' data-perf-title="' + perfTitle + '"' +
+              ' data-perf-rows="' + rowsAttr + '"' +
+              ' data-perf-total="' + totalAttr + '">' +
+            '<div class="ov-store-rank">' + r.rank + '</div>' +
+            '<div class="ov-store-meta"><div class="ov-store-name">' + r.store + '</div>' +
+              '<div class="ov-store-sub">' + fmtPct(r.new / r.visits) + ' new</div></div>' +
+            '<div class="ov-store-bar"><div class="ov-store-bar__track" style="width:' + m.trackW.toFixed(1) + '%;">' +
+              '<span class="ov-seg" data-seg="new"       style="width:' + m.segs.new.toFixed(1)       + '%; background:' + COLORS.new       + ';"></span>' +
+              '<span class="ov-seg" data-seg="returning" style="width:' + m.segs.returning.toFixed(1) + '%; background:' + COLORS.returning + ';"></span>' +
+              '<span class="ov-seg" data-seg="loyal"     style="width:' + m.segs.loyal.toFixed(1)     + '%; background:' + COLORS.loyal     + ';"></span>' +
+            '</div></div>' +
+            '<div class="ov-store-visits">' + fmtNum(r.visits) + '</div>' +
+          '</div>';
+        }).join('');
+        _storeListBuilt = true;
+        return;
+      }
+      // Subsequent: update widths in place → CSS transitions animate.
+      var rows = el.querySelectorAll('.ov-store-row');
+      metrics.forEach(function (m, i) {
+        var row = rows[i];
+        if (!row) return;
+        var track = row.querySelector('.ov-store-bar__track');
+        if (track) track.style.width = m.trackW.toFixed(1) + '%';
+        ['new', 'returning', 'loyal'].forEach(function (key) {
+          var seg = row.querySelector('.ov-seg[data-seg="' + key + '"]');
+          if (seg) seg.style.width = m.segs[key].toFixed(1) + '%';
+        });
+      });
     }
 
     // ── Dark hover tooltip (mirrors canonical .ep-perf-tooltip--dark) ─
@@ -597,37 +652,131 @@
       'ALDI':       '#0891b2',
       'All Others': '#94a3b8'
     };
-    var compShareCurrent = { Walmart: 0.47, Kroger: 0.25, Meijer: 0.12, ALDI: 0.08, 'All Others': 0.08 };
-    var compVisitsCurrent = { Walmart: 4413, Kroger: 2326, Meijer: 1116, ALDI: 758, 'All Others': 805 };
-    var compFreqMix = {
+    var compShareBase = { Walmart: 0.47, Kroger: 0.25, Meijer: 0.12, ALDI: 0.08, 'All Others': 0.08 };
+    var compVisitsBase = { Walmart: 4413, Kroger: 2326, Meijer: 1116, ALDI: 758, 'All Others': 805 };
+    var compFreqMixBase = {
       Walmart:     { new: 0.90, returning: 0.07, loyal: 0.03 },
       Kroger:      { new: 0.89, returning: 0.08, loyal: 0.03 },
       Meijer:      { new: 0.88, returning: 0.08, loyal: 0.04 },
       ALDI:        { new: 0.89, returning: 0.08, loyal: 0.03 },
       'All Others':{ new: 0.92, returning: 0.07, loyal: 0.01 }
     };
+
+    // UX-846 2026-05-27: per-store cross-shopping mock.
+    // Deterministic perturbation from baseline keyed by store rank +
+    // competitor name. Renormalizes shares to sum 1.0. Real per-store
+    // panel data lands when Greenberg adapter wires up.
+    function storeSeed(name) {
+      var idx = storeData.findIndex(function (r) { return r.store === name; });
+      return idx < 0 ? 0 : idx;
+    }
+    function hashJitter(seed, key) {
+      // -0.5 .. +0.4 deterministic
+      var h = ((seed + 1) * 17 + key.length * 13 + key.charCodeAt(0)) % 11;
+      return (h / 10) - 0.5;
+    }
+    function activeCompShare() {
+      if (ovSelectedStore === 'All Stores') return compShareBase;
+      var seed = storeSeed(ovSelectedStore);
+      var raw = {};
+      var sum = 0;
+      compNames.forEach(function (n) {
+        var v = compShareBase[n] + hashJitter(seed, n) * 0.06; // ±3pp
+        v = Math.max(0.02, v);
+        raw[n] = v;
+        sum += v;
+      });
+      var out = {};
+      compNames.forEach(function (n) { out[n] = raw[n] / sum; }); // renormalize
+      return out;
+    }
+    function activeCompVisits() {
+      if (ovSelectedStore === 'All Stores') return compVisitsBase;
+      var idx = storeSeed(ovSelectedStore);
+      var storeVisits = storeData[idx] ? storeData[idx].visits : 0;
+      var share = activeCompShare();
+      var out = {};
+      compNames.forEach(function (n) { out[n] = Math.round(storeVisits * share[n] * 0.85); });
+      return out;
+    }
+    function activeCompFreqMix() {
+      if (ovSelectedStore === 'All Stores') return compFreqMixBase;
+      var seed = storeSeed(ovSelectedStore);
+      var out = {};
+      compNames.forEach(function (n) {
+        var b = compFreqMixBase[n];
+        var jn = hashJitter(seed, n + 'n') * 0.04; // ±2pp
+        var jr = hashJitter(seed, n + 'r') * 0.04;
+        var newV  = Math.max(0.5, Math.min(0.98, b.new + jn));
+        var retV  = Math.max(0.02, Math.min(0.30, b.returning + jr));
+        var loyV  = Math.max(0.005, 1 - newV - retV);
+        out[n] = { new: newV, returning: retV, loyal: loyV };
+      });
+      return out;
+    }
+    // UX-846 2026-05-27: per-competitor store breakdown — mock until Greenberg
+    // panel provides per-store cross-shopping. Visits sum ≈ parent total;
+    // mix values jitter ±2pp around parent.
+    var compStores = {
+      Walmart: [
+        { store: 'Walmart #5421 - Tampa Centro',        visits: 1240, mix: { new: 0.91, returning: 0.06, loyal: 0.03 } },
+        { store: 'Walmart #1623 - Brandon',             visits:  980, mix: { new: 0.90, returning: 0.07, loyal: 0.03 } },
+        { store: 'Walmart #3209 - St. Petersburg N',    visits:  742, mix: { new: 0.89, returning: 0.08, loyal: 0.03 } },
+        { store: 'Walmart #4471 - Clearwater',          visits:  640, mix: { new: 0.90, returning: 0.07, loyal: 0.03 } },
+        { store: 'Walmart #2087 - Largo',               visits:  481, mix: { new: 0.92, returning: 0.06, loyal: 0.02 } },
+        { store: 'Walmart #1198 - Riverview',           visits:  330, mix: { new: 0.88, returning: 0.09, loyal: 0.03 } }
+      ],
+      Kroger: [
+        { store: 'Kroger #882 - Tampa Palms',           visits:  712, mix: { new: 0.88, returning: 0.09, loyal: 0.03 } },
+        { store: 'Kroger #441 - Brandon Town Ctr',      visits:  560, mix: { new: 0.89, returning: 0.08, loyal: 0.03 } },
+        { store: 'Kroger #1023 - Carrollwood',          visits:  428, mix: { new: 0.90, returning: 0.07, loyal: 0.03 } },
+        { store: 'Kroger #338 - South Tampa',           visits:  340, mix: { new: 0.89, returning: 0.08, loyal: 0.03 } },
+        { store: 'Kroger #765 - Wesley Chapel',         visits:  286, mix: { new: 0.91, returning: 0.07, loyal: 0.02 } }
+      ],
+      Meijer: [
+        { store: 'Meijer #112 - Lakeland',              visits:  392, mix: { new: 0.87, returning: 0.09, loyal: 0.04 } },
+        { store: 'Meijer #207 - Plant City',            visits:  284, mix: { new: 0.89, returning: 0.08, loyal: 0.03 } },
+        { store: 'Meijer #305 - Winter Haven',          visits:  240, mix: { new: 0.88, returning: 0.08, loyal: 0.04 } },
+        { store: 'Meijer #418 - Auburndale',            visits:  200, mix: { new: 0.88, returning: 0.08, loyal: 0.04 } }
+      ],
+      ALDI: [
+        { store: 'ALDI #44 - Brandon Mall',             visits:  246, mix: { new: 0.89, returning: 0.08, loyal: 0.03 } },
+        { store: 'ALDI #88 - Carrollwood Crossings',    visits:  202, mix: { new: 0.90, returning: 0.07, loyal: 0.03 } },
+        { store: 'ALDI #156 - Tampa Hyde Park',         visits:  170, mix: { new: 0.88, returning: 0.09, loyal: 0.03 } },
+        { store: 'ALDI #221 - St. Pete Tyrone',         visits:  140, mix: { new: 0.89, returning: 0.08, loyal: 0.03 } }
+      ],
+      'All Others': [
+        { store: 'Gordon Food Service - Brandon',       visits:  340, mix: { new: 0.93, returning: 0.06, loyal: 0.01 } },
+        { store: 'Grocery Outlet - Tampa',              visits:  260, mix: { new: 0.92, returning: 0.07, loyal: 0.01 } },
+        { store: 'The Fresh Market - South Tampa',      visits:  205, mix: { new: 0.91, returning: 0.08, loyal: 0.01 } }
+      ]
+    };
     // 8-week share trend — back-derive jitter from current values.
     var compWeeks = ['Wk 46','Wk 47','Wk 48','Wk 49','Wk 50','Wk 51','Wk 52','Wk 1'];
-    var compTrend = compNames.map(function (name) {
-      var base = compShareCurrent[name];
-      // Mild ±10% jitter over time, ending at the real current value.
-      var series = compWeeks.map(function (_, i) {
-        var offset = (Math.sin(i * 1.1 + name.length) * 0.08) * base;
-        var v = i === compWeeks.length - 1 ? base : base + offset;
-        return Math.max(0.02, v);
+    function activeCompTrend() {
+      var share = activeCompShare();
+      return compNames.map(function (name) {
+        var base = share[name];
+        var series = compWeeks.map(function (_, i) {
+          var offset = (Math.sin(i * 1.1 + name.length) * 0.08) * base;
+          var v = i === compWeeks.length - 1 ? base : base + offset;
+          return Math.max(0.02, v);
+        });
+        return { name: name, data: series };
       });
-      return { name: name, data: series };
-    });
+    }
 
     var compMetricMode = 'share';
 
     function buildCompOptions() {
-      var seriesData = compTrend.map(function (s) {
+      var share = activeCompShare();
+      var visits = activeCompVisits();
+      var seriesData = activeCompTrend().map(function (s) {
         var data = compMetricMode === 'share'
           ? s.data.map(function (v) { return +(v * 100).toFixed(1); })
           : s.data.map(function (v) {
               // approximate weekly visits from share trend
-              return Math.round(v * compVisitsCurrent[s.name] / compShareCurrent[s.name]);
+              return Math.round(v * visits[s.name] / share[s.name]);
             });
         return {
           name: s.name, type: 'line', smooth: true, symbol: 'circle', symbolSize: 6,
@@ -684,18 +833,40 @@
     function renderCompDetail() {
       var el = document.getElementById('ov-comp-detail');
       if (!el) return;
-      var rowsHtml = compNames.map(function (name) {
-        var share = compShareCurrent[name];
-        var visits = compVisitsCurrent[name];
-        var mix = compFreqMix[name];
-        return '<tr>' +
-          '<td><span class="ov-comp-dot" style="background:' + compColors[name] + ';"></span> ' + name + '</td>' +
+      var rowsHtml = compNames.map(function (name, parentIdx) {
+        var shareMap = activeCompShare();
+        var visitsMap = activeCompVisits();
+        var mixMap = activeCompFreqMix();
+        var share = shareMap[name];
+        var visits = visitsMap[name];
+        var mix = mixMap[name];
+        var children = compStores[name] || [];
+        var parentRow = '<tr class="ov-comp-row ov-comp-row--parent" data-comp-parent="' + parentIdx + '" aria-expanded="false">' +
+          '<td>' +
+            '<button type="button" class="ov-comp-toggle" aria-label="Toggle ' + name + ' stores">' +
+              '<span class="material-symbols-outlined ov-comp-chev">chevron_right</span>' +
+            '</button>' +
+            '<span class="ov-comp-dot" style="background:' + compColors[name] + ';"></span> ' + name +
+            ' <span class="ov-comp-count">(' + children.length + ')</span>' +
+          '</td>' +
           '<td class="num">' + (share * 100).toFixed(1) + '%</td>' +
           '<td class="num">' + fmtNum(visits) + '</td>' +
           '<td class="num">' + (mix.new       * 100).toFixed(0) + '%</td>' +
           '<td class="num">' + (mix.returning * 100).toFixed(0) + '%</td>' +
           '<td class="num">' + (mix.loyal     * 100).toFixed(0) + '%</td>' +
         '</tr>';
+        var childRows = children.map(function (s) {
+          var childShare = visits ? (s.visits / visits * 100) : 0;
+          return '<tr class="ov-comp-row ov-comp-row--child" data-comp-child="' + parentIdx + '" hidden>' +
+            '<td class="ov-comp-store">' + s.store + '</td>' +
+            '<td class="num">' + childShare.toFixed(1) + '%</td>' +
+            '<td class="num">' + fmtNum(s.visits) + '</td>' +
+            '<td class="num">' + (s.mix.new       * 100).toFixed(0) + '%</td>' +
+            '<td class="num">' + (s.mix.returning * 100).toFixed(0) + '%</td>' +
+            '<td class="num">' + (s.mix.loyal     * 100).toFixed(0) + '%</td>' +
+          '</tr>';
+        }).join('');
+        return parentRow + childRows;
       }).join('');
       el.innerHTML =
         '<div class="ov-comp-detail__title">Cross-shopping detail — current week</div>' +
@@ -707,7 +878,19 @@
           '<th class="num">1-3 visits</th>' +
           '<th class="num">4+ visits</th>' +
         '</tr></thead><tbody>' + rowsHtml + '</tbody></table>' +
-        '<div class="ov-comp-detail__note">Source: panel-tracked cross-shopping (Greenberg). 0 / 1-3 / 4+ visits refer to past-30-day visitation frequency at the competitor.</div>';
+        '<div class="ov-comp-detail__note">Source: panel-tracked cross-shopping (Greenberg). 0 / 1-3 / 4+ visits refer to past-30-day visitation frequency at the competitor. Click a competitor row to expand per-store breakdown.</div>';
+      // Wire expand/collapse (event delegation — innerHTML resets listeners).
+      el.querySelectorAll('.ov-comp-row--parent').forEach(function (row) {
+        row.addEventListener('click', function () {
+          var idx = row.dataset.compParent;
+          var open = row.getAttribute('aria-expanded') === 'true';
+          row.setAttribute('aria-expanded', String(!open));
+          el.querySelectorAll('.ov-comp-row--child[data-comp-child="' + idx + '"]').forEach(function (c) {
+            if (open) c.setAttribute('hidden', '');
+            else c.removeAttribute('hidden');
+          });
+        });
+      });
     }
 
     function initCompMetric() {
@@ -735,63 +918,48 @@
       });
     }
 
-    // ── OV1: Store scope dropdown (by-Competitor pane) ───────────
-    // Filters Crossover Trend to an individual store. Data backing the
-    // chart is currently the page aggregate; per-store cross-shopping
-    // slice requires real Greenberg panel data per store (TODO when
-    // adapter lands). UI chrome ships now so the pattern is locked.
+    // ── OV1: Store scope chips (by-Competitor pane) ──────────────
+    // UX-846 2026-05-27: replaced dropdown with chip-carousel pattern.
+    // Fixed "All Stores" chip + scrollable per-store chips. Selected store
+    // sets `ovSelectedStore`; filter to per-store cross-shopping slice
+    // pending real Greenberg panel data (TODO).
     var ovSelectedStore = 'All Stores';
-    function buildStoreDropdownMenu() {
-      var menu = document.getElementById('ov-store-dropdown-menu');
-      if (!menu) return;
-      var items = ['All Stores'].concat(storeData.map(function (r) { return r.store; }));
-      menu.innerHTML = items.map(function (name) {
-        var active = name === ovSelectedStore ? ' active' : '';
-        return '<button type="button" class="ov-store-dropdown__item' + active +
-               '" data-ov-store="' + name + '" role="menuitem">' + name + '</button>';
+    function fmtNumLocal(n) { return n.toLocaleString('en-US'); }
+    function buildStoreChips() {
+      var strip = document.getElementById('ov-store-chips-strip');
+      if (!strip) return;
+      strip.innerHTML = storeData.map(function (r) {
+        return '<button type="button" class="creative-chip" data-ov-store="' + r.store + '" aria-pressed="false" title="' + r.store + '">' +
+          '<div class="creative-chip__header">' +
+            '<div class="creative-chip__thumb"><span class="material-symbols-outlined">store</span></div>' +
+            '<span class="creative-chip__rank">#' + r.rank + '</span>' +
+          '</div>' +
+          '<span class="creative-chip__name">' + r.store + '</span>' +
+          '<span class="creative-chip__meta">' + fmtNumLocal(r.visits) + ' visits</span>' +
+        '</button>';
       }).join('');
+      // Wrap strip in chip-carousel (prev/next paging).
+      if (window.ChipCarousel && ChipCarousel.init) ChipCarousel.init(strip);
     }
     function setOvSelectedStore(name) {
       ovSelectedStore = name;
-      document.querySelectorAll('[data-ov-store-label]').forEach(function (el) {
-        el.textContent = name;
+      document.querySelectorAll('#ov-store-chips-row [data-ov-store]').forEach(function (c) {
+        var on = c.dataset.ovStore === name;
+        c.classList.toggle('creative-chip--active', on);
+        c.setAttribute('aria-pressed', String(on));
       });
-      document.querySelectorAll('.ov-store-dropdown__item').forEach(function (i) {
-        i.classList.toggle('active', i.dataset.ovStore === name);
-      });
-      // TODO: refilter compTrend / compShareCurrent to selected store
-      // once Greenberg panel exposes per-store cross-shopping slices.
-    }
-    function closeOvStoreMenu() {
-      var menu = document.getElementById('ov-store-dropdown-menu');
-      var btn  = document.querySelector('.ov-store-dropdown__btn');
-      if (menu) menu.setAttribute('hidden', '');
-      if (btn) btn.setAttribute('aria-expanded', 'false');
+      // Re-render comp chart + cross-shopping detail with per-store slice.
+      renderCompChart();
+      renderCompDetail();
     }
     function initOvStoreDropdown() {
-      buildStoreDropdownMenu();
-      var dd = document.querySelector('[data-ov-store-dropdown]');
-      if (!dd) return;
-      var btn  = dd.querySelector('.ov-store-dropdown__btn');
-      var menu = dd.querySelector('.ov-store-dropdown__menu');
-      btn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        var willOpen = menu.hasAttribute('hidden');
-        closeOvStoreMenu();
-        if (willOpen) {
-          menu.removeAttribute('hidden');
-          btn.setAttribute('aria-expanded', 'true');
-        }
-      });
-      menu.addEventListener('click', function (e) {
-        var item = e.target.closest('[data-ov-store]');
-        if (!item) return;
-        setOvSelectedStore(item.dataset.ovStore);
-        closeOvStoreMenu();
-      });
-      document.addEventListener('click', closeOvStoreMenu);
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') closeOvStoreMenu();
+      buildStoreChips();
+      var row = document.getElementById('ov-store-chips-row');
+      if (!row) return;
+      row.addEventListener('click', function (e) {
+        var chip = e.target.closest('[data-ov-store]');
+        if (!chip) return;
+        setOvSelectedStore(chip.dataset.ovStore);
       });
     }
 

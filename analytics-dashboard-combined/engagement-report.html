@@ -11,14 +11,14 @@
   <!-- CSS -->
   <link rel="stylesheet" href="css/design-tokens.css?v=5">
   <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/analytics-architecture.css?v=28">
+  <link rel="stylesheet" href="css/analytics-architecture.css?v=30">
   <link rel="stylesheet" href="css/header.css?v=7">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/engagement.css?v=15">
+  <link rel="stylesheet" href="css/engagement.css?v=16">
   <!-- Pulled in for perf-tabs / creative-chips / stat-strip / section-panel-header rules -->
   <link rel="stylesheet" href="css/distribution.css">
-  <link rel="stylesheet" href="css/engagement-canonical.css?v=11">
+  <link rel="stylesheet" href="css/engagement-canonical.css?v=12">
   <link rel="stylesheet" href="css/tiered-surfaces.css?v=1">
 </head>
 <body data-engagement-page="report" data-active-tab="overview" data-app-mode="report">
@@ -172,27 +172,29 @@
       <div class="narrative-header">
         <div class="narrative-header__left">
           <h4 class="narrative-header__section">Engagement</h4>
-          <h1 class="narrative-header__title" id="ep-hero-title">Report</h1>
+          <h1 class="narrative-header__title" id="ep-hero-title">Overview</h1>
           <h2 class="narrative-header__question" id="ep-hero-question">How is engagement performing this week?</h2>
         </div>
-        <div class="narrative-header__text">
-          <!-- F2 (UX-846, 2026-05-27): single-sentence header pattern.
-               Template: "{entity} — This ran at {n} of {total} stores for {Week N} ({date range})" -->
-          <p class="narrative-header__sentence">
-            <strong><span id="subtitle-entity-engagement">All Brands</span></strong> — This ran at
-            <span class="ep-cohort-pill" id="engagement-cohort-pill">
-              <span class="material-symbols-outlined" title="Cohort: subset of stores included in this metric">info</span>
-              <strong class="ep-cohort-pill__count">27 of 27 stores</strong>
-            </span>
-            for <strong><span id="subtitle-date-week-engagement">Week 47</span></strong>
-            <em>(<span id="subtitle-date-range-engagement">Nov 18 – Nov 24, 2025</span>)</em>
-          </p>
+      </div>
+      <!-- F3 (UX-846, 2026-05-27): hero-stat stat-strip shell (sibling of
+           .narrative-header). Label swaps with active perf-tab title. -->
+      <div class="stat-strip" id="ep-page-stat-strip">
+          <div class="stat-strip__cards">
+            <div class="stat-strip__item">
+              <div class="stat-strip__value-row">
+                <p class="narrative-header__sentence">
+                  This ran at
+                  <span class="ep-cohort-pill" id="engagement-cohort-pill">
+                    <strong class="ep-cohort-pill__count">—</strong>
+                  </span></p>
+                  <p><strong><span id="subtitle-date-week-engagement">Week 47</span></strong>
+                    <em>(<span id="subtitle-date-range-engagement">Nov 18 – Nov 24, 2025</span>)</em>
+                  </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="stat-strip" id="ep-page-stat-strip">
-        <!-- Populated by JS: hero KPI for active perf-tab. -->
-      </div>
-    </div>
 
     <!-- perf-tabs strip — Report mode (UX-846 2026-05-12): Overview + 4 KPI panes.
          Order = value-ranked: outcome (Performance) → audience (Users) → activity (Sessions) → depth (Duration).
@@ -360,7 +362,7 @@
         <!-- Row 2: 3 atomic-hierarchy Top-5 panels. Ranked by Performance Score. Row click → Explore prefiltered. -->
         <div class="ep-report-overview__row ep-report-overview__row--top5">
 
-          <div class="ep-kpi-cell ep-top5-panel">
+          <div class="ep-kpi-cell ep-top5-panel" data-href="engagement-explore.html?grain=circular">
             <div class="ep-kpi-cell__head">
               <div class="ep-kpi-cell__title">
                 <h3 class="ep-kpi-cell__story">Top Stores</h3>
@@ -371,17 +373,17 @@
             </div>
             <div class="ep-kpi-cell__chart" style="min-height:0;">
               <div class="ep-top5-bar-list">
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=circular&circular=336" data-perf-hover data-perf-views="10200" data-perf-clicks="5100" data-perf-adds="2900" data-perf-title="#336 Hollywood"><span class="ep-top5-bar-row__lbl">#336 Hollywood</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">18.2K</span></a>
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=circular&circular=421" data-perf-hover data-perf-views="8600" data-perf-clicks="4300" data-perf-adds="2400" data-perf-title="#421 Pembroke Pines"><span class="ep-top5-bar-row__lbl">#421 Pembroke Pines</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">15.3K</span></a>
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=circular&circular=189" data-perf-hover data-perf-views="7300" data-perf-clicks="3600" data-perf-adds="2000" data-perf-title="#189 Aventura"><span class="ep-top5-bar-row__lbl">#189 Aventura</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:57%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">12.9K</span></a>
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=circular&circular=052" data-perf-hover data-perf-views="5900" data-perf-clicks="3000" data-perf-adds="1600" data-perf-title="#052 Miami Beach"><span class="ep-top5-bar-row__lbl">#052 Miami Beach</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:29%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:15%"></div></div><span class="ep-top5-bar-row__val">10.5K</span></a>
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=circular&circular=214" data-perf-hover data-perf-views="4700" data-perf-clicks="2400" data-perf-adds="1300" data-perf-title="#214 Boca Raton"><span class="ep-top5-bar-row__lbl">#214 Boca Raton</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:29%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:15%"></div></div><span class="ep-top5-bar-row__val">8.4K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore-base.html?store=store-501" data-perf-hover data-perf-views="10200" data-perf-clicks="5100" data-perf-adds="2900" data-perf-title="#501 Center City (Acme)"><span class="ep-top5-bar-row__lbl">#501 Center City (Acme)</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">18.2K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore-base.html?store=store-301" data-perf-hover data-perf-views="8600" data-perf-clicks="4300" data-perf-adds="2400" data-perf-title="#301 Sacramento (Albertsons)"><span class="ep-top5-bar-row__lbl">#301 Sacramento (Albertsons)</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">15.3K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore-base.html?store=store-107" data-perf-hover data-perf-views="7300" data-perf-clicks="3600" data-perf-adds="2000" data-perf-title="#107 San Jose (Safeway)"><span class="ep-top5-bar-row__lbl">#107 San Jose (Safeway)</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:57%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">12.9K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore-base.html?store=store-310" data-perf-hover data-perf-views="5900" data-perf-clicks="3000" data-perf-adds="1600" data-perf-title="#310 Bellevue (Albertsons)"><span class="ep-top5-bar-row__lbl">#310 Bellevue (Albertsons)</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:29%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:15%"></div></div><span class="ep-top5-bar-row__val">10.5K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore-base.html?store=store-611" data-perf-hover data-perf-views="4700" data-perf-clicks="2400" data-perf-adds="1300" data-perf-title="#611 Providence (Shaw's)"><span class="ep-top5-bar-row__lbl">#611 Providence (Shaw's)</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:29%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:15%"></div></div><span class="ep-top5-bar-row__val">8.4K</span></a>
               </div>
             </div>
-            <a class="ep-kpi-cell__view" href="engagement-explore.html?grain=circular">Open Top Stores <span class="material-symbols-outlined">chevron_right</span></a>
+            <span class="ep-kpi-cell__view">Open Top Stores <span class="material-symbols-outlined">chevron_right</span></span>
           </div>
 
-          <div class="ep-kpi-cell ep-top5-panel">
+          <div class="ep-kpi-cell ep-top5-panel" data-href="engagement-explore.html?grain=category">
             <div class="ep-kpi-cell__head">
               <div class="ep-kpi-cell__title">
                 <h3 class="ep-kpi-cell__story">Top Categories</h3>
@@ -392,17 +394,17 @@
             </div>
             <div class="ep-kpi-cell__chart" style="min-height:0;">
               <div class="ep-top5-bar-list">
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=category&category=produce" data-perf-hover data-perf-views="15800" data-perf-clicks="7900" data-perf-adds="4400" data-perf-title="Produce"><span class="ep-top5-bar-row__lbl">Produce</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">28.1K</span></a>
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=category&category=meat" data-perf-hover data-perf-views="13900" data-perf-clicks="6900" data-perf-adds="3900" data-perf-title="Meat &amp; Seafood"><span class="ep-top5-bar-row__lbl">Meat &amp; Seafood</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">24.7K</span></a>
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=category&category=dairy" data-perf-hover data-perf-views="11200" data-perf-clicks="5600" data-perf-adds="3100" data-perf-title="Dairy"><span class="ep-top5-bar-row__lbl">Dairy</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">19.9K</span></a>
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=category&category=bakery" data-perf-hover data-perf-views="9400" data-perf-clicks="4700" data-perf-adds="2700" data-perf-title="Bakery"><span class="ep-top5-bar-row__lbl">Bakery</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">16.8K</span></a>
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=category&category=pantry" data-perf-hover data-perf-views="7500" data-perf-clicks="3800" data-perf-adds="2100" data-perf-title="Pantry"><span class="ep-top5-bar-row__lbl">Pantry</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">13.4K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore-base-categories.html?category=produce" data-perf-hover data-perf-views="15800" data-perf-clicks="7900" data-perf-adds="4400" data-perf-title="Produce"><span class="ep-top5-bar-row__lbl">Produce</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">28.1K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore-base-categories.html?category=meat" data-perf-hover data-perf-views="13900" data-perf-clicks="6900" data-perf-adds="3900" data-perf-title="Meat &amp; Seafood"><span class="ep-top5-bar-row__lbl">Meat &amp; Seafood</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">24.7K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore-base-categories.html?category=dairy" data-perf-hover data-perf-views="11200" data-perf-clicks="5600" data-perf-adds="3100" data-perf-title="Dairy"><span class="ep-top5-bar-row__lbl">Dairy</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">19.9K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore-base-categories.html?category=bakery" data-perf-hover data-perf-views="9400" data-perf-clicks="4700" data-perf-adds="2700" data-perf-title="Bakery"><span class="ep-top5-bar-row__lbl">Bakery</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">16.8K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore-base-categories.html?category=pantry" data-perf-hover data-perf-views="7500" data-perf-clicks="3800" data-perf-adds="2100" data-perf-title="Pantry"><span class="ep-top5-bar-row__lbl">Pantry</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">13.4K</span></a>
               </div>
             </div>
-            <a class="ep-kpi-cell__view" href="engagement-explore.html?grain=category">Open Top Categories <span class="material-symbols-outlined">chevron_right</span></a>
+            <span class="ep-kpi-cell__view">Open Top Categories <span class="material-symbols-outlined">chevron_right</span></span>
           </div>
 
-          <div class="ep-kpi-cell ep-top5-panel">
+          <div class="ep-kpi-cell ep-top5-panel" data-href="engagement-explore.html?grain=promotion">
             <div class="ep-kpi-cell__head">
               <div class="ep-kpi-cell__title">
                 <h3 class="ep-kpi-cell__story">Top Promotions</h3>
@@ -413,14 +415,14 @@
             </div>
             <div class="ep-kpi-cell__chart" style="min-height:0;">
               <div class="ep-top5-bar-list">
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=promotion&promotion=p001" data-perf-hover data-perf-views="5300" data-perf-clicks="2600" data-perf-adds="1500" data-perf-title="Avocados 3/$5"><span class="ep-top5-bar-row__lbl">Avocados 3/$5</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">9.4K</span></a>
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=promotion&promotion=p002" data-perf-hover data-perf-views="4400" data-perf-clicks="2200" data-perf-adds="1300" data-perf-title="Ribeye $9.99/lb"><span class="ep-top5-bar-row__lbl">Ribeye $9.99/lb</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">7.9K</span></a>
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=promotion&promotion=p003" data-perf-hover data-perf-views="3800" data-perf-clicks="1900" data-perf-adds="1000" data-perf-title="Milk 2/$6"><span class="ep-top5-bar-row__lbl">Milk 2/$6</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:57%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:15%"></div></div><span class="ep-top5-bar-row__val">6.7K</span></a>
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=promotion&promotion=p004" data-perf-hover data-perf-views="3100" data-perf-clicks="1600" data-perf-adds="900" data-perf-title="Bagels BOGO"><span class="ep-top5-bar-row__lbl">Bagels BOGO</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:55%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:29%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">5.6K</span></a>
-                <a class="ep-top5-bar-row" href="engagement-explore.html?grain=promotion&promotion=p005" data-perf-hover data-perf-views="2500" data-perf-clicks="1300" data-perf-adds="700" data-perf-title="Cereal $2.49"><span class="ep-top5-bar-row__lbl">Cereal $2.49</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:29%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">4.5K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore-base-promotions.html?promotion=promo-wk48-meat-10" data-perf-hover data-perf-views="5300" data-perf-clicks="2600" data-perf-adds="1500" data-perf-title="Ribeye Steak Family"><span class="ep-top5-bar-row__lbl">Ribeye Steak Family</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">9.4K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore-base-promotions.html?promotion=promo-wk48-snacks-57" data-perf-hover data-perf-views="4400" data-perf-clicks="2200" data-perf-adds="1300" data-perf-title="Lay's Chips Family"><span class="ep-top5-bar-row__lbl">Lay's Chips Family</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">7.9K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore-base-promotions.html?promotion=promo-wk48-dairy-22" data-perf-hover data-perf-views="3800" data-perf-clicks="1900" data-perf-adds="1000" data-perf-title="Greek Yogurt Family"><span class="ep-top5-bar-row__lbl">Greek Yogurt Family</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:57%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:28%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:15%"></div></div><span class="ep-top5-bar-row__val">6.7K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore-base-promotions.html?promotion=promo-wk48-beverages-48" data-perf-hover data-perf-views="3100" data-perf-clicks="1600" data-perf-adds="900" data-perf-title="Coca-Cola Family"><span class="ep-top5-bar-row__lbl">Coca-Cola Family</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:55%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:29%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">5.6K</span></a>
+                <a class="ep-top5-bar-row" href="engagement-explore-base-promotions.html?promotion=promo-wk48-produce-5" data-perf-hover data-perf-views="2500" data-perf-clicks="1300" data-perf-adds="700" data-perf-title="Strawberries Family"><span class="ep-top5-bar-row__lbl">Strawberries Family</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--vca"><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--v" style="width:56%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--c" style="width:29%"></div><div class="ep-top5-bar-row__seg ep-top5-bar-row__seg--a" style="width:16%"></div></div><span class="ep-top5-bar-row__val">4.5K</span></a>
               </div>
             </div>
-            <a class="ep-kpi-cell__view" href="engagement-explore.html?grain=promotion">Open Top Promotions <span class="material-symbols-outlined">chevron_right</span></a>
+            <span class="ep-kpi-cell__view">Open Top Promotions <span class="material-symbols-outlined">chevron_right</span></span>
           </div>
 
         </div>
@@ -428,7 +430,7 @@
         <!-- Row 3: 2 Max asks (Coupon Clips, Page Navigation). -->
         <div class="ep-report-overview__row ep-report-overview__row--asks">
 
-          <div class="ep-kpi-cell ep-top5-panel">
+          <div class="ep-kpi-cell ep-top5-panel" data-href="engagement-explore.html?metric=coupons">
             <div class="ep-kpi-cell__head">
               <div class="ep-kpi-cell__title">
                 <h3 class="ep-kpi-cell__story">Top Coupon Clips</h3>
@@ -436,7 +438,6 @@
               <div>
                 <div class="ep-kpi-cell__metric">By clips · combo cards rolled in · Week 47</div>
               </div>
-              <button type="button" class="ep-top5-panel__export" title="Export to CSV" aria-label="Export Top Coupon Clips to CSV"><span class="material-symbols-outlined">download</span> Export CSV</button>
             </div>
             <div class="ep-kpi-cell__chart" style="min-height:0;">
               <div class="ep-top5-bar-list">
@@ -447,9 +448,10 @@
                 <a class="ep-top5-bar-row" href="engagement-explore.html?metric=coupons&coupon=c105" data-perf-hover data-perf-title="Top Coupon Clips · Week 47" data-perf-rows='[{"dot": "coupon", "name": "$5 off $25 grocery", "val": "1.5K", "score": "\u25b2 3%"}, {"dot": "coupon", "name": "34% redeem", "val": "12% share"}]' data-perf-total='{"label":"Total Coupon Clips","val":"11.3K"}'><span class="ep-top5-bar-row__lbl">$5 off $25 grocery</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--coupon"><div class="ep-top5-bar-row__seg" style="width:48%"></div></div><span class="ep-top5-bar-row__val">1.5K</span></a>
               </div>
             </div>
+            <span class="ep-kpi-cell__view">Open Top Coupon Clips <span class="material-symbols-outlined">chevron_right</span></span>
           </div>
 
-          <div class="ep-kpi-cell ep-top5-panel">
+          <div class="ep-kpi-cell ep-top5-panel" data-href="engagement-explore.html?metric=pagenav">
             <div class="ep-kpi-cell__head">
               <div class="ep-kpi-cell__title">
                 <h3 class="ep-kpi-cell__story">Top Page Navigation</h3>
@@ -457,7 +459,6 @@
               <div>
                 <div class="ep-kpi-cell__metric">In-circular page hits · Week 47</div>
               </div>
-              <button type="button" class="ep-top5-panel__export" title="Export to CSV" aria-label="Export Top Page Navigation to CSV"><span class="material-symbols-outlined">download</span> Export CSV</button>
             </div>
             <div class="ep-kpi-cell__chart" style="min-height:0;">
               <div class="ep-top5-bar-list">
@@ -468,6 +469,7 @@
                 <a class="ep-top5-bar-row" href="engagement-explore.html?metric=pagenav&page=recipes" data-perf-hover data-perf-title="Top Page Navigation · Week 47" data-perf-rows='[{"dot": "pagenav", "name": "Recipes", "val": "4.2K", "score": "\u25b2 6%"}, {"dot": "pagenav", "name": "1m 36s avg time", "val": "10% of nav"}]' data-perf-total='{"label":"Total Page Navigation","val":"43.4K"}'><span class="ep-top5-bar-row__lbl">Recipes</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--pagenav"><div class="ep-top5-bar-row__seg" style="width:30%"></div></div><span class="ep-top5-bar-row__val">4.2K</span></a>
               </div>
             </div>
+            <span class="ep-kpi-cell__view">Open Top Page Navigation <span class="material-symbols-outlined">chevron_right</span></span>
           </div>
 
         </div>
@@ -479,102 +481,122 @@
          Tab activation via URL ?tab=X param parsed by shell-loader.js.
          Explore Data lives at engagement-explore.html (main nav). -->
 
-    <div class="perf-tab-pane" data-ep-pane="sessions">
-      <div class="hero-stat" data-ep-active="sessions"><div class="narrative-header"><div class="narrative-header-left">
-        <h2 class="narrative-header__title">Sessions</h2>
-        <p class="narrative-header__question">How are sessions distributed across stores, days, and weeks?</p>
-        <div class="narrative-header__meta">
+    <div class="chart-card perf-tab-pane" data-ep-pane="sessions">
+      <div class="chart-card__header">
+        <div class="chart-card__header-left">
+          <div class="ep-sub-tabs" role="tablist" aria-label="Sessions cuts">
+            <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="trend" role="tab" aria-selected="true">Time Trend</button>
+            <button class="ep-sub-tab" data-ep-sub="store" role="tab">By Store</button>
+            <button class="ep-sub-tab" data-ep-sub="day" role="tab">By Day</button>
+          </div>
         </div>
-      </div></div></div>
-      <div class="ep-sub-tabs" role="tablist" aria-label="Sessions cuts">
-        <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="trend" role="tab" aria-selected="true">Time Trend</button>
-        <button class="ep-sub-tab" data-ep-sub="store" role="tab">By Store</button>
-        <button class="ep-sub-tab" data-ep-sub="day" role="tab">By Day</button>
-      </div>
-      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="trend"><div class="duration-presets" role="tablist" aria-label="Trend range">
-        <button class="duration-preset" data-duration="1w" role="tab">1 Week</button>
-        <button class="duration-preset" data-duration="1m" role="tab">4 Week <span class="duration-preset__sub">(Month)</span></button>
-        <button class="duration-preset duration-preset--active" data-duration="1q" role="tab" aria-selected="true">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
-        <button class="duration-preset" data-duration="1y" role="tab">1 Year</button>
-      </div>
-      <div id="ep-sessions-trend"></div></div>
-      <div class="ep-sub-pane" data-ep-sub-pane="store"><div class="ep-stacked-list" id="ep-sessions-by-store"></div></div>
-      <div class="ep-sub-pane" data-ep-sub-pane="day"><div id="ep-sessions-by-day"></div></div>
-    </div>
-
-    <div class="perf-tab-pane" data-ep-pane="users">
-      <div class="hero-stat" data-ep-active="users"><div class="narrative-header"><div class="narrative-header-left">
-        <h2 class="narrative-header__title">Total Users</h2>
-        <p class="narrative-header__question">How many unique users engaged this week, and which stores drove them?</p>
-        <!-- ER3 (UX-846 2026-05-26): User cohorts dropped — don't reconcile to platform semantics. -->
-      </div></div></div>
-      <div class="ep-sub-tabs" role="tablist" aria-label="Users cuts">
-        <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="trend" role="tab" aria-selected="true">Time Trend</button>
-        <button class="ep-sub-tab" data-ep-sub="store" role="tab">By Store</button>
-        <button class="ep-sub-tab" data-ep-sub="day" role="tab">By Day</button>
-      </div>
-      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="trend"><div class="duration-presets" role="tablist" aria-label="Trend range">
-        <button class="duration-preset" data-duration="1w" role="tab">1 Week</button>
-        <button class="duration-preset" data-duration="1m" role="tab">4 Week <span class="duration-preset__sub">(Month)</span></button>
-        <button class="duration-preset duration-preset--active" data-duration="1q" role="tab" aria-selected="true">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
-        <button class="duration-preset" data-duration="1y" role="tab">1 Year</button>
-      </div>
-      <div id="ep-users-trend"></div></div>
-      <div class="ep-sub-pane" data-ep-sub-pane="store"><div class="ep-stacked-list" id="ep-users-by-store"></div></div>
-      <div class="ep-sub-pane" data-ep-sub-pane="day"><div id="ep-users-by-day"></div></div>
-    </div>
-
-    <div class="perf-tab-pane" data-ep-pane="duration">
-      <div class="hero-stat" data-ep-active="duration"><div class="narrative-header"><div class="narrative-header-left">
-        <h2 class="narrative-header__title">Avg Session Duration</h2>
-        <p class="narrative-header__question">How long are users spending on each store?</p>
-        <!-- ER3 (UX-846 2026-05-26): User cohorts dropped from Avg Duration. -->
-      </div></div></div>
-      <div class="ep-sub-tabs" role="tablist" aria-label="Duration cuts">
-        <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="trend" role="tab" aria-selected="true">Time Trend</button>
-        <button class="ep-sub-tab" data-ep-sub="store" role="tab">By Store</button>
-        <button class="ep-sub-tab" data-ep-sub="day" role="tab">By Day</button>
-      </div>
-      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="trend"><div class="duration-presets" role="tablist" aria-label="Trend range">
-        <button class="duration-preset" data-duration="1w" role="tab">1 Week</button>
-        <button class="duration-preset" data-duration="1m" role="tab">4 Week <span class="duration-preset__sub">(Month)</span></button>
-        <button class="duration-preset duration-preset--active" data-duration="1q" role="tab" aria-selected="true">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
-        <button class="duration-preset" data-duration="1y" role="tab">1 Year</button>
-      </div>
-      <div id="ep-duration-trend"></div></div>
-      <div class="ep-sub-pane" data-ep-sub-pane="store"><div class="ep-stacked-list" id="ep-duration-by-store"></div></div>
-      <div class="ep-sub-pane" data-ep-sub-pane="day"><div id="ep-duration-by-day"></div></div>
-    </div>
-
-    <div class="perf-tab-pane" data-ep-pane="performance">
-      <div class="hero-stat" data-ep-active="performance"><div class="narrative-header"><div class="narrative-header-left">
-        <h2 class="narrative-header__title">Performance Score</h2>
-        <p class="narrative-header__question">How is the Views/Clicks/Adds composite trending?</p>
-        <div class="narrative-header__meta">
-          <p class="ep-additivity" aria-label="Performance Score is the sum of Views, Clicks, and Adds (point totals)">
-          <span class="ep-additivity__lbl">Of the total:</span>
-          <span class="ep-additivity__pill ep-additivity__pill--n">Views</span>
-          <span class="ep-additivity__plus">+</span>
-          <span class="ep-additivity__pill ep-additivity__pill--r">Clicks</span>
-          <span class="ep-additivity__plus">+</span>
-          <span class="ep-additivity__pill ep-additivity__pill--e">Adds</span>
-        </p>
+        <div class="chart-card__header-right">
+          <div class="duration-presets" role="tablist" aria-label="Trend range" data-show-on-sub="trend">
+            <button class="duration-preset" data-duration="1w" role="tab">1 Week</button>
+            <button class="duration-preset" data-duration="1m" role="tab">4 Week <span class="duration-preset__sub">(Month)</span></button>
+            <button class="duration-preset duration-preset--active" data-duration="1q" role="tab" aria-selected="true">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
+            <button class="duration-preset" data-duration="1y" role="tab">1 Year</button>
+          </div>
         </div>
-      </div></div></div>
-      <div class="ep-sub-tabs" role="tablist" aria-label="Performance cuts">
-        <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="trend" role="tab" aria-selected="true">Time Trend</button>
-        <button class="ep-sub-tab" data-ep-sub="store" role="tab">By Store</button>
-        <button class="ep-sub-tab" data-ep-sub="day" role="tab">By Day</button>
       </div>
-      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="trend"><div class="duration-presets" role="tablist" aria-label="Trend range">
-        <button class="duration-preset" data-duration="1w" role="tab">1 Week</button>
-        <button class="duration-preset" data-duration="1m" role="tab">4 Week <span class="duration-preset__sub">(Month)</span></button>
-        <button class="duration-preset duration-preset--active" data-duration="1q" role="tab" aria-selected="true">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
-        <button class="duration-preset" data-duration="1y" role="tab">1 Year</button>
+      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="trend">
+        <div id="ep-sessions-trend"></div>
       </div>
-      <div id="ep-performance-trend"></div></div>
-      <div class="ep-sub-pane" data-ep-sub-pane="store"><div class="ep-stacked-list" id="ep-performance-by-store"></div></div>
-      <div class="ep-sub-pane" data-ep-sub-pane="day"><div id="ep-performance-by-day"></div></div>
+      <div class="ep-sub-pane" data-ep-sub-pane="store">
+        <div class="ep-stacked-list" id="ep-sessions-by-store"></div>
+      </div>
+      <div class="ep-sub-pane" data-ep-sub-pane="day">
+        <div id="ep-sessions-by-day"></div>
+      </div>
+    </div>
+
+    <div class="chart-card perf-tab-pane" data-ep-pane="users">
+      <!-- ER3 (UX-846 2026-05-26): User cohorts dropped — don't reconcile to platform semantics. -->
+      <div class="chart-card__header">
+        <div class="chart-card__header-left">
+          <div class="ep-sub-tabs" role="tablist" aria-label="Users cuts">
+            <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="trend" role="tab" aria-selected="true">Time Trend</button>
+            <button class="ep-sub-tab" data-ep-sub="store" role="tab">By Store</button>
+            <button class="ep-sub-tab" data-ep-sub="day" role="tab">By Day</button>
+          </div>
+        </div>
+        <div class="chart-card__header-right">
+          <div class="duration-presets" role="tablist" aria-label="Trend range" data-show-on-sub="trend">
+            <button class="duration-preset" data-duration="1w" role="tab">1 Week</button>
+            <button class="duration-preset" data-duration="1m" role="tab">4 Week <span class="duration-preset__sub">(Month)</span></button>
+            <button class="duration-preset duration-preset--active" data-duration="1q" role="tab" aria-selected="true">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
+            <button class="duration-preset" data-duration="1y" role="tab">1 Year</button>
+          </div>
+        </div>
+      </div>
+      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="trend">
+        <div id="ep-users-trend"></div>
+      </div>
+      <div class="ep-sub-pane" data-ep-sub-pane="store">
+        <div class="ep-stacked-list" id="ep-users-by-store"></div>
+      </div>
+      <div class="ep-sub-pane" data-ep-sub-pane="day">
+        <div id="ep-users-by-day"></div>
+      </div>
+    </div>
+
+    <div class="chart-card perf-tab-pane" data-ep-pane="duration">
+      <!-- ER3 (UX-846 2026-05-26): User cohorts dropped from Avg Duration. -->
+      <div class="chart-card__header">
+        <div class="chart-card__header-left">
+          <div class="ep-sub-tabs" role="tablist" aria-label="Duration cuts">
+            <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="trend" role="tab" aria-selected="true">Time Trend</button>
+            <button class="ep-sub-tab" data-ep-sub="store" role="tab">By Store</button>
+            <button class="ep-sub-tab" data-ep-sub="day" role="tab">By Day</button>
+          </div>
+        </div>
+        <div class="chart-card__header-right">
+          <div class="duration-presets" role="tablist" aria-label="Trend range" data-show-on-sub="trend">
+            <button class="duration-preset" data-duration="1w" role="tab">1 Week</button>
+            <button class="duration-preset" data-duration="1m" role="tab">4 Week <span class="duration-preset__sub">(Month)</span></button>
+            <button class="duration-preset duration-preset--active" data-duration="1q" role="tab" aria-selected="true">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
+            <button class="duration-preset" data-duration="1y" role="tab">1 Year</button>
+          </div>
+        </div>
+      </div>
+      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="trend">
+        <div id="ep-duration-trend"></div>
+      </div>
+      <div class="ep-sub-pane" data-ep-sub-pane="store">
+        <div class="ep-stacked-list" id="ep-duration-by-store"></div>
+      </div>
+      <div class="ep-sub-pane" data-ep-sub-pane="day">
+        <div id="ep-duration-by-day"></div>
+      </div>
+    </div>
+
+    <div class="chart-card perf-tab-pane" data-ep-pane="performance">
+      <div class="chart-card__header">
+        <div class="chart-card__header-left">
+          <div class="ep-sub-tabs" role="tablist" aria-label="Performance cuts">
+            <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="trend" role="tab" aria-selected="true">Time Trend</button>
+            <button class="ep-sub-tab" data-ep-sub="store" role="tab">By Store</button>
+            <button class="ep-sub-tab" data-ep-sub="day" role="tab">By Day</button>
+          </div>
+        </div>
+        <div class="chart-card__header-right">
+          <div class="duration-presets" role="tablist" aria-label="Trend range" data-show-on-sub="trend">
+            <button class="duration-preset" data-duration="1w" role="tab">1 Week</button>
+            <button class="duration-preset" data-duration="1m" role="tab">4 Week <span class="duration-preset__sub">(Month)</span></button>
+            <button class="duration-preset duration-preset--active" data-duration="1q" role="tab" aria-selected="true">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
+            <button class="duration-preset" data-duration="1y" role="tab">1 Year</button>
+          </div>
+        </div>
+      </div>
+      <div class="ep-sub-pane ep-sub-pane--active" data-ep-sub-pane="trend">
+        <div id="ep-performance-trend"></div>
+      </div>
+      <div class="ep-sub-pane" data-ep-sub-pane="store">
+        <div class="ep-stacked-list" id="ep-performance-by-store"></div>
+      </div>
+      <div class="ep-sub-pane" data-ep-sub-pane="day">
+        <div id="ep-performance-by-day"></div>
+      </div>
     </div>
 
   </main>
@@ -779,9 +801,9 @@
   <script src="js/engagement/shared-modals.js"></script>
   <script src="js/engagement/shared-filters.js"></script>
   <script src="js/engagement/shared-perf-charts.js"></script>
-  <script src="js/engagement/canonical-shell-tabs.js?v=6"></script>
+  <script src="js/engagement/canonical-shell-tabs.js?v=12"></script>
   <script src="js/engagement/mock-metric-panes.js?v=2"></script>
-  <script src="js/engagement/canonical-shell-renderers.js?v=5"></script>
+  <script src="js/engagement/canonical-shell-renderers.js?v=6"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       if (window.CanonicalShellRenderers) {
@@ -791,20 +813,21 @@
       }
       wirePanelClick();
     });
-    // PN1/PN2: any .ep-top5-panel containing a bottom-pinned
-    // a.ep-kpi-cell__view[href] becomes fully clickable. Inner anchors
-    // (.ep-top5-bar-row, the __view link itself) preserve their own click
-    // semantics — we delegate via e.target.closest('a, button').
+    // PN1/PN2: any .ep-top5-panel[data-href] becomes fully clickable. The
+    // bottom-pinned `.ep-kpi-cell__view` span is the visual affordance; the
+    // panel's `data-href` is the navigation target. Inner anchors/buttons
+    // (.ep-top5-bar-row) keep their own click semantics — we delegate via
+    // e.target.closest('a, button').
     function wirePanelClick() {
-      document.querySelectorAll('.ep-top5-panel').forEach(function (panel) {
-        var viewall = panel.querySelector('a.ep-kpi-cell__view[href]');
-        if (!viewall) return;
+      document.querySelectorAll('.ep-top5-panel[data-href]').forEach(function (panel) {
+        var href = panel.getAttribute('data-href');
+        if (!href) return;
         var story = panel.querySelector('.ep-kpi-cell__story');
         panel.setAttribute('tabindex', '0');
         panel.setAttribute('role', 'link');
         panel.setAttribute('aria-label',
           'Open ' + (story ? story.textContent.trim() : 'panel'));
-        function go() { window.location.href = viewall.getAttribute('href'); }
+        function go() { window.location.href = href; }
         panel.addEventListener('click', function (e) {
           if (e.target.closest('a, button')) return;
           go();
@@ -884,7 +907,7 @@
   <script src="js/engagement/base-report.js?v=2"></script>
   <script src="js/engagement/overview-kpi-donuts.js?v=3"></script>
   <script src="js/header-slide.js"></script>
-  <script src="js/engagement/engagement-page-app.js"></script>
+  <script src="js/engagement/engagement-page-app.js?v=1"></script>
 
 </body>
 </html>

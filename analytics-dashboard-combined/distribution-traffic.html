@@ -1,4 +1,10 @@
 <!DOCTYPE html>
+<!--
+  DATA SOURCE TRACKER (UX-846): every field on this page (mock vs real
+  source vs derived) + proposed API endpoints is catalogued in
+  ~/.claude/plans/UX-846/UX-846-distribution-data-source-tracker.md
+  Update the tracker when adding new panels or migrating MOCK → REAL.
+-->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -151,21 +157,26 @@
             <h1 class="narrative-header__title">Overview</h1>
             <h2 class="narrative-header__question">How is our distribution performing across channels?</h2>
           </div>
-          <div class="narrative-header__text">
-            <!-- F2 (UX-846, 2026-05-27): single-sentence header pattern.
-                 Template: "{entity} — This ran at {n} of {total} stores for {Week N} ({date range})" -->
-            <p class="narrative-header__sentence">
-              <strong><span id="subtitle-entity-overview">Ideal Media Lab</span></strong> — This ran at
-              <span class="ep-cohort-pill" id="dist-cohort-note-overview">
-                <span class="material-symbols-outlined" title="Cohort: subset of stores included in this metric">info</span>
-                <strong class="ep-cohort-pill__count">83 of 83 stores</strong>
-              </span>
-              for <strong><span id="subtitle-date-week-overview">Week 47</span></strong>
-              <em>(<span id="subtitle-date-range-overview">Nov 17 – Nov 23, 2026</span>)</em>
-            </p>
+        </div>
+        <!-- F3 (UX-846, 2026-05-27): hero-stat stat-strip shell (sibling of
+             .narrative-header). Label = page section title; value-row wraps the F2 sentence. -->
+        <div class="stat-strip" id="dist-traffic-stat-strip">
+          <div class="stat-strip__cards">
+            <div class="stat-strip__item">
+              <div class="stat-strip__value-row">
+                <p class="narrative-header__sentence">
+                  This ran at
+                  <span class="ep-cohort-pill" id="dist-cohort-note-overview">                    <strong class="ep-cohort-pill__count">83 of 83 stores</strong>
+                  </span></p>
+                  <p><strong><span id="subtitle-date-week-overview">Week 47</span></strong>
+                    <em>(<span id="subtitle-date-range-overview">Nov 17 – Nov 23, 2026</span>)</em>
+                  </p>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+        </div>
+      <!-- close .hero-stat -->
 
       <!-- ═══════════════════════════════════════════════
            Overview landing card grid — 05/19 PDF page 2.

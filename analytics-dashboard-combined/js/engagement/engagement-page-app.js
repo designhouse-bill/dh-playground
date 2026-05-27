@@ -84,6 +84,23 @@
     initDashboardSwitcher();
     initResizeHandler();
     initContextCards();
+    initCohortSync();
   });
+
+  // UX-846 2026-05-27: keep .ep-cohort-pill__count + .dh-top-bar entity card
+  // in parity with the active entity (MockData source of truth). Re-runs on
+  // entity-change so cohort denominator always reflects current scope.
+  function initCohortSync() {
+    function syncCohort() {
+      var stores = (window.MockData && window.MockData.entities && window.MockData.entities.stores) || [];
+      var total = stores.length;
+      if (!total) return;
+      document.querySelectorAll('.ep-cohort-pill__count').forEach(function (el) {
+        el.textContent = total + ' of ' + total + ' stores';
+      });
+    }
+    syncCohort();
+    document.addEventListener('dashboard:dataRefresh', syncCohort);
+  }
 
 })();

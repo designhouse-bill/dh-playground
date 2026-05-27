@@ -1,4 +1,10 @@
 <!DOCTYPE html>
+<!--
+  DATA SOURCE TRACKER (UX-846): every field on this page (mock vs real
+  source vs derived) + proposed API endpoints is catalogued in
+  ~/.claude/plans/UX-846/UX-846-distribution-data-source-tracker.md
+  Update the tracker when adding new panels or migrating MOCK → REAL.
+-->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -13,7 +19,7 @@
   <link rel="stylesheet" href="css/header.css?v=7">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/distribution.css?v=44">
+  <link rel="stylesheet" href="css/distribution.css?v=55">
 </head>
 <body data-dist-page="demographics">
 
@@ -137,86 +143,63 @@
             <h1 class="narrative-header__title">Observed Demographics</h1>
             <h2 class="narrative-header__question">Who are our attributed shoppers?</h2>
           </div>
-          <div class="narrative-header__text">
-            <!-- F2 (UX-846, 2026-05-27): single-sentence header pattern.
-                 Template: "{entity} — This ran at {n} of {total} stores for {Week N} ({date range})" -->
-            <p class="narrative-header__sentence">
-              <strong><span id="subtitle-entity-demographics">Ideal Media Lab</span></strong> — This ran at
-              <span class="ep-cohort-pill" id="dist-cohort-note-demographics">
-                <span class="material-symbols-outlined" title="Cohort: subset of stores included in this metric">info</span>
-                <strong class="ep-cohort-pill__count">83 of 83 stores</strong>
-              </span>
-              for <strong><span id="subtitle-date-week-demographics">Week 47</span></strong>
-              <em>(<span id="subtitle-date-range-demographics">Nov 17 – Nov 23, 2026</span>)</em>
-            </p>
+        </div>
+          <!-- F3 (UX-846, 2026-05-27): hero-stat stat-strip shell (sibling of .narrative-header). -->
+          <div class="stat-strip" id="dist-demographics-stat-strip">
+            <div class="stat-strip__cards">
+              <div class="stat-strip__item">
+                <div class="stat-strip__value-row">
+                  <p class="narrative-header__sentence">
+                    This ran at
+                    <span class="ep-cohort-pill" id="dist-cohort-note-demographics">                      <strong class="ep-cohort-pill__count">83 of 83 stores</strong>
+                    </span></p>
+                    <p><strong><span id="subtitle-date-week-demographics">Week 47</span></strong>
+                      <em>(<span id="subtitle-date-range-demographics">Nov 17 – Nov 23, 2026</span>)</em>
+                    </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      <!-- /.hero-stat -->
 
       <!-- ═══════════════════════════════════════════════
            Observed Demographics — 3 inner tabs (Max 05/19 PDF p.9-11).
            Current · By Store · Time Trend
            ═══════════════════════════════════════════════ -->
-      <div class="perf-tabs" id="od-perf-tabs" role="tablist" aria-label="Observed Demographics view">
-        <button class="perf-tab active" data-od-tab="current" role="tab" aria-selected="true">
-          <span class="material-symbols-outlined">dashboard</span> Current
-        </button>
-        <button class="perf-tab" data-od-tab="store" role="tab" aria-selected="false">
-          <span class="material-symbols-outlined">store</span> By Store
-        </button>
-        <button class="perf-tab" data-od-tab="trend" role="tab" aria-selected="false">
-          <span class="material-symbols-outlined">trending_up</span> Time Trend
-        </button>
-      </div>
-
-      <!-- ── Pane: Current (no dimension toggle; all 8 at once) ─── -->
-      <div class="perf-tab-pane active" data-od-pane="current">
-        <div class="chart-card">
-          <div class="chart-card__header">
-            <div>
-              <h3 class="panel-label">DEMOGRAPHICS</h3>
-              <p class="panel-subtitle">Who are our attributed shoppers? Demographic profile of <strong>10,822 visitors</strong>.<br><span class="panel-subtitle__muted">Ideal Media Lab · Week 20 (May 13 – May 19, 2026)</span></p>
+      <div class="chart-card" id="od-chart-card">
+        <div class="chart-card__header">
+          <div class="chart-card__header-left">
+            <div class="ep-sub-tabs" id="od-perf-tabs" role="tablist" aria-label="Observed Demographics view">
+              <button class="ep-sub-tab ep-sub-tab--active" data-dist-sub="trend" role="tab" aria-selected="true">Time Trend</button>
+              <button class="ep-sub-tab" data-dist-sub="current" role="tab" aria-selected="false">Current</button>
+              <button class="ep-sub-tab" data-dist-sub="store" role="tab" aria-selected="false">By Store</button>
             </div>
           </div>
-          <div class="od-grid" id="od-grid">
-            <!-- 2-col grid populated by JS. Alternating bars + donuts
-                 per 05/19 PDF page 9 layout rule. -->
+          <div class="chart-card__header-right">
+            <div class="duration-presets" id="od-trend-ranges" role="tablist" aria-label="Time range" data-show-on-sub="trend">
+              <button type="button" class="duration-preset" data-od-range="4w">4 Week <span class="duration-preset__sub">(Month)</span></button>
+              <button type="button" class="duration-preset" data-od-range="8w">8 Week</button>
+              <button type="button" class="duration-preset duration-preset--active" data-od-range="13w">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- ── Pane: By Store ──────────────────────────────────────── -->
-      <div class="perf-tab-pane" data-od-pane="store">
-        <div class="chart-card">
-          <div class="chart-card__header">
-            <div>
-              <h3 class="panel-label">By Store</h3>
-              <p class="panel-subtitle">Demographic profile of attributed shoppers — per store.<br><span class="panel-subtitle__muted">Select a dimension below; chart shows 100%-stacked composition per store.</span></p>
-            </div>
-          </div>
-          <div class="od-tile-row" id="od-tile-row-store" role="tablist" aria-label="Dimension"></div>
-          <div id="od-store-chart" style="height:560px; margin-top:var(--space-3,0.75rem);"></div>
-        </div>
-      </div>
+        <h3 class="panel-label" id="od-panel-title">Time Trend</h3>
+        <p class="panel-subtitle" id="od-panel-subtitle">Demographic mix over time — weekly stacked composition for the selected dimension.</p>
 
-      <!-- ── Pane: Time Trend ───────────────────────────────────── -->
-      <div class="perf-tab-pane" data-od-pane="trend">
-        <div class="chart-card">
-          <div class="chart-card__header">
-            <div>
-              <h3 class="panel-label">Time Trend</h3>
-              <p class="panel-subtitle">Demographic mix over time — weekly stacked composition for the selected dimension.</p>
-            </div>
-            <div class="chart-card__header-right">
-              <div class="duration-presets" id="od-trend-ranges" role="tablist" aria-label="Time range">
-                <button type="button" class="duration-preset" data-od-range="4w">4 Week <span class="duration-preset__sub">(Month)</span></button>
-                <button type="button" class="duration-preset" data-od-range="8w">8 Week</button>
-                <button type="button" class="duration-preset duration-preset--active" data-od-range="13w">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
-              </div>
-            </div>
-          </div>
+        <div class="ep-sub-pane ep-sub-pane--active" data-dist-sub-pane="trend">
           <div class="od-tile-row" id="od-tile-row-trend" role="tablist" aria-label="Dimension"></div>
           <div id="od-trend-chart" style="height:380px; margin-top:var(--space-3,0.75rem);"></div>
+        </div>
+        <div class="ep-sub-pane" data-dist-sub-pane="current">
+          <div class="od-grid" id="od-grid">
+            <!-- 2-col grid populated by JS. Alternating bars + donuts per 05/19 PDF page 9 layout rule. -->
+          </div>
+        </div>
+        <div class="ep-sub-pane" data-dist-sub-pane="store">
+          <div class="od-tile-row" id="od-tile-row-store" role="tablist" aria-label="Dimension"></div>
+          <div id="od-store-chart" style="height:560px; margin-top:var(--space-3,0.75rem);"></div>
         </div>
       </div>
 
@@ -295,25 +278,51 @@
     function visitorsFor(pct) { return Math.round(TOTAL_VISITORS * pct / 100); }
 
     // ── Tab switcher ─────────────────────────────────────────────
+    // ── Sub-tab switcher (UX-846 2026-05-27, engagement parity) ──
+    var PANEL_COPY = {
+      trend: {
+        title: 'Time Trend',
+        sub: 'Demographic mix over time — weekly stacked composition for the selected dimension.'
+      },
+      current: {
+        title: 'DEMOGRAPHICS',
+        sub: 'Who are our attributed shoppers? Demographic profile of <strong>10,822 visitors</strong>.<br><span class="panel-subtitle__muted">Ideal Media Lab · Week 20 (May 13 – May 19, 2026)</span>'
+      },
+      store: {
+        title: 'By Store',
+        sub: 'Demographic profile of attributed shoppers — per store.<br><span class="panel-subtitle__muted">Select a dimension below; chart shows 100%-stacked composition per store.</span>'
+      }
+    };
     function initTabs() {
-      var tabs  = document.querySelectorAll('#od-perf-tabs .perf-tab');
-      var panes = document.querySelectorAll('.perf-tab-pane[data-od-pane]');
-      tabs.forEach(function (tab) {
-        tab.addEventListener('click', function () {
-          var target = tab.dataset.odTab;
-          tabs.forEach(function (t) {
-            var on = t === tab;
-            t.classList.toggle('active', on);
-            t.setAttribute('aria-selected', String(on));
-          });
-          panes.forEach(function (p) {
-            p.classList.toggle('active', p.dataset.odPane === target);
-          });
-          // Resize ECharts when entering pane (built while hidden)
-          if (target === 'store' && window._odStoreChart) window._odStoreChart.resize();
-          if (target === 'trend' && window._odTrendChart) window._odTrendChart.resize();
+      var card  = document.getElementById('od-chart-card');
+      var tabs  = card.querySelectorAll('#od-perf-tabs .ep-sub-tab');
+      var panes = card.querySelectorAll('.ep-sub-pane[data-dist-sub-pane]');
+      var title = document.getElementById('od-panel-title');
+      var subtitle = document.getElementById('od-panel-subtitle');
+      function activate(target) {
+        tabs.forEach(function (t) {
+          var on = t.dataset.distSub === target;
+          t.classList.toggle('ep-sub-tab--active', on);
+          t.setAttribute('aria-selected', String(on));
         });
+        panes.forEach(function (p) {
+          p.classList.toggle('ep-sub-pane--active', p.dataset.distSubPane === target);
+        });
+        card.querySelectorAll('[data-show-on-sub]').forEach(function (el) {
+          el.style.display = (el.dataset.showOnSub === target) ? '' : 'none';
+        });
+        var copy = PANEL_COPY[target];
+        if (copy) {
+          if (title) title.textContent = copy.title;
+          if (subtitle) subtitle.innerHTML = copy.sub;
+        }
+        if (target === 'store' && window._odStoreChart) window._odStoreChart.resize();
+        if (target === 'trend' && window._odTrendChart) window._odTrendChart.resize();
+      }
+      tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () { activate(tab.dataset.distSub); });
       });
+      activate('trend');
     }
 
     // ── Current pane: 8 widgets, alternating bars + donuts ───────

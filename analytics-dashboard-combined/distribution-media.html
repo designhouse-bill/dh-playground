@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="css/header.css?v=7">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/distribution.css?v=39">
+  <link rel="stylesheet" href="css/distribution.css?v=41">
 </head>
 <body data-dist-page="media">
 
@@ -184,11 +184,24 @@
       <div class="perf-tab-pane active" data-pm-pane="store">
         <div class="chart-card">
           <div class="chart-card__header">
-            <div>
+            <div class="chart-card__header-left">
               <h3 class="panel-label">Click Through Rate</h3>
               <p class="panel-subtitle">Ranked stores — bar reflects selected metric. CTR%, Clicks, and Impressions available via the toggle.</p>
             </div>
             <div class="chart-card__header-right">
+              <div class="pm-campaign-dropdown" data-pm-campaign-dropdown>
+                <button type="button" class="pm-campaign-dropdown__btn" aria-haspopup="true" aria-expanded="false" aria-label="Campaign filter">
+                  <span class="material-symbols-outlined pm-campaign-dropdown__icon">campaign</span>
+                  <span class="pm-campaign-dropdown__label" data-pm-campaign-label>Regular Customers</span>
+                  <span class="material-symbols-outlined pm-campaign-dropdown__chev">expand_more</span>
+                </button>
+                <div class="pm-campaign-dropdown__menu" role="menu" hidden>
+                  <button type="button" class="pm-campaign-dropdown__item active" data-pm-campaign="Regular Customers" role="menuitem">Regular Customers</button>
+                  <button type="button" class="pm-campaign-dropdown__item" data-pm-campaign="Infrequent Customers" role="menuitem">Infrequent Customers</button>
+                  <button type="button" class="pm-campaign-dropdown__item" data-pm-campaign="Retargeting" role="menuitem">Retargeting</button>
+                  <button type="button" class="pm-campaign-dropdown__item" data-pm-campaign="META &amp; Competitors" role="menuitem">META &amp; Competitors</button>
+                </div>
+              </div>
               <div class="view-toggle view-toggle--compact" id="pm-store-metric-toggle" role="tablist" aria-label="Metric">
                 <button type="button" class="view-toggle__btn active" data-pm-metric="ctr" role="tab" aria-selected="true">CTR</button>
                 <button type="button" class="view-toggle__btn" data-pm-metric="clicks" role="tab" aria-selected="false">Clicks</button>
@@ -204,11 +217,24 @@
       <div class="perf-tab-pane" data-pm-pane="creative">
         <div class="chart-card">
           <div class="chart-card__header">
-            <div>
+            <div class="chart-card__header-left">
               <h3 class="panel-label">VARIANT PANELS</h3>
               <p class="panel-subtitle">How does each creative variant compare across the full metric set?<br><span class="panel-subtitle__muted">Detailed breakdown grid — every creative × every metric. Sortable, exportable.</span></p>
             </div>
             <div class="chart-card__header-right">
+              <div class="pm-campaign-dropdown" data-pm-campaign-dropdown>
+                <button type="button" class="pm-campaign-dropdown__btn" aria-haspopup="true" aria-expanded="false" aria-label="Campaign filter">
+                  <span class="material-symbols-outlined pm-campaign-dropdown__icon">campaign</span>
+                  <span class="pm-campaign-dropdown__label" data-pm-campaign-label>Regular Customers</span>
+                  <span class="material-symbols-outlined pm-campaign-dropdown__chev">expand_more</span>
+                </button>
+                <div class="pm-campaign-dropdown__menu" role="menu" hidden>
+                  <button type="button" class="pm-campaign-dropdown__item active" data-pm-campaign="Regular Customers" role="menuitem">Regular Customers</button>
+                  <button type="button" class="pm-campaign-dropdown__item" data-pm-campaign="Infrequent Customers" role="menuitem">Infrequent Customers</button>
+                  <button type="button" class="pm-campaign-dropdown__item" data-pm-campaign="Retargeting" role="menuitem">Retargeting</button>
+                  <button type="button" class="pm-campaign-dropdown__item" data-pm-campaign="META &amp; Competitors" role="menuitem">META &amp; Competitors</button>
+                </div>
+              </div>
               <div class="dist-tree-actions">
                 <!-- STUB: inert in spike — wired in Angular -->
                 <button class="dist-tree-action-btn" id="pm-export-btn" title="Export"><span class="material-symbols-outlined">download</span> Export</button>
@@ -243,11 +269,24 @@
       <div class="perf-tab-pane" data-pm-pane="trend">
         <div class="chart-card">
           <div class="chart-card__header">
-            <div>
+            <div class="chart-card__header-left">
               <h3 class="panel-label">OFF-PLATFORM MEDIA PERFORMANCE RANKING</h3>
               <p class="panel-subtitle">Which creatives, stores, and weeks delivered the strongest off-platform media performance?<br><span class="panel-subtitle__muted">Delivery metrics from Pulse — impressions, clicks, CTR — ranked by cut. Does NOT include attributed visits; see Observed Visits for outcome metrics.</span></p>
             </div>
             <div class="chart-card__header-right">
+              <div class="pm-campaign-dropdown" data-pm-campaign-dropdown>
+                <button type="button" class="pm-campaign-dropdown__btn" aria-haspopup="true" aria-expanded="false" aria-label="Campaign filter">
+                  <span class="material-symbols-outlined pm-campaign-dropdown__icon">campaign</span>
+                  <span class="pm-campaign-dropdown__label" data-pm-campaign-label>Regular Customers</span>
+                  <span class="material-symbols-outlined pm-campaign-dropdown__chev">expand_more</span>
+                </button>
+                <div class="pm-campaign-dropdown__menu" role="menu" hidden>
+                  <button type="button" class="pm-campaign-dropdown__item active" data-pm-campaign="Regular Customers" role="menuitem">Regular Customers</button>
+                  <button type="button" class="pm-campaign-dropdown__item" data-pm-campaign="Infrequent Customers" role="menuitem">Infrequent Customers</button>
+                  <button type="button" class="pm-campaign-dropdown__item" data-pm-campaign="Retargeting" role="menuitem">Retargeting</button>
+                  <button type="button" class="pm-campaign-dropdown__item" data-pm-campaign="META &amp; Competitors" role="menuitem">META &amp; Competitors</button>
+                </div>
+              </div>
               <div class="duration-presets" id="pm-trend-ranges" role="tablist" aria-label="Time range">
                 <button type="button" class="duration-preset" data-pm-range="1w">1 Week</button>
                 <button type="button" class="duration-preset" data-pm-range="4w">4 Week <span class="duration-preset__sub">(Month)</span></button>
@@ -309,6 +348,11 @@
     'use strict';
 
     var SERIES = { impressions: '#2196F3', clicks: '#ef4444', ctr: '#22c55e' };
+
+    // ── Campaign scope (PM1/PM2) ─────────────────────────────────
+    // Page-level state. All 3 panes (by Store / by Creative / Time Trend)
+    // sync to this campaign. JJ classification per creativeMeta.
+    var pmSelectedCampaign = 'Regular Customers';
 
     // ── Tab switcher ──────────────────────────────────────────────
     function initTabs() {
@@ -564,7 +608,11 @@
           '<th class="num">Impressions</th>' +
           '<th class="num">Spend</th>' +
         '</tr>';
-      body.innerHTML = creativeRows.map(function (r) {
+      var visibleRows = creativeRows.filter(function (r) {
+        var meta = creativeMeta[r.num] || {};
+        return meta.campaign === pmSelectedCampaign;
+      });
+      body.innerHTML = visibleRows.map(function (r) {
         return '<tr data-pm-creative="' + r.num + '">' +
           '<td><span class="pm-variant-num">' + r.num + '</span></td>' +
           '<td class="pm-variant-thumb-cell">' + thumbSvg(r, 56) + '</td>' +
@@ -925,6 +973,57 @@
       });
     }
 
+    // ── Campaign dropdown (PM1/PM2) ──────────────────────────────
+    // One dropdown per pane. Shared state (pmSelectedCampaign) syncs
+    // label + active item across all three. Change re-renders panes
+    // that depend on campaign filter. By-Store + Time-Trend filtering
+    // pending real per-campaign data slice (TODO).
+    function setPmSelectedCampaign(name) {
+      pmSelectedCampaign = name;
+      document.querySelectorAll('[data-pm-campaign-label]').forEach(function (el) {
+        el.textContent = name;
+      });
+      document.querySelectorAll('.pm-campaign-dropdown__item').forEach(function (i) {
+        i.classList.toggle('active', i.dataset.pmCampaign === name);
+      });
+      renderVariantPanels();
+      // TODO: refilter by-Store + Time-Trend once pulse-real-slim
+      // exposes per-campaign slices (storeRows / trendCore aggregate now).
+    }
+    function closeAllCampaignMenus() {
+      document.querySelectorAll('.pm-campaign-dropdown__menu').forEach(function (m) {
+        m.setAttribute('hidden', '');
+      });
+      document.querySelectorAll('.pm-campaign-dropdown__btn').forEach(function (b) {
+        b.setAttribute('aria-expanded', 'false');
+      });
+    }
+    function initCampaignDropdowns() {
+      document.querySelectorAll('[data-pm-campaign-dropdown]').forEach(function (dd) {
+        var btn  = dd.querySelector('.pm-campaign-dropdown__btn');
+        var menu = dd.querySelector('.pm-campaign-dropdown__menu');
+        btn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          var willOpen = menu.hasAttribute('hidden');
+          closeAllCampaignMenus();
+          if (willOpen) {
+            menu.removeAttribute('hidden');
+            btn.setAttribute('aria-expanded', 'true');
+          }
+        });
+        menu.addEventListener('click', function (e) {
+          var item = e.target.closest('[data-pm-campaign]');
+          if (!item) return;
+          setPmSelectedCampaign(item.dataset.pmCampaign);
+          closeAllCampaignMenus();
+        });
+      });
+      document.addEventListener('click', closeAllCampaignMenus);
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeAllCampaignMenus();
+      });
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
       initTabs();
       renderStoreTable('ctr');
@@ -935,6 +1034,7 @@
       renderTrendChart();
       initSeriesPills();
       initRangePresets();
+      initCampaignDropdowns();
     });
   })();
   </script>

@@ -6284,23 +6284,3 @@ body:not(.comparison-active) .detail-comparison {
 .ep-device-strip__lbl--tablet::before  { background: var(--series-a, #22c55e); }
 .ep-device-strip__lbl--other::before   { background: #94a3b8; }
 
-/* Phase 3d (UX-846): Export CSV stub button (Coupon Clips + Page Nav) */
-.ep-top5-panel__export {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border: 1px solid var(--color-border, #e5e7eb);
-  border-radius: 6px;
-  background: #fff;
-  color: var(--series-v, #2196F3);
-  font-size: 0.75rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 120ms ease, border-color 120ms ease;
-}
-.ep-top5-panel__export:hover {
-  background: rgba(33, 150, 243, 0.06);
-  border-color: rgba(33, 150, 243, 0.3);
-}
-.ep-top5-panel__export .material-symbols-outlined { font-size: 16px; }

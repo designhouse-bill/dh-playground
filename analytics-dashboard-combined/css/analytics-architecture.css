@@ -819,6 +819,10 @@ a.ep-kpi-cell:hover { border-color: var(--section-color, var(--color-border-hove
 .ep-kpi-cell__delta--down { color: var(--color-accent-danger); }
 .ep-kpi-cell__chart { flex: 1; min-height: 120px; display: flex; flex-direction: column; justify-content: center; }
 /* Jump button — bottom-pinned, divider above, consistent across all cells */
+/* Bottom-pinned "Open X →" affordance. Always a <span> — the parent
+   .ep-kpi-cell (row-1: <a>; row-2 Top-5: <div data-href>) is the link.
+   Hover affordances live on the parent only; this child never grows
+   its own underline or box. */
 .ep-kpi-cell__view {
   display: inline-flex; align-items: center; gap: 2px;
   font-size: 12px; font-weight: 600;
@@ -828,7 +832,6 @@ a.ep-kpi-cell:hover { border-color: var(--section-color, var(--color-border-hove
   border-top: 1px solid var(--color-border, #e5e7eb);
   text-decoration: none;
 }
-a.ep-kpi-cell__view:hover { text-decoration: underline; }
 .ep-kpi-cell__view .material-symbols-outlined { font-size: 16px; }
 
 /* Cell 1 — DoW bar (Sessions) */
@@ -2249,19 +2252,20 @@ a.ep-kpi-cell:hover,
 button.ep-kpi-cell:hover { border-color: var(--p-primary-color, #2196F3); box-shadow: var(--p-shadow-sm, 0 1px 2px rgba(0,0,0,.06)); }
 
 /* ============================================================
-   PN1: panel-hover affordance. .ep-top5-panel that contains a
-   `.ep-kpi-cell__view[href]` (the bottom-pinned "Open X →" link)
-   gets a hover border/shadow so the whole card reads as clickable.
-   Inner anchors/buttons keep their own click semantics.
+   PN1: panel-hover affordance. .ep-top5-panel[data-href] is wired
+   to navigate as a whole (JS `wirePanelClick`); the bottom-pinned
+   `.ep-kpi-cell__view` span is the visual affordance. Inner
+   anchors/buttons (row links) keep their own click semantics.
    ============================================================ */
-.ep-top5-panel:has(a.ep-kpi-cell__view) {
+.ep-top5-panel[data-href] {
+  cursor: pointer;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
-.ep-top5-panel:has(a.ep-kpi-cell__view):hover {
+.ep-top5-panel[data-href]:hover {
   border-color: var(--p-primary-color, #2196F3);
   box-shadow: var(--p-shadow-md, 0 4px 6px -1px rgba(0,0,0,.08));
 }
-.ep-top5-panel:has(a.ep-kpi-cell__view):focus-visible {
+.ep-top5-panel[data-href]:focus-visible {
   outline: 2px solid var(--p-primary-color, #2196F3);
   outline-offset: 2px;
 }

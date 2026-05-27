@@ -94,6 +94,13 @@
       topNSelect.value = state.topN === 'all' ? 'all' : state.topN.toString();
     }
 
+    // Auto-open detail panel when arriving with ?promotion=<id> (e.g. from a
+    // Report-page Top Promotions row). state-manager populates
+    // activePromotion from the URL during core.restoreState() above.
+    if (state.activePromotion) {
+      selectPromotion(state.activePromotion);
+    }
+
     console.log('[Promotions] Page initialized');
   }
 

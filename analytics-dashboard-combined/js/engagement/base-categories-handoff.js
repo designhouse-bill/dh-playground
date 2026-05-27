@@ -95,6 +95,13 @@
       topNSelect.value = state.topN === 'all' ? 'all' : state.topN.toString();
     }
 
+    // Auto-open detail panel when arriving with ?category=<id> (e.g. from a
+    // Report-page Top Categories row). state-manager populates
+    // selectedCategoryId from the URL during core.restoreState() above.
+    if (state.selectedCategoryId) {
+      selectCategoryGridRow(state.selectedCategoryId);
+    }
+
     console.log('[Categories] Page initialized');
   }
 

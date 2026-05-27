@@ -107,6 +107,13 @@
       topNSelect.value = state.topN === 'all' ? 'all' : state.topN.toString();
     }
 
+    // Auto-open detail panel when arriving with ?store=<id> (e.g. from a
+    // Report-page Top Stores row). state-manager populates selectedStoreId
+    // from the URL during core.restoreState() above.
+    if (state.selectedStoreId) {
+      selectStoreGridRow(state.selectedStoreId);
+    }
+
     console.log('[Circulars] Page initialized');
   }
 

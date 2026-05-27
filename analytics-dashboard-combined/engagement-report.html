@@ -11,7 +11,7 @@
   <!-- CSS -->
   <link rel="stylesheet" href="css/design-tokens.css?v=4">
   <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/analytics-architecture.css?v=23">
+  <link rel="stylesheet" href="css/analytics-architecture.css?v=24">
   <link rel="stylesheet" href="css/header.css?v=7">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
@@ -788,7 +788,31 @@
         window.CanonicalShellRenderers.wireTrendRanges();
         wireOverviewDonutHover();
       }
+      wirePanelClick();
     });
+    // PN1/PN2: any .ep-top5-panel containing a .ep-top5-panel__viewall[href]
+    // becomes fully clickable. Inner anchors (.ep-top5-bar-row, the viewall
+    // link itself) preserve their own click semantics — we delegate via
+    // e.target.closest('a, button').
+    function wirePanelClick() {
+      document.querySelectorAll('.ep-top5-panel').forEach(function (panel) {
+        var viewall = panel.querySelector('.ep-top5-panel__viewall[href]');
+        if (!viewall) return;
+        var story = panel.querySelector('.ep-kpi-cell__story');
+        panel.setAttribute('tabindex', '0');
+        panel.setAttribute('role', 'link');
+        panel.setAttribute('aria-label',
+          'Open ' + (story ? story.textContent.trim() : 'panel'));
+        function go() { window.location.href = viewall.getAttribute('href'); }
+        panel.addEventListener('click', function (e) {
+          if (e.target.closest('a, button')) return;
+          go();
+        });
+        panel.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); }
+        });
+      });
+    }
     // Generic ep-perf-tooltip dark hover for any element with [data-perf-hover].
     // Two modes:
     //   1) V/C/A composite: data-perf-views/clicks/adds (raw point totals) →

@@ -2215,6 +2215,25 @@ button.ep-kpi-cell:hover { border-color: var(--p-primary-color, #2196F3); box-sh
 }
 .ep-top5-panel__viewall:hover { text-decoration: underline; }
 
+/* ============================================================
+   PN1: full-panel click. Any .ep-top5-panel that contains a
+   `.ep-top5-panel__viewall[href]` becomes clickable; inner
+   anchors/buttons keep their own click semantics. Arrow icon
+   already present in `__viewall` satisfies PN2.
+   ============================================================ */
+.ep-top5-panel:has(.ep-top5-panel__viewall) {
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.ep-top5-panel:has(.ep-top5-panel__viewall):hover {
+  border-color: var(--p-primary-color, #2196F3);
+  box-shadow: var(--p-shadow-md, 0 4px 6px -1px rgba(0,0,0,.08));
+}
+.ep-top5-panel:has(.ep-top5-panel__viewall):focus-visible {
+  outline: 2px solid var(--p-primary-color, #2196F3);
+  outline-offset: 2px;
+}
+
 .ep-kpi-spark { width: 100%; height: 40px; }
 
 /* Top-5 row link styling (anchor variant — same shape as button rows) */

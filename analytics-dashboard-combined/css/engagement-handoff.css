@@ -1012,57 +1012,10 @@ img {
   border-radius: 1px;
 }
 
-/* Base Mode Button */
-.mode-btn {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-secondary);
-  background: white;
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-}
-
-.mode-btn .material-symbols-outlined {
-  font-size: 18px;
-}
-
-/* Outline variant (GRID, COMPARE) */
-.mode-btn--outline {
-  background: white;
-  border: 1px solid var(--color-gray-200);
-}
-
-.mode-btn--outline:hover {
-  background-color: var(--color-gray-50);
-  border-color: var(--color-gray-300);
-}
-
-/* GRID active state - black fill */
-.mode-btn--outline[data-mode="grid"].active {
-  background-color: var(--color-gray-900);
-  color: white;
-  border-color: var(--color-gray-900);
-}
-
-/* COMPARE active state - blue fill */
-.mode-btn--outline[data-mode="compare"].active {
-  background-color: var(--color-gray-900);
-  color: white;
-  border-color: var(--color-gray-900);
-}
-
-.mode-btn:focus-visible {
-  outline: 2px solid var(--color-primary-500);
-  outline-offset: 2px;
-}
+/* B1 (UX-846, 2026-05-27): .mode-btn rules moved to
+   analytics-architecture.css (loaded by engagement-report which
+   does NOT include this file). Keeping the legacy block deleted
+   here so the new arch rules win cleanly. */
 
 /* ============================================
    APP MODE STYLING

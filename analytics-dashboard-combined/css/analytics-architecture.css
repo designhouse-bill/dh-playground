@@ -400,58 +400,94 @@ body[data-dist-page] .perf-tabs--filled .perf-tab.active .material-symbols-outli
    "bordered pill, uppercase, gray-900 active" — matches
    analytics dashboard pattern across consumer pages.
    ============================================ */
+/* ============================================================
+   B1 (UX-846, 2026-05-27): .mode-btn = ghost + section-color-tinted
+   active. Each mode (Report/Explore Data/Compare) carries its own
+   AA-safe accent. Href-based selectors so HTML attrs don't churn.
+   ============================================================ */
 .mode-btn {
   display: flex;
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
   color: var(--color-text-secondary);
-  background: white;
-  border: 1px solid var(--color-gray-200);
+  background: transparent;
+  border: 1px solid transparent;
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all var(--transition-fast);
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
+  transition: background var(--transition-fast), color var(--transition-fast);
+  text-transform: none;
+  letter-spacing: 0;
+  text-decoration: none;
+  white-space: nowrap;
 }
 
-.mode-btn .material-symbols-outlined {
-  font-size: 18px;
+.mode-btn .material-symbols-outlined { font-size: 18px; }
+
+.mode-btn:hover {
+  background: var(--color-gray-100);
+  color: var(--color-text-primary);
 }
 
-.mode-btn--outline:hover {
-  background-color: var(--color-gray-50);
-  border-color: var(--color-gray-300);
+/* Per-mode active tint — keyed on href */
+.mode-btn[href*="engagement-report"].active {
+  background: var(--mode-report-light);
+  color: var(--mode-report);
+  font-weight: var(--font-weight-semibold);
+}
+.mode-btn[href*="engagement-explore"].active {
+  background: var(--mode-explore-light);
+  color: var(--mode-explore);
+  font-weight: var(--font-weight-semibold);
+}
+.mode-btn[href*="engagement-compare"].active {
+  background: var(--mode-compare-light);
+  color: var(--mode-compare);
+  font-weight: var(--font-weight-semibold);
 }
 
-.mode-btn--outline.active,
-.mode-btn--primary.active {
-  background-color: var(--color-gray-900);
-  color: white;
-  border-color: var(--color-gray-900);
-}
+.mode-btn--outline { background: transparent; border-color: transparent; }
+.mode-btn--outline:hover { background: var(--color-gray-100); }
 
 .mode-btn:focus-visible {
   outline: 2px solid var(--color-primary-500);
   outline-offset: 2px;
 }
 
-/* Segmented group wrapper: mode-btn--primary inside renders
-   borderless (group owns the border + radius). */
+/* Legacy mode-group--base wrapper: keep .mode-btn--primary borderless
+   inside segmented group (group owns the chrome). */
 .mode-group--base .mode-btn--primary {
   border-radius: 0;
   border: none;
-  background-color: white;
+  background: transparent;
   color: var(--color-text-secondary);
 }
 
-.mode-group--base.active .mode-btn--primary,
-.mode-group--base .mode-btn--primary.active {
-  background-color: var(--color-gray-900);
-  color: white;
-  border-color: var(--color-gray-900);
+/* Hero-stat tint per app mode. Specificity is bumped (body[…] + .hero-stat)
+   so this wins over .hero-stat[data-ep-active="overview"] in engagement-canonical
+   which would otherwise force gray tint on the Report page. */
+body[data-app-mode="report"]  .hero-stat { background: var(--mode-report-light); }
+body[data-app-mode="explore"] .hero-stat { background: var(--mode-explore-light); }
+body[data-app-mode="compare"] .hero-stat { background: var(--mode-compare-light); }
+
+body[data-app-mode="report"]  .hero-stat .narrative-header__title { color: var(--mode-report); }
+body[data-app-mode="explore"] .hero-stat .narrative-header__title { color: var(--mode-explore); }
+body[data-app-mode="compare"] .hero-stat .narrative-header__title { color: var(--mode-compare); }
+
+/* Responsive print/share — icon-only at tablet + mobile so the two
+   buttons stay side-by-side instead of stacking. */
+@media (max-width: 768px) {
+  .header-print-btn span:not(.material-symbols-outlined),
+  .header-share-btn span:not(.material-symbols-outlined) { display: none; }
+  .header-print-btn,
+  .header-share-btn {
+    padding: var(--space-2);
+    min-width: 40px;
+    justify-content: center;
+  }
+  .topbar__actions { flex-wrap: nowrap; }
 }
 
 /* ============================================================

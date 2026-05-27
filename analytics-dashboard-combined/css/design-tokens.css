@@ -243,6 +243,16 @@
 
   --section-overview:         #6B7280; /* neutral gray per section-color-tinting-rule pin */
   --section-overview-light:   #f3f4f6;
+
+  /* App-mode color tokens (B1) — alias to AA-safe section bases.
+     Drives .mode-btn active fill + .hero-stat tint per page. */
+  --mode-report:              var(--section-performance);       /* indigo-900 */
+  --mode-report-light:        var(--section-performance-light);
+  --mode-explore:             var(--section-users);             /* cyan-800 */
+  --mode-explore-light:       var(--section-users-light);
+  --mode-compare:             var(--section-duration);          /* orange-dark */
+  --mode-compare-light:       var(--section-duration-light);
+
   --section-performance:      #1E3A8A; /* indigo-900 (was #2196F3 — collided w/ --series-v + failed AA) */
   --section-performance-light:#eef2ff;
   --section-sessions:         #2563eb; /* blue — passes AA, unchanged */

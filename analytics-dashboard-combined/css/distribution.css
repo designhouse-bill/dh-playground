@@ -5735,14 +5735,18 @@ body[data-dist-page] .narrative-header__title {
 .od-tile.is-active .od-tile__sub { color: var(--series-v, #2196F3); }
 
 /* ============================================================
-   PM1/PM2 — Paid Media campaign dropdown (per-pane control,
-   shared state). Sits as first child of .chart-card__header-right.
+   Scope dropdowns — shared shape across distribution surfaces.
+   PM1/PM2: .pm-campaign-dropdown on distribution-media (per-pane).
+   OV1:     .ov-store-dropdown on distribution-visitation by-Competitor.
+   Sits as first child of .chart-card__header-right.
    ============================================================ */
-.pm-campaign-dropdown {
+.pm-campaign-dropdown,
+.ov-store-dropdown {
   position: relative;
   display: inline-flex;
 }
-.pm-campaign-dropdown__btn {
+.pm-campaign-dropdown__btn,
+.ov-store-dropdown__btn {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
@@ -5758,30 +5762,38 @@ body[data-dist-page] .narrative-header__title {
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s;
 }
-.pm-campaign-dropdown__btn:hover {
+.pm-campaign-dropdown__btn:hover,
+.ov-store-dropdown__btn:hover {
   background: var(--color-surface-hover);
   border-color: var(--color-gray-300, #d1d5db);
 }
-.pm-campaign-dropdown__btn[aria-expanded="true"] {
+.pm-campaign-dropdown__btn[aria-expanded="true"],
+.ov-store-dropdown__btn[aria-expanded="true"] {
   background: var(--color-surface-hover);
   border-color: var(--color-gray-400, #9ca3af);
 }
 .pm-campaign-dropdown__icon,
-.pm-campaign-dropdown__chev {
+.pm-campaign-dropdown__chev,
+.ov-store-dropdown__icon,
+.ov-store-dropdown__chev {
   font-size: 16px;
   color: var(--color-text-secondary);
 }
-.pm-campaign-dropdown__label {
+.pm-campaign-dropdown__label,
+.ov-store-dropdown__label {
   max-width: 14ch;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.pm-campaign-dropdown__menu {
+.pm-campaign-dropdown__menu,
+.ov-store-dropdown__menu {
   position: absolute;
   top: calc(100% + 4px);
   right: 0;
   min-width: 220px;
+  max-height: 320px;
+  overflow-y: auto;
   padding: var(--space-1);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -5792,8 +5804,10 @@ body[data-dist-page] .narrative-header__title {
   flex-direction: column;
   gap: 2px;
 }
-.pm-campaign-dropdown__menu[hidden] { display: none; }
-.pm-campaign-dropdown__item {
+.pm-campaign-dropdown__menu[hidden],
+.ov-store-dropdown__menu[hidden] { display: none; }
+.pm-campaign-dropdown__item,
+.ov-store-dropdown__item {
   display: block;
   width: 100%;
   text-align: left;
@@ -5807,16 +5821,21 @@ body[data-dist-page] .narrative-header__title {
   border-radius: 4px;
   cursor: pointer;
 }
-.pm-campaign-dropdown__item:hover {
+.pm-campaign-dropdown__item:hover,
+.ov-store-dropdown__item:hover {
   background: var(--color-surface-hover);
 }
-.pm-campaign-dropdown__item.active {
+.pm-campaign-dropdown__item.active,
+.ov-store-dropdown__item.active {
   background: var(--color-primary-50, #e8f1fd);
   color: var(--color-primary-700, #1565C0);
 }
 
 @container (max-width: 480px) {
   .pm-campaign-dropdown,
-  .pm-campaign-dropdown__btn { width: 100%; }
-  .pm-campaign-dropdown__label { max-width: none; flex: 1; }
+  .pm-campaign-dropdown__btn,
+  .ov-store-dropdown,
+  .ov-store-dropdown__btn { width: 100%; }
+  .pm-campaign-dropdown__label,
+  .ov-store-dropdown__label { max-width: none; flex: 1; }
 }

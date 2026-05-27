@@ -412,10 +412,13 @@
   gap: var(--space-1);
 }
 
+/* B1 (UX-846, 2026-05-27): match .mode-btn sizing — gap space-2, icon 18px.
+   Distribution tabs and Engagement view-modes share size/icon contract;
+   per-section active tint diverges via body[data-dist-page] (DC1/DC2). */
 .dist-tab {
   display: flex;
   align-items: center;
-  gap: var(--space-1);
+  gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-medium);
@@ -429,7 +432,7 @@
 }
 
 .dist-tab .material-symbols-outlined {
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .dist-tab:hover {

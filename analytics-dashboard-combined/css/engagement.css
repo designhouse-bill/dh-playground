@@ -2959,14 +2959,6 @@ body.app-mode-grid .view-search {
   color: var(--color-text-tertiary);
 }
 
-.grid-rows-select {
-  padding: var(--space-2) var(--space-3);
-  font-size: var(--font-size-sm);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background-color: white;
-}
-
 .grid-pagination {
   display: flex;
   align-items: center;
@@ -4743,21 +4735,6 @@ body:not(.comparison-active) .detail-comparison {
 .grid-footer__range {
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
-}
-
-.grid-rows-select {
-  padding: var(--space-1) var(--space-2);
-  font-size: var(--font-size-sm);
-  color: var(--color-text-primary);
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-}
-
-.grid-rows-select:focus {
-  outline: 2px solid var(--color-primary-500);
-  outline-offset: 2px;
 }
 
 /* Grid Pagination */

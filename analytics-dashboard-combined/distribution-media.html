@@ -287,9 +287,10 @@
                   <button type="button" class="pm-campaign-dropdown__item" data-pm-campaign="META &amp; Competitors" role="menuitem">META &amp; Competitors</button>
                 </div>
               </div>
-              <div class="pm-series-pills" id="pm-series-pills" role="group" aria-label="Series">
+              <div class="pm-series-pills" id="pm-series-pills" role="group" aria-label="Metric">
                 <button type="button" class="pm-series-pill active" data-pm-series="impressions" style="--pill-color:#2196F3;">Impressions</button>
-                <button type="button" class="pm-series-pill active" data-pm-series="clicks" style="--pill-color:#ef4444;">Clicks</button>
+                <button type="button" class="pm-series-pill" data-pm-series="clicks" style="--pill-color:#ef4444;">Clicks</button>
+                <button type="button" class="pm-series-pill" data-pm-series="ctr" style="--pill-color:#22c55e;">CTR</button>
               </div>
               <div class="duration-presets" id="pm-trend-ranges" role="tablist" aria-label="Time range">
                 <button type="button" class="duration-preset" data-pm-range="1w">1 Week</button>
@@ -789,7 +790,15 @@
       return Math.round(imp * trendYearCtr[i] / 100);
     });
 
-    var activeSeries = { impressions: true, clicks: true };
+    // Single-select metric (TT2): only one series visible at a time.
+    // Different metric scales (Imp 380k vs Clicks 3.5k vs CTR 0.9%)
+    // make mixed-axis charts flat-line. Default: Impressions.
+    var activeMetric = 'impressions';
+    var METRIC_META = {
+      impressions: { name: 'Impressions', color: SERIES.impressions, yName: 'Volume',  fmt: function (v) { return (v >= 1000) ? (v / 1000) + 'k' : v; }, tip: function (v) { return v.toLocaleString(); } },
+      clicks:      { name: 'Clicks',      color: SERIES.clicks,      yName: 'Volume',  fmt: function (v) { return (v >= 1000) ? (v / 1000) + 'k' : v; }, tip: function (v) { return v.toLocaleString(); } },
+      ctr:         { name: 'CTR',         color: SERIES.ctr,         yName: 'CTR (%)', fmt: function (v) { return v + '%'; },                              tip: function (v) { return v.toFixed(2) + '%'; } }
+    };
     var trendRange = '13w';
 
     function sliceTrend() {
@@ -809,19 +818,13 @@
 
     function buildTrendOptions() {
       var d = sliceTrend();
-      var series = [];
-      if (activeSeries.impressions) series.push({
-        name: 'Impressions', type: 'line', smooth: true, yAxisIndex: 0,
-        data: d.impressions,
-        itemStyle: { color: SERIES.impressions }, lineStyle: { color: SERIES.impressions, width: 2 },
+      var meta = METRIC_META[activeMetric];
+      var series = [{
+        name: meta.name, type: 'line', smooth: true, yAxisIndex: 0,
+        data: d[activeMetric],
+        itemStyle: { color: meta.color }, lineStyle: { color: meta.color, width: 2 },
         symbol: 'circle', symbolSize: 6
-      });
-      if (activeSeries.clicks) series.push({
-        name: 'Clicks', type: 'line', smooth: true, yAxisIndex: 0,
-        data: d.clicks,
-        itemStyle: { color: SERIES.clicks }, lineStyle: { color: SERIES.clicks, width: 2 },
-        symbol: 'circle', symbolSize: 6
-      });
+      }];
       return {
         grid: { left: 56, right: 24, top: 24, bottom: 48 },
         tooltip: {
@@ -832,22 +835,14 @@
           padding: [10, 12],
           textStyle: { color: '#fff', fontFamily: 'inherit', fontSize: 12 },
           formatter: function (params) {
-            var idx = params[0].dataIndex;
-            var ctrVal = d.ctr[idx];
             var html = '<div style="font-weight:700; margin-bottom:6px; font-size:13px; color:#fff;">' + params[0].name + '</div>';
             params.forEach(function (p) {
               html += '<div style="display:flex; align-items:center; gap:10px; min-width:220px; margin-top:2px;">' +
                 '<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:' + p.color + ';"></span>' +
                 '<span style="flex:1; color:rgba(255,255,255,0.9);">' + p.seriesName + '</span>' +
-                '<span style="font-weight:600; font-variant-numeric:tabular-nums; color:#fff;">' + p.value.toLocaleString() + '</span>' +
+                '<span style="font-weight:600; font-variant-numeric:tabular-nums; color:#fff;">' + meta.tip(p.value) + '</span>' +
                 '</div>';
             });
-            // CTR persists in the overlay (not as chart series)
-            html += '<div style="display:flex; align-items:center; gap:10px; min-width:220px; margin-top:2px;">' +
-              '<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:' + SERIES.ctr + ';"></span>' +
-              '<span style="flex:1; color:rgba(255,255,255,0.9);">CTR</span>' +
-              '<span style="font-weight:600; font-variant-numeric:tabular-nums; color:#fff;">' + ctrVal.toFixed(2) + '%</span>' +
-              '</div>';
             return html;
           }
         },
@@ -858,8 +853,8 @@
           axisLine: { lineStyle: { color: '#e5e7eb' } }
         },
         yAxis: {
-          type: 'value', name: 'Volume', position: 'left',
-          axisLabel: { color: '#6b7280', fontSize: 11, formatter: function (v) { return (v >= 1000) ? (v / 1000) + 'k' : v; } },
+          type: 'value', name: meta.yName, position: 'left',
+          axisLabel: { color: '#6b7280', fontSize: 11, formatter: meta.fmt },
           splitLine: { lineStyle: { color: '#f3f4f6' } },
           nameTextStyle: { color: '#6b7280', fontSize: 11 }
         },
@@ -880,10 +875,11 @@
       pills.forEach(function (pill) {
         pill.addEventListener('click', function () {
           var key = pill.dataset.pmSeries;
-          // CTR pill is informational only (no chart series). Skip toggle.
-          if (key === 'ctr') return;
-          activeSeries[key] = !activeSeries[key];
-          pill.classList.toggle('active', activeSeries[key]);
+          if (key === activeMetric) return;
+          activeMetric = key;
+          pills.forEach(function (p) {
+            p.classList.toggle('active', p.dataset.pmSeries === key);
+          });
           if (window._pmTrendChart) window._pmTrendChart.setOption(buildTrendOptions(), true);
         });
       });

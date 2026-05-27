@@ -9,16 +9,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 
   <!-- CSS -->
-  <link rel="stylesheet" href="css/design-tokens.css?v=2">
+  <link rel="stylesheet" href="css/design-tokens.css?v=4">
   <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/analytics-architecture.css?v=22">
-  <link rel="stylesheet" href="css/header.css?v=6">
+  <link rel="stylesheet" href="css/analytics-architecture.css?v=23">
+  <link rel="stylesheet" href="css/header.css?v=7">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/engagement.css?v=14">
+  <link rel="stylesheet" href="css/engagement.css?v=15">
   <!-- Pulled in for perf-tabs / creative-chips / stat-strip / section-panel-header rules -->
   <link rel="stylesheet" href="css/distribution.css">
-  <link rel="stylesheet" href="css/engagement-canonical.css?v=10">
+  <link rel="stylesheet" href="css/engagement-canonical.css?v=11">
   <link rel="stylesheet" href="css/tiered-surfaces.css?v=1">
 </head>
 <body data-engagement-page="report" data-active-tab="overview">
@@ -168,7 +168,7 @@
          (narrative-header left + stat-strip right). Title / question /
          entity counts swap per grain; stat-strip is populated by JS as the
          active perf-tab changes. -->
-    <div class="hero-stat" id="ep-page-hero-stat">
+    <div class="hero-stat" id="ep-page-hero-stat" data-ep-active="overview">
       <div class="narrative-header">
         <div class="narrative-header__left">
           <h4 class="narrative-header__section">Engagement</h4>
@@ -235,7 +235,7 @@
               </div>
               <div style="text-align:right;">
                 <div class="ep-kpi-cell__value">142.8K</div>
-                <div class="ep-kpi-cell__delta ep-kpi-cell__delta--up">▲ 5.8%</div>
+                <div class="ep-kpi-cell__delta ep-kpi-cell__delta--up" title="Versus last week">▲ 5.8%<span class="ep-kpi-cell__delta-vs">vs last week</span></div>
               </div>
             </div>
             <div class="ep-kpi-cell__chart ep-kpi-cell__chart--perf">
@@ -266,7 +266,7 @@
               </div>
               <div style="text-align:right;">
                 <div class="ep-kpi-cell__value">12,460</div>
-                <div class="ep-kpi-cell__delta ep-kpi-cell__delta--up">▲ 3.1%</div>
+                <div class="ep-kpi-cell__delta ep-kpi-cell__delta--up" title="Versus last week">▲ 3.1%<span class="ep-kpi-cell__delta-vs">vs last week</span></div>
               </div>
             </div>
             <div class="ep-kpi-cell__chart">
@@ -297,21 +297,7 @@
                   <span class="ep-users-by-store__val">604</span>
                 </li>
               </ol>
-              <!-- Phase 3c (UX-846): device-share strip (Max 05/14) -->
-              <div class="ep-device-strip" data-perf-hover data-perf-title="Users by Device · Week 47" data-perf-rows='[{"dot":"device","name":"Mobile","val":"8,598","score":"69%"},{"dot":"device","name":"Desktop","val":"2,367","score":"19%"},{"dot":"device","name":"Tablet","val":"1,121","score":"9%"},{"dot":"device","name":"Other","val":"374","score":"3%"}]' data-perf-total='{"label":"Total Users","val":"12,460"}'>
-                <div class="ep-device-strip__bar">
-                  <span class="ep-device-strip__seg ep-device-strip__seg--mobile"  style="width:69%"></span>
-                  <span class="ep-device-strip__seg ep-device-strip__seg--desktop" style="width:19%"></span>
-                  <span class="ep-device-strip__seg ep-device-strip__seg--tablet"  style="width:9%"></span>
-                  <span class="ep-device-strip__seg ep-device-strip__seg--other"   style="width:3%"></span>
-                </div>
-                <div class="ep-device-strip__legend">
-                  <span class="ep-device-strip__lbl ep-device-strip__lbl--mobile">Mobile · 69%</span>
-                  <span class="ep-device-strip__lbl ep-device-strip__lbl--desktop">Desktop · 19%</span>
-                  <span class="ep-device-strip__lbl ep-device-strip__lbl--tablet">Tablet · 9%</span>
-                  <span class="ep-device-strip__lbl ep-device-strip__lbl--other">Other · 3%</span>
-                </div>
-              </div>
+              <!-- DB1 (UX-846 2026-05-26): device-strip moved to Avg Duration only — Max ask. -->
             </div>
             <span class="ep-kpi-cell__view">Open Total Users <span class="material-symbols-outlined">chevron_right</span></span>
           </a>
@@ -326,7 +312,7 @@
               </div>
               <div style="text-align:right;">
                 <div class="ep-kpi-cell__value">78,542</div>
-                <div class="ep-kpi-cell__delta ep-kpi-cell__delta--up">▲ 4.2%</div>
+                <div class="ep-kpi-cell__delta ep-kpi-cell__delta--up" title="Versus last week">▲ 4.2%<span class="ep-kpi-cell__delta-vs">vs last week</span></div>
               </div>
             </div>
             <div class="ep-kpi-cell__chart">
@@ -339,21 +325,7 @@
                 <div class="ep-mini-dow__col" data-perf-hover data-perf-title="Sessions · Week 47" data-perf-rows='[{"dot":"day","name":"Saturday, Nov 22","val":"15,050"}]'><div class="ep-mini-dow__bar ep-mini-dow__bar--peak" style="height:96%"></div><span class="ep-mini-dow__lbl">S</span></div>
                 <div class="ep-mini-dow__col" data-perf-hover data-perf-title="Sessions · Week 47" data-perf-rows='[{"dot":"day","name":"Sunday, Nov 23","val":"6,580"}]'><div class="ep-mini-dow__bar" style="height:42%"></div><span class="ep-mini-dow__lbl">S</span></div>
               </div>
-              <!-- Phase 3c (UX-846): device-share strip (Max 05/14) -->
-              <div class="ep-device-strip" data-perf-hover data-perf-title="Sessions by Device · Week 47" data-perf-rows='[{"dot":"device","name":"Mobile","val":"54,200","score":"69%"},{"dot":"device","name":"Desktop","val":"14,800","score":"19%"},{"dot":"device","name":"Tablet","val":"7,300","score":"9%"},{"dot":"device","name":"Other","val":"2,242","score":"3%"}]' data-perf-total='{"label":"Total Sessions","val":"78,542"}'>
-                <div class="ep-device-strip__bar">
-                  <span class="ep-device-strip__seg ep-device-strip__seg--mobile"  style="width:69%"></span>
-                  <span class="ep-device-strip__seg ep-device-strip__seg--desktop" style="width:19%"></span>
-                  <span class="ep-device-strip__seg ep-device-strip__seg--tablet"  style="width:9%"></span>
-                  <span class="ep-device-strip__seg ep-device-strip__seg--other"   style="width:3%"></span>
-                </div>
-                <div class="ep-device-strip__legend">
-                  <span class="ep-device-strip__lbl ep-device-strip__lbl--mobile">Mobile · 69%</span>
-                  <span class="ep-device-strip__lbl ep-device-strip__lbl--desktop">Desktop · 19%</span>
-                  <span class="ep-device-strip__lbl ep-device-strip__lbl--tablet">Tablet · 9%</span>
-                  <span class="ep-device-strip__lbl ep-device-strip__lbl--other">Other · 3%</span>
-                </div>
-              </div>
+              <!-- DB1 (UX-846 2026-05-26): device-strip moved to Avg Duration only — Max ask. -->
             </div>
             <span class="ep-kpi-cell__view">Open Sessions <span class="material-symbols-outlined">chevron_right</span></span>
           </a>
@@ -368,7 +340,7 @@
               </div>
               <div style="text-align:right;">
                 <div class="ep-kpi-cell__value">6m 8s</div>
-                <div class="ep-kpi-cell__delta ep-kpi-cell__delta--down">▼ 1.5%</div>
+                <div class="ep-kpi-cell__delta ep-kpi-cell__delta--down" title="Versus last week">▼ 1.5%<span class="ep-kpi-cell__delta-vs">vs last week</span></div>
               </div>
             </div>
             <div class="ep-kpi-cell__chart">
@@ -533,16 +505,7 @@
       <div class="hero-stat" data-ep-active="users"><div class="narrative-header"><div class="narrative-header-left">
         <h2 class="narrative-header__title">Total Users</h2>
         <p class="narrative-header__question">How many unique users engaged this week, and which stores drove them?</p>
-        <div class="narrative-header__meta">
-          <p class="ep-additivity" aria-label="Total Users is the sum of New, Returning, and Engaged users">
-          <span class="ep-additivity__lbl">Of the total:</span>
-          <span class="ep-additivity__pill ep-additivity__pill--n">New</span>
-          <span class="ep-additivity__plus">+</span>
-          <span class="ep-additivity__pill ep-additivity__pill--r">Returning</span>
-          <span class="ep-additivity__plus">+</span>
-          <span class="ep-additivity__pill ep-additivity__pill--e">Engaged</span>
-        </p>
-        </div>
+        <!-- ER3 (UX-846 2026-05-26): User cohorts dropped — don't reconcile to platform semantics. -->
       </div></div></div>
       <div class="ep-sub-tabs" role="tablist" aria-label="Users cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="trend" role="tab" aria-selected="true">Time Trend</button>
@@ -564,16 +527,7 @@
       <div class="hero-stat" data-ep-active="duration"><div class="narrative-header"><div class="narrative-header-left">
         <h2 class="narrative-header__title">Avg Session Duration</h2>
         <p class="narrative-header__question">How long are users spending on each store?</p>
-        <div class="narrative-header__meta">
-          <p class="ep-additivity" aria-label="Avg Session Duration is the weighted average across New, Returning, and Engaged users">
-          <span class="ep-additivity__lbl">Of the avg:</span>
-          <span class="ep-additivity__pill ep-additivity__pill--n">New</span>
-          <span class="ep-additivity__plus">+</span>
-          <span class="ep-additivity__pill ep-additivity__pill--r">Returning</span>
-          <span class="ep-additivity__plus">+</span>
-          <span class="ep-additivity__pill ep-additivity__pill--e">Engaged</span>
-        </p>
-        </div>
+        <!-- ER3 (UX-846 2026-05-26): User cohorts dropped from Avg Duration. -->
       </div></div></div>
       <div class="ep-sub-tabs" role="tablist" aria-label="Duration cuts">
         <button class="ep-sub-tab ep-sub-tab--active" data-ep-sub="trend" role="tab" aria-selected="true">Time Trend</button>

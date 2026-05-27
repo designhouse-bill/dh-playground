@@ -2512,3 +2512,14 @@ body[data-dist-page] .perf-tabs .perf-tab.active {
 .narrative-header__right .stat-strip {
   display: none;
 }
+
+/* ============================================================
+   UX-846 PC1/PC2 — % delta inline "vs last week" + tooltip (2026-05-26)
+   Authority: punchlist PC1, PC2, PC3
+   ============================================================ */
+.ep-kpi-cell__delta-vs {
+  margin-left: 6px;
+  color: var(--color-text-tertiary, #6b7280);
+  font-size: 11px;
+  font-weight: 400;
+}

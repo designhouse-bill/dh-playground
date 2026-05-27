@@ -2355,14 +2355,90 @@ a.ep-store-rank__row:last-child { border-bottom: none; }
 .ep-mini-device__row:hover .ep-mini-device__fill { filter: brightness(1.1); }
 .ep-mini-device__val { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--p-text-color, #1f2937); }
 
-/* Top-5 bar rows (Row 2 + 3 panels) */
+/* ============================================================
+   Top-5 bar rows (Row 2 + 3 panels) — responsive contract
+   (RD pass, fix for Bill 2026-05-27 screenshot regression):
+     - Label col can shrink to 0 (ellipsis), bar col takes
+       remaining space, value pinned right.
+     - Container queries scoped to .ep-top5-panel so each cell
+       responds to its own slot width, not viewport.
+   ============================================================ */
+.ep-top5-panel { container-type: inline-size; container-name: top5; }
 .ep-top5-bar-list { display: flex; flex-direction: column; gap: 4px; }
-.ep-top5-bar-row { display: grid; grid-template-columns: minmax(120px, 1.4fr) minmax(140px, 3fr) auto; gap: 10px; align-items: center; padding: 6px 8px; font-size: 12px; color: inherit; text-decoration: none; border-radius: 4px; transition: background .15s; }
+.ep-top5-bar-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(40px, 2fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 6px 8px;
+  font-size: 12px;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background .15s;
+  min-width: 0;
+}
 .ep-top5-bar-row:hover { background: var(--p-surface-hover, #f3f4f6); }
-.ep-top5-bar-row__lbl { color: var(--p-text-color, #1f2937); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ep-top5-bar-row__val { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--p-text-color, #1f2937); }
-.ep-top5-bar-row__bar { display: flex; height: 14px; background: var(--color-gray-100, #f3f4f6); border-radius: 3px; overflow: hidden; }
-.ep-top5-bar-row__seg { height: 100%; transition: filter .15s; }
+.ep-top5-bar-row__lbl {
+  color: var(--p-text-color, #1f2937);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.ep-top5-bar-row__val {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--p-text-color, #1f2937);
+  white-space: nowrap;
+}
+.ep-top5-bar-row__bar {
+  display: flex;
+  width: 100%;
+  height: 14px;
+  background: var(--color-gray-100, #f3f4f6);
+  border-radius: 3px;
+  overflow: hidden;
+  min-width: 0;
+}
+.ep-top5-bar-row__seg { height: 100%; transition: filter .15s; flex-shrink: 0; }
+
+/* Narrow card: drop the value column entirely; label + bar only.
+   Title attribute on the row (set by hover tooltip data) preserves
+   value accessibility. */
+@container top5 (max-width: 260px) {
+  .ep-top5-bar-row {
+    grid-template-columns: minmax(0, 1fr) minmax(40px, 2fr);
+  }
+  .ep-top5-bar-row__val { display: none; }
+}
+
+/* Head row: subtitle column can shrink + ellipsis instead of wrapping
+   to 4 lines next to "View all". */
+.ep-top5-panel .ep-kpi-cell__head {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.ep-top5-panel .ep-kpi-cell__metric {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Very narrow: stack "View all" below subtitle so neither truncates. */
+@container top5 (max-width: 240px) {
+  .ep-top5-panel .ep-kpi-cell__head {
+    grid-template-columns: 1fr;
+  }
+  .ep-top5-panel .ep-top5-panel__viewall {
+    justify-self: start;
+  }
+  .ep-top5-panel .ep-kpi-cell__metric {
+    white-space: normal;
+    overflow: visible;
+  }
+}
 
 /* V/C/A variant — atomic-hierarchy panels (Circulars / Categories / Promotions) */
 .ep-top5-bar-row__bar--vca .ep-top5-bar-row__seg--v { background: var(--series-v, #2196F3); }

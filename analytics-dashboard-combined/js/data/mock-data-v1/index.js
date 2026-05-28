@@ -1,60 +1,180 @@
 /**
- * MockData v1 — Phase 0 STUB
+ * MockData v1 — Public API (Phase 2)
  *
- * Minimal stub to prove the data-driven render pattern. Returns hardcoded
- * aggregate payloads for two (entity, week) tuples so widget refresh can
- * be verified without the full aggregates.json being generated yet.
+ * Replaces the Phase 0 stub. Exposes a single window-global entry point
+ * for both engagement and distribution dashboards.
  *
- * Phase 1 replaces this stub with:
- *   - Real entity-hierarchy.js + weeks.js modules
- *   - Generated aggregates.json (13 weeks × 48 entity nodes)
- *   - Row-generator for Explore-page records
- *   - LRU cache, lazy-load, etc.
+ *   window.MockData.getAggregate({ entityId, weekId })
+ *   window.MockData.getRecords({ entityId, weekId, grain, page, pageSize })
+ *   window.MockData.getEntityTree()
+ *   window.MockData.getWeeks()
+ *   window.MockData.currentContext()           — URL → { entityId, weekId }
+ *
+ * Aggregate cache:
+ *   - LRU, capacity 12
+ *   - Keyed `entityId:weekId`
+ *   - aggregates.json lazy-loaded on first getAggregate() call
+ *
+ * Compat shim:
+ *   - window.MockData.v1 is preserved so the Phase 0 engagement-report.html
+ *     consumer (calls window.MockData.v1.getAggregate / .currentContext)
+ *     keeps working. v1.* delegates to the new top-level functions.
  *
  * Spec: ~/.claude/plans/UX-846/UX-846-DATA-LAYER-SCHEMA.md
+ *
+ * PHASE-2-ASSUMPTION: aggregates.json path is resolved relative to the
+ *   HTML page that loaded this script. We use a hard-coded relative path
+ *   "js/data/mock-data-v1/aggregates.json" — consistent with how the
+ *   existing dashboards reference their data files.
+ * PHASE-2-ASSUMPTION: Node-side consumers (build scripts) read aggregates.json
+ *   directly via fs; this module is browser-first. A Node fallback is
+ *   exposed via module.exports but does NOT fetch aggregates.json.
  */
 
-(function () {
+(function (root) {
   'use strict';
 
-  // Stub aggregate payloads — Top Stores only (the only field Phase 0 widget needs).
-  // Real aggregates.json will be MUCH larger; this is just enough to prove the wire.
-  // Two weeks shown so we can switch and watch the panel re-render with different numbers.
-  const stubAggregates = {
-    'brand-ideal-foods:week-47': {
-      entity: { id: 'brand-ideal-foods', name: 'Ideal Foods', level: 'brand', storeCount: 35 },
-      week:   { id: 'week-47', num: 47, startDate: '2025-11-18', endDate: '2025-11-24', label: 'Week 47 (Nov 18–24)', daysRun: 7 },
-      engagement: {
-        topStores: [
-          { id: 'store-2288', label: '#2288 Orlando',        value: 18200, deltaPct:  0.063, vca: { viewsProportion: 0.56, clicksProportion: 0.28, addsProportion: 0.16 }, href: 'engagement-explore-base.html?store=store-2288' },
-          { id: 'store-2415', label: '#2415 Tampa',          value: 15300, deltaPct:  0.041, vca: { viewsProportion: 0.56, clicksProportion: 0.28, addsProportion: 0.16 }, href: 'engagement-explore-base.html?store=store-2415' },
-          { id: 'store-2434', label: '#2434 Daytona Beach',  value: 12900, deltaPct:  0.022, vca: { viewsProportion: 0.57, clicksProportion: 0.28, addsProportion: 0.16 }, href: 'engagement-explore-base.html?store=store-2434' },
-          { id: 'store-2480', label: '#2480 Lakeland',       value: 10500, deltaPct: -0.018, vca: { viewsProportion: 0.56, clicksProportion: 0.29, addsProportion: 0.16 }, href: 'engagement-explore-base.html?store=store-2480' },
-          { id: 'store-705',  label: '#705 Haines City',     value:  8400, deltaPct:  0.012, vca: { viewsProportion: 0.56, clicksProportion: 0.29, addsProportion: 0.15 }, href: 'engagement-explore-base.html?store=store-705'  }
-        ]
-      }
-    },
-    'brand-ideal-foods:week-48': {
-      entity: { id: 'brand-ideal-foods', name: 'Ideal Foods', level: 'brand', storeCount: 35 },
-      week:   { id: 'week-48', num: 48, startDate: '2025-11-25', endDate: '2025-12-01', label: 'Week 48 (Nov 25–Dec 1)', daysRun: 7 },
-      engagement: {
-        topStores: [
-          { id: 'store-2415', label: '#2415 Tampa',          value: 22100, deltaPct:  0.083, vca: { viewsProportion: 0.55, clicksProportion: 0.29, addsProportion: 0.16 }, href: 'engagement-explore-base.html?store=store-2415' },
-          { id: 'store-2288', label: '#2288 Orlando',        value: 19400, deltaPct:  0.066, vca: { viewsProportion: 0.56, clicksProportion: 0.28, addsProportion: 0.16 }, href: 'engagement-explore-base.html?store=store-2288' },
-          { id: 'store-336',  label: '#336 Hollywood',       value: 16800, deltaPct:  0.301, vca: { viewsProportion: 0.58, clicksProportion: 0.27, addsProportion: 0.15 }, href: 'engagement-explore-base.html?store=store-336'  },
-          { id: 'store-518',  label: '#518 Naples',          value: 13200, deltaPct:  0.045, vca: { viewsProportion: 0.56, clicksProportion: 0.28, addsProportion: 0.16 }, href: 'engagement-explore-base.html?store=store-518'  },
-          { id: 'store-2434', label: '#2434 Daytona Beach',  value: 11700, deltaPct: -0.093, vca: { viewsProportion: 0.57, clicksProportion: 0.28, addsProportion: 0.15 }, href: 'engagement-explore-base.html?store=store-2434' }
-        ]
-      }
-    }
-  };
+  // ----- Aggregate cache (LRU, cap 12) -----
+  const CACHE_CAP = 12;
+  const cache = new Map(); // insertion order = recency
 
-  function getAggregate({ entityId, weekId } = {}) {
-    const key = `${entityId || 'brand-ideal-foods'}:${weekId || 'week-47'}`;
-    return stubAggregates[key] || stubAggregates['brand-ideal-foods:week-47'];
+  function cacheGet(key) {
+    if (!cache.has(key)) return undefined;
+    const val = cache.get(key);
+    cache.delete(key);
+    cache.set(key, val); // bump to MRU
+    return val;
+  }
+  function cacheSet(key, val) {
+    if (cache.has(key)) cache.delete(key);
+    cache.set(key, val);
+    while (cache.size > CACHE_CAP) {
+      const oldest = cache.keys().next().value;
+      cache.delete(oldest);
+    }
   }
 
+  // ----- Aggregates JSON (lazy load) -----
+  let aggregatesIndex = null;     // map: "entityId:weekId" → Aggregate
+  let aggregatesPromise = null;   // in-flight fetch
+  const AGGREGATES_URL = 'js/data/mock-data-v1/aggregates.json';
+
+  function loadAggregates() {
+    if (aggregatesIndex) return Promise.resolve(aggregatesIndex);
+    if (aggregatesPromise) return aggregatesPromise;
+    if (typeof fetch !== 'function') {
+      // Non-browser environment — surface an explicit error.
+      return Promise.reject(new Error('MockData: fetch unavailable; aggregates.json cannot be loaded outside the browser.'));
+    }
+    aggregatesPromise = fetch(AGGREGATES_URL)
+      .then(res => {
+        if (!res.ok) throw new Error('MockData: failed to load ' + AGGREGATES_URL + ' (' + res.status + ')');
+        return res.json();
+      })
+      .then(json => {
+        // Phase 1 may have written either a flat map or an array; normalize to map.
+        if (Array.isArray(json)) {
+          const map = {};
+          json.forEach(a => {
+            const key = (a.entity && a.entity.id) + ':' + (a.week && a.week.id);
+            map[key] = a;
+          });
+          aggregatesIndex = map;
+        } else if (json && json.aggregates && typeof json.aggregates === 'object') {
+          aggregatesIndex = json.aggregates;
+        } else {
+          aggregatesIndex = json; // assume flat map
+        }
+        return aggregatesIndex;
+      })
+      .catch(err => {
+        aggregatesPromise = null; // allow retry
+        throw err;
+      });
+    return aggregatesPromise;
+  }
+
+  // ----- getAggregate -----
+  // Sync return when cache is warm or aggregates already loaded; otherwise returns
+  // a Promise. Consumers that prefer always-async can `Promise.resolve(getAggregate(...))`.
+  //
+  // PHASE-2-ASSUMPTION: returning sync-or-promise mirrors how the Phase 0 stub
+  //   returned sync; promoting to always-async would break engagement-report.html
+  //   which calls `MockData.v1.getAggregate(...)` and uses the value immediately.
+  //   The dashboard pre-warms by calling getAggregate during DOMContentLoaded.
+  function getAggregate(opts) {
+    const entityId = (opts && opts.entityId) || 'brand-ideal-foods';
+    const weekId   = (opts && opts.weekId)   || 'week-47';
+    const key = entityId + ':' + weekId;
+
+    const cached = cacheGet(key);
+    if (cached) return cached;
+
+    if (aggregatesIndex) {
+      const val = aggregatesIndex[key] || null;
+      if (val) cacheSet(key, val);
+      return val;
+    }
+
+    return loadAggregates().then(idx => {
+      const val = idx[key] || null;
+      if (val) cacheSet(key, val);
+      return val;
+    });
+  }
+
+  // ----- getRecords (paginated, via row-generator) -----
+  function getRecords(opts) {
+    const entityId = opts && opts.entityId;
+    const weekId   = opts && opts.weekId;
+    const grain    = (opts && opts.grain) || 'promotion';
+    const page     = (opts && opts.page) || 1;
+    const pageSize = (opts && opts.pageSize) || 50;
+
+    if (!entityId || !weekId) {
+      return { records: [], page, pageSize, totalRecords: 0, totalPages: 0 };
+    }
+
+    const gen = root && root.MockDataRowGenerator;
+    if (!gen) {
+      throw new Error('MockData.getRecords: row-generator.js not loaded.');
+    }
+
+    let all;
+    switch (grain) {
+      case 'promotion': all = gen.generatePromotionRecords({ entityId, weekId }); break;
+      case 'creative':  all = gen.generateCreativeRecords({ entityId, weekId });  break;
+      case 'crossover': all = gen.generateCrossoverRecords({ entityId, weekId }); break;
+      case 'store':
+      case 'category':
+        // PHASE-2-ASSUMPTION: store/category grains are aggregate-derived (not row-level
+        //   generators). Consumers should read aggregate.engagement.topStores /
+        //   topCategories. Returning empty record set with a hint.
+        return { records: [], page, pageSize, totalRecords: 0, totalPages: 0, hint: 'derive from aggregate.engagement.top' + (grain === 'store' ? 'Stores' : 'Categories') };
+      default:
+        throw new Error('MockData.getRecords: unknown grain "' + grain + '"');
+    }
+
+    const totalRecords = all.length;
+    const totalPages = Math.max(1, Math.ceil(totalRecords / pageSize));
+    const start = (page - 1) * pageSize;
+    const records = all.slice(start, start + pageSize);
+    return { records, page, pageSize, totalRecords, totalPages };
+  }
+
+  // ----- getEntityTree / getWeeks -----
+  function getEntityTree() {
+    return (root && root.MockDataHierarchy) || null;
+  }
+  function getWeeks() {
+    return (root && root.MockDataWeeks) || [];
+  }
+
+  // ----- currentContext (URL → { entityId, weekId }) -----
   function currentContext() {
+    if (typeof window === 'undefined') {
+      return { entityId: 'brand-ideal-foods', weekId: 'week-47' };
+    }
     const params = new URLSearchParams(window.location.search);
     return {
       entityId: params.get('entity') || 'brand-ideal-foods',
@@ -62,11 +182,33 @@
     };
   }
 
-  window.MockData = window.MockData || {};
-  window.MockData.v1 = {
+  // ----- Public surface -----
+  const MockData = {
+    getAggregate,
+    getRecords,
+    getEntityTree,
+    getWeeks,
+    currentContext,
+    // Diagnostics
+    _internal: {
+      loadAggregates,
+      cache,
+      get aggregatesLoaded() { return !!aggregatesIndex; }
+    }
+  };
+
+  // Compat shim: preserve Phase 0 consumer pattern (window.MockData.v1.*)
+  MockData.v1 = {
     getAggregate,
     currentContext,
-    _isStub: true,
-    _stubKeys: Object.keys(stubAggregates)
+    _isStub: false,
+    _compatShim: true
   };
-})();
+
+  if (root) {
+    root.MockData = MockData;
+  }
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = MockData;
+  }
+})(typeof window !== 'undefined' ? window : null);

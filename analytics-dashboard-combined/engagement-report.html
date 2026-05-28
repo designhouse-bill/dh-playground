@@ -802,7 +802,9 @@
   <script>document.body.dataset.view = 'detail';</script>
   <script src="js/vendor/echarts.min.js"></script>
   <script src="js/shared/chart-colors.js"></script>
-  <script src="js/data/engagement-promotions.js"></script>
+  <!-- PHASE 4 (UX-846): 40MB engagement-promotions.js removed from Report page.
+       Report renders entirely from aggregates.json + row-1/Top-5 functions.
+       Explore pages still load it via deferred dynamic import. -->
   <script src="js/data/engagement-mock-data.js"></script>
   <script src="js/engagement/cache-manager.js"></script>
   <script src="js/engagement/data-service.js"></script>
@@ -824,15 +826,60 @@
         wireOverviewDonutHover();
       }
       wirePanelClick();
-      // Phase 3b (UX-846): all 3 Top-5 panels (Stores/Categories/Promotions) data-driven.
-      renderTop5PanelsFromAggregate();
-      // Phase 3a (UX-846): 4 row-1 chart-cells data-driven
-      renderRow1FromAggregate();
+      // Phase 4 (UX-846): single shared aggregate fetch per event tick.
+      refreshFromAggregate();
     });
-    // Phase 3b (UX-846): re-render Top-5 panels on context change.
-    document.addEventListener('dashboard:dataRefresh', renderTop5PanelsFromAggregate);
-    // Phase 3a (UX-846): re-render row-1 cells on context change.
-    document.addEventListener('dashboard:dataRefresh', renderRow1FromAggregate);
+    // Phase 4 (UX-846): one fetch on dataRefresh, broadcast to both renderers.
+    document.addEventListener('dashboard:dataRefresh', refreshFromAggregate);
+
+    // ============================================================
+    // PHASE 4 (UX-846): memoized aggregate fetch.
+    // Previously row-1 (renderRow1FromAggregate) and Top-5
+    // (renderTop5PanelsFromAggregate) each called MockData.getAggregate
+    // + fell back through _internal.loadAggregates independently — two
+    // Promise chains per dataRefresh.  Now both renderers receive the
+    // already-resolved aggregate from a single fetch per event tick.
+    // PHASE-4-ASSUMPTION: tick cache keyed by ctx (entityId|weekId),
+    //   invalidated on each refreshFromAggregate() call. Sufficient
+    //   because dataRefresh fires once per user context change.
+    // ============================================================
+    var _tickAggCache = { key: null, promise: null };
+    function fetchAggregateOnce(ctx) {
+      var key = ctx.entityId + '|' + ctx.weekId;
+      if (_tickAggCache.key === key && _tickAggCache.promise) return _tickAggCache.promise;
+      var direct = window.MockData && window.MockData.getAggregate
+        ? window.MockData.getAggregate(ctx)
+        : (window.MockData && window.MockData.v1 && window.MockData.v1.getAggregate(ctx));
+      var p = Promise.resolve(direct).then(function (agg) {
+        if (agg && agg.engagement) return agg;
+        // Safety-net fallback (delimiter mismatch fixed in Phase 4, but keep one release).
+        if (window.MockData && window.MockData._internal && window.MockData._internal.loadAggregates) {
+          return window.MockData._internal.loadAggregates().then(function (idx) {
+            return idx[ctx.entityId + '|' + ctx.weekId] || idx[ctx.entityId + ':' + ctx.weekId] || null;
+          });
+        }
+        return null;
+      });
+      _tickAggCache = { key: key, promise: p };
+      return p;
+    }
+    function refreshFromAggregate() {
+      if (!window.MockData) return;
+      var ctx = (window.MockData.currentContext && window.MockData.currentContext())
+        || { entityId: 'brand-ideal-foods', weekId: 'week-47' };
+      // Invalidate the per-tick cache so each dataRefresh re-fetches once.
+      _tickAggCache = { key: null, promise: null };
+      fetchAggregateOnce(ctx).then(function (agg) {
+        if (!agg || !agg.engagement) {
+          console.warn('[Phase 4] aggregate empty; static placeholders retained.');
+          return;
+        }
+        try { applyTop5Panels(agg); }  catch (e) { console.warn('[Phase 4] Top-5 render failed', e); }
+        try { applyRow1(agg); }        catch (e) { console.warn('[Phase 4] row-1 render failed', e); }
+      }).catch(function (err) {
+        console.warn('[Phase 4] refreshFromAggregate failed.', err);
+      });
+    }
 
     // ============================================================
     // Phase 3b (UX-846): 3 Top-5 panels render — Stores/Categories/Promotions.
@@ -852,25 +899,10 @@
     //   looking up "entityId|weekId". When index.js is fixed, the
     //   getAggregate() path will succeed and the fallback becomes unused.
     // ============================================================
-    function renderTop5PanelsFromAggregate() {
-      if (!window.MockData) return;
-      const ctx = (window.MockData.currentContext && window.MockData.currentContext())
-        || (window.MockData.v1 && window.MockData.v1.currentContext && window.MockData.v1.currentContext())
-        || { entityId: 'brand-ideal-foods', weekId: 'week-47' };
-      // Try the public API first; if null, fall back to the internal index using "|" key.
-      const direct = window.MockData.getAggregate
-        ? window.MockData.getAggregate(ctx)
-        : (window.MockData.v1 && window.MockData.v1.getAggregate(ctx));
-      Promise.resolve(direct).then(function (agg) {
-        if (agg && agg.engagement) return agg;
-        // Fallback: index.js uses ':' but aggregates.json keys use '|'.
-        if (window.MockData._internal && window.MockData._internal.loadAggregates) {
-          return window.MockData._internal.loadAggregates().then(function (idx) {
-            return idx[ctx.entityId + '|' + ctx.weekId] || idx[ctx.entityId + ':' + ctx.weekId] || null;
-          });
-        }
-        return null;
-      }).then(function (agg) {
+    // PHASE 4: legacy entry point — delegates to refreshFromAggregate (memoized).
+    function renderTop5PanelsFromAggregate() { refreshFromAggregate(); }
+    // PHASE 4: pure render fn — receives already-fetched aggregate.
+    function applyTop5Panels(agg) {
         if (!agg || !agg.engagement) return;
         const eng = agg.engagement;
         renderTop5Panel({
@@ -931,9 +963,6 @@
         // PHASE 3c: hero stat-strip uses the same aggregate; render alongside panels
         // so the heavy aggregate fetch is shared (single Promise chain).
         renderHeroStatStrip(eng, agg);
-      }).catch(function (err) {
-        console.warn('[Phase 3b/3c] Top-5 panels render failed; static placeholders retained.', err);
-      });
     }
 
     // ============================================================
@@ -1095,21 +1124,8 @@
     // Reads MockData.getAggregate({entityId, weekId}); handles sync OR Promise return.
     // Re-renders on 'dashboard:dataRefresh'. No echarts on this row — all SVG/HTML.
     // ============================================================
-    function renderRow1FromAggregate() {
-      if (!window.MockData) return;
-      const ctx = (window.MockData.currentContext && window.MockData.currentContext())
-        || (window.MockData.v1 && window.MockData.v1.currentContext && window.MockData.v1.currentContext())
-        || { entityId: 'brand-ideal-foods', weekId: 'week-47' };
-      const result = window.MockData.getAggregate
-        ? window.MockData.getAggregate(ctx)
-        : (window.MockData.v1 && window.MockData.v1.getAggregate(ctx));
-      // PHASE-3A-ASSUMPTION: getAggregate may return sync or Promise (see mock-data-v1/index.js).
-      // Wrap in Promise.resolve so both paths converge.
-      Promise.resolve(result).then(applyRow1).catch(function (err) {
-        // Surface but don't break the page — placeholders stay visible.
-        console.warn('[Phase 3a] getAggregate failed; row-1 placeholders retained.', err);
-      });
-    }
+    // PHASE 4 (UX-846): legacy entry — delegates to memoized refreshFromAggregate.
+    function renderRow1FromAggregate() { refreshFromAggregate(); }
 
     function applyRow1(agg) {
       if (!agg || !agg.engagement) return;

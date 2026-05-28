@@ -12,8 +12,14 @@
  *
  * Aggregate cache:
  *   - LRU, capacity 12
- *   - Keyed `entityId:weekId`
+ *   - Keyed `entityId|weekId` (pipe — matches aggregates.json native key format)
  *   - aggregates.json lazy-loaded on first getAggregate() call
+ *
+ * PHASE-4 (UX-846): key delimiter fix. Previously index.js built lookup
+ *   keys with ':' while aggregates.json shipped with '|', causing every
+ *   Phase 3 consumer to fall back to _internal.loadAggregates(). Now
+ *   aligned to '|' across the board. Consumers should no longer need
+ *   the fallback path; we keep it for one release as a safety net.
  *
  * Compat shim:
  *   - window.MockData.v1 is preserved so the Phase 0 engagement-report.html
@@ -55,7 +61,9 @@
   }
 
   // ----- Aggregates JSON (lazy load) -----
-  let aggregatesIndex = null;     // map: "entityId:weekId" → Aggregate
+  // PHASE-4: key delimiter unified to '|' (matches aggregates.json native keys).
+  const KEY_DELIM = '|';
+  let aggregatesIndex = null;     // map: "entityId|weekId" → Aggregate
   let aggregatesPromise = null;   // in-flight fetch
   const AGGREGATES_URL = 'js/data/mock-data-v1/aggregates.json';
 
@@ -76,14 +84,14 @@
         if (Array.isArray(json)) {
           const map = {};
           json.forEach(a => {
-            const key = (a.entity && a.entity.id) + ':' + (a.week && a.week.id);
+            const key = (a.entity && a.entity.id) + KEY_DELIM + (a.week && a.week.id);
             map[key] = a;
           });
           aggregatesIndex = map;
         } else if (json && json.aggregates && typeof json.aggregates === 'object') {
           aggregatesIndex = json.aggregates;
         } else {
-          aggregatesIndex = json; // assume flat map
+          aggregatesIndex = json; // assume flat map (aggregates.json uses '|' keys)
         }
         return aggregatesIndex;
       })
@@ -105,7 +113,7 @@
   function getAggregate(opts) {
     const entityId = (opts && opts.entityId) || 'brand-ideal-foods';
     const weekId   = (opts && opts.weekId)   || 'week-47';
-    const key = entityId + ':' + weekId;
+    const key = entityId + KEY_DELIM + weekId;
 
     const cached = cacheGet(key);
     if (cached) return cached;

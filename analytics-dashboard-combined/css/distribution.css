@@ -5926,30 +5926,97 @@ body[data-dist-page] .narrative-header__title {
 }
 
 /* ============================================================
-   Pilot-data banner (UX-846, 2026-05-28)
+   ⚠ DEMO-ONLY · dist-pilot · DO NOT PORT TO ANGULAR
+   Pilot-data overlay (UX-846, 2026-05-28)
    Distribution pages render Q1 2026 pilot mock data, distinct
-   from engagement (Nov 2025). Banner sets demo expectations.
+   from engagement (Nov 2025). Shown once per session on first
+   distribution-page visit; auto-dismisses after 10s.
+
+   Removal: delete entire block down to the matching closing
+   keyframes. See js/distribution/dist-pilot-banner.js for the
+   full removal checklist. No tokens, components, or rules
+   outside this block depend on .dist-pilot-banner*.
    ============================================================ */
 .dist-pilot-banner {
-  display: flex;
+  position: fixed;
+  inset: 0;
+  display: none;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-4);
-  margin: 0 var(--space-6) var(--space-4);
-  background: var(--color-info-bg, #eff6ff);
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.55);
+  z-index: 9000;
+  padding: var(--space-6);
+  animation: dist-pilot-fade-in 220ms ease-out;
+}
+.dist-pilot-banner.is-active {
+  display: flex;
+}
+.dist-pilot-banner.is-closing {
+  animation: dist-pilot-fade-out 220ms ease-in forwards;
+}
+.dist-pilot-banner__card {
+  position: relative;
+  max-width: 480px;
+  width: 100%;
+  background: var(--color-surface, #fff);
   border: 1px solid var(--color-info-border, #bfdbfe);
-  border-radius: var(--radius-md, 6px);
-  color: var(--color-info-text, #1e40af);
-  font-size: 0.8125rem;
-  line-height: 1.4;
+  border-radius: var(--radius-lg, 12px);
+  padding: var(--space-6) var(--space-6) var(--space-5);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  color: var(--color-text, #1f2937);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
 }
 .dist-pilot-banner__icon {
-  font-size: 18px;
+  font-size: 24px;
+  color: var(--color-info-text, #1e40af);
   flex-shrink: 0;
+  margin-top: 2px;
 }
 .dist-pilot-banner__text {
   flex: 1;
+  padding-right: var(--space-5);
 }
 .dist-pilot-banner__text strong {
   font-weight: 600;
+  display: block;
+  margin-bottom: var(--space-1);
+  color: var(--color-info-text, #1e40af);
 }
+.dist-pilot-banner__close {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  width: 28px;
+  height: 28px;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-secondary, #6b7280);
+  border-radius: var(--radius-sm, 4px);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  font-size: 18px;
+  line-height: 1;
+  transition: background-color 150ms ease;
+}
+.dist-pilot-banner__close:hover,
+.dist-pilot-banner__close:focus-visible {
+  background: var(--color-surface-hover, #f3f4f6);
+  color: var(--color-text, #1f2937);
+  outline: none;
+}
+@keyframes dist-pilot-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes dist-pilot-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+/* ⚠ END DEMO-ONLY · dist-pilot · DO NOT PORT TO ANGULAR */

@@ -24,7 +24,7 @@
   <link rel="stylesheet" href="css/header.css?v=7">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/distribution.css?v=44">
+  <link rel="stylesheet" href="css/distribution.css?v=56">
 </head>
 <body data-dist-page="overview">
 
@@ -140,13 +140,20 @@
 
   </header>
 
-  <!-- Pilot-data banner (UX-846, 2026-05-28) — distribution data is Q1 2026 pilot, distinct from engagement reporting period -->
-  <div class="dist-pilot-banner" role="note">
-    <span class="material-symbols-outlined dist-pilot-banner__icon">info</span>
-    <span class="dist-pilot-banner__text"><strong>Pilot data:</strong> Distribution metrics reflect the Q1 2026 pilot flight (Jan–Mar 2026). Engagement reporting on other tabs covers Nov 2025. The two periods do not overlap; entity and date selections are scoped per tab.</span>
+  <!-- ⚠ DEMO-ONLY · dist-pilot · DO NOT PORT TO ANGULAR — see js/distribution/dist-pilot-banner.js header for removal checklist -->
+  <div class="dist-pilot-banner" id="dist-pilot-banner" role="dialog" aria-modal="true" aria-labelledby="dist-pilot-banner-title" hidden>
+    <div class="dist-pilot-banner__card">
+      <span class="material-symbols-outlined dist-pilot-banner__icon" aria-hidden="true">info</span>
+      <div class="dist-pilot-banner__text">
+        <strong id="dist-pilot-banner-title">Pilot data</strong>
+        Distribution metrics reflect the Q1 2026 pilot flight (Jan–Mar 2026). Engagement reporting on other tabs covers Nov 2025. The two periods do not overlap; entity and date selections are scoped per tab.
+      </div>
+      <button type="button" class="dist-pilot-banner__close" aria-label="Dismiss notice" data-action="dist-pilot-close">
+        <span class="material-symbols-outlined" aria-hidden="true">close</span>
+      </button>
+    </div>
   </div>
-
-
+  <!-- ⚠ END DEMO-ONLY · dist-pilot -->
   <!-- ============================================================
        DISTRIBUTION OVERVIEW / LANDING
        Per Max 05/19 PDF page 2. Samples headline widgets from each
@@ -260,6 +267,7 @@
   <script src="js/data/distribution-data.js?v=19"></script>
 
   <script src="js/distribution/store-map.js?v=24"></script>
+  <!-- ⚠ DEMO-ONLY · dist-pilot · DO NOT PORT --><script src="js/distribution/dist-pilot-banner.js?v=1"></script><!-- ⚠ END DEMO-ONLY -->
   <script src="js/distribution/distribution.js?v=89"></script>
   <script src="js/distribution/distribution-modals.js?v=13"></script>
 

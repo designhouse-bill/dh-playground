@@ -179,9 +179,9 @@
       <!-- F3 (UX-846, 2026-05-27): hero-stat stat-strip shell (sibling of
            .narrative-header). Label swaps with active perf-tab title. -->
       <div class="stat-strip" id="ep-page-stat-strip">
-          <div class="stat-strip__cards">
-            <div class="stat-strip__item">
-              <div class="stat-strip__value-row">
+          <div class="stat-strip__cards" id="ep-page-stat-strip-cards">
+            <div class="stat-strip__item" id="ep-page-stat-strip-item">
+              <div class="stat-strip__value-row" id="ep-page-stat-strip-value-row">
                 <p class="narrative-header__sentence">
                   This ran at
                   <span class="ep-cohort-pill" id="engagement-cohort-pill">
@@ -438,17 +438,18 @@
         <!-- Row 3: 2 Max asks (Coupon Clips, Page Navigation). -->
         <div class="ep-report-overview__row ep-report-overview__row--asks">
 
-          <div class="ep-kpi-cell ep-top5-panel" data-href="engagement-explore.html?metric=coupons">
+          <!-- PHASE 3c (UX-846): data-driven render against MockData.getAggregate().topCouponClips. -->
+          <div id="ep-top-coupons-panel" class="ep-kpi-cell ep-top5-panel" data-href="engagement-explore.html?metric=coupons">
             <div class="ep-kpi-cell__head">
               <div class="ep-kpi-cell__title">
                 <h3 class="ep-kpi-cell__story">Top Coupon Clips</h3>
               </div>
               <div>
-                <div class="ep-kpi-cell__metric">By clips · combo cards rolled in · Week 47</div>
+                <div id="ep-top-coupons-metric" class="ep-kpi-cell__metric">By clips · combo cards rolled in · Week 47</div>
               </div>
             </div>
             <div class="ep-kpi-cell__chart" style="min-height:0;">
-              <div class="ep-top5-bar-list">
+              <div id="ep-top-coupons-list" class="ep-top5-bar-list">
                 <a class="ep-top5-bar-row" href="engagement-explore.html?metric=coupons&coupon=c101" data-perf-hover data-perf-title="Top Coupon Clips · Week 47" data-perf-rows='[{"dot": "coupon", "name": "$2 off Tide Pods", "val": "3.1K", "score": "\u25b2 8%"}, {"dot": "coupon", "name": "42% redeem", "val": "25% share"}]' data-perf-total='{"label":"Total Coupon Clips","val":"11.3K"}'><span class="ep-top5-bar-row__lbl">$2 off Tide Pods</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--coupon"><div class="ep-top5-bar-row__seg" style="width:100%"></div></div><span class="ep-top5-bar-row__val">3.1K</span></a>
                 <a class="ep-top5-bar-row" href="engagement-explore.html?metric=coupons&coupon=c102" data-perf-hover data-perf-title="Top Coupon Clips · Week 47" data-perf-rows='[{"dot": "coupon", "name": "$1 off Cheerios", "val": "2.6K", "score": "\u25b2 5%"}, {"dot": "coupon", "name": "38% redeem", "val": "21% share"}]' data-perf-total='{"label":"Total Coupon Clips","val":"11.3K"}'><span class="ep-top5-bar-row__lbl">$1 off Cheerios</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--coupon"><div class="ep-top5-bar-row__seg" style="width:84%"></div></div><span class="ep-top5-bar-row__val">2.6K</span></a>
                 <a class="ep-top5-bar-row" href="engagement-explore.html?metric=coupons&coupon=c103" data-perf-hover data-perf-title="Top Coupon Clips · Week 47" data-perf-rows='[{"dot": "coupon", "name": "BOGO Oreos", "val": "2.2K", "score": "\u25b2 12%"}, {"dot": "coupon", "name": "52% redeem", "val": "18% share"}]' data-perf-total='{"label":"Total Coupon Clips","val":"11.3K"}'><span class="ep-top5-bar-row__lbl">BOGO Oreos</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--coupon"><div class="ep-top5-bar-row__seg" style="width:71%"></div></div><span class="ep-top5-bar-row__val">2.2K</span></a>
@@ -459,17 +460,18 @@
             <span class="ep-kpi-cell__view">Open Top Coupon Clips <span class="material-symbols-outlined">chevron_right</span></span>
           </div>
 
-          <div class="ep-kpi-cell ep-top5-panel" data-href="engagement-explore.html?metric=pagenav">
+          <!-- PHASE 3c (UX-846): data-driven render against MockData.getAggregate().topPageNavigation. -->
+          <div id="ep-top-pagenav-panel" class="ep-kpi-cell ep-top5-panel" data-href="engagement-explore.html?metric=pagenav">
             <div class="ep-kpi-cell__head">
               <div class="ep-kpi-cell__title">
                 <h3 class="ep-kpi-cell__story">Top Page Navigation</h3>
               </div>
               <div>
-                <div class="ep-kpi-cell__metric">In-circular page hits · Week 47</div>
+                <div id="ep-top-pagenav-metric" class="ep-kpi-cell__metric">In-circular page hits · Week 47</div>
               </div>
             </div>
             <div class="ep-kpi-cell__chart" style="min-height:0;">
-              <div class="ep-top5-bar-list">
+              <div id="ep-top-pagenav-list" class="ep-top5-bar-list">
                 <a class="ep-top5-bar-row" href="engagement-explore.html?metric=pagenav&page=front" data-perf-hover data-perf-title="Top Page Navigation · Week 47" data-perf-rows='[{"dot": "pagenav", "name": "Front Page", "val": "14.2K", "score": "\u25b2 4%"}, {"dot": "pagenav", "name": "1m 12s avg time", "val": "32% of nav"}]' data-perf-total='{"label":"Total Page Navigation","val":"43.4K"}'><span class="ep-top5-bar-row__lbl">Front Page</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--pagenav"><div class="ep-top5-bar-row__seg" style="width:100%"></div></div><span class="ep-top5-bar-row__val">14.2K</span></a>
                 <a class="ep-top5-bar-row" href="engagement-explore.html?metric=pagenav&page=liquor" data-perf-hover data-perf-title="Top Page Navigation · Week 47" data-perf-rows='[{"dot": "pagenav", "name": "Liquor", "val": "10.5K", "score": "\u25b2 9%"}, {"dot": "pagenav", "name": "0m 58s avg time", "val": "24% of nav"}]' data-perf-total='{"label":"Total Page Navigation","val":"43.4K"}'><span class="ep-top5-bar-row__lbl">Liquor</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--pagenav"><div class="ep-top5-bar-row__seg" style="width:74%"></div></div><span class="ep-top5-bar-row__val">10.5K</span></a>
                 <a class="ep-top5-bar-row" href="engagement-explore.html?metric=pagenav&page=pdf" data-perf-hover data-perf-title="Top Page Navigation · Week 47" data-perf-rows='[{"dot": "pagenav", "name": "PDF View", "val": "8.2K", "score": "\u25b2 2%"}, {"dot": "pagenav", "name": "2m 04s avg time", "val": "19% of nav"}]' data-perf-total='{"label":"Total Page Navigation","val":"43.4K"}'><span class="ep-top5-bar-row__lbl">PDF View</span><div class="ep-top5-bar-row__bar ep-top5-bar-row__bar--pagenav"><div class="ep-top5-bar-row__seg" style="width:58%"></div></div><span class="ep-top5-bar-row__val">8.2K</span></a>
@@ -899,10 +901,154 @@
             return 'By Performance Score · Top ' + rows.length + ' of 75';
           }
         });
+        // PHASE 3c (UX-846): Coupon Clips + Page Navigation panels.
+        // Schema §6.1: topCouponClips ranked by 'clips'; topPageNavigation by 'pageHits'.
+        // PHASE-3C-ASSUMPTION: aggregates.json currently ships empty arrays for these
+        //   (see schema example line 621-622). renderTop5Panel bails when rows.length===0,
+        //   so the static placeholder HTML remains visible until the row-generator (Phase 2
+        //   follow-up) populates topCouponClips/topPageNavigation. The wire is in place.
+        // PHASE-3C-ASSUMPTION: Top5Row.vca may be absent for clip/pagehit rows (single-metric).
+        //   renderTop5Panel already defaults v/c/a to 0 → bar segments collapse, full bar
+        //   width still shows via the parent .ep-top5-bar-row__bar--vca container.
+        //   If pagenav rows want a single-color bar (--bar--pagenav / --bar--coupon),
+        //   that's a future styling pass.
+        renderTop5Panel({
+          listId:   'ep-top-coupons-list',
+          metricId: 'ep-top-coupons-metric',
+          rows:     eng.topCouponClips || [],
+          metricLabel: function (rows) {
+            return 'By clips · combo cards rolled in · Top ' + rows.length;
+          }
+        });
+        renderTop5Panel({
+          listId:   'ep-top-pagenav-list',
+          metricId: 'ep-top-pagenav-metric',
+          rows:     eng.topPageNavigation || [],
+          metricLabel: function (rows) {
+            return 'In-circular page hits · Top ' + rows.length;
+          }
+        });
+        // PHASE 3c: hero stat-strip uses the same aggregate; render alongside panels
+        // so the heavy aggregate fetch is shared (single Promise chain).
+        renderHeroStatStrip(eng, agg);
       }).catch(function (err) {
-        console.warn('[Phase 3b] Top-5 panels render failed; static placeholders retained.', err);
+        console.warn('[Phase 3b/3c] Top-5 panels render failed; static placeholders retained.', err);
       });
     }
+
+    // ============================================================
+    // Phase 3c (UX-846): hero stat-strip — swaps content per active perf-tab.
+    // Active perf-tab is detected from `.perf-tab.active` (canonical-shell-tabs.js
+    // toggles this class on click + on URL ?tab= bootstrap).
+    // PHASE-3C-ASSUMPTION: canonical-shell-tabs.js does NOT dispatch a custom
+    //   event on tab change. We add a delegated click listener on .perf-tabs in
+    //   THIS file (engagement-report.html only) and re-render the hero from a
+    //   cached aggregate. Cache is populated by renderHeroStatStrip; tab clicks
+    //   call renderHeroStatStripFromCache so we don't re-fetch.
+    // PHASE-3C-ASSUMPTION: when active tab is 'overview' we render the existing
+    //   cohort sentence shape ("This ran at X of Y stores · Week N (date)").
+    //   For the 4 KPI tabs we render a single .stat-strip__item with the metric
+    //   value + delta — the smallest viable swap; richer per-tab layouts are
+    //   a follow-up.
+    // ============================================================
+    var _heroAggCache = null;
+    function renderHeroStatStrip(eng, agg) {
+      _heroAggCache = { eng: eng, agg: agg };
+      var active = getActivePerfTab();
+      renderHeroStatStripFromCache(active);
+    }
+    function getActivePerfTab() {
+      // 1) Prefer URL ?tab= (matches canonical-shell-tabs.js bootstrap path).
+      try {
+        var urlTab = new URLSearchParams(window.location.search).get('tab');
+        if (urlTab) return urlTab;
+      } catch (_) {}
+      // 2) Otherwise read DOM .perf-tab.active.
+      var activeBtn = document.querySelector('#ep-perf-tabs .perf-tab.active');
+      if (activeBtn && activeBtn.dataset && activeBtn.dataset.epTab) return activeBtn.dataset.epTab;
+      // 3) Fallback.
+      return 'overview';
+    }
+    function renderHeroStatStripFromCache(tab) {
+      if (!_heroAggCache) return;
+      var eng = _heroAggCache.eng;
+      var agg = _heroAggCache.agg;
+      var hero = document.getElementById('ep-page-hero-stat');
+      if (hero) hero.setAttribute('data-ep-active', tab || 'overview');
+      var cards = document.getElementById('ep-page-stat-strip-cards');
+      if (!cards) return;
+
+      if (tab === 'performance' && eng.perfScore) {
+        cards.innerHTML = heroItemHTML('Performance Score',
+          formatThousands(eng.perfScore.value),
+          eng.perfScore.deltaPct, eng.perfScore.deltaDirection);
+      } else if (tab === 'users' && eng.totalUsers) {
+        cards.innerHTML = heroItemHTML('Total Users',
+          formatThousands(eng.totalUsers.value),
+          eng.totalUsers.deltaPct, eng.totalUsers.deltaDirection);
+      } else if (tab === 'sessions' && eng.sessions) {
+        cards.innerHTML = heroItemHTML('Sessions',
+          formatThousands(eng.sessions.value),
+          eng.sessions.deltaPct, eng.sessions.deltaDirection);
+      } else if (tab === 'duration' && eng.avgDuration) {
+        cards.innerHTML = heroItemHTML('Avg Duration',
+          eng.avgDuration.formatted || (eng.avgDuration.seconds + 's'),
+          eng.avgDuration.deltaPct, eng.avgDuration.deltaDirection);
+      } else {
+        // Overview (default): cohort sentence from cohort + week.
+        var cohort = eng.cohort || {};
+        var storesActive = cohort.storesActive != null ? cohort.storesActive : '—';
+        var storesTotal  = cohort.storesTotal  != null ? cohort.storesTotal  : '—';
+        var week = (agg && agg.week) || {};
+        var weekLabel = week.num != null ? ('Week ' + week.num) : 'Week 47';
+        var dateRange = week.label ? week.label.replace(/^Week \d+\s*/, '').replace(/^\(|\)$/g, '')
+                                   : (week.startDate && week.endDate ? (week.startDate + ' – ' + week.endDate) : '');
+        cards.innerHTML =
+          '<div class="stat-strip__item" id="ep-page-stat-strip-item">' +
+            '<div class="stat-strip__value-row" id="ep-page-stat-strip-value-row">' +
+              '<p class="narrative-header__sentence">' +
+                'This ran at ' +
+                '<span class="ep-cohort-pill" id="engagement-cohort-pill">' +
+                  '<strong class="ep-cohort-pill__count">' + storesActive + ' of ' + storesTotal + ' stores</strong>' +
+                '</span></p>' +
+              '<p><strong><span id="subtitle-date-week-engagement">' + weekLabel + '</span></strong>' +
+                (dateRange ? ' <em>(<span id="subtitle-date-range-engagement">' + dateRange + '</span>)</em>' : '') +
+              '</p>' +
+            '</div>' +
+          '</div>';
+      }
+    }
+    function heroItemHTML(label, valueStr, deltaPct, deltaDir) {
+      var arrow = deltaDir === 'down' ? '▼' : (deltaDir === 'flat' ? '–' : '▲');
+      var deltaClass = deltaDir === 'down' ? 'ep-kpi-cell__delta--down'
+                       : (deltaDir === 'flat' ? 'ep-kpi-cell__delta--flat' : 'ep-kpi-cell__delta--up');
+      var pct = (deltaPct == null) ? '' : (Math.round(Math.abs(deltaPct) * 1000) / 10) + '%';
+      return '<div class="stat-strip__item" id="ep-page-stat-strip-item">' +
+               '<div class="stat-strip__value-row" id="ep-page-stat-strip-value-row">' +
+                 '<p class="narrative-header__sentence"><strong>' + label + '</strong>: ' +
+                   '<span class="ep-cohort-pill"><strong class="ep-cohort-pill__count">' + valueStr + '</strong></span> ' +
+                   '<span class="ep-kpi-cell__delta ' + deltaClass + '">' + arrow + ' ' + pct + '</span>' +
+                 '</p>' +
+               '</div>' +
+             '</div>';
+    }
+    function formatThousands(n) {
+      if (n == null) return '—';
+      if (n >= 1000000) return (n / 1000000).toFixed(2) + 'M';
+      if (n >= 1000)    return (n / 1000).toFixed(1) + 'K';
+      return String(n);
+    }
+    // Phase 3c: perf-tab click → re-render hero from cached aggregate.
+    document.addEventListener('DOMContentLoaded', function () {
+      var tabsRoot = document.getElementById('ep-perf-tabs');
+      if (!tabsRoot) return;
+      tabsRoot.addEventListener('click', function (e) {
+        var btn = e.target.closest && e.target.closest('.perf-tab[data-ep-tab]');
+        if (!btn) return;
+        // Defer so canonical-shell-tabs.js can toggle .active first.
+        setTimeout(function () { renderHeroStatStripFromCache(btn.dataset.epTab); }, 0);
+      });
+    });
 
     function renderTop5Panel(opts) {
       const list = document.getElementById(opts.listId);

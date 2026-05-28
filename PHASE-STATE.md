@@ -1,8 +1,8 @@
 # UX-846 Unified Data Layer — Build State
 
-Last updated: 2026-05-27 (Phase 2 complete)
+Last updated: 2026-05-27 (Phase 3a complete)
 Branch: feature/UX-846-rename-engagement-canonical
-Cumulative estimated spend: ~95K (Phase 0 + Phase 1 + Phase 2; budget 280K hard cap, 200K soft stop)
+Cumulative estimated spend: ~125K (Phase 0 + 1 + 2 + 3a; budget 280K hard cap, 200K soft stop)
 
 > mock-data-v1/index.js is the public API entry point for both engagement and distribution dashboards.
 

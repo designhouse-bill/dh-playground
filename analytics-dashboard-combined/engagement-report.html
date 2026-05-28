@@ -228,20 +228,23 @@
         <!-- Row 1: 4 KPI tiles (equal). Click → ?tab=<kpi>. -->
         <div class="ep-report-overview__row ep-report-overview__row--kpi">
 
-          <a class="ep-kpi-cell ep-kpi-cell--equal" href="engagement-report.html?tab=performance" data-jump-to="performance">
+          <!-- PHASE 3a (UX-846): data-driven render against MockData.getAggregate().
+               IDs added on metric, value, delta, donut svg, total. Render fn
+               rewrites SVG path d="…" attributes + delta + value on init + dashboard:dataRefresh. -->
+          <a id="ep-perf-score-panel" class="ep-kpi-cell ep-kpi-cell--equal" href="engagement-report.html?tab=performance" data-jump-to="performance">
             <div class="ep-kpi-cell__head">
               <div class="ep-kpi-cell__title">
                 <h3 class="ep-kpi-cell__story">Performance Score</h3>
               </div>
               <div>
-                <div class="ep-kpi-cell__metric">V/C/A composite · Week 47</div>
+                <div id="ep-perf-score-metric" class="ep-kpi-cell__metric">V/C/A composite · Week 47</div>
               </div>
               <div style="text-align:right;">
-                <div class="ep-kpi-cell__value">142.8K</div>
-                <div class="ep-kpi-cell__delta ep-kpi-cell__delta--up" title="Versus last week">▲ 5.8%<span class="ep-kpi-cell__delta-vs">vs last week</span></div>
+                <div id="ep-perf-score-value" class="ep-kpi-cell__value">142.8K</div>
+                <div id="ep-perf-score-delta" class="ep-kpi-cell__delta ep-kpi-cell__delta--up" title="Versus last week">▲ 5.8%<span class="ep-kpi-cell__delta-vs">vs last week</span></div>
               </div>
             </div>
-            <div class="ep-kpi-cell__chart ep-kpi-cell__chart--perf">
+            <div id="ep-perf-score-chart" class="ep-kpi-cell__chart ep-kpi-cell__chart--perf">
               <svg class="ep-perf-donut-svg" viewBox="0 0 200 200" aria-label="Performance Score V/C/A composite">
                 <path class="ep-perf-donut-svg__slice ep-perf-donut-svg__slice--v" data-perf-hover data-perf-title="Performance Score · Week 47" data-perf-rows='[{"dot":"views","name":"Views","weight":"×1","val":"80,170","score":"80,170 pts"}]' data-perf-total='{"label":"Total Score","val":"142,800"}' d="M 100.00 10.00 A 90 90 0 1 1 66.34 183.47 L 81.30 146.37 A 50 50 0 1 0 100.00 50.00 Z" fill="var(--series-v, #2196F3)"></path>
                 <path class="ep-perf-donut-svg__slice ep-perf-donut-svg__slice--c" data-perf-hover data-perf-title="Performance Score · Week 47" data-perf-rows='[{"dot":"clicks","name":"Clicks","weight":"×5","val":"8,006","score":"40,030 pts"}]' data-perf-total='{"label":"Total Score","val":"142,800"}' d="M 66.34 183.47 A 90 90 0 0 1 24.31 51.30 L 57.95 72.94 A 50 50 0 0 0 81.30 146.37 Z" fill="var(--series-c, #f59e0b)"></path>
@@ -259,21 +262,21 @@
           <!-- Phase 3a (UX-846): replaced legacy "Total Users (N/R/E split)"
                with "Total Users by Store" per Max 05/14 + Gemini decision.
                GA can't reconcile N/R/E for this widget — slice by store. -->
-          <a class="ep-kpi-cell ep-kpi-cell--equal" href="engagement-report.html?tab=users" data-jump-to="users">
+          <a id="ep-users-panel" class="ep-kpi-cell ep-kpi-cell--equal" href="engagement-report.html?tab=users" data-jump-to="users">
             <div class="ep-kpi-cell__head">
               <div class="ep-kpi-cell__title">
                 <h3 class="ep-kpi-cell__story">Total Users by Store</h3>
               </div>
               <div>
-                <div class="ep-kpi-cell__metric">Total · Week 47 · top stores</div>
+                <div id="ep-users-metric" class="ep-kpi-cell__metric">Total · Week 47 · top stores</div>
               </div>
               <div style="text-align:right;">
-                <div class="ep-kpi-cell__value">12,460</div>
-                <div class="ep-kpi-cell__delta ep-kpi-cell__delta--up" title="Versus last week">▲ 3.1%<span class="ep-kpi-cell__delta-vs">vs last week</span></div>
+                <div id="ep-users-value" class="ep-kpi-cell__value">12,460</div>
+                <div id="ep-users-delta" class="ep-kpi-cell__delta ep-kpi-cell__delta--up" title="Versus last week">▲ 3.1%<span class="ep-kpi-cell__delta-vs">vs last week</span></div>
               </div>
             </div>
             <div class="ep-kpi-cell__chart">
-              <ol class="ep-users-by-store">
+              <ol id="ep-users-by-store-list" class="ep-users-by-store">
                 <li class="ep-users-by-store__row" data-perf-hover data-perf-title="WinnDixie 481 · Week 47" data-perf-rows='[{"name":"Users","val":"1,524"}]' data-perf-total='{"label":"Total Users","val":"12,460"}'>
                   <span class="ep-users-by-store__name">WinnDixie 481</span>
                   <span class="ep-users-by-store__track"><span class="ep-users-by-store__fill" style="width:100%;"></span></span>
@@ -305,21 +308,21 @@
             <span class="ep-kpi-cell__view">Open Total Users <span class="material-symbols-outlined">chevron_right</span></span>
           </a>
 
-          <a class="ep-kpi-cell ep-kpi-cell--equal" href="engagement-report.html?tab=sessions" data-jump-to="sessions">
+          <a id="ep-sessions-panel" class="ep-kpi-cell ep-kpi-cell--equal" href="engagement-report.html?tab=sessions" data-jump-to="sessions">
             <div class="ep-kpi-cell__head">
               <div class="ep-kpi-cell__title">
                 <h3 class="ep-kpi-cell__story">Sessions</h3>
               </div>
               <div>
-                <div class="ep-kpi-cell__metric">Total · Week 47 · by day</div>
+                <div id="ep-sessions-metric" class="ep-kpi-cell__metric">Total · Week 47 · by day</div>
               </div>
               <div style="text-align:right;">
-                <div class="ep-kpi-cell__value">78,542</div>
-                <div class="ep-kpi-cell__delta ep-kpi-cell__delta--up" title="Versus last week">▲ 4.2%<span class="ep-kpi-cell__delta-vs">vs last week</span></div>
+                <div id="ep-sessions-value" class="ep-kpi-cell__value">78,542</div>
+                <div id="ep-sessions-delta" class="ep-kpi-cell__delta ep-kpi-cell__delta--up" title="Versus last week">▲ 4.2%<span class="ep-kpi-cell__delta-vs">vs last week</span></div>
               </div>
             </div>
             <div class="ep-kpi-cell__chart">
-              <div class="ep-mini-dow" aria-label="Sessions per day of week">
+              <div id="ep-sessions-dow" class="ep-mini-dow" aria-label="Sessions per day of week">
                 <div class="ep-mini-dow__col" data-perf-hover data-perf-title="Sessions · Week 47" data-perf-rows='[{"dot":"day","name":"Monday, Nov 17","val":"9,840"}]'><div class="ep-mini-dow__bar" style="height:62%"></div><span class="ep-mini-dow__lbl">M</span></div>
                 <div class="ep-mini-dow__col" data-perf-hover data-perf-title="Sessions · Week 47" data-perf-rows='[{"dot":"day","name":"Tuesday, Nov 18","val":"7,510"}]'><div class="ep-mini-dow__bar" style="height:48%"></div><span class="ep-mini-dow__lbl">T</span></div>
                 <div class="ep-mini-dow__col" data-perf-hover data-perf-title="Sessions · Week 47" data-perf-rows='[{"dot":"day","name":"Wednesday, Nov 19","val":"8,620"}]'><div class="ep-mini-dow__bar" style="height:55%"></div><span class="ep-mini-dow__lbl">W</span></div>
@@ -333,21 +336,21 @@
             <span class="ep-kpi-cell__view">Open Sessions <span class="material-symbols-outlined">chevron_right</span></span>
           </a>
 
-          <a class="ep-kpi-cell ep-kpi-cell--equal" href="engagement-report.html?tab=duration" data-jump-to="duration">
+          <a id="ep-duration-panel" class="ep-kpi-cell ep-kpi-cell--equal" href="engagement-report.html?tab=duration" data-jump-to="duration">
             <div class="ep-kpi-cell__head">
               <div class="ep-kpi-cell__title">
                 <h3 class="ep-kpi-cell__story">Avg Duration</h3>
               </div>
               <div>
-                <div class="ep-kpi-cell__metric">Per session · device share</div>
+                <div id="ep-duration-metric" class="ep-kpi-cell__metric">Per session · device share</div>
               </div>
               <div style="text-align:right;">
-                <div class="ep-kpi-cell__value">6m 8s</div>
-                <div class="ep-kpi-cell__delta ep-kpi-cell__delta--down" title="Versus last week">▼ 1.5%<span class="ep-kpi-cell__delta-vs">vs last week</span></div>
+                <div id="ep-duration-value" class="ep-kpi-cell__value">6m 8s</div>
+                <div id="ep-duration-delta" class="ep-kpi-cell__delta ep-kpi-cell__delta--down" title="Versus last week">▼ 1.5%<span class="ep-kpi-cell__delta-vs">vs last week</span></div>
               </div>
             </div>
             <div class="ep-kpi-cell__chart">
-              <div class="ep-mini-device">
+              <div id="ep-duration-device" class="ep-mini-device">
                 <div class="ep-mini-device__row" data-perf-hover data-perf-title="Avg Duration · Week 47" data-perf-rows='[{"dot":"device","name":"Mobile","val":"7m 12s"},{"dot":"device","name":"54,200 sessions","val":"69% of time","score":"▲ 1.2%"}]'><span class="ep-mini-device__lbl">Mobile</span><div class="ep-mini-device__bar"><div class="ep-mini-device__fill" style="width:100%"></div></div><span class="ep-mini-device__val">7m 12s</span></div>
                 <div class="ep-mini-device__row" data-perf-hover data-perf-title="Avg Duration · Week 47" data-perf-rows='[{"dot":"device","name":"Desktop","val":"5m 02s"},{"dot":"device","name":"14,800 sessions","val":"14% of time","score":"▼ 0.4%"}]'><span class="ep-mini-device__lbl">Desktop</span><div class="ep-mini-device__bar"><div class="ep-mini-device__fill" style="width:70%"></div></div><span class="ep-mini-device__val">5m 02s</span></div>
                 <div class="ep-mini-device__row" data-perf-hover data-perf-title="Avg Duration · Week 47" data-perf-rows='[{"dot":"device","name":"Tablet","val":"4m 31s"},{"dot":"device","name":"7,300 sessions","val":"6% of time","score":"▼ 2.1%"}]'><span class="ep-mini-device__lbl">Tablet</span><div class="ep-mini-device__bar"><div class="ep-mini-device__fill" style="width:63%"></div></div><span class="ep-mini-device__val">4m 31s</span></div>
@@ -819,9 +822,13 @@
       wirePanelClick();
       // Phase 0 dry-run: data-driven Top Stores render
       renderTopStoresFromAggregate();
+      // Phase 3a (UX-846): 4 row-1 chart-cells data-driven
+      renderRow1FromAggregate();
     });
     // Phase 0 (UX-846): re-render Top Stores on context change.
     document.addEventListener('dashboard:dataRefresh', renderTopStoresFromAggregate);
+    // Phase 3a (UX-846): re-render row-1 cells on context change.
+    document.addEventListener('dashboard:dataRefresh', renderRow1FromAggregate);
 
     function renderTopStoresFromAggregate() {
       if (!window.MockData || !window.MockData.v1) return;
@@ -862,6 +869,244 @@
     function formatK(n) {
       if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
       return String(n);
+    }
+
+    // ============================================================
+    // Phase 3a (UX-846): row-1 chart-cells data-driven render.
+    // 4 widgets: Perf Score donut, Total Users by Store, Sessions DoW, Avg Duration device-strip.
+    // Reads MockData.getAggregate({entityId, weekId}); handles sync OR Promise return.
+    // Re-renders on 'dashboard:dataRefresh'. No echarts on this row — all SVG/HTML.
+    // ============================================================
+    function renderRow1FromAggregate() {
+      if (!window.MockData) return;
+      const ctx = (window.MockData.currentContext && window.MockData.currentContext())
+        || (window.MockData.v1 && window.MockData.v1.currentContext && window.MockData.v1.currentContext())
+        || { entityId: 'brand-ideal-foods', weekId: 'week-47' };
+      const result = window.MockData.getAggregate
+        ? window.MockData.getAggregate(ctx)
+        : (window.MockData.v1 && window.MockData.v1.getAggregate(ctx));
+      // PHASE-3A-ASSUMPTION: getAggregate may return sync or Promise (see mock-data-v1/index.js).
+      // Wrap in Promise.resolve so both paths converge.
+      Promise.resolve(result).then(applyRow1).catch(function (err) {
+        // Surface but don't break the page — placeholders stay visible.
+        console.warn('[Phase 3a] getAggregate failed; row-1 placeholders retained.', err);
+      });
+    }
+
+    function applyRow1(agg) {
+      if (!agg || !agg.engagement) return;
+      const eng = agg.engagement;
+      const wkLabel = (agg.week && (agg.week.label || ('Week ' + agg.week.num))) || 'Week 47';
+      try { renderPerfScoreCell(eng, wkLabel); } catch (e) { console.warn('[Phase 3a] perf-score render failed', e); }
+      try { renderUsersByStoreCell(eng, wkLabel); } catch (e) { console.warn('[Phase 3a] users render failed', e); }
+      try { renderSessionsDowCell(eng, wkLabel, agg.week); } catch (e) { console.warn('[Phase 3a] sessions render failed', e); }
+      try { renderDurationDeviceCell(eng, wkLabel); } catch (e) { console.warn('[Phase 3a] duration render failed', e); }
+    }
+
+    // ----- Performance Score (donut + V/C/A pills + hero value/delta) -----
+    function renderPerfScoreCell(eng, wkLabel) {
+      const totals = eng.totals || {};
+      const perf = eng.perfScore || {};
+      const v = totals.views || 0, c = totals.clicks || 0, a = totals.addToListCount || 0;
+      // Score-weighted segments: views×1, clicks×5, adds×20 (per schema §6.1 totalScore).
+      const sv = v * 1, sc = c * 5, sa = a * 20;
+      const sum = sv + sc + sa || 1;
+      const segs = [sv / sum, sc / sum, sa / sum];
+
+      const panel = document.getElementById('ep-perf-score-panel');
+      if (!panel) return;
+      const slices = panel.querySelectorAll('.ep-perf-donut-svg__slice');
+      // Build 3 annulus-arc path 'd' values. Outer r=90, inner r=50, center (100,100). Start at 12 o'clock.
+      let startAngle = -Math.PI / 2; // -90deg
+      const newDs = segs.map(function (frac) {
+        const sweep = frac * Math.PI * 2;
+        const endAngle = startAngle + sweep;
+        const d = annulusArcD(100, 100, 90, 50, startAngle, endAngle);
+        startAngle = endAngle;
+        return d;
+      });
+      slices.forEach(function (slice, i) {
+        if (newDs[i]) slice.setAttribute('d', newDs[i]);
+      });
+
+      // Update data-perf-rows tooltips with live counts.
+      if (slices[0]) slices[0].setAttribute('data-perf-rows', JSON.stringify([{ dot: 'views', name: 'Views', weight: '×1', val: fmtNum(v), score: fmtNum(sv) + ' pts' }]));
+      if (slices[1]) slices[1].setAttribute('data-perf-rows', JSON.stringify([{ dot: 'clicks', name: 'Clicks', weight: '×5', val: fmtNum(c), score: fmtNum(sc) + ' pts' }]));
+      if (slices[2]) slices[2].setAttribute('data-perf-rows', JSON.stringify([{ dot: 'adds', name: 'Adds', weight: '×20', val: fmtNum(a), score: fmtNum(sa) + ' pts' }]));
+      const total = totals.totalScore || sum;
+      slices.forEach(function (s) {
+        s.setAttribute('data-perf-total', JSON.stringify({ label: 'Total Score', val: fmtNum(total) }));
+        s.setAttribute('data-perf-title', 'Performance Score · ' + wkLabel);
+      });
+
+      // Hero value + delta (Phase 3c will replace hero-strip; we update the inline value here so source data is reachable).
+      setEl('ep-perf-score-value', formatK(perf.value || total));
+      setDelta('ep-perf-score-delta', perf.deltaPct, perf.deltaDirection);
+      setEl('ep-perf-score-metric', 'V/C/A composite · ' + wkLabel);
+    }
+
+    // Build SVG 'd' for an annulus arc (donut slice). Angles in radians, math convention.
+    function annulusArcD(cx, cy, rOuter, rInner, a0, a1) {
+      const x0o = cx + rOuter * Math.cos(a0), y0o = cy + rOuter * Math.sin(a0);
+      const x1o = cx + rOuter * Math.cos(a1), y1o = cy + rOuter * Math.sin(a1);
+      const x0i = cx + rInner * Math.cos(a0), y0i = cy + rInner * Math.sin(a0);
+      const x1i = cx + rInner * Math.cos(a1), y1i = cy + rInner * Math.sin(a1);
+      const largeArc = (a1 - a0) > Math.PI ? 1 : 0;
+      return [
+        'M', x0o.toFixed(2), y0o.toFixed(2),
+        'A', rOuter, rOuter, 0, largeArc, 1, x1o.toFixed(2), y1o.toFixed(2),
+        'L', x1i.toFixed(2), y1i.toFixed(2),
+        'A', rInner, rInner, 0, largeArc, 0, x0i.toFixed(2), y0i.toFixed(2),
+        'Z'
+      ].join(' ');
+    }
+
+    // ----- Total Users by Store (5-row bar list) -----
+    function renderUsersByStoreCell(eng, wkLabel) {
+      const tu = eng.totalUsers || {};
+      const rows = (tu.byStore || []).slice(0, 5);
+      const list = document.getElementById('ep-users-by-store-list');
+      if (!list) return;
+      const max = rows.length ? Math.max.apply(null, rows.map(function (r) { return r.users || 0; })) : 1;
+      const frag = document.createDocumentFragment();
+      rows.forEach(function (r) {
+        const li = document.createElement('li');
+        li.className = 'ep-users-by-store__row';
+        li.setAttribute('data-perf-hover', '');
+        li.setAttribute('data-perf-title', (r.storeName || '') + ' · ' + wkLabel);
+        li.setAttribute('data-perf-rows', JSON.stringify([{ name: 'Users', val: fmtNum(r.users) }]));
+        li.setAttribute('data-perf-total', JSON.stringify({ label: 'Total Users', val: fmtNum(tu.value || 0) }));
+        const widthPct = max ? Math.round((r.users / max) * 100) : 0;
+        li.innerHTML =
+          '<span class="ep-users-by-store__name">' + escapeHtml(r.storeName || '') + '</span>' +
+          '<span class="ep-users-by-store__track"><span class="ep-users-by-store__fill" style="width:' + widthPct + '%;"></span></span>' +
+          '<span class="ep-users-by-store__val">' + fmtNum(r.users) + '</span>';
+        frag.appendChild(li);
+      });
+      list.replaceChildren(frag);
+
+      setEl('ep-users-value', fmtNum(tu.value || 0));
+      setDelta('ep-users-delta', tu.deltaPct, tu.deltaDirection);
+      setEl('ep-users-metric', 'Total · ' + wkLabel + ' · top stores');
+    }
+
+    // ----- Sessions (DoW mini-chart) -----
+    function renderSessionsDowCell(eng, wkLabel, week) {
+      const sess = eng.sessions || {};
+      // PHASE-3A-ASSUMPTION: schema byDayOfWeek is [Mon..Sun] (length 7) per §6.1.
+      // Existing static HTML rendered M/T/W/T/F/S/S in that order — matches.
+      const dow = sess.byDayOfWeek || [];
+      const container = document.getElementById('ep-sessions-dow');
+      if (!container) return;
+      const labels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+      const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+      const max = dow.length ? Math.max.apply(null, dow) : 1;
+      // PHASE-3A-ASSUMPTION: peak day gets --peak modifier (matches static HTML pattern, Saturday in the seed).
+      const peakIdx = dow.indexOf(max);
+      const startDate = (week && week.startDate) ? new Date(week.startDate + 'T00:00:00') : null;
+      const frag = document.createDocumentFragment();
+      labels.forEach(function (lbl, i) {
+        const v = dow[i] || 0;
+        const col = document.createElement('div');
+        col.className = 'ep-mini-dow__col';
+        col.setAttribute('data-perf-hover', '');
+        col.setAttribute('data-perf-title', 'Sessions · ' + wkLabel);
+        // Compose a day-of-week date label if possible.
+        let dayLabel = dayNames[i];
+        if (startDate) {
+          // PHASE-3A-ASSUMPTION: schema weeks run Tue→Mon (§3); byDayOfWeek is Mon-first.
+          // startDate is Tuesday; Monday is +6 days; Tue=+0; Wed=+1; ...; Sun=+5; Mon=+6.
+          // Index 0 (Mon) → +6; index 1 (Tue) → +0; index 2 (Wed) → +1; ...; index 6 (Sun) → +5.
+          const offset = i === 0 ? 6 : i - 1;
+          const d = new Date(startDate.getTime() + offset * 86400000);
+          const mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
+          dayLabel = dayNames[i] + ', ' + mo + ' ' + d.getDate();
+        }
+        col.setAttribute('data-perf-rows', JSON.stringify([{ dot: 'day', name: dayLabel, val: fmtNum(v) }]));
+        const heightPct = max ? Math.round((v / max) * 100) : 0;
+        const barClass = (i === peakIdx) ? 'ep-mini-dow__bar ep-mini-dow__bar--peak' : 'ep-mini-dow__bar';
+        col.innerHTML =
+          '<div class="' + barClass + '" style="height:' + heightPct + '%"></div>' +
+          '<span class="ep-mini-dow__lbl">' + lbl + '</span>';
+        frag.appendChild(col);
+      });
+      container.replaceChildren(frag);
+
+      setEl('ep-sessions-value', fmtNum(sess.value || 0));
+      setDelta('ep-sessions-delta', sess.deltaPct, sess.deltaDirection);
+      setEl('ep-sessions-metric', 'Total · ' + wkLabel + ' · by day');
+    }
+
+    // ----- Avg Duration (device-strip) -----
+    function renderDurationDeviceCell(eng, wkLabel) {
+      const ad = eng.avgDuration || {};
+      const rows = (ad.byDevice || []);
+      const container = document.getElementById('ep-duration-device');
+      if (!container) return;
+      const maxSecs = rows.length ? Math.max.apply(null, rows.map(function (r) { return r.seconds || 0; })) : 1;
+      const labelMap = { mobile: 'Mobile', desktop: 'Desktop', tablet: 'Tablet', other: 'Other' };
+      const frag = document.createDocumentFragment();
+      rows.forEach(function (r) {
+        const row = document.createElement('div');
+        row.className = 'ep-mini-device__row';
+        row.setAttribute('data-perf-hover', '');
+        row.setAttribute('data-perf-title', 'Avg Duration · ' + wkLabel);
+        const lbl = labelMap[r.device] || (r.device ? (r.device[0].toUpperCase() + r.device.slice(1)) : 'Other');
+        const widthPct = maxSecs ? Math.round((r.seconds / maxSecs) * 100) : 0;
+        const sharePct = Math.round((r.proportion || 0) * 100);
+        const deltaStr = formatDeltaInline(r.deltaPct);
+        row.setAttribute('data-perf-rows', JSON.stringify([
+          { dot: 'device', name: lbl, val: formatDuration(r.seconds) },
+          { dot: 'device', name: fmtNum(r.sessions) + ' sessions', val: sharePct + '% of time', score: deltaStr }
+        ]));
+        row.innerHTML =
+          '<span class="ep-mini-device__lbl">' + lbl + '</span>' +
+          '<div class="ep-mini-device__bar"><div class="ep-mini-device__fill" style="width:' + widthPct + '%"></div></div>' +
+          '<span class="ep-mini-device__val">' + formatDuration(r.seconds) + '</span>';
+        frag.appendChild(row);
+      });
+      container.replaceChildren(frag);
+
+      setEl('ep-duration-value', ad.formatted || formatDuration(ad.seconds || 0));
+      setDelta('ep-duration-delta', ad.deltaPct, ad.deltaDirection);
+      setEl('ep-duration-metric', 'Per session · device share');
+    }
+
+    // ----- helpers -----
+    function setEl(id, text) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      // Preserve any trailing <span class="ep-kpi-cell__delta-vs"> child? — only used by delta. For metric/value, plain text is fine.
+      el.textContent = text;
+    }
+    function setDelta(id, deltaPct, direction) {
+      const el = document.getElementById(id);
+      if (!el || deltaPct == null) return;
+      const dir = direction || (deltaPct > 0 ? 'up' : (deltaPct < 0 ? 'down' : 'flat'));
+      el.classList.remove('ep-kpi-cell__delta--up', 'ep-kpi-cell__delta--down', 'ep-kpi-cell__delta--flat');
+      el.classList.add('ep-kpi-cell__delta--' + dir);
+      const arrow = dir === 'up' ? '▲' : (dir === 'down' ? '▼' : '·');
+      const pct = Math.abs(deltaPct * 100).toFixed(1);
+      el.innerHTML = arrow + ' ' + pct + '%<span class="ep-kpi-cell__delta-vs">vs last week</span>';
+    }
+    function fmtNum(n) {
+      if (n == null) return '0';
+      return Number(n).toLocaleString('en-US');
+    }
+    function formatDuration(secs) {
+      secs = Math.max(0, Math.round(secs || 0));
+      const m = Math.floor(secs / 60), s = secs % 60;
+      return m + 'm ' + (s < 10 ? '0' + s : s) + 's';
+    }
+    function formatDeltaInline(deltaPct) {
+      if (deltaPct == null) return '';
+      const arrow = deltaPct > 0 ? '▲' : (deltaPct < 0 ? '▼' : '·');
+      return arrow + ' ' + Math.abs(deltaPct * 100).toFixed(1) + '%';
+    }
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, function (ch) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+      });
     }
     // PN1/PN2: any .ep-top5-panel[data-href] becomes fully clickable. The
     // bottom-pinned `.ep-kpi-cell__view` span is the visual affordance; the

@@ -432,8 +432,8 @@
        ============================================================ -->
   <script src="js/vendor/echarts.min.js"></script>
   <script src="js/shared/chart-colors.js"></script>
-  <!-- PHASE 4 (UX-846): defer 40MB load (was render-blocking) --><script src="js/data/engagement-promotions.js" defer></script>
-  <script src="js/data/engagement-mock-data.js"></script>
+  <!-- PHASE 4 (UX-846): defer reverted — sync consumers (data-service.js reads window.MockData.promotions at init) --><script src="js/data/engagement-promotions.js"></script>
+  <script src="js/data/engagement-mock-data.js?v=fix1"></script>
   <script src="js/engagement/cache-manager.js"></script>
   <script src="js/engagement/data-service.js"></script>
   <script src="js/engagement/state-manager.js"></script>

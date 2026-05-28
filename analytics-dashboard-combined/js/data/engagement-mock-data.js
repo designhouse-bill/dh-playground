@@ -424,11 +424,16 @@ const MockData = (() => {
   }
 
   function getStoreIdsForEntity(entityId, entityLevel) {
-    if (entityLevel === 'all' || entityId === 'all') {
+    // PHASE-5-FIX: callers pass mixed level naming (modal `data-level="subbrand"`,
+    // hierarchy `subBrand`, legacy `sub-brand`). Normalize before compare so
+    // entity filter actually filters instead of silently returning all stores.
+    const lvl = (entityLevel || '').toString().toLowerCase().replace(/[-_\s]/g, '');
+
+    if (lvl === 'all' || entityId === 'all') {
       return getAllStores().map(s => s.id);
     }
 
-    if (entityLevel === 'brand') {
+    if (lvl === 'brand') {
       const brand = brands.find(b => b.id === entityId);
       if (!brand) return [];
       const storeIds = [];
@@ -438,7 +443,7 @@ const MockData = (() => {
       return storeIds;
     }
 
-    if (entityLevel === 'sub-brand') {
+    if (lvl === 'subbrand') {
       for (const brand of brands) {
         const subBrand = brand.subBrands.find(sb => sb.id === entityId);
         if (subBrand) {
@@ -448,8 +453,14 @@ const MockData = (() => {
       return [];
     }
 
-    if (entityLevel === 'store') {
+    if (lvl === 'store') {
       return [entityId];
+    }
+
+    if (lvl === 'group') {
+      const groups = (buildEntitiesStructure().groups) || [];
+      const group = groups.find(g => g.id === entityId);
+      return group && Array.isArray(group.storeIds) ? group.storeIds.slice() : [];
     }
 
     return getAllStores().map(s => s.id);

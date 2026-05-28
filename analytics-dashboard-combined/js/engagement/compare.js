@@ -114,12 +114,17 @@ const ComparePage = (function() {
    * Restore compare state from stored state
    */
   function restoreCompareState() {
+    // PHASE-5-FIX: Fresh-session entry should show main entity + current week,
+    // not last batch's A/B picks. sessionStorage flag survives same-tab reload
+    // but not new tab / new browser session. URL params (?weekA=, ?entityA=)
+    // still take precedence — see block below.
+    const SESSION_FLAG = 'compare:visited';
+    const isFreshSession = !sessionStorage.getItem(SESSION_FLAG);
+    sessionStorage.setItem(SESSION_FLAG, '1');
+
     const savedCompare = state.compareMode;
-    if (savedCompare) {
-      // Always land on Circulars; stored A/B context (week/entity) is still
-      // honored so users don't lose their selected periods/entities on reload.
-      // Only an explicit ?layer= URL param can switch to Categories/Promotions
-      // (handled below).
+    if (savedCompare && !isFreshSession) {
+      // Same-tab reload: honor stored A/B so user doesn't lose selections.
       currentLayer = 'circulars';
       if (savedCompare.contextA) {
         Object.assign(contextA, savedCompare.contextA);
@@ -127,6 +132,11 @@ const ComparePage = (function() {
       if (savedCompare.contextB) {
         Object.assign(contextB, savedCompare.contextB);
       }
+    } else if (isFreshSession) {
+      // Fresh session: drop stale persisted compareMode so main-context
+      // fallback (lines ~197+) seeds A from state.selectedWeekId / currentEntity.
+      currentLayer = 'circulars';
+      state.compareMode = null;
     }
 
     // Read URL parameters (URL takes precedence over saved state)
@@ -1154,12 +1164,19 @@ const ComparePage = (function() {
 
     // Initialize performance charts after DOM is updated
     if (window.PerfCharts) {
-      // Scale both bars against the same max engagement score so widths are directly comparable
-      const metricsA = dataA?.metrics || {};
-      const metricsB = dataB?.metrics || {};
-      const maxTotal = Math.max(metricsA.engagementScore || 0, metricsB.engagementScore || 0) || 1;
+      // PHASE-5-FIX: maxTotal must match buildChartOption's weighted points
+      // (views×1 + clicks×5 + adds×20), not engagementScore (composite).
+      // Old code used composite (~21K) but stacked-bar series sum to ~2.6M →
+      // xAxis.max overflowed 100× and segments collapsed visually.
+      const chartContainers = Array.from(document.querySelectorAll('.perf-chart[data-views]'));
+      const weightedTotal = el => {
+        const v = parseInt(el.dataset.views, 10)  || 0;
+        const c = parseInt(el.dataset.clicks, 10) || 0;
+        const a = parseInt(el.dataset.adds, 10)   || 0;
+        return v * 1 + c * 5 + a * 20;
+      };
+      const maxTotal = Math.max(1, ...chartContainers.map(weightedTotal));
 
-      const chartContainers = document.querySelectorAll('.perf-chart[data-views]');
       chartContainers.forEach(container => {
         const data = {
           views:     parseInt(container.dataset.views, 10)     || 0,

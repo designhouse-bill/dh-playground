@@ -494,7 +494,7 @@
   border-top: 1px solid var(--color-border);
   border-bottom: 1px solid var(--color-border);
   border-right: 1px solid var(--color-border);
-  margin-left: - var(--space-5);
+  margin-left: calc(-1 * var(--space-5));
   border-radius: var(--radius-md);
 }
 .segment-wrapper {
@@ -6283,4 +6283,6 @@ body:not(.comparison-active) .detail-comparison {
 .ep-device-strip__lbl--desktop::before { background: var(--series-c, #f59e0b); }
 .ep-device-strip__lbl--tablet::before  { background: var(--series-a, #22c55e); }
 .ep-device-strip__lbl--other::before   { background: #94a3b8; }
+
+} /* end #engagement-dashboard */
 

@@ -333,6 +333,17 @@
         }
         if (target === 'store' && window._odStoreChart) window._odStoreChart.resize();
         if (target === 'trend' && window._odTrendChart) window._odTrendChart.resize();
+        // UX-846 (2026-05-28): Current pane donuts init at 0 width while
+        // pane is display:none; lazy-init on first activation and resize
+        // donuts that were built before pane became visible.
+        if (target === 'current') {
+          if (!window._odCurrentRendered) {
+            renderCurrent();
+            window._odCurrentRendered = true;
+          } else if (Array.isArray(window._odDonutCharts)) {
+            window._odDonutCharts.forEach(function (c) { if (c) c.resize(); });
+          }
+        }
       }
       tabs.forEach(function (tab) {
         tab.addEventListener('click', function () { activate(tab.dataset.distSub); });
@@ -411,6 +422,9 @@
       el.appendChild(holder);
 
       var chart = echarts.init(holder);
+      // Track for resize on tab activation (donuts init in hidden pane)
+      window._odDonutCharts = window._odDonutCharts || [];
+      window._odDonutCharts.push(chart);
       var data = dim.cats.map(function (label, i) {
         return {
           name: label,
@@ -695,7 +709,9 @@
 
     document.addEventListener('DOMContentLoaded', function () {
       initTabs();
-      renderCurrent();
+      // UX-846: renderCurrent() moved to lazy-init inside activate('current').
+      // Eager render was happening while Current pane was display:none,
+      // causing echarts donuts to init at 0 width.
       renderTileRow('od-tile-row-store', currentStoreDim, function (dim) {
         currentStoreDim = dim;
         renderStoreChart(dim);

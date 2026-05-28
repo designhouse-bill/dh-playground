@@ -174,8 +174,8 @@
                 <div class="stat-strip__value-row">
                   <p class="narrative-header__sentence">
                     This ran at
-                    <span class="ep-cohort-pill" id="dist-cohort-note-media">                      <strong class="ep-cohort-pill__count">83 of 83 stores</strong>
-                    </span></p>
+                    <span class="ep-cohort-pill" id="dist-cohort-note-media">                      <strong class="ep-cohort-pill__count" id="pm-cohort-count">83 of 83 stores</strong>
+                    </span><span id="pm-cohort-campaign-suffix"></span></p>
                     <p><strong><span id="subtitle-date-week-media">Week 47</span></strong>
                       <em>(<span id="subtitle-date-range-media">Nov 17 – Nov 23, 2026</span>)</em>
                     </p>
@@ -231,11 +231,6 @@
             <button type="button" class="view-toggle__btn active" data-pm-metric="ctr" role="tab" aria-selected="true">CTR</button>
             <button type="button" class="view-toggle__btn" data-pm-metric="clicks" role="tab" aria-selected="false">Clicks</button>
             <button type="button" class="view-toggle__btn" data-pm-metric="impressions" role="tab" aria-selected="false">Impressions</button>
-          </div>
-          <div class="dist-tree-actions" data-show-on-sub="creative">
-            <button class="dist-tree-action-btn" id="pm-export-btn" title="Export"><span class="material-symbols-outlined">download</span> Export</button>
-            <button class="dist-tree-action-btn" id="pm-print-btn" title="Print"><span class="material-symbols-outlined">print</span> Print</button>
-            <button class="dist-tree-action-btn" id="pm-share-btn" title="Share"><span class="material-symbols-outlined">share</span> Share</button>
           </div>
         </div>
 
@@ -444,6 +439,17 @@
       'Infrequent Customers':{ vol: 0.55, ctr: 0.85 },
       'Retargeting':         { vol: 0.35, ctr: 1.85 },
       'META & Competitors':  { vol: 0.20, ctr: 2.40 }
+    };
+    // UX-846 (2026-05-28): per-campaign store reach. Hero cohort sentence
+    // updates from "83 of 83 stores" to active campaign's reach so user
+    // sees campaign filter reflected at the top of the page.
+    var PM_TOTAL_STORES = 83;
+    var CAMPAIGN_REACH = {
+      'All Campaigns':       83,
+      'Regular Customers':   83,
+      'Infrequent Customers':71,
+      'Retargeting':         27,
+      'META & Competitors':  12
     };
     function buildStoreRows(mult) {
       return baseStoreRows.map(function (r) {
@@ -1064,6 +1070,16 @@
       renderStoreTable(storeBtn ? storeBtn.dataset.pmMetric : 'ctr');
       renderTrendChart();
       renderVariantPanels();
+      updateCohortByCampaign(name);
+    }
+    // UX-846 (2026-05-28): write per-campaign reach + campaign-name suffix
+    // into hero cohort sentence so chip clicks reflect at top of page.
+    function updateCohortByCampaign(name) {
+      var reach = CAMPAIGN_REACH[name] != null ? CAMPAIGN_REACH[name] : PM_TOTAL_STORES;
+      var countEl  = document.getElementById('pm-cohort-count');
+      var suffixEl = document.getElementById('pm-cohort-campaign-suffix');
+      if (countEl)  countEl.textContent  = reach + ' of ' + PM_TOTAL_STORES + ' store' + (PM_TOTAL_STORES === 1 ? '' : 's');
+      if (suffixEl) suffixEl.textContent = (name && name !== 'All Campaigns') ? ' · ' + name : '';
     }
     function initCampaignDropdowns() {
       buildCampaignChips();
@@ -1087,6 +1103,7 @@
       initSeriesPills();
       initRangePresets();
       initCampaignDropdowns();
+      updateCohortByCampaign(pmSelectedCampaign || 'All Campaigns');
     });
   })();
   </script>

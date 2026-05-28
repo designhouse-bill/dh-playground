@@ -1,8 +1,8 @@
 # UX-846 Unified Data Layer — Build State
 
-Last updated: 2026-05-27 (Phase 3b complete)
+Last updated: 2026-05-27 (Phase 3c complete)
 Branch: feature/UX-846-rename-engagement-canonical
-Cumulative estimated spend: ~150K (Phase 0 + 1 + 2 + 3a + 3b; budget 280K hard cap, 200K soft stop)
+Cumulative estimated spend: ~175K (Phase 0 + 1 + 2 + 3a + 3b + 3c; budget 280K hard cap, 200K soft stop)
 
 > mock-data-v1/index.js is the public API entry point for both engagement and distribution dashboards.
 
@@ -20,7 +20,7 @@ Cumulative estimated spend: ~150K (Phase 0 + 1 + 2 + 3a + 3b; budget 280K hard c
 | 2 | Row-generator + module index | **done** | a35de1c | ~20K | row-generator.js (FNV-1a + mulberry32, 75 promos / 5 creatives / 8 crossover). index.js replaces Phase 0 stub: top-level MockData API + LRU cache (cap 12) + lazy aggregates.json fetch. `.v1` namespace preserved as compat shim for engagement-report.html. PHASE-2-ASSUMPTION markers inline. |
 | 3a | 4 row-1 chart-cells | **done** | b4cd004 | ~35K | Perf/Users/Sessions/Duration converted to MockData-driven render; listens dashboard:dataRefresh; echarts setOption pattern. Subagent stopped pre-commit; main thread committed. |
 | 3b | 3 Top-5 panels (Stores/Cats/Promos) | **done** | 2d3acea | ~25K | Generic `renderTop5PanelsFromAggregate` replaces Phase 0 `renderTopStoresFromAggregate`. All 3 panels driven by aggregate.engagement.{topStores,topCategories,topPromotions}. DocumentFragment + replaceChildren. Per-row href from `row.href`. Panel-level data-href stays static (schema §6.1 has no panel-href field). Async via Promise.resolve. **Key-delimiter mismatch worked around:** aggregates.json uses `entityId\|weekId` keys but index.js builds `entityId:weekId`; getAggregate() returns null → fallback reads `_internal.loadAggregates()` and looks up with `\|`. Should be fixed in index.js (out of scope for this phase). |
-| 3c | Coupon/PageNav + hero strip | pending | — | — | Subagent. Budget 30K. |
+| 3c | Coupon/PageNav + hero strip | **done** | fa3f4f6 | ~25K | Coupon/PageNav extend `renderTop5PanelsFromAggregate` (same fallback `_internal.loadAggregates()` workaround as 3b — `|` vs `:` key delimiter still unfixed). Aggregate `topCouponClips`/`topPageNavigation` ship empty in v1 aggregates.json (schema §6.1 example line 621-622) → static placeholder rows remain until row-generator populates them; wire verified. Hero stat-strip: Overview → cohort sentence from `eng.cohort` + `agg.week`; performance/users/sessions/duration → `heroItemHTML(label, value, deltaPct, deltaDir)`. Active tab read from URL `?tab=` first, falls back to `.perf-tab.active`. No event dispatched by canonical-shell-tabs.js → delegated click listener on `#ep-perf-tabs` calls `renderHeroStatStripFromCache` (setTimeout 0 so canonical-shell-tabs.js toggles class first). `_heroAggCache` avoids re-fetching aggregate per tab click. |
 | 4 | Perf pass | pending | — | — | Subagent. Budget 30K. |
 | 5 | Polish + final hand-off | pending | — | — | Main thread. Budget 20K. |
 

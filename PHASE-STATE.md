@@ -1,8 +1,8 @@
 # UX-846 Unified Data Layer — Build State
 
-Last updated: 2026-05-27 (Phase 3a complete)
+Last updated: 2026-05-27 (Phase 3b complete)
 Branch: feature/UX-846-rename-engagement-canonical
-Cumulative estimated spend: ~125K (Phase 0 + 1 + 2 + 3a; budget 280K hard cap, 200K soft stop)
+Cumulative estimated spend: ~150K (Phase 0 + 1 + 2 + 3a + 3b; budget 280K hard cap, 200K soft stop)
 
 > mock-data-v1/index.js is the public API entry point for both engagement and distribution dashboards.
 
@@ -19,7 +19,7 @@ Cumulative estimated spend: ~125K (Phase 0 + 1 + 2 + 3a; budget 280K hard cap, 2
 | 1 | Build script + aggregates.json | **done** | df78f1f | ~45K | 637 payloads (49 entities × 13 weeks), 7.0MB. Schema-mandated all-fields shape — <1MB target relaxed to "all fields present" per §6.3. |
 | 2 | Row-generator + module index | **done** | a35de1c | ~20K | row-generator.js (FNV-1a + mulberry32, 75 promos / 5 creatives / 8 crossover). index.js replaces Phase 0 stub: top-level MockData API + LRU cache (cap 12) + lazy aggregates.json fetch. `.v1` namespace preserved as compat shim for engagement-report.html. PHASE-2-ASSUMPTION markers inline. |
 | 3a | 4 row-1 chart-cells | **done** | b4cd004 | ~35K | Perf/Users/Sessions/Duration converted to MockData-driven render; listens dashboard:dataRefresh; echarts setOption pattern. Subagent stopped pre-commit; main thread committed. |
-| 3b | 3 Top-5 panels (Stores/Cats/Promos) | pending | — | — | Subagent. Budget 30K. Phase 0 already converted Top Stores — extend to Cats + Promos. |
+| 3b | 3 Top-5 panels (Stores/Cats/Promos) | **done** | 2d3acea | ~25K | Generic `renderTop5PanelsFromAggregate` replaces Phase 0 `renderTopStoresFromAggregate`. All 3 panels driven by aggregate.engagement.{topStores,topCategories,topPromotions}. DocumentFragment + replaceChildren. Per-row href from `row.href`. Panel-level data-href stays static (schema §6.1 has no panel-href field). Async via Promise.resolve. **Key-delimiter mismatch worked around:** aggregates.json uses `entityId\|weekId` keys but index.js builds `entityId:weekId`; getAggregate() returns null → fallback reads `_internal.loadAggregates()` and looks up with `\|`. Should be fixed in index.js (out of scope for this phase). |
 | 3c | Coupon/PageNav + hero strip | pending | — | — | Subagent. Budget 30K. |
 | 4 | Perf pass | pending | — | — | Subagent. Budget 30K. |
 | 5 | Polish + final hand-off | pending | — | — | Main thread. Budget 20K. |

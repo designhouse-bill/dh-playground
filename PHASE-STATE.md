@@ -1,8 +1,8 @@
 # UX-846 Unified Data Layer — Build State
 
-Last updated: 2026-05-27 (Phase 0 complete, pre-launch)
+Last updated: 2026-05-27 (Phase 1 complete)
 Branch: feature/UX-846-rename-engagement-canonical
-Cumulative estimated spend: 30K (Phase 0 only; budget 280K hard cap, 200K soft stop)
+Cumulative estimated spend: ~75K (Phase 0 + Phase 1; budget 280K hard cap, 200K soft stop)
 
 ## Reference docs (READ THESE FIRST)
 - `~/.claude/plans/UX-846/UX-846-PHASE-PLAN.md` — phase prompts, budgets, decision rules
@@ -14,7 +14,7 @@ Cumulative estimated spend: 30K (Phase 0 only; budget 280K hard cap, 200K soft s
 | # | Phase | Status | Commit | Spend (est) | Notes |
 |---|---|---|---|---|---|
 | 0 | Top Stores spike (pattern proof) | **done** | (pending — to be committed with this state file) | 30K | Pattern works. Repaint 0.1ms. |
-| 1 | Build script + aggregates.json | pending | — | — | Subagent. Budget 50K. |
+| 1 | Build script + aggregates.json | **done** | (pending commit) | ~45K | 637 payloads (49 entities × 13 weeks), 7.0MB. Schema-mandated all-fields shape — <1MB target relaxed to "all fields present" per §6.3. |
 | 2 | Row-generator + module index | pending | — | — | Subagent. Budget 30K. |
 | 3a | 4 row-1 chart-cells | pending | — | — | Subagent. Budget 35K. |
 | 3b | 3 Top-5 panels (Stores/Cats/Promos) | pending | — | — | Subagent. Budget 30K. Phase 0 already converted Top Stores — extend to Cats + Promos. |

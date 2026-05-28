@@ -5924,3 +5924,32 @@ body[data-dist-page] .narrative-header__title {
   .pm-campaign-dropdown__label,
   .ov-store-dropdown__label { max-width: none; flex: 1; }
 }
+
+/* ============================================================
+   Pilot-data banner (UX-846, 2026-05-28)
+   Distribution pages render Q1 2026 pilot mock data, distinct
+   from engagement (Nov 2025). Banner sets demo expectations.
+   ============================================================ */
+.dist-pilot-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  margin: 0 var(--space-6) var(--space-4);
+  background: var(--color-info-bg, #eff6ff);
+  border: 1px solid var(--color-info-border, #bfdbfe);
+  border-radius: var(--radius-md, 6px);
+  color: var(--color-info-text, #1e40af);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+.dist-pilot-banner__icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.dist-pilot-banner__text {
+  flex: 1;
+}
+.dist-pilot-banner__text strong {
+  font-weight: 600;
+}

@@ -24,6 +24,53 @@
 
 ---
 
+## Lock Legend
+
+Every pattern entry carries one of three states. State is stamped at the top of the entry — `🔒 LOCKED 2026-05-29 (Adam Portal Review)`, `📝 DRAFT`, or `🆕 NEW`.
+
+| State | Meaning | Mutability |
+|-------|---------|------------|
+| 🔒 **LOCKED `<date> (<meeting-ref>)`** | Stakeholder-accepted at the referenced review. The DOM / class / token shape is a contract with the future Angular port. | Verbatim required. Touch only with an explicit "unlock `<pattern-id>`" instruction from Bill, paired with a same-commit catalog update. |
+| 📝 **DRAFT** | Built, awaiting next stakeholder review. The shape is plausible but not contractual yet. | Mutable. Iterate freely; revisit at the next review for promotion to 🔒 or revision. |
+| 🆕 **NEW** | Being added in the current ticket. Has not survived any review. | Mutable, but must pass both gates (see Change Protocol) before merge. |
+
+**Infra-LOCKED nuance.** Infra entries (e.g. `PerfCharts.createChart`, `dashboard:dataRefresh` event, storage keys, type contracts) lock the **contract** — signature, event name, payload shape — NOT the implementation. Internals can be refactored without unlocking, as long as the contract holds.
+
+---
+
+## Change Protocol
+
+Two gates run before any pattern edit lands. Skip either → drift.
+
+**Gate A — Lock check (don't break accepted shape):**
+1. Grep target file classes / tokens against every 🔒 LOCKED entry.
+2. Overlap with a LOCKED entry → reuse it. No "v2" class, no parallel token, no shadow component.
+3. If the LOCKED shape genuinely cannot accommodate the new requirement → STOP, surface to Bill, get an explicit "unlock `<pattern-id>`" before continuing.
+
+**Gate B — Pattern reuse (don't fork existing canonical):**
+1. Grep for the same job already done — by canonical name, by role, by where-used hint.
+2. 80% fit → extend the canonical entry with a variant subsection. Don't fork into a new top-level pattern.
+3. < 80% fit and genuinely novel → add a new entry stamped `🆕 NEW` in the same commit that introduces the code.
+
+**Review → lock cycle.** After every stakeholder review that touches patterns in this file:
+1. Diff what was shown vs. the prior accepted state.
+2. Promote each accepted `🆕 NEW` / `📝 DRAFT` entry → `🔒 LOCKED <date> (<meeting-ref>)` in the SAME session.
+3. Commit message: `lock: <pattern-ids> per <stakeholder> YYYY-MM-DD`.
+4. Add a row to the Meeting Ledger below.
+5. From that point on, edits to the locked entries require an explicit unlock.
+
+---
+
+## Meeting Ledger
+
+Append-only log of stakeholder reviews that locked patterns. Use this to audit which review a contract traces back to.
+
+| Date | Meeting | Patterns locked |
+|------|---------|-----------------|
+| _(none yet — first ledger entry will follow the next review-driven lock pass.)_ | | |
+
+---
+
 # 1. Page shell
 
 ## 1.1 .context-row (canonical)

@@ -20,6 +20,8 @@
   <link rel="stylesheet" href="css/detail-panel.css">
   <link rel="stylesheet" href="css/engagement.css">
   <link rel="stylesheet" href="css/distribution.css?v=44">
+  <!-- UX-846 L0: configurable KPI cell grid styles -->
+  <link rel="stylesheet" href="css/dashboard-grid.css?v=1">
 </head>
 <body>
 
@@ -167,15 +169,32 @@
        HOME / LANDING SCREEN
        ============================================================ -->
   <main id="home-dashboard" class="dashboard-content active">
-    <div class="home-screen">
+    <div class="home-screen home-screen--kpi-grid">
 
-      <div class="home-hero">
-        <p class="home-eyebrow">Analytics Dashboard</p>
-        <h2 class="home-heading">What would you like to explore?</h2>
-        <p class="home-subheading">Select a dashboard below to get started.</p>
+      <!-- L0 hero row: title + mode switcher + customize -->
+      <div class="dash-hero-row">
+        <div class="dash-hero-row__left">
+          <p class="home-eyebrow">Analytics Dashboard</p>
+          <h2 class="home-heading">Your overview</h2>
+        </div>
+        <div class="dash-hero-row__right">
+          <!-- Mode switcher: Engagement | Distribution | Combined (default) -->
+          <div class="dash-mode-switcher" id="dash-mode-switcher" role="tablist" aria-label="Dashboard mode">
+            <button class="dash-mode-btn" data-dash-mode="engagement"   role="tab" aria-selected="false">Engagement</button>
+            <button class="dash-mode-btn" data-dash-mode="distribution" role="tab" aria-selected="false">Distribution</button>
+            <button class="dash-mode-btn active" data-dash-mode="combined" role="tab" aria-selected="true">Combined</button>
+          </div>
+          <button class="dash-customize-btn" id="dash-customize-btn" type="button" aria-label="Customize dashboard cells">
+            <span class="material-symbols-outlined">tune</span> Customize
+          </button>
+        </div>
       </div>
 
-      <div class="home-cards">
+      <!-- L0 KPI cell grid — rendered by js/index/dashboard-app.js from CELL_REGISTRY -->
+      <div class="dash-cell-grid" id="dash-cell-grid" role="region" aria-label="Dashboard cells"></div>
+
+      <!-- Legacy product cards — kept as fallback (hidden by default; remove once L0 ships and Adam signs off) -->
+      <div class="home-cards" data-legacy hidden>
 
         <div class="home-card" data-dashboard="engagement" role="button" tabindex="0" aria-label="Open Engagement dashboard">
           <div class="home-card__icon home-card__icon--engagement">
@@ -721,6 +740,11 @@
 
   <!-- Scroll-aware header hide/reveal (DC2 HeaderSlideService port) -->
   <script src="js/header-slide.js"></script>
+
+  <!-- UX-846 L0: configurable KPI cell registry + dashboard app -->
+  <script src="js/index/dashboard-registry.js?v=1"></script>
+  <script src="js/index/dashboard-app.js?v=1"></script>
+
   <!-- Main controller (last) -->
   <script src="js/app.js"></script>
 

@@ -1,12 +1,15 @@
 /* ============================================================
-   UX-846 L0 — Dashboard app (prototype)
+   UX-846 L0 — Dashboard app
 
    Boots the configurable KPI cell grid on index.html.
    - Reads mode + cell order from localStorage (key: dashboard-cells-v1)
    - Renders cells via CELL_REGISTRY (see dashboard-registry.js)
-   - Wires mode switcher (Engagement / Distribution / Combined)
+   - Wires mode switcher (Engagement / Distribution / Combined) using
+     the LOCKED .perf-tabs / .perf-tab grammar — same pattern used by
+     Engagement Report. No custom segmented control.
+   - Updates stat-strip cohort sentence (cell count + mode label)
    - Re-renders on dashboard:dataRefresh
-   - Customize modal stubbed — TODO once viz lands
+   - Customize button stubbed; modal lands next iteration.
 
    Angular port: replace fn refs with KpiCellRegistry service +
    ngComponentOutlet. See memory pin
@@ -16,7 +19,13 @@
   'use strict';
 
   var STORAGE_KEY = 'dashboard-cells-v1';
-  var DEFAULT_CONFIG = { mode: 'combined', cells: null }; // null cells = use defaults
+  var DEFAULT_CONFIG = { mode: 'combined', cells: null };
+
+  var MODE_LABELS = {
+    engagement:   'Engagement view',
+    distribution: 'Distribution view',
+    combined:     'Combined view'
+  };
 
   function loadConfig() {
     try {
@@ -33,6 +42,13 @@
     catch (e) { console.warn('dashboard-app: failed to persist config', e); }
   }
 
+  function updateStatStrip(cfg, cellCount) {
+    var countEl = document.getElementById('dash-cell-count');
+    var labelEl = document.getElementById('dash-mode-label');
+    if (countEl) countEl.textContent = cellCount + ' cell' + (cellCount === 1 ? '' : 's');
+    if (labelEl) labelEl.textContent = MODE_LABELS[cfg.mode] || 'Combined view';
+  }
+
   function renderGrid(cfg) {
     var grid = document.getElementById('dash-cell-grid');
     if (!grid || typeof window.getDashboardCells !== 'function') return;
@@ -40,6 +56,7 @@
     var cells = window.getDashboardCells(cfg.mode, cfg.cells);
     if (!cells.length) {
       grid.innerHTML = '<div class="dash-empty">No cells enabled for this mode. Use Customize to add cells.</div>';
+      updateStatStrip(cfg, 0);
       return;
     }
 
@@ -55,29 +72,30 @@
 
     grid.setAttribute('data-mode', cfg.mode);
     grid.setAttribute('data-cell-count', cells.length);
+    updateStatStrip(cfg, cells.length);
   }
 
   function initModeSwitcher(cfg) {
-    var switcher = document.getElementById('dash-mode-switcher');
-    if (!switcher) return;
+    var tabs = document.getElementById('dash-mode-tabs');
+    if (!tabs) return;
 
-    // Reflect current mode in active button
-    switcher.querySelectorAll('.dash-mode-btn').forEach(function (btn) {
+    // Sync visual active state to current cfg (perf-tab--active is the locked class)
+    tabs.querySelectorAll('.perf-tab').forEach(function (btn) {
       var on = btn.dataset.dashMode === cfg.mode;
-      btn.classList.toggle('active', on);
+      btn.classList.toggle('perf-tab--active', on);
       btn.setAttribute('aria-selected', on ? 'true' : 'false');
     });
 
-    switcher.addEventListener('click', function (e) {
-      var btn = e.target.closest('.dash-mode-btn');
+    tabs.addEventListener('click', function (e) {
+      var btn = e.target.closest('.perf-tab[data-dash-mode]');
       if (!btn) return;
       var mode = btn.dataset.dashMode;
       if (!mode || mode === cfg.mode) return;
       cfg.mode = mode;
       saveConfig(cfg);
-      switcher.querySelectorAll('.dash-mode-btn').forEach(function (b) {
+      tabs.querySelectorAll('.perf-tab').forEach(function (b) {
         var on = b === btn;
-        b.classList.toggle('active', on);
+        b.classList.toggle('perf-tab--active', on);
         b.setAttribute('aria-selected', on ? 'true' : 'false');
       });
       renderGrid(cfg);
@@ -102,8 +120,6 @@
     initModeSwitcher(cfg);
     initCustomizeBtn(cfg);
     renderGrid(cfg);
-
-    // Re-render on shared data refresh (existing event used across pages)
     document.addEventListener('dashboard:dataRefresh', function () { renderGrid(cfg); });
   }
 

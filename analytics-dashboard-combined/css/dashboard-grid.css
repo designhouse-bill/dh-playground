@@ -1,125 +1,33 @@
 /* ============================================================
-   UX-846 L0 — Dashboard grid styles (prototype)
+   UX-846 L0 — Dashboard scoping styles (prototype)
 
-   Layout + chrome for the configurable KPI cell grid on index.html.
-   ep-kpi-cell styles ship from analytics-architecture.css.
-   This file = container + mode switcher + customize btn + placeholder.
+   Tiny overlay. All structural styles come from locked sources:
+   - .hero-stat + .narrative-header + .stat-strip → analytics-architecture.css
+   - .perf-tabs + .perf-tab[--active|--filled]     → analytics-architecture.css
+   - .ep-report-overview + __row--kpi              → analytics-architecture.css
+   - .ep-kpi-cell + all viz bodies                 → analytics-architecture.css
+
+   This file adds ONLY:
+   - empty / error states for the cell grid
+   - top-level padding on the dashboard main (Engagement Report
+     inherits page padding from its own layout)
    ============================================================ */
 
-.home-screen--kpi-grid {
+#home-dashboard {
   padding: 24px 32px 48px;
   max-width: 1440px;
   margin: 0 auto;
 }
 
-.dash-hero-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 24px;
+#home-dashboard .hero-stat {
+  margin-bottom: 16px;
 }
 
-.dash-hero-row__left { display: flex; flex-direction: column; gap: 4px; }
-.dash-hero-row__right { display: flex; align-items: center; gap: 12px; }
-
-/* ── Mode switcher (segmented control) ────────────────────────── */
-.dash-mode-switcher {
-  display: inline-flex;
-  background: var(--p-surface-card, #fff);
-  border: 1px solid var(--p-surface-border, #e5e7eb);
-  border-radius: 8px;
-  padding: 4px;
-  gap: 4px;
+#home-dashboard #dash-mode-tabs {
+  margin-bottom: 20px;
 }
 
-.dash-mode-btn {
-  appearance: none;
-  border: 0;
-  background: transparent;
-  font: inherit;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--p-text-color-secondary, #6b7280);
-  padding: 6px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 120ms, color 120ms;
-}
-
-.dash-mode-btn:hover { background: var(--p-surface-hover, #f3f4f6); color: var(--p-text-color, #1f2937); }
-
-.dash-mode-btn.active {
-  background: var(--p-primary-color, #2196F3);
-  color: var(--p-primary-color-text, #fff);
-}
-
-/* ── Customize button ─────────────────────────────────────────── */
-.dash-customize-btn {
-  appearance: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--p-surface-card, #fff);
-  border: 1px solid var(--p-surface-border, #e5e7eb);
-  border-radius: 6px;
-  font: inherit;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--p-text-color, #1f2937);
-  padding: 6px 12px;
-  cursor: pointer;
-  transition: background 120ms;
-}
-
-.dash-customize-btn:hover { background: var(--p-surface-hover, #f3f4f6); }
-.dash-customize-btn .material-symbols-outlined { font-size: 18px; }
-
-/* ── Grid ─────────────────────────────────────────────────────── */
-.dash-cell-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
-}
-
-/* Distribution-only / Engagement-only — 4 cells fit one row at lg, two rows at md */
-.dash-cell-grid[data-mode="engagement"],
-.dash-cell-grid[data-mode="distribution"] {
-  /* Same 4-col grid; cell count just dictates row count */
-}
-
-/* Combined = 12 cells → 4×3 at lg */
-
-@media (max-width: 1100px) {
-  .dash-cell-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-
-@media (max-width: 640px) {
-  .dash-cell-grid { grid-template-columns: 1fr; }
-}
-
-/* ── Cell scaffold placeholder (until viz lands per-cell) ──────── */
-.ep-kpi-cell__placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 120px;
-  border: 1px dashed var(--p-surface-border, #e5e7eb);
-  border-radius: 6px;
-  color: var(--p-text-color-muted, #9ca3af);
-  font-size: 12px;
-  font-style: italic;
-  background: repeating-linear-gradient(
-    45deg,
-    transparent,
-    transparent 8px,
-    rgba(0,0,0,0.02) 8px,
-    rgba(0,0,0,0.02) 16px
-  );
-}
-
-/* ── States ───────────────────────────────────────────────────── */
+/* Empty / error fallback states inside the cell grid row */
 .dash-empty,
 .dash-cell-error {
   grid-column: 1 / -1;
@@ -131,4 +39,7 @@
   border-radius: 8px;
 }
 
-.dash-cell-error { color: var(--p-red-500, #ef4444); border-color: var(--p-red-500, #ef4444); }
+.dash-cell-error {
+  color: var(--p-red-500, #ef4444);
+  border-color: var(--p-red-500, #ef4444);
+}

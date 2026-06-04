@@ -73,41 +73,17 @@
           </div>
         </div>
 
-        <!-- Distribution Section Tabs (left-aligned, shown only when Distribution active) -->
-        <div class="dist-section-tabs" id="dist-section-tabs" style="display:none">
-          <button class="dist-tab active" data-section="section-visitation">
-            <span class="material-symbols-outlined">store</span>
-            Observed Store Visits
-          </button>
-          <button class="dist-tab" data-section="section-media">
-            <span class="material-symbols-outlined">campaign</span>
-            Media Buy
-          </button>
-          <button class="dist-tab" data-section="section-traffic">
-            <span class="material-symbols-outlined">trending_up</span>
-            Traffic Share
-          </button>
-        </div>
+        <!-- UX-846 L0 (2026-06-04): dist-section-tabs + view-modes dropped on index.
+             Dashboard is product-neutral; per-product nav lives on section pages. -->
 
-      </div>
-
-      <!-- View Modes: Engagement only — hidden when Distribution is active -->
-      <div class="view-modes" id="view-modes">
-        <button class="mode-btn mode-btn--primary active" data-mode="base" id="mode-btn-base" aria-label="Report view">
-          <span class="material-symbols-outlined">view_list</span>
-          REPORT
-        </button>
-        <button class="mode-btn mode-btn--outline" data-mode="grid" id="mode-btn-grid" aria-label="Explore view">
-          <span class="material-symbols-outlined">table_chart</span>
-          EXPLORE
-        </button>
-        <button class="mode-btn mode-btn--outline" data-mode="compare" id="mode-btn-compare" aria-label="Comparison view">
-          <span class="material-symbols-outlined">compare</span>
-          COMPARE
-        </button>
       </div>
 
       <div class="topbar__actions">
+        <!-- UX-846 L0: Customize sits next to Share, matches locked topbar__actions pattern. -->
+        <button class="header-share-btn" id="dash-customize-btn" type="button" aria-label="Customize dashboard cells">
+          <span class="material-symbols-outlined">tune</span>
+          Customize
+        </button>
         <button class="header-share-btn" id="header-share-btn">
           <span class="material-symbols-outlined">share</span>
           Share
@@ -151,15 +127,8 @@
         </div>
       </button>
 
-      <div class="filter-group">
-        <div class="filter-label">Filters</div>
-        <div class="filter-chips" id="filter-chips">
-          <button class="add-filter" id="add-filter-btn" aria-label="Add filter">
-            <span class="material-symbols-outlined">add</span>
-            Add Filter
-          </button>
-        </div>
-      </div>
+      <!-- UX-846 L0 (2026-06-04): filters dropped on index dashboard per Report-mode pattern;
+           filtering lives on Explore Data + section pages. -->
 
     </div>
 
@@ -169,57 +138,56 @@
        HOME / LANDING SCREEN
        ============================================================ -->
   <main id="home-dashboard" class="dashboard-content active">
-    <div class="home-screen home-screen--kpi-grid">
 
-      <!-- L0 hero row: title + mode switcher + customize -->
-      <div class="dash-hero-row">
-        <div class="dash-hero-row__left">
-          <p class="home-eyebrow">Analytics Dashboard</p>
-          <h2 class="home-heading">Your overview</h2>
-        </div>
-        <div class="dash-hero-row__right">
-          <!-- Mode switcher: Engagement | Distribution | Combined (default) -->
-          <div class="dash-mode-switcher" id="dash-mode-switcher" role="tablist" aria-label="Dashboard mode">
-            <button class="dash-mode-btn" data-dash-mode="engagement"   role="tab" aria-selected="false">Engagement</button>
-            <button class="dash-mode-btn" data-dash-mode="distribution" role="tab" aria-selected="false">Distribution</button>
-            <button class="dash-mode-btn active" data-dash-mode="combined" role="tab" aria-selected="true">Combined</button>
-          </div>
-          <button class="dash-customize-btn" id="dash-customize-btn" type="button" aria-label="Customize dashboard cells">
-            <span class="material-symbols-outlined">tune</span> Customize
-          </button>
+    <!-- ░░░ Hero-stat (locked sibling pattern: .hero-stat + .narrative-header + .stat-strip) ░░░ -->
+    <div class="hero-stat">
+      <div class="narrative-header">
+        <div class="narrative-header__left">
+          <h4 class="narrative-header__section">Dashboard</h4>
+          <h1 class="narrative-header__title">Overview</h1>
+          <h2 class="narrative-header__question">What's happening across engagement and distribution this week?</h2>
         </div>
       </div>
-
-      <!-- L0 KPI cell grid — rendered by js/index/dashboard-app.js from CELL_REGISTRY -->
-      <div class="dash-cell-grid" id="dash-cell-grid" role="region" aria-label="Dashboard cells"></div>
-
-      <!-- Legacy product cards — kept as fallback (hidden by default; remove once L0 ships and Adam signs off) -->
-      <div class="home-cards" data-legacy hidden>
-
-        <div class="home-card" data-dashboard="engagement" role="button" tabindex="0" aria-label="Open Engagement dashboard">
-          <div class="home-card__icon home-card__icon--engagement">
-            <span class="material-symbols-outlined">monitoring</span>
+      <div class="stat-strip" id="dash-overview-stat-strip">
+        <div class="stat-strip__cards">
+          <div class="stat-strip__item">
+            <div class="stat-strip__value-row">
+              <p class="narrative-header__sentence">
+                Showing
+                <span class="ep-cohort-pill"><strong class="ep-cohort-pill__count" id="dash-cell-count">12 cells</strong></span>
+                for
+                <strong><span id="dash-mode-label">Combined view</span></strong>
+              </p>
+              <p><strong><span id="dash-week-num">Week 47</span></strong>
+                <em>(<span id="dash-week-range">Nov 18 – Nov 24, 2025</span>)</em>
+              </p>
+            </div>
           </div>
-          <div class="home-card__body">
-            <h3 class="home-card__title">Engagement</h3>
-            <p class="home-card__desc">Analyze promotion performance across categories and store locations. Compare items by engagement score, track weekly trends, and explore top-performing stores side by side.</p>
-          </div>
-          <button class="home-card__cta" tabindex="-1">View Engagement</button>
         </div>
-
-        <div class="home-card" data-dashboard="distribution" role="button" tabindex="0" aria-label="Open Distribution dashboard">
-          <div class="home-card__icon home-card__icon--distribution">
-            <span class="material-symbols-outlined">campaign</span>
-          </div>
-          <div class="home-card__body">
-            <h3 class="home-card__title">Distribution</h3>
-            <p class="home-card__desc">Measure the reach and impact of your media spend on store visitation and observed visitation share. Review creative performance, competitive positioning, and store-level results week over week.</p>
-          </div>
-          <button class="home-card__cta" tabindex="-1">View Distribution</button>
-        </div>
-
       </div>
     </div>
+
+    <!-- ░░░ Mode switcher: locked .perf-tabs grammar (Engagement / Distribution / Combined) ░░░ -->
+    <div class="perf-tabs perf-tabs--filled" id="dash-mode-tabs" role="tablist" aria-label="Dashboard mode">
+      <button class="perf-tab" data-dash-mode="engagement" role="tab" aria-selected="false">
+        <span class="material-symbols-outlined">monitoring</span> Engagement
+      </button>
+      <button class="perf-tab" data-dash-mode="distribution" role="tab" aria-selected="false">
+        <span class="material-symbols-outlined">campaign</span> Distribution
+      </button>
+      <button class="perf-tab perf-tab--active" data-dash-mode="combined" role="tab" aria-selected="true">
+        <span class="material-symbols-outlined">dashboard</span> Combined
+      </button>
+    </div>
+
+    <!-- ░░░ KPI cell grid (locked .ep-report-overview container, row of cells) ░░░
+         Cells rendered by js/index/dashboard-app.js from CELL_REGISTRY. Same
+         container the Engagement Overview used pre-strip — cells reuse all
+         locked ep-kpi-cell styles + grid layout from analytics-architecture.css. -->
+    <div class="ep-report-overview" role="group" aria-label="Dashboard cells">
+      <div class="ep-report-overview__row ep-report-overview__row--kpi" id="dash-cell-grid"></div>
+    </div>
+
   </main>
 
   <!-- ============================================================

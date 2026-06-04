@@ -43,3 +43,205 @@
   color: var(--p-red-500, #ef4444);
   border-color: var(--p-red-500, #ef4444);
 }
+
+/* ── Customize modal ──────────────────────────────────────────────
+   Reuses the locked .modal-overlay/.modal/.modal-* class names (§8.1).
+   On index.html the engagement.css `.modal` panel chrome does NOT take
+   effect at runtime — a bare `.modal` here computes transparent + uncapped
+   even though engagement.css loads (200) and its tokens resolve (cause
+   unconfirmed; likely a served-CSS quirk). So the panel + header/body/footer
+   get concrete values scoped to this modal only. */
+#dash-customize-modal .modal {
+  background: var(--p-surface-card, #fff);
+  width: 92%;
+  max-width: 560px;
+  max-height: 84vh;
+  border-radius: 12px;
+  box-shadow: 0 20px 48px -12px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#dash-customize-modal .modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--p-surface-border, #e5e7eb);
+}
+
+#dash-customize-modal .modal-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--p-text-color, #1f2937);
+}
+
+#dash-customize-modal .modal-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: var(--p-text-color-secondary, #6b7280);
+  cursor: pointer;
+}
+
+#dash-customize-modal .modal-close:hover {
+  background: var(--p-surface-hover, #f3f4f6);
+  color: var(--p-text-color, #1f2937);
+}
+
+#dash-customize-modal .modal-body {
+  padding: 20px;
+  overflow: hidden;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+#dash-customize-modal .modal-footer {
+  padding: 14px 20px;
+  border-top: 1px solid var(--p-surface-border, #e5e7eb);
+}
+
+.dash-customize__hint {
+  margin: 0 0 16px;
+  color: var(--p-text-color-secondary, #6b7280);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.dash-customize__list {
+  list-style: none;
+  margin: 0;
+  padding: 0 4px 0 0; /* room for scrollbar without clipping arrows */
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 52vh;
+  overflow-y: auto;
+}
+
+.dash-customize__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--p-surface-border, #e5e7eb);
+  border-radius: 8px;
+  background: var(--p-surface-card, #fff);
+}
+
+.dash-customize__row--off {
+  background: var(--p-surface-ground, #f8f9fa);
+  opacity: 0.72;
+}
+
+.dash-customize__toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 auto;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.dash-customize__toggle input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--p-primary-color, #2196F3);
+  flex: 0 0 auto;
+}
+
+.dash-customize__name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--p-text-color, #1f2937);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dash-customize__product {
+  flex: 0 0 auto;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.dash-customize__product--engagement {
+  color: #1565C0;
+  background: rgba(33, 150, 243, 0.12);
+}
+
+.dash-customize__product--distribution {
+  color: #7c3aed;
+  background: rgba(124, 58, 237, 0.12);
+}
+
+.dash-customize__arrows {
+  flex: 0 0 auto;
+  display: inline-flex;
+  gap: 2px;
+}
+
+.dash-customize__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--p-surface-border, #e5e7eb);
+  border-radius: 6px;
+  background: var(--p-surface-card, #fff);
+  color: var(--p-text-color-secondary, #6b7280);
+  cursor: pointer;
+}
+
+.dash-customize__arrow:hover:not(:disabled) {
+  background: var(--p-surface-hover, #f3f4f6);
+  color: var(--p-text-color, #1f2937);
+}
+
+.dash-customize__arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.dash-customize__arrow .material-symbols-outlined {
+  font-size: 18px;
+}
+
+/* Footer: Reset pinned left, Cancel/Save right */
+.modal-footer--split {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dash-customize__footer-right {
+  display: inline-flex;
+  gap: 8px;
+}
+
+.modal-btn--text {
+  background: none;
+  border: none;
+  color: var(--p-text-color-secondary, #6b7280);
+  cursor: pointer;
+  padding: 8px 4px;
+}
+
+.modal-btn--text:hover {
+  color: var(--p-primary-color, #2196F3);
+  text-decoration: underline;
+}

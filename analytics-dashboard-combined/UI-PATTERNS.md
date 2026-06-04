@@ -67,13 +67,15 @@ Append-only log of stakeholder reviews that locked patterns. Use this to audit w
 
 | Date | Meeting | Patterns locked |
 |------|---------|-----------------|
-| _(none yet — first ledger entry will follow the next review-driven lock pass.)_ | | |
+| 2026-05-29 | Adam Portal Review | §1.1–§11.4 — all page-shell, tab-nav, chart-shell, bar/donut, filter-chip, top-5, modal/overlay, state-persistence, event-bus, and naming patterns shipped into the review. Locked retroactively via the A2 stamp pass (2026-06-04). §7.2 held 📝 DRAFT pending the panel-href schema decision. §12–15 are reference indexes, intentionally unstamped. |
 
 ---
 
 # 1. Page shell
 
 ## 1.1 .context-row (canonical)
+
+> **State:** 🔒 LOCKED 2026-05-29 (Adam Portal Review)
 
 The top entity + date picker row. Same DOM shape across all engagement + distribution pages.
 
@@ -92,6 +94,8 @@ The top entity + date picker row. Same DOM shape across all engagement + distrib
 **Drift:** none currently. Stay 1:1.
 
 ## 1.2 .hero-stat + .narrative-header (canonical)
+
+> **State:** 🔒 LOCKED 2026-05-29 (Adam Portal Review) — shape locked; per-page content drift noted below is expected, not an unlock.
 
 Hero region directly under the header. Question prompt + KPI strip pattern.
 
@@ -120,6 +124,8 @@ Hero region directly under the header. Question prompt + KPI strip pattern.
 
 ## 2.1 .perf-tabs (canonical for KPI tabs)
 
+> **State:** 🔒 LOCKED 2026-05-29 (Adam Portal Review)
+
 Used as the primary nav inside `.chart-card__header-left` on engagement-report.
 
 ```html
@@ -131,6 +137,8 @@ Used as the primary nav inside `.chart-card__header-left` on engagement-report.
 **Where used:** engagement-report (hero KPI tabs), engagement-compare layer-tabs, distribution section tabs.
 
 ## 2.2 .ep-sub-tabs (canonical for chart-card sub-views)
+
+> **State:** 🔒 LOCKED 2026-05-29 (Adam Portal Review) — `data-sub` vs `data-dist-sub` drift stays as documented; unify only via the §14 pre-port ticket, not an ad-hoc rename.
 
 Inside `.chart-card__header-left`, sub-views of a single chart-card.
 
@@ -147,6 +155,8 @@ Sub-panes use `.ep-sub-pane` + `.ep-sub-pane--active`.
 
 ## 2.3 data-show-on-sub (canonical)
 
+> **State:** 🔒 LOCKED 2026-05-29 (Adam Portal Review)
+
 Controls that should only appear for one sub-tab use:
 
 ```html
@@ -155,11 +165,31 @@ Controls that should only appear for one sub-tab use:
 
 Tab-activation handler must toggle `display:none/''` on every `[data-show-on-sub]` child.
 
+## 2.4 dashboard-mode-switcher (index.html L0)
+
+> **State:** 🆕 NEW 2026-06-04 (UX-846 L0) — reuses the LOCKED `.perf-tabs`/`.perf-tab` grammar (§2.1), no custom segmented control. Awaiting Adam round-2.
+
+Mode switcher on `index.html`: Engagement / Distribution / Combined. Same `.perf-tabs` shell as Engagement Report KPI tabs; active = `.perf-tab--active` + `aria-selected`.
+
+```html
+<div class="perf-tabs perf-tabs--filled" id="dash-mode-tabs" role="tablist">
+  <button class="perf-tab" data-dash-mode="engagement" role="tab">…</button>
+  <button class="perf-tab perf-tab--active" data-dash-mode="combined" role="tab">…</button>
+</div>
+```
+
+- Selection persists to `localStorage` key `dashboard-cells-v1` (`{mode, cells}`).
+- Mode is a `product` prefix filter against the registry (§3.3) — no separate render paths.
+
+**Where used:** `index.html` (`js/index/dashboard-app.js`).
+
 ---
 
 # 3. Chart shells
 
 ## 3.1 .chart-card (canonical 3-row contract)
+
+> **State:** 🔒 LOCKED 2026-05-29 (Adam Portal Review) — the 3-row contract is the lock. New chart-cards (e.g. Traffic Share, D2) MUST reuse this shell, not fork it.
 
 Every chart-card has exactly 3 horizontal rows:
 
@@ -186,11 +216,48 @@ Every chart-card has exactly 3 horizontal rows:
 
 **Stack rule:** below 640px viewport, header rows stack. Tested CSS.
 
+## 3.2 .ep-kpi-cell (canonical KPI cell shell)
+
+> **State:** 🔒 LOCKED 2026-05-29 (Adam Portal Review) — shown + accepted as the Engagement Overview cell. **Post-L0.5 (2026-06-04) the Engagement Report Overview pane was stripped; `index.html` dashboard is now the sole surface that hosts `.ep-kpi-cell`.** The shell shape is the contract every dashboard cell reuses verbatim.
+
+```html
+<a class="ep-kpi-cell ep-kpi-cell--equal" href="…" data-story-id="…" data-jump-to="…">
+  <div class="ep-kpi-cell__head">       <!-- story / metric / value / delta -->
+  <div class="ep-kpi-cell__chart">      <!-- per-story viz body -->
+  <span class="ep-kpi-cell__view">Open … <span class="material-symbols-outlined">chevron_right</span></span>
+</a>
+```
+
+- Viz bodies reused across cells: V/C/A donut SVG, ranked-bar list, mini-dow, mini-device.
+- `data-jump-to` carries the destination tab id. **Open item:** distribution destinations don't yet consume it cross-page (engagement honors `?tab=` via `canonical-shell-tabs.js`). See §14 / D-stream.
+
+**Where used:** `index.html` dashboard cells (`js/index/dashboard-registry.js`). Shape pre-L0.5: `engagement-report.html` Overview pane (now removed).
+
+## 3.3 dashboard-cell-registry (index.html L0)
+
+> **State:** 🆕 NEW 2026-06-04 (UX-846 L0) — prototype is a JS object mirroring the Angular `KpiCellRegistry` Injectable + `ngComponentOutlet` shape so the port is mechanical. Awaiting Adam round-2.
+
+```js
+window.CELL_REGISTRY = {
+  '<storyId>': { section, product: 'engagement'|'distribution', render, dataSource, defaultEnabled, defaultOrder }
+};
+window.CELL_LABELS = { '<storyId>': '<display name>' }; // single source for the name
+```
+
+- `getDashboardCells(mode, savedOrder)` — **savedOrder is authoritative**: a cell absent from it is disabled (not appended). New registry cells stay hidden until re-customized (matches admin-config / per-tenant model). Only `null` savedOrder = "never customized" → all cells, default order; an **empty array is a real "all disabled" state** and renders zero cells.
+- `getAllDashboardCells(mode)` — full mode universe for the Customize modal.
+- Render fn emits the LOCKED `.ep-kpi-cell` shell (§3.2); title sourced from `CELL_LABELS`.
+
+**Angular port:** `memory/topics/analytics-kpi-cell-registry-pattern.md`.
+**Where used:** `index.html` (`js/index/dashboard-registry.js`, `dashboard-app.js`).
+
 ---
 
 # 4. Bar charts (V/C/A stacked horizontal)
 
 ## 4.1 PerfCharts.createChart contract
+
+> **State:** 🔒 LOCKED 2026-05-29 (Adam Portal Review) · infra — the call **signature + maxTotal formula** are the contract; internals refactorable without unlock.
 
 ```js
 PerfCharts.createChart(containerId, {
@@ -216,6 +283,8 @@ If you pass `composite` as maxTotal, segments collapse to one color (xAxis overf
 
 ## 4.2 V/C/A palette tokens (canonical)
 
+> **State:** 🔒 LOCKED 2026-05-29 (Adam Portal Review) — token names + color mapping are contract. Traffic Share cohort series reuse `--series-v/c/a`; no parallel palette.
+
 ```
 --series-v   = blue   (Views)
 --series-c   = amber  (Clicks)
@@ -229,6 +298,8 @@ If you pass `composite` as maxTotal, segments collapse to one color (xAxis overf
 # 5. Donut charts
 
 ## 5.1 Lazy-init rule (HARD)
+
+> **State:** 🔒 LOCKED 2026-05-29 (Adam Portal Review) · infra — hard engineering rule. Any new hidden-pane chart (incl. D1 map under a perf-tab) must obey lazy-init / resize-on-activate.
 
 Donut charts inside a hidden pane (`display:none`) **must defer init** until the pane becomes visible, OR resize() the chart on tab activation. echarts grabs zero-width on init in a hidden container and the canvas paints invisible.
 
@@ -245,6 +316,8 @@ function activate(target) {
 **Bug class:** silent layout-time failure where data is correct but render dimensions are wrong. See distribution-demographics commit `8d50093`.
 
 ## 5.2 .od-card (observed-demographics donut shell)
+
+> **State:** 🔒 LOCKED 2026-05-29 (Adam Portal Review)
 
 ```html
 <div class="od-card od-card--donut" data-dim="gender">
@@ -263,6 +336,8 @@ function activate(target) {
 
 ## 6.1 .creative-chip-row + .creative-chip (canonical)
 
+> **State:** 🔒 LOCKED 2026-05-29 (Adam Portal Review)
+
 ```html
 <div class="creative-chips-row" id="pm-campaign-chips-row">
   <button class="creative-chip creative-chip--all creative-chip--active" data-pm-campaign="All Campaigns">...</button>
@@ -278,6 +353,8 @@ function activate(target) {
 
 ## 6.2 Chip-click contract
 
+> **State:** 🔒 LOCKED 2026-05-29 (Adam Portal Review) · infra — behavioral contract (4 steps). Any new chip-filtered surface must update the hero/cohort sentence too.
+
 Picking a chip MUST:
 1. Toggle `--active` + `aria-pressed`
 2. Update the underlying data slice
@@ -291,6 +368,8 @@ Picking a chip MUST:
 # 7. Top-5 panels
 
 ## 7.1 renderTop5PanelsFromAggregate (canonical, engagement-report)
+
+> **State:** 🔒 LOCKED 2026-05-29 (Adam Portal Review) · infra — `Top5Row` shape + DocumentFragment/dataRefresh render rules are contract.
 
 5 panels (Stores / Categories / Promotions / Coupon Clips / Page Navigation) render from the same aggregate slice:
 
@@ -310,6 +389,8 @@ Each `Top5Row` has `{ rank, name, value, metric, href }`. `href` field drives th
 
 ## 7.2 Panel-level data-href
 
+> **State:** 📝 DRAFT — the `data-href` mechanism shipped, but the open schema decision (aggregate-level href field vs. static HTML) is unresolved. Held DRAFT until decided; do not fork a parallel href mechanism in the meantime.
+
 Whole-panel click target. Currently static in HTML (`data-href="engagement-explore-base.html"`). **Drift:** no aggregate-level href field in schema §6.1. Decide: add to schema or keep static.
 
 ---
@@ -318,9 +399,13 @@ Whole-panel click target. Currently static in HTML (`data-href="engagement-explo
 
 ## 8.1 Permanent modal (canonical)
 
+> **State:** 🔒 LOCKED 2026-05-29 (Adam Portal Review)
+
 `.modal-overlay` + `.modal` shells with `data-modal-id="..."`. Open / close handled by `DashboardModals`.
 
 ## 8.2 Demo-only one-shot overlay (canonical)
+
+> **State:** 🔒 LOCKED 2026-05-29 (Adam Portal Review) · infra — the removability convention (single-grep-prefix, no runtime coupling) is the contract.
 
 For temporary scaffolding (e.g. pilot-data notice). Marked with `⚠ DEMO-ONLY · <prefix> · DO NOT PORT TO ANGULAR` comments on all 3 surfaces (HTML, CSS, JS). Single grep target removes everything.
 
@@ -328,11 +413,25 @@ See `js/distribution/dist-pilot-banner.js` for canonical example.
 
 **Rule:** demo-only scaffolding MUST be removable by `grep -rln "<prefix>" | xargs rm/edit` with no runtime coupling to state, services, or other components.
 
+## 8.3 dashboard-customize-modal (index.html L0)
+
+> **State:** 🆕 NEW 2026-06-04 (UX-846 L0) — reuses the LOCKED `.modal-overlay`/`.modal`/`.modal-*` shell (§8.1), no `DashboardModals` fork, no new global. Drag/drop reorder is the deferred stretch. Awaiting Adam round-2.
+
+Toggle cells on/off + up/down reorder + reset; Save → `localStorage` (`dashboard-cells-v1`) → re-render. Built lazily into `<body>` by `dashboard-app.js`.
+
+- Works on a draft copy of the enabled+ordered storyId list; commit on Save, discard on Cancel/Esc/backdrop.
+- Cross-mode safe: saving in one mode preserves the other product's enabled cells.
+- **index.html caveat:** the engagement.css `.modal` panel chrome does not take effect on index at runtime (a bare `.modal` computes transparent/uncapped despite the file loading + tokens resolving; cause unconfirmed), so `#dash-customize-modal .modal` gets explicit chrome in `dashboard-grid.css` — the locked class *names* are reused, values are local.
+
+**Where used:** `index.html` (`js/index/dashboard-app.js`, `css/dashboard-grid.css`).
+
 ---
 
 # 9. State persistence
 
 ## 9.1 sessionStorage (canonical for fresh-session resets)
+
+> **State:** 🔒 LOCKED 2026-05-29 (Adam Portal Review) · infra — choose-the-storage convention.
 
 Use when "new tab / new browser session" should reset state, but "same-tab reload" should preserve.
 
@@ -346,11 +445,15 @@ sessionStorage.setItem(FLAG, '1');
 
 ## 9.2 localStorage (canonical for cross-session persistence)
 
+> **State:** 🔒 LOCKED 2026-05-29 (Adam Portal Review) · infra — distribution-parity drift is a §14 pre-port ticket, not an unlock.
+
 For user preferences and "remember last selection forever." Via `state-manager.js`.
 
 **Drift:** distribution pages do not persist context at all (no `state-manager` wire-up). Engagement does. Cleanup target.
 
 ## 9.3 LRU in-memory cache (canonical for derived data)
+
+> **State:** 🔒 LOCKED 2026-05-29 (Adam Portal Review) · infra — cache key + cap are contract; don't add a parallel cache.
 
 mock-data-v1/index.js caps aggregate cache at 12 entries, keyed `${entityId}|${weekId}`. Don't add a parallel cache; use the LRU.
 
@@ -359,6 +462,8 @@ mock-data-v1/index.js caps aggregate cache at 12 entries, keyed `${entityId}|${w
 # 10. Event bus
 
 ## 10.1 dashboard:dataRefresh (canonical context-change event)
+
+> **State:** 🔒 LOCKED 2026-05-29 (Adam Portal Review) · infra — event name + `detail` payload shape are contract. Distribution non-listen drift is the §14 context-bus ticket.
 
 ```js
 document.dispatchEvent(new CustomEvent('dashboard:dataRefresh', {
@@ -384,6 +489,8 @@ document.addEventListener('dashboard:dataRefresh', handleDataRefresh);
 
 ## 10.2 compare:dateSelected / compare:entitySelected (canonical for compare)
 
+> **State:** 🔒 LOCKED 2026-05-29 (Adam Portal Review) · infra — event names + `detail` shapes are contract.
+
 ```js
 new CustomEvent('compare:dateSelected', {
   detail: { target: 'A' | 'B', weekId, weekLabel, weekRange }
@@ -398,6 +505,8 @@ Both events dispatched by `js/engagement/shared-modals.js`. Handled in `js/engag
 ---
 
 # 11. Naming (HARD rules)
+
+> **State (all of §11):** 🔒 LOCKED 2026-05-29 (Adam Portal Review) · infra — these are type/format contracts for the Angular port. Documented drift normalizes at §14 pre-port tickets; no new spelling without an unlock.
 
 ## 11.1 EntityLevel — canonical: `'all' | 'brand' | 'subBrand' | 'store' | 'group'`
 
@@ -433,6 +542,9 @@ Normalize at filter boundary today (`getStoreIdsForEntity` does this). Lock at t
 ---
 
 # 12. Anti-patterns (don't reach for)
+
+> **§12–15 are reference indexes, not patterns** — anti-pattern table, grep hints, the pre-port drift queue, and the changelog. They carry no lock stamp by design; they describe or point at the stamped entries above.
+
 
 | Anti-pattern | Why | Use instead |
 |---|---|---|
@@ -489,4 +601,12 @@ Pre-port tickets to close before code starts:
 v0.1.0  2026-05-28  Initial draft. Pulled from session retro (UX-846 unattended-run + post-verification debug),
                     existing memory notes (canonical-vca-series-palette, analytics-chart-card-pattern,
                     feedback_consistent_page_architecture), and bugs caught this session.
+v0.1.1  2026-06-04  A2 lock pass. Stamped §1.1–§11.4 🔒 LOCKED 2026-05-29 (Adam Portal Review); §7.2 held
+                    📝 DRAFT pending the panel-href schema decision. Added the Meeting Ledger's first row.
+                    §12–15 flagged as intentionally-unstamped reference. Gate A now has real LOCKED entries
+                    to grep against — required before D2 (Traffic Share) builds on chart-card / dist-section-tabs.
+v0.1.2  2026-06-04  L0 catalog (build-step 8 + L0.5). Added §2.4 dashboard-mode-switcher 🆕, §3.2 .ep-kpi-cell
+                    🔒 (now dashboard-only — Overview stripped in L0.5), §3.3 dashboard-cell-registry 🆕,
+                    §8.3 dashboard-customize-modal 🆕. Closes the Gate-B hole where the shipped L0 registry
+                    had no catalog entry.
 ```

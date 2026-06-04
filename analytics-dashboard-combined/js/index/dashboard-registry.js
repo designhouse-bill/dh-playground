@@ -20,6 +20,29 @@
 (function () {
   'use strict';
 
+  // ── Canonical display names (storyId → label) ──────────────────
+  // Authoritative source for the human-readable cell name: renderCell uses
+  // LABELS[storyId] first, falling back to the render fn's `story:` arg only
+  // if a label is missing — so LABELS wins wherever it's defined, and the
+  // Customize modal reads the same map. (The render fns still pass `story:`
+  // as a fallback; the Angular port should drop those and read label off the
+  // registry entry.)
+  var LABELS = {
+    'media-impact':      'Media Impact',
+    'top-creative':      'Top Creative',
+    'share-of-visits':   'Share of Visits',
+    'competitive-cross': 'Competitive Crossover',
+    'attributed-visits': 'Attributed Visits',
+    'lift-vs-baseline':  'Lift vs Baseline',
+    'audience-profile':  'Audience Profile',
+    'target-match':      'Target Match',
+    'eng-performance':   'Performance Score',
+    'eng-users':         'Total Users by Store',
+    'eng-sessions':      'Sessions',
+    'eng-duration':      'Avg Duration'
+  };
+  window.CELL_LABELS = LABELS;
+
   // ── Shared shell renderer ──────────────────────────────────────
   // Builds the locked ep-kpi-cell wrapper around a body HTML string.
   function renderCell(opts) {
@@ -31,7 +54,7 @@
       + '<a id="' + opts.storyId + '-panel" class="ep-kpi-cell ep-kpi-cell--equal" href="' + opts.href + '" data-story-id="' + opts.storyId + '" data-jump-to="' + (opts.jumpTo || '') + '">'
       +   '<div class="ep-kpi-cell__head">'
       +     '<div class="ep-kpi-cell__title">'
-      +       '<h3 class="ep-kpi-cell__story">' + opts.story + '</h3>'
+      +       '<h3 class="ep-kpi-cell__story">' + (LABELS[opts.storyId] || opts.story || opts.storyId) + '</h3>'
       +     '</div>'
       +     '<div>'
       +       '<div class="ep-kpi-cell__metric">' + opts.metric + '</div>'
@@ -295,7 +318,13 @@
       'eng-sessions':       { metric: 'Total · Week 47 · by day', value: '78,542',        delta: '4.2%',   deltaDir: 'up' },
       'eng-duration':       { metric: 'Per session · device share', value: '6m 8s',       delta: '1.5%',   deltaDir: 'down' }
     };
-    return f[storyId] || { metric: '—', value: '—', delta: '—', deltaDir: 'flat' };
+    if (!f[storyId]) {
+      // Unknown storyId would render a valid-looking em-dash cell that reads
+      // as "no data this week" rather than a wiring bug. Warn so it can't hide.
+      console.warn('dashboard: no mock data for', storyId);
+      return { metric: '—', value: '—', delta: '—', deltaDir: 'flat' };
+    }
+    return f[storyId];
   }
 
   // ── Registry ───────────────────────────────────────────────────
@@ -317,22 +346,41 @@
     'eng-duration':       { section: 'engagement-report', product: 'engagement', render: renderEngDurationCell, dataSource: function () { return mock('eng-duration'); },    defaultEnabled: true, defaultOrder: 12 }
   };
 
-  // Helper for dashboard-app — list entries by mode + saved order
-  window.getDashboardCells = function (mode, savedOrder) {
+  // All registry entries, mode-filtered, default order. Used by the
+  // Customize modal to show the full universe a user can enable/reorder.
+  window.getAllDashboardCells = function (mode) {
     var entries = Object.keys(window.CELL_REGISTRY).map(function (id) {
       return Object.assign({ storyId: id }, window.CELL_REGISTRY[id]);
     });
-
     if (mode === 'engagement')   entries = entries.filter(function (e) { return e.product === 'engagement'; });
     if (mode === 'distribution') entries = entries.filter(function (e) { return e.product === 'distribution'; });
-
-    if (savedOrder && savedOrder.length) {
-      var byId = {};
-      entries.forEach(function (e) { byId[e.storyId] = e; });
-      var ordered = savedOrder.map(function (id) { return byId[id]; }).filter(Boolean);
-      entries.forEach(function (e) { if (savedOrder.indexOf(e.storyId) === -1) ordered.push(e); });
-      return ordered;
-    }
     return entries.sort(function (a, b) { return a.defaultOrder - b.defaultOrder; });
+  };
+
+  // Cells to RENDER for a mode, honoring the saved enabled+ordered set.
+  //
+  // savedOrder is AUTHORITATIVE when present: a cell's absence means the
+  // user disabled it (not "append at the end"). This is what lets the
+  // Customize modal toggle cells off. New registry cells added later stay
+  // hidden until the user re-customizes — same contract as the Angular
+  // admin-config/per-tenant override model.
+  //
+  // ONLY null/undefined savedOrder means "never customized" → all cells in
+  // default order. An EMPTY array is a real state ("user disabled every
+  // cell") and must round-trip as zero enabled — NOT fall through to all.
+  window.getDashboardCells = function (mode, savedOrder) {
+    var entries = window.getAllDashboardCells(mode);
+    if (savedOrder == null) return entries;
+
+    var byId = {};
+    entries.forEach(function (e) { byId[e.storyId] = e; });
+    return savedOrder.map(function (id) {
+      var hit = byId[id];
+      // id absent from this mode's entries: either a legit cross-mode id
+      // (saved in combined, viewed in a single-product mode) or genuinely
+      // unknown. Warn only on the latter so stale/typo'd ids aren't silent.
+      if (!hit && !window.CELL_REGISTRY[id]) console.warn('dashboard: dropping unknown saved cell id', id);
+      return hit;
+    }).filter(Boolean);
   };
 })();

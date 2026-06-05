@@ -1835,20 +1835,15 @@
       stores.sort(function(a, b) { return b.change_pp - a.change_pp; });
     }
 
-    // Build store → top 5 competitors: nearest 10 by distance, then ranked by crossover share desc
+    // Build store → its 5 brand competitors (UX-846 D2). competitorStores now
+    // carries exactly 5 per store (one per canonical brand), bound via threatens[].
+    // Filter by threatens, sort by share desc — one distinct competitor entity each.
     var storeCompMap = {};
-    var validComps = D.competitorStores.filter(function(cs) { return cs.lat && cs.lng; });
+    var allComps = D.competitorStores;
     D.entities.stores.forEach(function(store) {
-      if (!store.lat || !store.lng) return;
-      var withDist = validComps.map(function(cs) {
-        return { cs: cs, dist: haversineDistance(store.lat, store.lng, cs.lat, cs.lng) };
-      });
-      withDist.sort(function(a, b) { return a.dist - b.dist; });
-      // Take nearest 10 for geographic relevance, then rank by crossover share
-      storeCompMap[store.id] = withDist.slice(0, 10)
-        .map(function(x) { return x.cs; })
-        .sort(function(a, b) { return (b.wk2_share || 0) - (a.wk2_share || 0) ; })
-        .slice(0, 5);
+      storeCompMap[store.id] = allComps
+        .filter(function(cs) { return cs.threatens.indexOf(store.id) !== -1; })
+        .sort(function(a, b) { return (b.wk2_share || 0) - (a.wk2_share || 0); });
     });
 
     var sortIcon = function(col) {
@@ -2095,23 +2090,10 @@
     StoreMap.renderStores(stores, storeData);
     StoreMap.fitBounds();
 
-    // Set competitor ranking so pip colors match crossover chart
-    var crossover = D.competitiveCrossover;
-    var seen = {};
-    var rankedNames = [];
-    crossover.forEach(function (c) {
-      if (!seen[c.competitor_name]) {
-        seen[c.competitor_name] = true;
-        rankedNames.push(c.competitor_name);
-      }
-    });
-    rankedNames.sort(function (a, b) {
-      var ac = crossover.find(function (c) { return c.competitor_name === a; });
-      var bc = crossover.find(function (c) { return c.competitor_name === b; });
-      return (bc ? bc.crossover_pct : 0) - (ac ? ac.crossover_pct : 0);
-    });
-    StoreMap.setCompetitorRanking(rankedNames.slice(0, 5));
-
+    // Competitor diamond pips use StoreMap's default brand→color map, which
+    // matches the leaderboard's LEADERBOARD_BRAND_COLORS exactly — so a diamond's
+    // pip color equals its expanded-row pip. (Previously setCompetitorRanking()
+    // reassigned colors by crossover rank, breaking that table↔map parity.)
     var competitorStores = D.competitorStores;
     var storeIds = stores.map(function(s) { return s.id; });
     StoreMap.renderCompetitors(competitorStores, storeIds);
@@ -2349,9 +2331,17 @@
         expandBtn.setAttribute('aria-expanded', String(children.classList.contains('open')));
         return;
       }
+      // Competitor child row → zoom/highlight its diamond marker (parity with store rows).
+      var childRow = e.target.closest('.lb-row--child');
+      if (childRow && childRow.dataset.compId) {
+        table.querySelectorAll('.lb-row--selected').forEach(function(r) { r.classList.remove('lb-row--selected'); });
+        childRow.classList.add('lb-row--selected');
+        if (typeof StoreMap !== 'undefined') StoreMap.highlightCompetitor(childRow.dataset.compId);
+        return;
+      }
       var parentRow = e.target.closest('.lb-row--parent');
       if (!parentRow || !parentRow.dataset.storeId) return;
-      table.querySelectorAll('.lb-row--parent').forEach(function(r) { r.classList.remove('lb-row--selected'); });
+      table.querySelectorAll('.lb-row--selected').forEach(function(r) { r.classList.remove('lb-row--selected'); });
       parentRow.classList.add('lb-row--selected');
       parentRow.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
       if (typeof StoreMap !== 'undefined') StoreMap.highlightStore(parentRow.dataset.storeId);
@@ -3845,6 +3835,26 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     });
   }
 
+  // UX-846 D2: expose map fns for the Traffic Share ep-sub-tabs inline driver.
+  // The Map pane lazy-inits Leaflet on first show (renderMap needs a visible,
+  // sized container) and invalidates size on return.
+  window.DistributionTraffic = {
+    renderMap: function (containerId) { renderMap(containerId || 'store-map'); },
+    invalidateMap: function () {
+      if (typeof StoreMap !== 'undefined' && StoreMap.invalidateSize) StoreMap.invalidateSize();
+    },
+    // UX-846 D2: By Store combined pane (direct lift of the pre-strip store pane) —
+    // leaderboard left + Leaflet map right. Row click → highlightStore + rings;
+    // expand row → competitors in range. Locked to Our Stores.
+    buildStorePane: function () {
+      renderMap('store-map-store-pane');
+      // Show competitor diamonds alongside our stores (renderMap renders them hidden).
+      if (typeof StoreMap !== 'undefined' && StoreMap.toggleCompetitors) StoreMap.toggleCompetitors(true);
+      renderLeaderboardInto(document.getElementById('leaderboard-table-store'), 'ours');
+      bindStoreTabInteractions();
+    }
+  };
+
   window.initDistributionPage = function (section) {
     try {
       initContext();
@@ -3890,8 +3900,8 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         initCrossoverTrendChart();
         initCrossoverTrendPresets();
         updateCrossoverTrendPeriod(4);
-        bindTrafficStoreSelection();
-        initTrafficShareTabs();
+        bindTrafficStoreSelection(); // no-op: legacy #leaderboard-table absent; By Store builds lazily via buildStorePane
+        initTrafficShareTabs();      // no-op when #ts-perf-tabs absent (new ep-sub-tabs shell drives tabs inline)
       }
 
       console.log('Distribution page initialized:', section);

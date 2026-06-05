@@ -6020,3 +6020,13 @@ body[data-dist-page] .narrative-header__title {
   to   { opacity: 0; }
 }
 /* ⚠ END DEMO-ONLY · dist-pilot · DO NOT PORT TO ANGULAR */
+
+/* UX-846 D2 (2026-06-04): Traffic Share has 4 ep-sub-tabs (Time Trend /
+   By Store / by Competitor / Map) vs Observed Visits' 3. The shared
+   .chart-card__header-left caps at max-width:400px and .ep-sub-tabs flex-wraps,
+   which squeezed the 4th tab to a 2nd row and wrapped button text. Scope the
+   fix to traffic: let the header-left grow, keep tabs on one row, and stop the
+   button labels from wrapping. Visitation's 3-tab default stays untouched. */
+#ts-chart-card .chart-card__header-left { max-width: none; }
+#ts-perf-subtabs { flex-wrap: nowrap; }
+#ts-perf-subtabs .ep-sub-tab { white-space: nowrap; flex-shrink: 0; }

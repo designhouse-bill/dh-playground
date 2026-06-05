@@ -521,6 +521,68 @@ const DistributionData = (function() {
   }
 
   // ========================================
+  // Per-store competitors (UX-846 D2 mock-data)
+  // ----------------------------------------
+  // Each of our stores competes against the 5 canonical competitor brands —
+  // the same set shown on the "by Competitor" crossover tab. The hand-authored
+  // Records.COMPETITOR_STORES set was location-based and brand-skewed (25 Publix /
+  // 7 Walmart / 2 ALDI / 1 Save A Lot / 0 Other), so most stores surfaced
+  // duplicate brands instead of 5 distinct entities. This generator gives every
+  // store exactly 5 competitors (one per brand) with full address + lat/lng so
+  // each renders a correct diamond marker. Deterministic (seeded by store+brand)
+  // so the map is stable across reloads. Real competitor data will drop into the
+  // same record shape: { id, brand, storeName, city, address, lat, lng, threatens[], wk2_share }.
+  const COMPETITOR_BRANDS = [
+    { brand: 'Publix',          shareBase: 22, shareSpread: 6 },
+    { brand: 'Walmart',         shareBase: 18, shareSpread: 6 },
+    { brand: 'ALDI',            shareBase: 12, shareSpread: 5 },
+    { brand: 'Save A Lot',      shareBase: 9,  shareSpread: 4 },
+    { brand: 'Other Retailers', shareBase: 14, shareSpread: 5 }
+  ];
+  const COMP_STREETS = ['Main St', 'Commerce Pkwy', 'Gulf Blvd', 'Cypress Ave',
+    'Pine Ridge Rd', 'University Dr', 'Town Center Blvd', 'Sunrise Way'];
+
+  function compHash(str) {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) { h = ((h << 5) - h) + str.charCodeAt(i); h |= 0; }
+    return Math.abs(h);
+  }
+
+  function buildPerStoreCompetitors() {
+    const out = [];
+    (Entities.stores || []).forEach(function (store) {
+      if (store.lat == null || store.lng == null) return;
+      COMPETITOR_BRANDS.forEach(function (b) {
+        const seed = compHash(store.id + '|' + b.brand);
+        // Deterministic offset 0.5–5 mi (~0.007–0.072°) in a seeded direction.
+        const distDeg = 0.007 + (seed % 65) / 1000;
+        const ang = (seed % 360) * Math.PI / 180;
+        const lat = +(store.lat + distDeg * Math.cos(ang)).toFixed(5);
+        const lng = +(store.lng + distDeg * Math.sin(ang)).toFixed(5);
+        const share = +Math.max(3, b.shareBase + (((seed % 1000) / 1000) * 2 - 1) * b.shareSpread).toFixed(1);
+        const streetNum = 100 + (seed % 9900);
+        const street = COMP_STREETS[seed % COMP_STREETS.length];
+        const zip = 30000 + (seed % 9999);
+        const brandSlug = b.brand.toLowerCase().replace(/[^a-z]+/g, '-').replace(/-$/, '');
+        out.push({
+          id: 'comp-' + store.storeNumber + '-' + brandSlug,
+          brand: b.brand,
+          storeName: b.brand + ' — ' + (store.name || store.city),
+          city: store.city,
+          address: streetNum + ' ' + street + ', ' + store.city + ' ' + zip,
+          lat: lat,
+          lng: lng,
+          threatens: [store.id],
+          wk2_share: share
+        });
+      });
+    });
+    return out;
+  }
+
+  const GENERATED_COMPETITORS = buildPerStoreCompetitors();
+
+  // ========================================
   // Public API (Property getters for live aggregation)
   // ========================================
 
@@ -561,6 +623,6 @@ const DistributionData = (function() {
     get retailerConfig() { return Entities.retailerConfig; },
 
     // Competitor store locations
-    get competitorStores() { return Records.COMPETITOR_STORES || []; }
+    get competitorStores() { return GENERATED_COMPETITORS; }
   };
 })();

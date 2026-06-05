@@ -2331,12 +2331,22 @@
         expandBtn.setAttribute('aria-expanded', String(children.classList.contains('open')));
         return;
       }
-      // Competitor child row → zoom/highlight its diamond marker (parity with store rows).
+      // Competitor child row → zoom to its diamond marker AND draw the parent
+      // store's proximity rings, so it's clear which store this is a competitor of.
       var childRow = e.target.closest('.lb-row--child');
       if (childRow && childRow.dataset.compId) {
         table.querySelectorAll('.lb-row--selected').forEach(function(r) { r.classList.remove('lb-row--selected'); });
         childRow.classList.add('lb-row--selected');
-        if (typeof StoreMap !== 'undefined') StoreMap.highlightCompetitor(childRow.dataset.compId);
+        var parentStoreId = childRow.dataset.parentStoreId;
+        if (typeof StoreMap !== 'undefined') {
+          if (parentStoreId && StoreMap.showParentAndCompetitor) {
+            StoreMap.showParentAndCompetitor(parentStoreId, childRow.dataset.compId);
+            var clegend = document.getElementById('ring-legend-store');
+            if (clegend) clegend.style.display = 'flex'; // rings now visible at parent
+          } else {
+            StoreMap.highlightCompetitor(childRow.dataset.compId);
+          }
+        }
         return;
       }
       var parentRow = e.target.closest('.lb-row--parent');

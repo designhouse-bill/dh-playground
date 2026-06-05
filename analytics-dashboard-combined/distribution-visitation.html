@@ -215,6 +215,7 @@
               <button type="button" class="duration-preset" data-ov-range="4w">4 Week <span class="duration-preset__sub">(Month)</span></button>
               <button type="button" class="duration-preset duration-preset--active" data-ov-range="8w">8 Week</button>
               <button type="button" class="duration-preset" data-ov-range="13w">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
+              <button type="button" class="duration-preset" data-ov-range="1y">1 Year</button>
             </div>
             <div class="duration-presets" id="ov-comp-ranges" role="tablist" aria-label="Time range" data-show-on-sub="competitor">
               <button type="button" class="duration-preset" data-ov-comp-range="4w">4 Week <span class="duration-preset__sub">(Month)</span></button>
@@ -578,26 +579,37 @@
         loyal:     Math.round(total * 0.15)
       };
     }
-    var trendTotals = [
-      { label: 'Wk 46', total: 30100, synth: true },
-      { label: 'Wk 47', total: 31800, synth: true },
-      { label: 'Wk 48', total: 29400, synth: true },
-      { label: 'Wk 49', total: 28942, synth: false },
-      { label: 'Wk 50', total: 25182, synth: false },
-      { label: 'Wk 51', total: 21680, synth: false },
-      { label: 'Wk 52', total: 38060, synth: false },
-      { label: 'Wk 1',  total: 32488, synth: false }
-    ];
+    // Real Greenberg weekly totals pinned to their true week-of-year positions
+    // (the recent tail). Earlier weeks are deterministically synthesized so the
+    // duration presets have a full year to slice — the real Wk46-52 values always
+    // sit at the visible recent edge, and windows end at Wk52 to line up with the
+    // Traffic Share / demographics trend windows.
+    var REAL_TOTALS = { 46: 30100, 47: 31800, 48: 29400, 49: 28942, 50: 25182, 51: 21680, 52: 38060 };
+    var trendTotals = [];
+    for (var _wk = 1; _wk <= 52; _wk++) {
+      var _real = REAL_TOTALS[_wk];
+      // Deterministic synth (~26-34K) — no Math.random so the chart is stable across renders.
+      var _total = _real != null ? _real
+        : Math.round(30000 + 4000 * Math.sin(_wk / 6) + (((_wk * 37) % 11) - 5) * 300);
+      trendTotals.push({ label: 'Wk ' + _wk, total: _total, synth: _real == null });
+    }
     var trendData = trendTotals.map(function (w) {
       var s = splitWeek(w.total);
       return { label: w.label, new: s.new, returning: s.returning, loyal: s.loyal };
     });
 
+    // Active duration preset (default 8 Week, matching duration-preset--active in markup).
+    var ovTrendRange = '8w';
+    function ovTrendWeeks() {
+      return ovTrendRange === '4w' ? 4 : ovTrendRange === '8w' ? 8 : ovTrendRange === '1y' ? 52 : 13;
+    }
+
     function renderTrendChart() {
       if (typeof echarts === 'undefined') return;
       var el = document.getElementById('ov-trend-chart');
       if (!el) return;
-      window._ovTrendChart = echarts.init(el);
+      if (!window._ovTrendChart) window._ovTrendChart = echarts.init(el);
+      var view = trendData.slice(-ovTrendWeeks());
       window._ovTrendChart.setOption({
         grid: { left: 56, right: 24, top: 24, bottom: 48 },
         legend: { show: false },
@@ -631,7 +643,7 @@
         },
         xAxis: {
           type: 'category',
-          data: trendData.map(function (d) { return d.label; }),
+          data: view.map(function (d) { return d.label; }),
           axisLabel: { color: '#6b7280', fontSize: 11 },
           axisLine: { lineStyle: { color: '#e5e7eb' } }
         },
@@ -642,11 +654,11 @@
           splitLine: { lineStyle: { color: '#f3f4f6' } }
         },
         series: [
-          { name: 'New',       type: 'bar', stack: 'visits', data: trendData.map(function (d) { return d.new; }),       itemStyle: { color: COLORS.new } },
-          { name: 'Returning', type: 'bar', stack: 'visits', data: trendData.map(function (d) { return d.returning; }), itemStyle: { color: COLORS.returning } },
-          { name: 'Loyal',     type: 'bar', stack: 'visits', data: trendData.map(function (d) { return d.loyal; }),     itemStyle: { color: COLORS.loyal } }
+          { name: 'New',       type: 'bar', stack: 'visits', data: view.map(function (d) { return d.new; }),       itemStyle: { color: COLORS.new } },
+          { name: 'Returning', type: 'bar', stack: 'visits', data: view.map(function (d) { return d.returning; }), itemStyle: { color: COLORS.returning } },
+          { name: 'Loyal',     type: 'bar', stack: 'visits', data: view.map(function (d) { return d.loyal; }),     itemStyle: { color: COLORS.loyal } }
         ]
-      });
+      }, true);
     }
 
     function initTrendRanges() {
@@ -654,7 +666,8 @@
         btn.addEventListener('click', function () {
           document.querySelectorAll('#ov-trend-ranges .duration-preset').forEach(function (b) { b.classList.remove('duration-preset--active'); });
           btn.classList.add('duration-preset--active');
-          // Spike: visual-only toggle; data range unchanged.
+          ovTrendRange = btn.dataset.ovRange;
+          renderTrendChart();
         });
       });
     }

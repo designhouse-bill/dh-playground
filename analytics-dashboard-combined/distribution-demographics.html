@@ -199,6 +199,7 @@
               <button type="button" class="duration-preset" data-od-range="4w">4 Week <span class="duration-preset__sub">(Month)</span></button>
               <button type="button" class="duration-preset" data-od-range="8w">8 Week</button>
               <button type="button" class="duration-preset duration-preset--active" data-od-range="13w">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
+              <button type="button" class="duration-preset" data-od-range="1y">1 Year</button>
             </div>
           </div>
         </div>
@@ -586,9 +587,12 @@
       var el = document.getElementById('od-trend-chart');
       if (!dim || !el) return;
       if (!window._odTrendChart) window._odTrendChart = echarts.init(el);
-      var n = trendRange === '4w' ? 4 : trendRange === '8w' ? 8 : 13;
+      var n = trendRange === '4w' ? 4 : trendRange === '8w' ? 8 : trendRange === '1y' ? 52 : 13;
+      // Anchor the window to Wk 52 (current) and count back n weeks, so labels
+      // read Wk(53-n)..Wk52 — no negative weeks at 1 Year, and the ranges line
+      // up with the Traffic Share trend windows (Wk 40-52, 45-52, 49-52).
       var weeks = [];
-      for (var w = n; w >= 1; w--) weeks.push('Wk ' + (21 - w));
+      for (var w = n; w >= 1; w--) weeks.push('Wk ' + (53 - w));
       // Slight week-over-week jitter
       var weekBuckets = weeks.map(function () { return jitterPct(dim.pct, 4); });
       var series = dim.cats.map(function (cat, ci) {

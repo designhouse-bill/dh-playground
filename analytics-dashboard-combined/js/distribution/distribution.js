@@ -2586,7 +2586,7 @@
     initFrequencyChart();
     initCrossoverChart();
     initCrossoverTrendChart();
-    initTrafficCombinedChart();
+    initTrafficCombinedChart(_crossoverTrendWeekCount);
     initVideoFunnelChart();
     initDemographicCharts();
   }
@@ -2908,44 +2908,22 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
   function initCrossoverTrendChart() {
     const el = document.getElementById('chart-crossover-trend');
     if (!el) return;
-    const chart = echarts.init(el);
-    charts.crossoverTrend = chart;
-
-    const weeks = D.flightWeeks.map(w => w.label);
-    const colors = ChartColors.series;
-
-    chart.setOption({
-      tooltip: {
-        trigger: 'axis',
-        backgroundColor: 'rgba(17,24,39,0.96)',
-        borderColor: 'rgba(255,255,255,0.12)',
-        textStyle: { color: '#fff', fontSize: 12 },
-        formatter: function(params) { return darkAxisTooltip(params, function(v) { return v.toFixed(1) + '%'; }); }
-      },
-      legend: {
-        data: D.competitiveCrossover.map(c => c.competitor_name),
-        bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, itemGap: 20,
-        textStyle: { fontSize: 12, color: '#6b7280' }
-      },
-      grid: { left: 50, right: 20, top: 20, bottom: 50 },
-      xAxis: { type: 'category', data: weeks, axisLabel: { fontSize: 11 } },
-      yAxis: { type: 'value', axisLabel: { formatter: '{value}%' } },
-      series: D.competitiveCrossover.map((comp, i) => ({
-        name: comp.competitor_name,
-        type: 'line',
-        data: comp.trend,
-        smooth: true,
-        lineStyle: { color: colors[i], width: 2 },
-        itemStyle: { color: colors[i] },
-        symbolSize: 6
-      }))
-    });
+    // Honor the active duration preset (default 8 Week) instead of plotting the
+    // full 52-week year. Delegates to updateCrossoverTrendPeriod so the init and
+    // preset-click paths share one render — matches the canonical Time Trend
+    // duration-preset contract in the Engagement shell.
+    updateCrossoverTrendPeriod(_crossoverTrendWeekCount);
   }
 
   // Crossover Trend metric mode: 'share' (% per competitor) or 'volume' (visit counts Our Brand vs Competitors).
   // Replaces removed Traffic Volume tab (Bill 2026-05-03 — kill cognitive overload of separate tab).
   var _crossoverTrendMetric = 'share';
-  var _crossoverTrendWeekCount = 4;
+  var _crossoverTrendWeekCount = 8; // default = 8 Week preset (matches duration-preset--active in markup)
+
+  // Time Trend duration map: keyed by the strip's own data-period values
+  // (4w/8w/13w) plus the by-Competitor strip's legacy keys (1w/1m/1q) for
+  // safety. Returns the number of trailing weeks to slice.
+  var CROSSOVER_TREND_WEEKS = { '1w': 1, '4w': 4, '8w': 8, '13w': 13, '1m': 4, '1q': 13, '1y': 52 };
 
   function initCrossoverTrendPresets() {
     var container = document.getElementById('crossover-trend-presets');
@@ -2953,11 +2931,15 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       var presets = container.querySelectorAll('.duration-preset');
       presets.forEach(function(btn) {
         btn.addEventListener('click', function() {
-          presets.forEach(function(b) { b.classList.remove('active'); });
-          btn.classList.add('active');
-          var period = btn.dataset.period;
-          _crossoverTrendWeekCount = period === '1w' ? 1 : period === '1m' ? 4 : period === '1q' ? 13 : 52;
+          presets.forEach(function(b) {
+            b.classList.remove('active', 'duration-preset--active');
+            b.setAttribute('aria-selected', 'false');
+          });
+          btn.classList.add('duration-preset--active');
+          btn.setAttribute('aria-selected', 'true');
+          _crossoverTrendWeekCount = CROSSOVER_TREND_WEEKS[btn.dataset.period] || 13;
           updateCrossoverTrendPeriod(_crossoverTrendWeekCount);
+          initTrafficCombinedChart(_crossoverTrendWeekCount); // bar chart shares the duration
         });
       });
     }
@@ -3052,13 +3034,18 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     });
   }
 
-  function initTrafficCombinedChart() {
+  // weekCount: trailing weeks to show, driven by the Time Trend duration presets
+  // (default 8). Omit/falsy = full series. Shares the slice contract with the
+  // crossover line chart so both charts in the trend pane move together.
+  function initTrafficCombinedChart(weekCount) {
     const el = document.getElementById('chart-traffic-combined');
     if (!el) return;
+    if (charts.trafficCombined) { charts.trafficCombined.dispose(); charts.trafficCombined = null; }
     const chart = echarts.init(el);
     charts.trafficCombined = chart;
 
-    const trend = D.trafficShareMetrics.trend;
+    const fullTrend = D.trafficShareMetrics.trend;
+    const trend = weekCount ? fullTrend.slice(Math.max(0, fullTrend.length - weekCount)) : fullTrend;
     const weeks = trend.map(w => D.getWeekLabel(w.week));
     const shareChange = D.trafficShareMetrics.summary.share_change_pp;
     const entityName = getEntityLabel();
@@ -3827,7 +3814,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         if (_trendViewInitialized) { initFrequencyChart(); initCrossoverTrendChart(); }
       } else if (section === 'traffic') {
         renderTrafficKpis(); /* renderTrafficLeaderboardPreview removed — Top Stores preview deleted from Overview */
-        initTrafficCombinedChart(); initCrossoverChart(); renderCrossoverDetail();
+        initTrafficCombinedChart(_crossoverTrendWeekCount); initCrossoverChart(); renderCrossoverDetail();
         initTrafficShareTabs();
       }
       updateRetailerLabels();
@@ -3890,16 +3877,15 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       } else if (section === 'traffic') {
         renderTrafficKpis();
         /* renderTrafficLeaderboardPreview removed — Top Stores preview deleted from Overview */
-        initTrafficCombinedChart();
+        initTrafficCombinedChart(_crossoverTrendWeekCount); // default 8 Week, matches active preset
         initCrossoverChart();
         renderCrossoverDetail();
         initTrafficChartToggle();
         initLeaderboardViewToggle();
         initCrossoverPeriodPresets();
         updateCrossoverChartPeriod(4);
-        initCrossoverTrendChart();
+        initCrossoverTrendChart(); // renders at the default 8 Week preset
         initCrossoverTrendPresets();
-        updateCrossoverTrendPeriod(4);
         bindTrafficStoreSelection(); // no-op: legacy #leaderboard-table absent; By Store builds lazily via buildStorePane
         initTrafficShareTabs();      // no-op when #ts-perf-tabs absent (new ep-sub-tabs shell drives tabs inline)
       }

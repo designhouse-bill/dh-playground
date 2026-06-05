@@ -2338,22 +2338,8 @@ a.ep-store-rank__row:last-child { border-bottom: none; }
 .ep-mini-stack__lbl--r::before { background: var(--users-returning, #0e7490); }
 .ep-mini-stack__lbl--e::before { background: var(--users-engaged, #155e75); }
 
-/* Mini DoW columns (Sessions tile) */
-.ep-mini-dow { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; align-items: end; height: 88px; }
-.ep-mini-dow__col { display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: end; }
-.ep-mini-dow__bar { width: 100%; background: var(--section-sessions, #2196F3); border-radius: 3px 3px 0 0; min-height: 4px; transition: filter .15s; }
-.ep-mini-dow__col:hover .ep-mini-dow__bar { filter: brightness(1.1); }
-.ep-mini-dow__bar--peak { background: color-mix(in srgb, var(--section-sessions, #2196F3) 80%, #000); }
-.ep-mini-dow__lbl { font-size: 10px; color: var(--color-text-secondary, #6b7280); }
-
-/* Mini device bars (Avg Duration tile) */
-.ep-mini-device { display: flex; flex-direction: column; gap: 6px; font-size: 11px; }
-.ep-mini-device__row { display: grid; grid-template-columns: 56px 1fr auto; gap: 8px; align-items: center; }
-.ep-mini-device__lbl { color: var(--color-text-secondary, #6b7280); }
-.ep-mini-device__bar { height: 14px; background: var(--color-gray-100, #f3f4f6); border-radius: 3px; overflow: hidden; }
-.ep-mini-device__fill { height: 100%; background: var(--section-duration, #d97706); border-radius: 3px; transition: filter .15s; }
-.ep-mini-device__row:hover .ep-mini-device__fill { filter: brightness(1.1); }
-.ep-mini-device__val { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--p-text-color, #1f2937); }
+/* Mini DoW columns, mini device bars, and ranked bar list moved to
+   css/kpi-cell.css (shared KPI-cell viz bodies). */
 
 /* ============================================================
    Top-5 bar rows (Row 2 + 3 panels) — responsive contract
@@ -2480,19 +2466,8 @@ a.ep-store-rank__row:last-child { border-bottom: none; }
   pointer-events: none;
 }
 
-/* SVG donut variant (UX-846 Report mode 2026-05-12) — replaces conic-gradient
-   donut so each V/C/A slice is a separate hover target. */
-.ep-perf-donut-svg { width: 180px; height: 180px; display: block; }
-.ep-perf-donut-svg__slice { cursor: pointer; transition: filter .15s, transform .15s; transform-origin: 100px 100px; }
-.ep-perf-donut-svg__slice:hover { filter: brightness(1.08); }
-
-/* Pill-style legend (matches Total Users legend pattern). Labels only — numbers on hover. */
-.ep-perf-donut__legend--pills { display: flex; flex-wrap: wrap; gap: 4px 12px; justify-content: center; font-size: 11px; color: var(--color-text-secondary, #6b7280); }
-.ep-perf-donut__legend-pill { display: inline-flex; align-items: center; gap: 4px; }
-.ep-perf-donut__legend-dot { width: 8px; height: 8px; border-radius: 2px; background: var(--p-text-color-muted, #9ca3af); }
-.ep-perf-donut__legend-pill--views .ep-perf-donut__legend-dot { background: var(--series-v, #2196F3); }
-.ep-perf-donut__legend-pill--clicks .ep-perf-donut__legend-dot { background: var(--series-c, #f59e0b); }
-.ep-perf-donut__legend-pill--adds .ep-perf-donut__legend-dot { background: var(--series-a, #22c55e); }
+/* SVG donut variant + pill legend moved to css/kpi-cell.css (shared
+   KPI-cell viz bodies). */
 
 /* UX-846 Report mode 2026-05-12: .duration-presets / .duration-preset styles
    moved (this duplicate block removed). Canonical rules at line 1295+ —

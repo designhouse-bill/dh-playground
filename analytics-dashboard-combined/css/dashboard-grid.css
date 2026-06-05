@@ -44,6 +44,38 @@
   border-color: var(--p-red-500, #ef4444);
 }
 
+/* Section-label overline — spans the full grid row, separates the
+   Engagement / Distribution cell bands. Emitted by dashboard-app renderGrid
+   at each product boundary. */
+.dash-section-label {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--p-text-color-secondary, #6b7280);
+}
+.dash-section-label:first-child { margin-top: 0; }
+.dash-section-label::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--p-text-color-muted, #9ca3af);
+}
+.dash-section-label[data-product="engagement"]::before   { background: var(--series-v, #2196F3); }
+.dash-section-label[data-product="distribution"]::before { background: var(--series-a, #22c55e); }
+.dash-section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--p-surface-border, #e5e7eb);
+}
+
 /* ── Customize modal ──────────────────────────────────────────────
    Reuses the locked .modal-overlay/.modal/.modal-* class names (§8.1).
    On index.html the engagement.css `.modal` panel chrome does NOT take

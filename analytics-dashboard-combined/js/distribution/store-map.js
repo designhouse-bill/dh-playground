@@ -55,6 +55,72 @@ const StoreMap = (function() {
   };
 
   // ========================================
+  // Dark hover tooltip — reuses the canonical chart-hover overlay
+  // (.ov-tooltip / .ov-tooltip--dark in distribution.css) so the map hover
+  // is styled identically to every other hover overlay on the dashboard.
+  // Hard rule: all maps use the dark overlay on hover.
+  // ========================================
+
+  let _mapTip = null;
+  let _mapTipVisible = false;
+
+  function ensureMapTip() {
+    if (_mapTip) return _mapTip;
+    _mapTip = document.createElement('div');
+    _mapTip.className = 'ov-tooltip ov-tooltip--dark';
+    document.body.appendChild(_mapTip);
+    document.addEventListener('mousemove', function (e) {
+      if (_mapTipVisible) positionMapTip(e);
+    });
+    return _mapTip;
+  }
+  function positionMapTip(e) {
+    if (!_mapTip) return;
+    var r = _mapTip.getBoundingClientRect();
+    var x = e.clientX + 14, y = e.clientY + 14;
+    if (x + r.width  > window.innerWidth  - 8) x = e.clientX - r.width  - 14;
+    if (y + r.height > window.innerHeight - 8) y = e.clientY - r.height - 14;
+    _mapTip.style.left = x + 'px';
+    _mapTip.style.top  = y + 'px';
+  }
+  function showMapTip(html, originalEvent) {
+    var t = ensureMapTip();
+    t.innerHTML = html;
+    t.classList.add('ov-tooltip--visible');
+    _mapTipVisible = true;
+    if (originalEvent) positionMapTip(originalEvent);
+  }
+  function hideMapTip() {
+    _mapTipVisible = false;
+    if (_mapTip) _mapTip.classList.remove('ov-tooltip--visible');
+  }
+  function tipRow(color, name, val) {
+    return '<div class="ov-tooltip__row">' +
+      '<span class="ov-tooltip__dot" style="background:' + color + ';"></span>' +
+      '<span class="ov-tooltip__name">' + name + '</span>' +
+      '<span class="ov-tooltip__val">' + val + '</span>' +
+    '</div>';
+  }
+  function storeTipHTML(store, data) {
+    var newPct = data.new_pct || 0, retPct = data.ret_pct || 0, loyPct = data.loy_pct || 0;
+    var visits = data.visits || 0;
+    return '<div class="ov-tooltip__title">' + store.name + ' (#' + store.storeNumber + ') · ' + store.city + '</div>' +
+      tipRow(SEGMENT_COLORS.new,       'New',       newPct.toFixed(0) + '%') +
+      tipRow(SEGMENT_COLORS.returning, 'Returning', retPct.toFixed(0) + '%') +
+      tipRow(SEGMENT_COLORS.loyal,     'Loyal',     loyPct.toFixed(0) + '%') +
+      '<div class="ov-tooltip__total"><span class="ov-tooltip__name">Total Visits</span>' +
+        '<span class="ov-tooltip__val">' + visits.toLocaleString() + '</span></div>';
+  }
+  function competitorTipHTML(cs) {
+    var pip = COMPETITOR_PIP_COLORS[cs.brand] || '#9CA3AF';
+    var rows = '';
+    if (cs.wk2_share != null) rows += tipRow(pip, 'Share of visits', cs.wk2_share + '%');
+    var addr = cs.address ? cs.address.split(',')[0] : '';
+    return '<div class="ov-tooltip__title">' + cs.brand + '</div>' + rows +
+      (addr ? '<div class="ov-tooltip__total"><span class="ov-tooltip__name">' + addr + '</span></div>' : '');
+  }
+
+  // ========================================
   // Init / Destroy
   // ========================================
 
@@ -153,6 +219,7 @@ const StoreMap = (function() {
       );
 
       marker.on('popupopen', function () {
+        hideMapTip();
         var btn = document.querySelector('.comp-popup-compare-btn[data-comp-id="' + cs.id + '"]');
         if (btn) {
           btn.addEventListener('click', function () {
@@ -160,6 +227,8 @@ const StoreMap = (function() {
           });
         }
       });
+      marker.on('mouseover', function (e) { showMapTip(competitorTipHTML(cs), e.originalEvent); });
+      marker.on('mouseout', hideMapTip);
 
       competitorLayer.addLayer(marker);
     });
@@ -295,8 +364,11 @@ const StoreMap = (function() {
       marker.bindPopup(popup, { maxWidth: 280, autoPan: false });
       marker.storeId = store.id;
       marker.on('click', function () {
+        hideMapTip();
         if (_onStoreClick) _onStoreClick(store.id);
       });
+      marker.on('mouseover', function (e) { showMapTip(storeTipHTML(store, data), e.originalEvent); });
+      marker.on('mouseout', hideMapTip);
       markersLayer.addLayer(marker);
     });
   }
@@ -444,6 +516,7 @@ const StoreMap = (function() {
   }
 
   function destroy() {
+    hideMapTip();
     if (map) {
       clearProximityRings();
       map.remove();

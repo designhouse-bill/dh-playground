@@ -63,13 +63,25 @@
       return;
     }
 
+    // Render cells, inserting a full-width section-label overline at each
+    // product boundary so the grid reads as labeled Engagement / Distribution
+    // bands. Default order keeps each product's cells contiguous; if a user
+    // customizes an interleaved order the label simply repeats at each switch.
+    var PRODUCT_LABEL = { engagement: 'Engagement', distribution: 'Distribution' };
+    var lastProduct = null;
     grid.innerHTML = cells.map(function (entry) {
+      var label = '';
+      if (entry.product && entry.product !== lastProduct) {
+        lastProduct = entry.product;
+        label = '<div class="dash-section-label" data-product="' + entry.product + '">'
+              + (PRODUCT_LABEL[entry.product] || entry.product) + '</div>';
+      }
       try {
         var data = entry.dataSource();
-        return entry.render(data);
+        return label + entry.render(data);
       } catch (e) {
         console.error('dashboard-app: render failed for', entry.storyId, e);
-        return '<div class="dash-cell-error">Cell "' + entry.storyId + '" failed to render.</div>';
+        return label + '<div class="dash-cell-error">Cell "' + entry.storyId + '" failed to render.</div>';
       }
     }).join('');
 

@@ -161,7 +161,16 @@
     if (!eyebrow) return;
     var productLabel = PRODUCT_LABEL[cfg.product];
     var section = (cfg.sections || []).filter(function (s) { return s.id === cfg.activeSection; })[0];
-    if (productLabel && section) eyebrow.textContent = productLabel + ' | ' + section.label;
+    if (!productLabel || !section) return;
+    // Suppress the "| Section" when the page H1 already names the section
+    // (Distribution: title "Traffic Share" == section label) so the eyebrow
+    // doesn't echo the title. Engagement keeps it — its title is per-tab
+    // ("Performance Score") and never equals the section label ("Report").
+    var header = (eyebrow.closest && eyebrow.closest('.narrative-header')) || document;
+    var titleEl = header.querySelector('.narrative-header__title');
+    var title = titleEl ? titleEl.textContent.trim() : '';
+    var redundant = title && title.toLowerCase() === section.label.toLowerCase();
+    eyebrow.textContent = redundant ? productLabel : productLabel + ' | ' + section.label;
   }
 
   function render(mount, cfg) {

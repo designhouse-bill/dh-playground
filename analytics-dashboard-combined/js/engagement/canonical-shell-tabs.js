@@ -81,8 +81,29 @@
       if (targetPane) applySubTab(targetPane, currentSubTab);
     }
 
+    // Phase 4.5: URL is the single source of truth for nav state. Write the
+    // active tab / sub-tab on click via history.replaceState (not push — avoids
+    // back-button spam) so the view survives refresh and rides along in Share
+    // links. Sole writer of ?tab / ?sub (shell-loader only reads ?tab;
+    // surface-controller owns ?view).
+    function writeNavParam(key, val) {
+      try {
+        var url = new URL(window.location.href);
+        url.searchParams.set(key, val);
+        window.history.replaceState({}, '', url.toString());
+      } catch (_) {}
+    }
+
     // Initial state — overview tint + copy on load.
     updatePageHero('overview');
+
+    // Phase 4.5: read ?sub= on load so the sub-sub tab (Time Trend / By Store /
+    // By Day) survives refresh. Set before the ?tab activation below so the
+    // initial pane renders the resolved sub-tab.
+    try {
+      var urlSub = new URLSearchParams(window.location.search).get('sub');
+      if (urlSub) currentSubTab = urlSub;
+    } catch (_) {}
 
     // UX-846 Report mode 2026-05-12: parse ?tab=X on load so KPI tile
      // hrefs (engagement-report.html?tab=performance) activate the pane.
@@ -97,15 +118,23 @@
       }
     } catch (_) {}
 
+    // Apply the resolved sub-tab to whichever pane is active on load — covers
+    // the no-?tab path where the HTML default-active pane never goes through
+    // activateTab (idempotent if it did).
+    var activePaneOnLoad = root.querySelector('.perf-tab-pane.active') || panes[0];
+    if (activePaneOnLoad) applySubTab(activePaneOnLoad, currentSubTab);
+
     tabs.forEach(function (tab) {
       tab.addEventListener('click', function () {
         activateTab(tab.dataset.epTab);
+        writeNavParam('tab', tab.dataset.epTab);
       });
     });
 
     root.querySelectorAll('.ep-kpi-tile[data-jump-to]').forEach(function (tile) {
       tile.addEventListener('click', function () {
         activateTab(tile.dataset.jumpTo);
+        writeNavParam('tab', tile.dataset.jumpTo);
         tabBar.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     });
@@ -116,6 +145,7 @@
         st.addEventListener('click', function () {
           currentSubTab = st.dataset.epSub;
           applySubTab(pane, currentSubTab);
+          writeNavParam('sub', currentSubTab);
         });
       });
     });

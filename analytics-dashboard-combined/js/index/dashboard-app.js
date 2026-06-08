@@ -63,30 +63,46 @@
       return;
     }
 
-    // Render cells, inserting a full-width section-label overline at each
-    // product boundary so the grid reads as labeled Engagement / Distribution
-    // bands. Default order keeps each product's cells contiguous; if a user
-    // customizes an interleaved order the label simply repeats at each switch.
+    // Two product columns: Engagement (left 50%) / Distribution (right 50%).
+    // Each product's cells are grouped into a labeled .dash-col that stacks
+    // them vertically; the grid itself is the 50/50 split (see dashboard-grid.css).
+    // Engagement is always the left column, Distribution the right; any other
+    // product falls after them. A single-product mode renders one column rather
+    // than a half-empty grid.
     var PRODUCT_LABEL = { engagement: 'Engagement', distribution: 'Distribution' };
-    var lastProduct = null;
-    grid.innerHTML = cells.map(function (entry) {
-      var label = '';
-      if (entry.product && entry.product !== lastProduct) {
-        lastProduct = entry.product;
-        label = '<div class="dash-section-label" data-product="' + entry.product + '">'
-              + (PRODUCT_LABEL[entry.product] || entry.product) + '</div>';
-      }
+    var COLUMN_ORDER = ['engagement', 'distribution'];
+
+    function renderCell(entry) {
       try {
-        var data = entry.dataSource();
-        return label + entry.render(data);
+        return entry.render(entry.dataSource());
       } catch (e) {
         console.error('dashboard-app: render failed for', entry.storyId, e);
-        return label + '<div class="dash-cell-error">Cell "' + entry.storyId + '" failed to render.</div>';
+        return '<div class="dash-cell-error">Cell "' + entry.storyId + '" failed to render.</div>';
       }
+    }
+
+    var order = [];
+    var byProduct = {};
+    cells.forEach(function (entry) {
+      var p = entry.product || 'other';
+      if (!byProduct[p]) { byProduct[p] = []; order.push(p); }
+      byProduct[p].push(entry);
+    });
+    order.sort(function (a, b) {
+      var ia = COLUMN_ORDER.indexOf(a), ib = COLUMN_ORDER.indexOf(b);
+      return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+    });
+
+    grid.innerHTML = order.map(function (p) {
+      var label = '<div class="dash-section-label" data-product="' + p + '">'
+                + (PRODUCT_LABEL[p] || p) + '</div>';
+      return '<div class="dash-col" data-product="' + p + '">'
+           + label + byProduct[p].map(renderCell).join('') + '</div>';
     }).join('');
 
     grid.setAttribute('data-mode', cfg.mode);
     grid.setAttribute('data-cell-count', cells.length);
+    grid.setAttribute('data-col-count', order.length);
     updateStatStrip(cfg, cells.length);
   }
 
@@ -217,8 +233,12 @@
 
   function initCustomizeBtn(cfg) {
     var btn = document.getElementById('dash-customize-btn');
-    if (!btn) return;
-    btn.addEventListener('click', function () { openCustomize(cfg); });
+    if (btn) btn.addEventListener('click', function () { openCustomize(cfg); });
+    // UX-846 A1: Customize now lives in the shared-header action menu, which is
+    // injected async and emits nav-a1:action. Open from that too.
+    document.addEventListener('nav-a1:action', function (e) {
+      if (e.detail && e.detail.action === 'customize') openCustomize(cfg);
+    });
 
     // Delegated handlers on the (lazily-created) modal.
     document.addEventListener('click', function (e) {
@@ -284,7 +304,11 @@
   function init() {
     if (!document.getElementById('dash-cell-grid')) return; // not on the dashboard page
     var cfg = loadConfig();
-    initModeSwitcher(cfg);
+    // UX-846 (2026-06-08): in-place mode switcher removed from index — the page is
+    // now the product-neutral Combined landing (Engagement/Distribution buttons in
+    // the topbar navigate to the standalone dashboards). Pin mode so a stale saved
+    // 'engagement'/'distribution' value can't strand the grid with no way back.
+    cfg.mode = 'combined';
     initCustomizeBtn(cfg);
     renderGrid(cfg);
     document.addEventListener('dashboard:dataRefresh', function () { renderGrid(cfg); });

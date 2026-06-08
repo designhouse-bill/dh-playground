@@ -23,10 +23,6 @@
   margin-bottom: 16px;
 }
 
-#home-dashboard #dash-mode-tabs {
-  margin-bottom: 20px;
-}
-
 /* Empty / error fallback states inside the cell grid row */
 .dash-empty,
 .dash-cell-error {
@@ -74,6 +70,47 @@
   flex: 1;
   height: 1px;
   background: var(--p-surface-border, #e5e7eb);
+}
+
+/* ── Two-product columns (UX-846, 2026-06-08) ─────────────────────
+   Desktop: index cell grid splits into Engagement (left 50%) and Distribution
+   (right 50%) product columns; within each, the ep-kpi-cells sit 2-up. renderGrid
+   wraps each product's cells in a .dash-col; this overrides the inherited
+   __row--kpi 4-up template. Single-product modes fall back to one product column. */
+#dash-cell-grid {
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+}
+#dash-cell-grid[data-col-count="1"] {
+  grid-template-columns: 1fr;
+}
+.dash-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;  /* 2-up cells inside a product column */
+  gap: var(--space-4, 1rem);
+  align-content: start;
+  min-width: 0;
+  /* Panel chrome — each product column reads as a white card on the page ground,
+     matching the panelled look of the other dashboards. The section-label becomes
+     the panel title. */
+  background: var(--p-surface-card, #fff);
+  border: 1px solid var(--p-surface-border, #e5e7eb);
+  border-radius: var(--p-border-radius-lg, 12px);
+  padding: var(--space-5, 1.25rem);
+  box-shadow: var(--p-shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+}
+/* .dash-section-label keeps its base grid-column: 1 / -1 → spans the column header. */
+
+/* Tablet & mobile: one column of ep-kpi-cells. Product columns stack and cells go
+   1-up. @media (not @container) — no container-type ancestor exists here, same
+   reason the __row--kpi backstop in analytics-architecture.css uses @media. */
+@media (max-width: 1024px) {
+  #dash-cell-grid {
+    grid-template-columns: 1fr;
+  }
+  .dash-col {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ── Customize modal ──────────────────────────────────────────────

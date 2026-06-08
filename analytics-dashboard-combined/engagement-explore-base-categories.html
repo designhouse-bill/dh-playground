@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="css/engagement-canonical.css?v=11">
   <!-- Handoff (bf32ea5) Base CSS, @scope'd under .engagement-handoff-scope (only applies inside Base pane) -->
   <link rel="stylesheet" href="css/engagement-handoff.css?v=2">
+  <link rel="stylesheet" href="css/nav-a1.css?v=6">
 </head>
 <body data-app-mode="explore">
 
@@ -47,58 +48,7 @@
        ============================================================ -->
   <header class="header header--engagement">
 
-    <div class="topbar">
-      <div class="topbar__left">
-
-        <div class="brand">
-          <h1 class="title">Analytics Dashboard</h1>
-        </div>
-        <span class="topbar__separator">|</span>
-
-        <!-- Dashboard Switcher -->
-        <div class="dashboard-switcher" id="dashboard-switcher">
-          <button class="performance-dropdown" id="performance-type-dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="performance-dropdown__text">Engagement</span>
-            <span class="material-symbols-outlined">expand_more</span>
-          </button>
-          <div class="dashboard-switcher__menu" id="dashboard-menu" role="menu">
-            <button class="dashboard-switcher__item active" role="menuitem">
-              <span class="material-symbols-outlined">monitoring</span>
-              Engagement
-            </button>
-            <a class="dashboard-switcher__item" data-href="distribution-media.html" role="menuitem">
-              <span class="material-symbols-outlined">campaign</span>
-              Distribution
-            </a>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Main nav: Report / Explore Data / Compare (UX-846 Report mode 2026-05-12) -->
-      <div class="view-modes" id="view-modes">
-        <a href="engagement-report.html" class="mode-btn mode-btn--outline" aria-label="Report">
-          <span class="material-symbols-outlined">monitoring</span>
-          Report
-        </a>
-        <a href="engagement-explore-base.html" class="mode-btn mode-btn--outline active" aria-label="Explore data" aria-current="page">
-          <span class="material-symbols-outlined">table_chart</span>
-          Explore Data
-        </a>
-        <a href="engagement-compare.html" class="mode-btn mode-btn--outline" aria-label="Comparison view">
-          <span class="material-symbols-outlined">compare</span>
-          Compare
-        </a>
-      </div>
-
-      <div class="topbar__actions">
-        <button class="header-share-btn" id="header-share-btn">
-          <span class="material-symbols-outlined">share</span>
-          Share
-        </button>
-      </div>
-    </div>
-
+    <div data-shell="topbar"></div>
     <!-- ░░░ CANONICAL .context-row · partials/canonical-context-row.html ░░░ -->
     <div class="context-row" data-canon="context-row-v1">
 
@@ -486,5 +436,8 @@
   <script src="js/header-slide.js"></script>
   <script src="js/engagement/engagement-page-app.js"></script>
 
+  <!-- UX-846 A1 shared header -->
+  <script>window.NAV_CONFIG = { product: "engagement", activeSection: "explore", actions: ["share"] };</script>
+  <script src="js/shared/nav-a1.js?v=4"></script>
 </body>
 </html>

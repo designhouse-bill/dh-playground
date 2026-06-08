@@ -1,0 +1,15 @@
+<!-- canonical-topbar.html — UX-846 Variant A1 shared header shell.
+     Fetched + injected by js/shared/nav-a1.js into <div data-shell="topbar"></div>.
+     Item lists (product buttons, section tabs, actions) are populated by the
+     loader from window.NAV_CONFIG. Reuses css/nav-a1.css. -->
+<div class="topbar topbar--a1">
+  <div class="topbar__row topbar__row--product">
+    <div class="brand"><h1 class="title" data-nav="title">Analytics Dashboard</h1></div>
+    <span class="topbar__separator" data-nav="sep">|</span>
+    <nav class="product-nav" data-nav="product" aria-label="Product dashboard"></nav>
+    <div class="topbar__actions" data-nav="actions"></div>
+  </div>
+  <div class="topbar__row topbar__row--section">
+    <nav class="perf-tabs perf-tabs--nav" data-nav="section" role="tablist" aria-label="Section"></nav>
+  </div>
+</div>

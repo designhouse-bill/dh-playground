@@ -22,7 +22,8 @@
   <link rel="stylesheet" href="css/engagement.css">
   <link rel="stylesheet" href="css/distribution.css?v=44">
   <!-- UX-846 L0: configurable KPI cell grid styles -->
-  <link rel="stylesheet" href="css/dashboard-grid.css?v=6">
+  <link rel="stylesheet" href="css/dashboard-grid.css?v=8">
+  <link rel="stylesheet" href="css/nav-a1.css?v=6">
 </head>
 <body>
 
@@ -49,49 +50,7 @@
        ============================================================ -->
   <header class="header">
 
-    <div class="topbar">
-      <div class="topbar__left">
-        <div class="brand">
-          <h1 class="title">Analytics Dashboard</h1>
-        </div>
-        <span class="topbar__separator">|</span>
-
-        <!-- Dashboard Switcher Dropdown -->
-        <div class="dashboard-switcher" id="dashboard-switcher">
-          <button class="performance-dropdown" id="performance-type-dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="performance-dropdown__text" id="dashboard-switcher-label">Engagement</span>
-            <span class="material-symbols-outlined">expand_more</span>
-          </button>
-          <div class="dashboard-switcher__menu" id="dashboard-menu" role="menu">
-            <button class="dashboard-switcher__item active" data-dashboard="engagement" role="menuitem">
-              <span class="material-symbols-outlined">monitoring</span>
-              Engagement
-            </button>
-            <button class="dashboard-switcher__item" data-dashboard="distribution" role="menuitem">
-              <span class="material-symbols-outlined">campaign</span>
-              Distribution
-            </button>
-          </div>
-        </div>
-
-        <!-- UX-846 L0 (2026-06-04): dist-section-tabs + view-modes dropped on index.
-             Dashboard is product-neutral; per-product nav lives on section pages. -->
-
-      </div>
-
-      <div class="topbar__actions">
-        <!-- UX-846 L0: Customize sits next to Share, matches locked topbar__actions pattern. -->
-        <button class="header-share-btn" id="dash-customize-btn" type="button" aria-label="Customize dashboard cells">
-          <span class="material-symbols-outlined">tune</span>
-          Customize
-        </button>
-        <button class="header-share-btn" id="header-share-btn">
-          <span class="material-symbols-outlined">share</span>
-          Share
-        </button>
-      </div>
-    </div>
-
+    <div data-shell="topbar"></div>
     <!-- Context Row -->
     <div class="context-row">
 
@@ -166,19 +125,6 @@
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- ░░░ Mode switcher: locked .perf-tabs grammar (Engagement / Distribution / Combined) ░░░ -->
-    <div class="perf-tabs perf-tabs--filled" id="dash-mode-tabs" role="tablist" aria-label="Dashboard mode">
-      <button class="perf-tab" data-dash-mode="engagement" role="tab" aria-selected="false">
-        <span class="material-symbols-outlined">monitoring</span> Engagement
-      </button>
-      <button class="perf-tab" data-dash-mode="distribution" role="tab" aria-selected="false">
-        <span class="material-symbols-outlined">campaign</span> Distribution
-      </button>
-      <button class="perf-tab perf-tab--active" data-dash-mode="combined" role="tab" aria-selected="true">
-        <span class="material-symbols-outlined">dashboard</span> Combined
-      </button>
     </div>
 
     <!-- ░░░ KPI cell grid (locked .ep-report-overview container, row of cells) ░░░
@@ -712,10 +658,13 @@
 
   <!-- UX-846 L0: configurable KPI cell registry + dashboard app -->
   <script src="js/index/dashboard-registry.js?v=4"></script>
-  <script src="js/index/dashboard-app.js?v=4"></script>
+  <script src="js/index/dashboard-app.js?v=6"></script>
 
   <!-- Main controller (last) -->
   <script src="js/app.js"></script>
 
+  <!-- UX-846 A1 shared header -->
+  <script>window.NAV_CONFIG = { product: "combined", sections: [], actions: ["customize","share"] };</script>
+  <script src="js/shared/nav-a1.js?v=4"></script>
 </body>
 </html>

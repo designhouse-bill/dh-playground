@@ -24,6 +24,7 @@
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
   <link rel="stylesheet" href="css/distribution.css?v=56">
+  <link rel="stylesheet" href="css/nav-a1.css?v=6">
 </head>
 <body data-dist-page="visitation">
 
@@ -47,62 +48,7 @@
 
   <header class="header header--distribution">
 
-    <div class="topbar">
-      <div class="topbar__left">
-
-        <div class="brand">
-          <h1 class="title">Analytics Dashboard</h1>
-        </div>
-        <span class="topbar__separator">|</span>
-
-        <!-- Dashboard Switcher -->
-        <div class="dashboard-switcher" id="dashboard-switcher">
-          <button class="performance-dropdown" id="performance-type-dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="performance-dropdown__text">Distribution</span>
-            <span class="material-symbols-outlined">expand_more</span>
-          </button>
-          <div class="dashboard-switcher__menu" id="dashboard-menu" role="menu">
-            <a class="dashboard-switcher__item" data-href="engagement-report.html" role="menuitem">
-              <span class="material-symbols-outlined">monitoring</span>
-              Engagement
-            </a>
-            <button class="dashboard-switcher__item active" role="menuitem">
-              <span class="material-symbols-outlined">campaign</span>
-              Distribution
-            </button>
-          </div>
-        </div>
-
-        <!-- Distribution Section Tabs (UX-846 2026-06-04: Traffic Share promoted to main nav per Adam follow-up. Order: Paid Media | Traffic Share | Observed Visits | Observed Demographics) -->
-        <div class="dist-section-tabs" id="dist-section-tabs">
-          <a class="dist-tab" href="distribution-media.html">
-            <span class="material-symbols-outlined">campaign</span>
-            Paid Media
-          </a>
-          <a class="dist-tab" href="distribution-traffic.html">
-            <span class="material-symbols-outlined">trending_up</span>
-            Traffic Share
-          </a>
-          <a class="dist-tab active" href="distribution-visitation.html">
-            <span class="material-symbols-outlined">store</span>
-            Observed Visits
-          </a>
-          <a class="dist-tab" href="distribution-demographics.html">
-            <span class="material-symbols-outlined">groups</span>
-            Observed Demographics
-          </a>
-        </div>
-
-      </div>
-
-      <div class="topbar__actions">
-        <button class="header-share-btn" id="header-share-btn">
-          <span class="material-symbols-outlined">share</span>
-          Share
-        </button>
-      </div>
-    </div>
-
+    <div data-shell="topbar"></div>
     <!-- ░░░ CANONICAL .context-row · partials/canonical-context-row.html ░░░ -->
     <div class="context-row" data-canon="context-row-v1">
       <button class="context-card context-card--date" id="date-selector" aria-label="Select date range">
@@ -142,20 +88,6 @@
 
   </header>
 
-  <!-- ⚠ DEMO-ONLY · dist-pilot · DO NOT PORT TO ANGULAR — see js/distribution/dist-pilot-banner.js header for removal checklist -->
-  <div class="dist-pilot-banner" id="dist-pilot-banner" role="dialog" aria-modal="true" aria-labelledby="dist-pilot-banner-title" hidden>
-    <div class="dist-pilot-banner__card">
-      <span class="material-symbols-outlined dist-pilot-banner__icon" aria-hidden="true">info</span>
-      <div class="dist-pilot-banner__text">
-        <strong id="dist-pilot-banner-title">Pilot data</strong>
-        Distribution metrics reflect the Q1 2026 pilot flight (Jan–Mar 2026). Engagement reporting on other tabs covers Nov 2025. The two periods do not overlap; entity and date selections are scoped per tab.
-      </div>
-      <button type="button" class="dist-pilot-banner__close" aria-label="Dismiss notice" data-action="dist-pilot-close">
-        <span class="material-symbols-outlined" aria-hidden="true">close</span>
-      </button>
-    </div>
-  </div>
-  <!-- ⚠ END DEMO-ONLY · dist-pilot -->
   <!-- ============================================================
        Store Visitation — "Are our media campaigns driving store visits?"
        ============================================================ -->
@@ -295,12 +227,12 @@
   <script src="js/data/distribution-data.js?v=19"></script>
 
   <script src="js/distribution/chip-carousel.js?v=1"></script>
-  <!-- ⚠ DEMO-ONLY · dist-pilot · DO NOT PORT --><script src="js/distribution/dist-pilot-banner.js?v=1"></script><!-- ⚠ END DEMO-ONLY -->
   <script src="js/distribution/distribution.js?v=64"></script>
   <script src="js/distribution/distribution-modals.js?v=13"></script>
 
   <script src="js/header-slide.js"></script>
   <script src="js/distribution/distribution-page-app.js?v=13"></script>
+  <script src="js/distribution/hash-deeplink.js?v=2"></script>
 
   <!-- ════════════════════════════════════════════════════════════
        Observed Visits — fixture init (Phase 1c).
@@ -1011,5 +943,8 @@
   })();
   </script>
 
+  <!-- UX-846 A1 shared header -->
+  <script>window.NAV_CONFIG = { product: "distribution", activeSection: "visitation", actions: ["export","share"] };</script>
+  <script src="js/shared/nav-a1.js?v=4"></script>
 </body>
 </html>

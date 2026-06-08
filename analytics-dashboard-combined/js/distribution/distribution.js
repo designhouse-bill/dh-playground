@@ -1839,8 +1839,10 @@
     // carries exactly 5 per store (one per canonical brand), bound via threatens[].
     // Filter by threatens, sort by share desc — one distinct competitor entity each.
     var storeCompMap = {};
+    var storeEntityById = {};
     var allComps = D.competitorStores;
     D.entities.stores.forEach(function(store) {
+      storeEntityById[store.id] = store;
       storeCompMap[store.id] = allComps
         .filter(function(cs) { return cs.threatens.indexOf(store.id) !== -1; })
         .sort(function(a, b) { return (b.wk2_share || 0) - (a.wk2_share || 0); });
@@ -1863,6 +1865,10 @@
       var storeId = 'store-' + s.store_id;
       var competitors = storeCompMap[storeId] || [];
       var hasChildren = competitors.length > 0;
+      var ent = storeEntityById[storeId];
+      var storeLabel = (ent && ent.name)
+        ? '#' + (ent.storeNumber != null ? ent.storeNumber : s.store_id) + ' ' + ent.name
+        : 'Store #' + s.store_id;
 
       html += '<div class="lb-row lb-row--parent' + (hasChildren ? '' : ' lb-row--leaf') + '" data-store-id="' + storeId + '">' +
         '<span class="lb-col lb-col--expand">' +
@@ -1872,7 +1878,7 @@
         '</span>' +
         '<span class="lb-col lb-col--store">' +
           '<span class="lb-rank">' + (i + 1) + '</span>' +
-          s.store_id +
+          storeLabel +
         '</span>' +
         '<span class="lb-col lb-col--city">' + s.city + '</span>' +
         '<span class="lb-col lb-col--share">' + s.wk2_share + '%</span>' +
@@ -3076,10 +3082,15 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       tooltip: {
         trigger: 'axis',
         axisPointer: { type: 'shadow' },
+        // Dark hover overlay — matches the sibling crossover-trend chart in this
+        // pane + the canonical analytics dark-tooltip pattern (D3 audit fix).
+        backgroundColor: 'rgba(17,24,39,0.96)',
+        borderColor: 'rgba(255,255,255,0.12)',
+        textStyle: { color: '#fff', fontSize: 12 },
         formatter: function(params) {
           let html = '<strong>' + params[0].axisValue + '</strong>';
           if (params[0].axisIndex === 0 && lastIdx >= 0 && params[0].dataIndex === lastIdx) {
-            html += ' <span style="color:#3B82F6;font-size:11px;">(current)</span>';
+            html += ' <span style="color:#93c5fd;font-size:11px;">(current)</span>';
           }
           html += '<br>';
           params.forEach(function(p) {

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<!--
+  UX-846 NAV ARCHITECTURE PROPOSAL — review mockup (NOT production)
+  Renders the nav variants from ~/.claude/plans/UX-846/UX-846-nav-architecture-proposal.md
+  Content-light on purpose: title bars + hero-stat + page skeleton only.
+  Uses the REAL nav grammar so weights read true:
+    .perf-tabs            = underline tab row (lighter)
+    .perf-tabs--filled    = blue filled-pill active (heavier)   ← "focus"
+    .mode-btn             = ghost button row (lightest)
+  "Focus" = which row gets the filled-pill. Throwaway — delete when a direction
+  is chosen. Serve from the same local server (analytics-combined).
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nav Architecture Proposal | Analytics Dashboard</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+
+  <!-- Real CSS so the controls render true -->
+  <link rel="stylesheet" href="css/design-tokens.css?v=5">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/analytics-architecture.css?v=27">
+  <link rel="stylesheet" href="css/header.css?v=7">
+  <link rel="stylesheet" href="css/context-bar.css">
+
+  <style>
+    /* ── proposal-page chrome only (not production) ───────────────── */
+    body { background: var(--p-surface-ground, #f8f9fa); }
+    .np-intro { padding: 20px 32px 4px; max-width: 1200px; margin: 0 auto; }
+    .np-intro h1 { font-size: 20px; margin: 0 0 4px; }
+    .np-intro p  { color: var(--p-text-color-secondary,#6b7280); margin: 0 0 6px; font-size: 14px; }
+    .np-frame {
+      max-width: 1200px; margin: 22px auto; background: #fff;
+      border: 1px solid var(--p-surface-border,#e5e7eb); border-radius: 12px;
+      box-shadow: var(--p-shadow-sm,0 1px 2px rgba(0,0,0,.05)); overflow: hidden;
+    }
+    .np-frame__label {
+      display:flex; align-items:baseline; gap:10px;
+      padding: 10px 16px; background:#0f172a; color:#fff; font-size:13px; font-weight:700;
+    }
+    .np-frame__label small { font-weight:400; color:#cbd5e1; }
+    .np-frame__badge { margin-left:auto; font-size:11px; font-weight:700; padding:2px 8px;
+      border-radius:999px; background:#1e293b; color:#93c5fd; }
+    .np-frame .header { position: static; }
+    /* second nav row sits on its own line with page padding */
+    .np-row2 { padding: 6px 24px; }
+    .np-row2 .perf-tabs { margin-bottom: 0; }
+    /* product perf-tabs inline in the topbar shouldn't draw a full underline track */
+    .topbar .perf-tabs { border-bottom: none; }
+    /* DEMO ONLY: real .mode-btn active is href-scoped; tint generically so the
+       ghost-button row reads as "active" in this static mock. */
+    .np-frame .mode-btn.active { color: var(--p-primary-color,#2196F3); background: var(--color-primary-50,#e3f2fd); }
+    /* ── Variant A1 tweaks (Bill 2026-06-08) ──────────────────────
+       Row 1 = compact product buttons (shorter: less padding + smaller font).
+       Row 2 = underline tabs with NO gaps, NO padding under → flush to container. */
+    #frame-a1 .np-product { display:flex; align-items:center; gap:4px; }
+    #frame-a1 .np-product .mode-btn { padding:8px 14px; font-size:15px; text-transform:uppercase; letter-spacing:.02em; color:#000; background:transparent; }
+    #frame-a1 .np-product .mode-btn.active { background:#000; color:#fff; }
+    #frame-a1 .np-product .mode-btn .material-symbols-outlined { font-size:16px; }
+    /* Row 2: light-gray track, square tabs (no top radius), no gaps, flush. */
+    #frame-a1 .np-row2--flush { padding:0 24px; background: var(--color-gray-50, #f9fafb); }
+    #frame-a1 .np-row2--flush .perf-tabs { gap:0; padding:0; margin:0; border-bottom:none; }
+    #frame-a1 .np-row2--flush .perf-tab { border-radius:0; }
+    /* Each section owns a color (existing AA-safe tokens). Active tab fills with
+       it (rule .perf-tabs .perf-tab.active → background:var(--section-color), white text);
+       inactive shows the color as text so the palette is visible. */
+    #frame-a1 .perf-tab[data-section="media"]        { --section-color: var(--section-media); }
+    #frame-a1 .perf-tab[data-section="traffic"]      { --section-color: var(--section-traffic); }
+    #frame-a1 .perf-tab[data-section="visitation"]   { --section-color: var(--section-visitation); }
+    #frame-a1 .perf-tab[data-section="demographics"] { --section-color: var(--section-demographics); }
+    #frame-a1 .np-row2--flush .perf-tab:not(.active) { color: var(--section-color); }
+    /* stub content */
+    .np-stub { padding: 8px 24px 24px; }
+    .np-skeleton { display:grid; grid-template-columns: repeat(3,1fr); gap:16px; margin-top:8px; }
+    .np-skeleton > div {
+      height: 92px; border:1px dashed var(--p-surface-border,#e5e7eb); border-radius:8px;
+      background:repeating-linear-gradient(135deg,#fafbfc,#fafbfc 10px,#f3f4f6 10px,#f3f4f6 20px);
+    }
+    /* ── action overflow menu (Phase 1 example) ───────────────────── */
+    .action-menu { position: relative; }
+    .action-menu__trigger {
+      display:flex; align-items:center; gap:6px; padding:8px 12px;
+      border:1px solid var(--p-surface-border,#e5e7eb); border-radius:8px;
+      background:#fff; cursor:pointer; font-weight:500; color:var(--p-text-color,#1f2937);
+    }
+    .action-menu__trigger:hover { background: var(--p-surface-hover,#f3f4f6); }
+    .action-menu__list {
+      position:absolute; right:0; top:calc(100% + 6px); min-width:180px; z-index:20;
+      background:#fff; border:1px solid var(--p-surface-border,#e5e7eb);
+      border-radius:8px; box-shadow: var(--p-shadow-lg,0 10px 15px -3px rgba(0,0,0,.1)); padding:6px;
+    }
+    .action-menu__list[hidden] { display:none; }
+    .action-menu__item {
+      display:flex; align-items:center; gap:10px; width:100%; padding:8px 10px;
+      border:none; background:none; cursor:pointer; border-radius:6px;
+      font-size:14px; color:var(--p-text-color,#1f2937); text-align:left;
+    }
+    .action-menu__item:hover { background: var(--p-surface-hover,#f3f4f6); }
+    .action-menu__item .material-symbols-outlined { font-size:18px; color:var(--p-text-color-secondary,#6b7280); }
+    .title--suffix small { font-weight:400; color:var(--p-text-color-secondary,#6b7280); }
+  </style>
+</head>
+<body>
+
+  <!-- Real dark utility bar (once, for context) -->
+  <div class="dh-top-bar">
+    <div class="dh-top-bar__left">
+      <img src="assets/ideal-sale-logo.svg" alt="ideal.sale" class="dh-top-bar__logo">
+      <div class="dh-top-bar__node">
+        <div class="dh-top-bar__node-icon"><span class="material-symbols-outlined">image</span></div>
+        <div class="dh-top-bar__node-info">
+          <span class="dh-top-bar__node-brand">Ideal-Brand</span>
+          <span class="dh-top-bar__node-name">All Stores</span>
+        </div>
+        <button class="dh-top-bar__change-btn">Change <span class="material-symbols-outlined">expand_more</span></button>
+      </div>
+    </div>
+    <div class="dh-top-bar__right">
+      <span class="dh-top-bar__user"><span class="dh-top-bar__user-label">User: </span>Adam Zimmerman</span>
+      <button class="dh-top-bar__logout"><span>Logout</span> <span class="material-symbols-outlined">logout</span></button>
+    </div>
+  </div>
+
+  <div class="np-intro">
+    <h1>Nav Architecture Proposal — variants</h1>
+    <p>Content-light mockups. Each frame = title bars + hero-stat + skeleton. Built from existing vocabulary — <code>perf-tabs</code> (underline), <code>perf-tabs--filled</code> (blue pill = focus), <code>mode-btn</code> (ghost button). The blue filled-pill marks which row holds the focus. Action menu (top-right) = Phase-1 one-button pattern — click it.</p>
+  </div>
+
+  <!-- ============================================================ A1 -->
+  <section class="np-frame" id="frame-a1">
+    <div class="np-frame__label">Variant A1 — Row 1 compact buttons <small>product = compact buttons; sections = underline tabs, no gaps, flush</small><span class="np-frame__badge">both products</span></div>
+    <header class="header">
+      <div class="topbar">
+        <div class="topbar__left">
+          <div class="brand"><h1 class="title">Analytics Dashboard</h1></div>
+          <span class="topbar__separator">|</span>
+          <!-- PRODUCT = compact buttons (shorter row) -->
+          <div class="view-modes np-product" role="tablist" aria-label="Product">
+            <button class="mode-btn">Engagement</button>
+            <button class="mode-btn active">Distribution</button>
+          </div>
+        </div>
+        <div class="topbar__actions" data-action-menu></div>
+      </div>
+      <!-- ROW 2 = square tabs on a light-gray track; active fills with the
+           section's own color (data-section → --section-color). -->
+      <div class="np-row2 np-row2--flush">
+        <div class="perf-tabs" role="tablist" aria-label="Section">
+          <button class="perf-tab active" data-section="media">Paid Media</button>
+          <button class="perf-tab" data-section="traffic">Traffic Share</button>
+          <button class="perf-tab" data-section="visitation">Observed Visits</button>
+          <button class="perf-tab" data-section="demographics">Observed Demographics</button>
+        </div>
+      </div>
+    </header>
+    <div class="np-stub">
+      <div class="hero-stat"><div class="narrative-header"><div class="narrative-header__left">
+        <h4 class="narrative-header__section">Distribution</h4>
+        <h1 class="narrative-header__title">Paid Media</h1>
+        <h2 class="narrative-header__question">How is paid media performing this week?</h2>
+      </div></div></div>
+      <div class="np-skeleton"><div></div><div></div><div></div></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ A2 -->
+  <section class="np-frame">
+    <div class="np-frame__label">Variant A2 — Row 2 focus <small>product = underline; sections = filled pill (matches existing 2-row convention)</small><span class="np-frame__badge">both products</span></div>
+    <header class="header">
+      <div class="topbar">
+        <div class="topbar__left">
+          <div class="brand"><h1 class="title">Analytics Dashboard</h1></div>
+          <span class="topbar__separator">|</span>
+          <!-- PRODUCT = underline perf-tabs (light) -->
+          <div class="perf-tabs" role="tablist" aria-label="Product">
+            <button class="perf-tab">Engagement</button>
+            <button class="perf-tab active">Distribution</button>
+          </div>
+        </div>
+        <div class="topbar__actions" data-action-menu></div>
+      </div>
+      <!-- ROW 2 = filled perf-tabs (HEAVY = focus) -->
+      <div class="np-row2">
+        <div class="perf-tabs perf-tabs--filled" role="tablist" aria-label="Section">
+          <button class="perf-tab active">Paid Media</button>
+          <button class="perf-tab">Traffic Share</button>
+          <button class="perf-tab">Observed Visits</button>
+          <button class="perf-tab">Observed Demographics</button>
+        </div>
+      </div>
+    </header>
+    <div class="np-stub">
+      <div class="hero-stat"><div class="narrative-header"><div class="narrative-header__left">
+        <h4 class="narrative-header__section">Distribution</h4>
+        <h1 class="narrative-header__title">Paid Media</h1>
+        <h2 class="narrative-header__question">How is paid media performing this week?</h2>
+      </div></div></div>
+      <div class="np-skeleton"><div></div><div></div><div></div></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ A3 -->
+  <section class="np-frame">
+    <div class="np-frame__label">Variant A3 — Row 2 focus <small>product = dropdown; sections = filled pill (max room)</small><span class="np-frame__badge">both products</span></div>
+    <header class="header">
+      <div class="topbar">
+        <div class="topbar__left">
+          <div class="brand"><h1 class="title">Analytics Dashboard</h1></div>
+          <span class="topbar__separator">|</span>
+          <!-- PRODUCT = existing dropdown (smallest footprint) -->
+          <div class="dashboard-switcher">
+            <button class="performance-dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="performance-dropdown__text">Distribution</span>
+              <span class="material-symbols-outlined">expand_more</span>
+            </button>
+          </div>
+        </div>
+        <div class="topbar__actions" data-action-menu></div>
+      </div>
+      <div class="np-row2">
+        <div class="perf-tabs perf-tabs--filled" role="tablist" aria-label="Section">
+          <button class="perf-tab active">Paid Media</button>
+          <button class="perf-tab">Traffic Share</button>
+          <button class="perf-tab">Observed Visits</button>
+          <button class="perf-tab">Observed Demographics</button>
+        </div>
+      </div>
+    </header>
+    <div class="np-stub">
+      <div class="hero-stat"><div class="narrative-header"><div class="narrative-header__left">
+        <h4 class="narrative-header__section">Distribution</h4>
+        <h1 class="narrative-header__title">Paid Media</h1>
+        <h2 class="narrative-header__question">How is paid media performing this week?</h2>
+      </div></div></div>
+      <div class="np-skeleton"><div></div><div></div><div></div></div>
+    </div>
+  </section>
+
+  <!-- =================================== single-product entitlement -->
+  <section class="np-frame">
+    <div class="np-frame__label">Single product — Distribution only <small>no product switcher; sections are the nav</small><span class="np-frame__badge">1 product</span></div>
+    <header class="header">
+      <div class="topbar">
+        <div class="topbar__left">
+          <div class="brand"><h1 class="title title--suffix">Analytics Dashboard <small>· Distribution</small></h1></div>
+        </div>
+        <div class="topbar__actions" data-action-menu></div>
+      </div>
+      <div class="np-row2">
+        <div class="perf-tabs perf-tabs--filled" role="tablist" aria-label="Section">
+          <button class="perf-tab active">Paid Media</button>
+          <button class="perf-tab">Traffic Share</button>
+          <button class="perf-tab">Observed Visits</button>
+          <button class="perf-tab">Observed Demographics</button>
+        </div>
+      </div>
+    </header>
+    <div class="np-stub">
+      <div class="hero-stat"><div class="narrative-header"><div class="narrative-header__left">
+        <h4 class="narrative-header__section">Distribution</h4>
+        <h1 class="narrative-header__title">Paid Media</h1>
+        <h2 class="narrative-header__question">How is paid media performing this week?</h2>
+      </div></div></div>
+      <div class="np-skeleton"><div></div><div></div><div></div></div>
+    </div>
+  </section>
+
+  <script>
+    // Phase-1 action menu — built once, cloned into each frame's actions slot.
+    // Mirrors the capability-config idea: fixed order, data-driven items.
+    var ACTIONS = [
+      { key:'export', label:'Export CSV', icon:'download' },
+      { key:'print',  label:'Print View', icon:'print' },
+      { key:'share',  label:'Share',      icon:'share' }
+    ];
+    function buildMenu() {
+      var wrap = document.createElement('div');
+      wrap.className = 'action-menu';
+      wrap.innerHTML =
+        '<button class="action-menu__trigger" aria-haspopup="true" aria-expanded="false">' +
+        '<span class="material-symbols-outlined">more_horiz</span><span>Actions</span></button>' +
+        '<div class="action-menu__list" role="menu" hidden>' +
+        ACTIONS.map(function(a){
+          return '<button class="action-menu__item" role="menuitem" data-action="'+a.key+'">' +
+                 '<span class="material-symbols-outlined">'+a.icon+'</span>'+a.label+'</button>';
+        }).join('') + '</div>';
+      var trigger = wrap.querySelector('.action-menu__trigger');
+      var list = wrap.querySelector('.action-menu__list');
+      trigger.addEventListener('click', function(e){
+        e.stopPropagation();
+        var open = !list.hidden;
+        document.querySelectorAll('.action-menu__list').forEach(function(l){ l.hidden = true; });
+        list.hidden = open;
+        trigger.setAttribute('aria-expanded', String(!open));
+      });
+      return wrap;
+    }
+    document.querySelectorAll('[data-action-menu]').forEach(function(slot){ slot.appendChild(buildMenu()); });
+    document.addEventListener('click', function(){
+      document.querySelectorAll('.action-menu__list').forEach(function(l){ l.hidden = true; });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+/* ============================================================
+   nav-a1.css — UX-846 Variant A1 two-tier header (rollout)
+
+   Row 1: title + product buttons (black/white, ALL-CAPS, compact) + Actions menu.
+   Row 2: section tabs — squared, light-gray track, per-section colors.
+          (Active fill rides the existing .perf-tabs .perf-tab.active rule in
+           analytics-architecture.css:2525 → background:var(--section-color).)
+
+   Markup is injected from partials/canonical-topbar.html by js/shared/nav-a1.js,
+   populated from window.NAV_CONFIG. Section colors reuse existing tokens:
+     distribution → --section-media/traffic/visitation/demographics
+     engagement   → --mode-report/explore/compare
+   ============================================================ */
+
+/* ── two rows ─────────────────────────────────────────────── */
+/* align-items:stretch overrides the inherited .topbar{align-items:center}, which
+   in a flex COLUMN would center+shrink each row horizontally (clustering them in
+   the middle) and defeat the Row-1 margin-left:auto. padding:0 so the rows own
+   their own horizontal padding (the base .topbar padding would double it up). */
+/* .topbar.topbar--a1 (two classes) so it beats single-class .topbar{padding/align}
+   rules in engagement.css/distribution.css that otherwise win this container. */
+.topbar.topbar--a1 { display: flex; flex-direction: column; gap: 0; align-items: stretch; padding: 0 !important; }
+/* align-self:stretch forces each row full-width regardless of the parent's
+   align-items (some pages' .topbar{align-items:center} wins the container cascade;
+   align-self on the child overrides it deterministically). */
+.topbar__row { display: flex; align-items: center; align-self: stretch; width: 100%; }
+.topbar__row--product { gap: var(--space-3, 12px); padding: 10px 24px; }
+.topbar__row--product .topbar__actions { margin-left: auto; }
+.topbar__row--section { padding: 0; }
+
+/* ── Row 1: product buttons (B/W, ALL-CAPS, compact) ──────── */
+.product-nav { display: flex; align-items: center; gap: 4px; }
+.product-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 14px;
+  font-size: 15px; font-weight: var(--font-weight-semibold, 600);
+  text-transform: uppercase; letter-spacing: .02em;
+  color: #000; background: transparent;
+  border: none; border-radius: var(--radius-md, 6px);
+  cursor: pointer; text-decoration: none;
+}
+.product-btn .material-symbols-outlined { font-size: 18px; }
+.product-btn:hover { background: var(--color-gray-100, #f3f4f6); }
+.product-btn.active { background: #000; color: #fff; }
+.product-btn.active .material-symbols-outlined { color: #fff; }
+/* single-product: product folds into the title */
+.title__suffix { font-weight: var(--font-weight-regular, 400); color: var(--color-text-secondary, #6b7280); }
+
+/* ── Row 2: section tabs — squared, light-gray track ──────── */
+.perf-tabs--nav {
+  flex: 1;                 /* span the full page width */
+  background: var(--color-gray-50, #f9fafb);
+  gap: 0;
+  padding: 0 24px;
+  border-top: 1px solid var(--color-border, #e5e7eb);     /* gray divider above the section row */
+  border-bottom: 1px solid var(--color-border-subtle, #eef0f2);
+}
+.perf-tabs--nav .perf-tab {
+  border-radius: 0;
+  text-decoration: none;          /* tabs are <a href> (section = separate page) */
+}
+/* inactive shows the section color as text; active fills with it (rule 2525) */
+.perf-tabs--nav .perf-tab:not(.active) { color: var(--section-color, var(--color-text-secondary)); }
+
+/* section → color map (reuses existing AA-safe tokens) */
+.perf-tab[data-section="media"]          { --section-color: var(--section-media); }
+.perf-tab[data-section="traffic"]        { --section-color: var(--section-traffic); }
+.perf-tab[data-section="visitation"]     { --section-color: var(--section-visitation); }
+.perf-tab[data-section="demographics"]   { --section-color: var(--section-demographics); }
+.perf-tab[data-section="report"]         { --section-color: var(--mode-report); }
+.perf-tab[data-section="explore"]        { --section-color: var(--mode-explore); }
+.perf-tab[data-section="compare"]        { --section-color: var(--mode-compare); }
+
+/* ── Actions overflow menu (Phase 1) ──────────────────────── */
+.action-menu { position: relative; }
+.action-menu__trigger {
+  display: flex; align-items: center; gap: 6px; padding: 8px 12px;
+  border: 1px solid var(--p-surface-border, #e5e7eb); border-radius: 8px;
+  background: #fff; cursor: pointer; font-weight: 500; color: var(--p-text-color, #1f2937);
+}
+.action-menu__trigger:hover { background: var(--p-surface-hover, #f3f4f6); }
+.action-menu__list {
+  position: absolute; right: 0; top: calc(100% + 6px); min-width: 180px; z-index: 40;
+  background: #fff; border: 1px solid var(--p-surface-border, #e5e7eb);
+  border-radius: 8px; box-shadow: var(--p-shadow-lg, 0 10px 15px -3px rgba(0,0,0,.1)); padding: 6px;
+}
+.action-menu__list[hidden] { display: none; }
+.action-menu__item {
+  display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 10px;
+  border: none; background: none; cursor: pointer; border-radius: 6px;
+  font-size: 14px; color: var(--p-text-color, #1f2937); text-align: left;
+}
+.action-menu__item:hover { background: var(--p-surface-hover, #f3f4f6); }
+.action-menu__item .material-symbols-outlined { font-size: 18px; color: var(--p-text-color-secondary, #6b7280); }
+
+/* ── responsive: collapse to one column of tabs (Distribution backstop @1024) ── */
+@media (max-width: 640px) {
+  .topbar__row--product { flex-wrap: wrap; gap: 8px; }
+  .perf-tabs--nav { overflow-x: auto; }
+}

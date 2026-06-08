@@ -409,7 +409,7 @@ Whole-panel click target. Currently static in HTML (`data-href="engagement-explo
 
 For temporary scaffolding (e.g. pilot-data notice). Marked with `⚠ DEMO-ONLY · <prefix> · DO NOT PORT TO ANGULAR` comments on all 3 surfaces (HTML, CSS, JS). Single grep target removes everything.
 
-See `js/distribution/dist-pilot-banner.js` for canonical example.
+Canonical example was `js/distribution/dist-pilot-banner.js` (the Q1-pilot notice), removed 2026-06-08 — its single-grep teardown across HTML/CSS/JS validated this convention. Reuse the `⚠ DEMO-ONLY · <prefix>` fencing for the next throwaway overlay.
 
 **Rule:** demo-only scaffolding MUST be removable by `grep -rln "<prefix>" | xargs rm/edit` with no runtime coupling to state, services, or other components.
 
@@ -441,7 +441,7 @@ const isFresh = !sessionStorage.getItem(FLAG);
 sessionStorage.setItem(FLAG, '1');
 ```
 
-**Where used:** engagement-compare A/B context reset, dist-pilot one-shot overlay.
+**Where used:** engagement-compare A/B context reset.
 
 ## 9.2 localStorage (canonical for cross-session persistence)
 
@@ -576,7 +576,6 @@ Normalize at filter boundary today (`getStoreIdsForEntity` does this). Lock at t
 | `MockData.getAggregate` (v1) | js/data/mock-data-v1/index.js |
 | `MockData.getRecords` (legacy) | js/data/engagement-mock-data.js |
 | `D.context` | js/distribution/distribution.js |
-| `.dist-pilot-banner` (demo-only) | js/distribution/dist-pilot-banner.js |
 
 ---
 

@@ -699,7 +699,9 @@
 .creative-chip--all {
   flex-shrink: 0;
   margin-top: 12px;
-  height: 100px;
+  /* No fixed height — size to content so the All chip matches the carousel
+     creative chips (identical 36px thumb + name + meta structure → equal
+     natural height). The old height:100px made it ~9px taller than them. */
 }
 /* Rank-badge pill on the All chip — same color/size scheme as numeric
    rank badges, but accommodates the literal "All" label. */

@@ -25,7 +25,7 @@
 </head>
 <body data-engagement-page="report" data-active-tab="performance" data-app-mode="report">
 
-<!-- UX-846 2026-05-12: chrome inlined (was shell-loader fetch — broke under file://). Mirrors categories+promotions. -->
+<!-- UX-846: chrome inlined directly (file:// can't fetch partials). Mirrors categories+promotions. -->
 
 <div class="dh-top-bar">
   <div class="dh-top-bar__left">
@@ -162,7 +162,7 @@
 
 
         <!-- R2 (2026-05-06): sub-page files dropped. All 4 metric panes inlined here.
-         Tab activation via URL ?tab=X param parsed by shell-loader.js.
+         Tab activation handled by canonical-shell-tabs.js.
          Explore Data lives at engagement-explore.html (main nav). -->
 
     <div class="chart-card perf-tab-pane" data-ep-pane="sessions">
@@ -464,9 +464,6 @@
   <!-- ============================================================
        SCRIPTS
        ============================================================ -->
-  <script src="js/engagement/engagement-grain-config.js?v=1"></script>
-  <script src="js/engagement/engagement-grain-init.js?v=2"></script>
-  <script src="js/engagement/engagement-grain-switcher.js?v=2"></script>
   <script src="js/engagement/engagement-url-sync.js?v=1"></script>
   <script src="js/engagement/engagement-drill.js?v=1"></script>
   <script src="js/engagement/engagement-breadcrumb.js?v=3"></script>

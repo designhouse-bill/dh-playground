@@ -84,8 +84,7 @@
     // Phase 4.5: URL is the single source of truth for nav state. Write the
     // active tab / sub-tab on click via history.replaceState (not push — avoids
     // back-button spam) so the view survives refresh and rides along in Share
-    // links. Sole writer of ?tab / ?sub (shell-loader only reads ?tab;
-    // surface-controller owns ?view).
+    // links. Sole writer of ?tab / ?sub (surface-controller owns ?view).
     function writeNavParam(key, val) {
       try {
         var url = new URL(window.location.href);

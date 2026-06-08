@@ -573,12 +573,6 @@
   color: var(--color-text-tertiary);
 }
 
-.view-modes {
-  display: flex;
-  align-items: stretch;
-  gap: var(--space-2);
-}
-
 /* Mode Group (BASE with subtabs) */
 .mode-group {
   display: flex;
@@ -6165,10 +6159,6 @@ body:not(.comparison-active) .detail-comparison {
   /* Percentile row: chart + score + icon + value no longer nowrap-locked. */
   .compare-cell .detail-percentile-row { flex-wrap: wrap; }
   .compare-cell .perf-chart-container { flex: 1 1 100%; min-width: 0; }
-
-  /* Mode strip (Report/Explore/Compare) — wrap onto two lines instead of
-     overflowing past 414. */
-  .view-modes { flex-wrap: wrap; }
 
   /* Layer tabs (Stores/Categories/Promotions) — horizontal scroll instead of
      overflow; cleaner than wrap for a 3-button perf-tab. */

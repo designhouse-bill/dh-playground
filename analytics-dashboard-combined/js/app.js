@@ -6,12 +6,9 @@
 (function () {
   'use strict';
 
-  // Read initial dashboard from active switcher item (DOM source of truth).
-  // Falls back to 'engagement' so context-card clicks always have a target.
-  let currentDashboard = (function () {
-    var active = document.querySelector('.dashboard-switcher__item.active');
-    return (active && active.dataset.dashboard) || 'engagement';
-  })();
+  // Default target for context-card clicks. The legacy dashboard switcher that
+  // used to seed this from the DOM was retired with the A1 shared header.
+  let currentDashboard = 'engagement';
   let distributionInitialized = false;
 
   // ── Dashboard Switching ──────────────────────────────────────────────────────
@@ -26,11 +23,9 @@
     });
 
     var header = document.querySelector('header.header');
-    var label = document.getElementById('dashboard-switcher-label');
-    var viewModes = document.getElementById('view-modes');
 
     if (name === 'home') {
-      // Home: hide switcher, separator, context row, view modes
+      // Home: reveal header, drop the distribution accent.
       if (header) header.classList.add('header--home');
       if (header) header.classList.remove('header--distribution');
       if (window.HeaderSlide) window.HeaderSlide.revealHeader();
@@ -41,27 +36,6 @@
     if (window.HeaderSlide) window.HeaderSlide.revealHeader();
     if (header) header.classList.remove('header--home');
     if (header) header.classList.toggle('header--distribution', name === 'distribution');
-
-    // Update dropdown label
-    if (label) {
-      label.textContent = name === 'engagement' ? 'Engagement' : 'Distribution';
-    }
-
-    // Update active state on menu items
-    document.querySelectorAll('.dashboard-switcher__item').forEach(function (btn) {
-      btn.classList.toggle('active', btn.dataset.dashboard === name);
-    });
-
-    // Show/hide view modes (engagement only)
-    if (viewModes) {
-      viewModes.style.display = name === 'engagement' ? '' : 'none';
-    }
-
-    // Show/hide distribution section tabs (distribution only)
-    var distTabs = document.getElementById('dist-section-tabs');
-    if (distTabs) {
-      distTabs.style.display = name === 'distribution' ? '' : 'none';
-    }
 
     // Restore context bar for the active dashboard
     if (name === 'engagement' && typeof window.DashboardCore !== 'undefined') {
@@ -116,43 +90,6 @@
     });
   }
 
-  // ── Header Init ───────────────────────────────────────────────────────────────
-
-  function initDashboardSwitcher() {
-    var dropdown = document.getElementById('performance-type-dropdown');
-    var menu = document.getElementById('dashboard-menu');
-
-    if (!dropdown || !menu) return;
-
-    dropdown.addEventListener('click', function (e) {
-      e.stopPropagation();
-      var isOpen = dropdown.getAttribute('aria-expanded') === 'true';
-      dropdown.setAttribute('aria-expanded', String(!isOpen));
-      menu.classList.toggle('open', !isOpen);
-    });
-
-    menu.querySelectorAll('.dashboard-switcher__item').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        dropdown.setAttribute('aria-expanded', 'false');
-        menu.classList.remove('open');
-        // Both dashboards are now standalone pages
-        if (btn.dataset.dashboard === 'distribution') {
-          window.location.href = 'distribution-visitation.html';
-        } else if (btn.dataset.dashboard === 'engagement') {
-          window.location.href = 'engagement-report.html';
-        } else {
-          switchDashboard(btn.dataset.dashboard);
-        }
-      });
-    });
-
-    // Close on outside click
-    document.addEventListener('click', function () {
-      dropdown.setAttribute('aria-expanded', 'false');
-      menu.classList.remove('open');
-    });
-  }
-
   // ── Context Card Wiring ───────────────────────────────────────────────────────
 
   function initContextCards() {
@@ -189,30 +126,6 @@
         }
       });
     }
-  }
-
-  // ── Distribution Section Tabs ─────────────────────────────────────────────────
-
-  function initDistSectionTabs() {
-    var tabs = document.querySelectorAll('#dist-section-tabs .dist-tab');
-    tabs.forEach(function (tab) {
-      tab.addEventListener('click', function () {
-        var sectionId = tab.dataset.section;
-        // Update active tab button
-        tabs.forEach(function (t) { t.classList.remove('active'); });
-        tab.classList.add('active');
-        // Show only the selected section
-        document.querySelectorAll('.dist-section').forEach(function (s) {
-          s.classList.toggle('active', s.id === sectionId);
-        });
-        // Resize eCharts — containers were display:none during init so they got 0×0 dimensions
-        setTimeout(resizeVisibleCharts, 0);
-        // Leaflet map needs an explicit size recalculation when its container becomes visible
-        if (sectionId === 'section-traffic' && typeof StoreMap !== 'undefined') {
-          StoreMap.invalidateSize();
-        }
-      });
-    });
   }
 
   // ── Home Cards ────────────────────────────────────────────────────────────────
@@ -254,9 +167,7 @@
     var header = document.querySelector('header.header');
     if (header) header.classList.add('header--home');
 
-    initDashboardSwitcher();
     initContextCards();
-    initDistSectionTabs();
     initHomeCards();
 
     // Hash routing: distribution pages link back as index.html#engagement

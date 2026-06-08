@@ -3798,7 +3798,6 @@ display: flex;
 /* ============================================================
    R4 (Item 19b): Per-section accent colors
    Driven by body[data-dist-page]. Controls:
-     - .dist-tab active/hover state in header
      - .hero-stat banner background
      - stat-strip accent border + hero value color
    Do NOT touch chart colors — these are header/hero only.
@@ -3823,23 +3822,6 @@ body[data-dist-page="overview"] {
 body[data-dist-page="demographics"] {
   --section-color:       var(--section-demographics);
   --section-color-light: var(--section-demographics-light);
-}
-
-/* Active tab pill: section color */
-body[data-dist-page] .dist-tab.active {
-  background: var(--section-color-light) !important;
-  color: var(--section-color) !important;
-}
-
-/* Hover: neutral gray — section color only for the committed active state */
-body[data-dist-page] .dist-tab:hover:not(.active) {
-  background: var(--color-gray-100);
-  color: var(--color-text-primary);
-}
-
-/* Focus ring */
-body[data-dist-page] .dist-tab:focus-visible {
-  outline-color: var(--section-color);
 }
 
 /* hero-stat banner: section color tint */

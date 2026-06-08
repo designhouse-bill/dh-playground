@@ -197,17 +197,12 @@ img {
    Home / Landing Screen
    ======================================== */
 
-/* Header in home mode — hide switcher, separator, context row, view modes */
-.header--home .dashboard-switcher,
+/* Header in home mode — hide separator + context row */
 .header--home .topbar__separator {
   display: none;
 }
 
 .header--home .context-row {
-  display: none;
-}
-
-.header--home .view-modes {
   display: none;
 }
 

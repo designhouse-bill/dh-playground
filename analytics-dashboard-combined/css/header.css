@@ -360,13 +360,6 @@
   font-size: 16px;
 }
 
-/* View Modes */
-.view-modes {
-  display: flex;
-  align-items: stretch;
-  gap: var(--space-2);
-}
-
 .mode-group {
   display: flex;
   align-items: stretch;
@@ -404,59 +397,6 @@
 }
 
 /* .mode-btn rules moved to analytics-architecture.css (Phase 0b block 4). */
-
-/* Distribution Section Tabs — left-aligned in topbar after the dropdown */
-.dist-section-tabs {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-}
-
-/* B1 (UX-846, 2026-05-27): match .mode-btn sizing — gap space-2, icon 18px.
-   Distribution tabs and Engagement view-modes share size/icon contract;
-   per-section active tint diverges via body[data-dist-page] (DC1/DC2). */
-.dist-tab {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-secondary);
-  background: none;
-  border: none;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
-}
-
-.dist-tab .material-symbols-outlined {
-  font-size: 18px;
-}
-
-.dist-tab:hover {
-  background: var(--color-gray-100);
-  color: var(--color-text-primary);
-}
-
-.dist-tab.active {
-  background: var(--color-primary-50);
-  color: var(--color-primary-600);
-  font-weight: var(--font-weight-semibold);
-}
-
-.dist-tab:focus-visible {
-  outline: 2px solid var(--color-primary-500);
-  outline-offset: 2px;
-}
-
-/* When tabs are <a> links instead of <button> elements */
-/* When tabs / switcher items are <a> links instead of <button> elements */
-a.dist-tab,
-a.dashboard-switcher__item {
-  text-decoration: none;
-}
 
 /* Context Row: Foundation Context + Filter Chips */
 .context-row {
@@ -693,61 +633,6 @@ a.dashboard-switcher__item {
   display: none;
 }
 
-/* Dashboard Switcher Dropdown */
-.dashboard-switcher {
-  position: relative;
-}
-
-.dashboard-switcher__menu {
-  display: none;
-  position: absolute;
-  top: calc(100% + var(--space-2));
-  left: 0;
-  min-width: 200px;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  z-index: 100;
-  padding: var(--space-1);
-}
-
-.dashboard-switcher__menu.open {
-  display: block;
-}
-
-.dashboard-switcher__item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  width: 100%;
-  padding: var(--space-3) var(--space-4);
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-secondary);
-  background: none;
-  border: none;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  text-align: left;
-}
-
-.dashboard-switcher__item:hover {
-  background-color: var(--color-gray-50);
-  color: var(--color-text-primary);
-}
-
-.dashboard-switcher__item.active {
-  background-color: var(--color-primary-50);
-  color: var(--color-primary-600);
-  font-weight: var(--font-weight-semibold);
-}
-
-.dashboard-switcher__item .material-symbols-outlined {
-  font-size: 20px;
-}
-
 /* Hide Original/Proposed/Proposed-Max version toggle (audit baseline = Proposed Max only). Markup retained for non-UI reference. */
 .view-version-toggle { display: none !important; }
 
@@ -756,16 +641,14 @@ a.dashboard-switcher__item {
    RESPONSIVE — page chrome (1024 / 768 / 480)
    ========================================================================= */
 
-/* ≤ 1024px: wrap the .topbar onto two rows when brand + dashboard switcher +
-   view-modes + share can't all fit. Each chunk keeps its own layout. */
+/* ≤ 1024px: wrap the .topbar onto two rows when brand + nav + share can't all
+   fit. Each chunk keeps its own layout. */
 @media (max-width: 1024px) {
   .topbar {
     flex-wrap: wrap;
     row-gap: var(--space-3);
   }
   .topbar__left { flex: 1 1 auto; min-width: 0; }
-  .view-modes,
-  #view-modes { flex: 1 1 100%; justify-content: flex-start; }
   .topbar__actions { flex: 0 0 auto; }
 }
 

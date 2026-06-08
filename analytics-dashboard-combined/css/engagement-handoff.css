@@ -199,17 +199,12 @@ img {
    Home / Landing Screen
    ======================================== */
 
-/* Header in home mode — hide switcher, separator, context row, view modes */
-.header--home .dashboard-switcher,
+/* Header in home mode — hide separator + context row */
 .header--home .topbar__separator {
   display: none;
 }
 
 .header--home .context-row {
-  display: none;
-}
-
-.header--home .view-modes {
   display: none;
 }
 
@@ -939,12 +934,6 @@ img {
 
 .search-box input::placeholder {
   color: var(--color-text-tertiary);
-}
-
-.view-modes {
-  display: flex;
-  align-items: stretch;
-  gap: var(--space-2);
 }
 
 /* Mode Group (BASE with subtabs) */

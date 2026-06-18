@@ -1502,15 +1502,6 @@
     }
   }
 
-  function buildFreqBar(label, value, total, color) {
-    var pct = total > 0 ? (value / total * 100).toFixed(0) : 0;
-    return '<div class="compare-panel__freq-bar">' +
-      '<div class="compare-panel__freq-track"><div class="compare-panel__freq-fill" style="width:' + pct + '%;background:' + color + ';"></div></div>' +
-      '<div class="compare-panel__freq-value">' + pct + '%</div>' +
-      '<div class="compare-panel__freq-label">' + label + '</div>' +
-    '</div>';
-  }
-
   function trendArrow(trend) {
     if (!trend || trend.length < 2) return '—';
     var first = trend[0];
@@ -1547,29 +1538,6 @@
       chips.push({ id: 'entity', type: 'deal', label: ctx.entityName });
     }
     HeaderComponent.renderFilterChips(chips);
-  }
-
-  function handleFilterRemove(filterId) {
-    if (filterId === 'flight-week') {
-      D.setFlightWeek('all');
-      var weeks = D.flightWeeks;
-      var firstWk = weeks[0];
-      var lastWk = weeks[weeks.length - 1];
-      HeaderComponent.updateDateDisplay(firstWk.label + ' – ' + lastWk.label, fmtDateRange(firstWk.start) + ' – ' + fmtDateRange(lastWk.end));
-    } else if (filterId === 'entity') {
-      D.setEntity('all', 'all', 'All Stores');
-      var rc = D.retailerConfig;
-      var storeCount = D.entities.stores.length;
-      HeaderComponent.updateEntityDisplay('ALL STORES', rc.name, storeCount + ' stores · ' + rc.pilotLabel);
-    }
-    // Re-render with reset context
-    renderAll();
-    Object.values(charts).forEach(function(chart) {
-      if (chart && chart.dispose) chart.dispose();
-    });
-    charts = {};
-    initCharts();
-    updateFilterChips();
   }
 
   function getEntityLabel() {

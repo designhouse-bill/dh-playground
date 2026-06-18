@@ -75,7 +75,15 @@
     var slot = root.querySelector('[data-nav="product"]');
     var sep  = root.querySelector('[data-nav="sep"]');
     var title = root.querySelector('[data-nav="title"]');
-    if (title) title.textContent = cfg.title || 'Analytics Dashboard';
+    if (title) {
+      title.textContent = cfg.title || 'Analytics Dashboard';
+      // Brand title navigates home to the Analytics Dashboard (index.html).
+      title.style.cursor = 'pointer';
+      title.setAttribute('role', 'link');
+      title.setAttribute('tabindex', '0');
+      title.addEventListener('click', function () { location.href = 'index.html'; });
+      title.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); location.href = 'index.html'; } });
+    }
 
     var ent = cfg.entitlements || (cfg.products || []).map(function (p) { return p.id; });
     // Single product → no switcher; fold product name into the title.

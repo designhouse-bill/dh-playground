@@ -295,6 +295,46 @@ If you pass `composite` as maxTotal, segments collapse to one color (xAxis overf
 
 ---
 
+# 4b. Line / area charts (canonical: white nodes + fill)
+
+## 4b.1 Node + fill style (canonical)
+
+> **State:** 🔒 LOCKED 2026-06-18 (Adam/Max Jun-16 review, Bill direction). Every line/area chart with markers uses the SAME node — **white fill + colored ring** (size 7) — over a colored line (width 2). Two fill variants by data semantics. No bare lines, no solid-colored nodes.
+
+**Canonical node (all variants):**
+```js
+symbol: 'circle', symbolSize: 7,
+lineStyle: { color: C, width: 2 },
+itemStyle: { color: '#fff', borderColor: C, borderWidth: 2 }   // white node, colored ring
+```
+
+**Variant A — independent series → gradient fill** (series don't sum to a whole; overlap composites via alpha):
+```js
+smooth: true,
+areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+  { offset: 0, color: echarts.color.modifyAlpha(C, 0.30) },
+  { offset: 1, color: echarts.color.modifyAlpha(C, 0) }
+]) }
+```
+Used: Paid Media → Time Trend (`distribution-media.html` buildTrendOptions); Traffic → crossover-**overlap** trend (`distribution.js` updateCrossoverTrendPeriod, share mode).
+
+**Variant B — composition / store-competitor share → solid 0.9 fill + `stack`** (series sum to a whole; bands must read as distinct regions):
+```js
+smooth: false,           // (composition; or true if the source uses smooth)
+stack: '<group>',
+areaStyle: { color: C, opacity: 0.9 }   // explicit color — required, else white node bleeds into fill
+```
+Used: Observed Visits → by Competitor (`distribution-visitation.html` buildCompOptions); Traffic → chart-crossover composition (`distribution.js` updateCrossoverChartPeriod, area mode).
+
+**Gotcha (white itemStyle propagates 3 ways):** with white `itemStyle.color` you MUST re-supply the real color in three places, or each renders white:
+1. `areaStyle` / `lineStyle` — set `color` explicitly (default = itemStyle color).
+2. **Tooltip markers** — `p.color`/`p.marker` become white. Use a `name→color` map in the formatter and render the ring marker manually (`background:#fff; border:2px solid C`). Shared `darkAxisTooltip(params, valueFmt, colorFn)` takes an optional `colorFn` for this.
+3. **Legend dots** — with `icon:'circle'` the legend uses itemStyle color. Pass `legend.data` as objects: `{ name, itemStyle: { color: C } }`.
+
+`echarts.color.modifyAlpha(C, a)` accepts hex/named/rgb. **Sparklines excluded** (too small for visible nodes).
+
+---
+
 # 5. Donut charts
 
 ## 5.1 Lazy-init rule (HARD)

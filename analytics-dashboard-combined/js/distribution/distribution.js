@@ -1916,105 +1916,6 @@
     _leaderboardView = savedView;
   }
 
-  function renderConcentration() {
-    const s = D.trafficShareMetrics.summary;
-    elements.concentrationStats.innerHTML = `
-      <div class="conc-stat">
-        <span class="conc-label">Highly Concentrated (HHI > 2500)</span>
-        <span class="conc-value">${s.highly_concentrated_count} stores</span>
-      </div>
-      <div class="conc-stat">
-        <span class="conc-label">Moderately Concentrated</span>
-        <span class="conc-value">${s.moderately_concentrated_count} stores</span>
-      </div>
-    `;
-  }
-
-  function renderThreats() {
-    const threats = D.primaryThreats;
-    const totalStores = D.trafficShareMetrics.summary.stores_total || 20;
-
-    elements.threatList.innerHTML = threats.map(t => {
-      const locationsHtml = t.locations && t.locations.length > 0
-        ? t.locations.map(loc => `
-            <div class="threat-location">
-              <span class="threat-location__address">${loc.address}</span>
-              <span class="threat-location__pct">${loc.threat_pct != null ? loc.threat_pct + '% comp share' : '—'}</span>
-            </div>
-          `).join('')
-        : '<div class="threat-location"><span class="threat-location__address" style="color:var(--text-muted);">No store-level data</span></div>';
-
-      return `
-        <details class="threat-item">
-          <summary class="threat-item__summary">
-            <span class="threat-name">${t.brand}</span>
-            <span class="threat-count">${t.store_count} store${t.store_count > 1 ? 's' : ''} threatened</span>
-            <div class="threat-bar">
-              <div class="threat-bar__fill" style="width: ${(t.store_count / totalStores) * 100}%;"></div>
-            </div>
-          </summary>
-          <div class="threat-item__locations">
-            <div class="threat-locations-header">
-              <span>Competitor Location</span>
-              <span>Impact</span>
-            </div>
-            ${locationsHtml}
-          </div>
-        </details>
-      `;
-    }).join('');
-  }
-
-  // ========================================
-  // Traffic Overview Preview (top 5, links to By Store tab)
-  // ========================================
-
-  function renderTrafficLeaderboardPreview() {
-    var host = document.getElementById('traffic-overview-preview');
-    if (!host) return;
-
-    function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-    function fmtChange(pp) {
-      if (pp == null) return '<span style="color:var(--p-text-color-muted)">—</span>';
-      var sign = pp > 0 ? '+' : '';
-      var color = pp > 0 ? 'var(--p-green-500)' : pp < 0 ? 'var(--p-red-500)' : 'var(--p-text-color-secondary)';
-      return '<span style="color:' + color + '">' + sign + pp.toFixed(1) + ' pp</span>';
-    }
-
-    var top5 = [].concat(D.trafficShareMetrics.storeLeaderboard || [])
-      .sort(function(a, b) { return (b.wk2_share || 0) - (a.wk2_share || 0); })
-      .slice(0, 5);
-
-    var header = '<div class="lb-header">' +
-      '<span class="lb-col lb-col--rank">#</span>' +
-      '<span class="lb-col lb-col--store">Store</span>' +
-      '<span class="lb-col lb-col--city">City</span>' +
-      '<span class="lb-col lb-col--share">Share</span>' +
-      '<span class="lb-col lb-col--change">Change</span>' +
-    '</div>';
-
-    var rows = top5.map(function(s, i) {
-      return '<div class="lb-row lb-row--leaf">' +
-        '<span class="lb-col lb-col--rank"><span class="lb-rank">' + (i + 1) + '</span></span>' +
-        '<span class="lb-col lb-col--store">Store #' + esc(s.store_id) + '</span>' +
-        '<span class="lb-col lb-col--city">' + esc(s.city || '') + '</span>' +
-        '<span class="lb-col lb-col--share">' + (s.wk2_share != null ? s.wk2_share + '%' : '—') + '</span>' +
-        '<span class="lb-col lb-col--change">' + fmtChange(s.change_pp) + '</span>' +
-      '</div>';
-    }).join('');
-
-    host.innerHTML = header + rows;
-
-    var link = document.getElementById('ts-overview-preview-link');
-    if (link && !link.dataset.bound) {
-      link.dataset.bound = '1';
-      link.addEventListener('click', function() {
-        var compareTab = document.querySelector('[data-ts-tab="compare"]');
-        if (compareTab) compareTab.click();
-      });
-    }
-  }
-
   // ========================================
   // Traffic Data Pane (dense flat leaderboard)
   // ========================================
@@ -2990,6 +2891,13 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     var slicedWeeks = flightWeeks.slice(sliceStart).map(function(w) { return w.label; });
     var colors = ChartColors.series;
 
+    // Cap to top-5 competitors by average share over the visible window (window-aware,
+    // matches the composition chart). Keeps the overlap chart readable as the set changes.
+    var ovTop = D.competitiveCrossover.slice().sort(function (a, b) {
+      function avg(c) { var t = (c.trend || []).slice(sliceStart); return t.length ? t.reduce(function (s, v) { return s + v; }, 0) / t.length : (c.crossover_pct || 0); }
+      return avg(b) - avg(a);
+    }).slice(0, 5);
+
     if (_crossoverTrendMetric === 'volume') {
       // Visits view — Our Brand bar + Competitors bar from trafficShareMetrics.trend.
       var trend = (D.trafficShareMetrics && D.trafficShareMetrics.trend) || [];
@@ -3020,31 +2928,43 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       return;
     }
 
+    // Color-by-name for tooltip ring markers (white node itemStyle makes p.color white).
+    var ovColorByName = {};
+    ovTop.forEach(function(c, i) { ovColorByName[c.competitor_name] = colors[i]; });
+
     chart.setOption({
       tooltip: {
         trigger: 'axis',
         backgroundColor: 'rgba(17,24,39,0.96)',
         borderColor: 'rgba(255,255,255,0.12)',
         textStyle: { color: '#fff', fontSize: 12 },
-        formatter: function(params) { return darkAxisTooltip(params, function(v) { return v.toFixed(1) + '%'; }); }
+        formatter: function(params) { return darkAxisTooltip(params, function(v) { return v.toFixed(1) + '%'; }, function(p) { return ovColorByName[p.seriesName] || p.color; }); }
       },
       legend: {
-        data: D.competitiveCrossover.map(function(c) { return c.competitor_name; }),
+        // Explicit per-item color — white node itemStyle would make icon:'circle' legend dots white.
+        data: ovTop.map(function(c, i) { return { name: c.competitor_name, itemStyle: { color: colors[i] } }; }),
         bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, itemGap: 20,
         textStyle: { fontSize: 12, color: '#6b7280' }
       },
       grid: { left: 50, right: 20, top: 20, bottom: 50 },
       xAxis: { type: 'category', data: slicedWeeks, axisLabel: { fontSize: 11 } },
       yAxis: { type: 'value', axisLabel: { formatter: '{value}%' } },
-      series: D.competitiveCrossover.map(function(comp, i) {
+      series: ovTop.map(function(comp, i) {
         return {
           name: comp.competitor_name,
           type: 'line',
           data: comp.trend.slice(sliceStart),
           smooth: true,
           lineStyle: { color: colors[i], width: 2 },
-          itemStyle: { color: colors[i] },
-          symbolSize: 6
+          // Canonical node: white fill + colored ring (pops over the fill).
+          itemStyle: { color: '#fff', borderColor: colors[i], borderWidth: 2 },
+          // Canonical line-chart style: nodes + gradient bottom fill (color→transparent).
+          // Overlapping translucent bands composite into blended color (alpha compositing).
+          areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: echarts.color.modifyAlpha(colors[i], 0.30) },
+            { offset: 1, color: echarts.color.modifyAlpha(colors[i], 0) }
+          ]) },
+          symbol: 'circle', symbolSize: 7
         };
       })
     });
@@ -5109,7 +5029,14 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         allComps.push(c);
       }
     });
-    allComps.sort(function (a, b) { return b.crossover_pct - a.crossover_pct; });
+    // Window-aware ranking: rank by average share over the visible window, so the
+    // top-N set (and what falls into "All Other") changes as the period toggles.
+    function windowAvg(c) {
+      var t = (c.trend || []).slice(sliceStart);
+      if (!t.length) return c.crossover_pct || 0;
+      return t.reduce(function (s, v) { return s + v; }, 0) / t.length;
+    }
+    allComps.sort(function (a, b) { return windowAvg(b) - windowAvg(a); });
 
     var top5 = allComps.slice(0, 5);
     var rest = allComps.slice(5);
@@ -5138,11 +5065,13 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         data: comp.trend.slice(sliceStart)
       };
       if (useArea) {
-        s.areaStyle = { opacity: 0.85 };
-        s.lineStyle = { width: 1 };
+        // Store/competitor composition — solid 0.9 fill + white nodes (canonical).
+        s.areaStyle = { color: CROSSOVER_COLORS[i], opacity: 0.9 };
+        s.lineStyle = { color: CROSSOVER_COLORS[i], width: 2 };
         s.symbol = 'circle';
-        s.symbolSize = 4;
+        s.symbolSize = 7;
         s.smooth = true;
+        s.itemStyle = { color: '#fff', borderColor: CROSSOVER_COLORS[i], borderWidth: 2 };
       } else {
         s.barWidth = '60%';
       }
@@ -5167,11 +5096,12 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       data: ourBrandTrend
     };
     if (useArea) {
-      ourBrandSeries.areaStyle = { opacity: 0.85 };
-      ourBrandSeries.lineStyle = { width: 1 };
+      ourBrandSeries.areaStyle = { color: CROSSOVER_COLORS[6], opacity: 0.9 };
+      ourBrandSeries.lineStyle = { color: CROSSOVER_COLORS[6], width: 2 };
       ourBrandSeries.symbol = 'circle';
-      ourBrandSeries.symbolSize = 4;
+      ourBrandSeries.symbolSize = 7;
       ourBrandSeries.smooth = true;
+      ourBrandSeries.itemStyle = { color: '#fff', borderColor: CROSSOVER_COLORS[6], borderWidth: 2 };
     } else {
       ourBrandSeries.barWidth = '60%';
     }
@@ -5194,11 +5124,12 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         data: allOtherTrend
       };
       if (useArea) {
-        allOtherSeries.areaStyle = { opacity: 0.85 };
-        allOtherSeries.lineStyle = { width: 1 };
+        allOtherSeries.areaStyle = { color: CROSSOVER_COLORS[5], opacity: 0.9 };
+        allOtherSeries.lineStyle = { color: CROSSOVER_COLORS[5], width: 2 };
         allOtherSeries.symbol = 'circle';
-        allOtherSeries.symbolSize = 4;
+        allOtherSeries.symbolSize = 7;
         allOtherSeries.smooth = true;
+        allOtherSeries.itemStyle = { color: '#fff', borderColor: CROSSOVER_COLORS[5], borderWidth: 2 };
       } else {
         allOtherSeries.barWidth = '60%';
       }
@@ -5208,6 +5139,12 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     var legendNames = ['Our Brand Only'].concat(top5.map(function (c) { return c.competitor_name; }));
     if (rest.length > 0) legendNames.push('All Other');
 
+    // Color-by-name for tooltip markers (white node itemStyle would make p.marker white).
+    var crossColorByName = {};
+    top5.forEach(function (c, i) { crossColorByName[c.competitor_name] = CROSSOVER_COLORS[i]; });
+    crossColorByName['Our Brand Only'] = CROSSOVER_COLORS[6];
+    crossColorByName['All Other'] = CROSSOVER_COLORS[5];
+
     // Full replace to switch between bar/area chart types cleanly
     chart.setOption({
       tooltip: {
@@ -5216,7 +5153,9 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         formatter: function (params) {
           var html = '<strong>' + params[0].axisValue.replace('\n', ' ') + '</strong>';
           params.forEach(function (p) {
-            html += '<br>' + p.marker + ' ' + p.seriesName + ': <strong>' + p.value.toFixed(1) + '%</strong>';
+            var c = crossColorByName[p.seriesName] || p.color;
+            var dot = '<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#fff;border:2px solid ' + c + ';box-sizing:border-box;vertical-align:middle;margin-right:6px;"></span>';
+            html += '<br>' + dot + p.seriesName + ': <strong>' + p.value.toFixed(1) + '%</strong>';
           });
           return html;
         }
@@ -5224,7 +5163,8 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       legend: {
         bottom: 0, icon: 'circle', itemWidth: 8, itemHeight: 8, itemGap: 20,
         textStyle: { fontSize: 12, color: '#6b7280' },
-        data: legendNames
+        // Explicit per-item color — white node itemStyle would make icon:'circle' legend dots white.
+        data: legendNames.map(function (n) { return { name: n, itemStyle: { color: crossColorByName[n] } }; })
       },
       grid: { left: 50, right: 24, top: 16, bottom: 60 },
       xAxis: {
@@ -5441,7 +5381,9 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
   }
 
   // Renders a dark-themed eCharts axis tooltip body. valueFmt(v) formats each series value.
-  function darkAxisTooltip(params, valueFmt) {
+  // colorFn(p) optional: when the series uses white-fill nodes (itemStyle.color='#fff'),
+  // p.color is white — pass a resolver to render the canonical white/colored-ring marker.
+  function darkAxisTooltip(params, valueFmt, colorFn) {
     if (!params || !params.length) return '';
     var label = params[0].axisValueLabel || params[0].name;
     var hint = bucketDateHint(label);
@@ -5450,9 +5392,11 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         + '<div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:7px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.18);">' + hint + '</div>'
       : '<div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:7px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.18);">' + label + '</div>';
     var rows = params.map(function(p) {
+      var dot = colorFn
+        ? '<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#fff;border:2px solid ' + colorFn(p) + ';box-sizing:border-box;margin-right:6px;vertical-align:middle;"></span>'
+        : '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:' + p.color + ';margin-right:6px;vertical-align:middle;"></span>';
       return '<div style="display:flex;justify-content:space-between;gap:14px;padding:2px 0;">'
-        + '<span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'
-        + p.color + ';margin-right:6px;vertical-align:middle;"></span>'
+        + '<span>' + dot
         + '<span style="color:rgba(255,255,255,0.85);">' + p.seriesName + '</span></span>'
         + '<span style="font-weight:600;color:#fff;">' + valueFmt(p.value) + '</span>'
         + '</div>';

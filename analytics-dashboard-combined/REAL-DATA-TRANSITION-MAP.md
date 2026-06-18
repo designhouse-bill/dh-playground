@@ -92,6 +92,32 @@ Overlaid creative fields: `group`, `kpi`, `kpi_metric`, `kpi_value`, `status`, `
 - `crossoverRecords` (entire — same)
 - `videoEngagement`, `demographics` — kept from prior session
 
+## Competitor set composition — crossover / traffic-share charts (DATA CONTRACT)
+
+Governs how Greenberg/VA competitor data must be bucketed for the by-Competitor charts (Observed Visits competitor, Traffic chart-crossover + crossover-overlap). Locks chart honesty before real data lands.
+
+**LOCKED (Adam Zimmerman, Jun-16 review):**
+- **Roll up** multi-location retailers to **one entry per banner** (Walmart = one series, not per-store `Walmart #5421`).
+- **Top-N named competitors + "All Other" residual.** Adam said **top-4**; prototype currently uses **top-5** → reconcile to one number (4 named + All Other + Our Brand = 6 bands).
+- Stack is a composition that **sums to 100%** every week (`Our Brand = 100 − Σ competitors`); "All Other" absorbs everyone outside top-N.
+
+**STABILITY MECHANISM (proven in prototype 2026-06-18, not yet Adam-confirmed):**
+Adam's rules describe a *snapshot*; the "competitor falls off / replaced" problem only appears over *time*. Mechanism that survives it:
+- Rank competitors **per selected window**, hold that set stable across the window's weeks → **no mid-window series swaps**.
+- A competitor entering/leaving the top-N rides as a growing/shrinking band, or moves to/from "All Other" — continuous, never a gap.
+- Verified: toggling 4w↔13w swaps Walmart↔Whole Foods at the top-5 boundary; stack stays 100%, no broken series.
+
+**OPEN DECISION (needs Adam) — ranking basis:**
+
+| Option | Pro | Con |
+|--------|-----|-----|
+| **Window-average** (prototype default) | Each view honest about who mattered *over that period* — serves the growth/shrinkage goal | Named set shuffles when the period toggles |
+| **Current top-N, fixed across windows** | Stable/predictable — matches Adam's "create a language" consistency theme | Buries a competitor that dominated historically but recently faded — misrepresents the past |
+
+Recommendation: **window-average**, with "All Other" as the stable anchor + a light cue when the set changes. But this trades against Adam's consistency principle — **his call, not baked in.**
+
+Greenberg ingestion must therefore deliver, per competitor banner, a **full per-week share series over the window** (not just a latest-week scalar) so ranking can be computed per window.
+
 ## Module API
 
 ```js

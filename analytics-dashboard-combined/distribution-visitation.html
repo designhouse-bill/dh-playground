@@ -137,8 +137,8 @@
         <div class="chart-card__header">
           <div class="chart-card__header-left">
             <div class="ep-sub-tabs" id="ov-perf-tabs" role="tablist" aria-label="Observed Visits view">
-              <button class="ep-sub-tab ep-sub-tab--active" data-dist-sub="trend" role="tab" aria-selected="true">Time Trend</button>
-              <button class="ep-sub-tab" data-dist-sub="store" role="tab" aria-selected="false">By Store</button>
+              <button class="ep-sub-tab ep-sub-tab--active" data-dist-sub="store" role="tab" aria-selected="true">By Store</button>
+              <button class="ep-sub-tab" data-dist-sub="trend" role="tab" aria-selected="false">Time Trend</button>
               <button class="ep-sub-tab" data-dist-sub="competitor" role="tab" aria-selected="false">by Competitor</button>
             </div>
           </div>
@@ -299,7 +299,7 @@
       tabs.forEach(function (tab) {
         tab.addEventListener('click', function () { activate(tab.dataset.distSub); });
       });
-      activate('trend');
+      activate('store');
     }
 
     // ── By Store fixture (real WD store visits + share%) ─────────
@@ -735,18 +735,31 @@
     function buildCompOptions() {
       var share = activeCompShare();
       var visits = activeCompVisits();
-      var seriesData = activeCompTrend().map(function (s) {
-        var data = compMetricMode === 'share'
-          ? s.data.map(function (v) { return +(v * 100).toFixed(1); })
-          : s.data.map(function (v) {
-              // approximate weekly visits from share trend
-              return Math.round(v * visits[s.name] / share[s.name]);
-            });
+      var trend = activeCompTrend();
+      var nWeeks = compWeeks.length;
+      // Per-week values per series. UX-846 Adam Jun-16: 100% stacked area.
+      var vals = trend.map(function (s) {
+        return compMetricMode === 'share'
+          ? s.data.slice() // normalized to 100% per week below
+          : s.data.map(function (v) { return Math.round(v * visits[s.name] / share[s.name]); });
+      });
+      if (compMetricMode === 'share') {
+        // Normalize each week column to sum to 100 so the stacked area tops out at 100%.
+        for (var w = 0; w < nWeeks; w++) {
+          var colSum = 0;
+          trend.forEach(function (s, si) { colSum += vals[si][w]; });
+          trend.forEach(function (s, si) { vals[si][w] = +(vals[si][w] / colSum * 100).toFixed(1); });
+        }
+      }
+      var seriesData = trend.map(function (s, si) {
         return {
-          name: s.name, type: 'line', smooth: true, symbol: 'circle', symbolSize: 6,
-          data: data,
-          itemStyle: { color: compColors[s.name] },
-          lineStyle: { color: compColors[s.name], width: 2 }
+          name: s.name, type: 'line', stack: 'comp', smooth: false,
+          symbol: 'circle', symbolSize: 7,
+          data: vals[si],
+          areaStyle: { color: compColors[s.name], opacity: 0.9 },
+          lineStyle: { color: compColors[s.name], width: 2 },
+          // Canonical node: white fill + colored ring (pops over the solid 0.9 band).
+          itemStyle: { color: '#fff', borderColor: compColors[s.name], borderWidth: 2 }
         };
       });
       return {
@@ -763,7 +776,7 @@
             var suffix = compMetricMode === 'share' ? '%' : '';
             params.forEach(function (p) {
               html += '<div style="display:flex; align-items:center; gap:10px; min-width:220px; margin-top:2px;">' +
-                '<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:' + p.color + ';"></span>' +
+                '<span style="display:inline-block; width:9px; height:9px; border-radius:50%; background:#fff; border:2px solid ' + (compColors[p.seriesName] || p.color) + '; box-sizing:border-box;"></span>' +
                 '<span style="flex:1; color:rgba(255,255,255,0.9);">' + p.seriesName + '</span>' +
                 '<span style="font-weight:600; font-variant-numeric:tabular-nums; color:#fff;">' + p.value.toLocaleString() + suffix + '</span>' +
                 '</div>';
@@ -777,6 +790,7 @@
                  axisLabel: { color: '#6b7280', fontSize: 11 },
                  axisLine: { lineStyle: { color: '#e5e7eb' } } },
         yAxis: { type: 'value',
+                 max: compMetricMode === 'share' ? 100 : null,
                  axisLabel: { color: '#6b7280', fontSize: 11,
                               formatter: compMetricMode === 'share'
                                 ? function (v) { return v + '%'; }

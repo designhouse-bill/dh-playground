@@ -589,19 +589,30 @@ const DistributionRecords = (function() {
   // D. Competitive Crossover Records (5 × 5 = 25)
   // ========================================
 
+  // 8 competitors with crossing trajectories over the visible 13-week tail, so the
+  // top-N set changes when the window toggles (4w vs 13w). `base` = share at the start
+  // of the visible window; `slope` = per-week change. Walmart fades out of top-5 in
+  // recent weeks; ALDI surges; Whole Foods crosses in. Tests competitor entry/exit.
   const COMPETITORS = [
-    { name: 'Publix', address: '1250 S Federal Hwy, Hollywood, FL 33020', basePct: 28.1, growthRate: 1.5 },
-    { name: 'Walmart', address: '8990 Turkey Lake Rd, Orlando, FL 32819', basePct: 19.3, growthRate: 0.8 },
-    { name: 'ALDI', address: '3401 W Vine St, Kissimmee, FL 34741', basePct: 15.2, growthRate: 0.9 },
-    { name: 'Other Retailers', address: '4100 N Federal Hwy, Fort Lauderdale, FL 33308', basePct: 7.1, growthRate: 0.3 },
-    { name: 'Save A Lot', address: '920 S Main St, Belle Glade, FL 33430', basePct: 5.8, growthRate: 0.08 }
+    { name: 'Publix',       address: '1250 S Federal Hwy, Hollywood, FL 33020',    base: 20.0, slope: -0.15 },
+    { name: 'Walmart',      address: '8990 Turkey Lake Rd, Orlando, FL 32819',     base: 16.0, slope: -0.85 },
+    { name: 'ALDI',         address: '3401 W Vine St, Kissimmee, FL 34741',        base:  6.0, slope:  0.95 },
+    { name: 'Kroger',       address: '700 W Oak Ridge Rd, Orlando, FL 32809',      base: 11.0, slope: -0.05 },
+    { name: 'Sprouts',      address: '4255 Town Center Blvd, Orlando, FL 32837',   base:  9.5, slope:  0.20 },
+    { name: 'Whole Foods',  address: '1989 Aloma Ave, Winter Park, FL 32792',      base:  9.0, slope:  0.15 },
+    { name: 'Save A Lot',   address: '920 S Main St, Belle Glade, FL 33430',       base:  5.0, slope:  0.05 },
+    { name: "Trader Joe's", address: '118 S Dixie Hwy, West Palm Beach, FL 33401', base:  4.0, slope:  0.10 }
   ];
 
   const crossoverRecords = [];
+  const XOVER_VISIBLE = 13;
+  const xoverStart = Math.max(0, WEEKS.length - XOVER_VISIBLE);
 
   COMPETITORS.forEach(comp => {
     WEEKS.forEach((weekId, weekIdx) => {
-      const pct = parseFloat((comp.basePct + (comp.growthRate * weekIdx)).toFixed(1));
+      // Trajectory applies over the visible 13-week tail; earlier weeks hold at base.
+      const rel = Math.max(0, weekIdx - xoverStart);
+      const pct = parseFloat(Math.max(2, Math.min(60, comp.base + comp.slope * rel)).toFixed(1));
       // Distribute visit buckets
       const totalBase = 800 + (pct * 20);
       const zeroPrev = Math.round(totalBase * 0.24);

@@ -23,7 +23,7 @@
   <link rel="stylesheet" href="css/header.css?v=7">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/distribution.css?v=56">
+  <link rel="stylesheet" href="css/distribution.css?v=59">
   <link rel="stylesheet" href="css/nav-a1.css?v=6">
 </head>
 <body data-dist-page="media">
@@ -100,7 +100,7 @@
           <div class="narrative-header__left">
           <h4 class="narrative-header__section">Distribution</h4>
           <h1 class="narrative-header__title">Paid Media</h1>
-          <h2 class="narrative-header__question">How efficiently is our ad spend being delivered?</h2>
+          <h2 class="narrative-header__question">How is our paid media being delivered?</h2>
           </div>
         </div>
           <!-- F3 (UX-846, 2026-05-27): hero-stat stat-strip shell (sibling of .narrative-header). -->
@@ -135,16 +135,16 @@
         <div class="chart-card__header">
           <div class="chart-card__header-left">
             <div class="ep-sub-tabs" id="pm-perf-tabs" role="tablist" aria-label="Paid Media view">
-              <button class="ep-sub-tab ep-sub-tab--active" data-dist-sub="trend" role="tab" aria-selected="true">Time Trend</button>
-              <button class="ep-sub-tab" data-dist-sub="store" role="tab" aria-selected="false">by Store</button>
+              <button class="ep-sub-tab ep-sub-tab--active" data-dist-sub="store" role="tab" aria-selected="true">by Store</button>
+              <button class="ep-sub-tab" data-dist-sub="trend" role="tab" aria-selected="false">Time Trend</button>
               <button class="ep-sub-tab" data-dist-sub="creative" role="tab" aria-selected="false">by Creative</button>
             </div>
           </div>
           <div class="chart-card__header-right">
             <div class="duration-presets" id="pm-trend-ranges" role="tablist" aria-label="Time range" data-show-on-sub="trend">
-              <button type="button" class="duration-preset" data-pm-range="1w">1 Week</button>
               <button type="button" class="duration-preset" data-pm-range="4w">4 Week <span class="duration-preset__sub">(Month)</span></button>
-              <button type="button" class="duration-preset duration-preset--active" data-pm-range="13w">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
+              <button type="button" class="duration-preset duration-preset--active" data-pm-range="8w">8 Week</button>
+              <button type="button" class="duration-preset" data-pm-range="13w">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
               <button type="button" class="duration-preset" data-pm-range="1y">1 Year</button>
             </div>
           </div>
@@ -163,11 +163,7 @@
             </button>
             <div class="creative-chips creative-chips--scroll" id="pm-campaign-chips-strip"></div>
           </div>
-          <div class="view-toggle view-toggle--compact" id="pm-store-metric-toggle" role="tablist" aria-label="Metric" data-show-on-sub="store">
-            <button type="button" class="view-toggle__btn active" data-pm-metric="ctr" role="tab" aria-selected="true">CTR</button>
-            <button type="button" class="view-toggle__btn" data-pm-metric="clicks" role="tab" aria-selected="false">Clicks</button>
-            <button type="button" class="view-toggle__btn" data-pm-metric="impressions" role="tab" aria-selected="false">Impressions</button>
-          </div>
+
         </div>
 
         <!-- Title row — panel-label/subtitle left, sub-tab-scoped controls right. -->
@@ -181,6 +177,11 @@
             <button type="button" class="series-pill" data-pm-series="clicks" style="--pill-color:#ef4444;">Clicks</button>
             <button type="button" class="series-pill" data-pm-series="ctr" style="--pill-color:#22c55e;">CTR</button>
           </div>
+            <div class="view-toggle view-toggle--compact" id="pm-store-metric-toggle" role="tablist" aria-label="Metric" data-show-on-sub="store">
+              <button type="button" class="view-toggle__btn active" data-pm-metric="ctr" role="tab" aria-selected="true">CTR</button>
+              <button type="button" class="view-toggle__btn" data-pm-metric="clicks" role="tab" aria-selected="false">Clicks</button>
+              <button type="button" class="view-toggle__btn" data-pm-metric="impressions" role="tab" aria-selected="false">Impressions</button>
+            </div>
         </div>
 
         <div class="ep-sub-pane ep-sub-pane--active" data-dist-sub-pane="trend">
@@ -309,8 +310,8 @@
       tabs.forEach(function (tab) {
         tab.addEventListener('click', function () { activate(tab.dataset.distSub); });
       });
-      // Default — Time Trend active on load.
-      activate('trend');
+      // Default — by Store active on load (UX-846 Adam Jun-16: land on overview).
+      activate('store');
     }
 
     // ── By Store fixture ──────────────────────────────────────────
@@ -425,19 +426,15 @@
       var NATIONAL_CTR_AVG = 0.10; // Chaffey 2024
       var rowsHtml = storeRows.map(function (r, i) {
         var w = (vals[i] / max) * 100;
-        var cpc = r.clicks ? r.spend / r.clicks : 0;
-        var cpm = r.impressions ? (r.spend / r.impressions) * 1000 : 0;
         var vsNatl = (r.ctr / NATIONAL_CTR_AVG).toFixed(1) + '× nat. avg';
         // data-perf-* attributes drive canonical dark hover tooltip
         var perfTitle = r.store + (r.tier ? ' · ' + r.tier + ' tier' : '') + ' · Wk 47 (Nov 17 – 23, 2026)';
         var perfRows = [
           { dot: 'impressions', name: 'Impressions',   val: fmtNum(r.impressions) },
           { dot: 'clicks',      name: 'Clicks',        val: fmtNum(r.clicks) },
-          { dot: 'ctr',         name: 'CTR',           val: fmtPct(r.ctr), score: vsNatl },
-          { dot: 'cpc',         name: 'CPC',           val: fmtMoney(cpc) },
-          { dot: 'cpm',         name: 'CPM',           val: fmtMoney(cpm) }
+          { dot: 'ctr',         name: 'CTR',           val: fmtPct(r.ctr), score: vsNatl }
         ];
-        var perfTotal = { label: 'Spend', val: fmtMoney(r.spend) };
+        var perfTotal = {};
         var rowsAttr  = JSON.stringify(perfRows).replace(/"/g, '&quot;');
         var totalAttr = JSON.stringify(perfTotal).replace(/"/g, '&quot;');
         function cell(col, content) {
@@ -454,7 +451,6 @@
           cell('impressions', fmtNum(r.impressions)) +
           cell('clicks',      fmtNum(r.clicks)) +
           cell('ctr',         fmtPct(r.ctr)) +
-          '<td class="pm-store-val">' + fmtMoney(r.spend) + '</td>' +
           '</tr>';
       }).join('');
       function head(col, label) {
@@ -468,7 +464,6 @@
             head('impressions', 'Impressions') +
             head('clicks',      'Clicks') +
             head('ctr',         'CTR') +
-            '<th>Spend</th>' +
           '</tr></thead>' +
           '<tbody>' + rowsHtml + '</tbody>' +
         '</table>';
@@ -591,7 +586,6 @@
           '<th class="num">CTR</th>' +
           '<th class="num">Clicks</th>' +
           '<th class="num">Impressions</th>' +
-          '<th class="num">Spend</th>' +
         '</tr>';
       var visibleRows = creativeRows.filter(function (r) {
         if (pmSelectedCampaign === 'All Campaigns') return true;
@@ -611,7 +605,6 @@
           '<td class="num">' + fmtPct(r.ctr) + '</td>' +
           '<td class="num">' + fmtNum(r.clicks) + '</td>' +
           '<td class="num">' + fmtNum(r.impressions) + '</td>' +
-          '<td class="num">' + fmtMoney(r.spend) + '</td>' +
         '</tr>';
       }).join('');
     }
@@ -620,8 +613,6 @@
     function renderCreativeDetail(creative) {
       var body = document.getElementById('pm-creative-detail-body');
       if (!body) return;
-      var cpc = creative.clicks ? creative.spend / creative.clicks : 0;
-      var cpm = creative.impressions ? (creative.spend / creative.impressions) * 1000 : 0;
       var meta = creativeMeta[creative.num] || {};
       var stores = deriveStoreBreakdown(creative);
 
@@ -650,7 +641,6 @@
             '<th>#</th><th>Store</th>' +
             '<th class="num">Impressions</th>' +
             '<th class="num">CTR</th>' +
-            '<th class="num">Spend</th>' +
           '</tr></thead>' +
           '<tbody>' +
           stores.map(function (s) {
@@ -660,7 +650,6 @@
               '<td>' + s.store + (s.rank === 1 ? ' <span class="pm-detail-stores__top">TOP</span>' : '') + '</td>' +
               '<td class="num">' + fmtNum(s.impressions) + '</td>' +
               '<td class="num">' + fmtPct(s.ctr) + '</td>' +
-              '<td class="num">' + fmtMoney(s.spend) + '</td>' +
             '</tr>';
           }).join('') +
           '</tbody>' +
@@ -697,9 +686,6 @@
           metric('Impressions', fmtNum(creative.impressions)) +
           metric('Clicks',      fmtNum(creative.clicks)) +
           metric('CTR',         fmtPct(creative.ctr)) +
-          metric('Spend',       fmtMoney(creative.spend)) +
-          metric('CPC',         fmtMoney(cpc)) +
-          metric('CPM',         fmtMoney(cpm)) +
         '</div>' +
         section('Store performance', storesTableHtml) +
         section('Asset metadata', '<div class="pm-detail-meta">' + metaHtml + '</div>') +
@@ -802,12 +788,12 @@
       clicks:      { name: 'Clicks',      color: SERIES.clicks,      yName: 'Volume',  fmt: function (v) { return (v >= 1000) ? (v / 1000) + 'k' : v; }, tip: function (v) { return v.toLocaleString(); } },
       ctr:         { name: 'CTR',         color: SERIES.ctr,         yName: 'CTR (%)', fmt: function (v) { return v + '%'; },                              tip: function (v) { return v.toFixed(2) + '%'; } }
     };
-    var trendRange = '13w';
+    var trendRange = '8w';
 
     function sliceTrend() {
       var n = trendYearWeeks.length;
-      var count = trendRange === '1w'  ? 1
-               : trendRange === '4w'  ? 4
+      var count = trendRange === '4w'  ? 4
+               : trendRange === '8w'  ? 8
                : trendRange === '13w' ? 13
                : n; // 1y
       var start = n - count;
@@ -825,8 +811,13 @@
       var series = [{
         name: meta.name, type: 'line', smooth: true, yAxisIndex: 0,
         data: d[activeMetric],
-        itemStyle: { color: meta.color }, lineStyle: { color: meta.color, width: 2 },
-        symbol: 'circle', symbolSize: 6
+        itemStyle: { color: '#fff', borderColor: meta.color, borderWidth: 2 },
+        lineStyle: { color: meta.color, width: 2 },
+        areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          { offset: 0, color: echarts.color.modifyAlpha(meta.color, 0.30) },
+          { offset: 1, color: echarts.color.modifyAlpha(meta.color, 0) }
+        ]) },
+        symbol: 'circle', symbolSize: 7
       }];
       return {
         grid: { left: 56, right: 24, top: 24, bottom: 48 },
@@ -841,7 +832,7 @@
             var html = '<div style="font-weight:700; margin-bottom:6px; font-size:13px; color:#fff;">' + params[0].name + '</div>';
             params.forEach(function (p) {
               html += '<div style="display:flex; align-items:center; gap:10px; min-width:220px; margin-top:2px;">' +
-                '<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:' + p.color + ';"></span>' +
+                '<span style="display:inline-block; width:9px; height:9px; border-radius:50%; background:#fff; border:2px solid ' + meta.color + '; box-sizing:border-box;"></span>' +
                 '<span style="flex:1; color:rgba(255,255,255,0.9);">' + p.seriesName + '</span>' +
                 '<span style="font-weight:600; font-variant-numeric:tabular-nums; color:#fff;">' + meta.tip(p.value) + '</span>' +
                 '</div>';

@@ -5714,10 +5714,10 @@ body[data-dist-page] .narrative-header__title {
 }
 
 /* ── Donut widget (Gender, Children, Homeowner, Marital) ─────── */
-.od-card--donut .od-card__body { min-height: 220px; }
+.od-card--donut .od-card__body { min-height: 170px; }
 .od-donut__center {
   position: absolute;
-  top: 30%;
+  top: 35%;
   left: 0;
   right: 0;
   text-align: center;

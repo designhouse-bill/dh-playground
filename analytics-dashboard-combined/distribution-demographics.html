@@ -122,16 +122,16 @@
         <div class="chart-card__header">
           <div class="chart-card__header-left">
             <div class="ep-sub-tabs" id="od-perf-tabs" role="tablist" aria-label="Observed Demographics view">
-              <button class="ep-sub-tab ep-sub-tab--active" data-dist-sub="trend" role="tab" aria-selected="true">Time Trend</button>
-              <button class="ep-sub-tab" data-dist-sub="current" role="tab" aria-selected="false">Current</button>
+              <button class="ep-sub-tab ep-sub-tab--active" data-dist-sub="current" role="tab" aria-selected="true">Current</button>
+              <button class="ep-sub-tab" data-dist-sub="trend" role="tab" aria-selected="false">Time Trend</button>
               <button class="ep-sub-tab" data-dist-sub="store" role="tab" aria-selected="false">By Store</button>
             </div>
           </div>
           <div class="chart-card__header-right">
             <div class="duration-presets" id="od-trend-ranges" role="tablist" aria-label="Time range" data-show-on-sub="trend">
               <button type="button" class="duration-preset" data-od-range="4w">4 Week <span class="duration-preset__sub">(Month)</span></button>
-              <button type="button" class="duration-preset" data-od-range="8w">8 Week</button>
-              <button type="button" class="duration-preset duration-preset--active" data-od-range="13w">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
+              <button type="button" class="duration-preset duration-preset--active" data-od-range="8w">8 Week</button>
+              <button type="button" class="duration-preset" data-od-range="13w">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
               <button type="button" class="duration-preset" data-od-range="1y">1 Year</button>
             </div>
           </div>
@@ -285,7 +285,7 @@
       tabs.forEach(function (tab) {
         tab.addEventListener('click', function () { activate(tab.dataset.distSub); });
       });
-      activate('trend');
+      activate('current');
     }
 
     // ── Current pane: 8 widgets, alternating bars + donuts ───────
@@ -353,7 +353,7 @@
       var el = document.getElementById('od-card-' + dim.key);
       if (!el || typeof echarts === 'undefined') return;
       var holder = document.createElement('div');
-      holder.style.height = '180px';
+      holder.style.height = '150px';
       holder.style.position = 'relative';
       el.innerHTML = '';
       el.appendChild(holder);
@@ -386,8 +386,8 @@
         },
         series: [{
           type: 'pie',
-          radius: ['55%', '78%'],
-          center: ['50%', '45%'],
+          radius: [49.5, 70],
+          center: ['50%', '50%'],
           avoidLabelOverlap: false,
           label: { show: false },
           labelLine: { show: false },
@@ -402,7 +402,7 @@
         '<div class="od-donut__label">' + dim.cats[0] + '</div>';
       holder.appendChild(center);
 
-      // Build a manual legend below the donut
+      // Build a manual legend above the donut (UX-846 Adam Jun-16: keys at top)
       var legend = document.createElement('div');
       legend.className = 'od-donut__legend';
       legend.innerHTML = dim.cats.map(function (label, i) {
@@ -411,7 +411,7 @@
           label + ' · ' + dim.pct[i] + '%' +
         '</span>';
       }).join('');
-      el.appendChild(legend);
+      el.insertBefore(legend, holder);
     }
 
     // ── Tile-row selector (shared by By Store + Time Trend) ──────
@@ -472,7 +472,7 @@
         };
       });
       window._odStoreChart.setOption({
-        grid: { left: 120, right: 24, top: 24, bottom: 40 },
+        grid: { left: 120, right: 24, top: 40, bottom: 16 },
         tooltip: {
           trigger: 'axis',
           axisPointer: { type: 'shadow' },
@@ -493,7 +493,7 @@
             return html;
           }
         },
-        legend: { bottom: 0, textStyle: { color: '#6b7280', fontSize: 11 }, itemWidth: 10, itemHeight: 10 },
+        legend: { top: 0, textStyle: { color: '#6b7280', fontSize: 11 }, itemWidth: 10, itemHeight: 10 },
         xAxis: {
           type: 'value', max: 100,
           axisLabel: { color: '#6b7280', fontSize: 11, formatter: '{value}%' },
@@ -511,7 +511,7 @@
 
     // ── Time Trend pane (stacked column by week) ─────────────────
     var currentTrendDim = 'age';
-    var trendRange = '13w';
+    var trendRange = '8w';
 
     function renderTrendChart() {
       if (typeof echarts === 'undefined') return;
@@ -537,7 +537,7 @@
         };
       });
       window._odTrendChart.setOption({
-        grid: { left: 56, right: 24, top: 24, bottom: 48 },
+        grid: { left: 56, right: 24, top: 40, bottom: 24 },
         tooltip: {
           trigger: 'axis',
           axisPointer: { type: 'shadow' },
@@ -558,7 +558,7 @@
             return html;
           }
         },
-        legend: { bottom: 0, textStyle: { color: '#6b7280', fontSize: 11 }, itemWidth: 10, itemHeight: 10 },
+        legend: { top: 0, textStyle: { color: '#6b7280', fontSize: 11 }, itemWidth: 10, itemHeight: 10 },
         xAxis: {
           type: 'category', data: weeks,
           axisLabel: { color: '#6b7280', fontSize: 11 },

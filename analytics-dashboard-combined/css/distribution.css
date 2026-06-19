@@ -5464,6 +5464,63 @@ body[data-dist-page] .narrative-header__title {
   justify-content: center;
 }
 .pm-detail-hero svg { width: 100%; height: 100%; border-radius: var(--radius-lg, 12px); }
+
+/* ── Creative media box (UX-846 #8, Adam Jun-16) ──────────────────────────────
+   Larger, aspect-correct creative display with animated FPO playback. The
+   .pm-cm__frame sizes to the creative's true ratio (--cm-aspect); the hero is
+   now just a wrapper, so its old fixed aspect/bg are relaxed here. */
+.pm-detail-hero { background: none; display: block; aspect-ratio: auto; overflow: visible; }
+.pm-cm { width: 100%; }
+.pm-cm__frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--cm-aspect, 300 / 250);
+  max-height: 280px;
+  margin: 0 auto;
+  border-radius: var(--radius-lg, 12px);
+  overflow: hidden;
+  background: var(--color-gray-100, #f3f4f6);
+}
+.pm-cm__art,
+.pm-cm__asset { display: block; width: 100%; height: 100%; object-fit: cover; }
+.pm-cm__fpo {
+  position: absolute; top: 6px; left: 6px;
+  font-size: 9px; font-weight: 700; letter-spacing: 0.06em;
+  background: rgba(17, 24, 39, 0.7); color: #fff;
+  padding: 2px 6px; border-radius: 4px;
+}
+.pm-cm__dims {
+  text-align: center; font-size: 11px;
+  color: var(--color-text-secondary); margin-top: 6px;
+}
+/* Motion — GIF loops continuously; VIDEO runs only while .is-playing. */
+@keyframes pm-cm-shine { 0% { transform: translateX(0); } 100% { transform: translateX(170px); } }
+@keyframes pm-cm-pulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+.pm-cm--animated .pm-cm__shine { animation: pm-cm-shine 2.6s linear infinite; }
+.pm-cm--animated .pm-cm__dot   { animation: pm-cm-pulse 1.7s ease-in-out infinite; }
+.pm-cm--video .pm-cm__shine,
+.pm-cm--video .pm-cm__dot { animation-play-state: paused; }
+.pm-cm--video.is-playing .pm-cm__shine,
+.pm-cm--video.is-playing .pm-cm__dot { animation-play-state: running; }
+/* Video play control + faux progress bar (FPO). */
+.pm-cm--video .pm-cm__frame { cursor: pointer; }
+.pm-cm__play {
+  position: absolute; inset: 0; margin: auto;
+  width: 52px; height: 52px; border-radius: 50%; border: none;
+  background: rgba(17, 24, 39, 0.6); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background 0.15s, opacity 0.15s;
+}
+.pm-cm__play .material-symbols-outlined { font-size: 30px; }
+.pm-cm__play:hover { background: rgba(17, 24, 39, 0.82); }
+.pm-cm--video.is-playing .pm-cm__play { opacity: 0; pointer-events: none; }
+.pm-cm__bar { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: rgba(255, 255, 255, 0.25); }
+.pm-cm__bar-fill { display: block; height: 100%; width: 0; background: var(--color-primary-500); }
+.pm-cm--video.is-playing .pm-cm__bar-fill { animation: pm-cm-progress 6s linear infinite; }
+@keyframes pm-cm-progress { from { width: 0; } to { width: 100%; } }
+@media (prefers-reduced-motion: reduce) {
+  .pm-cm__shine, .pm-cm__dot, .pm-cm__bar-fill { animation: none !important; }
+}
 .pm-detail-title {
   font-size: 1.125rem;
   font-weight: 700;

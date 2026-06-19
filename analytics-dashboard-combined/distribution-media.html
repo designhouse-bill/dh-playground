@@ -23,7 +23,7 @@
   <link rel="stylesheet" href="css/header.css?v=7">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/distribution.css?v=61">
+  <link rel="stylesheet" href="css/distribution.css?v=62">
   <link rel="stylesheet" href="css/methodology-tooltip.css?v=1">
   <link rel="stylesheet" href="css/nav-a1.css?v=6">
 </head>
@@ -576,6 +576,57 @@
       );
     }
 
+    // ── Creative media box (UX-846 #8, Adam Jun-16) ──────────────
+    // Larger, aspect-correct creative display with animated playback.
+    // Real assets aren't in the prototype, so fabricate an FPO that
+    // visibly "plays" (GIF loops; VIDEO has play/pause). When a real
+    // asset lands (creative.assetUrl), render <img>/<video> instead —
+    // no rework. Long-term: admin portal supplies assetUrl.
+    function parseDims(dimStr) {
+      var m = /(\d+)\s*[x×]\s*(\d+)/.exec(dimStr || '');
+      return m ? { w: +m[1], h: +m[2] } : { w: 300, h: 250 };
+    }
+    function creativeMedia(creative) {
+      var meta = creativeMeta[creative.num] || {};
+      var d = parseDims(meta.dimensions);
+      var type = creative.type;
+      var isVideo = type === 'VIDEO';
+      var isAnimated = isVideo || type === 'GIF';
+      var hue = (creative.num * 47) % 360;
+      var inner;
+      if (creative.assetUrl) {
+        // Future state — real asset wins over FPO.
+        inner = isVideo
+          ? '<video class="pm-cm__asset" src="' + creative.assetUrl + '" muted loop autoplay playsinline></video>'
+          : '<img class="pm-cm__asset" src="' + creative.assetUrl + '" alt="' + creative.name + '">';
+      } else {
+        // FPO art: hue-matched gradient + a sweeping shine + pulsing dot.
+        inner =
+          '<svg class="pm-cm__art" viewBox="0 0 120 80" preserveAspectRatio="xMidYMid slice" aria-hidden="true">' +
+            '<defs><linearGradient id="cm' + creative.num + '" x1="0" y1="0" x2="1" y2="1">' +
+              '<stop offset="0%" stop-color="hsl(' + hue + ',60%,86%)"/>' +
+              '<stop offset="100%" stop-color="hsl(' + ((hue + 35) % 360) + ',55%,68%)"/>' +
+            '</linearGradient></defs>' +
+            '<rect width="120" height="80" fill="url(#cm' + creative.num + ')"/>' +
+            '<circle class="pm-cm__dot" cx="60" cy="34" r="12" fill="hsl(' + hue + ',45%,40%)" opacity="0.7"/>' +
+            '<rect class="pm-cm__shine" x="-40" y="0" width="28" height="80" fill="#fff" opacity="0.28"/>' +
+            '<text x="60" y="68" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="9" font-weight="700" fill="hsl(' + hue + ',35%,28%)">' + type + '</text>' +
+          '</svg>' +
+          '<span class="pm-cm__fpo">FPO</span>';
+        if (isVideo) {
+          inner +=
+            '<button type="button" class="pm-cm__play" aria-label="Play preview">' +
+              '<span class="material-symbols-outlined">play_arrow</span></button>' +
+            '<div class="pm-cm__bar"><span class="pm-cm__bar-fill"></span></div>';
+        }
+      }
+      var cls = 'pm-cm pm-cm--' + type.toLowerCase() + (isAnimated ? ' pm-cm--animated' : '');
+      return '<div class="' + cls + '" style="--cm-aspect:' + d.w + ' / ' + d.h + ';">' +
+               '<div class="pm-cm__frame">' + inner + '</div>' +
+               '<div class="pm-cm__dims">' + (meta.dimensions || '—') + ' · ' + type + '</div>' +
+             '</div>';
+    }
+
     function renderVariantPanels() {
       var head = document.getElementById('pm-variant-head');
       var body = document.getElementById('pm-variant-body');
@@ -679,7 +730,7 @@
         '</div>';
 
       body.innerHTML =
-        '<div class="pm-detail-hero">' + thumbSvg(creative, 280) + '</div>' +
+        '<div class="pm-detail-hero">' + creativeMedia(creative) + '</div>' +
         '<div class="pm-detail-title">' + creative.name + '</div>' +
         (creative.sub ? '<div class="pm-detail-sub">' + creative.sub + '</div>' : '') +
         '<div class="pm-detail-tags">' +
@@ -718,6 +769,15 @@
         renderCreativeDetail(creative);
         panel.classList.add('detail-panel--open');
         panel.setAttribute('aria-hidden', 'false');
+      });
+      // VIDEO creative — click the FPO frame (or its play button) to toggle
+      // play/pause (UX-846 #8). GIF auto-loops; JPEG is static.
+      panel.addEventListener('click', function (e) {
+        var vid = e.target.closest('.pm-cm--video');
+        if (!vid || !e.target.closest('.pm-cm__frame')) return;
+        vid.classList.toggle('is-playing');
+        var btn = vid.querySelector('.pm-cm__play');
+        if (btn) btn.setAttribute('aria-label', vid.classList.contains('is-playing') ? 'Pause preview' : 'Play preview');
       });
       if (closeBtn) closeBtn.addEventListener('click', close);
       // Close on outside click

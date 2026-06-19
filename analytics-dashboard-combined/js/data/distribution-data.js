@@ -583,6 +583,75 @@ const DistributionData = (function() {
   const GENERATED_COMPETITORS = buildPerStoreCompetitors();
 
   // ========================================
+  // Visitation data freshness (UX-846 — Adam 2026-06-16)
+  // ========================================
+  // Impressions/clicks arrive near-real-time; visits + all visitation data
+  // (frequency, crossover, traffic share, demographics) lag and need a manual
+  // push from the team. VISITATION_LAG_DAYS is a TARGET (~3 weeks), not a
+  // guarantee — keep it here so the UI derives the date and never hardcodes it.
+  const VISITATION_LAG_DAYS = 21;
+
+  // A selected week falls in one of three zones relative to today + the lag:
+  //   settled  — period ended ≥ lag days ago → data is in (no banner).
+  //   pending  — period started but its data hasn't been pushed yet → banner + countdown.
+  //   future   — period hasn't started → "out-of-bounds", no data can exist.
+  function getVisitationFreshness(ctx) {
+    ctx = ctx || currentContext;
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    function parseISO(s) { var d = new Date(s + 'T00:00:00'); d.setHours(0, 0, 0, 0); return d; }
+    function addDays(d, n) { var t = new Date(d.getTime()); t.setDate(t.getDate() + n); return t; }
+    function fmt(d) { return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
+    function daysUntil(d) { return Math.max(0, Math.round((d - today) / 86400000)); }
+    function availFor(wk) { return addDays(parseISO(wk.end), VISITATION_LAG_DAYS); }
+    function zoneOf(wk) {
+      if (today >= availFor(wk)) return 'settled';
+      if (parseISO(wk.start) > today) return 'future';
+      return 'pending';
+    }
+    function lastSettled() {
+      var s = flightWeeks.filter(function (w) { return zoneOf(w) === 'settled'; });
+      return s.length ? s[s.length - 1] : null;
+    }
+
+    if (ctx.flightWeek === 'all') {
+      var pendingW = flightWeeks.filter(function (w) { return zoneOf(w) === 'pending'; });
+      if (!pendingW.length) return { status: 'available', lagDays: VISITATION_LAG_DAYS };
+      var ls = lastSettled();
+      var soonest = pendingW.slice().sort(function (a, b) { return availFor(a) - availFor(b); })[0];
+      var soonestAvail = availFor(soonest);
+      return {
+        status: 'partial',
+        lagDays: VISITATION_LAG_DAYS,
+        pendingCount: pendingW.length,
+        throughLabel: ls ? ls.label : null,
+        nextAvailableLabel: fmt(soonestAvail),
+        nextDaysUntil: daysUntil(soonestAvail)
+      };
+    }
+
+    var wk = flightWeeks.find(function (w) { return w.id === ctx.flightWeek; });
+    if (!wk) return { status: 'available', lagDays: VISITATION_LAG_DAYS };
+    var zone = zoneOf(wk);
+    if (zone === 'settled') {
+      return { status: 'available', lagDays: VISITATION_LAG_DAYS, weekLabel: wk.label, periodEndLabel: fmt(parseISO(wk.end)) };
+    }
+    if (zone === 'future') {
+      return { status: 'out-of-bounds', lagDays: VISITATION_LAG_DAYS, weekLabel: wk.label };
+    }
+    var avail = availFor(wk);
+    var ls2 = lastSettled();
+    return {
+      status: 'pending',
+      lagDays: VISITATION_LAG_DAYS,
+      weekLabel: wk.label,
+      periodEndLabel: fmt(parseISO(wk.end)),
+      availableOnLabel: fmt(avail),
+      daysUntil: daysUntil(avail),
+      lastSettledLabel: ls2 ? ls2.label : null
+    };
+  }
+
+  // ========================================
   // Public API (Property getters for live aggregation)
   // ========================================
 
@@ -591,6 +660,7 @@ const DistributionData = (function() {
     get context() { return { ...currentContext }; },
     setFlightWeek,
     setEntity,
+    getVisitationFreshness,
 
     // Week definitions
     flightWeeks,

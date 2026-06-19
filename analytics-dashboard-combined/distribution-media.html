@@ -23,7 +23,7 @@
   <link rel="stylesheet" href="css/header.css?v=7">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/distribution.css?v=62">
+  <link rel="stylesheet" href="css/distribution.css?v=63">
   <link rel="stylesheet" href="css/methodology-tooltip.css?v=1">
   <link rel="stylesheet" href="css/nav-a1.css?v=6">
 </head>
@@ -513,18 +513,20 @@
       deriveCreative(8, '0424 Berlin 320x50 Template', '',          'GIF',    1, 0.00, 0,    0.0)
     ];
 
-    // Asset metadata. Dimensions inferred from name where present;
-    // campaign type uses Jungle Jim's classification (Regular /
-    // Infrequent / Retargeting / META / Competitive).
+    // Asset metadata. Dimensions are NOT stored here — they're derived from the
+    // creative NAME (the real ad-ops size token, e.g. "Sullys 320x50") via
+    // creativeDims(); sizes we don't know are called out, never guessed
+    // (Bill 2026-06-19). Campaign type = Jungle Jim's classification
+    // (Regular / Infrequent / Retargeting / META / Competitive).
     var creativeMeta = {
-      1: { dimensions: '728×90',   campaign: 'Regular Customers',  flightStart: 'Nov 17, 2026', flightEnd: 'Nov 23, 2026' },
-      2: { dimensions: '300×250',  campaign: 'Infrequent Customers', flightStart: 'Nov 17, 2026', flightEnd: 'Nov 23, 2026' },
-      3: { dimensions: '300×250',  campaign: 'Regular Customers',  flightStart: 'Nov 17, 2026', flightEnd: 'Nov 23, 2026' },
-      4: { dimensions: '728×90',   campaign: 'Retargeting',        flightStart: 'Nov 10, 2026', flightEnd: 'Nov 23, 2026' },
-      5: { dimensions: '1920×1080',campaign: 'META & Competitors', flightStart: 'Nov 17, 2026', flightEnd: 'Nov 23, 2026' },
-      6: { dimensions: '320×50',   campaign: 'Regular Customers',  flightStart: 'Nov 17, 2026', flightEnd: 'Nov 23, 2026' },
-      7: { dimensions: '300×250',  campaign: 'Regular Customers',  flightStart: 'Nov 17, 2026', flightEnd: 'Nov 23, 2026' },
-      8: { dimensions: '320×50',   campaign: 'Regular Customers',  flightStart: 'Nov 17, 2026', flightEnd: 'Nov 23, 2026' }
+      1: { campaign: 'Regular Customers',    flightStart: 'Nov 17, 2026', flightEnd: 'Nov 23, 2026' },
+      2: { campaign: 'Infrequent Customers', flightStart: 'Nov 17, 2026', flightEnd: 'Nov 23, 2026' },
+      3: { campaign: 'Regular Customers',    flightStart: 'Nov 17, 2026', flightEnd: 'Nov 23, 2026' },
+      4: { campaign: 'Retargeting',          flightStart: 'Nov 10, 2026', flightEnd: 'Nov 23, 2026' },
+      5: { campaign: 'META & Competitors',   flightStart: 'Nov 17, 2026', flightEnd: 'Nov 23, 2026' },
+      6: { campaign: 'Regular Customers',    flightStart: 'Nov 17, 2026', flightEnd: 'Nov 23, 2026' },
+      7: { campaign: 'Regular Customers',    flightStart: 'Nov 17, 2026', flightEnd: 'Nov 23, 2026' },
+      8: { campaign: 'Regular Customers',    flightStart: 'Nov 17, 2026', flightEnd: 'Nov 23, 2026' }
     };
 
     // Per-creative store breakdown — synthetic allocation across
@@ -582,17 +584,35 @@
     // visibly "plays" (GIF loops; VIDEO has play/pause). When a real
     // asset lands (creative.assetUrl), render <img>/<video> instead —
     // no rework. Long-term: admin portal supplies assetUrl.
-    function parseDims(dimStr) {
-      var m = /(\d+)\s*[x×]\s*(\d+)/.exec(dimStr || '');
-      return m ? { w: +m[1], h: +m[2] } : { w: 300, h: 250 };
+    // Size comes from what we KNOW — the IAB size encoded in the creative NAME
+    // (ad-ops convention, e.g. "Sullys 320x50"). VIDEO = the target video
+    // (16:9), distinct from the in-app trigger (a JPG/GIF banner). Sizes not in
+    // the data are surfaced as "not specified", never guessed (Bill 2026-06-19).
+    function creativeDims(creative) {
+      var m = /(\d+)\s*[x×]\s*(\d+)/.exec(creative.name || '');
+      if (m) return { known: true, w: +m[1], h: +m[2], label: m[1] + '×' + m[2] };
+      if (creative.type === 'VIDEO') return { known: true, w: 1920, h: 1080, label: '1920×1080 (target video)' };
+      return { known: false, w: 4, h: 3, label: 'Size not specified' };
     }
     function creativeMedia(creative) {
-      var meta = creativeMeta[creative.num] || {};
-      var d = parseDims(meta.dimensions);
       var type = creative.type;
+      var dims = creativeDims(creative);
       var isVideo = type === 'VIDEO';
       var isAnimated = isVideo || type === 'GIF';
       var hue = (creative.num * 47) % 360;
+
+      // Unknown size + no real asset → don't fabricate a creative at a fake
+      // spec; surface the gap so it reads as a data gap, not a real banner.
+      if (!dims.known && !creative.assetUrl) {
+        return '<div class="pm-cm pm-cm--unknown">' +
+                 '<div class="pm-cm__frame pm-cm__frame--unknown">' +
+                   '<span class="material-symbols-outlined" aria-hidden="true">crop_free</span>' +
+                   '<span class="pm-cm__unknown-label">Size not specified</span>' +
+                 '</div>' +
+                 '<div class="pm-cm__dims">' + type + ' · not in source data</div>' +
+               '</div>';
+      }
+
       var inner;
       if (creative.assetUrl) {
         // Future state — real asset wins over FPO.
@@ -621,9 +641,9 @@
         }
       }
       var cls = 'pm-cm pm-cm--' + type.toLowerCase() + (isAnimated ? ' pm-cm--animated' : '');
-      return '<div class="' + cls + '" style="--cm-aspect:' + d.w + ' / ' + d.h + ';">' +
+      return '<div class="' + cls + '" style="--cm-aspect:' + dims.w + ' / ' + dims.h + ';">' +
                '<div class="pm-cm__frame">' + inner + '</div>' +
-               '<div class="pm-cm__dims">' + (meta.dimensions || '—') + ' · ' + type + '</div>' +
+               '<div class="pm-cm__dims">' + dims.label + ' · ' + type + '</div>' +
              '</div>';
     }
 
@@ -711,7 +731,7 @@
         '</table>';
 
       var metaHtml =
-        metaRow('Dimensions',  meta.dimensions || '—') +
+        metaRow('Dimensions',  creativeDims(creative).label) +
         metaRow('Campaign',    meta.campaign   || '—') +
         metaRow('Flight',      (meta.flightStart || '—') + ' → ' + (meta.flightEnd || '—')) +
         metaRow('Type',        creative.type);

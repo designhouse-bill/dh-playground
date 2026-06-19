@@ -5521,6 +5521,16 @@ body[data-dist-page] .narrative-header__title {
 @media (prefers-reduced-motion: reduce) {
   .pm-cm__shine, .pm-cm__dot, .pm-cm__bar-fill { animation: none !important; }
 }
+/* Unknown size — called out, never faked (no size token in the creative name). */
+.pm-cm--unknown .pm-cm__frame--unknown {
+  aspect-ratio: 3 / 2;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  background: var(--color-gray-50, #f9fafb);
+  border: 1px dashed var(--color-border-strong, #d1d5db);
+  color: var(--color-text-secondary);
+}
+.pm-cm__frame--unknown .material-symbols-outlined { font-size: 30px; opacity: 0.45; }
+.pm-cm__unknown-label { font-size: 12px; font-weight: 600; letter-spacing: 0.02em; }
 .pm-detail-title {
   font-size: 1.125rem;
   font-weight: 700;

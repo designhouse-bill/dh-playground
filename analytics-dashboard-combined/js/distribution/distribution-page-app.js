@@ -145,23 +145,32 @@
       host.insertBefore(banner, host.firstChild);
     }
 
-    function days(n) { return '~' + n + ' day' + (n === 1 ? '' : 's'); }
+    // Fluid timing — deliberately no hard day-counts or calendar dates (Bill 2026-06-19):
+    // keep expectations soft since the manual push can slip.
+    function fluidWhen(n) {
+      if (n <= 3) return 'shortly';
+      if (n <= 10) return 'in the coming days';
+      return 'in the coming weeks';
+    }
     var icon, title, detail;
     if (f.status === 'pending') {
       icon = 'schedule';
       title = 'Visitation data in progress';
-      detail = 'Visit, frequency & demographic metrics for ' + f.weekLabel +
-        ' arrive in ' + days(f.daysUntil) + ' (est. ' + f.availableOnLabel + ').' +
-        (f.lastSettledLabel ? ' Charts show ' + f.lastSettledLabel + ' (latest available).' : '') +
-        ' Impressions & clicks are current.';
+      var stand = f.lastSettledLabel ? ' Charts show ' + f.lastSettledLabel + ' (latest available).' : '';
+      if (f.inProgress) {
+        detail = f.weekLabel + ' is still in progress — visitation data compiles after it closes, ' +
+          'expected ' + fluidWhen(f.daysUntil) + '.' + stand + ' Impressions & clicks update live.';
+      } else {
+        detail = 'Visit, frequency & demographic metrics for ' + f.weekLabel +
+          ' are expected ' + fluidWhen(f.daysUntil) + '.' + stand + ' Impressions & clicks are current.';
+      }
       setVizInactive(section, true);
     } else if (f.status === 'partial') {
       icon = 'schedule';
       title = 'Recent weeks still compiling';
       detail = 'Visitation data is complete through ' + (f.throughLabel || 'earlier weeks') +
-        '. The most recent week' + (f.pendingCount > 1 ? 's arrive' : ' arrives') +
-        ' in ' + days(f.nextDaysUntil) + ' (est. ' + f.nextAvailableLabel +
-        '). Impressions & clicks are current.';
+        '. The most recent week' + (f.pendingCount > 1 ? 's are' : ' is') +
+        ' expected ' + fluidWhen(f.nextDaysUntil) + '. Impressions & clicks are current.';
       setVizInactive(section, false); // aggregate view stays active
     } else { // out-of-bounds — selected period hasn't occurred yet
       icon = 'event_busy';

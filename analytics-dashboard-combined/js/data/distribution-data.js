@@ -646,7 +646,8 @@ const DistributionData = (function() {
       weekLabel: wk.label,
       periodEndLabel: fmt(parseISO(wk.end)),
       availableOnLabel: fmt(avail),
-      daysUntil: daysUntil(avail),
+      daysUntil: daysUntil(avail),          // used only to bucket fluid copy; never displayed as a number
+      inProgress: today < parseISO(wk.end), // week hasn't closed yet → B0 wording
       lastSettledLabel: ls2 ? ls2.label : null
     };
   }

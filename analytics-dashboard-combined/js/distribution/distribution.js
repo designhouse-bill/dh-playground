@@ -2461,8 +2461,11 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
   // Init on DOM ready
   // ========================================
 
-  // Listen for data refresh events from modals
+  // Listen for data refresh events from modals.
+  // Full-dashboard only: standalone pages (data-dist-page) have their own per-section refresh in bindPageEvents;
+  // and renderAll needs cacheElements() to have populated its refs (elements.spotlightCards is undefined/null otherwise).
   document.addEventListener('distribution:dataRefresh', function() {
+    if (document.body.dataset.distPage || !elements.spotlightCards) return;
     renderAll();
     // Dispose and re-init charts with new data
     Object.values(charts).forEach(function(chart) {

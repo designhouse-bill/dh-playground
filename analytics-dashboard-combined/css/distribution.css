@@ -5954,6 +5954,26 @@ body[data-dist-page] .narrative-header__title {
   color: var(--color-text-secondary);
   line-height: 1.45;
 }
+/* "Jump to latest available" link inside the detail copy (UX-846 2026-06-19):
+   sets the main context to the settled week so the user need not reset it. */
+.freshness-banner__jump {
+  appearance: none;
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: var(--color-primary-600, var(--color-primary-500));
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+.freshness-banner__jump:hover { text-decoration: none; }
+.freshness-banner__jump:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
 /* (Available state shows no banner per D1 — no styling needed for it.) */
 /* Out-of-bounds = selected dates haven't occurred yet — neutral, not a warning. */
 .freshness-banner[data-status="out-of-bounds"] {

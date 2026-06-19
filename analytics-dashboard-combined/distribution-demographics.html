@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="css/header.css?v=7">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/distribution.css?v=60">
+  <link rel="stylesheet" href="css/distribution.css?v=61">
   <link rel="stylesheet" href="css/methodology-tooltip.css?v=1">
   <link rel="stylesheet" href="css/nav-a1.css?v=6">
 </head>
@@ -168,7 +168,7 @@
   <script src="js/data/pulse-real-slim.js?v=1"></script>
   <script src="js/data/distribution-entities.js?v=13"></script>
   <script src="js/data/distribution-records.js?v=22"></script>
-  <script src="js/data/distribution-data.js?v=21"></script>
+  <script src="js/data/distribution-data.js?v=22"></script>
 
   <!-- ════════════════════════════════════════════════════════════
        Observed Demographics — fixture init (Phase 1d).
@@ -186,7 +186,7 @@
     // Mirror the date context card + report subtitle to the shared data
     // layer's selected week so they agree with the freshness banner (which
     // reads the same context). Reads live, so labels never drift by date.
-    (function syncDateCard() {
+    function syncDateCard() {
       if (typeof DistributionData === 'undefined') return;
       var ctx   = DistributionData.context || {};
       var weeks = DistributionData.flightWeeks || [];
@@ -212,7 +212,11 @@
       set('context-date-sub', range);
       set('subtitle-date-week-demographics', label);
       set('subtitle-date-range-demographics', range);
-    })();
+    }
+    syncDateCard();
+    // Re-sync when the freshness banner's "jump to latest available" link (or
+    // any context change) fires — demographics has no distribution.js listener.
+    document.addEventListener('distribution:dataRefresh', syncDateCard);
 
     // ── Real fixture data (UNGROUPED Demographic Report) ─────────
     var DIMENSIONS = [
@@ -693,7 +697,7 @@
   </script>
 
   <!-- Shared boot — renders the visitation freshness banner for this section. -->
-  <script src="js/distribution/distribution-page-app.js?v=14"></script>
+  <script src="js/distribution/distribution-page-app.js?v=15"></script>
   <script src="js/distribution/hash-deeplink.js?v=2"></script>
   <!-- UX-846 A1 shared header -->
   <script>window.NAV_CONFIG = { product: "distribution", activeSection: "demographics", actions: ["export","share"] };</script>

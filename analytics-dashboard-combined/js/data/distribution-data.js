@@ -624,6 +624,7 @@ const DistributionData = (function() {
         lagDays: VISITATION_LAG_DAYS,
         pendingCount: pendingW.length,
         throughLabel: ls ? ls.label : null,
+        lastSettledId: ls ? ls.id : null,   // for banner "jump to latest available"
         nextAvailableLabel: fmt(soonestAvail),
         nextDaysUntil: daysUntil(soonestAvail)
       };
@@ -648,7 +649,8 @@ const DistributionData = (function() {
       availableOnLabel: fmt(avail),
       daysUntil: daysUntil(avail),          // used only to bucket fluid copy; never displayed as a number
       inProgress: today < parseISO(wk.end), // week hasn't closed yet → B0 wording
-      lastSettledLabel: ls2 ? ls2.label : null
+      lastSettledLabel: ls2 ? ls2.label : null,
+      lastSettledId: ls2 ? ls2.id : null    // for banner "jump to latest available"
     };
   }
 

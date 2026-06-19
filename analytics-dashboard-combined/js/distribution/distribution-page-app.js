@@ -152,11 +152,20 @@
       if (n <= 10) return 'in the coming days';
       return 'in the coming weeks';
     }
+    // "Jump to latest available" — wraps the settled-week label in a link that
+    // sets the main context to that week so the user doesn't have to reset it
+    // by hand (UX-846 Bill 2026-06-19). Reuses the canonical dataRefresh event.
+    var jumpId = f.lastSettledId || null;
+    function jumpLink(label, id) {
+      return id
+        ? '<button type="button" class="freshness-banner__jump" data-week-id="' + id + '">' + label + '</button>'
+        : label;
+    }
     var icon, title, detail;
     if (f.status === 'pending') {
       icon = 'schedule';
       title = 'Visitation data in progress';
-      var stand = f.lastSettledLabel ? ' Charts show ' + f.lastSettledLabel + ' (latest available).' : '';
+      var stand = f.lastSettledLabel ? ' Charts show ' + jumpLink(f.lastSettledLabel, jumpId) + ' (latest available).' : '';
       if (f.inProgress) {
         detail = f.weekLabel + ' is still in progress — visitation data compiles after it closes, ' +
           'expected ' + fluidWhen(f.daysUntil) + '.' + stand + ' Impressions & clicks update live.';
@@ -168,7 +177,7 @@
     } else if (f.status === 'partial') {
       icon = 'schedule';
       title = 'Recent weeks still compiling';
-      detail = 'Visitation data is complete through ' + (f.throughLabel || 'earlier weeks') +
+      detail = 'Visitation data is complete through ' + (f.throughLabel ? jumpLink(f.throughLabel, jumpId) : 'earlier weeks') +
         '. The most recent week' + (f.pendingCount > 1 ? 's are' : ' is') +
         ' expected ' + fluidWhen(f.nextDaysUntil) + '. Impressions & clicks are current.';
       setVizInactive(section, false); // aggregate view stays active
@@ -183,7 +192,16 @@
     banner.dataset.status = f.status;
     banner.querySelector('.freshness-banner__icon').textContent = icon;
     banner.querySelector('.freshness-banner__title').textContent = title;
-    banner.querySelector('.freshness-banner__detail').textContent = detail;
+    var detailEl = banner.querySelector('.freshness-banner__detail');
+    detailEl.innerHTML = detail; // controlled copy + an optional jump <button>
+    var jumpBtn = detailEl.querySelector('.freshness-banner__jump');
+    if (jumpBtn) {
+      jumpBtn.addEventListener('click', function () {
+        if (typeof DistributionData === 'undefined' || !DistributionData.setFlightWeek) return;
+        DistributionData.setFlightWeek(jumpBtn.dataset.weekId);
+        document.dispatchEvent(new CustomEvent('distribution:dataRefresh', { detail: { source: 'freshness-jump' } }));
+      });
+    }
   }
 
   // ── Boot ──────────────────────────────────────────────────────────────────────

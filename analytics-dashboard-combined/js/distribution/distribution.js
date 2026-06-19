@@ -2046,10 +2046,28 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     const entityName = getEntityLabel();
     const lastIdx = trend.length - 1;
 
-    // TT1 (UX-846, 2026-05-27): CTR series removed from this chart.
-    // Prior "Plan item 12 (Apr 17)" mock CTR computation dropped — Visits
-    // bar only. CTR belongs in a separate single-axis time-trend with TT2
-    // metric toggle if needed.
+    // UX-846 #7 (Adam Jun-16): 100% stacked AREA, two modes via the Share%/
+    // Visits toggle. Share = retailer_share/comp_share (already sum to 100);
+    // Visits = absolute stacked so total height grows/shrinks. Canonical area
+    // style (UI-PATTERNS §4b.1): white-ring nodes + solid 0.9 fill.
+    var tcView = _trafficChartView;                 // 'share' | 'volume'
+    var tcSuffix = tcView === 'share' ? '%' : '';
+    var tcColors = {};
+    tcColors[entityName] = ChartColors.green;       // our stores
+    tcColors['Competitors'] = ChartColors.gray;
+    function tcArea(name, data, color) {
+      return {
+        name: name, type: 'line', stack: 'ts', smooth: false,
+        symbol: 'circle', symbolSize: 7,
+        data: data,
+        areaStyle: { color: color, opacity: 0.9 },
+        lineStyle: { color: color, width: 2 },
+        // White-fill colored-ring node; white itemStyle.color requires the
+        // tooltip marker to be re-colored by hand (below) — the 3-way trap.
+        itemStyle: { color: '#fff', borderColor: color, borderWidth: 2 },
+        markArea: name === entityName ? { silent: true, data: markAreaData } : undefined
+      };
+    }
 
     // Current week highlight background
     const markAreaData = lastIdx >= 0 ? [[
@@ -2073,7 +2091,9 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
           }
           html += '<br>';
           params.forEach(function(p) {
-            html += p.marker + ' ' + p.seriesName + ': ' + p.value.toLocaleString() + '<br>';
+            var c = tcColors[p.seriesName] || p.color;
+            html += '<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#fff;border:2px solid ' + c + ';box-sizing:border-box;margin-right:6px;"></span>'
+                 + p.seriesName + ': ' + p.value.toLocaleString() + tcSuffix + '<br>';
           });
           return html;
         }
@@ -2093,47 +2113,21 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
           }
         }
       },
-      // TT1 (UX-846, 2026-05-27): dual-axis killed. CTR line dropped from
-      // this chart — CTR scale (0-2%) flattened against Visits (thousands)
-      // per Bill 00:07:11 ("things look like a flat line"). CTR available
-      // via separate metric toggle (TT2 pattern, Commit E).
       yAxis: {
         type: 'value',
-        name: 'Visits',
+        name: tcView === 'share' ? 'Share' : 'Visits',
+        max: tcView === 'share' ? 100 : null,
         nameTextStyle: { fontSize: 10, color: '#9ca3af' },
-        axisLabel: { formatter: function(val) { return (val / 1000).toFixed(0) + 'K'; } }
+        axisLabel: {
+          formatter: function(val) {
+            return tcView === 'share' ? val + '%' : (val / 1000).toFixed(0) + 'K';
+          }
+        }
       },
       series: [
-        {
-          name: entityName,
-          type: 'bar',
-          data: trend.map(function(w, i) {
-            return {
-              value: w.retailer_visits,
-              itemStyle: {
-                color: ChartColors.green,
-                borderRadius: [3, 3, 0, 0],
-                borderWidth: i === lastIdx ? 2 : 0,
-                borderColor: i === lastIdx ? '#059669' : 'transparent'
-              }
-            };
-          }),
-          barGap: '10%',
-          markArea: { silent: true, data: markAreaData }
-        },
-        {
-          name: 'Competitors',
-          type: 'bar',
-          data: trend.map(function(w) {
-            return {
-              value: w.comp_visits,
-              itemStyle: { color: ChartColors.gray, borderRadius: [3, 3, 0, 0] }
-            };
-          })
-        }
+        tcArea(entityName, trend.map(function(w) { return tcView === 'share' ? w.retailer_share : w.retailer_visits; }), ChartColors.green),
+        tcArea('Competitors', trend.map(function(w) { return tcView === 'share' ? w.comp_share : w.comp_visits; }), ChartColors.gray)
       ]
-      // TT1 (UX-846, 2026-05-27): "Avg CTR" graphic dropped — chart no
-      // longer surfaces CTR data after dual-axis kill.
     });
   }
 
@@ -2244,11 +2238,10 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     });
   }
 
-  // TT1 (UX-846, 2026-05-27): no-op stub. Prior responsibility was toggling
-  // the CTR right-axis between volume/share modes. Dual-axis killed —
-  // chart is single-axis Visits-only. Kept as a stub for callers; wire a
-  // TT2 metric toggle here when CTR/CPV/Spend variants are reintroduced.
-  function updateTrafficCombinedChart() { /* no-op since TT1 */ }
+  // UX-846 #7 (Adam Jun-16): rebuild the combined chart for the active
+  // Share%/Visits mode. (Was a no-op TT1 stub after the dual-axis kill;
+  // now the chart is a two-mode 100% stacked area that this toggle drives.)
+  function updateTrafficCombinedChart() { initTrafficCombinedChart(_crossoverTrendWeekCount); }
 
   // initVolumeChart removed — merged into initTrafficCombinedChart()
 

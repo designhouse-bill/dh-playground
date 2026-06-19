@@ -1,0 +1,125 @@
+/* ============================================
+   METHODOLOGY TOOLTIP — shared info-icon + popover
+   UX-846 #4 (Adam 2026-06-16). Generic, registry-driven; reuses the
+   .info-btn / .tooltip-overlay visual contract first built for the
+   engagement metrics-key tooltip (css/engagement.css) so any section
+   header can carry an "about this data" affordance.
+   Controller: js/shared/methodology-tooltip.js
+   ============================================ */
+
+/* Info button — small circular "i" beside a section title. */
+.info-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: serif;
+  position: relative;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.info-btn:hover {
+  background: #f5f5f5;
+  border-color: var(--color-primary-500);
+  color: var(--color-primary-500);
+  transform: scale(1.1);
+}
+
+.info-btn:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+.info-btn[aria-expanded="true"] {
+  background: var(--color-primary-500);
+  border-color: var(--color-primary-500);
+  color: #fff;
+}
+
+/* Title + methodology button share one row; button survives title rewrites. */
+.panel-title-row {
+  display: flex;
+  align-items: center;
+}
+.methodology-btn {
+  margin-left: 8px;
+}
+
+/* Popover overlay — appended to <body>, positioned in JS. */
+.tooltip-overlay {
+  position: fixed;
+  z-index: 9999;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.12);
+  padding: 16px;
+  max-width: 340px;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+
+.tooltip-overlay.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.tooltip-overlay::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 20px;
+  width: 12px;
+  height: 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-right: none;
+  border-bottom: none;
+  transform: rotate(45deg);
+}
+
+.tooltip-overlay.position-top::before {
+  top: auto;
+  bottom: -6px;
+  transform: rotate(225deg);
+}
+
+.tooltip-overlay .tooltip-title {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.tooltip-overlay .tooltip-content {
+  margin: 0 0 12px 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--color-text-primary);
+}
+
+.tooltip-overlay .tooltip-why-important {
+  margin: 0;
+  padding: 12px 0 0 0;
+  border-top: 1px solid var(--color-border);
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+}
+
+.tooltip-overlay .tooltip-why-important strong {
+  color: var(--color-text-primary);
+}

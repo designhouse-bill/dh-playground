@@ -20,6 +20,7 @@
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
   <link rel="stylesheet" href="css/distribution.css?v=60">
+  <link rel="stylesheet" href="css/methodology-tooltip.css?v=1">
   <link rel="stylesheet" href="css/nav-a1.css?v=6">
 </head>
 <body data-dist-page="demographics">
@@ -137,7 +138,10 @@
           </div>
         </div>
 
-        <h3 class="panel-label" id="od-panel-title">Time Trend</h3>
+        <div class="panel-title-row">
+          <h3 class="panel-label" id="od-panel-title">Time Trend</h3>
+          <button type="button" class="info-btn methodology-btn" data-methodology="greenberg-demographics" aria-expanded="false" aria-label="About this data: Observed Demographics">i</button>
+        </div>
         <p class="panel-subtitle" id="od-panel-subtitle">Demographic mix over time — weekly stacked composition for the selected dimension.</p>
 
         <div class="ep-sub-pane ep-sub-pane--active" data-dist-sub-pane="trend">
@@ -160,6 +164,12 @@
 
   <script src="js/vendor/echarts.min.js"></script>
 
+  <!-- Shared data layer — powers the visitation freshness banner (UX-846). -->
+  <script src="js/data/pulse-real-slim.js?v=1"></script>
+  <script src="js/data/distribution-entities.js?v=13"></script>
+  <script src="js/data/distribution-records.js?v=22"></script>
+  <script src="js/data/distribution-data.js?v=21"></script>
+
   <!-- ════════════════════════════════════════════════════════════
        Observed Demographics — fixture init (Phase 1d).
        Real data source: UNGROUPED Demographic Report — 11.28.25 to
@@ -170,29 +180,39 @@
   (function () {
     'use strict';
 
-    // ── Header dashboard switcher (carry-over from stub) ─────────
-    var dropdown = document.getElementById('performance-type-dropdown');
-    var menu     = document.getElementById('dashboard-menu');
-    if (dropdown && menu) {
-      dropdown.addEventListener('click', function (e) {
-        e.stopPropagation();
-        var open = dropdown.getAttribute('aria-expanded') === 'true';
-        dropdown.setAttribute('aria-expanded', String(!open));
-        menu.classList.toggle('open', !open);
-      });
-      menu.querySelectorAll('[data-href]').forEach(function (item) {
-        item.addEventListener('click', function () { window.location.href = item.dataset.href; });
-      });
-      document.addEventListener('click', function () {
-        dropdown.setAttribute('aria-expanded', 'false');
-        menu.classList.remove('open');
-      });
-    }
-    var brand = document.querySelector('.brand');
-    if (brand) {
-      brand.style.cursor = 'pointer';
-      brand.addEventListener('click', function () { window.location.href = 'index.html'; });
-    }
+    // Header switcher + brand nav handled by distribution-page-app.js boot.
+
+    // ── Date card ↔ shared layer sync (UX-846) ───────────────────
+    // Mirror the date context card + report subtitle to the shared data
+    // layer's selected week so they agree with the freshness banner (which
+    // reads the same context). Reads live, so labels never drift by date.
+    (function syncDateCard() {
+      if (typeof DistributionData === 'undefined') return;
+      var ctx   = DistributionData.context || {};
+      var weeks = DistributionData.flightWeeks || [];
+      var wk    = weeks.find(function (w) { return w.id === ctx.flightWeek; });
+      function fmtRange(s, e) {
+        var ds = new Date(s + 'T00:00:00'), de = new Date(e + 'T00:00:00');
+        var md = function (d) { return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); };
+        var sy = ds.getFullYear(), ey = de.getFullYear();
+        return md(ds) + (sy !== ey ? ', ' + sy : '') + ' – ' + md(de) + ', ' + ey;
+      }
+      var label, range;
+      if (wk) {
+        label = wk.label;
+        range = fmtRange(wk.start, wk.end);
+      } else if (weeks.length) {
+        label = 'All weeks';
+        range = fmtRange(weeks[0].start, weeks[weeks.length - 1].end);
+      } else {
+        return;
+      }
+      var set = function (id, val) { var el = document.getElementById(id); if (el) el.textContent = val; };
+      set('context-date-value', label);
+      set('context-date-sub', range);
+      set('subtitle-date-week-demographics', label);
+      set('subtitle-date-range-demographics', range);
+    })();
 
     // ── Real fixture data (UNGROUPED Demographic Report) ─────────
     var DIMENSIONS = [
@@ -672,9 +692,12 @@
   })();
   </script>
 
+  <!-- Shared boot — renders the visitation freshness banner for this section. -->
+  <script src="js/distribution/distribution-page-app.js?v=14"></script>
   <script src="js/distribution/hash-deeplink.js?v=2"></script>
   <!-- UX-846 A1 shared header -->
   <script>window.NAV_CONFIG = { product: "distribution", activeSection: "demographics", actions: ["export","share"] };</script>
+  <script src="js/shared/methodology-tooltip.js?v=1"></script>
   <script src="js/shared/nav-a1.js?v=5"></script>
 </body>
 </html>

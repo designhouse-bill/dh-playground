@@ -25,6 +25,7 @@
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
   <link rel="stylesheet" href="css/distribution.css?v=60">
+  <link rel="stylesheet" href="css/methodology-tooltip.css?v=1">
   <link rel="stylesheet" href="css/nav-a1.css?v=6">
 </head>
 <body data-dist-page="traffic">
@@ -154,6 +155,10 @@
             </div>
           </div>
           <div class="chart-card__header-right">
+            <div class="view-toggle view-toggle--compact" id="traffic-chart-toggle" role="tablist" aria-label="Metric" data-show-on-sub="trend">
+              <button type="button" class="view-toggle__btn active" data-traffic-view="share" role="tab" aria-selected="true">Share %</button>
+              <button type="button" class="view-toggle__btn" data-traffic-view="volume" role="tab" aria-selected="false">Visits</button>
+            </div>
             <div class="duration-presets" id="crossover-trend-presets" role="tablist" aria-label="Time range" data-show-on-sub="trend">
               <button type="button" class="duration-preset" data-period="4w">4 Week <span class="duration-preset__sub">(Month)</span></button>
               <button type="button" class="duration-preset duration-preset--active" data-period="8w">8 Week</button>
@@ -171,7 +176,10 @@
         <!-- Title row — panel-label left. -->
         <div class="chart-card__title-row">
           <div class="chart-card__title-block">
-            <h3 class="panel-label" id="ts-panel-title">Traffic Share Over Time</h3>
+            <div class="panel-title-row">
+              <h3 class="panel-label" id="ts-panel-title">Traffic Share Over Time</h3>
+              <button type="button" class="info-btn methodology-btn" data-methodology="traffic-share" aria-expanded="false" aria-label="About this data: Traffic Share">i</button>
+            </div>
             <p class="panel-subtitle" id="ts-panel-subtitle">Weekly share of observed shopper visits across our stores vs. nearby competitors.<br><span class="panel-subtitle__muted">Panel-tracked — directional, not a census.</span></p>
           </div>
         </div>
@@ -235,7 +243,7 @@
   <script src="js/data/distribution-data.js?v=21"></script>
 
   <script src="js/distribution/store-map.js?v=25"></script>
-  <script src="js/distribution/distribution.js?v=102"></script>
+  <script src="js/distribution/distribution.js?v=103"></script>
   <script src="js/distribution/distribution-modals.js?v=13"></script>
 
   <script src="js/header-slide.js"></script>
@@ -259,6 +267,7 @@
       actions: ['export', 'share']
     };
   </script>
+  <script src="js/shared/methodology-tooltip.js?v=1"></script>
   <script src="js/shared/nav-a1.js?v=5"></script>
   <script src="js/distribution/distribution-page-app.js?v=14"></script>
   <script src="js/distribution/hash-deeplink.js?v=2"></script>

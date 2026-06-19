@@ -467,6 +467,39 @@ Toggle cells on/off + up/down reorder + reset; Save → `localStorage` (`dashboa
 
 ---
 
+# 8b. Methodology tooltip (info-icon popover)
+
+## 8b.1 MethodologyTooltip (canonical for "about this data")
+
+> **State:** 🆕 NEW 2026-06-19 (UX-846 #4, Adam Jun-16) — shared info-icon + popover for section-level methodology. Generalizes the engagement metrics-key tooltip (§8b.2). Copy is 📝 DRAFT (Max authors final, Adam approves); the *mechanism* is the contribution.
+
+One info button per section header, opening a popover that explains how that section's data is measured/sourced. Reuses the `.info-btn` / `.tooltip-overlay` visual contract.
+
+```html
+<!-- inside the section title row; button is a SIBLING of the <h3>, never a child -->
+<div class="panel-title-row">
+  <h3 class="panel-label" id="ov-panel-title">Visit Frequency Over Time</h3>
+  <button type="button" class="info-btn methodology-btn"
+          data-methodology="observed-visits" aria-expanded="false"
+          aria-label="About this data: Observed Visits & Frequency">i</button>
+</div>
+```
+
+- **Registry-driven.** Copy lives in `METHODOLOGY_COPY` (js/shared/methodology-tooltip.js), keyed by topic id: `pulse-delivery`, `observed-visits`, `traffic-share`, `greenberg-crossover`, `greenberg-demographics`. Each = `{ title, content, why }` (content/why accept inline HTML). Add a key + a `data-methodology="<key>"` button; no per-page JS.
+- **Controller** is event-delegated + idempotent (`MethodologyTooltip.init()` auto-runs on load). Click/tap toggles; Esc or outside-click closes; resize/scroll closes; viewport-aware placement (flips above when no room below). Dynamic headers can call `MethodologyTooltip.buttonHTML(id)`.
+- **HARD: button must be a sibling of the title, wrapped with it in `.panel-title-row`** — the sub-tab `activate()` rewrites `<h3>.textContent` (e.g. distribution-media:305), so a button placed *inside* the h3 is wiped on every sub-tab switch.
+- **Additive:** the existing inline `.panel-subtitle__muted` methodology text stays; the tooltip is supplementary until Max reconciles copy.
+
+**Where used:** distribution-media / -visitation / -traffic / -demographics (section headers). Files: `css/methodology-tooltip.css`, `js/shared/methodology-tooltip.js`.
+
+## 8b.2 engagement metrics-key tooltip (predecessor — do not fork)
+
+> **State:** 📝 DRAFT — bespoke, hardcoded "Performance Metrics Key" popover in `js/engagement/shared-filters.js` (`.metrics-key-btn`). Same `.info-btn`/`.tooltip-overlay` chrome (defined in `css/engagement.css`).
+
+Pre-dates §8b.1. New methodology popovers use §8b.1, not this. Future cleanup: migrate the metrics-key into the §8b.1 registry so one controller owns all info popovers (logged in §14).
+
+---
+
 # 9. State persistence
 
 ## 9.1 sessionStorage (canonical for fresh-session resets)
@@ -616,6 +649,7 @@ Normalize at filter boundary today (`getStoreIdsForEntity` does this). Lock at t
 | `MockData.getAggregate` (v1) | js/data/mock-data-v1/index.js |
 | `MockData.getRecords` (legacy) | js/data/engagement-mock-data.js |
 | `D.context` | js/distribution/distribution.js |
+| `MethodologyTooltip` / `.methodology-btn` | js/shared/methodology-tooltip.js, css/methodology-tooltip.css |
 
 ---
 
@@ -631,6 +665,7 @@ Pre-port tickets to close before code starts:
 6. **`ep-sub` vs `dist-sub` data attribute** — pick one.
 7. **Dead action-button cluster** — sweep `panel-export-btn` / `panel-print-btn` from engagement-explore* (Export wired only on `grid-export-btn`; Share wired everywhere via `core.handleShareClick`).
 8. **localStorage parity** — distribution should persist context like engagement does.
+9. **Info-popover unification** — migrate the bespoke engagement metrics-key tooltip (§8b.2) into the `MethodologyTooltip` registry (§8b.1) so one controller + one CSS owns all info popovers.
 
 ---
 
@@ -648,4 +683,8 @@ v0.1.2  2026-06-04  L0 catalog (build-step 8 + L0.5). Added §2.4 dashboard-mode
                     🔒 (now dashboard-only — Overview stripped in L0.5), §3.3 dashboard-cell-registry 🆕,
                     §8.3 dashboard-customize-modal 🆕. Closes the Gate-B hole where the shipped L0 registry
                     had no catalog entry.
+v0.1.3  2026-06-19  Methodology tooltip (UX-846 #4, Adam Jun-16). Added §8b.1 MethodologyTooltip 🆕 (shared
+                    registry-driven info-icon popover on all 4 distribution section headers) + §8b.2 noting
+                    the engagement metrics-key tooltip as predecessor. Grep-hint row + drift item #9
+                    (info-popover unification). Copy 📝 DRAFT pending Max→Adam.
 ```

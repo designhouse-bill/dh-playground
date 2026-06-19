@@ -24,6 +24,7 @@
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
   <link rel="stylesheet" href="css/distribution.css?v=60">
+  <link rel="stylesheet" href="css/methodology-tooltip.css?v=1">
   <link rel="stylesheet" href="css/nav-a1.css?v=6">
 </head>
 <body data-dist-page="media">
@@ -169,7 +170,10 @@
         <!-- Title row — panel-label/subtitle left, sub-tab-scoped controls right. -->
         <div class="chart-card__title-row">
           <div class="chart-card__title-block">
-            <h3 class="panel-label" id="pm-panel-title">OFF-PLATFORM MEDIA PERFORMANCE RANKING</h3>
+            <div class="panel-title-row">
+              <h3 class="panel-label" id="pm-panel-title">OFF-PLATFORM MEDIA PERFORMANCE RANKING</h3>
+              <button type="button" class="info-btn methodology-btn" data-methodology="pulse-delivery" aria-expanded="false" aria-label="About this data: Off-Platform Media Delivery">i</button>
+            </div>
             <p class="panel-subtitle" id="pm-panel-subtitle">Which creatives, stores, and weeks delivered the strongest off-platform media performance?<br><span class="panel-subtitle__muted">Delivery metrics from Pulse — impressions, clicks, CTR — ranked by cut. Does NOT include attributed visits; see Observed Visits for outcome metrics.</span></p>
           </div>
           <div class="series-pills" id="series-pills" role="group" aria-label="Metric" data-show-on-sub="trend">
@@ -242,7 +246,7 @@
 
   <script src="js/distribution/store-map.js"></script>
   <script src="js/distribution/chip-carousel.js?v=2"></script>
-  <script src="js/distribution/distribution.js?v=102"></script>
+  <script src="js/distribution/distribution.js?v=103"></script>
   <script src="js/distribution/distribution-modals.js?v=13"></script>
 
   <script src="js/header-slide.js"></script>
@@ -1037,6 +1041,7 @@
 
   <!-- UX-846 A1 shared header -->
   <script>window.NAV_CONFIG = { product: "distribution", activeSection: "media", actions: ["export","share"] };</script>
+  <script src="js/shared/methodology-tooltip.js?v=1"></script>
   <script src="js/shared/nav-a1.js?v=5"></script>
 </body>
 </html>

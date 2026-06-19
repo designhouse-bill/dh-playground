@@ -6021,25 +6021,35 @@ body[data-dist-page] .narrative-header__title {
   color: var(--color-text-secondary);
   line-height: 1.45;
 }
-/* "Jump to latest available" link inside the detail copy (UX-846 2026-06-19):
-   sets the main context to the settled week so the user need not reset it. */
+/* "Jump to latest available" inside the detail copy (UX-846 2026-06-19):
+   sets the main context to the settled week so the user need not reset it.
+   Lozenge button — color/background base from .ep-cohort-pill, sized for inline. */
 .freshness-banner__jump {
   appearance: none;
-  border: none;
-  background: none;
-  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  margin: 0 1px;
+  padding: 1px 9px;
+  border: 1px solid var(--dh-border, var(--color-border, #d6d3c4));
+  border-radius: 999px;
+  background: var(--dh-surface-2, var(--color-surface-2, #fff));
+  color: var(--dh-text-2, var(--color-text-secondary, #3a3a3a));
   font: inherit;
-  color: var(--color-primary-600, var(--color-primary-500));
   font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 2px;
+  line-height: 1.5;
+  white-space: nowrap;
   cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
-.freshness-banner__jump:hover { text-decoration: none; }
+.freshness-banner__jump:hover {
+  background: var(--color-gray-100, #f3f4f6);
+  border-color: var(--color-border-strong, #9ca3af);
+  color: var(--color-text-primary, #111827);
+}
+.freshness-banner__jump:active { background: var(--color-gray-200, #e5e7eb); }
 .freshness-banner__jump:focus-visible {
   outline: 2px solid var(--color-primary-500);
   outline-offset: 2px;
-  border-radius: 2px;
 }
 /* (Available state shows no banner per D1 — no styling needed for it.) */
 /* Out-of-bounds = selected dates haven't occurred yet — neutral, not a warning. */

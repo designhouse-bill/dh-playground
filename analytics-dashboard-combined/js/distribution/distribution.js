@@ -2085,11 +2085,14 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         borderColor: 'rgba(255,255,255,0.12)',
         textStyle: { color: '#fff', fontSize: 12 },
         formatter: function(params) {
-          let html = '<strong>' + params[0].axisValue + '</strong>';
-          if (params[0].axisIndex === 0 && lastIdx >= 0 && params[0].dataIndex === lastIdx) {
-            html += ' <span style="color:#93c5fd;font-size:11px;">(current)</span>';
-          }
-          html += '<br>';
+          // Header = active metric selection + week (canonical toggle-tooltip pattern, UI-PATTERNS §4b.2).
+          var metricLabel = tcView === 'share' ? 'Share %' : 'Visits';
+          var wk = String(params[0].axisValue || '').replace(/^Wk\b/i, 'Week');
+          var isCurrent = lastIdx >= 0 && params[0].dataIndex === lastIdx;
+          let html = '<div style="font-weight:700; font-size:12px; letter-spacing:0.04em; text-transform:uppercase; margin-bottom:4px; color:#fff;">'
+            + metricLabel + ' | ' + wk
+            + (isCurrent ? ' <span style="color:#93c5fd; font-size:11px; text-transform:none; letter-spacing:0;">(current)</span>' : '')
+            + '</div>';
           params.forEach(function(p) {
             var c = tcColors[p.seriesName] || p.color;
             html += '<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#fff;border:2px solid ' + c + ';box-sizing:border-box;margin-right:6px;"></span>'
@@ -2857,7 +2860,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         initTrafficChartToggle();
         initLeaderboardViewToggle();
         initCrossoverPeriodPresets();
-        updateCrossoverChartPeriod(4);
+        updateCrossoverChartPeriod(8); // default 8 Week (matches the standardized preset row)
         initCrossoverTrendChart(); // renders at the default 8 Week preset
         initCrossoverTrendPresets();
       }
@@ -2918,10 +2921,11 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     var presets = container.querySelectorAll('.duration-preset');
     presets.forEach(function(btn) {
       btn.addEventListener('click', function() {
-        presets.forEach(function(b) { b.classList.remove('active'); });
-        btn.classList.add('active');
+        presets.forEach(function(b) { b.classList.remove('active', 'duration-preset--active'); });
+        btn.classList.add('duration-preset--active');
         var period = btn.dataset.period;
-        var weekCount = period === '1w' ? 1 : period === '1m' ? 4 : period === '1q' ? 13 : 52;
+        // P8 (Max Jun-16): standardized to 4/8/13/Year, matching every other trend row.
+        var weekCount = period === '4w' ? 4 : period === '8w' ? 8 : period === '13w' ? 13 : 52;
         updateCrossoverChartPeriod(weekCount);
       });
     });

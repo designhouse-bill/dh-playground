@@ -23,7 +23,7 @@
   <link rel="stylesheet" href="css/header.css?v=7">
   <link rel="stylesheet" href="css/context-bar.css">
   <link rel="stylesheet" href="css/detail-panel.css">
-  <link rel="stylesheet" href="css/distribution.css?v=63">
+  <link rel="stylesheet" href="css/distribution.css?v=64">
   <link rel="stylesheet" href="css/methodology-tooltip.css?v=1">
   <link rel="stylesheet" href="css/nav-a1.css?v=6">
 </head>
@@ -154,6 +154,7 @@
               <button type="button" class="duration-preset" data-ov-comp-range="4w">4 Week <span class="duration-preset__sub">(Month)</span></button>
               <button type="button" class="duration-preset duration-preset--active" data-ov-comp-range="8w">8 Week</button>
               <button type="button" class="duration-preset" data-ov-comp-range="13w">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
+              <button type="button" class="duration-preset" data-ov-comp-range="1y">1 Year</button>
             </div>
           </div>
         </div>
@@ -186,6 +187,12 @@
               <button type="button" class="info-btn methodology-btn" data-methodology="observed-visits" aria-expanded="false" aria-label="About this data: Observed Visits & Frequency">i</button>
             </div>
             <p class="panel-subtitle" id="ov-panel-subtitle">Each bar = total observed visits across all stores for that week, stacked by frequency segment.<br><span class="panel-subtitle__muted">Panel-tracked — directional, not a census.</span></p>
+          </div>
+          <div class="view-toggle view-toggle--compact" id="ov-comp-cohort" role="tablist" aria-label="Shopper cohort" data-show-on-sub="competitor">
+            <button type="button" class="view-toggle__btn active" data-ov-cohort="all" role="tab" aria-selected="true">All</button>
+            <button type="button" class="view-toggle__btn" data-ov-cohort="new" role="tab" aria-selected="false">New</button>
+            <button type="button" class="view-toggle__btn" data-ov-cohort="returning" role="tab" aria-selected="false">Returning</button>
+            <button type="button" class="view-toggle__btn" data-ov-cohort="loyal" role="tab" aria-selected="false">Loyal</button>
           </div>
           <div class="view-toggle view-toggle--compact" id="ov-comp-metric" role="tablist" aria-label="Metric" data-show-on-sub="competitor">
             <button type="button" class="view-toggle__btn active" data-ov-comp="share" role="tab" aria-selected="true">Share %</button>
@@ -231,7 +238,7 @@
   <script src="js/data/distribution-data.js?v=22"></script>
 
   <script src="js/distribution/chip-carousel.js?v=1"></script>
-  <script src="js/distribution/distribution.js?v=103"></script>
+  <script src="js/distribution/distribution.js?v=105"></script>
   <script src="js/distribution/distribution-modals.js?v=13"></script>
 
   <script src="js/header-slide.js"></script>
@@ -735,17 +742,27 @@
     }
 
     var compMetricMode = 'share';
+    var compCohort = 'all';   // P8 (Max Jun-16): N/R/L cohort lens — "where do our {cohort} shoppers also shop?"
 
     function buildCompOptions() {
       var share = activeCompShare();
       var visits = activeCompVisits();
       var trend = activeCompTrend();
+      var freqMix = activeCompFreqMix();
       var nWeeks = compWeeks.length;
+      // Cohort lens: scale each competitor by its share of the selected
+      // shopper cohort (new/returning/loyal); share mode renormalizes to 100%
+      // below, visits mode yields that cohort's absolute crossover visits.
+      function cohortScale(name) {
+        if (compCohort === 'all') return 1;
+        return (freqMix[name] && freqMix[name][compCohort] != null) ? freqMix[name][compCohort] : 1;
+      }
       // Per-week values per series. UX-846 Adam Jun-16: 100% stacked area.
       var vals = trend.map(function (s) {
+        var k = cohortScale(s.name);
         return compMetricMode === 'share'
-          ? s.data.slice() // normalized to 100% per week below
-          : s.data.map(function (v) { return Math.round(v * visits[s.name] / share[s.name]); });
+          ? s.data.map(function (v) { return v * k; }) // normalized to 100% per week below
+          : s.data.map(function (v) { return Math.round(v * visits[s.name] / share[s.name] * k); });
       });
       if (compMetricMode === 'share') {
         // Normalize each week column to sum to 100 so the stacked area tops out at 100%.
@@ -776,7 +793,21 @@
           padding: [10, 12],
           textStyle: { color: '#fff', fontFamily: 'inherit', fontSize: 12 },
           formatter: function (params) {
-            var html = '<div style="font-weight:700; margin-bottom:6px; font-size:13px; color:#fff;">' + params[0].name + '</div>';
+            // Cohort lens is otherwise only signalled by the toggle — name it here
+            // so a hovered value isn't ambiguous (Bill 2026-06-19).
+            var cohortLabel = { all: 'All shoppers', new: 'New shoppers', returning: 'Returning shoppers', loyal: 'Loyal shoppers' };
+            // Always label the lens; mute "All" (neutral default), accent active filters.
+            var cohortColor = (compCohort && compCohort !== 'all') ? '#93c5fd' : 'rgba(255,255,255,0.55)';
+            var cohortLine = '<div style="font-size:11px; font-weight:500; color:' + cohortColor + '; margin-bottom:6px;">' + (cohortLabel[compCohort] || 'All shoppers') + '</div>';
+            // Header = active metric selection + week (canonical toggle-tooltip pattern, UI-PATTERNS §4b.2).
+            var metricLabel = compMetricMode === 'share' ? 'Share %' : 'Visits';
+            // Reuse the canonical week→date formatter so the header matches the
+            // Traffic chart exactly: "Week 49 (11/17-11/23)".
+            var wkNum = /(\d+)/.exec(params[0].name);
+            var weekName = (wkNum && typeof DistributionData !== 'undefined' && DistributionData.getWeekLabel)
+              ? DistributionData.getWeekLabel('wk' + wkNum[1])
+              : params[0].name.replace(/^Wk\b/i, 'Week');
+            var html = '<div style="font-weight:700; font-size:12px; letter-spacing:0.04em; text-transform:uppercase; margin-bottom:2px; color:#fff;">' + metricLabel + ' | ' + weekName + '</div>' + cohortLine;
             var suffix = compMetricMode === 'share' ? '%' : '';
             params.forEach(function (p) {
               html += '<div style="display:flex; align-items:center; gap:10px; min-width:220px; margin-top:2px;">' +
@@ -890,6 +921,21 @@
       });
     }
 
+    function initCompCohort() {
+      var btns = document.querySelectorAll('#ov-comp-cohort .view-toggle__btn');
+      btns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          btns.forEach(function (b) {
+            var on = b === btn;
+            b.classList.toggle('active', on);
+            b.setAttribute('aria-selected', String(on));
+          });
+          compCohort = btn.dataset.ovCohort;
+          if (window._ovCompChart) window._ovCompChart.setOption(buildCompOptions(), true);
+        });
+      });
+    }
+
     function initCompRanges() {
       document.querySelectorAll('#ov-comp-ranges .duration-preset').forEach(function (btn) {
         btn.addEventListener('click', function () {
@@ -955,6 +1001,7 @@
       renderCompChart();
       renderCompDetail();
       initCompMetric();
+      initCompCohort();
       initCompRanges();
       initOvStoreDropdown();
     });

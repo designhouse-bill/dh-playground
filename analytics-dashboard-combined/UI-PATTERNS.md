@@ -333,6 +333,30 @@ Used: Observed Visits → by Competitor (`distribution-visitation.html` buildCom
 
 `echarts.color.modifyAlpha(C, a)` accepts hex/named/rgb. **Sparklines excluded** (too small for visible nodes).
 
+## 4b.2 Toggle-state tooltip header (canonical)
+
+> **State:** 🆕 NEW 2026-06-19 (Bill) — when a line/area chart's values depend on a control selection (metric toggle, cohort lens, etc.), the hover tooltip MUST name the active selection. Reading the value off the chart alone is ambiguous against the toggle state.
+
+Header line = **`<SELECTION> | <WEEK/X-LABEL>`**, uppercase, then any secondary lens on its own line, then the series rows:
+
+```js
+// metric toggle drives the chart → name it in the header
+var metricLabel = mode === 'share' ? 'Share %' : 'Visits';
+var wk = String(params[0].axisValue || params[0].name).replace(/^Wk\b/i, 'Week');
+var html = '<div style="font-weight:700; font-size:12px; letter-spacing:0.04em; '
+  + 'text-transform:uppercase; margin-bottom:2px; color:#fff;">'
+  + metricLabel + ' | ' + wk + '</div>';
+// optional secondary lens (e.g. cohort) — labelled EVERY state; mute the neutral default, accent active filters
+html += '<div style="font-size:11px; color:' + (cohort==='all' ? 'rgba(255,255,255,0.55)' : '#93c5fd') + ';">' + cohortLabel + '</div>';
+```
+
+- **Week label carries its date range** via the canonical `DistributionData.getWeekLabel('wk<n>')` → `Week 49 (12/1-12/7)`, so every toggle-driven chart's header matches. Map a compact axis label (`Wk 49`) back through `getWeekLabel` rather than reformatting by hand.
+- **Label every state**, including the neutral default ("All shoppers"), so absence-of-label is never the signal. Mute the default (`rgba(255,255,255,0.55)`), accent active filters (`#93c5fd`).
+- Uppercase + letter-spacing via CSS `text-transform` (keeps source casing in the DOM); per-row "(current)" / suffix markers set `text-transform:none`.
+- Pairs with the dark tooltip + white-node color re-mapping in §4b.1.
+
+**Where used:** Observed Visits → by Competitor (`distribution-visitation.html` buildCompOptions: Share%/Visits + N/R/L cohort); Traffic → combined trend (`distribution.js` initTrafficCombinedChart: Share%/Visits). Apply to any new toggle-driven line/area chart.
+
 ---
 
 # 5. Donut charts
@@ -666,6 +690,7 @@ Pre-port tickets to close before code starts:
 7. **Dead action-button cluster** — sweep `panel-export-btn` / `panel-print-btn` from engagement-explore* (Export wired only on `grid-export-btn`; Share wired everywhere via `core.handleShareClick`).
 8. **localStorage parity** — distribution should persist context like engagement does.
 9. **Info-popover unification** — migrate the bespoke engagement metrics-key tooltip (§8b.2) into the `MethodologyTooltip` registry (§8b.1) so one controller + one CSS owns all info popovers.
+10. **Week-date timezone handling** — `getWeekLabel` (distribution-data.js) parses ISO dates as UTC (`new Date(week.start)`), so tooltip week ranges read one day early in negative timezones (Wk 1 → `12/30-1/5` vs true `12/31-1/6`); `syncDateCard`/freshness use `new Date(s + 'T00:00:00')` and don't drift, so tooltip dates can sit a day off the context card. **Angular:** standardize on ONE timezone-safe parse/format (local-midnight or a date lib) for all week labels + context cards. Prototype intentionally left as-is — both toggle-tooltip charts share `getWeekLabel`, so they're at least consistent with each other.
 
 ---
 
@@ -687,4 +712,8 @@ v0.1.3  2026-06-19  Methodology tooltip (UX-846 #4, Adam Jun-16). Added §8b.1 M
                     registry-driven info-icon popover on all 4 distribution section headers) + §8b.2 noting
                     the engagement metrics-key tooltip as predecessor. Grep-hint row + drift item #9
                     (info-popover unification). Copy 📝 DRAFT pending Max→Adam.
+v0.1.4  2026-06-19  Added §4b.2 toggle-state tooltip header 🆕 (Bill): line/area tooltips whose values depend
+                    on a control selection (metric toggle, cohort lens) must name the active selection in an
+                    uppercase "SELECTION | WEEK X" header + label every lens state. Applied to Observed Visits
+                    by-Competitor + Traffic combined trend.
 ```

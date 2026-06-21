@@ -162,6 +162,8 @@
     </section>
   </main>
 
+  <div id="modals-container"></div>
+
   <script src="js/vendor/echarts.min.js"></script>
 
   <!-- Shared data layer — powers the visitation freshness banner (UX-846). -->
@@ -169,6 +171,7 @@
   <script src="js/data/distribution-entities.js?v=13"></script>
   <script src="js/data/distribution-records.js?v=22"></script>
   <script src="js/data/distribution-data.js?v=22"></script>
+  <script src="js/distribution/distribution-modals.js?v=13"></script>
 
   <!-- ════════════════════════════════════════════════════════════
        Observed Demographics — fixture init (Phase 1d).
@@ -213,10 +216,36 @@
       set('subtitle-date-week-demographics', label);
       set('subtitle-date-range-demographics', range);
     }
+    // ── Entity card ↔ shared layer sync (UX-846) ─────────────────
+    // No distribution.js on this page, so mirror its initContext entity block
+    // (distribution.js:80) so the Entity card + cohort scope agree after Apply.
+    function syncEntityCard() {
+      if (typeof DistributionData === 'undefined') return;
+      var rc  = DistributionData.retailerConfig || {};
+      var ctx = DistributionData.context || {};
+      var ent = DistributionData.entities;
+      var count = (ent && ctx.entityId) ? ent.getStoresForEntity(ctx.entityId, ctx.entityLevel).length : 0;
+      var levelLabel = ctx.entityLevel === 'all' ? 'BRAND'
+        : ctx.entityLevel === 'brand' ? 'SUB-BRAND'
+        : ctx.entityLevel === 'sub-brand' ? 'GROUP'
+        : 'STORE';
+      var name = ctx.entityLevel === 'all' ? rc.name : ctx.entityName;
+      var sub  = count + ' store' + (count !== 1 ? 's' : '');
+      if (ctx.entityLevel === 'all' && rc.pilotLabel) sub += ' · ' + rc.pilotLabel;
+      var set = function (id, val) { var el = document.getElementById(id); if (el && val != null) el.textContent = val; };
+      set('context-entity-breadcrumb', levelLabel);
+      set('context-entity-value', name);
+      set('context-entity-sub', sub);
+    }
+
     syncDateCard();
+    syncEntityCard();
     // Re-sync when the freshness banner's "jump to latest available" link (or
     // any context change) fires — demographics has no distribution.js listener.
-    document.addEventListener('distribution:dataRefresh', syncDateCard);
+    document.addEventListener('distribution:dataRefresh', function () {
+      syncDateCard();
+      syncEntityCard();
+    });
 
     // ── Real fixture data (UNGROUPED Demographic Report) ─────────
     var DIMENSIONS = [
@@ -702,6 +731,6 @@
   <!-- UX-846 A1 shared header -->
   <script>window.NAV_CONFIG = { product: "distribution", activeSection: "demographics", actions: ["export","share"] };</script>
   <script src="js/shared/methodology-tooltip.js?v=1"></script>
-  <script src="js/shared/nav-a1.js?v=5"></script>
+  <script src="js/shared/nav-a1.js?v=7"></script>
 </body>
 </html>

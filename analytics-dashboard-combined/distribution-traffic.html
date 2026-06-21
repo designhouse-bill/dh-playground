@@ -183,6 +183,17 @@
             </div>
             <p class="panel-subtitle" id="ts-panel-subtitle">Weekly share of observed shopper visits across our stores vs. nearby competitors.<br><span class="panel-subtitle__muted">Panel-tracked — directional, not a census.</span></p>
           </div>
+          <!-- by-Competitor controls — mirror Observed Visits #ov-comp-cohort/#ov-comp-metric (P8 parity, Max Jun-16). -->
+          <div class="view-toggle view-toggle--compact" id="crossover-cohort" role="tablist" aria-label="Shopper cohort" data-show-on-sub="competitor">
+            <button type="button" class="view-toggle__btn active" data-xover-cohort="all" role="tab" aria-selected="true">All</button>
+            <button type="button" class="view-toggle__btn" data-xover-cohort="new" role="tab" aria-selected="false">New</button>
+            <button type="button" class="view-toggle__btn" data-xover-cohort="returning" role="tab" aria-selected="false">Returning</button>
+            <button type="button" class="view-toggle__btn" data-xover-cohort="loyal" role="tab" aria-selected="false">Loyal</button>
+          </div>
+          <div class="view-toggle view-toggle--compact" id="crossover-metric" role="tablist" aria-label="Metric" data-show-on-sub="competitor">
+            <button type="button" class="view-toggle__btn active" data-xover-metric="share" role="tab" aria-selected="true">Share %</button>
+            <button type="button" class="view-toggle__btn" data-xover-metric="visits" role="tab" aria-selected="false">Visits</button>
+          </div>
         </div>
 
         <div class="ep-sub-pane ep-sub-pane--active" data-dist-sub-pane="trend">
@@ -244,7 +255,7 @@
   <script src="js/data/distribution-data.js?v=22"></script>
 
   <script src="js/distribution/store-map.js?v=25"></script>
-  <script src="js/distribution/distribution.js?v=105"></script>
+  <script src="js/distribution/distribution.js?v=106"></script>
   <script src="js/distribution/distribution-modals.js?v=13"></script>
 
   <script src="js/header-slide.js"></script>
@@ -269,7 +280,7 @@
     };
   </script>
   <script src="js/shared/methodology-tooltip.js?v=1"></script>
-  <script src="js/shared/nav-a1.js?v=5"></script>
+  <script src="js/shared/nav-a1.js?v=7"></script>
   <script src="js/distribution/distribution-page-app.js?v=15"></script>
   <script src="js/distribution/hash-deeplink.js?v=2"></script>
 

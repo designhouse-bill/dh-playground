@@ -355,7 +355,7 @@ html += '<div style="font-size:11px; color:' + (cohort==='all' ? 'rgba(255,255,2
 - Uppercase + letter-spacing via CSS `text-transform` (keeps source casing in the DOM); per-row "(current)" / suffix markers set `text-transform:none`.
 - Pairs with the dark tooltip + white-node color re-mapping in §4b.1.
 
-**Where used:** Observed Visits → by Competitor (`distribution-visitation.html` buildCompOptions: Share%/Visits + N/R/L cohort); Traffic → combined trend (`distribution.js` initTrafficCombinedChart: Share%/Visits). Apply to any new toggle-driven line/area chart.
+**Where used:** Observed Visits → by Competitor (`distribution-visitation.html` buildCompOptions: Share%/Visits + N/R/L cohort); Traffic → combined trend (`distribution.js` initTrafficCombinedChart: Share%/Visits); Traffic → by Competitor crossover (`distribution.js` updateCrossoverChartPeriod: Share%/Visits + N/R/L cohort, P8 parity 2026-06-21). Apply to any new toggle-driven line/area chart.
 
 ---
 

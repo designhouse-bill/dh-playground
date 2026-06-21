@@ -1438,6 +1438,23 @@
     StoreMap.renderStores(stores, storeData);
     StoreMap.fitBounds();
 
+    // #5 (Adam Jun-16): brand-store MARKER click → same effect as a table row
+    // click (proximity rings + radius-key legend + row highlight). Previously the
+    // marker callback was never registered, so markers showed no rings.
+    if (StoreMap.onStoreClick) {
+      StoreMap.onStoreClick(function (storeId) {
+        StoreMap.highlightStore(storeId);
+        var legend = document.getElementById('ring-legend-store');
+        if (legend) legend.style.display = 'flex';
+        var table = document.getElementById('leaderboard-table-store');
+        if (table) {
+          table.querySelectorAll('.lb-row--selected').forEach(function (r) { r.classList.remove('lb-row--selected'); });
+          var row = table.querySelector('.lb-row--parent[data-store-id="' + storeId + '"]');
+          if (row) { row.classList.add('lb-row--selected'); row.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
+        }
+      });
+    }
+
     // Competitor diamond pips use StoreMap's default brand→color map, which
     // matches the leaderboard's LEADERBOARD_BRAND_COLORS exactly — so a diamond's
     // pip color equals its expanded-row pip. (Previously setCompetitorRanking()
@@ -1895,6 +1912,10 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
   // Replaces removed Traffic Volume tab (Bill 2026-05-03 — kill cognitive overload of separate tab).
   var _crossoverTrendMetric = 'share';
   var _crossoverTrendWeekCount = 8; // default = 8 Week preset (matches duration-preset--active in markup)
+  // by-Competitor pane state (P8 parity, Max Jun-16) — mirrors Observed Visits comp controls.
+  var _crossoverPeriodWeekCount = 8; // by-Competitor duration (own preset row)
+  var _crossoverCohort = 'all';      // N/R/L cohort lens (all|new|returning|loyal)
+  var _crossoverMetric = 'share';    // Share % (100% area) vs Visits (absolute)
 
   // Time Trend duration map: keyed by the strip's own data-period values
   // (4w/8w/13w) plus the by-Competitor strip's legacy keys (1w/1m/1q) for
@@ -2860,6 +2881,8 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         initTrafficChartToggle();
         initLeaderboardViewToggle();
         initCrossoverPeriodPresets();
+        initCrossoverCohort();
+        initCrossoverMetric();
         updateCrossoverChartPeriod(8); // default 8 Week (matches the standardized preset row)
         initCrossoverTrendChart(); // renders at the default 8 Week preset
         initCrossoverTrendPresets();
@@ -2931,7 +2954,33 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     });
   }
 
+  // by-Competitor cohort lens (All/New/Returning/Loyal) — mirrors Observed Visits initCompCohort.
+  function initCrossoverCohort() {
+    var btns = document.querySelectorAll('#crossover-cohort .view-toggle__btn');
+    btns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        btns.forEach(function (b) { var on = b === btn; b.classList.toggle('active', on); b.setAttribute('aria-selected', String(on)); });
+        _crossoverCohort = btn.dataset.xoverCohort;
+        updateCrossoverChartPeriod(_crossoverPeriodWeekCount);
+      });
+    });
+  }
+
+  // by-Competitor Share%/Visits toggle — mirrors Observed Visits initCompMetric.
+  function initCrossoverMetric() {
+    var btns = document.querySelectorAll('#crossover-metric .view-toggle__btn');
+    btns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        btns.forEach(function (b) { var on = b === btn; b.classList.toggle('active', on); b.setAttribute('aria-selected', String(on)); });
+        _crossoverMetric = btn.dataset.xoverMetric;
+        updateCrossoverChartPeriod(_crossoverPeriodWeekCount);
+      });
+    });
+  }
+
   function updateCrossoverChartPeriod(weekCount) {
+    weekCount = weekCount || _crossoverPeriodWeekCount;
+    _crossoverPeriodWeekCount = weekCount;
     var el = document.getElementById('chart-crossover');
     if (!el) return;
 
@@ -2983,9 +3032,58 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     var useArea = weekCount > 4;
     var chartType = useArea ? 'line' : 'bar';
 
+    // ── P8 parity (Max Jun-16): cohort lens + Share%/Visits, mirroring Observed
+    //    Visits by-Competitor (distribution-visitation.html buildCompOptions). ──
+    // Cohort fraction from per-competitor N/R/L crossover buckets (zero_prev=New,
+    // one_three=Returning, four_plus=Loyal); constant multiplier across the window,
+    // same approximation as the Observed Visits freqMix.
+    function cohortFrac(c) {
+      if (_crossoverCohort === 'all') return 1;
+      var z = c.crossover_visits_zero_prev || 0, o = c.crossover_visits_one_three || 0, f = c.crossover_visits_four_plus || 0;
+      var tot = z + o + f;
+      if (!tot) return 1;
+      var v = _crossoverCohort === 'new' ? z : _crossoverCohort === 'returning' ? o : f;
+      return v / tot;
+    }
+    var asVisits = _crossoverMetric === 'visits';
+    var visitsTrend = (D.trafficShareMetrics && D.trafficShareMetrics.trend) || [];
+    function retailVisitsAt(idx) { var t = visitsTrend[idx]; return t ? (t.retailer_visits || 0) : 0; }
+    // Cohort-scaled raw shares per visible week (competitors + All Other).
+    var top5Scaled = top5.map(function (c) {
+      var k = cohortFrac(c);
+      return slicedWeeks.map(function (_, wi) { return (c.trend[sliceStart + wi] || 0) * k; });
+    });
+    var restScaled = slicedWeeks.map(function (_, wi) {
+      var s = 0; rest.forEach(function (c) { s += (c.trend[sliceStart + wi] || 0) * cohortFrac(c); }); return s;
+    });
+    // Our Brand Only = original exclusivity (cohort-neutral); renormalization lets it
+    // grow when competitors shrink under a cohort filter (Loyal = more exclusive).
+    var ourBrandRaw = slicedWeeks.map(function (_, wi) {
+      var idx = sliceStart + wi, s = 0;
+      top5.forEach(function (c) { s += (c.trend[idx] || 0); });
+      rest.forEach(function (c) { s += (c.trend[idx] || 0); });
+      return Math.max(0, 100 - s);
+    });
+    // Renormalize each week column to 100 (cohort scaling breaks the native sum).
+    var colSum = slicedWeeks.map(function (_, wi) {
+      var s = ourBrandRaw[wi] + restScaled[wi];
+      top5Scaled.forEach(function (arr) { s += arr[wi]; });
+      return s || 1;
+    });
+    // Share% mode = normalized %, Visits mode = % × that week's retailer visits.
+    function toVal(rawArr) {
+      return rawArr.map(function (v, wi) {
+        var share = +(v / colSum[wi] * 100).toFixed(1);
+        return asVisits ? Math.round(retailVisitsAt(sliceStart + wi) * share / 100) : share;
+      });
+    }
+    var top5Data = top5Scaled.map(toVal);
+    var ourBrandData = toVal(ourBrandRaw);
+    var allOtherData = toVal(restScaled);
+
     var stackLabel = useArea ? { show: false } : {
       show: true, position: 'inside', fontSize: 10, color: '#fff', fontWeight: 'bold',
-      formatter: function (p) { return p.value >= 6 ? p.value.toFixed(1) + '%' : ''; }
+      formatter: function (p) { return (!asVisits && p.value >= 6) ? p.value.toFixed(1) + '%' : ''; }
     };
 
     var namedSeries = top5.map(function (comp, i) {
@@ -2996,7 +3094,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         itemStyle: { color: CROSSOVER_COLORS[i] },
         label: stackLabel,
         emphasis: { focus: 'series' },
-        data: comp.trend.slice(sliceStart)
+        data: top5Data[i]
       };
       if (useArea) {
         // Store/competitor composition — solid 0.9 fill + white nodes (canonical).
@@ -3013,13 +3111,6 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     });
 
     // Our Brand Only
-    var ourBrandTrend = flightWeeks.slice(sliceStart).map(function (_, wi) {
-      var idx = sliceStart + wi;
-      var compSum = 0;
-      top5.forEach(function (c) { compSum += (c.trend[idx] || 0); });
-      rest.forEach(function (c) { compSum += (c.trend[idx] || 0); });
-      return Math.max(0, 100 - compSum);
-    });
     var ourBrandSeries = {
       name: 'Our Brand Only',
       type: chartType,
@@ -3027,7 +3118,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       itemStyle: { color: CROSSOVER_COLORS[6] },
       label: stackLabel,
       emphasis: { focus: 'series' },
-      data: ourBrandTrend
+      data: ourBrandData
     };
     if (useArea) {
       ourBrandSeries.areaStyle = { color: CROSSOVER_COLORS[6], opacity: 0.9 };
@@ -3042,12 +3133,6 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
     namedSeries.push(ourBrandSeries);
 
     if (rest.length > 0) {
-      var allOtherTrend = flightWeeks.slice(sliceStart).map(function (_, wi) {
-        var idx = sliceStart + wi;
-        var sum = 0;
-        rest.forEach(function (c) { sum += (c.trend[idx] || 0); });
-        return sum;
-      });
       var allOtherSeries = {
         name: 'All Other',
         type: chartType,
@@ -3055,7 +3140,7 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
         itemStyle: { color: CROSSOVER_COLORS[5] },
         label: stackLabel,
         emphasis: { focus: 'series' },
-        data: allOtherTrend
+        data: allOtherData
       };
       if (useArea) {
         allOtherSeries.areaStyle = { color: CROSSOVER_COLORS[5], opacity: 0.9 };
@@ -3084,12 +3169,27 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       tooltip: {
         trigger: 'axis',
         axisPointer: { type: useArea ? 'line' : 'shadow' },
+        backgroundColor: '#1f2937',
+        borderColor: 'rgba(255,255,255,0.08)',
+        borderWidth: 1,
+        padding: [10, 12],
+        textStyle: { color: '#fff', fontFamily: 'inherit', fontSize: 12 },
         formatter: function (params) {
-          var html = '<strong>' + params[0].axisValue.replace('\n', ' ') + '</strong>';
+          // Canonical toggle-state header (UI-PATTERNS §4b.2): name the active
+          // metric + cohort so a hovered value isn't ambiguous against the toggles.
+          var cohortLabel = { all: 'All shoppers', new: 'New shoppers', returning: 'Returning shoppers', loyal: 'Loyal shoppers' };
+          var cohortColor = (_crossoverCohort && _crossoverCohort !== 'all') ? '#93c5fd' : 'rgba(255,255,255,0.55)';
+          var metricLabel = asVisits ? 'Visits' : 'Share %';
+          var html = '<div style="font-weight:700;font-size:12px;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:2px;color:#fff;">' + metricLabel + ' | ' + params[0].axisValue.replace('\n', ' ') + '</div>' +
+            '<div style="font-size:11px;font-weight:500;color:' + cohortColor + ';margin-bottom:6px;">' + (cohortLabel[_crossoverCohort] || 'All shoppers') + '</div>';
           params.forEach(function (p) {
             var c = crossColorByName[p.seriesName] || p.color;
             var dot = '<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#fff;border:2px solid ' + c + ';box-sizing:border-box;vertical-align:middle;margin-right:6px;"></span>';
-            html += '<br>' + dot + p.seriesName + ': <strong>' + p.value.toFixed(1) + '%</strong>';
+            var val = asVisits ? Math.round(p.value).toLocaleString() : p.value.toFixed(1) + '%';
+            html += '<div style="display:flex;align-items:center;gap:10px;min-width:220px;margin-top:2px;">' +
+              '<span>' + dot + '<span style="color:rgba(255,255,255,0.9);">' + p.seriesName + '</span></span>' +
+              '<span style="flex:1;"></span>' +
+              '<span style="font-weight:600;font-variant-numeric:tabular-nums;color:#fff;">' + val + '</span></div>';
           });
           return html;
         }
@@ -3110,8 +3210,11 @@ var CROSSOVER_COLORS = ['#E07850', '#A8BF6E', '#2AADDB', '#D4A574', '#9B7FD4', '
       },
       yAxis: {
         type: 'value',
-        max: 100,
-        axisLabel: { formatter: '{value}%', fontSize: 11, color: '#6b7280' },
+        max: asVisits ? null : 100,
+        axisLabel: {
+          formatter: asVisits ? function (v) { return v >= 1000 ? (v / 1000) + 'k' : v; } : '{value}%',
+          fontSize: 11, color: '#6b7280'
+        },
         splitLine: { lineStyle: { color: '#f3f4f6' } }
       },
       series: namedSeries

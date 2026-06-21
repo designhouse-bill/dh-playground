@@ -35,7 +35,7 @@
   var DEFAULT_ENTITLEMENTS = ['engagement', 'distribution'];
   var PRODUCTS = [
     { id: 'engagement',   label: 'Engagement',   href: 'engagement-report.html?tab=performance' },
-    { id: 'distribution', label: 'Distribution', href: 'distribution-traffic.html' }
+    { id: 'distribution', label: 'Distribution', href: 'distribution-media.html' }
   ];
   var SECTIONS = {
     engagement: [

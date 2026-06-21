@@ -1,2 +1,7 @@
 Ideal-promo-template-matrix/.env
 node_modules/
+
+# OS + build artifacts
+.DS_Store
+**/.DS_Store
+*.zip

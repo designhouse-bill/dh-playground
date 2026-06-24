@@ -33,6 +33,8 @@
 
 /** In ISC: `import { Observable } from 'rxjs'`. Local placeholder so this spec tsc's standalone. */
 type Observable<T> = { subscribe(observer?: unknown): { unsubscribe(): void } };
+/** In ISC: Angular `Signal<T>` from '@angular/core'. Local placeholder so this spec tsc's standalone. */
+type Signal<T> = () => T;
 
 export type IsoDate = string; // 'YYYY-MM-DD'
 export type Hash = string;
@@ -363,15 +365,16 @@ export interface DashboardDistributionApi {
 
 /* ============================================================================
  * §E  STATE — NEW   target: src/app/analytic-dashboard/services/distribution-state.service.ts
- * Impl mirrors TableStateService: BehaviorSubject per dimension + combineLatest →
- * filters$ (debounceTime(0) + distinctUntilChanged), buildApiParams() → snake_case,
- * page resets to 1 on any filter change. No NgRx/signals.
+ * Impl uses Angular SIGNALS (ratified 2026-06-24): signal() per dist-own dimension +
+ * computed() fetchKey; shared entity/date bridged from phase-1's RxJS via toSignal().
+ * buildApiParams() → snake_case; page resets to 1 on any filter change.
  * ========================================================================== */
 
 export interface DistributionState {
-  // Pure consumer of shared entity+date from phase-1 TableStateService — no setDateRange/setEntityFilters here.
-  readonly sharedContext$: Observable<{ brandHash?: Hash; nodeHash?: Hash; startDate?: string; endDate?: string }>;
-  readonly filters$: Observable<unknown>;
+  // Angular signals (ratified). Pure consumer of shared entity+date from phase-1 — no setDateRange/setEntityFilters here.
+  readonly sharedContext: Signal<{ brandHash?: Hash; nodeHash?: Hash; startDate?: string; endDate?: string }>;
+  readonly fetchKey: Signal<unknown>; // computed(sharedContext + distFilters) — refetch trigger; NOT trendWindow
+  readonly trendWindow: Signal<number>; // VIEW-ONLY (P1-4) — slices the chart, never refetches
   setStoreTier(tier: DistributionEngagementParams['store_tier']): void;
   setMetric(metric: DistributionEngagementParams['metric']): void;
   setCohort(cohort: DistributionEngagementParams['cohort']): void;
@@ -380,6 +383,7 @@ export interface DistributionState {
   setSort(sortBy: string, sortDirection: 'asc' | 'desc'): void;
   setPage(page: number): void;
   setLimit(limit: number): void;
+  setTrendWindow(weeks: number): void; // VIEW-ONLY trendWindow setter (P1-4)
   buildApiParams(): DistributionEngagementParams;
 }
 

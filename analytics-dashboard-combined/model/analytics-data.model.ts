@@ -14,16 +14,16 @@
  *   - Service `extends ApiService` (src/app/core/services/), returns Observable, endpoints
  *     `brands/{brandHash}/nodes/{nodeHash}/analytics/{resource}`, params built via HttpParams.
  *   - State `TableStateService` (src/app/analytic-dashboard/services/): BehaviorSubject +
- *     combineLatest → filters$; buildApiParams() emits snake_case. No NgRx, no signals.
+ *     combineLatest → filters$; buildApiParams() emits snake_case. (Phase-1 has no NgRx/signals; phase-2 state = SIGNALS — see BUILD POSTURE.)
  *   - NgModule-declared, default change detection, ECharts.
  *
- * BUILD POSTURE (decided 2026-06-23): MATCH India phase-1 EXACTLY for consistency + low review
- *   friction — default change detection, NgModule-declared, custom CSS spinner + toast, silent
- *   error swallow (`error: () => { this.isLoading = false; }`), NO OnPush/signals. Service calls
- *   are `http.get<any[]>(url, …)` then cast to the DTOs below — exactly like
- *   DashboardPromotionTableService.getPromotionalData → `res as PromotionTableDto`. The DTOs
- *   themselves stay strictly typed (India's shared/dto DTOs are typed too; the `any` lives at the
- *   service-call/component layer, not the contract).
+ * BUILD POSTURE (decided 2026-06-23; Kevin-aligned update 2026-06-24): match India phase-1 idioms
+ *   — default change detection (NOT OnPush), NgModule-declared, custom CSS spinner + toast — EXCEPT
+ *   where reviewer Kevin's current bar supersedes: state via Angular SIGNALS (signal/computed, seam
+ *   bridged via toSignal) not RxJS BehaviorSubject; services return STRICTLY-TYPED DTOs
+ *   (`http.get<TrafficShareSummary>(…)` — NOT the Engagement `http.get<any[]>` + cast; Kevin blocks
+ *   `any`); `@UntilDestroy()` teardown; transloco i18n (en+es). DTOs strictly typed throughout.
+ *   Full ratified set: handoff §11.
  *
  * Prototype provenance: field shapes harvested from mydarndest-playground data layer; the
  * raw snake_case inventory is in git history. Mapping comments below: `// proto: <name>`.

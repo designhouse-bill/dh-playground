@@ -34,13 +34,17 @@
     </section>
   </main>
 
+  <script src="../vendor/echarts.min.js"></script>
+  <script src="../shared/chart-colors.js"></script>
   <script src="../data/sections.js"></script>
+  <script src="../data/traffic-share-data.js"></script>
   <script src="../shared/component-loader.js"></script>
   <script src="../shared/section-hero/init.js"></script>
   <script src="../shared/sub-tabs/init.js"></script>
   <script src="../shared/toggle/init.js"></script>
   <script src="../shared/methodology-popover/init.js"></script>
   <script src="../shared/chart-card/init.js"></script>
+  <script src="../traffic-share/trend/init.js"></script>
   <script>
     document.querySelectorAll('[data-component="section-hero"]').forEach(function (host) {
       window.DistComponents.load(host, '../shared/section-hero/section-hero.html').then(function (node) {
@@ -49,15 +53,18 @@
     });
     document.querySelectorAll('[data-component="chart-card"]').forEach(function (host) {
       window.DistComponents.load(host, '../shared/chart-card/chart-card.html').then(function (node) {
-        // Nested fragments: inject the sub-tabs strip + methodology trigger before the card driver inits.
+        // Nested fragments: inject the sub-tabs strip + methodology trigger + trend pane before the card driver inits.
         var subHost = node.querySelector('[data-component="sub-tabs"]');
         subHost.dataset.section = node.dataset.section;
         var methHost = node.querySelector('[data-component="methodology-popover"]');
+        var trendHost = node.querySelector('[data-component="trend"]');
         return Promise.all([
           window.DistComponents.load(subHost, '../shared/sub-tabs/sub-tabs.html'),
-          window.DistComponents.load(methHost, '../shared/methodology-popover/methodology-popover.html')
+          window.DistComponents.load(methHost, '../shared/methodology-popover/methodology-popover.html'),
+          window.DistComponents.load(trendHost, '../traffic-share/trend/trend.html')
         ]).then(function () {
           window.DistMethodologyPopover.init();
+          window.DistTrend.init();
           window.DistChartCard.init(node, window.DIST_SECTIONS[node.dataset.section]);
         });
       });

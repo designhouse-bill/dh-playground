@@ -53,8 +53,8 @@
         </div>
 
         <div class="ep-sub-pane ep-sub-pane--active" data-dist-sub-pane="trend">
-          <div id="chart-traffic-combined" style="height:380px;"></div>
-          <div id="chart-crossover-trend" style="height:300px; margin-top:12px;"></div>
+          <!-- nested fragment — the shell chains this load before DistChartCard.init -->
+          <div data-component="trend"></div>
         </div>
         <div class="ep-sub-pane" data-dist-sub-pane="store">
           <!-- By Store — leaderboard + map side-by-side (direct lift of the pre-strip

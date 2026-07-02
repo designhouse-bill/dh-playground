@@ -54,14 +54,24 @@
     }
 
     // Toggle groups: activation via shared/toggle; data swaps are engine
-    // hooks (guarded no-ops until the trend / by-competitor carves).
+    // hooks (guarded no-ops until their component carves land). The trend
+    // seams route to window.DistTrend (traffic-share/trend carve 2026-07-02).
+    function trendHook(method) {
+      return function (value) {
+        if (window.DistTrend && window.DistTrend[method]) window.DistTrend[method](value);
+      };
+    }
     card.querySelectorAll('.view-toggle').forEach(function (el) {
       var attr = el.querySelector('[data-traffic-view]') ? 'trafficView'
         : el.querySelector('[data-xover-cohort]') ? 'xoverCohort' : 'xoverMetric';
-      window.DistToggle.init(el, { attr: attr });
+      var opts = { attr: attr };
+      if (el.id === 'traffic-chart-toggle') opts.onChange = trendHook('setView');
+      window.DistToggle.init(el, opts);
     });
     card.querySelectorAll('.duration-presets').forEach(function (el) {
-      window.DistToggle.init(el, { attr: 'period', activeClass: 'duration-preset--active' });
+      var opts = { attr: 'period', activeClass: 'duration-preset--active' };
+      if (el.id === 'crossover-trend-presets') opts.onChange = trendHook('setWeeks');
+      window.DistToggle.init(el, opts);
     });
 
     var tabsApi = window.DistSubTabs.init(strip, { paneRoot: card, onChange: onSub });

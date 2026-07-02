@@ -1,0 +1,20 @@
+{
+  "name": "traffic-share/trend",
+  "protoAnchor": "#ts-chart-card [data-dist-sub-pane=\"trend\"] (fragment root = unstyled wrapper div stamped data-component=\"trend\" \u2014 the loader's single-root anchor, mirrors the Angular host element; proto pane has no wrapper, oracle state eval must tolerate it or diff the pane region pixels)",
+  "protoSource": [
+    "analytics-dashboard-combined/distribution-traffic.html \u2014 trend pane content (#chart-traffic-combined + #chart-crossover-trend divs), verbatim",
+    "analytics-dashboard-combined/js/distribution/distribution.js \u2014 initTrafficCombinedChart / initCrossoverTrendChart / updateCrossoverTrendPeriod / updateTrafficCombinedChart + in-IIFE darkAxisTooltip/bucketDateHint/_fmtDateRange, verbatim; control listeners (initTrafficChartToggle, initCrossoverTrendPresets) replaced by DistToggle onChange seams (setView/setWeeks); dead local shareChange dropped",
+    "analytics-dashboard-combined/js/shared/chart-colors.js \u2014 copied verbatim to shared/chart-colors.js",
+    "analytics-dashboard-combined/js/vendor/echarts.min.js \u2014 copied verbatim to vendor/echarts.min.js",
+    "analytics-dashboard-combined/js/data/* \u2014 snapshotted to data/traffic-share-data.js via data/generate-traffic-share-data.mjs (deterministic; getWeekLabel carved verbatim)"
+  ],
+  "angularTarget": "ideal-sale-circular/src/app/analytic-dashboard/components/distribution-view/traffic-share-trend",
+  "backing": "echarts",
+  "style": "module",
+  "oracle": "canvas-hash mode (parity.mjs canvasSelectors): md5 of both chart canvases' toDataURL must match, plus computed props on the pane wrapper; element-screenshot pixel diff is reported but non-gating for canvas backing (fractional-offset compositing resamples canvas layers \u2014 tablet showed 0.03 px noise with byte-identical bitmaps). State: strip viz-inactive, click trend tab, wait 1800ms for echarts animation.",
+  "ux928Items": [
+    "#15 remove #chart-crossover-trend + its init path \u2014 GATED, apply as visible diff only after the verbatim carve is oracle-green"
+  ],
+  "notes": "No trend.css \u2014 pane chrome (.ep-sub-pane) belongs to sub-tabs, chart hosts carry inline heights verbatim. Eager-init contract kept: charts init while the pane is hidden (0\u00d70), chart-card resizePane fixes sizing on first tab show. Angular twin takes the DistToggle seams as inputs/outputs (view, weeks).",
+  "status": "carved \u2014 oracle 8/8 green both viewports (2026-07-02, canvas hashes identical)"
+}

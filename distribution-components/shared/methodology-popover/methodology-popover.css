@@ -1,0 +1,95 @@
+/* ============================================
+   shared/methodology-popover — trigger button + popover content
+   Carved from analytics-dashboard-combined @ proto-2.0-baseline:
+     methodology-tooltip.css 10-47  — .info-btn states (verbatim)
+     methodology-tooltip.css 54-56  — .methodology-btn margin (verbatim;
+       .panel-title-row 50-53 stays with chart-card)
+     methodology-tooltip.css 100-125 — popover content typography
+       (.tooltip-title / .tooltip-content / .tooltip-why-important),
+       re-scoped under .p-popover
+   PrimeNG-first (LOCKED 2026-07-01): the open overlay is REAL PrimeNG
+   Popover DOM (.p-popover > .p-popover-content) chromed by vendor/aura.css
+   (background/border/radius/shadow/arrow/gutter) — replaces the proto's
+   .tooltip-overlay chrome (methodology-tooltip.css 58-98). Closed by
+   default → invisible to the static oracle; open-state delta = the
+   policy substitution, sign-off rides the 2.1 dial.
+   Angular twin: shared/methodology-popover (dh-methodology-popover, p-popover).
+   ============================================ */
+
+/* ── methodology-tooltip.css 10-47 ── */
+/* Info button — small circular "i" beside a section title. */
+.info-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: serif;
+  position: relative;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.info-btn:hover {
+  background: #f5f5f5;
+  border-color: var(--color-primary-500);
+  color: var(--color-primary-500);
+  transform: scale(1.1);
+}
+
+.info-btn:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+.info-btn[aria-expanded="true"] {
+  background: var(--color-primary-500);
+  border-color: var(--color-primary-500);
+  color: #fff;
+}
+
+/* ── methodology-tooltip.css 54-56 ── */
+.methodology-btn {
+  margin-left: 8px;
+}
+
+/* ── popover content ── methodology-tooltip.css 100-125, re-scoped from
+   .tooltip-overlay to the PrimeNG root; sizing cap carried from 58-72. ── */
+.p-popover.methodology-popover {
+  max-width: 340px;
+}
+
+.p-popover.methodology-popover .tooltip-title {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.p-popover.methodology-popover .tooltip-content {
+  margin: 0 0 12px 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--color-text-primary);
+}
+
+.p-popover.methodology-popover .tooltip-why-important {
+  margin: 0;
+  padding: 12px 0 0 0;
+  border-top: 1px solid var(--color-border);
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+}
+
+.p-popover.methodology-popover .tooltip-why-important strong {
+  color: var(--color-text-primary);
+}

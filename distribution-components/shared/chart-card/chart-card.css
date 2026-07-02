@@ -13,21 +13,20 @@
        header/controls/title-row + 640px stack (3927-3983),
        .panel-subtitle__muted (5051-5052), #ts-chart-card
        header-left max-width release (5980-5986)
-     methodology-tooltip.css — .info-btn states (10-47),
-       .panel-title-row + .methodology-btn (49-56)
+     methodology-tooltip.css — .panel-title-row (50-53)
    Skipped (no matching node in this markup): chips-row rule
    (dist 3985-3992), .panel-sublabel, .tooltip-overlay (popover
-   DOM is body-appended — arrives with the methodology-popover
-   carve).
+   DOM is body-appended — superseded by the p-popover overlay in
+   shared/methodology-popover).
    CARVED OUT: → shared/sub-tabs (2026-07-02): arch 497-547,
      dist 3993-3999, dist 5987-5988 (#ts-perf-subtabs pair) —
      now in shared/sub-tabs/sub-tabs.css, loaded BEFORE this file.
+   → shared/methodology-popover (2026-07-02): meth 10-47,
+     meth 54-56 — loaded AFTER this file (proto order).
    CARRIED BLOCKS (move out at their own carve, keep load order):
      → shared/toggle (p-selectbutton): arch 1401-1470,
        arch 1640-1706, arch 2538-2547, dist 1759-1803,
        dist 3108-3114
-     → shared/methodology-popover (p-popover): meth 10-47,
-       meth 54-56
    Angular twin: components/shared/chart-card
    ============================================================ */
 
@@ -341,52 +340,9 @@
    shared/sub-tabs.) Visitation's 3-tab default stays untouched. */
 #ts-chart-card .chart-card__header-left { max-width: none; }
 
-/* ── methodology-tooltip.css 10-47 ── CARRIED → shared/methodology-popover ── */
-/* Info button — small circular "i" beside a section title. */
-.info-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  border: 1px solid var(--color-border);
-  border-radius: 50%;
-  background: var(--color-surface);
-  color: var(--color-text-secondary);
-  font-size: 11px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: serif;
-  position: relative;
-  flex-shrink: 0;
-  vertical-align: middle;
-}
-
-.info-btn:hover {
-  background: #f5f5f5;
-  border-color: var(--color-primary-500);
-  color: var(--color-primary-500);
-  transform: scale(1.1);
-}
-
-.info-btn:focus-visible {
-  outline: 2px solid var(--color-primary-500);
-  outline-offset: 2px;
-}
-
-.info-btn[aria-expanded="true"] {
-  background: var(--color-primary-500);
-  border-color: var(--color-primary-500);
-  color: #fff;
-}
-
-/* ── methodology-tooltip.css 49-56 (.panel-title-row stays with chart-card — Angular twin keeps it; .methodology-btn CARRIED → shared/methodology-popover) ── */
+/* ── methodology-tooltip.css 50-53 (.panel-title-row stays with chart-card — Angular twin keeps it; .info-btn/.methodology-btn carved out → shared/methodology-popover 2026-07-02, loaded AFTER this file, matching proto order) ── */
 /* Title + methodology button share one row; button survives title rewrites. */
 .panel-title-row {
   display: flex;
   align-items: center;
-}
-.methodology-btn {
-  margin-left: 8px;
 }

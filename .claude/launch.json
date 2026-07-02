@@ -6,6 +6,12 @@
       "runtimeExecutable": "npx",
       "runtimeArgs": ["serve", "-p", "8082", "analytics-dashboard-combined"],
       "port": 8082
+    },
+    {
+      "name": "playground-root",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "-p", "4890", "."],
+      "port": 4890
     }
   ]
 }

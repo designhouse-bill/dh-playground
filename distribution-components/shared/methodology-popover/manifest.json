@@ -1,0 +1,16 @@
+{
+  "name": "shared/methodology-popover",
+  "protoAnchor": ".methodology-btn",
+  "protoSource": [
+    "analytics-dashboard-combined/distribution-traffic.html — .info-btn.methodology-btn trigger (inside #ts-chart-card .panel-title-row)",
+    "analytics-dashboard-combined/css/methodology-tooltip.css — .info-btn states (10-47), .methodology-btn margin (54-56), content typography (100-125); proto overlay chrome (58-98) REPLACED by vendor/aura.css p-popover",
+    "analytics-dashboard-combined/js/shared/methodology-tooltip.js — COPY registry + controller (rebuilt on p-popover DOM)"
+  ],
+  "angularTarget": "ideal-sale-circular/src/app/analytic-dashboard/components/shared/methodology-popover",
+  "backing": "primeng(popover)",
+  "style": "standalone",
+  "oracle": "static — trigger button rides the chart-card-traffic crop (closed popover = no static DOM). Open-state = wrapper-pixel vs the Angular p-popover once the twin exists (real PrimeNG DOM ≠ proto .tooltip-overlay by design).",
+  "ux928Items": [],
+  "notes": "First vendor/aura.css consumer. PrimeNG-first substitution: open overlay = real Popover DOM (.p-popover > .p-popover-content) chromed by Aura (bg/border/radius/shadow/arrow/gutter, enter/leave motion classes) — proto .tooltip-overlay chrome dropped; content typography (.tooltip-title/.tooltip-content/.tooltip-why-important) carried verbatim, re-scoped under .p-popover.methodology-popover, 340px cap kept. Static 0Δ unaffected (closed by default); open-state sign-off rides the 2.1 dial. Trigger carve = traffic instance verbatim (data-methodology=traffic-share); other sections stamp their topic id on their own carves. COPY strings = DRAFT seed (Max authors, Adam approves — UX-846 #4). Loaded as a nested fragment inside chart-card (same chain as sub-tabs).",
+  "status": "carved — oracle static 0Δ 6/6 both viewports (2026-07-02); open-state verified functionally (Aura chrome, arrow tracking, Esc/outside close, aria-expanded fill)"
+}

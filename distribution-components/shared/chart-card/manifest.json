@@ -5,7 +5,7 @@
     "analytics-dashboard-combined/distribution-traffic.html — #ts-chart-card block (lines 142-230 at proto-2.0-baseline) + inline ep-sub-tab driver script (PANEL_COPY + initTabs)",
     "analytics-dashboard-combined/css/analytics-architecture.css — ep-sub-tabs family, duration-presets family, view-toggle PILL + borderless lock",
     "analytics-dashboard-combined/css/distribution.css — chart-card block + panel-label/subtitle, view-toggle SEGMENTED + STRIP re-add, header/controls/title-row + 640px stack, ep-sub-tab--active section color, #ts-chart-card 4-tab overrides",
-    "analytics-dashboard-combined/css/methodology-tooltip.css — info-btn, panel-title-row, methodology-btn"
+    "analytics-dashboard-combined/css/methodology-tooltip.css — .panel-title-row only (info-btn/methodology-btn carved out → shared/methodology-popover 2026-07-02)"
   ],
   "angularTarget": "ideal-sale-circular/src/app/analytic-dashboard/components/shared/chart-card",
   "backing": "custom",

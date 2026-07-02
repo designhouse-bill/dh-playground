@@ -1,0 +1,89 @@
+      <!-- ═══════════════════════════════════════════════
+           Traffic Share — 4 inner tabs (Observed Visits parity + Map).
+           Time Trend · By Store · by Competitor · Map
+           Engine: distribution.js eager-inits trend/competitor/store
+           containers on load; Map pane lazy-inits Leaflet on first show.
+           ═══════════════════════════════════════════════ -->
+      <div class="chart-card" id="ts-chart-card">
+        <div class="chart-card__header">
+          <div class="chart-card__header-left">
+            <div class="ep-sub-tabs" id="ts-perf-subtabs" role="tablist" aria-label="Traffic Share view">
+              <button class="ep-sub-tab ep-sub-tab--active" data-dist-sub="store" role="tab" aria-selected="true">By Store</button>
+              <button class="ep-sub-tab" data-dist-sub="trend" role="tab" aria-selected="false">Time Trend</button>
+              <button class="ep-sub-tab" data-dist-sub="competitor" role="tab" aria-selected="false">by Competitor</button>
+            </div>
+          </div>
+          <div class="chart-card__header-right">
+            <div class="view-toggle view-toggle--compact" id="traffic-chart-toggle" role="tablist" aria-label="Metric" data-show-on-sub="trend">
+              <button type="button" class="view-toggle__btn active" data-traffic-view="share" role="tab" aria-selected="true">Share %</button>
+              <button type="button" class="view-toggle__btn" data-traffic-view="volume" role="tab" aria-selected="false">Visits</button>
+            </div>
+            <div class="duration-presets" id="crossover-trend-presets" role="tablist" aria-label="Time range" data-show-on-sub="trend">
+              <button type="button" class="duration-preset" data-period="4w">4 Week <span class="duration-preset__sub">(Month)</span></button>
+              <button type="button" class="duration-preset duration-preset--active" data-period="8w">8 Week</button>
+              <button type="button" class="duration-preset" data-period="13w">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
+              <button type="button" class="duration-preset" data-period="1y">1 Year</button>
+            </div>
+            <div class="duration-presets" id="crossover-period-presets" role="tablist" aria-label="Time range" data-show-on-sub="competitor">
+              <button type="button" class="duration-preset" data-period="4w">4 Week <span class="duration-preset__sub">(Month)</span></button>
+              <button type="button" class="duration-preset duration-preset--active" data-period="8w">8 Week</button>
+              <button type="button" class="duration-preset" data-period="13w">13 Week <span class="duration-preset__sub">(Quarter)</span></button>
+              <button type="button" class="duration-preset" data-period="1y">1 Year</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Title row — panel-label left. -->
+        <div class="chart-card__title-row">
+          <div class="chart-card__title-block">
+            <div class="panel-title-row">
+              <h3 class="panel-label" id="ts-panel-title">Traffic Share Over Time</h3>
+              <button type="button" class="info-btn methodology-btn" data-methodology="traffic-share" aria-expanded="false" aria-label="About this data: Traffic Share">i</button>
+            </div>
+            <p class="panel-subtitle" id="ts-panel-subtitle">Weekly share of observed shopper visits across our stores vs. nearby competitors.<br><span class="panel-subtitle__muted">Panel-tracked — directional, not a census.</span></p>
+          </div>
+          <!-- by-Competitor controls — mirror Observed Visits #ov-comp-cohort/#ov-comp-metric (P8 parity, Max Jun-16). -->
+          <div class="view-toggle view-toggle--compact" id="crossover-cohort" role="tablist" aria-label="Shopper cohort" data-show-on-sub="competitor">
+            <button type="button" class="view-toggle__btn active" data-xover-cohort="all" role="tab" aria-selected="true">All</button>
+            <button type="button" class="view-toggle__btn" data-xover-cohort="new" role="tab" aria-selected="false">New</button>
+            <button type="button" class="view-toggle__btn" data-xover-cohort="returning" role="tab" aria-selected="false">Returning</button>
+            <button type="button" class="view-toggle__btn" data-xover-cohort="loyal" role="tab" aria-selected="false">Loyal</button>
+          </div>
+          <div class="view-toggle view-toggle--compact" id="crossover-metric" role="tablist" aria-label="Metric" data-show-on-sub="competitor">
+            <button type="button" class="view-toggle__btn active" data-xover-metric="share" role="tab" aria-selected="true">Share %</button>
+            <button type="button" class="view-toggle__btn" data-xover-metric="visits" role="tab" aria-selected="false">Visits</button>
+          </div>
+        </div>
+
+        <div class="ep-sub-pane ep-sub-pane--active" data-dist-sub-pane="trend">
+          <div id="chart-traffic-combined" style="height:380px;"></div>
+          <div id="chart-crossover-trend" style="height:300px; margin-top:12px;"></div>
+        </div>
+        <div class="ep-sub-pane" data-dist-sub-pane="store">
+          <!-- By Store — leaderboard + map side-by-side (direct lift of the pre-strip
+               store pane). Row click zooms/highlights the store; expand reveals its
+               competitors in range. Locked to Our Stores. Engine: buildStorePane(). -->
+          <div class="traffic-perf-panel">
+            <div class="traffic-perf-body">
+              <div class="traffic-perf-table-wrap">
+                <div class="leaderboard-table" id="leaderboard-table-store"></div>
+              </div>
+              <div class="traffic-perf-map-wrap">
+                <div id="store-map-store-pane" style="height: 100%; min-height: 480px; border-radius: 8px;"></div>
+                <div class="map-ring-legend" id="ring-legend-store" style="display:none; position:absolute; top:12px; right:12px; z-index:800;">
+                  <div class="map-ring-legend__item"><span class="map-ring-legend__circle map-ring-legend__circle--1"></span>1 mi</div>
+                  <div class="map-ring-legend__item"><span class="map-ring-legend__circle map-ring-legend__circle--3"></span>3 mi</div>
+                  <div class="map-ring-legend__item"><span class="map-ring-legend__circle map-ring-legend__circle--5"></span>5 mi</div>
+                </div>
+                <button class="map-reset-btn" id="traffic-map-reset-btn-store" title="Reset map view">
+                  <span class="material-symbols-outlined">zoom_out_map</span> Reset
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ep-sub-pane" data-dist-sub-pane="competitor">
+          <div id="chart-crossover" style="height:360px;"></div>
+          <div class="crossover-detail" id="crossover-detail"></div>
+        </div>
+      </div>

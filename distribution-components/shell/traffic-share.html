@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="../css/design-tokens.css">
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../shared/section-hero/section-hero.css">
+  <link rel="stylesheet" href="../shared/chart-card/chart-card.css">
   <link rel="stylesheet" href="shell.css">
 </head>
 <body data-dist-page="traffic">
@@ -24,16 +25,23 @@
   <main>
     <section class="dist-section active" id="section-traffic">
       <div data-component="section-hero" data-section="traffic"></div>
+      <div data-component="chart-card" data-section="traffic"></div>
     </section>
   </main>
 
   <script src="../data/sections.js"></script>
   <script src="../shared/component-loader.js"></script>
   <script src="../shared/section-hero/init.js"></script>
+  <script src="../shared/chart-card/init.js"></script>
   <script>
     document.querySelectorAll('[data-component="section-hero"]').forEach(function (host) {
       window.DistComponents.load(host, '../shared/section-hero/section-hero.html').then(function (node) {
         window.DistSectionHero.render(node, window.DIST_SECTIONS[node.dataset.section]);
+      });
+    });
+    document.querySelectorAll('[data-component="chart-card"]').forEach(function (host) {
+      window.DistComponents.load(host, '../shared/chart-card/chart-card.html').then(function (node) {
+        window.DistChartCard.init(node, window.DIST_SECTIONS[node.dataset.section]);
       });
     });
   </script>

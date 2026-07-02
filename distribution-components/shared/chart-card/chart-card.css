@@ -1,0 +1,457 @@
+/* ============================================================
+   shared/chart-card — carved verbatim from the 2.0 proto
+   Sources (proto-2.0-baseline), in original load order
+   (analytics-architecture.css → distribution.css →
+   methodology-tooltip.css — order preserved so the .view-toggle
+   4-block cascade resolves identically):
+     analytics-architecture.css — ep-sub-tabs family (497-547),
+       duration-presets family (1401-1470), view-toggle PILL
+       canonical + compact (1640-1706), view-toggle borderless
+       lock (2538-2547)
+     distribution.css — .chart-card + panel-label/subtitle
+       (1413-1439), view-toggle SEGMENTED override (1759-1803),
+       view-toggle STRIP border re-add (3108-3114), chart-card
+       header/controls/title-row + 640px stack (3927-3983),
+       chart-card ep-sub-tab--active section color (3993-3999),
+       .panel-subtitle__muted (5051-5052), #ts-chart-card 4-tab
+       overrides (5980-5988)
+     methodology-tooltip.css — .info-btn states (10-47),
+       .panel-title-row + .methodology-btn (49-56)
+   Skipped (no matching node in this markup): chips-row rule
+   (dist 3985-3992), .panel-sublabel, .tooltip-overlay (popover
+   DOM is body-appended — arrives with the methodology-popover
+   carve).
+   CARRIED BLOCKS (move out at their own carve, keep load order):
+     → shared/sub-tabs: arch 497-547, dist 3993-3999,
+       dist 5987-5988 (#ts-perf-subtabs pair)
+     → shared/toggle (p-selectbutton): arch 1401-1470,
+       arch 1640-1706, arch 2538-2547, dist 1759-1803,
+       dist 3108-3114
+     → shared/methodology-popover (p-popover): meth 10-47,
+       meth 54-56
+   Angular twin: components/shared/chart-card
+   ============================================================ */
+
+/* ── analytics-architecture.css 497-547 ── CARRIED → shared/sub-tabs ── */
+/* ============================================================
+   ep-sub-tabs — pill-style sub-tab strip (cuts inside a perf-tab pane)
+   Phase 0b block 5 migrated 2026-05-04 from engagement-canonical.css (75-82).
+   Distinct chrome from .perf-tabs (underline) — variant, not duplicate.
+   Entity override: .perf-tab-pane .ep-sub-tab--active uses --section-color
+   (stays in engagement-canonical.css line 143-144).
+   ============================================================ */
+
+.ep-sub-tabs {
+  display: flex;
+  gap: var(--space-2);
+  padding: 0 var(--space-6) 0 0;
+  flex-wrap: wrap;
+}
+
+.ep-sub-tab {
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--space-1-5);
+  background: var(--color-white);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--p-text-color);
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+}
+
+.ep-sub-tab:hover {
+  background: var(--p-surface-hover);
+}
+
+.ep-sub-tab--active {
+  background: var(--color-accent-soft-bg);
+  border-color: var(--color-accent-soft-border);
+}
+
+.ep-sub-tab--data {
+  margin-left: auto;
+  color: var(--color-primary, #2196F3);
+  border-color: var(--color-accent-info-border);
+}
+
+.ep-sub-tab--data:hover {
+  background: var(--color-accent-info-bg);
+}
+
+.ep-sub-pane { display: none; padding: var(--space-4) var(--space-6); }
+.ep-sub-pane--active { display: block; }
+
+/* ── analytics-architecture.css 1401-1470 ── CARRIED → shared/toggle ── */
+/* ── duration-presets / ep-trend-ranges ─────────────────────────
+   Range chips segmented control. Multi-page chrome (3 dist surfaces).
+   .ep-trend-range* are aliases used on engagement-promotions. */
+.duration-presets,
+.ep-trend-ranges {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.duration-preset,
+.ep-trend-range {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-12);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.duration-preset:last-child,
+.ep-trend-range:last-child { border-right: none; }
+
+.duration-preset:hover,
+.ep-trend-range:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text-primary);
+}
+
+.duration-preset.active,
+.duration-preset--active,
+.ep-trend-range.active,
+.ep-trend-range--active {
+  background: var(--color-gray-900);
+  color: #fff;
+}
+
+.duration-preset--active .duration-preset__sub,
+.duration-preset.active .duration-preset__sub {
+  opacity: 0.85;
+  color: #fff;
+}
+
+.duration-preset__sub {
+  font-size: var(--font-size-11);
+  font-weight: 400;
+  opacity: 0.75;
+  margin-left: 2px;
+}
+
+.duration-presets--compact {
+  display: inline-flex;
+  gap: var(--space-1);
+  border: none;
+  border-radius: 0;
+  overflow: visible;
+  margin-left: var(--space-3);
+}
+
+.duration-presets--compact .duration-preset {
+  padding: var(--space-1) var(--space-2-5);
+  font-size: var(--font-size-11);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+/* ── analytics-architecture.css 1640-1706 ── CARRIED → shared/toggle ── */
+
+/* ──────────────────────────────────────────────────────────────
+   Phase 0b block 20 (2026-05-04): .view-toggle family
+   Canonical: PILL variant (gap, per-btn border+radius, primary-500
+   active). Sourced from distribution-shared.css + engagement.css
+   (identical duplicates). Used on engagement-categories /
+   -circulars / -grid / -compare.
+   Divergent: SEGMENTED variant (single outer border, fit-content,
+   gray-900 active) lives in distribution.css and overrides this
+   canonical via load-order cascade on distribution-* +
+   engagement-promotions + index. Documented divergence — same
+   class, two patterns (see block 18/19 pattern).
+   .view-toggle--compact is a generic padding/font-size modifier.
+   STRIP variant (3rd pattern, Phase 0b audit 2026-05-04): also lives
+   in distribution.css (~3089) using .toggle-btn children (not __btn);
+   index.html only. No cascade conflict — distinct child class.
+   ────────────────────────────────────────────────────────────── */
+
+.view-toggle {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.view-toggle__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  height: 32px;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.view-toggle__btn:hover {
+  background-color: var(--color-gray-100);
+  color: var(--color-text-secondary);
+}
+
+.view-toggle__btn.active {
+  background-color: var(--color-primary-500);
+  border-color: var(--color-primary-500);
+  color: white;
+}
+
+.view-toggle__btn .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.view-toggle__label {
+  font-size: var(--font-size-sm);
+}
+
+.view-toggle--compact {
+  display: inline-flex;
+}
+
+.view-toggle--compact .view-toggle__btn {
+  padding: 4px 12px;
+  font-size: 12px;
+}
+
+/* ── analytics-architecture.css 2538-2547 ── CARRIED → shared/toggle ── */
+/* .view-toggle borderless (both PILL canonical and SEGMENTED override) */
+.view-toggle {
+  border: 0;
+}
+.view-toggle__btn {
+  border: 0;
+}
+.view-toggle__btn + .view-toggle__btn {
+  border-left: 0;
+}
+
+/* ── distribution.css 1413-1439 ── */
+/* ========================================
+   Chart Cards
+   ======================================== */
+
+.chart-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0  0 var(--radius-lg) var(--radius-lg);
+  padding: var(--space-5);
+  margin-bottom: 64px;
+}
+
+/* .chart-card__header canonical rule lives at line ~3957 (flex + space-between
+   + flex-wrap + gap). Earlier duplicate removed UX-846 2026-05-27. */
+
+.panel-label {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.panel-subtitle {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  margin: 0;
+}
+
+/* ── distribution.css 1759-1803 ── CARRIED → shared/toggle ── */
+
+/* SEGMENTED .view-toggle override (Phase 0b block 20, 2026-05-04).
+   Pill canonical lives in analytics-architecture.css; this override
+   wins on distribution-* + engagement-promotions + index via load
+   order. Documented divergence — same class, two patterns. */
+.view-toggle {
+  display: flex;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  width: fit-content;
+}
+
+.view-toggle__btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  background: white;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.view-toggle__btn .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.view-toggle__btn + .view-toggle__btn {
+  border-left: 1px solid var(--color-gray-200);
+}
+
+.view-toggle__btn:hover {
+  background: var(--color-gray-50);
+}
+
+.view-toggle__btn.active {
+  /* UX-846 2026-05-27: slate (#475569) so view-toggle doesn't visually
+     compete with duration-presets (also active = dark). */
+  background: #475569;
+  color: white;
+}
+
+/* ── distribution.css 3108-3114 (STRIP-variant border re-add; matches by class, part of the resolved .view-toggle cascade) ── CARRIED → shared/toggle ── */
+.view-toggle,
+.sort-toggle {
+  display: flex;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+/* ── distribution.css 3927-3983 ── */
+.chart-card__header-left {
+  max-width: 400px;
+}
+
+.chart-card__header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.chart-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* UX-846 2026-05-27 (engagement parity, consolidated chart-card per page section):
+   Header row = sub-tabs left + duration-presets right (matches engagement).
+   Extra controls sit in a separate row below header via .chart-card__controls. */
+.dist-section > .chart-card > .chart-card__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+}
+
+/* UX-846 2026-05-27: title row — panel-label/subtitle on the left,
+   sub-tab-scoped controls (e.g. ov-comp-metric) right-aligned. */
+.dist-section > .chart-card > .chart-card__title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.dist-section > .chart-card > .chart-card__title-row > .chart-card__title-block {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Narrow widths (<640px): stack title-row so panel-label gets full width
+   instead of being squeezed into a tall narrow column by space-between. */
+@media (max-width: 640px) {
+  .dist-section > .chart-card > .chart-card__title-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  /* Same treatment for chart-card__header — sub-tabs above presets. */
+  .dist-section > .chart-card > .chart-card__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* ── distribution.css 3993-3999 ── CARRIED → shared/sub-tabs ── */
+/* Active sub-tab uses section color (mirrors engagement's
+   .perf-tab-pane .ep-sub-tab--active rule in engagement-canonical.css). */
+.dist-section > .chart-card .ep-sub-tab--active {
+  background: var(--section-color-light);
+  border-color: var(--section-color);
+  color: var(--section-color);
+}
+
+/* ── distribution.css 5051-5052 ── */
+/* ── chart-card subtitle muted variant ──────────────────────── */
+.panel-subtitle__muted { color: #9ca3af; font-size: 0.8125rem; }
+
+/* ── distribution.css 5980-5988 (lines 5987-5988 CARRIED → shared/sub-tabs) ── */
+/* UX-846 D2 (2026-06-04): Traffic Share has 4 ep-sub-tabs (Time Trend /
+   By Store / by Competitor / Map) vs Observed Visits' 3. The shared
+   .chart-card__header-left caps at max-width:400px and .ep-sub-tabs flex-wraps,
+   which squeezed the 4th tab to a 2nd row and wrapped button text. Scope the
+   fix to traffic: let the header-left grow, keep tabs on one row, and stop the
+   button labels from wrapping. Visitation's 3-tab default stays untouched. */
+#ts-chart-card .chart-card__header-left { max-width: none; }
+#ts-perf-subtabs { flex-wrap: nowrap; }
+#ts-perf-subtabs .ep-sub-tab { white-space: nowrap; flex-shrink: 0; }
+
+/* ── methodology-tooltip.css 10-47 ── CARRIED → shared/methodology-popover ── */
+/* Info button — small circular "i" beside a section title. */
+.info-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: serif;
+  position: relative;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.info-btn:hover {
+  background: #f5f5f5;
+  border-color: var(--color-primary-500);
+  color: var(--color-primary-500);
+  transform: scale(1.1);
+}
+
+.info-btn:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+.info-btn[aria-expanded="true"] {
+  background: var(--color-primary-500);
+  border-color: var(--color-primary-500);
+  color: #fff;
+}
+
+/* ── methodology-tooltip.css 49-56 (.panel-title-row stays with chart-card — Angular twin keeps it; .methodology-btn CARRIED → shared/methodology-popover) ── */
+/* Title + methodology button share one row; button survives title rewrites. */
+.panel-title-row {
+  display: flex;
+  align-items: center;
+}
+.methodology-btn {
+  margin-left: 8px;
+}

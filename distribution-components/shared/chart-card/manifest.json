@@ -1,0 +1,17 @@
+{
+  "name": "shared/chart-card",
+  "protoAnchor": "#ts-chart-card .chart-card",
+  "protoSource": [
+    "analytics-dashboard-combined/distribution-traffic.html — #ts-chart-card block (lines 142-230 at proto-2.0-baseline) + inline ep-sub-tab driver script (PANEL_COPY + initTabs)",
+    "analytics-dashboard-combined/css/analytics-architecture.css — ep-sub-tabs family, duration-presets family, view-toggle PILL + borderless lock",
+    "analytics-dashboard-combined/css/distribution.css — chart-card block + panel-label/subtitle, view-toggle SEGMENTED + STRIP re-add, header/controls/title-row + 640px stack, ep-sub-tab--active section color, #ts-chart-card 4-tab overrides",
+    "analytics-dashboard-combined/css/methodology-tooltip.css — info-btn, panel-title-row, methodology-btn"
+  ],
+  "angularTarget": "ideal-sale-circular/src/app/analytic-dashboard/components/shared/chart-card",
+  "backing": "custom",
+  "style": "module",
+  "oracle": "static node-by-node + pixel on #ts-chart-card, state eval on BOTH sides removes .ep-sub-pane nodes (pane internals belong to the trend/leaderboard/store-map/by-competitor carves) AND strips .viz-inactive (freshness-engine dimming from distribution-page-app.js setVizInactive — runtime data state, arrives with the data-layer/freshness carve, its .viz-inactive rule stays in distribution.css 6068-6073)",
+  "ux928Items": [],
+  "notes": "Container carve: markup is the traffic instance verbatim (ids ts-chart-card / ts-perf-subtabs etc.) including panes; inner primitives (sub-tabs, view-toggle/duration-presets, info-btn) stay inline until their own carves — their CSS is in chart-card.css under CARRIED headers, load order preserved for the 4-block .view-toggle cascade. init.js = the page's inline ep-sub-tab driver, parameterized via data/sections.js (panelCopy, defaultSub: store); engine calls (echarts resize, DistributionTraffic.buildStorePane) are guarded no-ops until those carves. Angular twin projects these via ng-content slots + panelLabel/panelSubtitle inputs.",
+  "status": "carved — oracle static 0Δ both viewports (2026-07-01)"
+}

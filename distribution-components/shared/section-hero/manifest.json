@@ -12,5 +12,5 @@
   "oracle": "static node-by-node, 0-delta vs proto-2.0-baseline",
   "ux928Items": [],
   "notes": "Fragment markup is the traffic instance verbatim (ids dist-traffic-stat-strip etc.); init.js parameterizes text via data/sections.js. Id suffixes templatize when the second section carves.",
-  "status": "carved — oracle static pending"
+  "status": "carved — oracle static 0Δ both viewports (2026-07-01)"
 }

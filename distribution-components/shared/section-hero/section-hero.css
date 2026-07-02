@@ -1,0 +1,320 @@
+/* ============================================================
+   shared/section-hero — carved verbatim from the 2.0 proto
+   Sources (proto-2.0-baseline):
+     analytics-architecture.css — narrative-header (122-178),
+       stat-strip (180-291), hero-stat (293-321), app-mode tints
+       (472-481), sentence + ep-cohort-pill + stat-strip kill (2549-2600)
+     distribution.css — data-dist-page hero tints (3829-3838,
+       3846-3849), 768px (3623-3634) + 480px (3721-3724) hero rules,
+       print hero rule (subset of grouped print rule 3766)
+   Angular twin: components/shared/section-hero
+   ============================================================ */
+
+/* ============================================================
+   narrative-header — section title + question + subtitle stack
+   Phase 0b migrated 2026-05-04 from distribution.css (3813-3849).
+   Entity overrides (engagement-canonical .perf-tab-pane scope,
+   body[data-dist-page] title color) stay in entity files.
+   ============================================================ */
+
+.narrative-header {
+  padding: var(--space-3) 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.narrative-header__title {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-text-primary);
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  margin: 0;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.narrative-header__text {
+  flex: 1;
+}
+
+.narrative-header__question {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.narrative-header__subtitle {
+  font-size: var(--font-size-12);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+  margin: 2px 0 0 0;
+}
+
+/* Inline wrapper for additivity-pills + cohort-note (UX-846 Report mode 2026-05-12).
+   Side-by-side row; wraps on narrow widths so the cohort pill drops below
+   when needed. */
+.narrative-header__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+  margin-top: var(--space-2);
+}
+.narrative-header__meta > .ep-additivity,
+.narrative-header__meta > .ep-cohort-note { margin: 0; flex: 0 0 auto; white-space: nowrap; }
+
+/* ============================================================
+   stat-strip — hero metric strip (project-wide)
+   Phase 0b migrated 2026-05-04 from distribution.css (3851-3968).
+   --stat-strip-accent default in design-tokens.css; entity files
+   override via body[data-dist-page] / .perf-tab-pane scope.
+   ============================================================ */
+
+.stat-strip {
+  border-radius: var(--radius-10);
+  padding: 0 var(--space-3);
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin: 0;
+}
+
+.stat-strip__title {
+  display: none;
+}
+
+.stat-strip__cards {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.stat-strip__item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  white-space: nowrap;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-faint);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2-5) var(--space-4);
+  min-width: 0;
+  box-shadow: var(--shadow-xs);
+  flex: 1;
+}
+
+.stat-strip__label {
+  font-size: var(--font-size-10);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.stat-strip__proposed-badge {
+  font-size: var(--font-size-8);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.06em;
+  color: var(--color-text-tertiary);
+  background: var(--color-gray-100);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 1px 4px;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+
+.stat-strip__value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-direction: column;
+}
+
+.stat-strip__value {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  line-height: 1.15;
+}
+
+.stat-strip__trend {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.15;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--color-text-secondary);
+}
+
+.stat-strip__trend .material-symbols-outlined {
+  font-size: var(--font-size-28);
+}
+
+/* Arrow icon carries directional color; number stays neutral. */
+.stat-strip__trend--up .material-symbols-outlined { color: var(--color-success-500); }
+.stat-strip__trend--down .material-symbols-outlined { color: var(--color-error-500); }
+.stat-strip__trend--flat .material-symbols-outlined { color: var(--color-gray-700); }
+
+.stat-strip__separator {
+  display: none;
+}
+
+/* Apr 17: hero strip = ONE metric only. Hide siblings via CSS, keep JS render. */
+.stat-strip__cards > .stat-strip__item:nth-child(n+2) {
+  display: none;
+}
+.stat-strip__cards > .stat-strip__item:first-child {
+  flex: 1;
+  border-left: 3px solid var(--stat-strip-accent);
+}
+
+/* ============================================================
+   hero-stat — narrative-header + single hero stat shell
+   Phase 0b migrated 2026-05-04 from distribution.css
+   (3978-3987 + 4025-4035). Entity files override background
+   via body[data-dist-page].
+   ============================================================ */
+
+.hero-stat {
+  border-radius: var(--radius-xl);
+  padding: var(--space-3) var(--space-2) var(--space-3) var(--space-4);
+  margin-bottom: var(--space-2);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-5);
+  flex-wrap: nowrap;
+  flex-direction: row;
+  
+}
+
+.hero-stat > .narrative-header {
+  flex: 1 1 60%;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+.hero-stat > .stat-strip {
+  flex: 0 1 auto;
+}
+
+/* Hero-stat tint per app mode. Specificity is bumped (body[…] + .hero-stat)
+   so this wins over .hero-stat[data-ep-active="overview"] in engagement-canonical
+   which would otherwise force gray tint on the Report page. */
+body[data-app-mode="report"]  .hero-stat { background: var(--mode-report-light); }
+body[data-app-mode="explore"] .hero-stat { background: var(--mode-explore-light); }
+body[data-app-mode="compare"] .hero-stat { background: var(--mode-compare-light); }
+
+body[data-app-mode="report"]  .hero-stat .narrative-header__title { color: var(--mode-report); }
+body[data-app-mode="explore"] .hero-stat .narrative-header__title { color: var(--mode-explore); }
+body[data-app-mode="compare"] .hero-stat .narrative-header__title { color: var(--mode-compare); }
+
+/* ============================================================
+   UX-846 δ4 narrative-header meta block (2026-05-26)
+   Authority: analytics-page-header-canonical.md
+   Stack: section / title / question / entity-line / date-line
+   Cohort pill is singular per page (F4/ER4).
+   Kills page-header .stat-strip (F1 expanded).
+   ============================================================ */
+
+/* F2 (UX-846, 2026-05-27): single-sentence header pattern replaces the
+   former __entity-line + __date-line two-row layout. Cohort pill sits
+   inline inside the sentence. Wraps cleanly on narrow widths. */
+.narrative-header__sentence {
+  margin: 6px 0 0;
+  font-size: 15px;
+  color: var(--dh-text-1, var(--color-text-primary, #1a1a1a));
+  font-weight: 400;
+  line-height: 1.7;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.ep-cohort-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--dh-surface-2, var(--color-surface-2, #fff));
+  border: 1px solid var(--dh-border, var(--color-border, #d6d3c4));
+  font-size: 12.5px;
+  color: var(--dh-text-2, var(--color-text-secondary, #3a3a3a));
+  font-weight: 500;
+}
+.ep-cohort-pill .material-symbols-outlined {
+  font-size: 15px;
+  color: var(--dh-text-3, var(--color-text-tertiary, #777));
+  cursor: help;
+}
+.ep-cohort-pill strong {
+  font-weight: 600;
+}
+
+/* Kill page-header .stat-strip per F1-expanded (perf-tabs primary nav).
+   Selector restricted to .narrative-header context — hero-stat sub-pane
+   strips (P17) untouched. */
+.narrative-header .stat-strip,
+.narrative-header__right .stat-strip {
+  display: none;
+}
+
+
+/* ── distribution.css layer (loads after architecture) ── */
+
+/* hero-stat banner: section color tint */
+body[data-dist-page] .hero-stat {
+  background: var(--section-color-light);
+}
+
+/* Stat-strip: accent border uses section color; value stays black
+   (section color on numbers conflicts with red = negative convention) */
+body[data-dist-page] .hero-stat .stat-strip {
+  --stat-strip-accent: var(--section-color);
+}
+
+/* Section title: section color */
+body[data-dist-page] .narrative-header__title {
+  color: var(--section-color);
+}
+
+@media (max-width: 768px) {
+  /* Hero stat — stack narrative above metric strip */
+  .hero-stat {
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+  }
+  .hero-stat > .narrative-header {
+    max-width: 100%;
+  }
+  .hero-stat > .stat-strip {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Hero stat — even tighter */
+  .hero-stat {
+    padding: 12px;
+  }
+}
+
+@media print {
+  .hero-stat { display: none !important; }
+}

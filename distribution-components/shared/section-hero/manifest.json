@@ -1,0 +1,16 @@
+{
+  "name": "shared/section-hero",
+  "protoAnchor": ".hero-stat",
+  "protoSource": [
+    "analytics-dashboard-combined/distribution-traffic.html — .hero-stat block (lines 111-137 at proto-2.0-baseline)",
+    "analytics-dashboard-combined/css/analytics-architecture.css — narrative-header, stat-strip, hero-stat, app-mode tints, sentence + ep-cohort-pill",
+    "analytics-dashboard-combined/css/distribution.css — data-dist-page hero tints, 768/480/print hero rules"
+  ],
+  "angularTarget": "ideal-sale-circular/src/app/analytic-dashboard/components/shared/section-hero",
+  "backing": "custom",
+  "style": "module",
+  "oracle": "static node-by-node, 0-delta vs proto-2.0-baseline",
+  "ux928Items": [],
+  "notes": "Fragment markup is the traffic instance verbatim (ids dist-traffic-stat-strip etc.); init.js parameterizes text via data/sections.js. Id suffixes templatize when the second section carves.",
+  "status": "carved — oracle static pending"
+}

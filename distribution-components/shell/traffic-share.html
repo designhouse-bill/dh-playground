@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<!--
+  UX-928 shell — Traffic Share assembler.
+  Composes carved fragments into the section page; maps to the Angular
+  distribution.component container. Grows one placeholder per carve.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Distribution — Traffic Share | distribution-components</title>
+
+  <!-- Google Material Symbols (same load as the proto pages) -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+
+  <!-- Load order mirrors the proto: tokens, base, component layers, shell -->
+  <link rel="stylesheet" href="../css/design-tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../shared/section-hero/section-hero.css">
+  <link rel="stylesheet" href="shell.css">
+</head>
+<body data-dist-page="traffic">
+
+  <main>
+    <section class="dist-section active" id="section-traffic">
+      <div data-component="section-hero" data-section="traffic"></div>
+    </section>
+  </main>
+
+  <script src="../data/sections.js"></script>
+  <script src="../shared/component-loader.js"></script>
+  <script src="../shared/section-hero/init.js"></script>
+  <script>
+    document.querySelectorAll('[data-component="section-hero"]').forEach(function (host) {
+      window.DistComponents.load(host, '../shared/section-hero/section-hero.html').then(function (node) {
+        window.DistSectionHero.render(node, window.DIST_SECTIONS[node.dataset.section]);
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+/* ============================================================
+   shell — page scaffolding carved verbatim from the 2.0 proto
+   Sources (proto-2.0-baseline): distribution.css —
+     .dist-section container (85-98), R4 per-section accent
+     var scopes on body[data-dist-page] (3800-3827)
+   Angular twin: distribution-view/distribution.component (container)
+   ============================================================ */
+
+.dist-section {
+  display: none; /* hidden until tab activates it */
+  flex-direction: column;
+  max-width: 1200px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: var(--space-2);
+  padding-bottom: 64px;
+}
+
+.dist-section.active {
+  display: flex;
+}
+
+/* ============================================================
+   R4 (Item 19b): Per-section accent colors
+   Driven by body[data-dist-page]. Controls:
+     - .hero-stat banner background
+     - stat-strip accent border + hero value color
+   Do NOT touch chart colors — these are header/hero only.
+   ============================================================ */
+
+body[data-dist-page="visitation"] {
+  --section-color:       var(--section-visitation);
+  --section-color-light: var(--section-visitation-light);
+}
+body[data-dist-page="media"] {
+  --section-color:       var(--section-media);
+  --section-color-light: var(--section-media-light);
+}
+body[data-dist-page="traffic"] {
+  --section-color:       var(--section-traffic);
+  --section-color-light: var(--section-traffic-light);
+}
+body[data-dist-page="overview"] {
+  --section-color:       var(--section-traffic);
+  --section-color-light: var(--section-traffic-light);
+}
+body[data-dist-page="demographics"] {
+  --section-color:       var(--section-demographics);
+  --section-color-light: var(--section-demographics-light);
+}

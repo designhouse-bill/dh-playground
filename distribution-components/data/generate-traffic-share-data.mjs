@@ -51,6 +51,17 @@ const snapshot = {
   competitorStores: D.competitorStores
 };
 
+// Mock-data cleanup (Bill, 2026-07-02): pulse-real-slim leaks 48 non-SEG
+// banner stores (MDI / Lunds / Gelson's / UNFI / Houchens / AGNE — city and
+// lat/lng all null) into the retailer's own store list; drop them from the
+// snapshot. Proto (frozen answer key) still renders them — the leaderboard
+// oracle entry is expected-fail vs proto anyway; map and hero crops are
+// unaffected (no lat/lng → never mapped; hero count is verbatim HTML).
+// Delete this block to bring them back.
+snapshot.entities.stores = snapshot.entities.stores.filter(s => s.city != null);
+snapshot.trafficShareMetrics.storeLeaderboard =
+  snapshot.trafficShareMetrics.storeLeaderboard.filter(r => r.city);
+
 // #16 popover fields — per-store visits + 4wk/8wk share deltas. The proto's
 // storeLeaderboard (frozen, parity answer key) never carried these; derive
 // them from the same trafficRecords the proto aggregates, using the proto's

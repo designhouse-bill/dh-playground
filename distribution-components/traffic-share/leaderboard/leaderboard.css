@@ -1,11 +1,12 @@
-/* traffic-share/leaderboard — CARRIED verbatim from the frozen proto
-   (analytics-dashboard-combined/css/distribution.css). Blocks appear in
-   source order so the intra-file cascade is preserved (.lb-rank is hit by
-   TWO blocks: the unified numeric badge at dist:647, then the leaderboard
-   override at dist:2831 — later wins per property, min-width/padding/
-   line-height/flex-shrink survive from the badge block).
-   Loads BEFORE chart-card.css in the shell (the lb- and traffic-perf-
-   families have no selector overlap with the remaining chart-card cascade). */
+/* traffic-share/leaderboard — p-treetable conversion (UX-928, 2026-07-02).
+   Structural chrome comes from vendor/aura.css (real Aura treetable layer);
+   this file keeps the proto pane chrome (traffic-perf-*) + the two carried
+   badge/pip blocks that now live INSIDE treetable cells, and adds the
+   density/layout adapter scoped to #leaderboard-table-store. Every
+   --p-treetable-* override below maps 1:1 to the Angular twin's [dt] input
+   (scoped design tokens) — do NOT restyle p-treetable internals with bare
+   selectors unless PrimeNG exposes no token for it (those cases are marked
+   NO-TOKEN and become ::ng-deep-free PT/styleClass rules in Angular). */
 
 /* ── CARRIED dist:647 — unified numeric badge, re-scoped to .lb-rank only
       (the other badge selectors' components aren't on this page) ── */
@@ -88,59 +89,9 @@ display: flex;
   min-height: 560px;
 }
 
-/* ── CARRIED dist:2779 — Leaderboard Table ── */
-.leaderboard-table {
-  flex: 1;
-  overflow-y: auto;
-  min-height: 0;
-}
-
-.lb-header,
-.lb-row {
-  display: grid;
-  grid-template-columns: 28px 1fr 130px 64px;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  align-items: center;
-  font-size: var(--font-size-sm);
-}
-
-.lb-header {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  background: var(--color-surface);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-bottom: 2px solid var(--color-border);
-  padding-top: var(--space-3);
-  padding-bottom: var(--space-3);
-  position: sticky;
-  top: 0;
-  background: var(--color-surface);
-}
-
-.lb-row {
-  border-bottom: 1px solid var(--color-gray-100);
-}
-
-.lb-row {
-  cursor: pointer;
-}
-
-.lb-row:hover {
-  background: var(--color-gray-50);
-}
-
-.lb-row--selected {
-  background: #e3f2fd !important;
-}
-
-/* Status border colors removed — no health grading in leaderboard */
-
+/* ── CARRIED dist:2831 — leaderboard rank badge override (cascade partner
+      of the dist:647 block above; min-width/padding/line-height/flex-shrink
+      survive from it) ── */
 .lb-rank {
   display: inline-flex;
   align-items: center;
@@ -155,6 +106,7 @@ display: flex;
   margin-right: var(--space-1);
 }
 
+/* ── CARRIED dist:2845 — brand pip (now inside treetable cells) ── */
 .lb-comp-pip {
   display: inline-block;
   width: 8px;
@@ -165,97 +117,41 @@ display: flex;
   flex-shrink: 0;
 }
 
-/* Tree table: expand button */
-.lb-col--expand {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* ── p-treetable adapter — density tokens (Angular twin: [dt] input) ── */
+#leaderboard-table-store {
+  --p-treetable-header-cell-padding: 10px 12px;
+  --p-treetable-body-cell-padding: 8px 12px;
+  --p-treetable-node-toggle-button-size: 24px;
+  font-size: var(--font-size-sm);
 }
 
-.lb-expand-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 2px;
-  color: var(--color-text-secondary);
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  transition: color 0.15s, background 0.15s;
+/* NO-TOKEN: flex sizing inside the fixed-height pane. In Angular this is
+   scrollHeight="flex" (PrimeNG sets the container overflow itself). */
+#leaderboard-table-store {
+  flex: 1;
+  min-height: 0;
 }
-.lb-expand-btn:hover {
-  color: var(--color-primary);
-  background: var(--color-gray-100);
+#leaderboard-table-store .p-treetable-table-container {
+  overflow: auto;
 }
-.lb-expand-btn .material-symbols-outlined {
-  font-size: 16px;
-  transition: transform 0.2s;
-}
-.lb-expand-btn[aria-expanded="true"] .material-symbols-outlined {
-  transform: rotate(90deg);
+/* NO-TOKEN: sticky header for the flex-scroll case (PrimeNG applies this
+   via its scrollable-table structural CSS at runtime). */
+#leaderboard-table-store .p-treetable-thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
-/* Child rows */
-.lb-children {
-  display: none;
+/* NO-TOKEN: column alignment + numeric column emphasis — becomes plain
+   column classes on the Angular side (styleClass on the col templates). */
+#leaderboard-table-store .lb-td-share {
+  text-align: right;
 }
-.lb-children.open {
-  display: block;
-}
-
-.lb-row--child {
-  background: var(--color-gray-50);
-  border-bottom: 1px solid var(--color-gray-100);
-  cursor: pointer;
-  font-size: var(--font-size-xs);
-}
-.lb-row--child:hover {
-  background: #f0f4ff;
-}
-.lb-row--child .lb-col--store {
-  padding-left: var(--space-2);
-  color: var(--color-text-secondary);
-}
-
-/* Parent with no children: no pointer on expand col */
-.lb-row--leaf {
-  cursor: pointer;
-}
-
-.lb-col--city { text-align: left; }
-
-.lb-col--change.positive { color: var(--color-success-600); font-weight: var(--font-weight-semibold); }
-.lb-col--change.negative { color: var(--color-error-500); font-weight: var(--font-weight-semibold); }
-
-/* Sortable column headers */
-.lb-col--sortable {
-  cursor: pointer;
-  user-select: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  transition: color 0.15s;
-}
-.lb-col--sortable:hover {
-  color: var(--color-primary);
-}
-.lb-col--sorted {
-  color: var(--color-primary);
+#leaderboard-table-store td.lb-td-share {
   font-weight: var(--font-weight-semibold);
 }
-.lb-sort-icon {
-  font-size: 14px;
-  vertical-align: middle;
-}
-.lb-sort-icon--active {
-  color: var(--color-primary);
-}
-.lb-sort-icon--inactive {
-  color: var(--color-gray-300);
-  transition: color 0.15s;
-}
-.lb-col--sortable:hover .lb-sort-icon--inactive {
-  color: var(--color-primary);
+#leaderboard-table-store .lb-store-label {
+  min-width: 0;
 }
 
 /* ── CARRIED dist:3583 — Responsive — Tablet (≤ 1024px), pane rows only ── */
@@ -263,7 +159,8 @@ display: flex;
   .traffic-perf-body { grid-template-columns: 1fr; }
 }
 
-/* ── CARRIED dist:3621 — Responsive — Mobile (≤ 768px), pane rows only ── */
+/* ── CARRIED dist:3621 — Responsive — Mobile (≤ 768px): proto hid the City
+      column (.lb-col--city); same rule re-anchored to the treetable cells ── */
 @media (max-width: 768px) {
-  .lb-col--city { display: none; }
+  #leaderboard-table-store .lb-td-city { display: none; }
 }

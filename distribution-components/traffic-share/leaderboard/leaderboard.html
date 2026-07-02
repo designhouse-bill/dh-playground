@@ -1,7 +1,22 @@
-<!-- traffic-share/leaderboard — the By Store leaderboard grid, carved verbatim
-     from shared/chart-card (store pane). Single root = the .leaderboard-table
-     div itself; the loader stamps data-component on it. Rows render lazily on
-     first tab show via window.DistLeaderboard.build() (chart-card store hook).
-     Angular twin: dh-traffic-share-leaderboard (module) — converts to
-     p-treetable per UX-928 pilot (#16 expand + sort native). -->
-<div class="leaderboard-table" id="leaderboard-table-store"></div>
+<!-- traffic-share/leaderboard — By Store leaderboard as REAL p-treetable DOM
+     (UX-928 PrimeNG-first conversion, decided 2026-07-02: convert now, not at
+     dial). Static twin of PrimeNG v20.4 TreeTable (ISC-pinned): root/table
+     classes from TreeTableStyle.classes, chromed by vendor/aura.css. thead +
+     tbody rows are rendered by init.js (sort state lives in the header).
+     Fragment root keeps id for the engine seams; the loader stamps
+     data-component on it. Angular twin: dh-traffic-share-leaderboard wrapping
+     <p-treetable [value]="nodes" selectionMode="single" scrollHeight="flex">
+     — this DOM is the template for every later table conversion (#3/#5/#11). -->
+<div class="p-treetable p-component p-treetable-hoverable-rows p-treetable-scrollable p-treetable-flex-scrollable" id="leaderboard-table-store" data-scrollselectors=".p-treetable-scrollable-body">
+  <div class="p-treetable-table-container">
+    <table class="p-treetable-table p-treetable-scrollable-table" role="table">
+      <colgroup>
+        <col>
+        <col style="width: 130px">
+        <col style="width: 96px">
+      </colgroup>
+      <thead class="p-treetable-thead" role="rowgroup"></thead>
+      <tbody class="p-treetable-tbody" role="rowgroup"></tbody>
+    </table>
+  </div>
+</div>

@@ -8,12 +8,12 @@
     "analytics-dashboard-combined/js/data/* — snapshot extended with trafficShareMetrics.storeLeaderboard + entities.stores + competitorStores (data/generate-traffic-share-data.mjs)"
   ],
   "angularTarget": "ideal-sale-circular/src/app/analytic-dashboard/components/distribution-view/traffic-share-leaderboard",
-  "backing": "custom → primeng(treetable)",
+  "backing": "primeng(treetable)",
   "style": "module",
   "oracle": "store pane is lazy-built on first tab show — oracle entry clicks the By Store sub-tab on BOTH sides before diffing, crops to .traffic-perf-panel (map half renders empty both sides until the store-map carve; strip viz-inactive on the ancestor card).",
   "ux928Items": [
     "#16 By Store → Map: p-treetable conversion (native expand + sort), rename tab label, side-panel reorg — conversion follows the verbatim carve after oracle-green"
   ],
   "notes": "Rows render lazily via window.DistLeaderboard.build() from the chart-card store hook. Locked to Our Stores view ('ours'); the competitors view of renderLeaderboard is carried verbatim for the Angular twin's view input. Angular twin takes sort/view as inputs, row-select + expand as outputs (map seam).",
-  "status": "carved — oracle 10/10 green both viewports (2026-07-02, px=0 cssDiffs=0 cropped to .traffic-perf-table-wrap); expand/row-select/aria click-verified in shell, console clean (favicon 404 only)"
+  "status": "converted to p-treetable (2026-07-02, decided: now not at dial) — verbatim carve was oracle 10/10 green first (git history); post-conversion baseline pixel entry EXPECTED-fail, gate = parity-oracle/functional/leaderboard-treetable.mjs 19/19 PASS (anatomy, expand/collapse, Share sort desc/asc + aria-sort, single select, sticky header, console clean) + sign-off screenshot out/leaderboard-treetable-signoff.png. DOM = real v20.4 TreeTable anatomy (TreeTableStyle.classes + TreeTableToggler template from ISC node_modules): root p-treetable p-component + hoverable/scrollable/flex-scrollable, table-container > table > thead th.p-treetable-header-cell (+ p-sortable-column), toggler button.p-treetable-toggler marginInlineStart=level*16px w/ data-p-icon chevrons, primeng/icons svgs verbatim. Density via --p-treetable-* tokens (Angular [dt] analog); NO-TOKEN rules marked in leaderboard.css. Share sort = behavior ADD (#16); rank badge + pips carried inside cells. Awaiting Adam/Max sign-off → freeze reference into baselines/"
 }

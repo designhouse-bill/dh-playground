@@ -46,6 +46,7 @@ const snapshot = {
     storeLeaderboard: D.trafficShareMetrics.storeLeaderboard
   },
   competitiveCrossover: D.competitiveCrossover,
+  primaryThreats: D.primaryThreats,
   entities: { stores: D.entities.stores },
   competitorStores: D.competitorStores
 };
@@ -77,6 +78,7 @@ console.log('wrote data/traffic-share-data.js —',
   snapshot.flightWeeks.length, 'weeks,',
   snapshot.trafficShareMetrics.trend.length, 'trend points,',
   snapshot.competitiveCrossover.length, 'competitors,',
+  snapshot.primaryThreats.length, 'threat brands,',
   snapshot.trafficShareMetrics.storeLeaderboard.length, 'leaderboard rows,',
   snapshot.entities.stores.length, 'stores,',
   snapshot.competitorStores.length, 'competitor stores');

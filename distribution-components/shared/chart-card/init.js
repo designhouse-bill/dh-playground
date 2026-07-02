@@ -6,8 +6,8 @@
    Angular twin (chart-card composes dh-sub-tabs/dh-sub-pane). Panel
    copy + default sub come from data/sections.js (cfg.panelCopy /
    cfg.defaultSub). Engine hooks: trend seams → window.DistTrend,
-   store pane → window.DistLeaderboard + window.DistStoreMap (both live,
-   traffic-share carves). */
+   store pane → window.DistLeaderboard + window.DistStoreMap,
+   competitor seams → window.DistCrossover (all live, traffic-share carves). */
 (function () {
   'use strict';
 
@@ -63,16 +63,24 @@
         if (window.DistTrend && window.DistTrend[method]) window.DistTrend[method](value);
       };
     }
+    function crossoverHook(method) {
+      return function (value) {
+        if (window.DistCrossover && window.DistCrossover[method]) window.DistCrossover[method](value);
+      };
+    }
     card.querySelectorAll('.view-toggle').forEach(function (el) {
       var attr = el.querySelector('[data-traffic-view]') ? 'trafficView'
         : el.querySelector('[data-xover-cohort]') ? 'xoverCohort' : 'xoverMetric';
       var opts = { attr: attr };
       if (el.id === 'traffic-chart-toggle') opts.onChange = trendHook('setView');
+      if (el.id === 'crossover-cohort') opts.onChange = crossoverHook('setCohort');
+      if (el.id === 'crossover-metric') opts.onChange = crossoverHook('setMetric');
       window.DistToggle.init(el, opts);
     });
     card.querySelectorAll('.duration-presets').forEach(function (el) {
       var opts = { attr: 'period', activeClass: 'duration-preset--active' };
       if (el.id === 'crossover-trend-presets') opts.onChange = trendHook('setWeeks');
+      if (el.id === 'crossover-period-presets') opts.onChange = crossoverHook('setWeeks');
       window.DistToggle.init(el, opts);
     });
 

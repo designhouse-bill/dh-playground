@@ -1,0 +1,186 @@
+/* by-competitor.css — full resolved cascade for the by-Competitor pane
+   (crossover chart + brand tree table), copied VERBATIM from the frozen proto
+   (proto-2.0-baseline). Provenance per block. Loads BEFORE chart-card.css
+   (no selector overlap with the remaining cascade — verified 2026-07-02).
+
+   Rules matching the fragment's nodes only. NOT carried (documented):
+   - dist:934-951 .col-* width rules — comp table headers are inline-styled, no col classes.
+   - dist:1001-1010 .th-sortable / .th-sort-icon — comp table has no sortable headers.
+   - dist:1051-1062 .row-number, dist:825 .dist-tree-table-wrap — not in comp markup.
+   - dist:1842 .visitation-current-panel > .crossover-detail — visitation ancestor only. */
+
+/* ── CARRIED from css/analytics-architecture.css:1533-1568 —
+      cross-entity tree-table expand/collapse toggle ── */
+.tree-toggle {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: transform var(--transition-fast);
+}
+
+.tree-toggle:hover {
+  color: var(--color-text-primary);
+}
+
+.tree-toggle.collapsed {
+  transform: rotate(-90deg);
+}
+
+.tree-toggle .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.tree-toggle-placeholder {
+  width: 20px;
+  flex-shrink: 0;
+}
+
+.tree-row-hidden {
+  display: none;
+}
+
+/* ── CARRIED from css/distribution.css:926-929 — table base ── */
+.dist-tree-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* ── CARRIED from css/distribution.css:963-980 — table header ── */
+.dist-tree-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.dist-tree-table th {
+  padding: 0.625rem 0.5rem;
+  text-align: left;
+  font-size: 0.7rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--p-text-color-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--p-surface-border);
+  background-color: var(--p-surface-100, #f3f4f6);
+  white-space: nowrap;
+}
+
+/* ── CARRIED from css/distribution.css:1027-1033 — table cells ── */
+.dist-tree-table td {
+  padding: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--p-text-color);
+  border-bottom: 1px solid var(--p-surface-200);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── CARRIED from css/distribution.css:1083-1096 — parent rows ── */
+.dist-tree-row--parent {
+  background: var(--p-surface-card);
+  cursor: pointer;
+}
+
+.dist-tree-row--parent:hover td {
+  background: var(--p-surface-hover, #f9fafb);
+}
+
+.dist-tree-row--parent .creative-label {
+  font-weight: var(--font-weight-semibold);
+  color: var(--p-text-color);
+}
+
+/* ── CARRIED from css/distribution.css:1098-1112 — child rows ── */
+.dist-tree-row--child td {
+  background: var(--p-surface-50, #f8fafc);
+  font-size: 0.75rem;
+  color: var(--p-text-color-secondary);
+}
+
+.dist-tree-row--child:hover td {
+  background: var(--p-surface-100, #f3f4f6);
+}
+
+.dist-tree-row--child:last-child td,
+.dist-tree-row--child + .dist-tree-row--parent td,
+.dist-tree-row--child + .dist-tree-row--detail td {
+  border-bottom: 2px solid var(--p-surface-border);
+}
+
+/* ── CARRIED from css/distribution.css:1129-1130 — tree indentation ── */
+.tree-indent-0 { padding-left: var(--p-spacing-4) !important; }
+.tree-indent-1 { padding-left: calc(var(--p-spacing-4) + 32px) !important; }
+
+/* ── CARRIED from css/distribution.css:1137-1141 — name cell layout
+      (DOCUMENTED DIVERGENCE vs engagement variant; dist = 6px gap) ── */
+.tree-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── CARRIED from css/distribution.css:1170-1174 — creative name block ── */
+.creative-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── CARRIED from css/distribution.css:1534-1539 — later .creative-label
+      block; source-order preserved (typography wins over none here,
+      properties disjoint) ── */
+.creative-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+/* ── CARRIED from css/distribution.css:1667-1673 — crossover detail ── */
+.comp-tree-table {
+  margin-top: var(--space-2);
+}
+
+.crossover-detail {
+  padding: 0 var(--space-4) var(--space-4);
+}
+
+/* ── CARRIED from css/distribution.css:2065-2067 — trend colors ── */
+.trend--up { color: var(--color-success-600); }
+.trend--down { color: var(--color-error-500); }
+.trend--flat { color: var(--color-text-secondary); }
+
+/* ── CARRIED from css/distribution.css:3582/3602-3604 — tablet min-width
+      (oracle 768 viewport sits inside this query) ── */
+@media (max-width: 1024px) {
+  .dist-tree-table {
+    min-width: 1024px;
+  }
+}
+
+/* ── CARRIED from css/distribution.css:3615/3665-3672 — narrow padding ── */
+@media (max-width: 768px) {
+  .dist-tree-table {
+    min-width: 900px;
+  }
+  .dist-tree-table th,
+  .dist-tree-table td {
+    padding: 8px 6px;
+    font-size: 12px;
+  }
+}
+
+/* ── CARRIED from css/distribution.css:3763/3774-3776 — print rules
+      matching this fragment ── */
+@media print {
+  .dist-tree-table { font-size: 10px; }
+  .dist-tree-table th { background: #f3f4f6 !important; }
+  .tree-row-hidden { display: table-row !important; }
+}

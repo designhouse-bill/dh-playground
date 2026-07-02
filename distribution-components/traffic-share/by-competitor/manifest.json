@@ -1,0 +1,20 @@
+{
+  "name": "traffic-share/by-competitor",
+  "protoAnchor": "#ts-chart-card [data-dist-sub-pane=\"competitor\"] (fragment root = unstyled wrapper div stamped data-component=\"by-competitor\" — the loader's single-root anchor, mirrors the Angular host element; proto pane has no wrapper, trend-carve convention)",
+  "protoSource": [
+    "analytics-dashboard-combined/distribution-traffic.html — competitor pane content (#chart-crossover + #crossover-detail divs), verbatim",
+    "analytics-dashboard-combined/js/distribution/distribution.js — initCrossoverChart / updateCrossoverChartPeriod / renderCrossoverDetail + fmtNumber + pane state (_crossoverPeriodWeekCount/_crossoverCohort/_crossoverMetric), verbatim; control listeners (initCrossoverPeriodPresets / initCrossoverCohort / initCrossoverMetric) replaced by DistToggle onChange seams (setWeeks/setCohort/setMetric)",
+    "analytics-dashboard-combined/css/distribution.css + css/analytics-architecture.css — dist-tree-table / comp-tree-table / crossover-detail / tree-toggle cascade, CARRIED with line provenance in by-competitor.css",
+    "analytics-dashboard-combined/js/data/* — snapshot extended with primaryThreats (data/generate-traffic-share-data.mjs)"
+  ],
+  "angularTarget": "ideal-sale-circular/src/app/analytic-dashboard/components/distribution-view/distribution-crossover",
+  "backing": "echarts",
+  "style": "module",
+  "oracle": "canvas-hash on #chart-crossover (parity.mjs canvasSelectors, trend precedent) + node computed-style on the #crossover-detail tree table (custom DOM). State: strip viz-inactive, click competitor tab, wait for echarts animation.",
+  "ux928Items": [
+    "toggles (.view-toggle → p-selectbutton) ride the 2.1 dial per the shared/toggle carve decision — NOT this carve",
+    "#6 (My Brand / My competitors dropdowns, Adam's deck) — future dial, untouched here"
+  ],
+  "notes": "No pane chrome — .ep-sub-pane belongs to sub-tabs; chart host carries inline height verbatim. Eager-init contract kept: proto inits the crossover chart while the pane is hidden (0×0), chart-card resizePane fixes sizing on first tab show. init() order mirrors initDistributionPage('traffic'): initCrossoverChart → renderCrossoverDetail → updateCrossoverChartPeriod(8) (init chart is transient — the update(8) area render is the resting state, same both sides). Angular twin takes the DistToggle seams as inputs (weeks, cohort, metric).",
+  "status": "carved 2026-07-02 — chart 0Δ both viewports (canvas-hash); detail tree table 0Δ desktop, tablet KNOWN-FAIL px≈0.013-0.016 = pure text/border anti-aliasing at a ~0.5px capture-scroll phase offset (cssDiffs=0; node-by-node probe verified all row geometry/backgrounds byte-identical both sides) — adjudication with Bill: per-component pixelThreshold vs expected-fail note"
+}

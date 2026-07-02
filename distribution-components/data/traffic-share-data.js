@@ -2270,6 +2270,387 @@ window.DIST_TRAFFIC_DATA = (function () {
       ]
     }
   ],
+  "primaryThreats": [
+    {
+      "brand": "Local Competitor",
+      "store_count": 48,
+      "locations": []
+    },
+    {
+      "brand": "Publix",
+      "store_count": 25,
+      "locations": [
+        {
+          "id": "comp-pub-4",
+          "address": "5765 Naples Blvd, Naples, FL 34109",
+          "lat": 26.241,
+          "lng": -81.76,
+          "threatens": [
+            "store-518"
+          ],
+          "threat_pct": 67.8
+        },
+        {
+          "id": "comp-pub-2",
+          "address": "1250 S Federal Hwy, Hollywood, FL 33020",
+          "lat": 26.01,
+          "lng": -80.145,
+          "threatens": [
+            "store-336"
+          ],
+          "threat_pct": 65.2
+        },
+        {
+          "id": "comp-pub-25",
+          "address": "1310 Ariana St W, Lakeland, FL 33803",
+          "lat": 28.03,
+          "lng": -81.97,
+          "threatens": [
+            "store-1712"
+          ],
+          "threat_pct": 64.7
+        },
+        {
+          "id": "comp-pub-1",
+          "address": "28200 S Dixie Hwy, Homestead, FL 33033",
+          "lat": 25.475,
+          "lng": -80.44,
+          "threatens": [
+            "store-319"
+          ],
+          "threat_pct": 63.3
+        },
+        {
+          "id": "comp-pub-23",
+          "address": "5910 University Blvd W, Jacksonville, FL 32216",
+          "lat": 30.263,
+          "lng": -81.59,
+          "threatens": [
+            "store-1690"
+          ],
+          "threat_pct": 63.3
+        },
+        {
+          "id": "comp-pub-24",
+          "address": "2640 US Hwy 92, Lakeland, FL 33801",
+          "lat": 28.04,
+          "lng": -81.95,
+          "threatens": [
+            "store-1710"
+          ],
+          "threat_pct": 62.3
+        },
+        {
+          "id": "comp-pub-8",
+          "address": "13521 N Florida Ave, Tampa, FL 33612",
+          "lat": 28.06,
+          "lng": -82.459,
+          "threatens": [
+            "store-2415"
+          ],
+          "threat_pct": 61.4
+        },
+        {
+          "id": "comp-pub-3",
+          "address": "4650 S Cleveland Ave, Fort Myers, FL 33907",
+          "lat": 26.598,
+          "lng": -81.87,
+          "threatens": [
+            "store-508"
+          ],
+          "threat_pct": 61
+        },
+        {
+          "id": "comp-pub-10",
+          "address": "1555 W New Haven Ave, Melbourne, FL 32904",
+          "lat": 28.078,
+          "lng": -80.64,
+          "threatens": [
+            "store-2474"
+          ],
+          "threat_pct": 60.9
+        },
+        {
+          "id": "comp-pub-11",
+          "address": "3950 US-98 N, Lakeland, FL 33809",
+          "lat": 28.08,
+          "lng": -81.97,
+          "threatens": [
+            "store-2480"
+          ],
+          "threat_pct": 59.2
+        },
+        {
+          "id": "comp-pub-9",
+          "address": "1570 W Intl Speedway Blvd, Daytona Beach, FL 32114",
+          "lat": 29.21,
+          "lng": -81.065,
+          "threatens": [
+            "store-2434"
+          ],
+          "threat_pct": 58.9
+        },
+        {
+          "id": "comp-pub-16",
+          "address": "11500 Beach Blvd, Jacksonville, FL 32246",
+          "lat": 30.29,
+          "lng": -81.528,
+          "threatens": [
+            "store-195"
+          ],
+          "threat_pct": 57.8
+        },
+        {
+          "id": "comp-pub-7",
+          "address": "7640 W Sand Lake Rd, Orlando, FL 32819",
+          "lat": 28.449,
+          "lng": -81.47,
+          "threatens": [
+            "store-2288"
+          ],
+          "threat_pct": 57.4
+        },
+        {
+          "id": "comp-pub-21",
+          "address": "3720 NW 13th St, Gainesville, FL 32609",
+          "lat": 29.68,
+          "lng": -82.34,
+          "threatens": [
+            "store-2482"
+          ],
+          "threat_pct": 56.8
+        },
+        {
+          "id": "comp-pub-13",
+          "address": "6255 Cortez Rd W, Bradenton, FL 34210",
+          "lat": 27.463,
+          "lng": -82.6,
+          "threatens": [
+            "store-2509"
+          ],
+          "threat_pct": 56.6
+        },
+        {
+          "id": "comp-pub-5",
+          "address": "2345 Pine Island Rd, Matlacha, FL 33993",
+          "lat": 26.636,
+          "lng": -82.072,
+          "threatens": [
+            "store-726"
+          ],
+          "threat_pct": 55.9
+        },
+        {
+          "id": "comp-pub-12",
+          "address": "3870 Bee Ridge Rd, Sarasota, FL 34233",
+          "lat": 27.302,
+          "lng": -82.48,
+          "threatens": [
+            "store-2487"
+          ],
+          "threat_pct": 54.7
+        },
+        {
+          "id": "comp-pub-14",
+          "address": "2510 Burnsed Blvd, The Villages, FL 32163",
+          "lat": 28.93,
+          "lng": -81.99,
+          "threatens": [
+            "store-2545"
+          ],
+          "threat_pct": 53.1
+        },
+        {
+          "id": "comp-pub-19",
+          "address": "4525 San Juan Ave, Jacksonville, FL 32210",
+          "lat": 30.298,
+          "lng": -81.733,
+          "threatens": [
+            "store-2399"
+          ],
+          "threat_pct": 52.7
+        },
+        {
+          "id": "comp-pub-22",
+          "address": "1700 N Monroe St, Tallahassee, FL 32303",
+          "lat": 30.455,
+          "lng": -84.275,
+          "threatens": [
+            "store-2495"
+          ],
+          "threat_pct": 52.6
+        },
+        {
+          "id": "comp-pub-6",
+          "address": "35951 US Hwy 27, Haines City, FL 33844",
+          "lat": 28.088,
+          "lng": -81.617,
+          "threatens": [
+            "store-705"
+          ],
+          "threat_pct": 49.9
+        },
+        {
+          "id": "comp-pub-17",
+          "address": "34940 Emerald Coast Pkwy, Destin, FL 32541",
+          "lat": 30.393,
+          "lng": -86.46,
+          "threatens": [
+            "store-560"
+          ],
+          "threat_pct": 49.3
+        },
+        {
+          "id": "comp-pub-18",
+          "address": "1200 Palm Coast Pkwy NW, Palm Coast, FL 32137",
+          "lat": 29.565,
+          "lng": -81.23,
+          "threatens": [
+            "store-2247"
+          ],
+          "threat_pct": 48.6
+        },
+        {
+          "id": "comp-pub-15",
+          "address": "1415 Timberlane Rd, Tallahassee, FL 32312",
+          "lat": 30.49,
+          "lng": -84.31,
+          "threatens": [
+            "store-86"
+          ],
+          "threat_pct": 47.9
+        },
+        {
+          "id": "comp-pub-20",
+          "address": "3100 SW College Rd, Ocala, FL 34474",
+          "lat": 29.17,
+          "lng": -82.18,
+          "threatens": [
+            "store-2437"
+          ],
+          "threat_pct": 47.9
+        }
+      ]
+    },
+    {
+      "brand": "Walmart",
+      "store_count": 7,
+      "locations": [
+        {
+          "id": "comp-wm-7",
+          "address": "50 S Arlington Rd, Jacksonville, FL 32211",
+          "lat": 30.329,
+          "lng": -81.6,
+          "threatens": [
+            "store-1716"
+          ],
+          "threat_pct": 70.6
+        },
+        {
+          "id": "comp-wm-6",
+          "address": "100 W 48th St, Jacksonville, FL 32208",
+          "lat": 30.387,
+          "lng": -81.67,
+          "threatens": [
+            "store-1694"
+          ],
+          "threat_pct": 69.9
+        },
+        {
+          "id": "comp-wm-5",
+          "address": "5250 Moncrief Rd W, Jacksonville, FL 32209",
+          "lat": 30.365,
+          "lng": -81.71,
+          "threatens": [
+            "store-1692"
+          ],
+          "threat_pct": 67.8
+        },
+        {
+          "id": "comp-wm-4",
+          "address": "2767 W US Hwy 90, Lake City, FL 32055",
+          "lat": 30.188,
+          "lng": -82.664,
+          "threatens": [
+            "store-1671"
+          ],
+          "threat_pct": 65
+        },
+        {
+          "id": "comp-wm-2",
+          "address": "1040 Malabar Rd SE, Palm Bay, FL 32907",
+          "lat": 28.003,
+          "lng": -80.621,
+          "threatens": [
+            "store-2501"
+          ],
+          "threat_pct": 64
+        },
+        {
+          "id": "comp-wm-3",
+          "address": "2101 S Hwy 77, Lynn Haven, FL 32444",
+          "lat": 30.227,
+          "lng": -85.64,
+          "threatens": [
+            "store-436"
+          ],
+          "threat_pct": 59.2
+        },
+        {
+          "id": "comp-wm-1",
+          "address": "2601 N Davis Hwy, Pensacola, FL 32503",
+          "lat": 30.448,
+          "lng": -87.23,
+          "threatens": [
+            "store-2449"
+          ],
+          "threat_pct": 44.9
+        }
+      ]
+    },
+    {
+      "brand": "ALDI",
+      "store_count": 2,
+      "locations": [
+        {
+          "id": "comp-aldi-1",
+          "address": "1900 Tamiami Trail, Port Charlotte, FL 33948",
+          "lat": 26.985,
+          "lng": -82.12,
+          "threatens": [
+            "store-2490"
+          ],
+          "threat_pct": 57.7
+        },
+        {
+          "id": "comp-aldi-2",
+          "address": "1233 Wendy Ct, Spring Hill, FL 34607",
+          "lat": 28.482,
+          "lng": -82.548,
+          "threatens": [
+            "store-711"
+          ],
+          "threat_pct": 47.9
+        }
+      ]
+    },
+    {
+      "brand": "Save A Lot",
+      "store_count": 1,
+      "locations": [
+        {
+          "id": "comp-sal-1",
+          "address": "920 S Main St, Belle Glade, FL 33430",
+          "lat": 26.678,
+          "lng": -80.67,
+          "threatens": [
+            "store-381"
+          ],
+          "threat_pct": 52
+        }
+      ]
+    }
+  ],
   "entities": {
     "stores": [
       {

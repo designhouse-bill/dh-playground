@@ -1,0 +1,16 @@
+{
+  "name": "shared/sub-tabs",
+  "protoAnchor": "#ts-perf-subtabs",
+  "protoSource": [
+    "analytics-dashboard-combined/distribution-traffic.html — #ts-perf-subtabs strip (inside #ts-chart-card header-left) + tab-activation slice of the inline ep-sub-tab driver",
+    "analytics-dashboard-combined/css/analytics-architecture.css — ep-sub-tabs family incl. .ep-sub-pane visibility (497-547 at proto-2.0-baseline)",
+    "analytics-dashboard-combined/css/distribution.css — chart-card ep-sub-tab--active section color (3993-3999), #ts-perf-subtabs nowrap pair (5987-5988)"
+  ],
+  "angularTarget": "ideal-sale-circular/src/app/analytic-dashboard/components/shared/sub-tabs",
+  "backing": "custom",
+  "style": "module",
+  "oracle": "static node-by-node + pixel on #ts-perf-subtabs (strip only). Pane visibility rules (.ep-sub-pane) ride along here but pane INTERNALS belong to the trend/leaderboard/store-map/by-competitor carves — they stay covered (and stripped) by the chart-card-traffic state eval.",
+  "ux928Items": [],
+  "notes": "Strip carve out of chart-card: markup = the traffic instance verbatim (3 tabs, store default active); pane divs stay in chart-card.html (they hold later carves' content) — mirrors the Angular pairing where chart-card projects dh-sub-pane children and dh-sub-tabs owns activation. init.js = tab toggle + aria + pane visibility with an onChange seam; card chrome (panel copy, data-show-on-sub controls, store lazy-build, echarts resize) stays in chart-card/init.js. Loaded as a nested fragment: chart-card.html carries the placeholder, the shell chains the load before calling DistChartCard.init.",
+  "status": "carved — oracle static 0Δ both viewports (2026-07-02)"
+}

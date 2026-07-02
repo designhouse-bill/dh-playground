@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="../css/design-tokens.css">
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../shared/section-hero/section-hero.css">
+  <link rel="stylesheet" href="../shared/sub-tabs/sub-tabs.css">
   <link rel="stylesheet" href="../shared/chart-card/chart-card.css">
   <link rel="stylesheet" href="shell.css">
 </head>
@@ -32,6 +33,7 @@
   <script src="../data/sections.js"></script>
   <script src="../shared/component-loader.js"></script>
   <script src="../shared/section-hero/init.js"></script>
+  <script src="../shared/sub-tabs/init.js"></script>
   <script src="../shared/chart-card/init.js"></script>
   <script>
     document.querySelectorAll('[data-component="section-hero"]').forEach(function (host) {
@@ -41,7 +43,12 @@
     });
     document.querySelectorAll('[data-component="chart-card"]').forEach(function (host) {
       window.DistComponents.load(host, '../shared/chart-card/chart-card.html').then(function (node) {
-        window.DistChartCard.init(node, window.DIST_SECTIONS[node.dataset.section]);
+        // Nested fragment: inject the sub-tabs strip before the card driver inits.
+        var subHost = node.querySelector('[data-component="sub-tabs"]');
+        subHost.dataset.section = node.dataset.section;
+        return window.DistComponents.load(subHost, '../shared/sub-tabs/sub-tabs.html').then(function () {
+          window.DistChartCard.init(node, window.DIST_SECTIONS[node.dataset.section]);
+        });
       });
     });
   </script>

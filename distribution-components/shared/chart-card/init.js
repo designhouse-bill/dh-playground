@@ -1,9 +1,11 @@
-/* chart-card init — the traffic page's inline ep-sub-tab driver slice
-   (distribution-traffic.html "Traffic Share — ep-sub-tab driver",
-   UX-846 D2 2026-06-04), carved verbatim minus the DOMContentLoaded
-   tail (the shell calls init after fragment injection). Panel copy +
-   default sub come from data/sections.js (cfg.panelCopy / cfg.defaultSub).
-   Engine hooks stay guarded no-ops here: echarts resize and
+/* chart-card init — the CARD-CHROME slice of the traffic page's inline
+   ep-sub-tab driver (distribution-traffic.html, UX-846 D2 2026-06-04):
+   panel copy, data-show-on-sub control visibility, engine hooks. Tab
+   activation + pane visibility split out to shared/sub-tabs/init.js
+   (2026-07-02) — this reacts via its onChange seam, mirroring the
+   Angular twin (chart-card composes dh-sub-tabs/dh-sub-pane). Panel
+   copy + default sub come from data/sections.js (cfg.panelCopy /
+   cfg.defaultSub). Engine hooks stay guarded no-ops: echarts resize and
    window.DistributionTraffic.buildStorePane arrive with the trend /
    leaderboard / store-map carves. */
 (function () {
@@ -20,21 +22,13 @@
   function init(card, cfg) {
     if (!card || !cfg) return;
     var PANEL_COPY = cfg.panelCopy || {};
-    var tabs  = card.querySelectorAll('.ep-sub-tabs .ep-sub-tab');
-    var panes = card.querySelectorAll('[data-dist-sub-pane]');
+    var strip = card.querySelector('.ep-sub-tabs');
     var title = card.querySelector('.panel-label');
     var sub   = card.querySelector('.panel-subtitle');
     var storeBuilt = false;
 
-    function showSub(name) {
-      tabs.forEach(function (t) {
-        var on = t.dataset.distSub === name;
-        t.classList.toggle('ep-sub-tab--active', on);
-        t.setAttribute('aria-selected', on ? 'true' : 'false');
-      });
-      panes.forEach(function (p) {
-        p.classList.toggle('ep-sub-pane--active', p.dataset.distSubPane === name);
-      });
+    // Card chrome reacting to a tab change (activation itself lives in sub-tabs).
+    function onSub(name) {
       // Sub-tab-scoped controls (duration presets, view toggles).
       card.querySelectorAll('[data-show-on-sub]').forEach(function (el) {
         el.style.display = el.dataset.showOnSub === name ? '' : 'none';
@@ -59,12 +53,10 @@
       resizePane(active);
     }
 
-    tabs.forEach(function (t) {
-      t.addEventListener('click', function () { showSub(t.dataset.distSub); });
-    });
+    var tabsApi = window.DistSubTabs.init(strip, { paneRoot: card, onChange: onSub });
 
     // Initialize control visibility for the default tab.
-    showSub(cfg.defaultSub);
+    tabsApi.activate(cfg.defaultSub);
   }
 
   window.DistChartCard = { init: init };

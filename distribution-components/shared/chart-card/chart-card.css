@@ -4,26 +4,25 @@
    (analytics-architecture.css → distribution.css →
    methodology-tooltip.css — order preserved so the .view-toggle
    4-block cascade resolves identically):
-     analytics-architecture.css — ep-sub-tabs family (497-547),
-       duration-presets family (1401-1470), view-toggle PILL
-       canonical + compact (1640-1706), view-toggle borderless
-       lock (2538-2547)
+     analytics-architecture.css — duration-presets family
+       (1401-1470), view-toggle PILL canonical + compact
+       (1640-1706), view-toggle borderless lock (2538-2547)
      distribution.css — .chart-card + panel-label/subtitle
        (1413-1439), view-toggle SEGMENTED override (1759-1803),
        view-toggle STRIP border re-add (3108-3114), chart-card
        header/controls/title-row + 640px stack (3927-3983),
-       chart-card ep-sub-tab--active section color (3993-3999),
-       .panel-subtitle__muted (5051-5052), #ts-chart-card 4-tab
-       overrides (5980-5988)
+       .panel-subtitle__muted (5051-5052), #ts-chart-card
+       header-left max-width release (5980-5986)
      methodology-tooltip.css — .info-btn states (10-47),
        .panel-title-row + .methodology-btn (49-56)
    Skipped (no matching node in this markup): chips-row rule
    (dist 3985-3992), .panel-sublabel, .tooltip-overlay (popover
    DOM is body-appended — arrives with the methodology-popover
    carve).
+   CARVED OUT: → shared/sub-tabs (2026-07-02): arch 497-547,
+     dist 3993-3999, dist 5987-5988 (#ts-perf-subtabs pair) —
+     now in shared/sub-tabs/sub-tabs.css, loaded BEFORE this file.
    CARRIED BLOCKS (move out at their own carve, keep load order):
-     → shared/sub-tabs: arch 497-547, dist 3993-3999,
-       dist 5987-5988 (#ts-perf-subtabs pair)
      → shared/toggle (p-selectbutton): arch 1401-1470,
        arch 1640-1706, arch 2538-2547, dist 1759-1803,
        dist 3108-3114
@@ -31,59 +30,6 @@
        meth 54-56
    Angular twin: components/shared/chart-card
    ============================================================ */
-
-/* ── analytics-architecture.css 497-547 ── CARRIED → shared/sub-tabs ── */
-/* ============================================================
-   ep-sub-tabs — pill-style sub-tab strip (cuts inside a perf-tab pane)
-   Phase 0b block 5 migrated 2026-05-04 from engagement-canonical.css (75-82).
-   Distinct chrome from .perf-tabs (underline) — variant, not duplicate.
-   Entity override: .perf-tab-pane .ep-sub-tab--active uses --section-color
-   (stays in engagement-canonical.css line 143-144).
-   ============================================================ */
-
-.ep-sub-tabs {
-  display: flex;
-  gap: var(--space-2);
-  padding: 0 var(--space-6) 0 0;
-  flex-wrap: wrap;
-}
-
-.ep-sub-tab {
-  padding: var(--space-2) var(--space-4);
-  border: 1px solid var(--color-border);
-  border-radius: var(--space-1-5);
-  background: var(--color-white);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--p-text-color);
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1-5);
-}
-
-.ep-sub-tab:hover {
-  background: var(--p-surface-hover);
-}
-
-.ep-sub-tab--active {
-  background: var(--color-accent-soft-bg);
-  border-color: var(--color-accent-soft-border);
-}
-
-.ep-sub-tab--data {
-  margin-left: auto;
-  color: var(--color-primary, #2196F3);
-  border-color: var(--color-accent-info-border);
-}
-
-.ep-sub-tab--data:hover {
-  background: var(--color-accent-info-bg);
-}
-
-.ep-sub-pane { display: none; padding: var(--space-4) var(--space-6); }
-.ep-sub-pane--active { display: block; }
 
 /* ── analytics-architecture.css 1401-1470 ── CARRIED → shared/toggle ── */
 /* ── duration-presets / ep-trend-ranges ─────────────────────────
@@ -382,29 +328,18 @@
   }
 }
 
-/* ── distribution.css 3993-3999 ── CARRIED → shared/sub-tabs ── */
-/* Active sub-tab uses section color (mirrors engagement's
-   .perf-tab-pane .ep-sub-tab--active rule in engagement-canonical.css). */
-.dist-section > .chart-card .ep-sub-tab--active {
-  background: var(--section-color-light);
-  border-color: var(--section-color);
-  color: var(--section-color);
-}
-
 /* ── distribution.css 5051-5052 ── */
 /* ── chart-card subtitle muted variant ──────────────────────── */
 .panel-subtitle__muted { color: #9ca3af; font-size: 0.8125rem; }
 
-/* ── distribution.css 5980-5988 (lines 5987-5988 CARRIED → shared/sub-tabs) ── */
+/* ── distribution.css 5980-5986 ── */
 /* UX-846 D2 (2026-06-04): Traffic Share has 4 ep-sub-tabs (Time Trend /
    By Store / by Competitor / Map) vs Observed Visits' 3. The shared
-   .chart-card__header-left caps at max-width:400px and .ep-sub-tabs flex-wraps,
-   which squeezed the 4th tab to a 2nd row and wrapped button text. Scope the
-   fix to traffic: let the header-left grow, keep tabs on one row, and stop the
-   button labels from wrapping. Visitation's 3-tab default stays untouched. */
+   .chart-card__header-left caps at max-width:400px, which squeezed the
+   4th tab to a 2nd row. Scope the fix to traffic: let the header-left
+   grow. (The strip's own nowrap pair, dist 5987-5988, lives in
+   shared/sub-tabs.) Visitation's 3-tab default stays untouched. */
 #ts-chart-card .chart-card__header-left { max-width: none; }
-#ts-perf-subtabs { flex-wrap: nowrap; }
-#ts-perf-subtabs .ep-sub-tab { white-space: nowrap; flex-shrink: 0; }
 
 /* ── methodology-tooltip.css 10-47 ── CARRIED → shared/methodology-popover ── */
 /* Info button — small circular "i" beside a section title. */

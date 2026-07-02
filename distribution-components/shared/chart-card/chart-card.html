@@ -7,11 +7,8 @@
       <div class="chart-card" id="ts-chart-card">
         <div class="chart-card__header">
           <div class="chart-card__header-left">
-            <div class="ep-sub-tabs" id="ts-perf-subtabs" role="tablist" aria-label="Traffic Share view">
-              <button class="ep-sub-tab ep-sub-tab--active" data-dist-sub="store" role="tab" aria-selected="true">By Store</button>
-              <button class="ep-sub-tab" data-dist-sub="trend" role="tab" aria-selected="false">Time Trend</button>
-              <button class="ep-sub-tab" data-dist-sub="competitor" role="tab" aria-selected="false">by Competitor</button>
-            </div>
+            <!-- nested fragment — the shell chains this load before DistChartCard.init -->
+            <div data-component="sub-tabs"></div>
           </div>
           <div class="chart-card__header-right">
             <div class="view-toggle view-toggle--compact" id="traffic-chart-toggle" role="tablist" aria-label="Metric" data-show-on-sub="trend">

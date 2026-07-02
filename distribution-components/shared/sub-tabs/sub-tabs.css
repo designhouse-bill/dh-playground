@@ -1,0 +1,86 @@
+/* ============================================================
+   shared/sub-tabs — carved verbatim from the 2.0 proto
+   (moved out of shared/chart-card's CARRIED blocks 2026-07-02).
+   Sources (proto-2.0-baseline), in original load order:
+     analytics-architecture.css — ep-sub-tabs family incl.
+       .ep-sub-pane visibility (497-547)
+     distribution.css — chart-card ep-sub-tab--active section
+       color (3993-3999), #ts-perf-subtabs nowrap pair (5987-5988)
+   Pane visibility rules live here (not chart-card) to mirror the
+   Angular pairing: dh-sub-tabs (strip) + dh-sub-pane (pane).
+   Load before chart-card.css in the shell — the ep-sub-* family
+   has no selector overlap with the remaining chart-card cascade,
+   and within this file original order is preserved (base wrap →
+   #ts-perf-subtabs nowrap wins by specificity + order).
+   Angular twin: components/shared/sub-tabs (dh-sub-tabs/dh-sub-pane)
+   ============================================================ */
+
+/* ── analytics-architecture.css 497-547 ── */
+/* ============================================================
+   ep-sub-tabs — pill-style sub-tab strip (cuts inside a perf-tab pane)
+   Phase 0b block 5 migrated 2026-05-04 from engagement-canonical.css (75-82).
+   Distinct chrome from .perf-tabs (underline) — variant, not duplicate.
+   Entity override: .perf-tab-pane .ep-sub-tab--active uses --section-color
+   (stays in engagement-canonical.css line 143-144).
+   ============================================================ */
+
+.ep-sub-tabs {
+  display: flex;
+  gap: var(--space-2);
+  padding: 0 var(--space-6) 0 0;
+  flex-wrap: wrap;
+}
+
+.ep-sub-tab {
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--space-1-5);
+  background: var(--color-white);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--p-text-color);
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+}
+
+.ep-sub-tab:hover {
+  background: var(--p-surface-hover);
+}
+
+.ep-sub-tab--active {
+  background: var(--color-accent-soft-bg);
+  border-color: var(--color-accent-soft-border);
+}
+
+.ep-sub-tab--data {
+  margin-left: auto;
+  color: var(--color-primary, #2196F3);
+  border-color: var(--color-accent-info-border);
+}
+
+.ep-sub-tab--data:hover {
+  background: var(--color-accent-info-bg);
+}
+
+.ep-sub-pane { display: none; padding: var(--space-4) var(--space-6); }
+.ep-sub-pane--active { display: block; }
+
+/* ── distribution.css 3993-3999 ── */
+/* Active sub-tab uses section color (mirrors engagement's
+   .perf-tab-pane .ep-sub-tab--active rule in engagement-canonical.css). */
+.dist-section > .chart-card .ep-sub-tab--active {
+  background: var(--section-color-light);
+  border-color: var(--section-color);
+  color: var(--section-color);
+}
+
+/* ── distribution.css 5987-5988 ── */
+/* UX-846 D2 (2026-06-04): Traffic Share has 4 ep-sub-tabs vs Observed
+   Visits' 3 — keep the traffic strip on one row, stop label wrap.
+   (The companion header-left max-width release, dist 5986, stays with
+   chart-card.) */
+#ts-perf-subtabs { flex-wrap: nowrap; }
+#ts-perf-subtabs .ep-sub-tab { white-space: nowrap; flex-shrink: 0; }

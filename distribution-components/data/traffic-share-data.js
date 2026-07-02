@@ -702,7 +702,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Publix",
         "primary_threat_address": "28200 S Dixie Hwy, Homestead, FL 33033",
-        "group": "green"
+        "group": "green",
+        "total_visits": 4182,
+        "change_4wk_pp": 0,
+        "change_8wk_pp": 0
       },
       {
         "store_id": "336",
@@ -715,7 +718,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Publix",
         "primary_threat_address": "1250 S Federal Hwy, Hollywood, FL 33020",
-        "group": "green"
+        "group": "green",
+        "total_visits": 4251,
+        "change_4wk_pp": 0,
+        "change_8wk_pp": 0
       },
       {
         "store_id": "381",
@@ -728,7 +734,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Save A Lot",
         "primary_threat_address": "920 S Main St, Belle Glade, FL 33430",
-        "group": "green"
+        "group": "green",
+        "total_visits": 3317,
+        "change_4wk_pp": 0,
+        "change_8wk_pp": 0
       },
       {
         "store_id": "508",
@@ -741,7 +750,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Publix",
         "primary_threat_address": "4650 S Cleveland Ave, Fort Myers, FL 33907",
-        "group": "green"
+        "group": "green",
+        "total_visits": 4136,
+        "change_4wk_pp": 0,
+        "change_8wk_pp": 0
       },
       {
         "store_id": "518",
@@ -754,7 +766,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Publix",
         "primary_threat_address": "5765 Naples Blvd, Naples, FL 34109",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 3445,
+        "change_4wk_pp": 6.5,
+        "change_8wk_pp": 14.8
       },
       {
         "store_id": "726",
@@ -767,7 +782,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Publix",
         "primary_threat_address": "2345 Pine Island Rd, Matlacha, FL 33993",
-        "group": "green"
+        "group": "green",
+        "total_visits": 3565,
+        "change_4wk_pp": 0,
+        "change_8wk_pp": 0
       },
       {
         "store_id": "705",
@@ -780,7 +798,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Publix",
         "primary_threat_address": "35951 US Hwy 27, Haines City, FL 33844",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 3986,
+        "change_4wk_pp": 0,
+        "change_8wk_pp": 3.9
       },
       {
         "store_id": "2288",
@@ -793,7 +814,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Publix",
         "primary_threat_address": "7640 W Sand Lake Rd, Orlando, FL 32819",
-        "group": "red"
+        "group": "red",
+        "total_visits": 4238,
+        "change_4wk_pp": -1.8,
+        "change_8wk_pp": 1.4
       },
       {
         "store_id": "2415",
@@ -806,7 +830,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Publix",
         "primary_threat_address": "13521 N Florida Ave, Tampa, FL 33612",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 4044,
+        "change_4wk_pp": 6.3,
+        "change_8wk_pp": 11.4
       },
       {
         "store_id": "2434",
@@ -819,7 +846,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Publix",
         "primary_threat_address": "1570 W Intl Speedway Blvd, Daytona Beach, FL 32114",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 3856,
+        "change_4wk_pp": 5.6,
+        "change_8wk_pp": 10.4
       },
       {
         "store_id": "2474",
@@ -832,7 +862,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Publix",
         "primary_threat_address": "1555 W New Haven Ave, Melbourne, FL 32904",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 3553,
+        "change_4wk_pp": 2.7,
+        "change_8wk_pp": 6.7
       },
       {
         "store_id": "2480",
@@ -845,7 +878,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Publix",
         "primary_threat_address": "3950 US-98 N, Lakeland, FL 33809",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 3402,
+        "change_4wk_pp": 4.4,
+        "change_8wk_pp": 7.6
       },
       {
         "store_id": "2487",
@@ -858,7 +894,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Publix",
         "primary_threat_address": "3870 Bee Ridge Rd, Sarasota, FL 34233",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 4630,
+        "change_4wk_pp": 4,
+        "change_8wk_pp": 6.7
       },
       {
         "store_id": "2490",
@@ -871,7 +910,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "ALDI",
         "primary_threat_address": "1900 Tamiami Trail, Port Charlotte, FL 33948",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 2920,
+        "change_4wk_pp": 2.8,
+        "change_8wk_pp": 4.4
       },
       {
         "store_id": "2501",
@@ -884,7 +926,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Walmart",
         "primary_threat_address": "1040 Malabar Rd SE, Palm Bay, FL 32907",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 2734,
+        "change_4wk_pp": 3.9,
+        "change_8wk_pp": 9
       },
       {
         "store_id": "2509",
@@ -897,7 +942,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Publix",
         "primary_threat_address": "6255 Cortez Rd W, Bradenton, FL 34210",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 3730,
+        "change_4wk_pp": 4.3,
+        "change_8wk_pp": 10.2
       },
       {
         "store_id": "2545",
@@ -910,7 +958,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Publix",
         "primary_threat_address": "2510 Burnsed Blvd, The Villages, FL 32163",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 3512,
+        "change_4wk_pp": 4.8,
+        "change_8wk_pp": 8.4
       },
       {
         "store_id": "711",
@@ -923,7 +974,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "ALDI",
         "primary_threat_address": "1233 Wendy Ct, Spring Hill, FL 34607",
-        "group": "red"
+        "group": "red",
+        "total_visits": 3876,
+        "change_4wk_pp": -2.2,
+        "change_8wk_pp": -11.1
       },
       {
         "store_id": "86",
@@ -936,7 +990,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Publix",
         "primary_threat_address": "1415 Timberlane Rd, Tallahassee, FL 32312",
-        "group": "green"
+        "group": "green",
+        "total_visits": 4243,
+        "change_4wk_pp": 0,
+        "change_8wk_pp": 0
       },
       {
         "store_id": "195",
@@ -949,7 +1006,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Publix",
         "primary_threat_address": "11500 Beach Blvd, Jacksonville, FL 32246",
-        "group": "green"
+        "group": "green",
+        "total_visits": 3671,
+        "change_4wk_pp": 0,
+        "change_8wk_pp": 0
       },
       {
         "store_id": "560",
@@ -962,7 +1022,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Publix",
         "primary_threat_address": "34940 Emerald Coast Pkwy, Destin, FL 32541",
-        "group": "green"
+        "group": "green",
+        "total_visits": 3148,
+        "change_4wk_pp": 0,
+        "change_8wk_pp": 0
       },
       {
         "store_id": "2247",
@@ -975,7 +1038,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Publix",
         "primary_threat_address": "1200 Palm Coast Pkwy NW, Palm Coast, FL 32137",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 3837,
+        "change_4wk_pp": 4.7,
+        "change_8wk_pp": 7.6
       },
       {
         "store_id": "2399",
@@ -988,7 +1054,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Publix",
         "primary_threat_address": "4525 San Juan Ave, Jacksonville, FL 32210",
-        "group": "green"
+        "group": "green",
+        "total_visits": 4313,
+        "change_4wk_pp": 0,
+        "change_8wk_pp": 0
       },
       {
         "store_id": "2437",
@@ -1001,7 +1070,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Publix",
         "primary_threat_address": "3100 SW College Rd, Ocala, FL 34474",
-        "group": "green"
+        "group": "green",
+        "total_visits": 3469,
+        "change_4wk_pp": 0,
+        "change_8wk_pp": 0
       },
       {
         "store_id": "2449",
@@ -1014,7 +1086,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Walmart",
         "primary_threat_address": "2601 N Davis Hwy, Pensacola, FL 32503",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 3992,
+        "change_4wk_pp": 3.9,
+        "change_8wk_pp": 9.2
       },
       {
         "store_id": "2482",
@@ -1027,7 +1102,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Publix",
         "primary_threat_address": "3720 NW 13th St, Gainesville, FL 32609",
-        "group": "green"
+        "group": "green",
+        "total_visits": 3251,
+        "change_4wk_pp": 0,
+        "change_8wk_pp": 0
       },
       {
         "store_id": "2495",
@@ -1040,7 +1118,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Publix",
         "primary_threat_address": "1700 N Monroe St, Tallahassee, FL 32303",
-        "group": "green"
+        "group": "green",
+        "total_visits": 3763,
+        "change_4wk_pp": 0,
+        "change_8wk_pp": 0
       },
       {
         "store_id": "436",
@@ -1053,7 +1134,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Walmart",
         "primary_threat_address": "2101 S Hwy 77, Lynn Haven, FL 32444",
-        "group": "red"
+        "group": "red",
+        "total_visits": 2659,
+        "change_4wk_pp": -2.1,
+        "change_8wk_pp": -4.8
       },
       {
         "store_id": "1671",
@@ -1066,7 +1150,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Walmart",
         "primary_threat_address": "2767 W US Hwy 90, Lake City, FL 32055",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 2665,
+        "change_4wk_pp": 3.9,
+        "change_8wk_pp": 12
       },
       {
         "store_id": "1690",
@@ -1079,7 +1166,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Publix",
         "primary_threat_address": "5910 University Blvd W, Jacksonville, FL 32216",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 3362,
+        "change_4wk_pp": 5.1,
+        "change_8wk_pp": 11.9
       },
       {
         "store_id": "1692",
@@ -1092,7 +1182,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Walmart",
         "primary_threat_address": "5250 Moncrief Rd W, Jacksonville, FL 32209",
-        "group": "red"
+        "group": "red",
+        "total_visits": 2773,
+        "change_4wk_pp": -1.9,
+        "change_8wk_pp": 1.4
       },
       {
         "store_id": "1694",
@@ -1105,7 +1198,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Walmart",
         "primary_threat_address": "100 W 48th St, Jacksonville, FL 32208",
-        "group": "red"
+        "group": "red",
+        "total_visits": 2434,
+        "change_4wk_pp": -1.9,
+        "change_8wk_pp": -2.4
       },
       {
         "store_id": "1710",
@@ -1118,7 +1214,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Publix",
         "primary_threat_address": "2640 US Hwy 92, Lakeland, FL 33801",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 2611,
+        "change_4wk_pp": 4.1,
+        "change_8wk_pp": 6.5
       },
       {
         "store_id": "1712",
@@ -1131,7 +1230,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Publix",
         "primary_threat_address": "1310 Ariana St W, Lakeland, FL 33803",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 2680,
+        "change_4wk_pp": 5.4,
+        "change_8wk_pp": 11
       },
       {
         "store_id": "1716",
@@ -1144,7 +1246,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Walmart",
         "primary_threat_address": "50 S Arlington Rd, Jacksonville, FL 32211",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 2481,
+        "change_4wk_pp": 4.6,
+        "change_8wk_pp": 7.8
       },
       {
         "store_id": "mdi-saubel-s-market-743",
@@ -1157,7 +1262,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 0,
+        "change_4wk_pp": 5.7,
+        "change_8wk_pp": 12.3
       },
       {
         "store_id": "mdi-roland-s-5530",
@@ -1170,7 +1278,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 0,
+        "change_4wk_pp": 2.9,
+        "change_8wk_pp": 4.6
       },
       {
         "store_id": "mdi-casselman-8311",
@@ -1183,7 +1294,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 0,
+        "change_4wk_pp": 0,
+        "change_8wk_pp": 0
       },
       {
         "store_id": "mdi-bradfords-neighborhood-market-2504",
@@ -1196,7 +1310,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 0,
+        "change_4wk_pp": 0,
+        "change_8wk_pp": 1.8
       },
       {
         "store_id": "mdi-j-j-foods-apts",
@@ -1209,7 +1326,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 0,
+        "change_4wk_pp": 4.8,
+        "change_8wk_pp": 6.6
       },
       {
         "store_id": "mdi-j-j-foods-gainesville",
@@ -1222,7 +1342,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 0,
+        "change_4wk_pp": 0,
+        "change_8wk_pp": 0
       },
       {
         "store_id": "mdi-j-j-foods-publix",
@@ -1235,7 +1358,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 0,
+        "change_4wk_pp": 3.5,
+        "change_8wk_pp": 8.6
       },
       {
         "store_id": "mdi-j-j-foods-oakland",
@@ -1248,7 +1374,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 0,
+        "change_4wk_pp": 2.7,
+        "change_8wk_pp": 7.8
       },
       {
         "store_id": "lunds-lunds-byerlys-woodbury",
@@ -1261,7 +1390,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 32,
+        "change_4wk_pp": 5.8,
+        "change_8wk_pp": 10.4
       },
       {
         "store_id": "lunds-lunds-byerlys-white-bear-lake",
@@ -1274,7 +1406,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 22,
+        "change_4wk_pp": 1.7,
+        "change_8wk_pp": 6.4
       },
       {
         "store_id": "lunds-lunds-byerlys-wayzata",
@@ -1287,7 +1422,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 11,
+        "change_4wk_pp": 0,
+        "change_8wk_pp": 4.2
       },
       {
         "store_id": "lunds-lunds-byerlys-uptown-minneapolis",
@@ -1300,7 +1438,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 37,
+        "change_4wk_pp": 2.4,
+        "change_8wk_pp": 7.9
       },
       {
         "store_id": "lunds-lunds-byerlys-st-louis-park",
@@ -1313,7 +1454,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 36,
+        "change_4wk_pp": 0.1,
+        "change_8wk_pp": 7.8
       },
       {
         "store_id": "lunds-lunds-byerlys-st-cloud",
@@ -1326,7 +1470,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 13,
+        "change_4wk_pp": 3.7,
+        "change_8wk_pp": 11
       },
       {
         "store_id": "lunds-lunds-byerlys-roseville",
@@ -1339,7 +1486,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 26,
+        "change_4wk_pp": 3.4,
+        "change_8wk_pp": 5.1
       },
       {
         "store_id": "lunds-lunds-byerlys-ridgedale",
@@ -1352,7 +1502,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 25,
+        "change_4wk_pp": 5,
+        "change_8wk_pp": 11.7
       },
       {
         "store_id": "houchens-price-less-iga-65",
@@ -1365,7 +1518,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 24,
+        "change_4wk_pp": 2.3,
+        "change_8wk_pp": 6.2
       },
       {
         "store_id": "houchens-price-less-iga-69",
@@ -1378,7 +1534,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 13,
+        "change_4wk_pp": 1.7,
+        "change_8wk_pp": 9.8
       },
       {
         "store_id": "houchens-price-less-iga-68",
@@ -1391,7 +1550,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 11,
+        "change_4wk_pp": 0,
+        "change_8wk_pp": 6.8
       },
       {
         "store_id": "houchens-price-less-iga-61",
@@ -1404,7 +1566,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 0,
+        "change_4wk_pp": 6.7,
+        "change_8wk_pp": 15.8
       },
       {
         "store_id": "houchens-price-less-iga-66",
@@ -1417,7 +1582,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 11,
+        "change_4wk_pp": 1.6,
+        "change_8wk_pp": 10.6
       },
       {
         "store_id": "houchens-price-less-iga-18",
@@ -1430,7 +1598,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 27,
+        "change_4wk_pp": 5.8,
+        "change_8wk_pp": 13
       },
       {
         "store_id": "houchens-simpson-s-supermarket-1242",
@@ -1443,7 +1614,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 13,
+        "change_4wk_pp": 3.3,
+        "change_8wk_pp": 12
       },
       {
         "store_id": "houchens-price-less-iga-1110",
@@ -1456,7 +1630,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 13,
+        "change_4wk_pp": 6.3,
+        "change_8wk_pp": 11
       },
       {
         "store_id": "gelsons-conquesting-campaing-laguna-beach-dana-point",
@@ -1469,7 +1646,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 12,
+        "change_4wk_pp": 5.1,
+        "change_8wk_pp": 11.4
       },
       {
         "store_id": "gelsons-gelson-s-westlake-8",
@@ -1482,7 +1662,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 0,
+        "change_4wk_pp": 4.9,
+        "change_8wk_pp": 8.1
       },
       {
         "store_id": "gelsons-gelson-s-west-la-at-west-edge-34",
@@ -1495,7 +1678,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 21,
+        "change_4wk_pp": 2.4,
+        "change_8wk_pp": 3.1
       },
       {
         "store_id": "gelsons-gelson-s-west-hollywood-108",
@@ -1508,7 +1694,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 0,
+        "change_4wk_pp": 0,
+        "change_8wk_pp": 2.7
       },
       {
         "store_id": "gelsons-gelson-s-valley-village-north-hollywood-3",
@@ -1521,7 +1710,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 11,
+        "change_4wk_pp": 8.8,
+        "change_8wk_pp": 14.4
       },
       {
         "store_id": "gelsons-gelson-s-toluca-lake-35",
@@ -1534,7 +1726,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 14,
+        "change_4wk_pp": 2,
+        "change_8wk_pp": 2.3
       },
       {
         "store_id": "gelsons-gelson-s-thousand-oaks-32",
@@ -1547,7 +1742,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 14,
+        "change_4wk_pp": 2,
+        "change_8wk_pp": 4.6
       },
       {
         "store_id": "gelsons-gelson-s-tarzana-5",
@@ -1560,7 +1758,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 0,
+        "change_4wk_pp": 3.3,
+        "change_8wk_pp": 5.2
       },
       {
         "store_id": "unfi-pioneer-market-mariposa-242290",
@@ -1573,7 +1774,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 0,
+        "change_4wk_pp": 4.4,
+        "change_8wk_pp": 7.6
       },
       {
         "store_id": "unfi-pioneer-market-waterford-241424",
@@ -1586,7 +1790,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 0,
+        "change_4wk_pp": 2.8,
+        "change_8wk_pp": 4.4
       },
       {
         "store_id": "unfi-paradise-family-grocery-440318",
@@ -1599,7 +1806,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 0,
+        "change_4wk_pp": 1.2,
+        "change_8wk_pp": 7.5
       },
       {
         "store_id": "unfi-pokerville-market-wineries-247298",
@@ -1612,7 +1822,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 0,
+        "change_4wk_pp": 6.3,
+        "change_8wk_pp": 12
       },
       {
         "store_id": "unfi-pokerville-market-grocery-247298",
@@ -1625,7 +1838,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 0,
+        "change_4wk_pp": 6.9,
+        "change_8wk_pp": 14.6
       },
       {
         "store_id": "unfi-nielsen-brothers-carmel-by-the-sea-hotels",
@@ -1638,7 +1854,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 0,
+        "change_4wk_pp": 5,
+        "change_8wk_pp": 11.3
       },
       {
         "store_id": "unfi-radermacher-s-fresh-market-le-sueur",
@@ -1651,7 +1870,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 51,
+        "change_4wk_pp": 1.4,
+        "change_8wk_pp": 9.2
       },
       {
         "store_id": "unfi-radermacher-s-fresh-market-le-center",
@@ -1664,7 +1886,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 26,
+        "change_4wk_pp": 0,
+        "change_8wk_pp": 4
       },
       {
         "store_id": "agne-sully-s-superette-10805",
@@ -1677,7 +1902,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 13,
+        "change_4wk_pp": 3.6,
+        "change_8wk_pp": 6
       },
       {
         "store_id": "agne-vista-foods-10803",
@@ -1690,7 +1918,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 32,
+        "change_4wk_pp": 0,
+        "change_8wk_pp": 0
       },
       {
         "store_id": "agne-sully-s-superette-10809",
@@ -1703,7 +1934,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Moderately Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 81,
+        "change_4wk_pp": 3.7,
+        "change_8wk_pp": 7
       },
       {
         "store_id": "agne-berlin-marketplace-10807",
@@ -1716,7 +1950,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 47,
+        "change_4wk_pp": 2.7,
+        "change_8wk_pp": 4.5
       },
       {
         "store_id": "agne-harvest-market-10808",
@@ -1729,7 +1966,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 12,
+        "change_4wk_pp": 5.3,
+        "change_8wk_pp": 9.6
       },
       {
         "store_id": "agne-newport-village-market-10801",
@@ -1742,7 +1982,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 22,
+        "change_4wk_pp": 4.9,
+        "change_8wk_pp": 8.1
       },
       {
         "store_id": "agne-woodstock-village-market-10827",
@@ -1755,7 +1998,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 14,
+        "change_4wk_pp": 1.3,
+        "change_8wk_pp": 7.1
       },
       {
         "store_id": "agne-londonderry-village-10820",
@@ -1768,7 +2014,10 @@ window.DIST_TRAFFIC_DATA = (function () {
         "hhi_status": "Highly Concentrated",
         "primary_threat": "Local Competitor",
         "primary_threat_address": "",
-        "group": "amber"
+        "group": "amber",
+        "total_visits": 27,
+        "change_4wk_pp": 0,
+        "change_8wk_pp": 2.4
       }
     ]
   },

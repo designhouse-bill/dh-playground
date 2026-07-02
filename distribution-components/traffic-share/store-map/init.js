@@ -61,13 +61,6 @@ const StoreMap = (function() {
   // Brand color for our store pins (replaces health-graded green/amber/red)
   const BRAND_COLOR = '#4272D8';
 
-  // Segment colors matching bar view
-  const SEGMENT_COLORS = {
-    new: '#4272D8',
-    returning: '#F59E0B',
-    loyal: '#10B981'
-  };
-
   // ========================================
   // Dark hover tooltip — reuses the canonical chart-hover overlay
   // (.ov-tooltip / .ov-tooltip--dark in distribution.css) so the map hover
@@ -115,14 +108,13 @@ const StoreMap = (function() {
       '<span class="ov-tooltip__val">' + val + '</span>' +
     '</div>';
   }
+  // #16: hover tip leads with Share/Visits (N/R/L cut — Max: "not relevant")
   function storeTipHTML(store, data) {
-    var newPct = data.new_pct || 0, retPct = data.ret_pct || 0, loyPct = data.loy_pct || 0;
+    var share = data.share != null ? data.share + '%' : '—';
     var visits = data.visits || 0;
     return '<div class="ov-tooltip__title">' + store.name + ' (#' + store.storeNumber + ') · ' + store.city + '</div>' +
-      tipRow(SEGMENT_COLORS.new,       'New',       newPct.toFixed(0) + '%') +
-      tipRow(SEGMENT_COLORS.returning, 'Returning', retPct.toFixed(0) + '%') +
-      tipRow(SEGMENT_COLORS.loyal,     'Loyal',     loyPct.toFixed(0) + '%') +
-      '<div class="ov-tooltip__total"><span class="ov-tooltip__name">Total Visits</span>' +
+      tipRow(BRAND_COLOR, 'Share of Area', share) +
+      '<div class="ov-tooltip__total"><span class="ov-tooltip__name">Visits</span>' +
         '<span class="ov-tooltip__val">' + visits.toLocaleString() + '</span></div>';
   }
   function competitorTipHTML(cs) {
@@ -273,54 +265,31 @@ const StoreMap = (function() {
   // Render Stores
   // ========================================
 
-  // Build SVG donut chart for popup
-  function buildDonutSVG(newPct, retPct, loyPct, size) {
-    size = size || 80;
-    var r = size / 2;
-    var ir = r * 0.55; // inner radius (donut hole)
-    var cx = r, cy = r;
-
-    function arcPath(startAngle, endAngle, outerR, innerR) {
-      if (endAngle - startAngle >= 359.99) endAngle = startAngle + 359.99;
-      var s1 = startAngle * Math.PI / 180;
-      var e1 = endAngle * Math.PI / 180;
-      var large = (endAngle - startAngle > 180) ? 1 : 0;
-      var x1 = cx + outerR * Math.cos(s1), y1 = cy + outerR * Math.sin(s1);
-      var x2 = cx + outerR * Math.cos(e1), y2 = cy + outerR * Math.sin(e1);
-      var x3 = cx + innerR * Math.cos(e1), y3 = cy + innerR * Math.sin(e1);
-      var x4 = cx + innerR * Math.cos(s1), y4 = cy + innerR * Math.sin(s1);
-      return 'M ' + x1 + ' ' + y1 +
-             ' A ' + outerR + ' ' + outerR + ' 0 ' + large + ' 1 ' + x2 + ' ' + y2 +
-             ' L ' + x3 + ' ' + y3 +
-             ' A ' + innerR + ' ' + innerR + ' 0 ' + large + ' 0 ' + x4 + ' ' + y4 + ' Z';
+  // #16: single partial-fill pie = store's share-of-area (10% full = 10% of
+  // nearby grocery visits). Replaces the N/R/L donut Max cut ("not relevant").
+  function buildShareFillSVG(pct, size) {
+    size = size || 64;
+    var r = size / 2, cx = r, cy = r, or_ = r - 2;
+    var clamped = Math.max(0, Math.min(100, pct || 0));
+    var fill = '';
+    if (clamped >= 99.95) {
+      fill = '<circle cx="' + cx + '" cy="' + cy + '" r="' + or_ + '" fill="' + BRAND_COLOR + '" />';
+    } else if (clamped > 0) {
+      var sweep = clamped / 100 * 360;
+      var s1 = -90 * Math.PI / 180, e1 = (-90 + sweep) * Math.PI / 180;
+      var large = sweep > 180 ? 1 : 0;
+      var x1 = cx + or_ * Math.cos(s1), y1 = cy + or_ * Math.sin(s1);
+      var x2 = cx + or_ * Math.cos(e1), y2 = cy + or_ * Math.sin(e1);
+      fill = '<path d="M ' + cx + ' ' + cy + ' L ' + x1 + ' ' + y1 +
+             ' A ' + or_ + ' ' + or_ + ' 0 ' + large + ' 1 ' + x2 + ' ' + y2 + ' Z" fill="' + BRAND_COLOR + '" />';
     }
-
-    var total = newPct + retPct + loyPct;
-    if (total === 0) total = 1;
-    var segments = [
-      { pct: newPct / total * 100, color: SEGMENT_COLORS.new },
-      { pct: retPct / total * 100, color: SEGMENT_COLORS.returning },
-      { pct: loyPct / total * 100, color: SEGMENT_COLORS.loyal }
-    ];
-
-    var paths = '';
-    var angle = -90; // start at top
-    segments.forEach(function(seg) {
-      if (seg.pct < 0.5) return;
-      var sweep = seg.pct / 100 * 360;
-      paths += '<path d="' + arcPath(angle, angle + sweep, r - 2, ir) + '" fill="' + seg.color + '" />';
-      angle += sweep;
-    });
-
     return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '">' +
-      paths +
-      '<circle cx="' + cx + '" cy="' + cy + '" r="' + ir + '" fill="white" />' +
-      '</svg>';
+      '<circle cx="' + cx + '" cy="' + cy + '" r="' + or_ + '" fill="#E5E7EB" />' + fill + '</svg>';
   }
 
   /**
    * @param {Array} stores - Store objects from DistributionEntities.stores
-   * @param {Object} storeData - Map of storeId → { group, share, change_pp, primary_threat, new_pct, ret_pct, loy_pct, visits }
+   * @param {Object} storeData - Map of storeId → { group, share, change_pp, change_4wk_pp, change_8wk_pp, primary_threat, visits }
    */
   function renderStores(stores, storeData) {
     if (!map || !markersLayer) return;
@@ -341,37 +310,38 @@ const StoreMap = (function() {
         fillOpacity: 0.9
       });
 
-      // Donut popup data
-      const newPct = data.new_pct || 0;
-      const retPct = data.ret_pct || 0;
-      const loyPct = data.loy_pct || 0;
+      // #16 popover: Share% + Visits primary up top, partial-fill share pie,
+      // share-change last/4wk/8wk, #1-share competitor (was Threat)
       const visits = data.visits || 0;
-      const share = data.share != null ? data.share + '%' : '—';
-      const changePp = data.change_pp != null
-        ? (data.change_pp >= 0 ? '+' : '') + data.change_pp + ' pp'
-        : '—';
+      const shareVal = data.share != null ? data.share : null;
+      const share = shareVal != null ? shareVal + '%' : '—';
+      const fmtPp = (v) => v == null ? '—' : (v >= 0 ? '+' : '') + v + ' pp';
       const threat = data.primary_threat || '—';
 
-      const donutSvg = buildDonutSVG(newPct, retPct, loyPct, 80);
+      const shareSvg = buildShareFillSVG(shareVal || 0, 64);
 
       const popup = `
-        <div style="font-family: var(--font-family, system-ui); font-size: 13px; line-height: 1.5; min-width: 220px;">
+        <div style="font-family: var(--font-family, system-ui); font-size: 13px; line-height: 1.5; min-width: 230px;">
           <div style="font-weight: 600; font-size: 14px; margin-bottom: 2px;">${store.name} (#${store.storeNumber})</div>
           <div style="color: #6b7280; margin-bottom: 10px;">${store.city}</div>
-          <div style="display: flex; gap: 16px; align-items: center; margin-bottom: 10px;">
-            <div style="flex-shrink: 0;">${donutSvg}</div>
-            <div style="font-size: 12px; line-height: 1.8;">
-              <div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${SEGMENT_COLORS.new};margin-right:6px;"></span>New: <b>${newPct.toFixed(0)}%</b></div>
-              <div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${SEGMENT_COLORS.returning};margin-right:6px;"></span>Returning: <b>${retPct.toFixed(0)}%</b></div>
-              <div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${SEGMENT_COLORS.loyal};margin-right:6px;"></span>Loyal: <b>${loyPct.toFixed(0)}%</b></div>
-              <div style="margin-top: 4px; color: #6b7280;">${visits.toLocaleString()} visits</div>
+          <div style="display: flex; gap: 14px; align-items: center; margin-bottom: 10px;">
+            <div style="flex-shrink: 0;" title="Share of nearby grocery visits">${shareSvg}</div>
+            <div>
+              <div style="font-size: 20px; font-weight: 700; color: ${BRAND_COLOR}; line-height: 1.2;">${share}</div>
+              <div style="font-size: 11px; color: #6b7280; margin-bottom: 4px;">share of area visits</div>
+              <div style="font-size: 15px; font-weight: 600; line-height: 1.2;">${visits.toLocaleString()}</div>
+              <div style="font-size: 11px; color: #6b7280;">visits</div>
             </div>
           </div>
-          <div style="border-top: 1px solid #e5e7eb; padding-top: 8px; display: flex; gap: 12px; font-size: 12px;">
-            <div><span style="color:#6b7280;">Share:</span> <b>${share}</b></div>
-            <div><span style="color:#6b7280;">Change:</span> <b>${changePp}</b></div>
-            <div><span style="color:#6b7280;">Threat:</span> <b>${threat}</b></div>
+          <div style="border-top: 1px solid #e5e7eb; padding-top: 8px; font-size: 12px;">
+            <div style="color:#6b7280; margin-bottom: 2px;">Share change</div>
+            <div style="display: flex; gap: 12px;">
+              <div><span style="color:#6b7280;">Last wk:</span> <b>${fmtPp(data.change_pp)}</b></div>
+              <div><span style="color:#6b7280;">4 wk:</span> <b>${fmtPp(data.change_4wk_pp)}</b></div>
+              <div><span style="color:#6b7280;">8 wk:</span> <b>${fmtPp(data.change_8wk_pp)}</b></div>
+            </div>
           </div>
+          <div style="margin-top: 6px; font-size: 12px;"><span style="color:#6b7280;">#1-share competitor:</span> <b>${threat}</b></div>
         </div>
       `;
 
@@ -601,10 +571,9 @@ const StoreMap = (function() {
       storeData['store-' + s.store_id] = {
         share: s.wk2_share,
         change_pp: s.change_pp,
+        change_4wk_pp: s.change_4wk_pp,
+        change_8wk_pp: s.change_8wk_pp,
         primary_threat: s.primary_threat,
-        new_pct: s.new_pct || 33,
-        ret_pct: s.ret_pct || 33,
-        loy_pct: s.loy_pct || 34,
         visits: s.total_visits || 0
       };
     });

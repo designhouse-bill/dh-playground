@@ -5,9 +5,10 @@
    (2026-07-02) — this reacts via its onChange seam, mirroring the
    Angular twin (chart-card composes dh-sub-tabs/dh-sub-pane). Panel
    copy + default sub come from data/sections.js (cfg.panelCopy /
-   cfg.defaultSub). Engine hooks stay guarded no-ops: echarts resize and
-   window.DistributionTraffic.buildStorePane arrive with the trend /
-   leaderboard / store-map carves. */
+   cfg.defaultSub). Engine hooks: trend seams → window.DistTrend,
+   store-pane leaderboard → window.DistLeaderboard (traffic-share carves);
+   the map half of the store pane stays a guarded no-op until the
+   store-map carve. */
 (function () {
   'use strict';
 
@@ -44,11 +45,13 @@
       // By Store pane: lazy-build leaderboard + Leaflet map on first show
       // (renderMap needs a visible, sized container); invalidate size on return.
       if (name === 'store') {
-        var DT = window.DistributionTraffic;
-        if (DT) {
-          if (!storeBuilt) { DT.buildStorePane(); storeBuilt = true; }
-          else if (DT.invalidateMap) { DT.invalidateMap(); }
+        if (!storeBuilt) {
+          if (window.DistLeaderboard) window.DistLeaderboard.build();
+          storeBuilt = true;
         }
+        // Map half (renderMap / invalidateMap) arrives with the store-map carve.
+        var DT = window.DistributionTraffic;
+        if (DT && DT.invalidateMap) DT.invalidateMap();
       }
       resizePane(active);
     }

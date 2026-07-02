@@ -689,6 +689,1087 @@ window.DIST_TRAFFIC_DATA = (function () {
         "retailer_visits": 123497,
         "comp_visits": 236021
       }
+    ],
+    "storeLeaderboard": [
+      {
+        "store_id": "319",
+        "city": "Homestead, FL",
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "none",
+        "hhi": 2200,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Publix",
+        "primary_threat_address": "28200 S Dixie Hwy, Homestead, FL 33033",
+        "group": "green"
+      },
+      {
+        "store_id": "336",
+        "city": "Hollywood, FL",
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "opportunity",
+        "hhi": 2100,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Publix",
+        "primary_threat_address": "1250 S Federal Hwy, Hollywood, FL 33020",
+        "group": "green"
+      },
+      {
+        "store_id": "381",
+        "city": "Belle Glade, FL",
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "opportunity",
+        "hhi": 2800,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Save A Lot",
+        "primary_threat_address": "920 S Main St, Belle Glade, FL 33430",
+        "group": "green"
+      },
+      {
+        "store_id": "508",
+        "city": "Fort Myers, FL",
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "opportunity",
+        "hhi": 2400,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Publix",
+        "primary_threat_address": "4650 S Cleveland Ave, Fort Myers, FL 33907",
+        "group": "green"
+      },
+      {
+        "store_id": "518",
+        "city": "Naples, FL",
+        "wk3_share": 75.1,
+        "wk2_share": 78.2,
+        "change_pp": 3.1,
+        "alert_type": "none",
+        "hhi": 2200,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Publix",
+        "primary_threat_address": "5765 Naples Blvd, Naples, FL 34109",
+        "group": "amber"
+      },
+      {
+        "store_id": "726",
+        "city": "St James City, FL",
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "opportunity",
+        "hhi": 3200,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Publix",
+        "primary_threat_address": "2345 Pine Island Rd, Matlacha, FL 33993",
+        "group": "green"
+      },
+      {
+        "store_id": "705",
+        "city": "Haines City, FL",
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "none",
+        "hhi": 2650,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Publix",
+        "primary_threat_address": "35951 US Hwy 27, Haines City, FL 33844",
+        "group": "amber"
+      },
+      {
+        "store_id": "2288",
+        "city": "Orlando, FL",
+        "wk3_share": 33.1,
+        "wk2_share": 37.2,
+        "change_pp": 4.1,
+        "alert_type": "critical",
+        "hhi": 2350,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Publix",
+        "primary_threat_address": "7640 W Sand Lake Rd, Orlando, FL 32819",
+        "group": "red"
+      },
+      {
+        "store_id": "2415",
+        "city": "Tampa, FL",
+        "wk3_share": 83.1,
+        "wk2_share": 83.2,
+        "change_pp": 0.1,
+        "alert_type": "none",
+        "hhi": 2400,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Publix",
+        "primary_threat_address": "13521 N Florida Ave, Tampa, FL 33612",
+        "group": "amber"
+      },
+      {
+        "store_id": "2434",
+        "city": "Daytona Beach, FL",
+        "wk3_share": 78.7,
+        "wk2_share": 78.6,
+        "change_pp": -0.1,
+        "alert_type": "none",
+        "hhi": 2350,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Publix",
+        "primary_threat_address": "1570 W Intl Speedway Blvd, Daytona Beach, FL 32114",
+        "group": "amber"
+      },
+      {
+        "store_id": "2474",
+        "city": "Melbourne, FL",
+        "wk3_share": 60.3,
+        "wk2_share": 62.5,
+        "change_pp": 2.2,
+        "alert_type": "none",
+        "hhi": 2500,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Publix",
+        "primary_threat_address": "1555 W New Haven Ave, Melbourne, FL 32904",
+        "group": "amber"
+      },
+      {
+        "store_id": "2480",
+        "city": "Lakeland, FL",
+        "wk3_share": 76.5,
+        "wk2_share": 76.1,
+        "change_pp": -0.4,
+        "alert_type": "none",
+        "hhi": 2700,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Publix",
+        "primary_threat_address": "3950 US-98 N, Lakeland, FL 33809",
+        "group": "amber"
+      },
+      {
+        "store_id": "2487",
+        "city": "Sarasota, FL",
+        "wk3_share": 67.3,
+        "wk2_share": 66.8,
+        "change_pp": -0.5,
+        "alert_type": "none",
+        "hhi": 2550,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Publix",
+        "primary_threat_address": "3870 Bee Ridge Rd, Sarasota, FL 34233",
+        "group": "amber"
+      },
+      {
+        "store_id": "2490",
+        "city": "Port Charlotte, FL",
+        "wk3_share": 69.6,
+        "wk2_share": 68.8,
+        "change_pp": -0.8,
+        "alert_type": "none",
+        "hhi": 2900,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "ALDI",
+        "primary_threat_address": "1900 Tamiami Trail, Port Charlotte, FL 33948",
+        "group": "amber"
+      },
+      {
+        "store_id": "2501",
+        "city": "Palm Bay, FL",
+        "wk3_share": 64.5,
+        "wk2_share": 67,
+        "change_pp": 2.5,
+        "alert_type": "none",
+        "hhi": 2450,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Walmart",
+        "primary_threat_address": "1040 Malabar Rd SE, Palm Bay, FL 32907",
+        "group": "amber"
+      },
+      {
+        "store_id": "2509",
+        "city": "Bradenton, FL",
+        "wk3_share": 71.2,
+        "wk2_share": 73.8,
+        "change_pp": 2.6,
+        "alert_type": "none",
+        "hhi": 2600,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Publix",
+        "primary_threat_address": "6255 Cortez Rd W, Bradenton, FL 34210",
+        "group": "amber"
+      },
+      {
+        "store_id": "2545",
+        "city": "The Villages, FL",
+        "wk3_share": 78.5,
+        "wk2_share": 78.2,
+        "change_pp": -0.3,
+        "alert_type": "none",
+        "hhi": 2700,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Publix",
+        "primary_threat_address": "2510 Burnsed Blvd, The Villages, FL 32163",
+        "group": "amber"
+      },
+      {
+        "store_id": "711",
+        "city": "Spring Hill, FL",
+        "wk3_share": 41.8,
+        "wk2_share": 36.7,
+        "change_pp": -5.1,
+        "alert_type": "critical",
+        "hhi": 2850,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "ALDI",
+        "primary_threat_address": "1233 Wendy Ct, Spring Hill, FL 34607",
+        "group": "red"
+      },
+      {
+        "store_id": "86",
+        "city": "Tallahassee, FL",
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "opportunity",
+        "hhi": 2750,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Publix",
+        "primary_threat_address": "1415 Timberlane Rd, Tallahassee, FL 32312",
+        "group": "green"
+      },
+      {
+        "store_id": "195",
+        "city": "Jacksonville, FL",
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "none",
+        "hhi": 2500,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Publix",
+        "primary_threat_address": "11500 Beach Blvd, Jacksonville, FL 32246",
+        "group": "green"
+      },
+      {
+        "store_id": "560",
+        "city": "Destin, FL",
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "opportunity",
+        "hhi": 2850,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Publix",
+        "primary_threat_address": "34940 Emerald Coast Pkwy, Destin, FL 32541",
+        "group": "green"
+      },
+      {
+        "store_id": "2247",
+        "city": "Palm Coast, FL",
+        "wk3_share": 80.3,
+        "wk2_share": 80,
+        "change_pp": -0.3,
+        "alert_type": "none",
+        "hhi": 2800,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Publix",
+        "primary_threat_address": "1200 Palm Coast Pkwy NW, Palm Coast, FL 32137",
+        "group": "amber"
+      },
+      {
+        "store_id": "2399",
+        "city": "Jacksonville, FL",
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "opportunity",
+        "hhi": 2600,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Publix",
+        "primary_threat_address": "4525 San Juan Ave, Jacksonville, FL 32210",
+        "group": "green"
+      },
+      {
+        "store_id": "2437",
+        "city": "Ocala, FL",
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "opportunity",
+        "hhi": 2900,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Publix",
+        "primary_threat_address": "3100 SW College Rd, Ocala, FL 34474",
+        "group": "green"
+      },
+      {
+        "store_id": "2449",
+        "city": "Pensacola, FL",
+        "wk3_share": 77.9,
+        "wk2_share": 80.4,
+        "change_pp": 2.5,
+        "alert_type": "none",
+        "hhi": 2800,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Walmart",
+        "primary_threat_address": "2601 N Davis Hwy, Pensacola, FL 32503",
+        "group": "amber"
+      },
+      {
+        "store_id": "2482",
+        "city": "Gainesville, FL",
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "opportunity",
+        "hhi": 2650,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Publix",
+        "primary_threat_address": "3720 NW 13th St, Gainesville, FL 32609",
+        "group": "green"
+      },
+      {
+        "store_id": "2495",
+        "city": "Tallahassee, FL",
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "opportunity",
+        "hhi": 2750,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Publix",
+        "primary_threat_address": "1700 N Monroe St, Tallahassee, FL 32303",
+        "group": "green"
+      },
+      {
+        "store_id": "436",
+        "city": "Lynn Haven, FL",
+        "wk3_share": 39.9,
+        "wk2_share": 34.9,
+        "change_pp": -5,
+        "alert_type": "critical",
+        "hhi": 2700,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Walmart",
+        "primary_threat_address": "2101 S Hwy 77, Lynn Haven, FL 32444",
+        "group": "red"
+      },
+      {
+        "store_id": "1671",
+        "city": "Lake City, FL",
+        "wk3_share": 83.7,
+        "wk2_share": 83.9,
+        "change_pp": 0.2,
+        "alert_type": "none",
+        "hhi": 2600,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Walmart",
+        "primary_threat_address": "2767 W US Hwy 90, Lake City, FL 32055",
+        "group": "amber"
+      },
+      {
+        "store_id": "1690",
+        "city": "Jacksonville, FL",
+        "wk3_share": 68.8,
+        "wk2_share": 71.6,
+        "change_pp": 2.8,
+        "alert_type": "none",
+        "hhi": 2400,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Publix",
+        "primary_threat_address": "5910 University Blvd W, Jacksonville, FL 32216",
+        "group": "amber"
+      },
+      {
+        "store_id": "1692",
+        "city": "Jacksonville, FL",
+        "wk3_share": 24.8,
+        "wk2_share": 28.8,
+        "change_pp": 4,
+        "alert_type": "critical",
+        "hhi": 2300,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Walmart",
+        "primary_threat_address": "5250 Moncrief Rd W, Jacksonville, FL 32209",
+        "group": "red"
+      },
+      {
+        "store_id": "1694",
+        "city": "Jacksonville, FL",
+        "wk3_share": 22.4,
+        "wk2_share": 26.5,
+        "change_pp": 4.1,
+        "alert_type": "critical",
+        "hhi": 2250,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Walmart",
+        "primary_threat_address": "100 W 48th St, Jacksonville, FL 32208",
+        "group": "red"
+      },
+      {
+        "store_id": "1710",
+        "city": "Lakeland, FL",
+        "wk3_share": 65.9,
+        "wk2_share": 65.4,
+        "change_pp": -0.5,
+        "alert_type": "none",
+        "hhi": 2500,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Publix",
+        "primary_threat_address": "2640 US Hwy 92, Lakeland, FL 33801",
+        "group": "amber"
+      },
+      {
+        "store_id": "1712",
+        "city": "Lakeland, FL",
+        "wk3_share": 72.3,
+        "wk2_share": 72.2,
+        "change_pp": -0.1,
+        "alert_type": "none",
+        "hhi": 2450,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Publix",
+        "primary_threat_address": "1310 Ariana St W, Lakeland, FL 33803",
+        "group": "amber"
+      },
+      {
+        "store_id": "1716",
+        "city": "Jacksonville, FL",
+        "wk3_share": 63.7,
+        "wk2_share": 66.3,
+        "change_pp": 2.6,
+        "alert_type": "none",
+        "hhi": 2350,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Walmart",
+        "primary_threat_address": "50 S Arlington Rd, Jacksonville, FL 32211",
+        "group": "amber"
+      },
+      {
+        "store_id": "mdi-saubel-s-market-743",
+        "city": null,
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "none",
+        "hhi": 2203,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "mdi-roland-s-5530",
+        "city": null,
+        "wk3_share": 55.2,
+        "wk2_share": 57.4,
+        "change_pp": 2.2,
+        "alert_type": "none",
+        "hhi": 2627,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "mdi-casselman-8311",
+        "city": null,
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "none",
+        "hhi": 2622,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "mdi-bradfords-neighborhood-market-2504",
+        "city": null,
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "none",
+        "hhi": 2864,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "mdi-j-j-foods-apts",
+        "city": null,
+        "wk3_share": 56.2,
+        "wk2_share": 58.5,
+        "change_pp": 2.3,
+        "alert_type": "none",
+        "hhi": 2277,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "mdi-j-j-foods-gainesville",
+        "city": null,
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "none",
+        "hhi": 2424,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "mdi-j-j-foods-publix",
+        "city": null,
+        "wk3_share": 60.3,
+        "wk2_share": 62.7,
+        "change_pp": 2.4,
+        "alert_type": "none",
+        "hhi": 2453,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "mdi-j-j-foods-oakland",
+        "city": null,
+        "wk3_share": 71.9,
+        "wk2_share": 71.4,
+        "change_pp": -0.5,
+        "alert_type": "none",
+        "hhi": 2361,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "lunds-lunds-byerlys-woodbury",
+        "city": null,
+        "wk3_share": 72.2,
+        "wk2_share": 72.2,
+        "change_pp": 0,
+        "alert_type": "none",
+        "hhi": 2600,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "lunds-lunds-byerlys-white-bear-lake",
+        "city": null,
+        "wk3_share": 80.6,
+        "wk2_share": 79.9,
+        "change_pp": -0.7,
+        "alert_type": "none",
+        "hhi": 2397,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "lunds-lunds-byerlys-wayzata",
+        "city": null,
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "none",
+        "hhi": 2366,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "lunds-lunds-byerlys-uptown-minneapolis",
+        "city": null,
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "none",
+        "hhi": 2960,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "lunds-lunds-byerlys-st-louis-park",
+        "city": null,
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "none",
+        "hhi": 2266,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "lunds-lunds-byerlys-st-cloud",
+        "city": null,
+        "wk3_share": 84,
+        "wk2_share": 85,
+        "change_pp": 1,
+        "alert_type": "none",
+        "hhi": 2890,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "lunds-lunds-byerlys-roseville",
+        "city": null,
+        "wk3_share": 64.7,
+        "wk2_share": 64,
+        "change_pp": -0.7,
+        "alert_type": "none",
+        "hhi": 2206,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "lunds-lunds-byerlys-ridgedale",
+        "city": null,
+        "wk3_share": 80.4,
+        "wk2_share": 83.1,
+        "change_pp": 2.7,
+        "alert_type": "none",
+        "hhi": 2864,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "houchens-price-less-iga-65",
+        "city": null,
+        "wk3_share": 56.7,
+        "wk2_share": 58.8,
+        "change_pp": 2.1,
+        "alert_type": "none",
+        "hhi": 2407,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "houchens-price-less-iga-69",
+        "city": null,
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "none",
+        "hhi": 2411,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "houchens-price-less-iga-68",
+        "city": null,
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "none",
+        "hhi": 2410,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "houchens-price-less-iga-61",
+        "city": null,
+        "wk3_share": 82.4,
+        "wk2_share": 85,
+        "change_pp": 2.6,
+        "alert_type": "none",
+        "hhi": 2403,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "houchens-price-less-iga-66",
+        "city": null,
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "none",
+        "hhi": 2408,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "houchens-price-less-iga-18",
+        "city": null,
+        "wk3_share": 74.9,
+        "wk2_share": 77.8,
+        "change_pp": 2.9,
+        "alert_type": "none",
+        "hhi": 2255,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "houchens-simpson-s-supermarket-1242",
+        "city": null,
+        "wk3_share": 84.7,
+        "wk2_share": 85,
+        "change_pp": 0.3,
+        "alert_type": "none",
+        "hhi": 2437,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "houchens-price-less-iga-1110",
+        "city": null,
+        "wk3_share": 83,
+        "wk2_share": 83.1,
+        "change_pp": 0.1,
+        "alert_type": "none",
+        "hhi": 2633,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "gelsons-conquesting-campaing-laguna-beach-dana-point",
+        "city": null,
+        "wk3_share": 74.2,
+        "wk2_share": 77.4,
+        "change_pp": 3.2,
+        "alert_type": "none",
+        "hhi": 2486,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "gelsons-gelson-s-westlake-8",
+        "city": null,
+        "wk3_share": 79.7,
+        "wk2_share": 79.5,
+        "change_pp": -0.2,
+        "alert_type": "none",
+        "hhi": 2938,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "gelsons-gelson-s-west-la-at-west-edge-34",
+        "city": null,
+        "wk3_share": 68.2,
+        "wk2_share": 67.3,
+        "change_pp": -0.9,
+        "alert_type": "none",
+        "hhi": 2590,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "gelsons-gelson-s-west-hollywood-108",
+        "city": null,
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "none",
+        "hhi": 2994,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "gelsons-gelson-s-valley-village-north-hollywood-3",
+        "city": null,
+        "wk3_share": 72.4,
+        "wk2_share": 75.4,
+        "change_pp": 3,
+        "alert_type": "none",
+        "hhi": 2801,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "gelsons-gelson-s-toluca-lake-35",
+        "city": null,
+        "wk3_share": 72.4,
+        "wk2_share": 71.4,
+        "change_pp": -1,
+        "alert_type": "none",
+        "hhi": 2922,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "gelsons-gelson-s-thousand-oaks-32",
+        "city": null,
+        "wk3_share": 62.4,
+        "wk2_share": 64.4,
+        "change_pp": 2,
+        "alert_type": "none",
+        "hhi": 2964,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "gelsons-gelson-s-tarzana-5",
+        "city": null,
+        "wk3_share": 64.9,
+        "wk2_share": 64.2,
+        "change_pp": -0.7,
+        "alert_type": "none",
+        "hhi": 2282,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "unfi-pioneer-market-mariposa-242290",
+        "city": null,
+        "wk3_share": 73.4,
+        "wk2_share": 73,
+        "change_pp": -0.4,
+        "alert_type": "none",
+        "hhi": 2509,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "unfi-pioneer-market-waterford-241424",
+        "city": null,
+        "wk3_share": 65.1,
+        "wk2_share": 64.3,
+        "change_pp": -0.8,
+        "alert_type": "none",
+        "hhi": 2611,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "unfi-paradise-family-grocery-440318",
+        "city": null,
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "none",
+        "hhi": 2774,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "unfi-pokerville-market-wineries-247298",
+        "city": null,
+        "wk3_share": 76.9,
+        "wk2_share": 80,
+        "change_pp": 3.1,
+        "alert_type": "none",
+        "hhi": 2929,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "unfi-pokerville-market-grocery-247298",
+        "city": null,
+        "wk3_share": 82.1,
+        "wk2_share": 82.3,
+        "change_pp": 0.2,
+        "alert_type": "none",
+        "hhi": 2678,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "unfi-nielsen-brothers-carmel-by-the-sea-hotels",
+        "city": null,
+        "wk3_share": 81.4,
+        "wk2_share": 84.1,
+        "change_pp": 2.7,
+        "alert_type": "none",
+        "hhi": 2940,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "unfi-radermacher-s-fresh-market-le-sueur",
+        "city": null,
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "none",
+        "hhi": 2834,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "unfi-radermacher-s-fresh-market-le-center",
+        "city": null,
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "none",
+        "hhi": 2493,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "agne-sully-s-superette-10805",
+        "city": null,
+        "wk3_share": 57.3,
+        "wk2_share": 59.7,
+        "change_pp": 2.4,
+        "alert_type": "none",
+        "hhi": 2400,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "agne-vista-foods-10803",
+        "city": null,
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "none",
+        "hhi": 2424,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "agne-sully-s-superette-10809",
+        "city": null,
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "none",
+        "hhi": 2396,
+        "hhi_status": "Moderately Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "agne-berlin-marketplace-10807",
+        "city": null,
+        "wk3_share": 58,
+        "wk2_share": 57.2,
+        "change_pp": -0.8,
+        "alert_type": "none",
+        "hhi": 2703,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "agne-harvest-market-10808",
+        "city": null,
+        "wk3_share": 70.8,
+        "wk2_share": 70.7,
+        "change_pp": -0.1,
+        "alert_type": "none",
+        "hhi": 2976,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "agne-newport-village-market-10801",
+        "city": null,
+        "wk3_share": 67.3,
+        "wk2_share": 67,
+        "change_pp": -0.3,
+        "alert_type": "none",
+        "hhi": 2750,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "agne-woodstock-village-market-10827",
+        "city": null,
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "none",
+        "hhi": 2722,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      },
+      {
+        "store_id": "agne-londonderry-village-10820",
+        "city": null,
+        "wk3_share": 85,
+        "wk2_share": 85,
+        "change_pp": 0,
+        "alert_type": "none",
+        "hhi": 2973,
+        "hhi_status": "Highly Concentrated",
+        "primary_threat": "Local Competitor",
+        "primary_threat_address": "",
+        "group": "amber"
+      }
     ]
   },
   "competitiveCrossover": [
@@ -1187,6 +2268,4640 @@ window.DIST_TRAFFIC_DATA = (function () {
         5.1,
         5.2
       ]
+    }
+  ],
+  "entities": {
+    "stores": [
+      {
+        "id": "store-319",
+        "storeNumber": 319,
+        "name": "Homestead",
+        "city": "Homestead, FL",
+        "address": "30346 Old Dixie Highway, Homestead, FL 33030",
+        "subBrandId": "subbrand-wd-south",
+        "brandId": "brand-seg",
+        "lat": 25.462,
+        "lng": -80.448
+      },
+      {
+        "id": "store-336",
+        "storeNumber": 336,
+        "name": "Hollywood",
+        "city": "Hollywood, FL",
+        "address": "3010 Johnson St, Hollywood, FL 33021",
+        "subBrandId": "subbrand-wd-south",
+        "lat": 26.02,
+        "lng": -80.153,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-381",
+        "storeNumber": 381,
+        "name": "Belle Glade",
+        "city": "Belle Glade, FL",
+        "address": "900 S Main St, Belle Glade, FL 33430",
+        "subBrandId": "subbrand-wd-south",
+        "lat": 26.685,
+        "lng": -80.67,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-508",
+        "storeNumber": 508,
+        "name": "Fort Myers",
+        "city": "Fort Myers, FL",
+        "address": "4650 S Cleveland Ave, Fort Myers, FL 33907",
+        "subBrandId": "subbrand-wd-south",
+        "lat": 26.62,
+        "lng": -81.87,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-518",
+        "storeNumber": 518,
+        "name": "Naples",
+        "city": "Naples, FL",
+        "address": "5750 Naples Blvd, Naples, FL 34109",
+        "subBrandId": "subbrand-wd-south",
+        "lat": 26.234,
+        "lng": -81.781,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-726",
+        "storeNumber": 726,
+        "name": "St James City",
+        "city": "St James City, FL",
+        "address": "9864 Stringfellow Rd, St James City, FL 33956",
+        "subBrandId": "subbrand-wd-south",
+        "lat": 26.532,
+        "lng": -82.085,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-705",
+        "storeNumber": 705,
+        "name": "Haines City",
+        "city": "Haines City, FL",
+        "address": "36019 US Hwy 27 N, Haines City, FL 33844",
+        "subBrandId": "subbrand-wd-central",
+        "lat": 28.117,
+        "lng": -81.618,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-2288",
+        "storeNumber": 2288,
+        "name": "Orlando",
+        "city": "Orlando, FL",
+        "address": "7640 W Sand Lake Rd, Orlando, FL 32819",
+        "subBrandId": "subbrand-wd-central",
+        "lat": 28.452,
+        "lng": -81.47,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-2415",
+        "storeNumber": 2415,
+        "name": "Tampa",
+        "city": "Tampa, FL",
+        "address": "13508 N Florida Ave, Tampa, FL 33612",
+        "subBrandId": "subbrand-wd-central",
+        "lat": 28.072,
+        "lng": -82.459,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-2434",
+        "storeNumber": 2434,
+        "name": "Daytona Beach",
+        "city": "Daytona Beach, FL",
+        "address": "1570 W Intl Speedway Blvd, Daytona Beach, FL 32114",
+        "subBrandId": "subbrand-wd-central",
+        "lat": 29.186,
+        "lng": -81.077,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-2474",
+        "storeNumber": 2474,
+        "name": "Melbourne",
+        "city": "Melbourne, FL",
+        "address": "1900 W New Haven Ave, Melbourne, FL 32904",
+        "subBrandId": "subbrand-wd-central",
+        "lat": 28.078,
+        "lng": -80.624,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-2480",
+        "storeNumber": 2480,
+        "name": "Lakeland",
+        "city": "Lakeland, FL",
+        "address": "3950 US-98 N, Lakeland, FL 33809",
+        "subBrandId": "subbrand-wd-central",
+        "lat": 28.079,
+        "lng": -81.957,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-2487",
+        "storeNumber": 2487,
+        "name": "Sarasota",
+        "city": "Sarasota, FL",
+        "address": "3870 Bee Ridge Rd, Sarasota, FL 34233",
+        "subBrandId": "subbrand-wd-central",
+        "lat": 27.305,
+        "lng": -82.477,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-2490",
+        "storeNumber": 2490,
+        "name": "Port Charlotte",
+        "city": "Port Charlotte, FL",
+        "address": "1900 Tamiami Trail, Port Charlotte, FL 33948",
+        "subBrandId": "subbrand-wd-central",
+        "lat": 26.976,
+        "lng": -82.113,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-2501",
+        "storeNumber": 2501,
+        "name": "Palm Bay",
+        "city": "Palm Bay, FL",
+        "address": "1040 Malabar Rd SE, Palm Bay, FL 32907",
+        "subBrandId": "subbrand-wd-central",
+        "lat": 28.003,
+        "lng": -80.66,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-2509",
+        "storeNumber": 2509,
+        "name": "Bradenton",
+        "city": "Bradenton, FL",
+        "address": "6255 Cortez Rd W, Bradenton, FL 34210",
+        "subBrandId": "subbrand-wd-central",
+        "lat": 27.464,
+        "lng": -82.588,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-2545",
+        "storeNumber": 2545,
+        "name": "The Villages",
+        "city": "The Villages, FL",
+        "address": "2500 Burnsed Blvd, The Villages, FL 32163",
+        "subBrandId": "subbrand-wd-central",
+        "lat": 28.925,
+        "lng": -81.986,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-711",
+        "storeNumber": 711,
+        "name": "Spring Hill",
+        "city": "Spring Hill, FL",
+        "address": "1233 Wendy Ct, Spring Hill, FL 34607",
+        "subBrandId": "subbrand-wd-central",
+        "lat": 28.477,
+        "lng": -82.538,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-86",
+        "storeNumber": 86,
+        "name": "Tallahassee",
+        "city": "Tallahassee, FL",
+        "address": "111 S Magnolia Dr Suite 39, Tallahassee, FL 32301",
+        "subBrandId": "subbrand-wd-north",
+        "lat": 30.43,
+        "lng": -84.27,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-195",
+        "storeNumber": 195,
+        "name": "Jacksonville Beach",
+        "city": "Jacksonville, FL",
+        "address": "11380 Beach Blvd Suite 6, Jacksonville, FL 32246",
+        "subBrandId": "subbrand-wd-north",
+        "lat": 30.289,
+        "lng": -81.51,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-560",
+        "storeNumber": 560,
+        "name": "Destin",
+        "city": "Destin, FL",
+        "address": "981 US Hwy 98, Destin, FL 32541",
+        "subBrandId": "subbrand-wd-north",
+        "lat": 30.394,
+        "lng": -86.497,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-2247",
+        "storeNumber": 2247,
+        "name": "Palm Coast",
+        "city": "Palm Coast, FL",
+        "address": "1260 W Palm Coast Pkwy, Palm Coast, FL 32137",
+        "subBrandId": "subbrand-wd-north",
+        "lat": 29.551,
+        "lng": -81.245,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-2399",
+        "storeNumber": 2399,
+        "name": "Jacksonville West",
+        "city": "Jacksonville, FL",
+        "address": "4525 San Juan Ave, Jacksonville, FL 32210",
+        "subBrandId": "subbrand-wd-north",
+        "lat": 30.287,
+        "lng": -81.703,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-2437",
+        "storeNumber": 2437,
+        "name": "Ocala",
+        "city": "Ocala, FL",
+        "address": "7131 N US Hwy 441, Ocala, FL 34475",
+        "subBrandId": "subbrand-wd-north",
+        "lat": 29.225,
+        "lng": -82.133,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-2449",
+        "storeNumber": 2449,
+        "name": "Pensacola",
+        "city": "Pensacola, FL",
+        "address": "2601 N Davis Hwy, Pensacola, FL 32503",
+        "subBrandId": "subbrand-wd-north",
+        "lat": 30.443,
+        "lng": -87.22,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-2482",
+        "storeNumber": 2482,
+        "name": "Gainesville",
+        "city": "Gainesville, FL",
+        "address": "3720 NW 13th St, Gainesville, FL 32609",
+        "subBrandId": "subbrand-wd-north",
+        "lat": 29.678,
+        "lng": -82.356,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-2495",
+        "storeNumber": 2495,
+        "name": "Tallahassee N",
+        "city": "Tallahassee, FL",
+        "address": "1700 N Monroe St, Tallahassee, FL 32303",
+        "subBrandId": "subbrand-wd-north",
+        "lat": 30.456,
+        "lng": -84.274,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-436",
+        "storeNumber": 436,
+        "name": "Lynn Haven",
+        "city": "Lynn Haven, FL",
+        "address": "2101 S Hwy 77, Lynn Haven, FL 32444",
+        "subBrandId": "subbrand-wd-north",
+        "lat": 30.233,
+        "lng": -85.655,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-1671",
+        "storeNumber": 1671,
+        "name": "Lake City",
+        "city": "Lake City, FL",
+        "address": "4506 SW Heritage Oaks Cir, Lake City, FL 32055",
+        "subBrandId": "subbrand-harveys",
+        "lat": 30.17,
+        "lng": -82.66,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-1690",
+        "storeNumber": 1690,
+        "name": "Jacksonville University",
+        "city": "Jacksonville, FL",
+        "address": "5909 University Blvd W, Jacksonville, FL 32216",
+        "subBrandId": "subbrand-harveys",
+        "lat": 30.29,
+        "lng": -81.59,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-1692",
+        "storeNumber": 1692,
+        "name": "Jacksonville Moncrief",
+        "city": "Jacksonville, FL",
+        "address": "5250 Moncrief Rd W, Jacksonville, FL 32209",
+        "subBrandId": "subbrand-harveys",
+        "lat": 30.37,
+        "lng": -81.7,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-1694",
+        "storeNumber": 1694,
+        "name": "Jacksonville 48th",
+        "city": "Jacksonville, FL",
+        "address": "201 W 48th St, Jacksonville, FL 32208",
+        "subBrandId": "subbrand-harveys",
+        "lat": 30.38,
+        "lng": -81.66,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-1710",
+        "storeNumber": 1710,
+        "name": "Lakeland East",
+        "city": "Lakeland, FL",
+        "address": "2630 US Hwy 92, Lakeland, FL 33801",
+        "subBrandId": "subbrand-harveys",
+        "lat": 28.046,
+        "lng": -81.905,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-1712",
+        "storeNumber": 1712,
+        "name": "Lakeland Central",
+        "city": "Lakeland, FL",
+        "address": "1305 Ariana St W, Lakeland, FL 33803",
+        "subBrandId": "subbrand-harveys",
+        "lat": 28.03,
+        "lng": -81.97,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-1716",
+        "storeNumber": 1716,
+        "name": "Jacksonville Arlington",
+        "city": "Jacksonville, FL",
+        "address": "49 S Arlington Rd, Jacksonville, FL 32211",
+        "subBrandId": "subbrand-harveys",
+        "lat": 30.33,
+        "lng": -81.6,
+        "brandId": "brand-seg"
+      },
+      {
+        "id": "store-mdi-saubel-s-market-743",
+        "storeNumber": 743,
+        "name": "Saubel's Market #743",
+        "city": null,
+        "address": null,
+        "brandId": "brand-mdi",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431084",
+          "Advertiser Name": "MDI",
+          "ID": "33733",
+          "Name": "Saubel's Market #743",
+          "Group": "MDI",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5605",
+          "Creative IDs": "77128 77129 77130 77131",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-04-09 / 2026-04-30 : 257.4",
+          "Budget($)": "257.4",
+          "Start Date": "2026-04-09",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "evenly",
+          "Conversion Tracking": "0d6e89d7-7be9-4ce9-849d-547883239dc7",
+          "_store_number": 743
+        }
+      },
+      {
+        "id": "store-mdi-roland-s-5530",
+        "storeNumber": 5530,
+        "name": "Roland’s 5530",
+        "city": null,
+        "address": null,
+        "brandId": "brand-mdi",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431084",
+          "Advertiser Name": "MDI",
+          "ID": "33732",
+          "Name": "Roland’s 5530",
+          "Group": "MDI",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5604",
+          "Creative IDs": "77124 77125 77126 77127",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-04-09 / 2026-04-30 : 171.6",
+          "Budget($)": "171.6",
+          "Start Date": "2026-04-09",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "evenly",
+          "Conversion Tracking": "0d6e89d7-7be9-4ce9-849d-547883239dc7",
+          "_store_number": 5530
+        }
+      },
+      {
+        "id": "store-mdi-casselman-8311",
+        "storeNumber": 8311,
+        "name": "Casselman 8311",
+        "city": null,
+        "address": null,
+        "brandId": "brand-mdi",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431084",
+          "Advertiser Name": "MDI",
+          "ID": "33715",
+          "Name": "Casselman 8311",
+          "Group": "MDI",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5586",
+          "Creative IDs": "76259 76260 76261 76262",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "off",
+          "Ongoing Interval": "",
+          "Ongoing Flights": "",
+          "Budget($)": "179.4",
+          "Start Date": "2026-04-07",
+          "End Date": "2026-04-29",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "evenly",
+          "Conversion Tracking": "0d6e89d7-7be9-4ce9-849d-547883239dc7",
+          "_store_number": 8311
+        }
+      },
+      {
+        "id": "store-mdi-bradfords-neighborhood-market-2504",
+        "storeNumber": 2504,
+        "name": "Bradfords Neighborhood Market 2504",
+        "city": null,
+        "address": null,
+        "brandId": "brand-mdi",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431084",
+          "Advertiser Name": "MDI",
+          "ID": "33714",
+          "Name": "Bradfords Neighborhood Market 2504",
+          "Group": "MDI",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5585",
+          "Creative IDs": "76256 76257 76258",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-04-08 / 2026-04-30 : 269.1",
+          "Budget($)": "269.1",
+          "Start Date": "2026-04-08",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "evenly",
+          "Conversion Tracking": "0d6e89d7-7be9-4ce9-849d-547883239dc7",
+          "_store_number": 2504
+        }
+      },
+      {
+        "id": "store-mdi-j-j-foods-apts",
+        "storeNumber": null,
+        "name": "J&J Foods APTs",
+        "city": null,
+        "address": null,
+        "brandId": "brand-mdi",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431084",
+          "Advertiser Name": "MDI",
+          "ID": "33565",
+          "Name": "J&J Foods APTs",
+          "Group": "MDI",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5493",
+          "Creative IDs": "77108 77109 77110 77111",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-03-26 / 2026-03-31 : 11.99\n2026-04-01 / 2026-04-30 : 60",
+          "Budget($)": "71.99",
+          "Start Date": "2026-03-26",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "2",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "0d6e89d7-7be9-4ce9-849d-547883239dc7",
+          "_store_number": null
+        }
+      },
+      {
+        "id": "store-mdi-j-j-foods-gainesville",
+        "storeNumber": null,
+        "name": "J&J Foods GAINESVILLE",
+        "city": null,
+        "address": null,
+        "brandId": "brand-mdi",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431084",
+          "Advertiser Name": "MDI",
+          "ID": "33564",
+          "Name": "J&J Foods GAINESVILLE",
+          "Group": "MDI",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5492",
+          "Creative IDs": "77112 77113 77114 77115",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-03-26 / 2026-03-31 : 11.99\n2026-04-01 / 2026-04-30 : 60",
+          "Budget($)": "71.99",
+          "Start Date": "2026-03-26",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "2",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "0d6e89d7-7be9-4ce9-849d-547883239dc7",
+          "_store_number": null
+        }
+      },
+      {
+        "id": "store-mdi-j-j-foods-publix",
+        "storeNumber": null,
+        "name": "J&J Foods PUBLIX",
+        "city": null,
+        "address": null,
+        "brandId": "brand-mdi",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431084",
+          "Advertiser Name": "MDI",
+          "ID": "33563",
+          "Name": "J&J Foods PUBLIX",
+          "Group": "MDI",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5491",
+          "Creative IDs": "77116 77117 77118 77119",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-03-26 / 2026-03-31 : 11.99\n2026-04-01 / 2026-04-30 : 60",
+          "Budget($)": "71.99",
+          "Start Date": "2026-03-26",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "2",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "0d6e89d7-7be9-4ce9-849d-547883239dc7",
+          "_store_number": null
+        }
+      },
+      {
+        "id": "store-mdi-j-j-foods-oakland",
+        "storeNumber": null,
+        "name": "J&J Foods OAKLAND",
+        "city": null,
+        "address": null,
+        "brandId": "brand-mdi",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431084",
+          "Advertiser Name": "MDI",
+          "ID": "33562",
+          "Name": "J&J Foods OAKLAND",
+          "Group": "MDI",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5490",
+          "Creative IDs": "77120 77121 77122 77123",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-03-26 / 2026-03-31 : 11.99\n2026-04-01 / 2026-04-30 : 60",
+          "Budget($)": "71.99",
+          "Start Date": "2026-03-26",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "2",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "0d6e89d7-7be9-4ce9-849d-547883239dc7",
+          "_store_number": null
+        }
+      },
+      {
+        "id": "store-lunds-lunds-byerlys-woodbury",
+        "storeNumber": null,
+        "name": "Lunds & Byerlys Woodbury",
+        "city": null,
+        "address": null,
+        "brandId": "brand-lunds",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431011",
+          "Advertiser Name": "Lunds & Byerlys",
+          "ID": "32293",
+          "Name": "Lunds & Byerlys Woodbury",
+          "Group": "",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "4604",
+          "Creative IDs": "77081 77082 77083",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-02-01 / 2026-02-28 : 252\n2026-03-01 / 2026-03-31 : 127.20\n2026-04-01 / 2026-04-30 : 270",
+          "Budget($)": "649.2",
+          "Start Date": "2026-02-01",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "4",
+          "Daily cap($)": "11.45",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "be6d5cba-9b31-4e78-b78b-a7d8ed7694c5",
+          "_store_number": null
+        }
+      },
+      {
+        "id": "store-lunds-lunds-byerlys-white-bear-lake",
+        "storeNumber": null,
+        "name": "Lunds & Byerlys White Bear Lake",
+        "city": null,
+        "address": null,
+        "brandId": "brand-lunds",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431011",
+          "Advertiser Name": "Lunds & Byerlys",
+          "ID": "32292",
+          "Name": "Lunds & Byerlys White Bear Lake",
+          "Group": "",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "4603",
+          "Creative IDs": "77078 77079 77080",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-02-01 / 2026-02-28 : 252\n2026-03-01 / 2026-03-31 : 127.20\n2026-04-01 / 2026-04-30 : 270",
+          "Budget($)": "649.2",
+          "Start Date": "2026-02-01",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "4",
+          "Daily cap($)": "11.45",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "be6d5cba-9b31-4e78-b78b-a7d8ed7694c5",
+          "_store_number": null
+        }
+      },
+      {
+        "id": "store-lunds-lunds-byerlys-wayzata",
+        "storeNumber": null,
+        "name": "Lunds & Byerlys Wayzata",
+        "city": null,
+        "address": null,
+        "brandId": "brand-lunds",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431011",
+          "Advertiser Name": "Lunds & Byerlys",
+          "ID": "32291",
+          "Name": "Lunds & Byerlys Wayzata",
+          "Group": "",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "4612",
+          "Creative IDs": "77075 77076 77077",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-02-01 / 2026-02-28 : 252\n2026-03-01 / 2026-03-31 : 127.20\n2026-04-01 / 2026-04-30 : 270",
+          "Budget($)": "649.2",
+          "Start Date": "2026-02-01",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "4",
+          "Daily cap($)": "11.45",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "be6d5cba-9b31-4e78-b78b-a7d8ed7694c5",
+          "_store_number": null
+        }
+      },
+      {
+        "id": "store-lunds-lunds-byerlys-uptown-minneapolis",
+        "storeNumber": null,
+        "name": "Lunds & Byerlys Uptown Minneapolis",
+        "city": null,
+        "address": null,
+        "brandId": "brand-lunds",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431011",
+          "Advertiser Name": "Lunds & Byerlys",
+          "ID": "32290",
+          "Name": "Lunds & Byerlys Uptown Minneapolis",
+          "Group": "",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "4611",
+          "Creative IDs": "77072 77073 77074",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-02-01 / 2026-02-28 : 252\n2026-03-01 / 2026-03-31 : 127.20\n2026-04-01 / 2026-04-30 : 270",
+          "Budget($)": "649.2",
+          "Start Date": "2026-02-01",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "4",
+          "Daily cap($)": "11.45",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "be6d5cba-9b31-4e78-b78b-a7d8ed7694c5",
+          "_store_number": null
+        }
+      },
+      {
+        "id": "store-lunds-lunds-byerlys-st-louis-park",
+        "storeNumber": null,
+        "name": "Lunds & Byerlys St. Louis Park",
+        "city": null,
+        "address": null,
+        "brandId": "brand-lunds",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431011",
+          "Advertiser Name": "Lunds & Byerlys",
+          "ID": "32289",
+          "Name": "Lunds & Byerlys St. Louis Park",
+          "Group": "",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "4610",
+          "Creative IDs": "77069 77070 77071",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-02-01 / 2026-02-28 : 252\n2026-03-01 / 2026-03-31 : 127.20\n2026-04-01 / 2026-04-30 : 270",
+          "Budget($)": "649.2",
+          "Start Date": "2026-02-01",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "4",
+          "Daily cap($)": "11.45",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "be6d5cba-9b31-4e78-b78b-a7d8ed7694c5",
+          "_store_number": null
+        }
+      },
+      {
+        "id": "store-lunds-lunds-byerlys-st-cloud",
+        "storeNumber": null,
+        "name": "Lunds & Byerlys St. Cloud",
+        "city": null,
+        "address": null,
+        "brandId": "brand-lunds",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431011",
+          "Advertiser Name": "Lunds & Byerlys",
+          "ID": "32288",
+          "Name": "Lunds & Byerlys St. Cloud",
+          "Group": "",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "4609",
+          "Creative IDs": "77066 77067 77068",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-02-01 / 2026-02-28 : 252\n2026-03-01 / 2026-03-31 : 127.20\n2026-04-01 / 2026-04-30 : 270",
+          "Budget($)": "649.2",
+          "Start Date": "2026-02-01",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "4",
+          "Daily cap($)": "11.45",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "be6d5cba-9b31-4e78-b78b-a7d8ed7694c5",
+          "_store_number": null
+        }
+      },
+      {
+        "id": "store-lunds-lunds-byerlys-roseville",
+        "storeNumber": null,
+        "name": "Lunds & Byerlys Roseville",
+        "city": null,
+        "address": null,
+        "brandId": "brand-lunds",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431011",
+          "Advertiser Name": "Lunds & Byerlys",
+          "ID": "32287",
+          "Name": "Lunds & Byerlys Roseville",
+          "Group": "",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "4608",
+          "Creative IDs": "77063 77064 77065",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-02-01 / 2026-02-28 : 252\n2026-03-01 / 2026-03-31 : 127.20\n2026-04-01 / 2026-04-30 : 270",
+          "Budget($)": "649.2",
+          "Start Date": "2026-02-01",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "4",
+          "Daily cap($)": "11.45",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "be6d5cba-9b31-4e78-b78b-a7d8ed7694c5",
+          "_store_number": null
+        }
+      },
+      {
+        "id": "store-lunds-lunds-byerlys-ridgedale",
+        "storeNumber": null,
+        "name": "Lunds & Byerlys Ridgedale",
+        "city": null,
+        "address": null,
+        "brandId": "brand-lunds",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431011",
+          "Advertiser Name": "Lunds & Byerlys",
+          "ID": "32286",
+          "Name": "Lunds & Byerlys Ridgedale",
+          "Group": "",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "4607",
+          "Creative IDs": "77060 77061 77062",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-02-01 / 2026-02-28 : 252\n2026-03-01 / 2026-03-31 : 127.20\n2026-04-01 / 2026-04-30 : 270",
+          "Budget($)": "649.2",
+          "Start Date": "2026-02-01",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "4",
+          "Daily cap($)": "11.45",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "be6d5cba-9b31-4e78-b78b-a7d8ed7694c5",
+          "_store_number": null
+        }
+      },
+      {
+        "id": "store-houchens-price-less-iga-65",
+        "storeNumber": 65,
+        "name": "Price Less IGA 65",
+        "city": null,
+        "address": null,
+        "brandId": "brand-houchens",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431071",
+          "Advertiser Name": "Houchen's Food Group",
+          "ID": "33721",
+          "Name": "Price Less IGA 65",
+          "Group": "Houchen's Food Group",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5592",
+          "Creative IDs": "76217 76218 76219",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-04-08 / 2026-05-05 : 179.4",
+          "Budget($)": "179.4",
+          "Start Date": "2026-04-08",
+          "End Date": "2026-05-05",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "evenly",
+          "Conversion Tracking": "58bd177e-fd97-478f-88c6-c89d4b4728d0",
+          "_store_number": 65
+        }
+      },
+      {
+        "id": "store-houchens-price-less-iga-69",
+        "storeNumber": 69,
+        "name": "Price Less IGA 69",
+        "city": null,
+        "address": null,
+        "brandId": "brand-houchens",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431071",
+          "Advertiser Name": "Houchen's Food Group",
+          "ID": "33720",
+          "Name": "Price Less IGA 69",
+          "Group": "Houchen's Food Group",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5591",
+          "Creative IDs": "76214 76215 76216",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-04-08 / 2026-05-05 : 134.55",
+          "Budget($)": "134.55",
+          "Start Date": "2026-04-08",
+          "End Date": "2026-05-05",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "evenly",
+          "Conversion Tracking": "58bd177e-fd97-478f-88c6-c89d4b4728d0",
+          "_store_number": 69
+        }
+      },
+      {
+        "id": "store-houchens-price-less-iga-68",
+        "storeNumber": 68,
+        "name": "Price Less IGA 68",
+        "city": null,
+        "address": null,
+        "brandId": "brand-houchens",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431071",
+          "Advertiser Name": "Houchen's Food Group",
+          "ID": "33719",
+          "Name": "Price Less IGA 68",
+          "Group": "Houchen's Food Group",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5590",
+          "Creative IDs": "76211 76212 76213",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-04-08 / 2026-05-05 : 134.55",
+          "Budget($)": "134.55",
+          "Start Date": "2026-04-08",
+          "End Date": "2026-05-05",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "evenly",
+          "Conversion Tracking": "58bd177e-fd97-478f-88c6-c89d4b4728d0",
+          "_store_number": 68
+        }
+      },
+      {
+        "id": "store-houchens-price-less-iga-61",
+        "storeNumber": 61,
+        "name": "Price Less IGA 61",
+        "city": null,
+        "address": null,
+        "brandId": "brand-houchens",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431071",
+          "Advertiser Name": "Houchen's Food Group",
+          "ID": "33718",
+          "Name": "Price Less IGA 61",
+          "Group": "Houchen's Food Group",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5589",
+          "Creative IDs": "76208 76209 76210",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-04-08 / 2026-05-05 : 89.7",
+          "Budget($)": "89.7",
+          "Start Date": "2026-04-08",
+          "End Date": "2026-05-05",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "evenly",
+          "Conversion Tracking": "58bd177e-fd97-478f-88c6-c89d4b4728d0",
+          "_store_number": 61
+        }
+      },
+      {
+        "id": "store-houchens-price-less-iga-66",
+        "storeNumber": 66,
+        "name": "Price Less IGA 66",
+        "city": null,
+        "address": null,
+        "brandId": "brand-houchens",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431071",
+          "Advertiser Name": "Houchen's Food Group",
+          "ID": "33717",
+          "Name": "Price Less IGA 66",
+          "Group": "Houchen's Food Group",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5588",
+          "Creative IDs": "76205 76206 76207",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-04-08 / 2026-05-05 : 179.4",
+          "Budget($)": "179.4",
+          "Start Date": "2026-04-08",
+          "End Date": "2026-05-05",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "evenly",
+          "Conversion Tracking": "58bd177e-fd97-478f-88c6-c89d4b4728d0",
+          "_store_number": 66
+        }
+      },
+      {
+        "id": "store-houchens-price-less-iga-18",
+        "storeNumber": 18,
+        "name": "Price Less IGA 18",
+        "city": null,
+        "address": null,
+        "brandId": "brand-houchens",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431071",
+          "Advertiser Name": "Houchen's Food Group",
+          "ID": "33716",
+          "Name": "Price Less IGA 18",
+          "Group": "Houchen's Food Group",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5587",
+          "Creative IDs": "76202 76203 76204",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-04-08 / 2026-05-05 : 179.4",
+          "Budget($)": "179.4",
+          "Start Date": "2026-04-08",
+          "End Date": "2026-05-05",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "evenly",
+          "Conversion Tracking": "58bd177e-fd97-478f-88c6-c89d4b4728d0",
+          "_store_number": 18
+        }
+      },
+      {
+        "id": "store-houchens-simpson-s-supermarket-1242",
+        "storeNumber": 1242,
+        "name": "Simpson's Supermarket 1242",
+        "city": null,
+        "address": null,
+        "brandId": "brand-houchens",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431071",
+          "Advertiser Name": "Houchen's Food Group",
+          "ID": "33346",
+          "Name": "Simpson's Supermarket 1242",
+          "Group": "Houchen's Food Group",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5207",
+          "Creative IDs": "76196 76197 76198",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-03-01 / 2026-03-31 : 139.49\n2026-04-01 / 2026-04-30 : 134.99",
+          "Budget($)": "274.48",
+          "Start Date": "2026-03-01",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "58bd177e-fd97-478f-88c6-c89d4b4728d0",
+          "_store_number": 1242
+        }
+      },
+      {
+        "id": "store-houchens-price-less-iga-1110",
+        "storeNumber": 1110,
+        "name": "Price Less IGA 1110",
+        "city": null,
+        "address": null,
+        "brandId": "brand-houchens",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431071",
+          "Advertiser Name": "Houchen's Food Group",
+          "ID": "33345",
+          "Name": "Price Less IGA 1110",
+          "Group": "Houchen's Food Group",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5206",
+          "Creative IDs": "76193 76194 76195",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-03-01 / 2026-03-31 : 58.13\n2026-04-01 / 2026-04-30 : 56.25",
+          "Budget($)": "114.38",
+          "Start Date": "2026-03-01",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "58bd177e-fd97-478f-88c6-c89d4b4728d0",
+          "_store_number": 1110
+        }
+      },
+      {
+        "id": "store-gelsons-conquesting-campaing-laguna-beach-dana-point",
+        "storeNumber": null,
+        "name": "Conquesting Campaing Laguna Beach Dana Point",
+        "city": null,
+        "address": null,
+        "brandId": "brand-gelsons",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431069",
+          "Advertiser Name": "Gelson's",
+          "ID": "33469",
+          "Name": "Conquesting Campaing Laguna Beach Dana Point",
+          "Group": "Gelson's",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5423",
+          "Creative IDs": "76051 76052 76053 76054",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-03-11 / 2026-03-31 : 363.58\n2026-04-01 / 2026-04-30 : 991.6",
+          "Budget($)": "1355.18",
+          "Start Date": "2026-03-11",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "evenly",
+          "Conversion Tracking": "11553f53-00c9-465e-832a-1bb2919153f9",
+          "_store_number": null
+        }
+      },
+      {
+        "id": "store-gelsons-gelson-s-westlake-8",
+        "storeNumber": 8,
+        "name": "Gelson's Westlake 8",
+        "city": null,
+        "address": null,
+        "brandId": "brand-gelsons",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431069",
+          "Advertiser Name": "Gelson's",
+          "ID": "33202",
+          "Name": "Gelson's Westlake 8",
+          "Group": "Gelson's",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5248",
+          "Creative IDs": "75987 75988 75989 75990",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-03-01 / 2026-03-31 : 120.90\n2026-04-01 / 2026-04-30 : 117",
+          "Budget($)": "237.9",
+          "Start Date": "2026-03-01",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "11553f53-00c9-465e-832a-1bb2919153f9",
+          "_store_number": 8
+        }
+      },
+      {
+        "id": "store-gelsons-gelson-s-west-la-at-west-edge-34",
+        "storeNumber": 34,
+        "name": "Gelson's West LA at West Edge 34",
+        "city": null,
+        "address": null,
+        "brandId": "brand-gelsons",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431069",
+          "Advertiser Name": "Gelson's",
+          "ID": "33201",
+          "Name": "Gelson's West LA at West Edge 34",
+          "Group": "Gelson's",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5246",
+          "Creative IDs": "76019 76020 76021 76022",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-03-01 / 2026-03-31 : 1024.64\n2026-04-01 / 2026-04-30 : 991.59",
+          "Budget($)": "2016.23",
+          "Start Date": "2026-03-01",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "11553f53-00c9-465e-832a-1bb2919153f9",
+          "_store_number": 34
+        }
+      },
+      {
+        "id": "store-gelsons-gelson-s-west-hollywood-108",
+        "storeNumber": 108,
+        "name": "Gelson's West Hollywood 108",
+        "city": null,
+        "address": null,
+        "brandId": "brand-gelsons",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431069",
+          "Advertiser Name": "Gelson's",
+          "ID": "33200",
+          "Name": "Gelson's West Hollywood 108",
+          "Group": "Gelson's",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5245",
+          "Creative IDs": "76015 76016 76017 76018",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-03-01 / 2026-03-31 : 120.90\n2026-04-01 / 2026-04-30 : 117",
+          "Budget($)": "237.9",
+          "Start Date": "2026-03-01",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "11553f53-00c9-465e-832a-1bb2919153f9",
+          "_store_number": 108
+        }
+      },
+      {
+        "id": "store-gelsons-gelson-s-valley-village-north-hollywood-3",
+        "storeNumber": 3,
+        "name": "Gelson's Valley Village/North Hollywood 3",
+        "city": null,
+        "address": null,
+        "brandId": "brand-gelsons",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431069",
+          "Advertiser Name": "Gelson's",
+          "ID": "33199",
+          "Name": "Gelson's Valley Village/North Hollywood 3",
+          "Group": "Gelson's",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5244",
+          "Creative IDs": "75959 75960 75961 75962",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-03-01 / 2026-03-31 : 120.90\n2026-04-01 / 2026-04-30 : 117",
+          "Budget($)": "237.9",
+          "Start Date": "2026-03-01",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "11553f53-00c9-465e-832a-1bb2919153f9",
+          "_store_number": 3
+        }
+      },
+      {
+        "id": "store-gelsons-gelson-s-toluca-lake-35",
+        "storeNumber": 35,
+        "name": "Gelson's Toluca Lake 35",
+        "city": null,
+        "address": null,
+        "brandId": "brand-gelsons",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431069",
+          "Advertiser Name": "Gelson's",
+          "ID": "33198",
+          "Name": "Gelson's Toluca Lake 35",
+          "Group": "Gelson's",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5243",
+          "Creative IDs": "75947 75948 75949 75950",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-03-01 / 2026-03-31 : 423.15\n2026-04-01 / 2026-04-30 : 409.5",
+          "Budget($)": "832.65",
+          "Start Date": "2026-03-01",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "11553f53-00c9-465e-832a-1bb2919153f9",
+          "_store_number": 35
+        }
+      },
+      {
+        "id": "store-gelsons-gelson-s-thousand-oaks-32",
+        "storeNumber": 32,
+        "name": "Gelson's Thousand Oaks 32",
+        "city": null,
+        "address": null,
+        "brandId": "brand-gelsons",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431069",
+          "Advertiser Name": "Gelson's",
+          "ID": "33197",
+          "Name": "Gelson's Thousand Oaks 32",
+          "Group": "Gelson's",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5242",
+          "Creative IDs": "76027 76028 76029 76030",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-03-01 / 2026-03-31 : 1024.64\n2026-04-01 / 2026-04-30 : 991.59",
+          "Budget($)": "2016.23",
+          "Start Date": "2026-03-01",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "11553f53-00c9-465e-832a-1bb2919153f9",
+          "_store_number": 32
+        }
+      },
+      {
+        "id": "store-gelsons-gelson-s-tarzana-5",
+        "storeNumber": 5,
+        "name": "Gelson's Tarzana 5",
+        "city": null,
+        "address": null,
+        "brandId": "brand-gelsons",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431069",
+          "Advertiser Name": "Gelson's",
+          "ID": "33196",
+          "Name": "Gelson's Tarzana 5",
+          "Group": "Gelson's",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5241",
+          "Creative IDs": "75971 75972 75973 75974",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-03-01 / 2026-03-31 : 120.90\n2026-04-01 / 2026-04-30 : 117",
+          "Budget($)": "237.9",
+          "Start Date": "2026-03-01",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "11553f53-00c9-465e-832a-1bb2919153f9",
+          "_store_number": 5
+        }
+      },
+      {
+        "id": "store-unfi-pioneer-market-mariposa-242290",
+        "storeNumber": 242290,
+        "name": "Pioneer Market Mariposa 242290",
+        "city": null,
+        "address": null,
+        "brandId": "brand-unfi",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431053",
+          "Advertiser Name": "UNFI",
+          "ID": "33815",
+          "Name": "Pioneer Market Mariposa 242290",
+          "Group": "UNFI East - Pioneer Market Mariposa",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5672",
+          "Creative IDs": "75800 75801",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-04-22 / 2026-04-30 : 105.3",
+          "Budget($)": "105.3",
+          "Start Date": "2026-04-22",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "evenly",
+          "Conversion Tracking": "300934c5-e858-4406-a8df-9c992acc9996",
+          "_store_number": 242290
+        }
+      },
+      {
+        "id": "store-unfi-pioneer-market-waterford-241424",
+        "storeNumber": 241424,
+        "name": "Pioneer Market Waterford 241424",
+        "city": null,
+        "address": null,
+        "brandId": "brand-unfi",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431053",
+          "Advertiser Name": "UNFI",
+          "ID": "33814",
+          "Name": "Pioneer Market Waterford 241424",
+          "Group": "UNFI East - Pioneer Market Waterford",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5671",
+          "Creative IDs": "75800 75801",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-04-22 / 2026-04-30 : 105.3",
+          "Budget($)": "105.3",
+          "Start Date": "2026-04-22",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "evenly",
+          "Conversion Tracking": "300934c5-e858-4406-a8df-9c992acc9996",
+          "_store_number": 241424
+        }
+      },
+      {
+        "id": "store-unfi-paradise-family-grocery-440318",
+        "storeNumber": 440318,
+        "name": "Paradise Family Grocery 440318",
+        "city": null,
+        "address": null,
+        "brandId": "brand-unfi",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431053",
+          "Advertiser Name": "UNFI",
+          "ID": "33809",
+          "Name": "Paradise Family Grocery 440318",
+          "Group": "UNFI East - Paradise Family Grocery",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5663",
+          "Creative IDs": "75623 75624",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-04-20 / 2026-04-30 : 128.70",
+          "Budget($)": "128.7",
+          "Start Date": "2026-04-20",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "evenly",
+          "Conversion Tracking": "300934c5-e858-4406-a8df-9c992acc9996",
+          "_store_number": 440318
+        }
+      },
+      {
+        "id": "store-unfi-pokerville-market-wineries-247298",
+        "storeNumber": 247298,
+        "name": "Pokerville Market Wineries 247298",
+        "city": null,
+        "address": null,
+        "brandId": "brand-unfi",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431053",
+          "Advertiser Name": "UNFI",
+          "ID": "33638",
+          "Name": "Pokerville Market Wineries 247298",
+          "Group": "UNFI West - Pokeville Market",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5382",
+          "Creative IDs": "76592 76593",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-04-03 / 2026-04-30 : 163.80",
+          "Budget($)": "163.8",
+          "Start Date": "2026-04-03",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "8",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "evenly",
+          "Conversion Tracking": "dbd742a1-86d7-4437-97cd-aafcdc98bb03",
+          "_store_number": 247298
+        }
+      },
+      {
+        "id": "store-unfi-pokerville-market-grocery-247298",
+        "storeNumber": 247298,
+        "name": "Pokerville Market Grocery 247298",
+        "city": null,
+        "address": null,
+        "brandId": "brand-unfi",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431053",
+          "Advertiser Name": "UNFI",
+          "ID": "33637",
+          "Name": "Pokerville Market Grocery 247298",
+          "Group": "UNFI West - Pokeville Market",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5549",
+          "Creative IDs": "76590 76591",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-04-03 / 2026-04-30 : 163.80",
+          "Budget($)": "163.8",
+          "Start Date": "2026-04-03",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "8",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "evenly",
+          "Conversion Tracking": "dbd742a1-86d7-4437-97cd-aafcdc98bb03",
+          "_store_number": 247298
+        }
+      },
+      {
+        "id": "store-unfi-nielsen-brothers-carmel-by-the-sea-hotels",
+        "storeNumber": null,
+        "name": "Nielsen Brothers Carmel-by-the-Sea Hotels",
+        "city": null,
+        "address": null,
+        "brandId": "brand-unfi",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431053",
+          "Advertiser Name": "UNFI",
+          "ID": "33572",
+          "Name": "Nielsen Brothers Carmel-by-the-Sea Hotels",
+          "Group": "UNFI West - Nielsen Brothers",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5501",
+          "Creative IDs": "76586 76587",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-03-26 / 2026-03-31 : 45\n2026-04-01 / 2026-04-30 : 210",
+          "Budget($)": "255",
+          "Start Date": "2026-03-26",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "8",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "300934c5-e858-4406-a8df-9c992acc9996",
+          "_store_number": null
+        }
+      },
+      {
+        "id": "store-unfi-radermacher-s-fresh-market-le-sueur",
+        "storeNumber": null,
+        "name": "Radermacher's Fresh Market Le Sueur",
+        "city": null,
+        "address": null,
+        "brandId": "brand-unfi",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431053",
+          "Advertiser Name": "UNFI",
+          "ID": "33510",
+          "Name": "Radermacher's Fresh Market Le Sueur",
+          "Group": "UNFI Central - Radermacher's",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5449",
+          "Creative IDs": "77710 77711 77712",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-03-16 / 2026-03-31 : 198.90\n2026-04-01 / 2026-04-30 : 351",
+          "Budget($)": "549.9",
+          "Start Date": "2026-03-16",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "evenly",
+          "Conversion Tracking": "300934c5-e858-4406-a8df-9c992acc9996",
+          "_store_number": null
+        }
+      },
+      {
+        "id": "store-unfi-radermacher-s-fresh-market-le-center",
+        "storeNumber": null,
+        "name": "Radermacher's Fresh Market Le Center",
+        "city": null,
+        "address": null,
+        "brandId": "brand-unfi",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431053",
+          "Advertiser Name": "UNFI",
+          "ID": "33509",
+          "Name": "Radermacher's Fresh Market Le Center",
+          "Group": "UNFI Central - Radermacher's",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5448",
+          "Creative IDs": "77707 77708 77709",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-03-16 / 2026-03-31 : 198.90\n2026-04-01 / 2026-04-30 : 351",
+          "Budget($)": "549.9",
+          "Start Date": "2026-03-16",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "evenly",
+          "Conversion Tracking": "300934c5-e858-4406-a8df-9c992acc9996",
+          "_store_number": null
+        }
+      },
+      {
+        "id": "store-agne-sully-s-superette-10805",
+        "storeNumber": 10805,
+        "name": "Sully's Superette 10805",
+        "city": null,
+        "address": null,
+        "brandId": "brand-agne",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431064",
+          "Advertiser Name": "Agne",
+          "ID": "33107",
+          "Name": "Sully's Superette 10805",
+          "Group": "Associated Grocers New England - Corporate Stores",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5144",
+          "Creative IDs": "77470 77471",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-03-01 / 2026-03-31 : 181.35\n2026-04-01 / 2026-04-30 : 351.001",
+          "Budget($)": "532.35",
+          "Start Date": "2026-03-01",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "71ac34d3-23e5-43f5-8bf3-464aaa8c558a",
+          "_store_number": 10805
+        }
+      },
+      {
+        "id": "store-agne-vista-foods-10803",
+        "storeNumber": 10803,
+        "name": "Vista Foods 10803",
+        "city": null,
+        "address": null,
+        "brandId": "brand-agne",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431064",
+          "Advertiser Name": "Agne",
+          "ID": "33106",
+          "Name": "Vista Foods 10803",
+          "Group": "Associated Grocers New England - Corporate Stores",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5142",
+          "Creative IDs": "77476 77477",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-03-01 / 2026-03-31 : 181.35\n2026-04-01 / 2026-04-30 : 351.001",
+          "Budget($)": "532.35",
+          "Start Date": "2026-03-01",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "71ac34d3-23e5-43f5-8bf3-464aaa8c558a",
+          "_store_number": 10803
+        }
+      },
+      {
+        "id": "store-agne-sully-s-superette-10809",
+        "storeNumber": 10809,
+        "name": "Sully's Superette 10809",
+        "city": null,
+        "address": null,
+        "brandId": "brand-agne",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431064",
+          "Advertiser Name": "Agne",
+          "ID": "33105",
+          "Name": "Sully's Superette 10809",
+          "Group": "Associated Grocers New England - Corporate Stores",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5141",
+          "Creative IDs": "77468 77469",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-03-01 / 2026-03-31 : 181.35\n2026-04-01 / 2026-04-30 : 351.001",
+          "Budget($)": "532.35",
+          "Start Date": "2026-03-01",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "71ac34d3-23e5-43f5-8bf3-464aaa8c558a",
+          "_store_number": 10809
+        }
+      },
+      {
+        "id": "store-agne-berlin-marketplace-10807",
+        "storeNumber": 10807,
+        "name": "Berlin Marketplace 10807",
+        "city": null,
+        "address": null,
+        "brandId": "brand-agne",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431064",
+          "Advertiser Name": "Agne",
+          "ID": "33104",
+          "Name": "Berlin Marketplace 10807",
+          "Group": "Associated Grocers New England - Corporate Stores",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5139",
+          "Creative IDs": "77450 77451",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-03-01 / 2026-03-31 : 181.35\n2026-04-01 / 2026-04-30 : 292.502",
+          "Budget($)": "473.85",
+          "Start Date": "2026-03-01",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "71ac34d3-23e5-43f5-8bf3-464aaa8c558a",
+          "_store_number": 10807
+        }
+      },
+      {
+        "id": "store-agne-harvest-market-10808",
+        "storeNumber": 10808,
+        "name": "Harvest Market 10808",
+        "city": null,
+        "address": null,
+        "brandId": "brand-agne",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431064",
+          "Advertiser Name": "Agne",
+          "ID": "33103",
+          "Name": "Harvest Market 10808",
+          "Group": "Associated Grocers New England - Corporate Stores",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5137",
+          "Creative IDs": "77454 77455",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-03-01 / 2026-03-31 : 181.35\n2026-04-01 / 2026-04-30 : 234.003",
+          "Budget($)": "415.35",
+          "Start Date": "2026-03-01",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "71ac34d3-23e5-43f5-8bf3-464aaa8c558a",
+          "_store_number": 10808
+        }
+      },
+      {
+        "id": "store-agne-newport-village-market-10801",
+        "storeNumber": 10801,
+        "name": "Newport Village Market 10801",
+        "city": null,
+        "address": null,
+        "brandId": "brand-agne",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431064",
+          "Advertiser Name": "Agne",
+          "ID": "33102",
+          "Name": "Newport Village Market 10801",
+          "Group": "Associated Grocers New England - Corporate Stores",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5135",
+          "Creative IDs": "77462 77463",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-03-01 / 2026-03-31 : 181.35\n2026-04-01 / 2026-04-30 : 351.001",
+          "Budget($)": "532.35",
+          "Start Date": "2026-03-01",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "71ac34d3-23e5-43f5-8bf3-464aaa8c558a",
+          "_store_number": 10801
+        }
+      },
+      {
+        "id": "store-agne-woodstock-village-market-10827",
+        "storeNumber": 10827,
+        "name": "Woodstock Village Market 10827",
+        "city": null,
+        "address": null,
+        "brandId": "brand-agne",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431064",
+          "Advertiser Name": "Agne",
+          "ID": "33101",
+          "Name": "Woodstock Village Market 10827",
+          "Group": "Associated Grocers New England - Corporate Stores",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5131",
+          "Creative IDs": "77474 77475",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-03-01 / 2026-03-31 : 181.35\n2026-04-01 / 2026-04-30 : 292.502",
+          "Budget($)": "473.85",
+          "Start Date": "2026-03-01",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "71ac34d3-23e5-43f5-8bf3-464aaa8c558a",
+          "_store_number": 10827
+        }
+      },
+      {
+        "id": "store-agne-londonderry-village-10820",
+        "storeNumber": 10820,
+        "name": "Londonderry Village 10820",
+        "city": null,
+        "address": null,
+        "brandId": "brand-agne",
+        "subBrandId": null,
+        "lat": null,
+        "lng": null,
+        "pulseCampaign": {
+          "Agency ID": "297",
+          "Advertiser ID": "431064",
+          "Advertiser Name": "Agne",
+          "ID": "33100",
+          "Name": "Londonderry Village 10820",
+          "Group": "Associated Grocers New England - Corporate Stores",
+          "Channel": "display",
+          "On/Off": "on",
+          "Status": "Live",
+          "Business ID/Page URL": "",
+          "Audience ID": "5129",
+          "Creative IDs": "77460 77461",
+          "KPI": "awareness",
+          "KPI metric": "ctr",
+          "KPI value": "0.6",
+          "Is Ongoing": "on",
+          "Ongoing Interval": "flights",
+          "Ongoing Flights": "2026-03-01 / 2026-03-31 : 181.35\n2026-04-01 / 2026-04-30 : 292.502",
+          "Budget($)": "473.85",
+          "Start Date": "2026-03-01",
+          "End Date": "2026-04-30",
+          "Max Bid($)": "3.5",
+          "Daily cap($)": "",
+          "Frequency amount": "4",
+          "Frequency interval": "hour",
+          "Pacing": "even",
+          "Conversion Tracking": "71ac34d3-23e5-43f5-8bf3-464aaa8c558a",
+          "_store_number": 10820
+        }
+      }
+    ]
+  },
+  "competitorStores": [
+    {
+      "id": "comp-319-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Homestead",
+      "city": "Homestead, FL",
+      "address": "3837 University Dr, Homestead, FL 36014",
+      "lat": 25.47224,
+      "lng": -80.45755,
+      "threatens": [
+        "store-319"
+      ],
+      "wk2_share": 21.2
+    },
+    {
+      "id": "comp-319-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Homestead",
+      "city": "Homestead, FL",
+      "address": "9581 University Dr, Homestead, FL 30472",
+      "lat": 25.48672,
+      "lng": -80.48914,
+      "threatens": [
+        "store-319"
+      ],
+      "wk2_share": 21.4
+    },
+    {
+      "id": "comp-319-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Homestead",
+      "city": "Homestead, FL",
+      "address": "5079 Cypress Ave, Homestead, FL 33593",
+      "lat": 25.47218,
+      "lng": -80.46637,
+      "threatens": [
+        "store-319"
+      ],
+      "wk2_share": 8.8
+    },
+    {
+      "id": "comp-319-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Homestead",
+      "city": "Homestead, FL",
+      "address": "7508 Pine Ridge Rd, Homestead, FL 34141",
+      "lat": 25.50173,
+      "lng": -80.42687,
+      "threatens": [
+        "store-319"
+      ],
+      "wk2_share": 9.1
+    },
+    {
+      "id": "comp-319-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Homestead",
+      "city": "Homestead, FL",
+      "address": "954 Town Center Blvd, Homestead, FL 30656",
+      "lat": 25.41963,
+      "lng": -80.40412,
+      "threatens": [
+        "store-319"
+      ],
+      "wk2_share": 13.5
+    },
+    {
+      "id": "comp-336-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Hollywood",
+      "city": "Hollywood, FL",
+      "address": "8776 Main St, Hollywood, FL 36696",
+      "lat": 25.97308,
+      "lng": -80.18709,
+      "threatens": [
+        "store-336"
+      ],
+      "wk2_share": 25.3
+    },
+    {
+      "id": "comp-336-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Hollywood",
+      "city": "Hollywood, FL",
+      "address": "7402 Town Center Blvd, Hollywood, FL 32055",
+      "lat": 26.01501,
+      "lng": -80.12952,
+      "threatens": [
+        "store-336"
+      ],
+      "wk2_share": 15.6
+    },
+    {
+      "id": "comp-336-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Hollywood",
+      "city": "Hollywood, FL",
+      "address": "6730 Gulf Blvd, Hollywood, FL 35244",
+      "lat": 26.07802,
+      "lng": -80.1865,
+      "threatens": [
+        "store-336"
+      ],
+      "wk2_share": 14.3
+    },
+    {
+      "id": "comp-336-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Hollywood",
+      "city": "Hollywood, FL",
+      "address": "5663 Sunrise Way, Hollywood, FL 37444",
+      "lat": 26.03913,
+      "lng": -80.15885,
+      "threatens": [
+        "store-336"
+      ],
+      "wk2_share": 10.3
+    },
+    {
+      "id": "comp-336-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Hollywood",
+      "city": "Hollywood, FL",
+      "address": "4447 Sunrise Way, Hollywood, FL 31773",
+      "lat": 26.00753,
+      "lng": -80.15936,
+      "threatens": [
+        "store-336"
+      ],
+      "wk2_share": 9.5
+    },
+    {
+      "id": "comp-381-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Belle Glade",
+      "city": "Belle Glade, FL",
+      "address": "5882 Town Center Blvd, Belle Glade, FL 38653",
+      "lat": 26.70262,
+      "lng": -80.66288,
+      "threatens": [
+        "store-381"
+      ],
+      "wk2_share": 23
+    },
+    {
+      "id": "comp-381-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Belle Glade",
+      "city": "Belle Glade, FL",
+      "address": "8800 Pine Ridge Rd, Belle Glade, FL 31275",
+      "lat": 26.701,
+      "lng": -80.64229,
+      "threatens": [
+        "store-381"
+      ],
+      "wk2_share": 18
+    },
+    {
+      "id": "comp-381-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Belle Glade",
+      "city": "Belle Glade, FL",
+      "address": "6084 Pine Ridge Rd, Belle Glade, FL 30539",
+      "lat": 26.71449,
+      "lng": -80.64152,
+      "threatens": [
+        "store-381"
+      ],
+      "wk2_share": 7.8
+    },
+    {
+      "id": "comp-381-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Belle Glade",
+      "city": "Belle Glade, FL",
+      "address": "8903 Cypress Ave, Belle Glade, FL 39496",
+      "lat": 26.6324,
+      "lng": -80.65392,
+      "threatens": [
+        "store-381"
+      ],
+      "wk2_share": 5
+    },
+    {
+      "id": "comp-381-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Belle Glade",
+      "city": "Belle Glade, FL",
+      "address": "8409 Commerce Pkwy, Belle Glade, FL 36824",
+      "lat": 26.64914,
+      "lng": -80.68988,
+      "threatens": [
+        "store-381"
+      ],
+      "wk2_share": 13.1
+    },
+    {
+      "id": "comp-508-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Fort Myers",
+      "city": "Fort Myers, FL",
+      "address": "3719 Sunrise Way, Fort Myers, FL 31738",
+      "lat": 26.58596,
+      "lng": -81.88172,
+      "threatens": [
+        "store-508"
+      ],
+      "wk2_share": 19.8
+    },
+    {
+      "id": "comp-508-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Fort Myers",
+      "city": "Fort Myers, FL",
+      "address": "6565 University Dr, Fort Myers, FL 32604",
+      "lat": 26.56977,
+      "lng": -81.85654,
+      "threatens": [
+        "store-508"
+      ],
+      "wk2_share": 21.2
+    },
+    {
+      "id": "comp-508-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Fort Myers",
+      "city": "Fort Myers, FL",
+      "address": "7259 Cypress Ave, Fort Myers, FL 31219",
+      "lat": 26.57019,
+      "lng": -81.8267,
+      "threatens": [
+        "store-508"
+      ],
+      "wk2_share": 13.6
+    },
+    {
+      "id": "comp-508-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Fort Myers",
+      "city": "Fort Myers, FL",
+      "address": "3054 Town Center Blvd, Fort Myers, FL 37508",
+      "lat": 26.60043,
+      "lng": -81.93825,
+      "threatens": [
+        "store-508"
+      ],
+      "wk2_share": 8.6
+    },
+    {
+      "id": "comp-508-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Fort Myers",
+      "city": "Fort Myers, FL",
+      "address": "8632 Main St, Fort Myers, FL 34968",
+      "lat": 26.6336,
+      "lng": -81.82815,
+      "threatens": [
+        "store-508"
+      ],
+      "wk2_share": 15.3
+    },
+    {
+      "id": "comp-518-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Naples",
+      "city": "Naples, FL",
+      "address": "5614 Gulf Blvd, Naples, FL 39870",
+      "lat": 26.21122,
+      "lng": -81.72984,
+      "threatens": [
+        "store-518"
+      ],
+      "wk2_share": 22.2
+    },
+    {
+      "id": "comp-518-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Naples",
+      "city": "Naples, FL",
+      "address": "8060 Pine Ridge Rd, Naples, FL 39445",
+      "lat": 26.22864,
+      "lng": -81.7855,
+      "threatens": [
+        "store-518"
+      ],
+      "wk2_share": 15.1
+    },
+    {
+      "id": "comp-518-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Naples",
+      "city": "Naples, FL",
+      "address": "5256 Pine Ridge Rd, Naples, FL 33176",
+      "lat": 26.22392,
+      "lng": -81.76033,
+      "threatens": [
+        "store-518"
+      ],
+      "wk2_share": 16.6
+    },
+    {
+      "id": "comp-518-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Naples",
+      "city": "Naples, FL",
+      "address": "9661 University Dr, Naples, FL 39858",
+      "lat": 26.26481,
+      "lng": -81.76917,
+      "threatens": [
+        "store-518"
+      ],
+      "wk2_share": 8.7
+    },
+    {
+      "id": "comp-518-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Naples",
+      "city": "Naples, FL",
+      "address": "8411 Sunrise Way, Naples, FL 39796",
+      "lat": 26.27943,
+      "lng": -81.7537,
+      "threatens": [
+        "store-518"
+      ],
+      "wk2_share": 12.1
+    },
+    {
+      "id": "comp-726-publix",
+      "brand": "Publix",
+      "storeName": "Publix — St James City",
+      "city": "St James City, FL",
+      "address": "1233 University Dr, St James City, FL 34103",
+      "lat": 26.56811,
+      "lng": -82.03708,
+      "threatens": [
+        "store-726"
+      ],
+      "wk2_share": 20
+    },
+    {
+      "id": "comp-726-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — St James City",
+      "city": "St James City, FL",
+      "address": "7963 Cypress Ave, St James City, FL 34596",
+      "lat": 26.50204,
+      "lng": -82.03887,
+      "threatens": [
+        "store-726"
+      ],
+      "wk2_share": 23.6
+    },
+    {
+      "id": "comp-726-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — St James City",
+      "city": "St James City, FL",
+      "address": "5403 Cypress Ave, St James City, FL 32333",
+      "lat": 26.54053,
+      "lng": -82.01552,
+      "threatens": [
+        "store-726"
+      ],
+      "wk2_share": 9
+    },
+    {
+      "id": "comp-726-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — St James City",
+      "city": "St James City, FL",
+      "address": "840 Pine Ridge Rd, St James City, FL 34997",
+      "lat": 26.54797,
+      "lng": -82.07919,
+      "threatens": [
+        "store-726"
+      ],
+      "wk2_share": 6.1
+    },
+    {
+      "id": "comp-726-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — St James City",
+      "city": "St James City, FL",
+      "address": "2718 Town Center Blvd, St James City, FL 31826",
+      "lat": 26.53965,
+      "lng": -82.13946,
+      "threatens": [
+        "store-726"
+      ],
+      "wk2_share": 10.2
+    },
+    {
+      "id": "comp-705-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Haines City",
+      "city": "Haines City, FL",
+      "address": "7558 Gulf Blvd, Haines City, FL 31716",
+      "lat": 28.10245,
+      "lng": -81.68647,
+      "threatens": [
+        "store-705"
+      ],
+      "wk2_share": 19.1
+    },
+    {
+      "id": "comp-705-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Haines City",
+      "city": "Haines City, FL",
+      "address": "4360 Pine Ridge Rd, Haines City, FL 30696",
+      "lat": 28.123,
+      "lng": -81.62839,
+      "threatens": [
+        "store-705"
+      ],
+      "wk2_share": 22.3
+    },
+    {
+      "id": "comp-705-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Haines City",
+      "city": "Haines City, FL",
+      "address": "480 Pine Ridge Rd, Haines City, FL 37607",
+      "lat": 28.17996,
+      "lng": -81.59508,
+      "threatens": [
+        "store-705"
+      ],
+      "wk2_share": 12.8
+    },
+    {
+      "id": "comp-705-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Haines City",
+      "city": "Haines City, FL",
+      "address": "3361 University Dr, Haines City, FL 32766",
+      "lat": 28.18048,
+      "lng": -81.59363,
+      "threatens": [
+        "store-705"
+      ],
+      "wk2_share": 11.9
+    },
+    {
+      "id": "comp-705-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Haines City",
+      "city": "Haines City, FL",
+      "address": "827 Sunrise Way, Haines City, FL 30925",
+      "lat": 28.18052,
+      "lng": -81.6102,
+      "threatens": [
+        "store-705"
+      ],
+      "wk2_share": 10.3
+    },
+    {
+      "id": "comp-2288-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Orlando",
+      "city": "Orlando, FL",
+      "address": "706 Gulf Blvd, Orlando, FL 31398",
+      "lat": 28.46542,
+      "lng": -81.43985,
+      "threatens": [
+        "store-2288"
+      ],
+      "wk2_share": 24.5
+    },
+    {
+      "id": "comp-2288-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Orlando",
+      "city": "Orlando, FL",
+      "address": "3356 Main St, Orlando, FL 33652",
+      "lat": 28.51737,
+      "lng": -81.45126,
+      "threatens": [
+        "store-2288"
+      ],
+      "wk2_share": 19.9
+    },
+    {
+      "id": "comp-2288-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Orlando",
+      "city": "Orlando, FL",
+      "address": "3924 Main St, Orlando, FL 36299",
+      "lat": 28.41891,
+      "lng": -81.50195,
+      "threatens": [
+        "store-2288"
+      ],
+      "wk2_share": 11.2
+    },
+    {
+      "id": "comp-2288-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Orlando",
+      "city": "Orlando, FL",
+      "address": "5133 Commerce Pkwy, Orlando, FL 30479",
+      "lat": 28.47681,
+      "lng": -81.47305,
+      "threatens": [
+        "store-2288"
+      ],
+      "wk2_share": 10.1
+    },
+    {
+      "id": "comp-2288-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Orlando",
+      "city": "Orlando, FL",
+      "address": "1257 University Dr, Orlando, FL 30266",
+      "lat": 28.46302,
+      "lng": -81.42226,
+      "threatens": [
+        "store-2288"
+      ],
+      "wk2_share": 14.6
+    },
+    {
+      "id": "comp-2415-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Tampa",
+      "city": "Tampa, FL",
+      "address": "9224 Main St, Tampa, FL 38134",
+      "lat": 28.08933,
+      "lng": -82.4847,
+      "threatens": [
+        "store-2415"
+      ],
+      "wk2_share": 18.7
+    },
+    {
+      "id": "comp-2415-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Tampa",
+      "city": "Tampa, FL",
+      "address": "8134 Gulf Blvd, Tampa, FL 37539",
+      "lat": 28.04312,
+      "lng": -82.39414,
+      "threatens": [
+        "store-2415"
+      ],
+      "wk2_share": 17.2
+    },
+    {
+      "id": "comp-2415-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Tampa",
+      "city": "Tampa, FL",
+      "address": "826 Town Center Blvd, Tampa, FL 37557",
+      "lat": 28.13963,
+      "lng": -82.45189,
+      "threatens": [
+        "store-2415"
+      ],
+      "wk2_share": 8.3
+    },
+    {
+      "id": "comp-2415-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Tampa",
+      "city": "Tampa, FL",
+      "address": "8691 Sunrise Way, Tampa, FL 39284",
+      "lat": 28.09037,
+      "lng": -82.48013,
+      "threatens": [
+        "store-2415"
+      ],
+      "wk2_share": 12.9
+    },
+    {
+      "id": "comp-2415-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Tampa",
+      "city": "Tampa, FL",
+      "address": "6919 Sunrise Way, Tampa, FL 33552",
+      "lat": 28.03839,
+      "lng": -82.4461,
+      "threatens": [
+        "store-2415"
+      ],
+      "wk2_share": 18.2
+    },
+    {
+      "id": "comp-2434-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Daytona Beach",
+      "city": "Daytona Beach, FL",
+      "address": "7641 University Dr, Daytona Beach, FL 30116",
+      "lat": 29.24557,
+      "lng": -81.09751,
+      "threatens": [
+        "store-2434"
+      ],
+      "wk2_share": 24.9
+    },
+    {
+      "id": "comp-2434-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Daytona Beach",
+      "city": "Daytona Beach, FL",
+      "address": "6519 Cypress Ave, Daytona Beach, FL 31370",
+      "lat": 29.20103,
+      "lng": -81.10411,
+      "threatens": [
+        "store-2434"
+      ],
+      "wk2_share": 12.2
+    },
+    {
+      "id": "comp-2434-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Daytona Beach",
+      "city": "Daytona Beach, FL",
+      "address": "7685 University Dr, Daytona Beach, FL 35308",
+      "lat": 29.17059,
+      "lng": -81.08418,
+      "threatens": [
+        "store-2434"
+      ],
+      "wk2_share": 7.9
+    },
+    {
+      "id": "comp-2434-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Daytona Beach",
+      "city": "Daytona Beach, FL",
+      "address": "8624 Pine Ridge Rd, Daytona Beach, FL 39613",
+      "lat": 29.17899,
+      "lng": -81.09138,
+      "threatens": [
+        "store-2434"
+      ],
+      "wk2_share": 10.8
+    },
+    {
+      "id": "comp-2434-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Daytona Beach",
+      "city": "Daytona Beach, FL",
+      "address": "6874 Town Center Blvd, Daytona Beach, FL 34101",
+      "lat": 29.21488,
+      "lng": -81.14186,
+      "threatens": [
+        "store-2434"
+      ],
+      "wk2_share": 18.7
+    },
+    {
+      "id": "comp-2474-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Melbourne",
+      "city": "Melbourne, FL",
+      "address": "7699 Sunrise Way, Melbourne, FL 32649",
+      "lat": 28.08655,
+      "lng": -80.61708,
+      "threatens": [
+        "store-2474"
+      ],
+      "wk2_share": 28
+    },
+    {
+      "id": "comp-2474-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Melbourne",
+      "city": "Melbourne, FL",
+      "address": "2599 Sunrise Way, Melbourne, FL 38736",
+      "lat": 28.03506,
+      "lng": -80.60752,
+      "threatens": [
+        "store-2474"
+      ],
+      "wk2_share": 24
+    },
+    {
+      "id": "comp-2474-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Melbourne",
+      "city": "Melbourne, FL",
+      "address": "413 Commerce Pkwy, Melbourne, FL 38233",
+      "lat": 28.09846,
+      "lng": -80.64594,
+      "threatens": [
+        "store-2474"
+      ],
+      "wk2_share": 12.1
+    },
+    {
+      "id": "comp-2474-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Melbourne",
+      "city": "Melbourne, FL",
+      "address": "5352 Main St, Melbourne, FL 39014",
+      "lat": 28.12803,
+      "lng": -80.59273,
+      "threatens": [
+        "store-2474"
+      ],
+      "wk2_share": 11
+    },
+    {
+      "id": "comp-2474-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Melbourne",
+      "city": "Melbourne, FL",
+      "address": "2558 Gulf Blvd, Melbourne, FL 32656",
+      "lat": 28.08974,
+      "lng": -80.64607,
+      "threatens": [
+        "store-2474"
+      ],
+      "wk2_share": 17.6
+    },
+    {
+      "id": "comp-2480-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Lakeland",
+      "city": "Lakeland, FL",
+      "address": "9788 Pine Ridge Rd, Lakeland, FL 32560",
+      "lat": 28.04932,
+      "lng": -81.93845,
+      "threatens": [
+        "store-2480"
+      ],
+      "wk2_share": 25.5
+    },
+    {
+      "id": "comp-2480-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Lakeland",
+      "city": "Lakeland, FL",
+      "address": "1346 Town Center Blvd, Lakeland, FL 37186",
+      "lat": 28.07124,
+      "lng": -81.95506,
+      "threatens": [
+        "store-2480"
+      ],
+      "wk2_share": 15
+    },
+    {
+      "id": "comp-2480-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Lakeland",
+      "city": "Lakeland, FL",
+      "address": "5390 Town Center Blvd, Lakeland, FL 32617",
+      "lat": 28.08652,
+      "lng": -81.93633,
+      "threatens": [
+        "store-2480"
+      ],
+      "wk2_share": 12.9
+    },
+    {
+      "id": "comp-2480-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Lakeland",
+      "city": "Lakeland, FL",
+      "address": "2561 University Dr, Lakeland, FL 32956",
+      "lat": 28.10887,
+      "lng": -82.00672,
+      "threatens": [
+        "store-2480"
+      ],
+      "wk2_share": 10.3
+    },
+    {
+      "id": "comp-2480-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Lakeland",
+      "city": "Lakeland, FL",
+      "address": "8487 Cypress Ave, Lakeland, FL 32744",
+      "lat": 28.07344,
+      "lng": -81.93883,
+      "threatens": [
+        "store-2480"
+      ],
+      "wk2_share": 18.9
+    },
+    {
+      "id": "comp-2487-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Sarasota",
+      "city": "Sarasota, FL",
+      "address": "8745 University Dr, Sarasota, FL 34487",
+      "lat": 27.34186,
+      "lng": -82.47378,
+      "threatens": [
+        "store-2487"
+      ],
+      "wk2_share": 18.9
+    },
+    {
+      "id": "comp-2487-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Sarasota",
+      "city": "Sarasota, FL",
+      "address": "9899 Sunrise Way, Sarasota, FL 33265",
+      "lat": 27.31092,
+      "lng": -82.44657,
+      "threatens": [
+        "store-2487"
+      ],
+      "wk2_share": 19.2
+    },
+    {
+      "id": "comp-2487-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Sarasota",
+      "city": "Sarasota, FL",
+      "address": "3747 Sunrise Way, Sarasota, FL 36716",
+      "lat": 27.33501,
+      "lng": -82.44482,
+      "threatens": [
+        "store-2487"
+      ],
+      "wk2_share": 13.5
+    },
+    {
+      "id": "comp-2487-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Sarasota",
+      "city": "Sarasota, FL",
+      "address": "2302 Gulf Blvd, Sarasota, FL 34479",
+      "lat": 27.32284,
+      "lng": -82.46094,
+      "threatens": [
+        "store-2487"
+      ],
+      "wk2_share": 9.8
+    },
+    {
+      "id": "comp-2487-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Sarasota",
+      "city": "Sarasota, FL",
+      "address": "3700 Pine Ridge Rd, Sarasota, FL 31125",
+      "lat": 27.248,
+      "lng": -82.477,
+      "threatens": [
+        "store-2487"
+      ],
+      "wk2_share": 16
+    },
+    {
+      "id": "comp-2490-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Port Charlotte",
+      "city": "Port Charlotte, FL",
+      "address": "1875 Cypress Ave, Port Charlotte, FL 32666",
+      "lat": 26.95153,
+      "lng": -82.10159,
+      "threatens": [
+        "store-2490"
+      ],
+      "wk2_share": 24.1
+    },
+    {
+      "id": "comp-2490-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Port Charlotte",
+      "city": "Port Charlotte, FL",
+      "address": "9751 Sunrise Way, Port Charlotte, FL 30345",
+      "lat": 26.95701,
+      "lng": -82.06352,
+      "threatens": [
+        "store-2490"
+      ],
+      "wk2_share": 21
+    },
+    {
+      "id": "comp-2490-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Port Charlotte",
+      "city": "Port Charlotte, FL",
+      "address": "3771 Sunrise Way, Port Charlotte, FL 35057",
+      "lat": 26.9786,
+      "lng": -82.10544,
+      "threatens": [
+        "store-2490"
+      ],
+      "wk2_share": 9.7
+    },
+    {
+      "id": "comp-2490-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Port Charlotte",
+      "city": "Port Charlotte, FL",
+      "address": "5854 Town Center Blvd, Port Charlotte, FL 30606",
+      "lat": 26.94517,
+      "lng": -82.10976,
+      "threatens": [
+        "store-2490"
+      ],
+      "wk2_share": 10.2
+    },
+    {
+      "id": "comp-2490-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Port Charlotte",
+      "city": "Port Charlotte, FL",
+      "address": "8556 Pine Ridge Rd, Port Charlotte, FL 32021",
+      "lat": 26.98897,
+      "lng": -82.11391,
+      "threatens": [
+        "store-2490"
+      ],
+      "wk2_share": 18.6
+    },
+    {
+      "id": "comp-2501-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Palm Bay",
+      "city": "Palm Bay, FL",
+      "address": "4862 Town Center Blvd, Palm Bay, FL 31495",
+      "lat": 27.99827,
+      "lng": -80.69367,
+      "threatens": [
+        "store-2501"
+      ],
+      "wk2_share": 26.3
+    },
+    {
+      "id": "comp-2501-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Palm Bay",
+      "city": "Palm Bay, FL",
+      "address": "3568 Pine Ridge Rd, Palm Bay, FL 38616",
+      "lat": 27.98962,
+      "lng": -80.67486,
+      "threatens": [
+        "store-2501"
+      ],
+      "wk2_share": 15.2
+    },
+    {
+      "id": "comp-2501-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Palm Bay",
+      "city": "Palm Bay, FL",
+      "address": "7976 Pine Ridge Rd, Palm Bay, FL 33421",
+      "lat": 28.05192,
+      "lng": -80.70724,
+      "threatens": [
+        "store-2501"
+      ],
+      "wk2_share": 7.8
+    },
+    {
+      "id": "comp-2501-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Palm Bay",
+      "city": "Palm Bay, FL",
+      "address": "3685 University Dr, Palm Bay, FL 38634",
+      "lat": 27.94311,
+      "lng": -80.64395,
+      "threatens": [
+        "store-2501"
+      ],
+      "wk2_share": 8.9
+    },
+    {
+      "id": "comp-2501-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Palm Bay",
+      "city": "Palm Bay, FL",
+      "address": "2229 Commerce Pkwy, Palm Bay, FL 31139",
+      "lat": 28.03814,
+      "lng": -80.68112,
+      "threatens": [
+        "store-2501"
+      ],
+      "wk2_share": 18.3
+    },
+    {
+      "id": "comp-2509-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Bradenton",
+      "city": "Bradenton, FL",
+      "address": "8630 Gulf Blvd, Bradenton, FL 35065",
+      "lat": 27.45477,
+      "lng": -82.61337,
+      "threatens": [
+        "store-2509"
+      ],
+      "wk2_share": 27.2
+    },
+    {
+      "id": "comp-2509-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Bradenton",
+      "city": "Bradenton, FL",
+      "address": "6748 Pine Ridge Rd, Bradenton, FL 32688",
+      "lat": 27.52758,
+      "lng": -82.60151,
+      "threatens": [
+        "store-2509"
+      ],
+      "wk2_share": 18.6
+    },
+    {
+      "id": "comp-2509-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Bradenton",
+      "city": "Bradenton, FL",
+      "address": "8732 Pine Ridge Rd, Bradenton, FL 32692",
+      "lat": 27.40062,
+      "lng": -82.57909,
+      "threatens": [
+        "store-2509"
+      ],
+      "wk2_share": 8.3
+    },
+    {
+      "id": "comp-2509-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Bradenton",
+      "city": "Bradenton, FL",
+      "address": "9067 Cypress Ave, Bradenton, FL 36393",
+      "lat": 27.45645,
+      "lng": -82.5831,
+      "threatens": [
+        "store-2509"
+      ],
+      "wk2_share": 7.1
+    },
+    {
+      "id": "comp-2509-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Bradenton",
+      "city": "Bradenton, FL",
+      "address": "2255 Sunrise Way, Bradenton, FL 35521",
+      "lat": 27.45205,
+      "lng": -82.58695,
+      "threatens": [
+        "store-2509"
+      ],
+      "wk2_share": 9.6
+    },
+    {
+      "id": "comp-2545-publix",
+      "brand": "Publix",
+      "storeName": "Publix — The Villages",
+      "city": "The Villages, FL",
+      "address": "3274 Town Center Blvd, The Villages, FL 33867",
+      "lat": 28.94371,
+      "lng": -82.02802,
+      "threatens": [
+        "store-2545"
+      ],
+      "wk2_share": 20.5
+    },
+    {
+      "id": "comp-2545-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — The Villages",
+      "city": "The Villages, FL",
+      "address": "4888 Pine Ridge Rd, The Villages, FL 38748",
+      "lat": 28.91573,
+      "lng": -81.95747,
+      "threatens": [
+        "store-2545"
+      ],
+      "wk2_share": 23.9
+    },
+    {
+      "id": "comp-2545-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — The Villages",
+      "city": "The Villages, FL",
+      "address": "2044 Pine Ridge Rd, The Villages, FL 32439",
+      "lat": 28.97435,
+      "lng": -82.02185,
+      "threatens": [
+        "store-2545"
+      ],
+      "wk2_share": 7.4
+    },
+    {
+      "id": "comp-2545-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — The Villages",
+      "city": "The Villages, FL",
+      "address": "4037 University Dr, The Villages, FL 35521",
+      "lat": 28.8845,
+      "lng": -81.96881,
+      "threatens": [
+        "store-2545"
+      ],
+      "wk2_share": 10.1
+    },
+    {
+      "id": "comp-2545-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — The Villages",
+      "city": "The Villages, FL",
+      "address": "9353 Commerce Pkwy, The Villages, FL 39253",
+      "lat": 28.93523,
+      "lng": -81.95253,
+      "threatens": [
+        "store-2545"
+      ],
+      "wk2_share": 14.5
+    },
+    {
+      "id": "comp-711-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Spring Hill",
+      "city": "Spring Hill, FL",
+      "address": "9647 Sunrise Way, Spring Hill, FL 31627",
+      "lat": 28.50578,
+      "lng": -82.53447,
+      "threatens": [
+        "store-711"
+      ],
+      "wk2_share": 16.6
+    },
+    {
+      "id": "comp-711-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Spring Hill",
+      "city": "Spring Hill, FL",
+      "address": "8105 Commerce Pkwy, Spring Hill, FL 36619",
+      "lat": 28.47247,
+      "lng": -82.5898,
+      "threatens": [
+        "store-711"
+      ],
+      "wk2_share": 13.3
+    },
+    {
+      "id": "comp-711-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Spring Hill",
+      "city": "Spring Hill, FL",
+      "address": "5457 Commerce Pkwy, Spring Hill, FL 31991",
+      "lat": 28.43385,
+      "lng": -82.49776,
+      "threatens": [
+        "store-711"
+      ],
+      "wk2_share": 13.6
+    },
+    {
+      "id": "comp-711-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Spring Hill",
+      "city": "Spring Hill, FL",
+      "address": "4552 Main St, Spring Hill, FL 39204",
+      "lat": 28.50979,
+      "lng": -82.57441,
+      "threatens": [
+        "store-711"
+      ],
+      "wk2_share": 9.4
+    },
+    {
+      "id": "comp-711-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Spring Hill",
+      "city": "Spring Hill, FL",
+      "address": "318 Town Center Blvd, Spring Hill, FL 34475",
+      "lat": 28.51246,
+      "lng": -82.5103,
+      "threatens": [
+        "store-711"
+      ],
+      "wk2_share": 16.2
+    },
+    {
+      "id": "comp-86-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Tallahassee",
+      "city": "Tallahassee, FL",
+      "address": "4824 Main St, Tallahassee, FL 38090",
+      "lat": 30.4077,
+      "lng": -84.29153,
+      "threatens": [
+        "store-86"
+      ],
+      "wk2_share": 25.9
+    },
+    {
+      "id": "comp-86-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Tallahassee",
+      "city": "Tallahassee, FL",
+      "address": "9522 Town Center Blvd, Tallahassee, FL 35165",
+      "lat": 30.44127,
+      "lng": -84.24881,
+      "threatens": [
+        "store-86"
+      ],
+      "wk2_share": 14.7
+    },
+    {
+      "id": "comp-86-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Tallahassee",
+      "city": "Tallahassee, FL",
+      "address": "5454 Town Center Blvd, Tallahassee, FL 35651",
+      "lat": 30.40847,
+      "lng": -84.2477,
+      "threatens": [
+        "store-86"
+      ],
+      "wk2_share": 15.5
+    },
+    {
+      "id": "comp-86-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Tallahassee",
+      "city": "Tallahassee, FL",
+      "address": "1953 Commerce Pkwy, Tallahassee, FL 36407",
+      "lat": 30.41195,
+      "lng": -84.29396,
+      "threatens": [
+        "store-86"
+      ],
+      "wk2_share": 12.6
+    },
+    {
+      "id": "comp-86-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Tallahassee",
+      "city": "Tallahassee, FL",
+      "address": "5731 Sunrise Way, Tallahassee, FL 39492",
+      "lat": 30.40609,
+      "lng": -84.29953,
+      "threatens": [
+        "store-86"
+      ],
+      "wk2_share": 17.3
+    },
+    {
+      "id": "comp-195-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Jacksonville Beach",
+      "city": "Jacksonville, FL",
+      "address": "3391 Sunrise Way, Jacksonville, FL 35865",
+      "lat": 30.25565,
+      "lng": -81.55119,
+      "threatens": [
+        "store-195"
+      ],
+      "wk2_share": 27.9
+    },
+    {
+      "id": "comp-195-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Jacksonville Beach",
+      "city": "Jacksonville, FL",
+      "address": "8043 Cypress Ave, Jacksonville, FL 36359",
+      "lat": 30.27979,
+      "lng": -81.51391,
+      "threatens": [
+        "store-195"
+      ],
+      "wk2_share": 22.1
+    },
+    {
+      "id": "comp-195-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Jacksonville Beach",
+      "city": "Jacksonville, FL",
+      "address": "1301 University Dr, Jacksonville, FL 38230",
+      "lat": 30.29827,
+      "lng": -81.52543,
+      "threatens": [
+        "store-195"
+      ],
+      "wk2_share": 10
+    },
+    {
+      "id": "comp-195-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Jacksonville Beach",
+      "city": "Jacksonville, FL",
+      "address": "1774 Town Center Blvd, Jacksonville, FL 38802",
+      "lat": 30.31898,
+      "lng": -81.46874,
+      "threatens": [
+        "store-195"
+      ],
+      "wk2_share": 6.4
+    },
+    {
+      "id": "comp-195-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Jacksonville Beach",
+      "city": "Jacksonville, FL",
+      "address": "8772 Main St, Jacksonville, FL 37088",
+      "lat": 30.32207,
+      "lng": -81.48933,
+      "threatens": [
+        "store-195"
+      ],
+      "wk2_share": 13.7
+    },
+    {
+      "id": "comp-560-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Destin",
+      "city": "Destin, FL",
+      "address": "4201 Commerce Pkwy, Destin, FL 39150",
+      "lat": 30.43907,
+      "lng": -86.5335,
+      "threatens": [
+        "store-560"
+      ],
+      "wk2_share": 16
+    },
+    {
+      "id": "comp-560-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Destin",
+      "city": "Destin, FL",
+      "address": "5045 Commerce Pkwy, Destin, FL 31876",
+      "lat": 30.39165,
+      "lng": -86.5239,
+      "threatens": [
+        "store-560"
+      ],
+      "wk2_share": 20.9
+    },
+    {
+      "id": "comp-560-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Destin",
+      "city": "Destin, FL",
+      "address": "955 Sunrise Way, Destin, FL 33924",
+      "lat": 30.38551,
+      "lng": -86.48851,
+      "threatens": [
+        "store-560"
+      ],
+      "wk2_share": 7.5
+    },
+    {
+      "id": "comp-560-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Destin",
+      "city": "Destin, FL",
+      "address": "5148 Main St, Destin, FL 30197",
+      "lat": 30.43856,
+      "lng": -86.49074,
+      "threatens": [
+        "store-560"
+      ],
+      "wk2_share": 5.4
+    },
+    {
+      "id": "comp-560-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Destin",
+      "city": "Destin, FL",
+      "address": "4142 Town Center Blvd, Destin, FL 30379",
+      "lat": 30.39066,
+      "lng": -86.52077,
+      "threatens": [
+        "store-560"
+      ],
+      "wk2_share": 10.4
+    },
+    {
+      "id": "comp-2247-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Palm Coast",
+      "city": "Palm Coast, FL",
+      "address": "9585 University Dr, Palm Coast, FL 31961",
+      "lat": 29.54412,
+      "lng": -81.23517,
+      "threatens": [
+        "store-2247"
+      ],
+      "wk2_share": 21.8
+    },
+    {
+      "id": "comp-2247-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Palm Coast",
+      "city": "Palm Coast, FL",
+      "address": "2057 University Dr, Palm Coast, FL 35323",
+      "lat": 29.5151,
+      "lng": -81.22976,
+      "threatens": [
+        "store-2247"
+      ],
+      "wk2_share": 13.9
+    },
+    {
+      "id": "comp-2247-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Palm Coast",
+      "city": "Palm Coast, FL",
+      "address": "7951 Cypress Ave, Palm Coast, FL 35475",
+      "lat": 29.55387,
+      "lng": -81.25247,
+      "threatens": [
+        "store-2247"
+      ],
+      "wk2_share": 11.5
+    },
+    {
+      "id": "comp-2247-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Palm Coast",
+      "city": "Palm Coast, FL",
+      "address": "5076 Pine Ridge Rd, Palm Coast, FL 33293",
+      "lat": 29.53653,
+      "lng": -81.21534,
+      "threatens": [
+        "store-2247"
+      ],
+      "wk2_share": 10.4
+    },
+    {
+      "id": "comp-2247-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Palm Coast",
+      "city": "Palm Coast, FL",
+      "address": "4558 Town Center Blvd, Palm Coast, FL 32973",
+      "lat": 29.59559,
+      "lng": -81.28515,
+      "threatens": [
+        "store-2247"
+      ],
+      "wk2_share": 10.6
+    },
+    {
+      "id": "comp-2399-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Jacksonville West",
+      "city": "Jacksonville, FL",
+      "address": "6239 Cypress Ave, Jacksonville, FL 35149",
+      "lat": 30.30213,
+      "lng": -81.69779,
+      "threatens": [
+        "store-2399"
+      ],
+      "wk2_share": 20.1
+    },
+    {
+      "id": "comp-2399-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Jacksonville West",
+      "city": "Jacksonville, FL",
+      "address": "1725 Commerce Pkwy, Jacksonville, FL 31031",
+      "lat": 30.22025,
+      "lng": -81.70884,
+      "threatens": [
+        "store-2399"
+      ],
+      "wk2_share": 19.5
+    },
+    {
+      "id": "comp-2399-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Jacksonville West",
+      "city": "Jacksonville, FL",
+      "address": "4295 Sunrise Way, Jacksonville, FL 38551",
+      "lat": 30.31396,
+      "lng": -81.6645,
+      "threatens": [
+        "store-2399"
+      ],
+      "wk2_share": 9.9
+    },
+    {
+      "id": "comp-2399-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Jacksonville West",
+      "city": "Jacksonville, FL",
+      "address": "546 Gulf Blvd, Jacksonville, FL 36386",
+      "lat": 30.2833,
+      "lng": -81.75587,
+      "threatens": [
+        "store-2399"
+      ],
+      "wk2_share": 9.4
+    },
+    {
+      "id": "comp-2399-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Jacksonville West",
+      "city": "Jacksonville, FL",
+      "address": "3512 Pine Ridge Rd, Jacksonville, FL 33214",
+      "lat": 30.22362,
+      "lng": -81.69409,
+      "threatens": [
+        "store-2399"
+      ],
+      "wk2_share": 11.1
+    },
+    {
+      "id": "comp-2437-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Ocala",
+      "city": "Ocala, FL",
+      "address": "5068 Main St, Ocala, FL 36948",
+      "lat": 29.23273,
+      "lng": -82.15678,
+      "threatens": [
+        "store-2437"
+      ],
+      "wk2_share": 27.6
+    },
+    {
+      "id": "comp-2437-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Ocala",
+      "city": "Ocala, FL",
+      "address": "7474 Gulf Blvd, Ocala, FL 37473",
+      "lat": 29.29064,
+      "lng": -82.1399,
+      "threatens": [
+        "store-2437"
+      ],
+      "wk2_share": 12.9
+    },
+    {
+      "id": "comp-2437-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Ocala",
+      "city": "Ocala, FL",
+      "address": "2738 Gulf Blvd, Ocala, FL 31351",
+      "lat": 29.24613,
+      "lng": -82.17273,
+      "threatens": [
+        "store-2437"
+      ],
+      "wk2_share": 12.4
+    },
+    {
+      "id": "comp-2437-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Ocala",
+      "city": "Ocala, FL",
+      "address": "8867 Sunrise Way, Ocala, FL 32728",
+      "lat": 29.21357,
+      "lng": -82.11783,
+      "threatens": [
+        "store-2437"
+      ],
+      "wk2_share": 9.5
+    },
+    {
+      "id": "comp-2437-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Ocala",
+      "city": "Ocala, FL",
+      "address": "4569 Commerce Pkwy, Ocala, FL 32390",
+      "lat": 29.26443,
+      "lng": -82.15669,
+      "threatens": [
+        "store-2437"
+      ],
+      "wk2_share": 16.7
+    },
+    {
+      "id": "comp-2449-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Pensacola",
+      "city": "Pensacola, FL",
+      "address": "8421 Commerce Pkwy, Pensacola, FL 35846",
+      "lat": 30.44904,
+      "lng": -87.21475,
+      "threatens": [
+        "store-2449"
+      ],
+      "wk2_share": 17.5
+    },
+    {
+      "id": "comp-2449-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Pensacola",
+      "city": "Pensacola, FL",
+      "address": "1791 Sunrise Way, Pensacola, FL 35750",
+      "lat": 30.46351,
+      "lng": -87.16043,
+      "threatens": [
+        "store-2449"
+      ],
+      "wk2_share": 21.5
+    },
+    {
+      "id": "comp-2449-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Pensacola",
+      "city": "Pensacola, FL",
+      "address": "7721 Commerce Pkwy, Pensacola, FL 37819",
+      "lat": 30.42943,
+      "lng": -87.24449,
+      "threatens": [
+        "store-2449"
+      ],
+      "wk2_share": 12.2
+    },
+    {
+      "id": "comp-2449-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Pensacola",
+      "city": "Pensacola, FL",
+      "address": "2436 Main St, Pensacola, FL 33821",
+      "lat": 30.39512,
+      "lng": -87.21665,
+      "threatens": [
+        "store-2449"
+      ],
+      "wk2_share": 6.1
+    },
+    {
+      "id": "comp-2449-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Pensacola",
+      "city": "Pensacola, FL",
+      "address": "9710 Gulf Blvd, Pensacola, FL 30403",
+      "lat": 30.43377,
+      "lng": -87.24537,
+      "threatens": [
+        "store-2449"
+      ],
+      "wk2_share": 17.1
+    },
+    {
+      "id": "comp-2482-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Gainesville",
+      "city": "Gainesville, FL",
+      "address": "7962 Gulf Blvd, Gainesville, FL 34991",
+      "lat": 29.64409,
+      "lng": -82.30172,
+      "threatens": [
+        "store-2482"
+      ],
+      "wk2_share": 17.9
+    },
+    {
+      "id": "comp-2482-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Gainesville",
+      "city": "Gainesville, FL",
+      "address": "3676 Pine Ridge Rd, Gainesville, FL 30804",
+      "lat": 29.63872,
+      "lng": -82.33851,
+      "threatens": [
+        "store-2482"
+      ],
+      "wk2_share": 22.5
+    },
+    {
+      "id": "comp-2482-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Gainesville",
+      "city": "Gainesville, FL",
+      "address": "2092 Pine Ridge Rd, Gainesville, FL 36645",
+      "lat": 29.69658,
+      "lng": -82.35205,
+      "threatens": [
+        "store-2482"
+      ],
+      "wk2_share": 15.9
+    },
+    {
+      "id": "comp-2482-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Gainesville",
+      "city": "Gainesville, FL",
+      "address": "5699 Cypress Ave, Gainesville, FL 34213",
+      "lat": 29.73095,
+      "lng": -82.33777,
+      "threatens": [
+        "store-2482"
+      ],
+      "wk2_share": 5.8
+    },
+    {
+      "id": "comp-2482-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Gainesville",
+      "city": "Gainesville, FL",
+      "address": "607 Sunrise Way, Gainesville, FL 37338",
+      "lat": 29.69393,
+      "lng": -82.36635,
+      "threatens": [
+        "store-2482"
+      ],
+      "wk2_share": 13.1
+    },
+    {
+      "id": "comp-2495-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Tallahassee N",
+      "city": "Tallahassee, FL",
+      "address": "1092 Main St, Tallahassee, FL 33170",
+      "lat": 30.45788,
+      "lng": -84.32797,
+      "threatens": [
+        "store-2495"
+      ],
+      "wk2_share": 23.1
+    },
+    {
+      "id": "comp-2495-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Tallahassee N",
+      "city": "Tallahassee, FL",
+      "address": "6074 Gulf Blvd, Tallahassee, FL 32806",
+      "lat": 30.48999,
+      "lng": -84.25107,
+      "threatens": [
+        "store-2495"
+      ],
+      "wk2_share": 17.7
+    },
+    {
+      "id": "comp-2495-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Tallahassee N",
+      "city": "Tallahassee, FL",
+      "address": "5426 Gulf Blvd, Tallahassee, FL 35128",
+      "lat": 30.4469,
+      "lng": -84.24228,
+      "threatens": [
+        "store-2495"
+      ],
+      "wk2_share": 7.3
+    },
+    {
+      "id": "comp-2495-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Tallahassee N",
+      "city": "Tallahassee, FL",
+      "address": "8749 Commerce Pkwy, Tallahassee, FL 38748",
+      "lat": 30.48168,
+      "lng": -84.26993,
+      "threatens": [
+        "store-2495"
+      ],
+      "wk2_share": 7
+    },
+    {
+      "id": "comp-2495-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Tallahassee N",
+      "city": "Tallahassee, FL",
+      "address": "4449 Commerce Pkwy, Tallahassee, FL 33557",
+      "lat": 30.44201,
+      "lng": -84.28176,
+      "threatens": [
+        "store-2495"
+      ],
+      "wk2_share": 17.5
+    },
+    {
+      "id": "comp-436-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Lynn Haven",
+      "city": "Lynn Haven, FL",
+      "address": "7281 Commerce Pkwy, Lynn Haven, FL 39854",
+      "lat": 30.19707,
+      "lng": -85.64263,
+      "threatens": [
+        "store-436"
+      ],
+      "wk2_share": 19.4
+    },
+    {
+      "id": "comp-436-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Lynn Haven",
+      "city": "Lynn Haven, FL",
+      "address": "5057 Commerce Pkwy, Lynn Haven, FL 39016",
+      "lat": 30.23008,
+      "lng": -85.63118,
+      "threatens": [
+        "store-436"
+      ],
+      "wk2_share": 12.7
+    },
+    {
+      "id": "comp-436-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Lynn Haven",
+      "city": "Lynn Haven, FL",
+      "address": "9631 Sunrise Way, Lynn Haven, FL 36957",
+      "lat": 30.26066,
+      "lng": -85.65938,
+      "threatens": [
+        "store-436"
+      ],
+      "wk2_share": 9.3
+    },
+    {
+      "id": "comp-436-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Lynn Haven",
+      "city": "Lynn Haven, FL",
+      "address": "988 Main St, Lynn Haven, FL 36630",
+      "lat": 30.21344,
+      "lng": -85.65084,
+      "threatens": [
+        "store-436"
+      ],
+      "wk2_share": 7.3
+    },
+    {
+      "id": "comp-436-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Lynn Haven",
+      "city": "Lynn Haven, FL",
+      "address": "6318 Town Center Blvd, Lynn Haven, FL 38099",
+      "lat": 30.23439,
+      "lng": -85.6649,
+      "threatens": [
+        "store-436"
+      ],
+      "wk2_share": 18.2
+    },
+    {
+      "id": "comp-1671-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Lake City",
+      "city": "Lake City, FL",
+      "address": "539 Sunrise Way, Lake City, FL 30340",
+      "lat": 30.1721,
+      "lng": -82.6492,
+      "threatens": [
+        "store-1671"
+      ],
+      "wk2_share": 23.7
+    },
+    {
+      "id": "comp-1671-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Lake City",
+      "city": "Lake City, FL",
+      "address": "5951 Sunrise Way, Lake City, FL 36643",
+      "lat": 30.17101,
+      "lng": -82.71799,
+      "threatens": [
+        "store-1671"
+      ],
+      "wk2_share": 23.4
+    },
+    {
+      "id": "comp-1671-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Lake City",
+      "city": "Lake City, FL",
+      "address": "5097 Commerce Pkwy, Lake City, FL 39848",
+      "lat": 30.15976,
+      "lng": -82.65045,
+      "threatens": [
+        "store-1671"
+      ],
+      "wk2_share": 16
+    },
+    {
+      "id": "comp-1671-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Lake City",
+      "city": "Lake City, FL",
+      "address": "4472 Main St, Lake City, FL 30016",
+      "lat": 30.14291,
+      "lng": -82.69467,
+      "threatens": [
+        "store-1671"
+      ],
+      "wk2_share": 10.4
+    },
+    {
+      "id": "comp-1671-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Lake City",
+      "city": "Lake City, FL",
+      "address": "5254 Town Center Blvd, Lake City, FL 33174",
+      "lat": 30.19278,
+      "lng": -82.71116,
+      "threatens": [
+        "store-1671"
+      ],
+      "wk2_share": 13.5
+    },
+    {
+      "id": "comp-1690-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Jacksonville University",
+      "city": "Jacksonville, FL",
+      "address": "3674 Gulf Blvd, Jacksonville, FL 32089",
+      "lat": 30.23517,
+      "lng": -81.56326,
+      "threatens": [
+        "store-1690"
+      ],
+      "wk2_share": 24.1
+    },
+    {
+      "id": "comp-1690-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Jacksonville University",
+      "city": "Jacksonville, FL",
+      "address": "392 Pine Ridge Rd, Jacksonville, FL 31282",
+      "lat": 30.3121,
+      "lng": -81.6447,
+      "threatens": [
+        "store-1690"
+      ],
+      "wk2_share": 22.7
+    },
+    {
+      "id": "comp-1690-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Jacksonville University",
+      "city": "Jacksonville, FL",
+      "address": "7388 Pine Ridge Rd, Jacksonville, FL 34120",
+      "lat": 30.28808,
+      "lng": -81.64497,
+      "threatens": [
+        "store-1690"
+      ],
+      "wk2_share": 8.9
+    },
+    {
+      "id": "comp-1690-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Jacksonville University",
+      "city": "Jacksonville, FL",
+      "address": "4405 University Dr, Jacksonville, FL 30345",
+      "lat": 30.25909,
+      "lng": -81.58172,
+      "threatens": [
+        "store-1690"
+      ],
+      "wk2_share": 8.2
+    },
+    {
+      "id": "comp-1690-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Jacksonville University",
+      "city": "Jacksonville, FL",
+      "address": "8539 Sunrise Way, Jacksonville, FL 34479",
+      "lat": 30.24239,
+      "lng": -81.57172,
+      "threatens": [
+        "store-1690"
+      ],
+      "wk2_share": 13.4
+    },
+    {
+      "id": "comp-1692-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Jacksonville Moncrief",
+      "city": "Jacksonville, FL",
+      "address": "8252 Main St, Jacksonville, FL 35479",
+      "lat": 30.33675,
+      "lng": -81.74255,
+      "threatens": [
+        "store-1692"
+      ],
+      "wk2_share": 27.4
+    },
+    {
+      "id": "comp-1692-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Jacksonville Moncrief",
+      "city": "Jacksonville, FL",
+      "address": "2722 Gulf Blvd, Jacksonville, FL 34899",
+      "lat": 30.37603,
+      "lng": -81.72837,
+      "threatens": [
+        "store-1692"
+      ],
+      "wk2_share": 18.3
+    },
+    {
+      "id": "comp-1692-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Jacksonville Moncrief",
+      "city": "Jacksonville, FL",
+      "address": "786 Town Center Blvd, Jacksonville, FL 30092",
+      "lat": 30.41808,
+      "lng": -81.73243,
+      "threatens": [
+        "store-1692"
+      ],
+      "wk2_share": 15.9
+    },
+    {
+      "id": "comp-1692-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Jacksonville Moncrief",
+      "city": "Jacksonville, FL",
+      "address": "1267 Sunrise Way, Jacksonville, FL 39087",
+      "lat": 30.37178,
+      "lng": -81.66605,
+      "threatens": [
+        "store-1692"
+      ],
+      "wk2_share": 12.7
+    },
+    {
+      "id": "comp-1692-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Jacksonville Moncrief",
+      "city": "Jacksonville, FL",
+      "address": "3363 Sunrise Way, Jacksonville, FL 32273",
+      "lat": 30.42983,
+      "lng": -81.6746,
+      "threatens": [
+        "store-1692"
+      ],
+      "wk2_share": 13.6
+    },
+    {
+      "id": "comp-1694-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Jacksonville 48th",
+      "city": "Jacksonville, FL",
+      "address": "178 Gulf Blvd, Jacksonville, FL 33048",
+      "lat": 30.3748,
+      "lng": -81.68445,
+      "threatens": [
+        "store-1694"
+      ],
+      "wk2_share": 22.9
+    },
+    {
+      "id": "comp-1694-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Jacksonville 48th",
+      "city": "Jacksonville, FL",
+      "address": "5048 Main St, Jacksonville, FL 31483",
+      "lat": 30.38052,
+      "lng": -81.64501,
+      "threatens": [
+        "store-1694"
+      ],
+      "wk2_share": 22.2
+    },
+    {
+      "id": "comp-1694-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Jacksonville 48th",
+      "city": "Jacksonville, FL",
+      "address": "4084 Main St, Jacksonville, FL 36063",
+      "lat": 30.43573,
+      "lng": -81.63519,
+      "threatens": [
+        "store-1694"
+      ],
+      "wk2_share": 12.8
+    },
+    {
+      "id": "comp-1694-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Jacksonville 48th",
+      "city": "Jacksonville, FL",
+      "address": "8029 Commerce Pkwy, Jacksonville, FL 37830",
+      "lat": 30.41556,
+      "lng": -81.65437,
+      "threatens": [
+        "store-1694"
+      ],
+      "wk2_share": 9.2
+    },
+    {
+      "id": "comp-1694-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Jacksonville 48th",
+      "city": "Jacksonville, FL",
+      "address": "5731 Cypress Ave, Jacksonville, FL 37809",
+      "lat": 30.40391,
+      "lng": -81.63047,
+      "threatens": [
+        "store-1694"
+      ],
+      "wk2_share": 18.3
+    },
+    {
+      "id": "comp-1710-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Lakeland East",
+      "city": "Lakeland, FL",
+      "address": "5385 Commerce Pkwy, Lakeland, FL 30236",
+      "lat": 28.0553,
+      "lng": -81.88506,
+      "threatens": [
+        "store-1710"
+      ],
+      "wk2_share": 27.8
+    },
+    {
+      "id": "comp-1710-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Lakeland East",
+      "city": "Lakeland, FL",
+      "address": "4811 Cypress Ave, Lakeland, FL 37087",
+      "lat": 27.99628,
+      "lng": -81.93487,
+      "threatens": [
+        "store-1710"
+      ],
+      "wk2_share": 14.5
+    },
+    {
+      "id": "comp-1710-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Lakeland East",
+      "city": "Lakeland, FL",
+      "address": "1891 Cypress Ave, Lakeland, FL 34662",
+      "lat": 28.00353,
+      "lng": -81.89827,
+      "threatens": [
+        "store-1710"
+      ],
+      "wk2_share": 9.9
+    },
+    {
+      "id": "comp-1710-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Lakeland East",
+      "city": "Lakeland, FL",
+      "address": "3826 Gulf Blvd, Lakeland, FL 39270",
+      "lat": 28.08597,
+      "lng": -81.96001,
+      "threatens": [
+        "store-1710"
+      ],
+      "wk2_share": 5.2
+    },
+    {
+      "id": "comp-1710-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Lakeland East",
+      "city": "Lakeland, FL",
+      "address": "4700 Main St, Lakeland, FL 38956",
+      "lat": 28.05677,
+      "lng": -81.96606,
+      "threatens": [
+        "store-1710"
+      ],
+      "wk2_share": 11
+    },
+    {
+      "id": "comp-1712-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Lakeland Central",
+      "city": "Lakeland, FL",
+      "address": "3559 Sunrise Way, Lakeland, FL 32667",
+      "lat": 28.06963,
+      "lng": -81.9379,
+      "threatens": [
+        "store-1712"
+      ],
+      "wk2_share": 20.3
+    },
+    {
+      "id": "comp-1712-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Lakeland Central",
+      "city": "Lakeland, FL",
+      "address": "7141 Commerce Pkwy, Lakeland, FL 30705",
+      "lat": 28.00386,
+      "lng": -81.98003,
+      "threatens": [
+        "store-1712"
+      ],
+      "wk2_share": 22.1
+    },
+    {
+      "id": "comp-1712-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Lakeland Central",
+      "city": "Lakeland, FL",
+      "address": "8493 Commerce Pkwy, Lakeland, FL 38690",
+      "lat": 28.01437,
+      "lng": -81.93318,
+      "threatens": [
+        "store-1712"
+      ],
+      "wk2_share": 12.9
+    },
+    {
+      "id": "comp-1712-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Lakeland Central",
+      "city": "Lakeland, FL",
+      "address": "6964 Main St, Lakeland, FL 30528",
+      "lat": 28.09029,
+      "lng": -81.94316,
+      "threatens": [
+        "store-1712"
+      ],
+      "wk2_share": 8.7
+    },
+    {
+      "id": "comp-1712-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Lakeland Central",
+      "city": "Lakeland, FL",
+      "address": "4394 Gulf Blvd, Lakeland, FL 31126",
+      "lat": 27.99315,
+      "lng": -81.95203,
+      "threatens": [
+        "store-1712"
+      ],
+      "wk2_share": 10.9
+    },
+    {
+      "id": "comp-1716-publix",
+      "brand": "Publix",
+      "storeName": "Publix — Jacksonville Arlington",
+      "city": "Jacksonville, FL",
+      "address": "293 University Dr, Jacksonville, FL 32470",
+      "lat": 30.3641,
+      "lng": -81.59213,
+      "threatens": [
+        "store-1716"
+      ],
+      "wk2_share": 26.7
+    },
+    {
+      "id": "comp-1716-walmart",
+      "brand": "Walmart",
+      "storeName": "Walmart — Jacksonville Arlington",
+      "city": "Jacksonville, FL",
+      "address": "8199 Cypress Ave, Jacksonville, FL 32060",
+      "lat": 30.28401,
+      "lng": -81.5992,
+      "threatens": [
+        "store-1716"
+      ],
+      "wk2_share": 22.8
+    },
+    {
+      "id": "comp-1716-aldi",
+      "brand": "ALDI",
+      "storeName": "ALDI — Jacksonville Arlington",
+      "city": "Jacksonville, FL",
+      "address": "1897 University Dr, Jacksonville, FL 36747",
+      "lat": 30.36395,
+      "lng": -81.60178,
+      "threatens": [
+        "store-1716"
+      ],
+      "wk2_share": 9
+    },
+    {
+      "id": "comp-1716-save-a-lot",
+      "brand": "Save A Lot",
+      "storeName": "Save A Lot — Jacksonville Arlington",
+      "city": "Jacksonville, FL",
+      "address": "3340 Pine Ridge Rd, Jacksonville, FL 33042",
+      "lat": 30.268,
+      "lng": -81.6,
+      "threatens": [
+        "store-1716"
+      ],
+      "wk2_share": 7.7
+    },
+    {
+      "id": "comp-1716-other-retailers",
+      "brand": "Other Retailers",
+      "storeName": "Other Retailers — Jacksonville Arlington",
+      "city": "Jacksonville, FL",
+      "address": "9310 Gulf Blvd, Jacksonville, FL 32379",
+      "lat": 30.2893,
+      "lng": -81.6235,
+      "threatens": [
+        "store-1716"
+      ],
+      "wk2_share": 15.1
     }
   ]
 };

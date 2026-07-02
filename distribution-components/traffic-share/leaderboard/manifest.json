@@ -1,0 +1,19 @@
+{
+  "name": "traffic-share/leaderboard",
+  "protoAnchor": "#ts-chart-card [data-dist-sub-pane=\"store\"] .leaderboard-table#leaderboard-table-store (fragment root = the .leaderboard-table div itself — loader stamps data-component on it, no wrapper; parent .traffic-perf-* pane chrome stays in chart-card markup, its CSS carries here)",
+  "protoSource": [
+    "analytics-dashboard-combined/distribution-traffic.html — store pane leaderboard div, verbatim",
+    "analytics-dashboard-combined/js/distribution/distribution.js — renderLeaderboard / renderLeaderboardInto / bindStoreTabInteractions / haversineDistance + LEADERBOARD_BRAND_COLORS, verbatim; page `elements` cache shrunk to the one entry read; StoreMap calls kept verbatim behind typeof guards (live again at store-map carve); entry seam window.DistLeaderboard.build() = the leaderboard half of proto DistributionTraffic.buildStorePane()",
+    "analytics-dashboard-combined/css/distribution.css — CARRIED blocks: dist:647 unified numeric badge re-scoped to .lb-rank, dist:2708 traffic-perf panel family, dist:2779 leaderboard-table + lb-* family, dist:3583/3621 responsive rows; source order preserved (.lb-rank two-block cascade)",
+    "analytics-dashboard-combined/js/data/* — snapshot extended with trafficShareMetrics.storeLeaderboard + entities.stores + competitorStores (data/generate-traffic-share-data.mjs)"
+  ],
+  "angularTarget": "ideal-sale-circular/src/app/analytic-dashboard/components/distribution-view/traffic-share-leaderboard",
+  "backing": "custom → primeng(treetable)",
+  "style": "module",
+  "oracle": "store pane is lazy-built on first tab show — oracle entry clicks the By Store sub-tab on BOTH sides before diffing, crops to .traffic-perf-panel (map half renders empty both sides until the store-map carve; strip viz-inactive on the ancestor card).",
+  "ux928Items": [
+    "#16 By Store → Map: p-treetable conversion (native expand + sort), rename tab label, side-panel reorg — conversion follows the verbatim carve after oracle-green"
+  ],
+  "notes": "Rows render lazily via window.DistLeaderboard.build() from the chart-card store hook. Locked to Our Stores view ('ours'); the competitors view of renderLeaderboard is carried verbatim for the Angular twin's view input. Angular twin takes sort/view as inputs, row-select + expand as outputs (map seam).",
+  "status": "carved — oracle 10/10 green both viewports (2026-07-02, px=0 cssDiffs=0 cropped to .traffic-perf-table-wrap); expand/row-select/aria click-verified in shell, console clean (favicon 404 only)"
+}

@@ -1,0 +1,269 @@
+/* traffic-share/leaderboard — CARRIED verbatim from the frozen proto
+   (analytics-dashboard-combined/css/distribution.css). Blocks appear in
+   source order so the intra-file cascade is preserved (.lb-rank is hit by
+   TWO blocks: the unified numeric badge at dist:647, then the leaderboard
+   override at dist:2831 — later wins per property, min-width/padding/
+   line-height/flex-shrink survive from the badge block).
+   Loads BEFORE chart-card.css in the shell (the lb- and traffic-perf-
+   families have no selector overlap with the remaining chart-card cascade). */
+
+/* ── CARRIED dist:647 — unified numeric badge, re-scoped to .lb-rank only
+      (the other badge selectors' components aren't on this page) ── */
+.lb-rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--section-color, #2196F3);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* ── CARRIED dist:2708 — Traffic Store Performance Panel ── */
+
+.traffic-perf-panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.traffic-perf-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4) var(--space-4) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.traffic-perf-header__left {
+display: flex;
+    align-items: flex-start;
+    gap: var(--space-1);
+    flex: 1;
+    min-width: 0;
+    justify-content: flex-start;
+    flex-direction: column;
+}
+
+
+.traffic-perf-header__right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex: 0;
+  min-width: 200px;
+  justify-content: flex-end;
+}
+
+.traffic-perf-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.traffic-perf-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+}
+
+.traffic-perf-table-wrap {
+  display: flex;
+  flex-direction: column;
+  height: 560px;
+  overflow: hidden;
+  border-right: 1px solid var(--color-border);
+}
+
+.traffic-perf-map-wrap {
+  position: relative;
+  min-height: 560px;
+}
+
+/* ── CARRIED dist:2779 — Leaderboard Table ── */
+.leaderboard-table {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.lb-header,
+.lb-row {
+  display: grid;
+  grid-template-columns: 28px 1fr 130px 64px;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  align-items: center;
+  font-size: var(--font-size-sm);
+}
+
+.lb-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--color-surface);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--color-border);
+  padding-top: var(--space-3);
+  padding-bottom: var(--space-3);
+  position: sticky;
+  top: 0;
+  background: var(--color-surface);
+}
+
+.lb-row {
+  border-bottom: 1px solid var(--color-gray-100);
+}
+
+.lb-row {
+  cursor: pointer;
+}
+
+.lb-row:hover {
+  background: var(--color-gray-50);
+}
+
+.lb-row--selected {
+  background: #e3f2fd !important;
+}
+
+/* Status border colors removed — no health grading in leaderboard */
+
+.lb-rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-full);
+  background: var(--color-gray-100);
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-secondary);
+  margin-right: var(--space-1);
+}
+
+.lb-comp-pip {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+/* Tree table: expand button */
+.lb-col--expand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lb-expand-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  transition: color 0.15s, background 0.15s;
+}
+.lb-expand-btn:hover {
+  color: var(--color-primary);
+  background: var(--color-gray-100);
+}
+.lb-expand-btn .material-symbols-outlined {
+  font-size: 16px;
+  transition: transform 0.2s;
+}
+.lb-expand-btn[aria-expanded="true"] .material-symbols-outlined {
+  transform: rotate(90deg);
+}
+
+/* Child rows */
+.lb-children {
+  display: none;
+}
+.lb-children.open {
+  display: block;
+}
+
+.lb-row--child {
+  background: var(--color-gray-50);
+  border-bottom: 1px solid var(--color-gray-100);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+}
+.lb-row--child:hover {
+  background: #f0f4ff;
+}
+.lb-row--child .lb-col--store {
+  padding-left: var(--space-2);
+  color: var(--color-text-secondary);
+}
+
+/* Parent with no children: no pointer on expand col */
+.lb-row--leaf {
+  cursor: pointer;
+}
+
+.lb-col--city { text-align: left; }
+
+.lb-col--change.positive { color: var(--color-success-600); font-weight: var(--font-weight-semibold); }
+.lb-col--change.negative { color: var(--color-error-500); font-weight: var(--font-weight-semibold); }
+
+/* Sortable column headers */
+.lb-col--sortable {
+  cursor: pointer;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  transition: color 0.15s;
+}
+.lb-col--sortable:hover {
+  color: var(--color-primary);
+}
+.lb-col--sorted {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
+}
+.lb-sort-icon {
+  font-size: 14px;
+  vertical-align: middle;
+}
+.lb-sort-icon--active {
+  color: var(--color-primary);
+}
+.lb-sort-icon--inactive {
+  color: var(--color-gray-300);
+  transition: color 0.15s;
+}
+.lb-col--sortable:hover .lb-sort-icon--inactive {
+  color: var(--color-primary);
+}
+
+/* ── CARRIED dist:3583 — Responsive — Tablet (≤ 1024px), pane rows only ── */
+@media (max-width: 1024px) {
+  .traffic-perf-body { grid-template-columns: 1fr; }
+}
+
+/* ── CARRIED dist:3621 — Responsive — Mobile (≤ 768px), pane rows only ── */
+@media (max-width: 768px) {
+  .lb-col--city { display: none; }
+}

@@ -63,7 +63,8 @@
           <div class="traffic-perf-panel">
             <div class="traffic-perf-body">
               <div class="traffic-perf-table-wrap">
-                <div class="leaderboard-table" id="leaderboard-table-store"></div>
+                <!-- nested fragment — the shell chains this load before DistChartCard.init -->
+                <div data-component="leaderboard"></div>
               </div>
               <div class="traffic-perf-map-wrap">
                 <div id="store-map-store-pane" style="height: 100%; min-height: 480px; border-radius: 8px;"></div>

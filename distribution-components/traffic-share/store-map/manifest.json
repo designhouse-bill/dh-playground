@@ -1,0 +1,21 @@
+{
+  "name": "traffic-share/store-map",
+  "protoAnchor": "#ts-chart-card [data-dist-sub-pane=\"store\"] .traffic-perf-map-wrap #store-map-store-pane (fragment root = the map container div itself, same convention as leaderboard's fragment root = its own table div; the ring-legend + reset-btn siblings stay in chart-card.html, styled by store-map.css)",
+  "protoSource": [
+    "analytics-dashboard-combined/distribution-traffic.html — store pane map div, verbatim",
+    "analytics-dashboard-combined/js/distribution/store-map.js — the whole StoreMap IIFE, verbatim, unrenamed (every carved component's `typeof StoreMap !== 'undefined'` guard expects this exact global)",
+    "analytics-dashboard-combined/js/distribution/distribution.js — renderMap() + the map half of DistributionTraffic.buildStorePane(), verbatim data shaping; the onStoreClick row-select callback re-targeted from the old .lb-row--parent[data-store-id] selectors to window.DistLeaderboard.selectStore() (leaderboard's p-treetable conversion replaced that markup at the leaderboard carve)",
+    "analytics-dashboard-combined/css/distribution.css — CARRIED blocks: dist:2102 map-reset-btn, dist:2180 comp-marker family, dist:4167 map-ring-legend family, dist:5360 ov-tooltip family",
+    "analytics-dashboard-combined/js/vendor/leaflet.min.js + analytics-dashboard-combined/vendor/leaflet.min.css — copied verbatim to vendor/"
+  ],
+  "angularTarget": "ideal-sale-circular/src/app/analytic-dashboard/components/distribution-view/store-map",
+  "backing": "leaflet",
+  "style": "standalone",
+  "oracle": "wrapper-region pixel diff on #ts-chart-card .traffic-perf-map-wrap (tile-pane excluded from the diff — see tileDeterminism below) + computed props on the wrapper. State: strip viz-inactive on #ts-chart-card, click [data-dist-sub=\"store\"], wait 1000ms for Leaflet init + our own layers to render, hide .leaflet-tile-pane on BOTH sides before the screenshot. pixelThreshold overridden to 0.02 for this entry (parity.mjs gained per-component pixelThreshold support 2026-07-02, same pattern as canvasSelectors) — desktop is exact 0Δ, tablet showed a one-off 0.013 of pure circleMarker stroke-edge anti-aliasing jitter (re-run came back 0Δ too).",
+  "tileDeterminism": "Leaflet loads live network tiles from cartocdn ({s}/{r} subdomains) — nondeterministic across runs/timing, not something the carve should special-case in component code. DECIDED at carve (2026-07-02): the oracle state eval hides `#store-map-store-pane .leaflet-tile-pane` (visibility:hidden) on both old and new pages before the screenshot, same technique as the viz-inactive strip. Everything left in the crop (our SVG circleMarkers in the 'stores' pane, divIcon competitor pins in the 'competitors' pane, proximity rings, zoom control, map-reset-btn, ring-legend) is deterministic — driven by our own snapshot data, not the network.",
+  "ux928Items": [
+    "#16 By Store → Map: tab rename + popover Share%/Visits reorder land as their own gated diff AFTER this verbatim carve is oracle-green (popover layout still needs the meeting frame)"
+  ],
+  "notes": "Lazy-built like leaderboard: window.DistStoreMap.build() called once from chart-card's onSub('store') on first show (mirrors the proto's storeBuilt gate in the inline ep-sub-tab driver — build once via DistributionTraffic.buildStorePane(), else invalidateMap() on return). chart-card/init.js updated to the if/else form and now calls DistLeaderboard.build()+DistStoreMap.build() together on first show, DistStoreMap.invalidate() on subsequent shows — the window.DistributionTraffic bridge stub is gone, both seams are live. Reset-btn click + ring-legend show/hide on row click are still owned by leaderboard/init.js (bindStoreTabInteractions) — store-map only supplies the reverse direction (marker click → row select) via the new DistLeaderboard.selectStore(storeId) export. Data reused from data/traffic-share-data.js (D.entities.stores / D.trafficShareMetrics.storeLeaderboard / D.competitorStores), same snapshot the leaderboard carve reads — not duplicated.",
+  "status": "carved — oracle green both viewports (2026-07-02, px=0/cssDiffs=0 both), verified in browser preview (map renders, tiles load, marker click → highlightStore + legend + leaderboard row-select all wired, console clean)"
+}

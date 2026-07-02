@@ -262,8 +262,8 @@
     tr.classList.add('p-treetable-row-selected');
   }
 
-  // Entry seam — the store-pane slice of proto buildStorePane() (map half
-  // arrives with the store-map carve). Locked to Our Stores, like the proto.
+  // Entry seam — the store-pane slice of proto buildStorePane(). Locked to
+  // Our Stores, like the proto.
   window.DistLeaderboard = {
     build: function () {
       var root = document.getElementById('leaderboard-table-store');
@@ -271,6 +271,15 @@
       _leaderboardView = 'ours';
       render(root);
       bindStoreTabInteractions(root);
+    },
+    // Reverse seam for the store-map carve: a marker click needs to select
+    // the matching row. Old proto renderMap() touched .lb-row--parent
+    // directly; the p-treetable conversion replaced that markup, so
+    // store-map/init.js calls this instead of reaching into our DOM itself.
+    selectStore: function (storeId) {
+      var root = document.getElementById('leaderboard-table-store');
+      var tr = root && root.querySelector('tr[data-store-id="' + storeId + '"]');
+      if (tr) selectRow(root, tr);
     }
   };
 })();

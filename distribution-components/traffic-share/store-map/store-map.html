@@ -1,0 +1,8 @@
+<!-- traffic-share/store-map — Leaflet map pane, verbatim from the store-pane
+     right half (distribution-traffic.html #store-map-store-pane). Fragment
+     root = the map container div itself (same convention as leaderboard's
+     fragment root = its own table div); the ring-legend + reset-btn siblings
+     stay in chart-card.html (parent chrome, styled by store-map.css since
+     they're map controls driven by StoreMap's own click/legend behavior).
+     Leaflet builds all internal DOM at runtime via StoreMap.init(). -->
+<div id="store-map-store-pane" style="height: 100%; min-height: 480px; border-radius: 8px;"></div>

@@ -67,7 +67,8 @@
                 <div data-component="leaderboard"></div>
               </div>
               <div class="traffic-perf-map-wrap">
-                <div id="store-map-store-pane" style="height: 100%; min-height: 480px; border-radius: 8px;"></div>
+                <!-- nested fragment — the shell chains this load before DistChartCard.init -->
+                <div data-component="store-map"></div>
                 <div class="map-ring-legend" id="ring-legend-store" style="display:none; position:absolute; top:12px; right:12px; z-index:800;">
                   <div class="map-ring-legend__item"><span class="map-ring-legend__circle map-ring-legend__circle--1"></span>1 mi</div>
                   <div class="map-ring-legend__item"><span class="map-ring-legend__circle map-ring-legend__circle--3"></span>3 mi</div>

@@ -6,9 +6,8 @@
    Angular twin (chart-card composes dh-sub-tabs/dh-sub-pane). Panel
    copy + default sub come from data/sections.js (cfg.panelCopy /
    cfg.defaultSub). Engine hooks: trend seams → window.DistTrend,
-   store-pane leaderboard → window.DistLeaderboard (traffic-share carves);
-   the map half of the store pane stays a guarded no-op until the
-   store-map carve. */
+   store pane → window.DistLeaderboard + window.DistStoreMap (both live,
+   traffic-share carves). */
 (function () {
   'use strict';
 
@@ -47,11 +46,11 @@
       if (name === 'store') {
         if (!storeBuilt) {
           if (window.DistLeaderboard) window.DistLeaderboard.build();
+          if (window.DistStoreMap) window.DistStoreMap.build();
           storeBuilt = true;
+        } else if (window.DistStoreMap) {
+          window.DistStoreMap.invalidate();
         }
-        // Map half (renderMap / invalidateMap) arrives with the store-map carve.
-        var DT = window.DistributionTraffic;
-        if (DT && DT.invalidateMap) DT.invalidateMap();
       }
       resizePane(active);
     }

@@ -13,6 +13,9 @@
   <!-- Google Material Symbols (same load as the proto pages) -->
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="../vendor/leaflet.min.css">
+
   <!-- Real Aura theme (vendor/) loads FIRST so local rules keep cascade priority -->
   <link rel="stylesheet" href="../vendor/aura.css">
   <!-- Load order mirrors the proto: tokens, base, component layers, shell -->
@@ -22,6 +25,7 @@
   <link rel="stylesheet" href="../shared/sub-tabs/sub-tabs.css">
   <link rel="stylesheet" href="../shared/toggle/toggle.css">
   <link rel="stylesheet" href="../traffic-share/leaderboard/leaderboard.css">
+  <link rel="stylesheet" href="../traffic-share/store-map/store-map.css">
   <link rel="stylesheet" href="../shared/chart-card/chart-card.css">
   <link rel="stylesheet" href="../shared/methodology-popover/methodology-popover.css">
   <link rel="stylesheet" href="shell.css">
@@ -36,6 +40,7 @@
   </main>
 
   <script src="../vendor/echarts.min.js"></script>
+  <script src="../vendor/leaflet.min.js"></script>
   <script src="../shared/chart-colors.js"></script>
   <script src="../data/sections.js"></script>
   <script src="../data/traffic-share-data.js"></script>
@@ -47,6 +52,7 @@
   <script src="../shared/chart-card/init.js"></script>
   <script src="../traffic-share/trend/init.js"></script>
   <script src="../traffic-share/leaderboard/init.js"></script>
+  <script src="../traffic-share/store-map/init.js"></script>
   <script>
     document.querySelectorAll('[data-component="section-hero"]').forEach(function (host) {
       window.DistComponents.load(host, '../shared/section-hero/section-hero.html').then(function (node) {
@@ -61,11 +67,13 @@
         var methHost = node.querySelector('[data-component="methodology-popover"]');
         var trendHost = node.querySelector('[data-component="trend"]');
         var lbHost = node.querySelector('[data-component="leaderboard"]');
+        var mapHost = node.querySelector('[data-component="store-map"]');
         return Promise.all([
           window.DistComponents.load(subHost, '../shared/sub-tabs/sub-tabs.html'),
           window.DistComponents.load(methHost, '../shared/methodology-popover/methodology-popover.html'),
           window.DistComponents.load(trendHost, '../traffic-share/trend/trend.html'),
-          window.DistComponents.load(lbHost, '../traffic-share/leaderboard/leaderboard.html')
+          window.DistComponents.load(lbHost, '../traffic-share/leaderboard/leaderboard.html'),
+          window.DistComponents.load(mapHost, '../traffic-share/store-map/store-map.html')
         ]).then(function () {
           window.DistMethodologyPopover.init();
           window.DistTrend.init();

@@ -53,6 +53,17 @@
       resizePane(active);
     }
 
+    // Toggle groups: activation via shared/toggle; data swaps are engine
+    // hooks (guarded no-ops until the trend / by-competitor carves).
+    card.querySelectorAll('.view-toggle').forEach(function (el) {
+      var attr = el.querySelector('[data-traffic-view]') ? 'trafficView'
+        : el.querySelector('[data-xover-cohort]') ? 'xoverCohort' : 'xoverMetric';
+      window.DistToggle.init(el, { attr: attr });
+    });
+    card.querySelectorAll('.duration-presets').forEach(function (el) {
+      window.DistToggle.init(el, { attr: 'period', activeClass: 'duration-preset--active' });
+    });
+
     var tabsApi = window.DistSubTabs.init(strip, { paneRoot: card, onChange: onSub });
 
     // Initialize control visibility for the default tab.

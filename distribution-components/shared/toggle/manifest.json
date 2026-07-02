@@ -1,0 +1,16 @@
+{
+  "name": "shared/toggle",
+  "protoAnchor": ".view-toggle, .duration-presets",
+  "protoSource": [
+    "analytics-dashboard-combined/distribution-traffic.html — the 5 traffic instances (traffic-chart-toggle, crossover-cohort, crossover-metric, crossover-trend-presets, crossover-period-presets) stay VERBATIM in shared/chart-card/chart-card.html (card content, like the sub-panes)",
+    "analytics-dashboard-combined/css/analytics-architecture.css — duration-presets family (1401-1470), view-toggle PILL canonical + compact (1640-1706), view-toggle borderless lock (2538-2547) at proto-2.0-baseline",
+    "analytics-dashboard-combined/css/distribution.css — view-toggle SEGMENTED override (1759-1803), STRIP border re-add + .sort-toggle (3108-3114)"
+  ],
+  "angularTarget": "ideal-sale-circular/src/app/analytic-dashboard/components/shared/toggle",
+  "backing": "primeng(selectbutton) — DOM still custom verbatim; swap lands at the 2.1 dial",
+  "style": "standalone",
+  "oracle": "static — instances ride the chart-card-traffic crop (no markup moved, DOM unchanged by this carve). p-selectbutton swap is static-VISIBLE → wrapper-pixel + supervised sign-off at dial time (carve-vs-dial decision 2026-07-02).",
+  "ux928Items": [],
+  "notes": "CSS-family + driver carve, no fragment markup: 5 per-card instances differ in ids/data attrs/button sets — the Angular twin takes options via input, so the proto keeps instance markup in the consuming card and this folder owns the resolved cascade (toggle.css, loaded BEFORE chart-card.css — no selector overlap with the remaining chart-card cascade; internal 4-block .view-toggle order preserved) plus the activation seam (init.js, window.DistToggle: active class + aria-selected + onChange; engine data swaps arrive with the trend carve). Both flavors (.view-toggle + .duration-presets) = one twin, two style variants.",
+  "status": "carved — CSS + driver (2026-07-02); markup untouched, oracle static unaffected by construction (verified 6/6)"
+}

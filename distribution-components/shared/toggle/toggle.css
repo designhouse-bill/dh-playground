@@ -1,0 +1,233 @@
+/* ============================================================
+   shared/toggle — carved verbatim from the 2.0 proto
+   (moved out of shared/chart-card/chart-card.css 2026-07-02;
+   the CARRIED blocks, original proto load order preserved:
+   analytics-architecture.css → distribution.css).
+   Family = the segmented-control chrome: .view-toggle (PILL
+   canonical + SEGMENTED override + borderless lock + STRIP
+   border re-add) and .duration-presets/.ep-trend-ranges — both
+   flavors map to ONE Angular twin backed by p-selectbutton.
+   Sources (proto-2.0-baseline):
+     analytics-architecture.css — duration-presets family
+       (1401-1470), view-toggle PILL canonical + compact
+       (1640-1706), view-toggle borderless lock (2538-2547)
+     distribution.css — view-toggle SEGMENTED override
+       (1759-1803), view-toggle STRIP border re-add + .sort-toggle
+       (3108-3114)
+   Loads BEFORE chart-card.css (toggle family has no selector
+   overlap with the remaining chart-card cascade; internal
+   4-block .view-toggle order preserved here).
+   VERBATIM today (carve-vs-dial decision 2026-07-02): the
+   p-selectbutton DOM swap is static-VISIBLE, so it lands at the
+   2.1 dial with supervised sign-off, not at carve time.
+   Angular twin: components/shared/toggle
+   ============================================================ */
+
+/* ── analytics-architecture.css 1401-1470 ── */
+/* ── duration-presets / ep-trend-ranges ─────────────────────────
+   Range chips segmented control. Multi-page chrome (3 dist surfaces).
+   .ep-trend-range* are aliases used on engagement-promotions. */
+.duration-presets,
+.ep-trend-ranges {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.duration-preset,
+.ep-trend-range {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-12);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.duration-preset:last-child,
+.ep-trend-range:last-child { border-right: none; }
+
+.duration-preset:hover,
+.ep-trend-range:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text-primary);
+}
+
+.duration-preset.active,
+.duration-preset--active,
+.ep-trend-range.active,
+.ep-trend-range--active {
+  background: var(--color-gray-900);
+  color: #fff;
+}
+
+.duration-preset--active .duration-preset__sub,
+.duration-preset.active .duration-preset__sub {
+  opacity: 0.85;
+  color: #fff;
+}
+
+.duration-preset__sub {
+  font-size: var(--font-size-11);
+  font-weight: 400;
+  opacity: 0.75;
+  margin-left: 2px;
+}
+
+.duration-presets--compact {
+  display: inline-flex;
+  gap: var(--space-1);
+  border: none;
+  border-radius: 0;
+  overflow: visible;
+  margin-left: var(--space-3);
+}
+
+.duration-presets--compact .duration-preset {
+  padding: var(--space-1) var(--space-2-5);
+  font-size: var(--font-size-11);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+/* ── analytics-architecture.css 1640-1706 ── */
+
+/* ──────────────────────────────────────────────────────────────
+   Phase 0b block 20 (2026-05-04): .view-toggle family
+   Canonical: PILL variant (gap, per-btn border+radius, primary-500
+   active). Sourced from distribution-shared.css + engagement.css
+   (identical duplicates). Used on engagement-categories /
+   -circulars / -grid / -compare.
+   Divergent: SEGMENTED variant (single outer border, fit-content,
+   gray-900 active) lives in distribution.css and overrides this
+   canonical via load-order cascade on distribution-* +
+   engagement-promotions + index. Documented divergence — same
+   class, two patterns (see block 18/19 pattern).
+   .view-toggle--compact is a generic padding/font-size modifier.
+   STRIP variant (3rd pattern, Phase 0b audit 2026-05-04): also lives
+   in distribution.css (~3089) using .toggle-btn children (not __btn);
+   index.html only. No cascade conflict — distinct child class.
+   ────────────────────────────────────────────────────────────── */
+
+.view-toggle {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.view-toggle__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  height: 32px;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.view-toggle__btn:hover {
+  background-color: var(--color-gray-100);
+  color: var(--color-text-secondary);
+}
+
+.view-toggle__btn.active {
+  background-color: var(--color-primary-500);
+  border-color: var(--color-primary-500);
+  color: white;
+}
+
+.view-toggle__btn .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.view-toggle__label {
+  font-size: var(--font-size-sm);
+}
+
+.view-toggle--compact {
+  display: inline-flex;
+}
+
+.view-toggle--compact .view-toggle__btn {
+  padding: 4px 12px;
+  font-size: 12px;
+}
+
+/* ── analytics-architecture.css 2538-2547 ── */
+/* .view-toggle borderless (both PILL canonical and SEGMENTED override) */
+.view-toggle {
+  border: 0;
+}
+.view-toggle__btn {
+  border: 0;
+}
+.view-toggle__btn + .view-toggle__btn {
+  border-left: 0;
+}
+
+/* ── distribution.css 1759-1803 ── */
+
+/* SEGMENTED .view-toggle override (Phase 0b block 20, 2026-05-04).
+   Pill canonical lives in analytics-architecture.css; this override
+   wins on distribution-* + engagement-promotions + index via load
+   order. Documented divergence — same class, two patterns. */
+.view-toggle {
+  display: flex;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  width: fit-content;
+}
+
+.view-toggle__btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  background: white;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.view-toggle__btn .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.view-toggle__btn + .view-toggle__btn {
+  border-left: 1px solid var(--color-gray-200);
+}
+
+.view-toggle__btn:hover {
+  background: var(--color-gray-50);
+}
+
+.view-toggle__btn.active {
+  /* UX-846 2026-05-27: slate (#475569) so view-toggle doesn't visually
+     compete with duration-presets (also active = dark). */
+  background: #475569;
+  color: white;
+}
+
+/* ── distribution.css 3108-3114 (STRIP-variant border re-add; matches by class, part of the resolved .view-toggle cascade) ── */
+.view-toggle,
+.sort-toggle {
+  display: flex;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
